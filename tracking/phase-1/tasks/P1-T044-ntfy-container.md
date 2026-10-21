@@ -1,0 +1,102 @@
+---
+id: P1-T044
+kind: task
+title: Deploy self-hosted ntfy behind Tailscale with auth
+phase: 1
+type: OPS
+status: backlog
+priority: high
+size: S
+severity: ""
+owner: agent
+claimed_by: ""
+depends_on: [P1-T004]
+requirements: [R1.14]
+roadmap_todos: [T1.43]
+modules: [M17]
+dashboards: [D16]
+branch: p1/P1-T044-ntfy-container
+pr: ""
+doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md, docs/07-security-notes.md]
+doc_sync_status: n/a
+found_in: ""
+created: 2026-10-21
+updated: 2026-10-21
+started: ""
+completed: ""
+blocked_reason: ""
+checkpoint: ""
+---
+
+# P1-T044 · Deploy self-hosted ntfy behind Tailscale with auth
+
+## Goal / expected outcome
+
+An `ntfy` container runs digest-pinned with `auth-default-access: deny-all`, a private topic and a write token for the notifier, reachable only over Tailscale, as the second independent alert channel.
+
+## Context & references
+
+- Roadmap: requirements [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.43](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
+- Containers: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`ntfy`, phase 1) · [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) (ntfy as second independent channel)
+- Network membership and iOS push caveat: P1-B006
+- Depends on (this phase): P1-T004
+
+## Requirements
+
+- `ntfy` service in Compose with persistent cache/auth DB volumes; served via Caddy on the Tailscale interface (`ntfy.<tailnet>.ts.net`) only
+- Auth: deny-all default; user `mt-notifier` (write to topic `mt-alerts-<random>`), user `phone` (read); tokens in sops
+- Cache duration ≥ 24 h so a phone offline overnight still receives queued alerts
+- Health check and Prometheus metrics enabled
+
+## ToDo
+
+- [ ] Add the service, Caddy route and secrets
+- [ ] Create users/ACLs via an idempotent bootstrap script
+- [ ] Port-scan check: not reachable outside the tailnet
+- [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
+
+## Verification
+
+### Tests
+
+- Integration: publish with the notifier token succeeds; anonymous publish/subscribe denied (401/403)
+- Security: external scan shows no ntfy port (reuse P0 T0.65 scan job)
+
+### Scenarios
+
+- Given the notifier token is revoked, when an alert is sent, then the notifier records the failure and Telegram/email still deliver
+
+### Stress / failure injection
+
+- n/a: single-user volumes
+
+## Acceptance criteria
+
+- [ ] Authenticated publish works; anonymous access denied; reachable only on Tailscale
+- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+
+## Exceptions & edge cases
+
+- iOS instant delivery normally needs an upstream relay; decision recorded per P1-B006
+
+## Cardinal rules (do NOT)
+
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT add an image without pinning it by digest, or vendored code that carries telemetry or referral IDs.
+- Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
+
+## Doc sync on completion
+
+- `docs/roadmap/phase-1-data-and-monitoring.md`: tick T1.43 once every task traced to it in PHASE.md is done; note P1-T044 next to it.
+- `docs/02-v1-architecture.md` §3.1: add `ntfy` to a network (edge/obs)
+- `docs/07-security-notes.md` §9: ntfy auth model
+
+## Branch & PR
+
+- Branch: `p1/P1-T044-ntfy-container`
+- PR title: `P1-T044: Deploy self-hosted ntfy behind Tailscale with auth`
+- PR checklist: tests added · docs synced · task file ticked · `./kanban done P1-T044` run
+
+## Progress log
+
+- 2026-10-21 00:00 · planner · created

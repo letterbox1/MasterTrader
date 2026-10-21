@@ -1,0 +1,102 @@
+---
+id: P3-T037
+kind: task
+title: CARF reconciliation scaffold (venue-reported vs journal)
+phase: 3
+type: BUILD
+status: backlog
+priority: low
+size: S
+severity: ""
+owner: agent
+claimed_by: ""
+depends_on: [P3-T034]
+requirements: [R3.10, R3.11]
+roadmap_todos: [T3.27, T3.28]
+modules: [M18]
+dashboards: [D15]
+branch: p3/P3-T037-carf-reconciliation
+pr: ""
+doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
+doc_sync_status: n/a
+found_in: ""
+created: 2026-10-21
+updated: 2026-10-21
+started: ""
+completed: ""
+blocked_reason: ""
+checkpoint: ""
+---
+
+# P3-T037 · CARF reconciliation scaffold (venue-reported vs journal)
+
+## Goal / expected outcome
+
+The journal can import venue-reported annual crypto totals (CARF/CRS 2.0 style statements or venue tax reports, CSV), store each venue's tax-residency declaration, and produce a reconciliation report of venue-reported vs journal totals per venue and year.
+
+## Context & references
+
+- Roadmap: [R3.10, T3.27](../../../docs/roadmap/phase-3-journal-and-tax.md) (R3.10 lists CARF reconciliation)
+- [09 cross-border events: CARF / CRS 2.0](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · agent question 7 (AU CARF start) ([09](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks))
+- Gap: P3-B010 (no venue-reported format/source defined)
+
+## Requirements
+
+- Table `journal.venue_reported_total` (WORM): venue, account, period, metric (gross proceeds, gross acquisitions, transfers out, count), value, currency, source file hash.
+- Table `journal.venue_residency_declaration` (WORM): venue, declared country, date, evidence ref.
+- Generic CSV importer with a column map per venue in `config/journal/carf_maps/<venue>.yaml`.
+- Report `carf_recon` (type in `journal.tax_report`): per metric diff and status; differences > 1% or AUD 100 flagged.
+- Australia's CARF start is (U) (2027/28 reported); the scaffold is ready, no data expected yet.
+
+## ToDo
+
+- [ ] Migrations + importer + report
+- [ ] Sample map for one venue from its annual statement CSV
+- [ ] Tests; docs
+
+## Verification
+
+### Tests
+
+- Unit: sample venue totals vs fixture journal → diff report.
+- Unit: residency declaration stored and shown.
+
+### Scenarios
+
+- Given a venue annual statement showing proceeds 12,000 AUD, when the journal shows 11,500, then the report flags a 500 difference with event drill-down.
+
+### Stress / failure injection
+
+- n/a: low volume, annual
+
+## Acceptance criteria
+
+- [ ] Import + report work on a sample
+- [ ] Report listed in D15 Reports
+- [ ] CI green (lint, types, tests, `pit` check; `tax-golden` once P3-T045 lands)
+
+## Exceptions & edge cases
+
+- Venue reports in USD → converted with RBA for the period's end per the venue's own convention (documented in the map).
+
+## Cardinal rules (do NOT)
+
+- Do NOT change journal data to match venue totals; differences are explained or corrected via events.
+- Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
+- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
+
+## Doc sync on completion
+
+- `docs/roadmap/phase-3-journal-and-tax.md`: tick T3.27, T3.28 once every item mapped to it is done.
+
+## Branch & PR
+
+- Branch: `p3/P3-T037-carf-reconciliation`
+- PR title: `P3-T037: CARF reconciliation scaffold (venue-reported vs journal)`
+- PR checklist: tests added · docs synced · task file ticked · `./kanban done P3-T037` run
+
+## Progress log
+
+- 2026-10-21 00:00 · planner · created
