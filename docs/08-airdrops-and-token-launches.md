@@ -5,9 +5,10 @@ _Raw evidence: [research/airdrops-rugpull-discord.md](research/airdrops-rugpull-
 ## Principles
 
 1. **Vet first, act second.** Only *viable* opportunities that pass rug-pull/scam screening reach the user or the executor.
-2. **Act autonomously only where it's safe and permitted.** In practice that means claiming an airdrop your existing wallet already qualifies for, through a dedicated hot wallet, under a mandate you signed. Everything else becomes **step-by-step instructions** in your task queue.
+2. **Act autonomously only where it's safe and permitted.** In practice that means claiming an airdrop your existing wallet already qualifies for, through that chain's **airdrop identity wallet** (signer-held, capped; never the hot trading wallet, [13 §1](13-wallets-treasury-and-onchain.md#1-custody-tiers)), under a mandate you signed. Everything else becomes **step-by-step instructions** in your task queue.
 3. **No fake engagement, no sybil farming, no self-bots.** Social tasks (follow, retweet, join Discord, Galxe/Zealy/Layer3 quests) are always queued for you to do yourself.
-4. **Everything is journalled** (tax class, AUD value at receipt, transaction hashes, decision trail).
+4. **Everything is journalled** (tax class, AUD value at receipt per the valuation hierarchy in [16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal), transaction hashes, decision trail).
+5. **Numbers are configuration.** Wallet floats, signer caps, gas budgets and the EV hurdle below are **defaults, configurable** ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)); loosening any of them is C3.
 
 ## Pipeline
 
@@ -17,14 +18,14 @@ DISCOVER → NORMALISE/DEDUP → ENRICH → RISK-SCORE → VIABILITY-SCORE → D
 
 | Stage | Free sources / tools |
 |---|---|
-| Discover | DefiLlama `/protocols` (tokenless protocols with rising TVL); CryptoRank Sandbox (ICO/IDO calendars, launchpads, funding rounds); CoinGecko Demo (new listings, categories); DexScreener (new pairs, profiles); Galxe GraphQL (read-only); Snapshot GraphQL and governance-forum JSON; the **Discord inbox** (followed announcement channels); Telegram channels (**postures only**: addresses, mention counts, channel spread; text never reaches a model, see [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)); news/RSS; manual `/add <url>` via Telegram |
+| Discover | DefiLlama `/protocols` via the official API host `api.llama.fi` (tokenless protocols with rising TVL); CryptoRank Sandbox (ICO/IDO calendars, launchpads, funding rounds); CoinGecko Demo (new listings, categories); DexScreener (new pairs, profiles); Galxe GraphQL (read-only); Snapshot GraphQL and governance-forum JSON; the **Discord inbox** (followed announcement channels); Telegram channels (**postures only**: addresses, mention counts, channel spread; text never reaches a model, see [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)); news/RSS; manual `/add <url>` via Telegram |
 | Normalise | Key = (chain, contract), else the project slug. **Official domain** resolved from CoinGecko/DefiLlama, cross-checked with WHOIS age and blocklists. **Corroboration score:** how many independent listing sites/sources (DefiLlama, CryptoRank, CoinGecko, official X/Discord/docs) agree on the domain, contract and dates; < 2 independent sources → watch only |
 | Enrich | **Blockscout** / own RPC (verified source, proxy/implementation, creator; Etherscan for manual lookups only, its terms bar decision use); Helius (Solana RPC, `getAsset`, mint/freeze authority, holders); DexScreener/GeckoTerminal (liquidity, pair age, volume); CryptoRank (funding) |
 | Risk-score | **GoPlus** (EVM, primary) · **Honeypot.is** (EVM sell simulation) · **RugCheck.xyz** (Solana, primary) · re-implemented **solana-rugchecker** heuristics · **CRPWarner** concepts (hidden mint / sell limits / leaking token), plus an optional sandboxed Gigahorse deep-scan worker · optional Slither on verified source · blocklists (MetaMask eth-phishing-detect, ScamSniffer, polkadot-js, Chainabuse) |
 | Calibrate | Private evaluation against the **SoK rug-pull dataset** (2,391 labelled ETH/BSC contracts) + CRPWarner ground truth + our own outcomes. The model is advisory; the rule-based baseline is authoritative |
-| Act / queue | Policy engine → signer container (hot wallet), or the user-task queue |
+| Act / queue | Policy engine → signer container (airdrop identity wallet, or a burner during vetting), or the user-task queue |
 | Track | Snapshot dates, claim windows, deadlines, `isClaimed`, vesting unlocks, post-claim liquidity/price, wallet approvals |
-| Journal | `airdrop_income_journal` → tax engine. ATO: *general* airdrops are ordinary income at receipt value; *initial allocations* have a $0 cost base, with CGT on disposal (U, confirm with a tax agent) |
+| Journal | Airdrop events in `journal.event` (airdrop established / initial allocation), linked to the campaign record → tax engine ([09](09-journal-and-tax.md)). ATO: *general* airdrops are ordinary income at receipt value; *initial allocations* have a $0 cost base, with CGT on disposal (U, confirm with a tax agent) |
 
 ### Risk score (0–100; any hard-fail = 100 = reject)
 

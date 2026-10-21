@@ -6,6 +6,7 @@
 - It doesn't presume any trading style or timeframe.
 - Any strategy type can be built, backtested, simulated, paper-traded and run live on any timeframe, from **tick / order-book level up to daily-and-above**.
 - Strategies, risk limits and preferences are **user inputs** (UI, Telegram, and later MCP), not things baked into the code.
+- Every number in this spec that shapes trading (limits, thresholds, timers, gates) is a **default you can change**, not a hard rule. The reference values live in [16](16-configuration-and-safety-model.md); where this spec and 16 differ, 16 wins.
 
 Companion docs:
 - [07 security notes](07-security-notes.md)
@@ -13,6 +14,9 @@ Companion docs:
 - [09 journal & tax](09-journal-and-tax.md)
 - [06 data sources](06-aggregators-and-market-providers.md)
 - [04 plan of action](04-plan-of-action.md)
+- [15 bots, HITL & WORM records](15-bots-hitl-and-worm-audit.md)
+- [16 configuration, defaults & failure safety](16-configuration-and-safety-model.md)
+- [17 decisions register](17-decisions-register.md) (the decision for every planning gap)
 
 ---
 
@@ -20,13 +24,15 @@ Companion docs:
 
 | Rule | Meaning |
 |---|---|
-| **Personal use** | GPL/AGPL code can be used directly, because nothing is distributed or served to others. Yahoo, Myfxbook, ForexFactory and similar personal-use terms are fine. Keep the repo **private**. |
+| **Personal use** | GPL/AGPL code can be used directly, because nothing is distributed or served to others (e.g. freqtrade's analysers are vendored in M7). Yahoo, Myfxbook, ForexFactory and similar personal-use terms are fine. Keep the repo **private**. |
+| **Configuration** | **Nothing that shapes trading is hard-coded.** Limits, sizing, drawdown triggers, capital steps, wallet caps, gas budgets, validation gates, approval timers and failure behaviour are configuration with documented defaults ([16](16-configuration-and-safety-model.md)). Layers inherit **tighten-only**: L0 hard ceilings (host file, no API) → L1 system → L2 venue/account → L3 sleeve → L4 bot; the effective value is the strictest. Tightening is immediate; loosening is C3. A strategy manifest *proposes* values, never imposes them. Every change is a versioned WORM row ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)). |
 | **Free only** | Only free sources and free tiers. A single user should stay under the free limits. **Excluded (paid):** X API, CoinGlass, CME FedWatch API, TokenSniffer, Glassnode, Trading Economics, Databento credits, paid exchange data. **Every connector has a quota tracker that throttles before the limit.** |
 | **Deferred** | Reddit (optional if API access is granted) and X: revisit only if free and permitted. **MCP control plane:** built last (Phase 8), only once the platform is in daily use. |
 | **Never** | Self-bots, fake engagement, sybil farming, scraping that breaks a platform's terms, autonomous wallet signatures outside a mandate (see [07](07-security-notes.md)). |
 | **Jurisdiction** | Australian tax resident now; possible move to the UAE, Egypt or Cyprus later. The journal and tax engine are jurisdiction-pluggable ([09](09-journal-and-tax.md)). |
-| **Policy & compliance** | AU retail boundary, the **venue access registry** (orders blocked to venues/products not lawfully available to you), **2× crypto-derivatives leverage cap**, explicit self-trade prevention, Travel Rule, per-platform data terms: see [12](12-policy-and-compliance.md). |
-| **Data provenance** | Every stored row carries `source`, `licence` and use flags (`train_ok`, `model_input_ok`, `retention_days`, `commercial_ok`). Training and inference paths refuse disallowed rows. **Telegram text never reaches any model, RAG index or training set** (Telegram API terms); Telegram feeds deterministic postures only ([12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). |
+| **Policy & compliance** | AU retail boundary, the **venue access registry** (orders blocked to venues/products not lawfully available to you), **2× crypto-derivatives leverage cap** (an L0 ceiling), explicit self-trade prevention where the venue supports it, Travel Rule, per-platform data terms: see [12](12-policy-and-compliance.md). Rule changes are watched, never auto-applied (M3a). |
+| **Data provenance** | Every stored row carries **seven separate columns**: `source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`. Training and inference paths (including MCP responses, M20) refuse disallowed rows. **Telegram text never reaches any model, RAG index or training set** (Telegram API terms); Telegram feeds deterministic postures only ([12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). |
+| **Failure safety** | A down engine, host or network must leave no unprotected exposure: three-layer dead-man (M11), resting venue-side stops on every live position, restart flat with bots paused, one fixed egress IP for exchange keys ([16 §3](16-configuration-and-safety-model.md#3-failure-safety)). |
 
 ---
 

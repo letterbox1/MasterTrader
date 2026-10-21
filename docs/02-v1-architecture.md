@@ -69,11 +69,14 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 
 | Network | Members | Internet egress | Purpose |
 |---|---|---|---|
-| `edge` | caddy, mt-api | — | TLS termination on the Tailscale interface; serves the web app |
-| `core` | mt-api, all app services, nats, postgres, mlflow, tei, litellm, vllm, hindsight | Venues and LLM APIs via allow-list | Business logic |
+| `edge` | caddy, mt-api, ntfy, mcp (P8) | ntfy: upstream relay only (iOS push, message ID only) | TLS termination on the Tailscale interface; serves the web app, ntfy and the MCP endpoint (`/mcp`). Nothing is published except via Tailscale |
+| `core` | mt-api, all app services, nats, postgres, mlflow, tei-embed, tei-rerank, litellm, llm-local, hindsight, deadman, ib-gateway | Venues and LLM APIs via allow-list; venue traffic via the egress exit node from P7 | Business logic. `mcp` is **not** on `core`: it reaches only `mt_api` |
 | `scrape` | ingest-text, rss-bridge, crawl4ai | Yes (wide) | Untrusted fetching; **no route to postgres or signer** (publishes to NATS via a narrow NATS account) |
-| `signer` | signer | Chain RPC only | Hot-wallet signing; reachable only from airdrop-exec |
-| `obs` | grafana, loki, prometheus, vector, alertmanager | Telegram API (alerts) | Observability |
+| `signer` | signer | Chain RPC only | Hot-wallet signing; accepts intents only from the policy service (airdrop-exec in P5; treasury and DEX execution go through it, [13 §2](13-wallets-treasury-and-onchain.md)) |
+| `ctl` | mt-api, docker-proxy | — | Restricted Docker-socket proxy: `system.service.restart` may restart only allow-listed containers; no other Docker API |
+| `obs` | grafana, loki, prometheus, vector, alertmanager | Telegram API (alerts) | Observability. Alerts leave only through the single `alert.*` fan-out (§6) |
+
+**Egress exit node (external, P7):** a small WireGuard/Tailscale exit node on a Sydney cloud VM with a static IP, outside the host. All venue traffic (engine, deadman, monitor recon, ib-gateway) is routed through it, so a broadband → 4G failover doesn't change the IP the exchanges see. If the tunnel is down, nothing on our side can reach the venues and protection falls to venue timers and resting stops ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
 
 ### 3.2 Containers
 
@@ -86,35 +89,42 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `prefect-server` + `prefect-worker` | prefect | Scheduled batch flows (backfills, macro, EOD jobs, retraining) | 0 |
 | `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | — | Observability | 0 |
 | `mlflow` | mlflow | Experiments + model registry | 0 |
-| `litellm` | LiteLLM ≥ 1.83 | Model gateway (research/chat/debate) | 0 |
-| `tei` | text-embeddings-inference (CPU or GPU) | Embeddings + rerank | 0 |
+| `litellm` | LiteLLM ≥ 1.83 | Model gateway (research/chat/debate); its callback writes every call to `audit.llm_call` from P0 | 0 |
+| `tei-embed` | text-embeddings-inference (CPU or GPU) | Embeddings (one model per TEI instance) | 0 |
+| `tei-rerank` | text-embeddings-inference (CPU or GPU) | Reranker | 0 |
+| `llm-local` | llama-server (CPU) or vLLM (GPU) | Serves the `local-advisor` route; gateway fallback when budgets are exhausted ([10 §5](10-memory-rag-and-models.md)) | 0 |
+| `docker-proxy` | restricted Docker-socket proxy | Lets `system.service.restart` restart allow-listed containers only; mt-api never mounts the Docker socket | 0 |
 | `ingest-market` | `mt_data.market` | Venue WS clients (via Nautilus data clients), Parquet recorder, bar builder | 1 |
+| `ib-gateway` | IB Gateway, IBC-managed (digest-pinned) | IBKR API session with scheduled re-login; only when IBKR is used (read-only API for P1 recon) | 1 (when IBKR is used) |
 | `ingest-batch` | `mt_data` (Prefect flows) | Macro, fundamentals, calendars, backfills | 1 |
 | `monitor` | `mt_monitor` | Data-quality + cost/TCA + reconciliation (M16) | 1 |
-| `engine` | `mt_engine` (NautilusTrader TradingNode) + `mt_strategy` + `mt_risk` + Decision One tier A | Live/paper trading node; strategies; risk; execution | 2 |
+| `engine` | `mt_engine` (NautilusTrader TradingNode) + `mt_strategy` + `mt_risk` + Decision One tier A | Live/paper trading node; strategies; risk; execution; in-engine watchdog (dead-man layer 1) | 2 |
+| `deadman` | `mt_risk.deadman` (small sidecar) | Dead-man layer 2: watches the **engine's** heartbeat with its own trade-only keys and venue connections; can only cancel and flatten per `on_system_failure` ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) | 2 |
 | `backtest-worker` | `mt_lab` | Backtests, validation, optimisation, distillation, sandbox orchestration | 2 |
 | `sandbox` | gVisor/`--network none` runner | LLM-generated strategy code | 2 |
 | `journal` | `mt_journal` | Journal ingestion, lot engine, tax rules, reports | 3 |
-| `ingest-text` | `mt_data.text` | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT | 4 |
+| `ingest-text` | `mt_data.text` | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT. **Telegram: postures only** (regex extractor → `text.telegram_posture`; never to nlp, RAG or models, F3b) | 4 |
 | `rss-bridge` | rss-bridge | Feeds for sites without RSS | 4 |
 | `nlp` | `mt_features.text` | Relevance gate, entity linking, FinBERT, embeddings → `text.document` | 4 |
 | `ingest-events` | `mt_data.events` | USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP/Kalshi/Polymarket | 4 |
 | `airdrop` | `mt_airdrop` | Discovery, enrichment, risk/viability scoring | 5 |
-| `airdrop-exec` + `signer` | `mt_airdrop.exec` | Mandated claims, simulation, revokes | 5 |
+| `airdrop-exec` + `signer` | `mt_airdrop.exec` | The **policy service** in P5: mandated claims, simulation, revokes, sweeps to the vault | 5 |
+| (library) | `mt_onchain.costgate` | On-chain cost gate, used by the signer path from P5 and by `treasury` in P6 ([13 §7](13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16)) | 5 |
 | `curation` | `mt_curation` | Task queue, digests | 5 |
-| `wallet-indexer` | `mt_treasury.indexer` | Unified wallet view: balances, transfers (internal tagging), approvals, nonce-authority and depeg monitors | 5 |
-| `treasury` | `mt_treasury` | M22 hold-and-earn + treasury allocation, on-chain cost gate | 6 |
-| `signer` (extended) | `mt_signer` | Intents-only signer for hot/burner/identity keys (13 §2); also serves DEX execution | 5 |
+| `wallet-indexer` | `mt_treasury.indexer` | Unified wallet view: balances, transfers (internal tagging), approvals, nonce-authority and depeg monitors; extends `ops.wallets` | 5 |
+| `treasury` | `mt_treasury` | M22 hold-and-earn + treasury allocation; uses `mt_onchain.costgate`; signs only via the policy service | 6 |
+| `signer` (extended) | `mt_signer` | Intents-only signer for hot/burner/identity keys (13 §2); accepts intents only from the policy service (airdrop-exec, treasury and DEX execution all go through it) | 5 |
 | `anvil` | foundry anvil | Local mainnet-fork simulation before signatures | 5 |
 | `social` | `mt_social` | M23 social drafts (approval → web intent from your account) | 6 (optional) |
-| `ntfy` | ntfy | Second, independent alert channel (push) | 1 |
-| `telegram-bot` | `mt_ui.telegram` | Alerts, digests, approvals, task buttons, `/kill` | 2 (alerts from 1) |
+| `ntfy` | ntfy (self-hosted) | Second, independent alert channel (push), reachable via Tailscale only; iOS push uses ntfy's upstream relay, which carries only a message ID | 1 |
+| `telegram-bot` | `mt_ui.telegram` | Alerts, digests, approvals, task buttons, `/kill` (its NATS credentials may publish only `kill.set`) | 2 (alerts from 1) |
 | `agents` | `mt_agents` | LangGraph debate runs (M8) | 6 |
 | `hindsight` | Hindsight (slim) | Agent memory (schema `hindsight`) | 6 |
-| `decision-svc` | `mt_models` + vLLM (`/classify`) or ONNX | Decision One tier B (SemIf readout → own Qwen-LoRA head) | 4 (SemIf) / 6 |
+| `decision-svc` | `mt_models` + vLLM (`/classify`) or ONNX | Decision One tier B (SemIf readout → own Qwen-LoRA head). Decision path: prefix caching **off**, fixed batch ([10 §4.3](10-memory-rag-and-models.md)) | 4 (SemIf) / 6 |
 | `anomaly` | `mt_anomaly` | Detectors + explain agent | 6 |
 | `hummingbot` | hummingbot (telemetry off) | Market-making sidecar | 6 (optional) |
-| `mcp` | `mt_mcp` | MCP adapter over `mt_api` | 8 (optional) |
+| `mcp` | `mt_mcp` | MCP adapter over `mt_api` (thin; no DB or NATS access); on `edge` behind Caddy, Tailscale only (§7.4) | 8 (optional) |
+| (external) egress exit node | WireGuard/Tailscale on a Sydney cloud VM, static IP | Fixed egress IP for all exchange traffic (§3.1) | 7 |
 
 **Hardware:** 8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + HDD for cold Parquet. A 16–24 GB GPU is recommended for tier B, vLLM, Hindsight and LightRAG.
 
@@ -122,30 +132,35 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 
 | Module | Package | Runs in | Owns (Postgres schema/tables) | Publishes | Consumes |
 |---|---|---|---|---|---|
-| M0 Strategy framework | `mt_strategy` | engine, backtest-worker | `strategy.registry`, `strategy.versions`, `strategy.runs` | `sig.*`, `strat.status.*` | `md.*`, `feat.*`, `dec.tierb.*` |
+| M0 Strategy framework | `mt_strategy` | engine, backtest-worker | `strategy.registry`, `strategy.versions`, `strategy.runs`, `strategy.bot`, `strategy.bot_version` (WORM) | `sig.*`, `strat.status.*`, `bot.{id}.status` | `md.*`, `feat.*`, `dec.tierb.*`, `engine.cmd.*` |
 | M1 Market data | `mt_data.market` | ingest-market, ingest-batch | `market.instrument`, `market.bar_*`, `market.macro_series`, `market.filing` | `md.*`, `dq.raw.*` | venue WS/REST |
-| M2 News & social | `mt_data.text` | ingest-text, nlp | `text.document`, `text.source` | `text.doc.*` | feeds |
+| M2 News & social | `mt_data.text` | ingest-text, nlp | `text.document`, `text.source`, `text.telegram_posture` (`model_input_ok = false`, `train_ok = false`) | `text.doc.*` (never Telegram), `posture.telegram.*` | feeds |
 | M3 Events | `mt_data.events` | ingest-events | `text.geo_event`, `text.exposure_map` | `evt.*` | feeds |
-| M4 Airdrops | `mt_airdrop` | airdrop, airdrop-exec | `curation.airdrop_*`, `curation.mandate`, `curation.exec_log` | `airdrop.*`, `task.new` | risk APIs, chain RPC |
+| M4 Airdrops | `mt_airdrop` | airdrop, airdrop-exec | `curation.airdrop_*`, `curation.mandate`, `curation.exec_log` | `airdrop.*`, `task.new` | risk APIs, chain RPC, `posture.telegram.*` (rules only) |
 | M5 Calendars | `mt_data.calendar` | ingest-batch | `text.calendar_event` | `cal.*` | FRED, ForexFactory, CB |
 | M6 Features | `mt_features` | engine (incremental), batch | `features.value`, `features.def` | `feat.*` | `md.*`, `text.*`, `evt.*` |
 | M7 Lab | `mt_lab` | backtest-worker, sandbox | `strategy.backtest`, `strategy.experiment` (+ MLflow) | `lab.job.*` | catalog, features |
-| M8 Agents | `mt_agents` | agents | `audit.decision_run`, `audit.signal` | `sig.agent.*` | RAG, memory, gateway |
+| M8 Agents | `mt_agents` | agents | `audit.decision_run`, `audit.signal` (`Signal` fields in [03 M8](03-build-spec.md)) | `sig.agent.*` | RAG, memory, gateway |
 | M9 Memory & RAG | `mt_memory` | agents, nlp, hindsight | `rag.doc_chunk`, `hindsight.*` | — | TEI |
-| M10 Anomaly | `mt_anomaly` | anomaly | `audit.anomaly` | `alert.anomaly.*` | `md.*`, `text.*`, `evt.*` |
-| M11 Risk | `mt_risk` | engine (in-process) + mt-api (policy) | `risk.policy`, `risk.limit_state`, `risk.change`, `risk.event` | `risk.*`, KV `risk_state`, `kill` | `ord.intent.*`, `dq.status.*`, `cost.*` |
+| M10 Anomaly | `mt_anomaly` | anomaly | `audit.anomaly` | `alert.anomaly.*` | `md.*`, `text.*`, `evt.*`, `anomaly.explain` requests |
+| M11 Risk | `mt_risk` | engine (in-process) + mt-api (policy) + deadman | `risk.policy`, `risk.limit_state`, `risk.change`, `risk.event`, `risk.approval` | `risk.*`, KV `risk_state`, `kill` | `ord.intent.*`, `dq.status.*`, `cost.*`, KV `audit.integrity`, `egress.status`, `posture.telegram.*` (rules only), `venue.registry.changed`, `sys.heartbeat.*` |
 | M12 Execution | `mt_engine` | engine | `audit.order`, `audit.fill`, `audit.position_snapshot` | `ord.*`, `fill.*`, `pos.*` | venues |
 | M13 MM sidecar | hummingbot + adapter | hummingbot | `audit.mm_*` | `mm.*` | Hummingbot API |
-| M14 Crowd-sim | services/crowdsim | optional | `research.crowdsim_run` | — | — |
+| M14 Crowd-sim | services/crowdsim | optional | `strategy.crowdsim_run` | — | — |
 | M15 UI | `mt_ui` (web + telegram) | caddy, telegram-bot | `ops.user_pref`, `ops.notification` | — | WS topics |
-| M16 Monitor | `mt_monitor` | monitor | `audit.dq_event`, `audit.cost_event`, `market.spread_*`, `audit.recon` | `dq.status.*`, `cost.*`, `recon.*` | `md.*`, fills, venues |
-| M17 Observability & audit | `mt_obs` | all | `audit.*` hash chain, `audit.llm_call`, `audit.command` | metrics, logs | — |
-| M18 Journal & tax | `mt_journal` | journal | `journal.*` | `journal.*` | fills, ledgers, chain, airdrops |
+| M16 Monitor | `mt_monitor` | monitor | `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `market.spread_*`, `audit.recon` | `dq.status.*`, `cost.*`, `recon.*`, `egress.status` | `md.*`, `dq.raw.*`, fills, venues |
+| M17 Observability & audit | `mt_obs` | all | `audit.*` hash chain, `audit.command`, `audit.llm_call` (from P0, LiteLLM callback), `audit.seal`, `audit.integrity_incident` | metrics, logs, KV `audit.integrity` | — |
+| M18 Journal & tax | `mt_journal` | journal | `journal.*`, `ops.wallets` (account and address registry, created P3) | `journal.*`, `tax.residency.changed` | fills, ledgers, chain, airdrops |
 | M19 Curation | `mt_curation` | curation, telegram-bot | `curation.task`, `curation.community` | `task.*` | `airdrop.*`, `risk.approval.*` |
-| M20 MCP | `mt_mcp` | mcp | — (via `audit.command`) | — | `mt_api` |
-| M22 Treasury & hold-and-earn | `mt_treasury` | treasury, wallet-indexer | `treasury.wallet`, `treasury.transfer`, `treasury.position`, `treasury.policy` | `wallet.*`, `treasury.*` | chain RPC, venues, `risk.*` |
+| M20 MCP | `mt_mcp` | mcp | — (via `mt_api`: `audit.mcp_call` for every MCP call, `audit.command` for commands) | — | `mt_api` |
+| M22 Treasury & hold-and-earn | `mt_treasury` | treasury, wallet-indexer | `treasury.transfer`, `treasury.position`, `treasury.policy`; extends `ops.wallets` (P5) | `wallet.*`, `treasury.*` | chain RPC, venues, `risk.*` |
 | M23 Social participation | `mt_social` | social | `curation.social_draft` | `social.draft.*` | `text.doc.*`, `task.*` |
-| M21 Models | `mt_models` | engine (tier A), decision-svc, litellm, tei | `models.registry`, `models.question`, `audit.tierb_decision` | `dec.tierb.*`, KV `tierb_scores` | `text.doc.*`, M8 teacher log |
+| M21 Models | `mt_models` | engine (tier A), decision-svc, litellm, llm-local, tei-embed, tei-rerank | `models.registry`, `models.question`, `models.label`, `audit.tierb_decision` | `dec.tierb.*`, KV `tierb_scores` | `text.doc.*`, M8 teacher log |
+
+**Naming rules:**
+- **Audit tables are singular and schema-qualified.** The canonical names are `audit.order`, `audit.fill`, `audit.command`, `audit.llm_call`, `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call` ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)). Other docs use these names.
+- **One wallet registry:** `ops.wallets` holds accounts and on-chain addresses. P3 creates it; the P5 wallet-indexer and M22 extend it additively. There is no `treasury.wallet`.
+- **Telegram postures** (`text.telegram_posture`, `posture.telegram.*`) are consumed only by code/policy rules (M4, M11). Never by M6 features, tier A/B, agents or RAG.
 
 ## 5. Data architecture
 
