@@ -290,6 +290,8 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 
 ## 6. Proposed v1 architecture (summary)
 
+> **Superseded:** the current architecture is [02-v1-architecture.md](02-v1-architecture.md) (v2) and [03-build-spec.md](03-build-spec.md). The sketch below is kept as the original proposal.
+
 See [`02-v1-architecture.md`](02-v1-architecture.md) for the full build scope.
 
 ```
