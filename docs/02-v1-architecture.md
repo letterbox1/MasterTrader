@@ -208,6 +208,7 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | Endpoint | Purpose |
 |---|---|
 | `/portfolio/summary` | Value, P&L, margin, exposure, drawdown |
+| `POST /risk/preview` | Dry-run pre-trade checks for an intent (no side effects) |
 | `/positions`, `/orders`, `/fills` | Positions, orders, fills |
 | `/markets/instruments`, `/markets/{id}/bars?spec=&from=&to=` | Instruments, bars |
 | `/markets/{id}/book`, `/markets/matrix` | Order book, cross-asset matrix |
@@ -215,15 +216,17 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `/lab/backtests`, `/lab/backtests/{id}`, `/lab/experiments`, `/lab/jobs` | Research lab |
 | `/agents/runs`, `/agents/runs/{id}`, `/signals` | Agent runs, signals |
 | `/models/registry`, `/models/questions`, `/models/tierb/decisions`, `/models/benchmarks`, `/models/gateway/spend` | Models |
-| `/memory/search`, `/rag/search` | Memory and document search |
+| `/memory/search`, `/memory/banks`, `/rag/search` | Memory and document search |
 | `/risk/policy`, `/risk/state`, `/risk/events`, `/risk/changes`, `/risk/stress` | Risk |
 | `/data/feeds`, `/data/quotas`, `/data/dq-events`, `/data/costs`, `/data/recon` | Data quality, costs, reconciliation |
-| `/intel/documents`, `/intel/events`, `/intel/calendar`, `/intel/sentiment` | Intel |
-| `/airdrops`, `/airdrops/{id}`, `/airdrops/mandates` | Airdrops |
-| `/tasks`, `/community` | Tasks and curation |
-| `/journal/trades`, `/journal/events`, `/journal/lots` | Journal |
+| `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment` | Intel |
+| `/mm/bots` (+ `/{id}`, `/{id}/pnl`) | Market-making bots |
+| `/airdrops`, `/airdrops/{id}`, `/airdrops/mandates`, `/airdrops/wallet` | Airdrops |
+| `/tasks` (+ `/{id}`), `/community` | Tasks and curation |
+| `/journal/trades` (+ `/{id}`), `/journal/events`, `/journal/lots` | Journal |
 | `/tax/summary?fy=`, `/tax/reports`, `/tax/residency` | Tax |
-| `/system/health`, `/system/services`, `/system/backups`, `/system/keys` (masked metadata only), `/system/settings` | System |
+| `/system/health`, `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings` | System |
+| `/mcp/tools` | MCP tool registry (Phase 8) |
 | `/audit/log` | Audit log |
 | `/notifications` | Notifications |
 
@@ -251,14 +254,16 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | Approvals | `approval.approve`, `approval.reject` |
 | Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.set_mode` (paper / approve / auto) |
 | Lab | `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel` |
-| Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.promote`, `models.rollback`, `models.bakeoff.run` |
+| Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.promote`, `models.rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete` |
+| Market making | `mm.bot.create`, `mm.bot.start`, `mm.bot.stop`, `mm.bot.update`, `mm.bot.cancel_all` |
 | Risk | `risk.policy.update` (diff; tighten = C1, loosen = C3), `risk.kill.on`, `risk.kill.off`, `risk.deadman.ack`, `risk.stress.run` |
 | Data | `data.feed.pause`, `data.feed.resume`, `data.backfill.run`, `data.recon.run` |
 | Intel | `intel.source.add`, `intel.source.mute`, `intel.watchlist.update` |
-| Airdrops | `airdrop.add_url`, `airdrop.rescore`, `airdrop.reject`, `airdrop.mandate.create` (C3), `airdrop.mandate.revoke`, `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval` |
+| Airdrops | `airdrop.add_url`, `airdrop.rescore`, `airdrop.reject`, `airdrop.mandate.create` (C3), `airdrop.mandate.revoke`, `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval`, `wallet.sweep` |
 | Tasks | `task.done`, `task.skip`, `task.snooze`, `task.never` |
-| Journal & tax | `journal.note.add`, `journal.tag`, `tax.report.generate`, `tax.export`, `tax.residency.add`, `tax.regime.set` |
-| System | `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.settings.update`, `system.service.restart` |
+| Journal & tax | `journal.note.add`, `journal.tag`, `tax.report.generate`, `tax.export`, `tax.residency.add`, `tax.regime.set`, `tax.lot.select` |
+| System | `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.settings.update`, `system.service.restart`, `audit.verify` |
+| MCP (Phase 8) | `mcp.tool.set`, `mcp.policy.set`, `mcp.token.revoke` |
 
 ### 7.3 Real-time (WebSocket `/api/v1/ws`)
 
@@ -270,7 +275,8 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
   - `risk.state`, `risk.event`, `kill`, `heartbeat`;
   - `signals`, `tierb`, `agents.run`;
   - `text.doc`, `evt`, `cal`;
-  - `airdrop`, `tasks`, `journal`, `notifications`, `lab.job`, `system`.
+  - `airdrop`, `tasks`, `journal`, `notifications`, `lab.job`, `system`;
+  - `mm`, `recon`.
 - **Message envelope:** `{topic, seq, ts, data}`. The client detects gaps via `seq` and re-syncs with the matching REST query.
 
 ### 7.4 Telegram & MCP

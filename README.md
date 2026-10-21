@@ -22,11 +22,12 @@ Around that it adds:
 |---|---|
 | [GOAL.md](GOAL.md) | What we're building and why |
 | [DESIGN.md](DESIGN.md) | **Design system v2:** tokens, type, components, and the full responsive system (1920px+ → 240px, portrait/landscape, laptops, tablets, foldables) |
+| [docs/ui/](docs/ui/README.md) | **Frontend scope:** information architecture & routes, app shell, component library, 17 dashboard specs (widgets, data shown, actions + confirmation levels, states, acceptance criteria, backend contract), mobile/PWA/Telegram |
 | [ui-examples/](ui-examples/README.md) | 13 Stitch reference screens (screenshots + HTML) with a responsive audit and content corrections |
 | [brand/](brand/README.md) | Signal M logo, app icon, palette |
 | [SPEC.md](SPEC.md) | v1 specification and core decisions |
 | [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) | Vetting of 10 open-source repos: licenses, code audit, reputation, overlap and redundancy, verdicts, and the supporting free data/memory/quant ecosystem |
-| [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | One-page architecture: principles, module diagram, asset coverage, promotion gates |
+| [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | **End-to-end architecture v3:** deployment topology, networks & containers, module ownership, data stores, NATS subjects, `mt_api` REST/WS contract + confirmation levels + command catalogue, end-to-end flows, SLOs, degraded modes, frontend stack, phase-by-phase build plan |
 | [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec v2:** ground rules (free only), stack, repo layout, modules M0–M20 (strategy framework, risk manager, live monitor, observability, journal/tax, curation, MCP), timeframes per asset class, gates |
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phases 0–8 with checklists and a demo per phase (platform first, strategies second, MCP last) |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
