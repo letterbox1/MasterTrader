@@ -35,9 +35,11 @@ A one-page view of how the modules fit together. The detail lives in [03-build-s
         │                           │                               │ pause/alert               │
         └────────────┬──────────────┴───────────────┬───────────────┘                            │
                      ▼                              ▼                                            ▼
-          M6 Features ── M7 Research lab ── M0 Strategy framework ◄── M8 AI agents ◄── M9 Memory (Hindsight/LightRAG)
+          M6 Features ── M7 Research lab ── M0 Strategy framework ◄── M8 AI agents ◄── M9 Memory (Hindsight) + RAG
           (TA, factors,   (backtest/validate/   (any type, any         (debate graph,      M10 Anomaly + explain
            micro, macro)   optimise, MLflow)     timeframe)              valuation tools)
+                            M21 Decision One: tier A in-process GBDT (~µs) · tier B local LLM flags (async)
+                            LiteLLM gateway → Claude / custom endpoint / local (research, chat, debate; never hot path)
                                                      │ OrderIntent
                                                      ▼
                               M11 RISK MANAGER (default-deny · limits · sizing · kill/dead-man switch)

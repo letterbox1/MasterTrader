@@ -30,7 +30,8 @@
 | Storage | **Postgres + TimescaleDB + pgvector** (system of record, bars at every size); **Nautilus Parquet catalog + DuckDB** (raw ticks/L2) |
 | Observability & audit | **Grafana + Loki + Prometheus + Vector + OpenTelemetry**; append-only, hash-chained audit tables (orders, fills, LLM calls, risk changes, commands) |
 | Journal & tax | In-house jurisdiction-pluggable engine (rp2/ledger ideas): **AU_2026**, **AU_2027_REFORM**, AE, EG, CY; PAYG-instalment estimator; Beancount/hledger audit export |
-| Memory / RAG | **Hindsight** + LightRAG |
+| Memory / RAG | **Hindsight** (self-hosted, our Postgres, local TEI embedder bge-small + reranker) + hybrid document RAG in Postgres (pgvector + tsvector, RRF, rerank, point-in-time); LightRAG optional later |
+| Decision One & models | **Tier A:** in-process compiled GBDT (~10–50 µs) in the order path. **Tier B:** local Qwen3.5-4B advisor (vLLM/llama.cpp, JSON, async). Big-model decisions distilled into both. Research/chat via the **LiteLLM gateway** (Claude / custom endpoint / local fallback, budgets) |
 | News & social | RSS + RSS-Bridge, GDELT, Telegram (Telethon + Bot API), Discord (own server + followed announcement channels), Bluesky, Mastodon. **Reddit optional; X deferred** |
 | Global events | GDELT/USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP + Kalshi/Polymarket probabilities |
 | Airdrops / launches | Vet (GoPlus, RugCheck, Honeypot.is, blocklists, rug-pull heuristics) → auto-claim only for eligible claims on a mandate-bound hot wallet → everything else becomes user tasks |

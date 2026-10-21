@@ -39,7 +39,8 @@ Companion docs:
 | Bus | **NATS JetStream** (market data fan-out, events, alerts) |
 | Databases | **Postgres 16 + TimescaleDB (TSL Community image) + pgvector** is the system of record. **Nautilus ParquetDataCatalog + DuckDB** hold raw ticks/L2. **QuestDB** is optional, only if live SQL over raw ticks is ever needed. |
 | Observability | **Grafana + Loki** (logs, shipped by Vector) + **Prometheus** (metrics) + **OpenTelemetry** traces; Grafana Alerting → Telegram |
-| LLMs | Claude API for decision/manager roles; **Ollama** local models for analysts, relevance gating, sentiment, summarisation |
+| Models | **Decision One** (M21): tier A = in-process compiled GBDT/ONNX (~10–50 µs) in the order path; tier B = local small LLM (Qwen3.5-4B on vLLM/llama.cpp) as an async advisor. Research/chat/debate go through the **LiteLLM gateway** → Claude API / your custom endpoint / local fallback. Embeddings and rerank via **TEI** (bge-small-en-v1.5 + bge-reranker-v2-m3). See [10](10-memory-rag-and-models.md). |
+| GPU (recommended) | One consumer GPU (16–24 GB VRAM) makes tier B fast (~150–300 ms/decision); without one, tier B is seconds-scale and used only for slower flags |
 | Orchestration | Prefect (batch and scheduled flows); long-running services under Compose |
 | Access | Everything bound to localhost or the internal network; remote access via **Tailscale** only |
 | Secrets | `sops` + `age` encrypted file → tmpfs at start ([07 §2](07-security-notes.md#2-secrets)) |
@@ -60,7 +61,8 @@ MasterTrader/
 │   ├── mt_strategy/    # strategy framework: base classes, templates, registry, parameter schemas, multi-timeframe helpers (M0)
 │   ├── mt_lab/         # backtest/sim orchestration, validation, optimisation, sandboxed LLM strategy generation (M7)
 │   ├── mt_agents/      # LangGraph decision graph + tools (M8)
-│   ├── mt_memory/      # Hindsight + LightRAG + decision settlement (M9)
+│   ├── mt_memory/      # Hindsight agent memory + document RAG (hybrid pgvector/tsvector, rerank) + decision settlement (M9)
+│   ├── mt_models/      # Decision One tier A runtime + tier B advisor client, model registry, distillation, gateway config (M21)
 │   ├── mt_anomaly/     # anomaly detectors + explain agent (M10)
 │   ├── mt_risk/        # risk manager: policies, pre-trade checks, portfolio risk, kill switch, dead-man's switch (M11)
 │   ├── mt_engine/      # Nautilus wrapper + custom adapters (Alpaca, OANDA, IG, cTrader, MT5) (M12)
@@ -322,11 +324,28 @@ Full design: [08](08-airdrops-and-token-launches.md).
 - **How strategies use it:** an *LLM-signal* strategy (M0) or any strategy can consume these signals as a feature.
 - **Versioning:** prompts and models are versioned and every call is audited (M17).
 
-### M9 Memory — `mt_memory`
+### M9 Memory & RAG — `mt_memory`
 
-- **Hindsight** (agent memory).
-- **LightRAG** (filings/reports).
-- Decision settlement + reflection.
+Full design: [10](10-memory-rag-and-models.md).
+
+**Hindsight** (MIT), self-hosted:
+- **slim** image, running in our Postgres in its own `hindsight` schema;
+- **local embedder and reranker via TEI**: bge-small-en-v1.5 (384-d) + bge-reranker-v2-m3;
+- its LLM goes through the LiteLLM gateway.
+
+**Memory banks:** `decisions`, `strategies`, `market-regimes`, `user`, `ops`. Point-in-time recall in backtests.
+
+**Document RAG** (`rag` schema):
+- pgvector HNSW (halfvec) + native tsvector + pg_trgm;
+- **Reciprocal Rank Fusion**, then cross-encoder rerank, then recency decay;
+- **`ingested_at`/`published_at` ≤ as_of filter**.
+- Chunking: filings by section with context headers; news with dedup.
+- Caches: embedding, retrieval and prompt caches.
+- Shares the TEI embedder with Hindsight.
+
+**Optional later:** LightRAG graph over filings (offline, research path only).
+
+**Decision settlement and reflection** go into Hindsight, and teacher logs go into `decisions` (feeding M21 distillation).
 
 ### M10 Anomaly monitor — `mt_anomaly`
 
@@ -524,6 +543,37 @@ Full design: [09](09-journal-and-tax.md).
   - **weekly** curation and review digest.
 - **Telegram buttons:** Done / Skip / Snooze / Details / Never. Feedback tunes ranking, and tasks expire automatically.
 
+### M21 Decision One & model serving — `mt_models`
+
+Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-fast-accurate-concurrent-decisions).
+
+**Tier A: microsecond engine, in the order path.**
+- **Model and runtime:** a GBDT/linear/small-MLP model, compiled to **ONNX Runtime / Treelite / lleaves**, loaded **in-process** in the strategy.
+- **Latency:** ~10–50 µs per prediction.
+- **Inputs:** incremental features plus cached tier-B flags.
+- **Output:** a calibrated probability/edge, which M11 sizes.
+- **Applicability:** works for every strategy type, including scalpers.
+
+**Tier B: millisecond advisor, asynchronous and never blocking.**
+- **Model and serving:** **Qwen3.5-4B** (Apache-2.0; alternatives Gemma 4 E4B, Phi-4-mini) on **vLLM** (GPU) or **llama.cpp server** (CPU).
+- **Concurrency:** continuous batching and prefix caching.
+- **Output contract:** strict JSON schema, temperature 0, hard timeout → ignored on a miss.
+- **What it produces:** regime/veto/annotation flags on NATS KV.
+
+**Distillation:** M8's debate decisions (the teacher) plus realised outcomes train tier A, and optionally LoRA-tune tier B.
+- Students are calibrated (isotonic/Platt; Brier/ECE).
+- They are promoted only through §8 gates, with the teacher in shadow.
+
+**Model gateway (LiteLLM proxy, ≥ 1.83, pinned by digest):**
+- **Routes:** research, chat, debate, strategy generation, explain agents and Hindsight route via `research-primary` (Claude), then `research-custom` (your endpoint), then `local-advisor`.
+- **Budgets and fallback:** per-role budgets; local fallback when a budget is exhausted.
+- **Never on the hot path.**
+
+**Supporting pieces:**
+- **TEI** container (embeddings + rerank).
+- **Model registry in MLflow:** version, training data range, calibration, benchmark latency.
+- **Latency SLOs** per tier, monitored in M17.
+
 ### M20 MCP control plane — `mt_mcp` (built LAST, Phase 8, only if wanted)
 
 **Purpose:** talk to the trading system and its agents through Claude (Desktop/Code) or another MCP client. You can ask, analyse, adjust and trade conversationally.
@@ -570,7 +620,12 @@ The UI shows each instrument's finest available resolution, so you know which st
 
 ## 7. LLM cost control
 
-- **Model tiers:** local models for analysts and gating; Claude for managers.
+- **Model tiers:**
+  - Decision One tier A (no LLM) in the order path;
+  - tier B local small LLM for fast flags;
+  - local models for analysts and gating;
+  - Claude (or your custom endpoint) for managers and research.
+  - All non-hot-path calls go through the **LiteLLM gateway** with per-role daily budgets and local fallback.
 - **When agents run:**
   - per the strategy's configured cadence;
   - **event-triggered** (anomaly, calendar, big news);

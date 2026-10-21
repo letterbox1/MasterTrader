@@ -93,6 +93,7 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
     - OpenMagpie PostHog;
     - RSS-Bridge default `enabled_bridges = *`;
     - MiroFish open CORS / default secret.
+- **LiteLLM:** releases 1.82.7/1.82.8 were malicious (PyPI compromise, March 2026). Use ≥ 1.83, pinned by hash or image digest; give it only the API keys it needs; keep it on the internal network.
 - **Python:** `uv lock` with hashes; Dependabot/Renovate on the private repo; `pip-audit` in CI.
 - No `curl | sh` installers; build from source or pinned images.
 

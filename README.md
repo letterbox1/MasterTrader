@@ -31,6 +31,7 @@ Around that it adds:
 | [docs/07-security-notes.md](docs/07-security-notes.md) | Threat model, secrets, exchange keys (no withdrawals), wallet tiers, network, application controls (risk changes, MCP), supply chain, backups, incident runbooks |
 | [docs/08-airdrops-and-token-launches.md](docs/08-airdrops-and-token-launches.md) | Airdrop/ICO/launch pipeline, rug-pull and scam vetting, what may run autonomously vs user tasks, Discord/community curation queue |
 | [docs/09-journal-and-tax.md](docs/09-journal-and-tax.md) | Automatic journal and tax engine: AU EOFY/PAYG (incl. the reported 2027 CGT reform), UAE/Egypt/Cyprus plugins, residency timeline, tax-tool vetting |
+| [docs/10-memory-rag-and-models.md](docs/10-memory-rag-and-models.md) | Hindsight self-hosted memory, local embedders/rerankers, hybrid RAG in Postgres, **Decision One** (µs tier + fast local LLM advisor, distillation), LiteLLM routing to Claude / custom endpoint |
 | [docs/research/](docs/research/) | Raw per-repo research notes with file-level evidence |
 
 ## Licensing stance

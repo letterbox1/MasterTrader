@@ -53,6 +53,10 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - pgBackRest + restic off-site backups;
   - automated restore test.
 - [ ] **`mt_api` command layer skeleton.** The UI and Telegram will call it; MCP will later wrap it.
+- [ ] **Model gateway:**
+  - LiteLLM proxy (≥ 1.83, pinned by digest) with Claude + your custom endpoint + a local model;
+  - per-role budgets;
+  - **TEI** container (bge-small-en-v1.5 + bge-reranker-v2-m3).
 
 **Demo:** `docker compose up` gives a healthy stack, with Grafana showing DB/NATS/host health and logs in Loki.
 
@@ -101,6 +105,10 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - MLflow tracking.
 - [ ] **M6 core features:** TA-Lib, Alpha158, microstructure; IC evaluator.
 - [ ] **Sandboxed LLM strategy generator.**
+- [ ] **M21 Decision One tier A:**
+  - train → calibrate → compile (ONNX/Treelite) → in-process runtime;
+  - latency benchmark (target < 50 µs);
+  - MLflow model registry.
 - [ ] **M15 web UI v1:** strategy builder/registry, backtest viewer, risk-policy editor, positions, manual trade ticket. **Telegram bot v1:** alerts, `/kill`, `/status`, `/pause`.
 
 **Demo:** you create any strategy type on any timeframe (template, code or "describe it"), backtest it with realistic costs, validate it, and run it on paper behind the risk manager.
@@ -132,7 +140,13 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - Discord bot on followed announcement channels;
   - Bluesky Jetstream; Mastodon;
   - StockTwits/YouTube conditional.
-- [ ] **Text processing:** local-LLM relevance gate → entity linking → FinBERT → embeddings → `document`.
+- [ ] **Text processing:** local-LLM relevance gate → entity linking → FinBERT → embeddings (TEI) → `document`.
+- [ ] **M9 document RAG** (`rag` schema):
+  - hybrid pgvector + tsvector with RRF;
+  - rerank;
+  - point-in-time filter;
+  - filing/news chunking;
+  - retrieval benchmarks.
 - [ ] **Events:** USGS, GDACS, NOAA/NHC, FIRMS, ReliefWeb, UCDP, OpenSanctions, Kalshi/Polymarket + exposure map.
 - [ ] **Calendars:** FRED release dates, ForexFactory weekly JSON, central-bank schedules, earnings/IPOs. Blackout windows feed M11.
 - [ ] **Features:** retail positioning (Myfxbook, IG, OANDA books), nowcasts, Fed-path probabilities, VIX regime.
@@ -160,7 +174,17 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
 
 ## Phase 6 — AI decision layer, memory & anomalies (weeks 24–28)
 - [ ] **M8 decision graph:** LangGraph debate graph (TradingAgents-derived) with FinRobot valuation tools and a macro/events analyst; structured `Signal` with provenance.
-- [ ] **M9 memory:** Hindsight + LightRAG; decision settlement + reflection.
+- [ ] **M9 memory:**
+  - **Hindsight** self-hosted (slim, our Postgres schema, TEI embeddings/rerank, LLM via gateway);
+  - memory banks;
+  - decision settlement + reflection;
+  - point-in-time recall.
+- [ ] **M21 tier B advisor:**
+  - Qwen3.5-4B on vLLM (GPU) or llama.cpp (CPU);
+  - JSON-schema flags to NATS KV;
+  - timeout fallback.
+- [ ] **M21 distillation loop:** teacher log (M8) + outcomes → tier A retrain / tier B LoRA → calibration → gated promotion; teacher in shadow.
+- [ ] **Optional:** LightRAG graph over filings (offline).
 - [ ] **M10:** anomaly detectors + explain agent.
 - [ ] **LLM-signal strategy template** (M0) consuming M8 signals.
 - [ ] **Evaluation and cost:** evaluate on post-training-cutoff data; LLM cost cap and spend panel; every call audited.
