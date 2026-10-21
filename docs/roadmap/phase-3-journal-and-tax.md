@@ -32,7 +32,7 @@
 | R3.05 | Lot engine: specific-ID → FIFO fallback; FX-cash lots (Div 775); Decimal everywhere | [03 M18](../03-build-spec.md#m18-trading-journal--tax--mt_journal) | Property tests |
 | R3.06 | **AU_2026** plugin: 50% discount, revenue-account CFD/FX/futures, Div 775, crypto income, wash-sale flags, myTax mapping, **PAYG-instalment estimator**; GST/BAS mode dormant | [09 plugin interface](../09-journal-and-tax.md#jurisdiction-plugin-interface), [09 key findings](../09-journal-and-tax.md#️-key-findings-that-shape-the-design) | Golden tests |
 | R3.07 | Tax regime is a per-FY, per-activity setting (investor / trader-in-business / revenue); reports **both ways** until your tax agent decides | [09 key findings](../09-journal-and-tax.md#️-key-findings-that-shape-the-design) | Report test |
-| R3.08 | **AU_2027_REFORM behind a flag** (status conflicts between sources) + the **30 June 2027 market-value snapshot job** of every open lot | [09 key findings](../09-journal-and-tax.md#️-key-findings-that-shape-the-design), [11 §3](../11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) | Dry-run snapshot |
+| R3.08 | **AU_2027_REFORM behind a flag** (status conflicts between sources) + the **30 June 2027 market-value snapshot job** of every open lot, using the per-asset-class price convention in [16 §4.2](../16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) | [09 key findings](../09-journal-and-tax.md#️-key-findings-that-shape-the-design), [11 §3](../11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) | Dry-run snapshot |
 | R3.09 | Residency timeline (CGT event I1 modelling) + AE / EG (crypto hard-flag) / CY / GENERIC plugin stubs | [09 plugin interface](../09-journal-and-tax.md#jurisdiction-plugin-interface) | Plugin tests |
 | R3.10 | Exports: Beancount/hledger + Fava, accountant CSV/PDF pack, optional Koinly/Syla CSV, CARF reconciliation | [03 M18](../03-build-spec.md#m18-trading-journal--tax--mt_journal), [09 goals](../09-journal-and-tax.md#goals) | Export diff |
 | R3.11 | Daily reconciliation journal ↔ venues; mismatch = incident | [09 quality](../09-journal-and-tax.md#quality) | Recon report |
@@ -41,6 +41,7 @@
 | R3.14 | D15: FY summary, PAYG estimate, lots/matches, residency, reports, regime setting | [D15](../ui/dashboards/D15-tax.md) | Playwright |
 | R3.N1 | Tax-sensitive fields encrypted at column level (`pgcrypto`) and excluded from LLM prompts | [07 §8](../07-security-notes.md#8-data-protection-backups--audit) | Prompt audit |
 | R3.N2 | Tax golden tests are mandatory for merge | [04 standing rules](../04-plan-of-action.md#standing-rules) | CI |
+| R3.15 | **Valuation hierarchy** for non-trade events: fill price → VWAP of our recorded trades (AUD venue, else USD × RBA) → on-chain pool price → aggregators as cross-check only; stored values are ours with method + source | [16 §4.1](../16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) | Golden tests |
 
 ## 4. ToDo sets
 
@@ -64,6 +65,7 @@
 - [ ] **T3.28** `BUILD` Reconciliation job journal ↔ venues. → R3.11
 - [ ] **T3.29** `BUILD` UI: D14 Journal, D15 Tax & Reports. → R3.13, R3.14
 - [ ] **T3.30** `BUILD` Tax-agent questions created as `TAX_QUESTION` tasks (queue lands fully in P5; store now). → T3.01
+- [ ] **T3.31** `BUILD` Valuation service implementing the hierarchy; snapshot price convention per asset class. → R3.15, R3.08
 
 ### C. Ops & config (`OPS`)
 - [ ] **T3.40** `OPS` `journal` container; Fava sidecar on the internal network. → R3.10

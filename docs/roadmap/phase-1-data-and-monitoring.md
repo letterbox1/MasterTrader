@@ -41,9 +41,11 @@
 | R1.13 | **Venue-health monitor:** withdrawal delays, PoR/incident notes, AUSTRAC re-check reminders → `ops.venue_registry` health | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry), [13 §6](../13-wallets-treasury-and-onchain.md#6-monitors-feed-m16-and-m11) | D07 panel |
 | R1.14 | **Alerts:** Grafana Alerting → Telegram + email + **ntfy** (second independent channel) | [07 §9](../07-security-notes.md#9-monitoring--incident-response) | Test alerts |
 | R1.15 | **UI:** D07 (feeds, quotas, DQ events, costs, recon) and D02 (charts, cross-asset matrix, instrument detail with **finest available resolution**) | [D07](../ui/dashboards/D07-data-quality.md), [D02](../ui/dashboards/D02-markets.md), [03 §6](../03-build-spec.md#6-smallest-free-timeframe-by-asset-class) | Playwright |
-| R1.N1 | Feed staleness detected → `dq.status` stale **< 2 s** | [02 §9.2](../02-v1-architecture.md#92-observability--slos) | SLO metric |
+| R1.N1 | Feed staleness: `dq.status` → stale within **≤ 250 ms (p99)** of the data-age threshold being crossed (see R1.17) | [02 §9.2](../02-v1-architecture.md#92-observability--slos) | SLO metric |
 | R1.N2 | UI live update lag p95 < 500 ms; server throttles ≤ 4 Hz charts, ≤ 1 Hz tables | [02 §9.2](../02-v1-architecture.md#92-observability--slos), [02 §6](../02-v1-architecture.md#6-messaging-nats) | Client telemetry |
 | R1.N3 | Storage within budget (~0.3–1 TB/year for ~10 liquid crypto symbols at trades + L1 + L2@1s); cold Parquet to HDD | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Disk metrics |
+| R1.16 | **Egress check:** every minute, confirm exchange traffic leaves via the allow-listed static IP and the IP's country matches your configured residency (free GeoIP DB, e.g. DB-IP Lite); mismatch blocks new orders + alerts. Safety only; never a tax input | [16 §3.2](../16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) | Fault test |
+| R1.17 | **Data age definition:** age = now − our receive time per stream; per-bot thresholds (2 s fast / 60 s slow, session-aware); monitor flips status ≤ 250 ms p99 after crossing (M11's inline order-time check lands in P2) | [16 §2.2](../16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) | Fault injection |
 
 ## 4. ToDo sets
 
@@ -67,6 +69,8 @@
 - [ ] **T1.30** `BUILD` Venue-health collector writing to `ops.venue_registry` health fields; quarterly AUSTRAC re-check task. → R1.13
 - [ ] **T1.31** `BUILD` Telegram bot (alerts only) + ntfy + email notifier behind one `alert.{severity}.{kind}` consumer. → R1.14
 - [ ] **T1.32** `BUILD` UI: D07 Data & Quality, D02 Markets (lightweight-charts, matrix, instrument detail), notifications centre. → R1.15 · [D07](../ui/dashboards/D07-data-quality.md) · [D02](../ui/dashboards/D02-markets.md)
+- [ ] **T1.33** `BUILD` Egress IP/country check with GeoIP DB; `egress.status` → M11 + alerts. → R1.16
+- [ ] **T1.34** `BUILD` Alpaca real-time stream, FinanceDatabase symbol master and `exchange_calendars` integration; CoinGecko/DefiLlama enrichment with ≤ 24 h encrypted cache. → R1.05, R1.09
 
 ### C. Ops & config (`OPS`)
 - [ ] **T1.40** `OPS` Storage layout: NVMe hot Parquet, HDD cold tier, compaction schedule, disk alerts. → R1.N3
@@ -80,6 +84,7 @@
 - [ ] **T1.62** `VERIFY` Bar parity: Timescale aggregates vs bars rebuilt from Parquet ticks for a sample day. → R1.02
 - [ ] **T1.63** `VERIFY` Provenance/retention test: CoinGecko rows deleted after 24 h; untagged rows rejected. → R1.09
 - [ ] **T1.64** `VERIFY` Alert path test on all three channels. → R1.14
+- [ ] **T1.65** `VERIFY` Egress fault test: wrong egress IP or country → new orders blocked and alerted. → R1.16
 
 ### E. Run / soak (`RUN`)
 - [ ] **T1.80** `RUN` 7-day continuous recording soak; gap report per instrument; disk growth vs budget. → R1.N3

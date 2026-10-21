@@ -180,6 +180,13 @@ class KanbanCase(unittest.TestCase):
         self.assertIn("resume brief", r.stdout)
         self.assertIn("session-start", (self.tmp / "tracking" / "SESSIONS.md").read_text())
 
+    def test_session_start_installs_git_hooks_in_fresh_clone(self):
+        self.new(0, "X")
+        get = lambda: subprocess.run(["git", "config", "--get", "core.hooksPath"], cwd=self.tmp, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(get(), "")
+        self.k("hook", "session-start", stdin="{}")
+        self.assertEqual(get(), "tools/kanban/githooks")
+
     def test_pause_silences_hooks(self):
         self.new(0, "X")
         self.k("pause")

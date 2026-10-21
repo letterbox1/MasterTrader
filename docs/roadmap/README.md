@@ -57,16 +57,16 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:roadmap-counts:start -->
 | Phase | Requirements | `USER` | `BUILD` | `OPS` | `VERIFY` | `RUN` | ToDos |
 |---|---|---|---|---|---|---|---|
-| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 17 | 12 | 8 | 7 | 6 | 1 | 34 |
-| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 18 | 4 | 13 | 4 | 5 | 1 | 27 |
-| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 41 | 9 | 16 | 3 | 10 | 2 | 40 |
-| [P3 Journal & Tax](phase-3-journal-and-tax.md) | 16 | 6 | 11 | 2 | 5 | 1 | 25 |
-| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 15 | 5 | 10 | 3 | 5 | 1 | 24 |
-| [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 22 | 7 | 13 | 3 | 6 | 1 | 30 |
-| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 21 | 5 | 11 | 2 | 6 | 1 | 25 |
-| [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 13 | 10 | 6 | 2 | 4 | 3 | 25 |
-| [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 7 | 3 | 3 | 1 | 3 | 1 | 11 |
-| **Total** | | **61** | **91** | **27** | **50** | **12** | **241** |
+| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 19 | 13 | 10 | 7 | 7 | 1 | 38 |
+| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 4 | 15 | 4 | 6 | 1 | 30 |
+| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 44 | 9 | 20 | 3 | 11 | 2 | 45 |
+| [P3 Journal & Tax](phase-3-journal-and-tax.md) | 17 | 6 | 12 | 2 | 5 | 1 | 26 |
+| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 16 | 6 | 11 | 3 | 5 | 1 | 26 |
+| [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 23 | 8 | 13 | 3 | 6 | 1 | 31 |
+| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 21 | 5 | 12 | 2 | 6 | 1 | 26 |
+| [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 14 | 11 | 6 | 3 | 5 | 3 | 28 |
+| [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 8 | 3 | 3 | 1 | 3 | 1 | 11 |
+| **Total** | | **65** | **102** | **28** | **54** | **12** | **261** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
@@ -158,6 +158,7 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T0.10 | P0 | Free API keys: FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. | gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md) |
 | T0.11 | P0 | **Venue checks:** look up each AU venue you may use on the AUSTRAC register by ABN; note products available to you as a retail client; send the results for the registry seed. | R0.06 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |
 | T0.12 | P0 | Set your login password and enrol TOTP on first boot. | R0.08 |
+| T0.13 | P0 | Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). | R0.09, R0.13 |
 | T1.01 | P1 | Pick the starting **universe/watchlist**: ~10 crypto pairs, FX/metal pairs, ~30 US ETFs/stocks (Alpaca IEX limit), macro series you care about. | R1.01–R1.06 |
 | T1.02 | P1 | Create **read-only** API keys on practice/testnet accounts (IP-allow-listed) for reconciliation and fee-tier reads. | R1.12 · [07 §3](../07-security-notes.md#3-broker--exchange-keys) |
 | T1.03 | P1 | Install the ntfy app on your phone and subscribe to the private topic; confirm the email alert address. | R1.14 |
@@ -182,6 +183,7 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T4.03 | P4 | Give watch keywords/cashtags and the RSS feeds/sites you trust. | R4.01, R4.05 |
 | T4.04 | P4 | Label ~200 sampled documents relevant/irrelevant to calibrate the SemIf gate threshold. | R4.12 |
 | T4.05 | P4 | Confirm whether Reddit access was granted (if yes it joins as optional). | [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) |
+| T4.06 | P4 | Get the free NASA FIRMS / ACLED keys and confirm the OpenSanctions licence terms for personal use. | R4.08 |
 | T5.01 | P5 | Set up the **vault** (air-gapped hardware) and **warm** hardware wallet yourself; the system only gets public addresses. | R5.01 |
 | T5.02 | P5 | **Seed backup:** Shamir (SLIP-39) shares or multisig, stored in separate locations; write the sealed **estate letter** (where shares are, how to unwind, no secrets). | [07 §4](../07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims) |
 | T5.03 | P5 | Approve creation of the hot, identity (one per chain) and burner keys in the signer; fund them with minimal floats. | R5.01, R5.07 |
@@ -189,6 +191,7 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T5.05 | P5 | Sign the first **mandates** (C3): wallet, chain, allowed contracts/functions, caps, expiry. | R5.15 |
 | T5.06 | P5 | Set the disposal rule (default sell 50% on claim) and EV hurdle. | R5.14, R5.17 |
 | T5.07 | P5 | Work the task queue: join/follow communities, do social tasks yourself, ICO reviews. | R5.20, R5.21 |
+| T5.08 | P5 | Review and confirm the wallet/signer/gas limits (prefilled defaults) to enable signing. | R5.24 |
 | T6.01 | P6 | Set LLM budgets (monthly cap, per role) and confirm your custom endpoint details for the gateway. | R6.07 |
 | T6.02 | P6 | Work the **D10 labelling queue** (~15 min/day while it's new). | R6.13 |
 | T6.03 | P6 | Approve the **treasury policy** and protocol allow-list (C3); decide on HLP (only if Hyperliquid is approved). | R6.20–R6.22 |
@@ -199,14 +202,15 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T7.03 | P7 | Create live keys: trade-only, IP-locked, no withdrawals; pre-register withdrawal addresses (Travel Rule). | R7.04 |
 | T7.04 | P7 | Fund micro-live (A$2–5k) only after the gate report passes. | R7.05 |
 | T7.05 | P7 | Run the **weekly review** (30–45 min) and sign it off in the journal. | R7.03 |
-| T7.06 | P7 | Approve each promotion (approve | auto is C3); approve each capital step after 4 clean weeks. → R7.05, R7.08 |
+| T7.06 | P7 | Approve each promotion (bot HITL → autonomous is C3); approve each capital step after 4 clean weeks. | R7.05, R7.08 |
 | T7.07 | P7 | Optional professional advice: Hyperliquid exposure, OKX AU derivatives status, a written "private, non-commercial" boundary. | R7.13 |
 | T7.08 | P7 | FP Markets: read client-agreement clauses on algo trading/scalping/hedging; set up the Windows VPS near the MT5 server (if MT5 route). | R7.10 |
 | T7.09 | P7 | Install the UPS and 4G failover; do the pull-the-plug drill with paper positions. | R7.11 |
 | T7.10 | P7 | 12-month review: keep only sleeves with positive live net P&L, live Sharpe > 0.5 and beating the benchmark. | R7.05 |
+| T7.11 | P7 | Provision the egress VM (free tier where available, else a small paid VM in Sydney) and allow-list its IP on every live key. | R7.14 |
 | T8.01 | P8 | **Decide whether to build MCP** (decision gate above). | — |
 | T8.02 | P8 | Configure your MCP client (Claude Desktop/Code) with the server and a scoped token. | R8.02 |
-| T8.03 | P8 | Choose MCP policy: which venues/sizes may skip approve mode (default: none). | R8.04 |
+| T8.03 | P8 | Choose MCP token scopes and expiry per client (1d/7d/30d/1y/custom/indefinite with warning); MCP orders always need your approval. | R8.04, R8.08 |
 <!-- kanban:user-register:end -->
 
 ## 7. Traceability

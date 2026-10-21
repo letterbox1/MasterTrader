@@ -28,17 +28,18 @@
 | R8.01 | Thin adapter over `mt_api` (official `mcp` SDK or FastMCP); no new business logic | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) | Code review |
 | R8.02 | Transport stdio, or Streamable HTTP on localhost/Tailscale with scoped token auth; tokens revocable | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted), [02 §7](../02-v1-architecture.md#7-api-contract-mt_api) | Auth tests |
 | R8.03 | Tool groups: read & analyse; talk to agents (M8/M9/M10); trade & adjust (place/modify/cancel, adjust/close, stops/targets, scale, flatten); strategies; risk (view, tighten, loosen out-of-band, kill); curation | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) | Tool tests |
-| R8.04 | **Every MCP order goes through M11**; MCP orders default to **approve mode** (Telegram button), configurable per venue/size | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted), [SPEC NN2](../../SPEC.md#non-negotiable-requirements) | Bypass tests |
+| R8.04 | **Every MCP order goes through M11**; MCP orders **always** need your approval card (Telegram/web, TTL 5 min); MCP can never approve | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted), [SPEC NN2](../../SPEC.md#non-negotiable-requirements) | Bypass tests |
 | R8.05 | Loosening risk = C3 (Telegram + TOTP); hard ceilings unwritable | [07 §6](../07-security-notes.md#6-application-controls) | C3 tests |
 | R8.06 | **Never exposed:** withdrawals, key management, mandate signing | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) | Tool list audit |
 | R8.07 | Every call audited (`audit.command`, source = mcp); D17 shows sessions, calls, approvals, tool/policy settings, token revoke | [D17](../ui/dashboards/D17-mcp-console.md) | Audit check |
+| R8.08 | **Transport & tokens:** Streamable HTTP (JSON-RPC 2.0, SSE streaming, resumable) on Tailscale/TLS + stdio (newline-delimited JSON) locally, optional legacy HTTP+SSE endpoint; server notifications via resource subscriptions; tokens opaque 256-bit, hashed at rest, scoped, revocable, expiry 1d/7d/30d/1y/custom/indefinite (indefinite = warning + C3 + monthly reminder), OAuth 2.1 (PKCE, resource indicators) where the client supports it; MCP can never approve | [16 §2.12](../16-configuration-and-safety-model.md#212-mcp-phase-8), [17 §A](../17-decisions-register.md#a-s2-items-all-resolved) | Auth + transport tests |
 
 ## 4. ToDo sets
 
 ### A. Your actions (`USER`)
 - [ ] **T8.01** `USER` **Decide whether to build MCP** (decision gate above).
 - [ ] **T8.02** `USER` Configure your MCP client (Claude Desktop/Code) with the server and a scoped token. → R8.02
-- [ ] **T8.03** `USER` Choose MCP policy: which venues/sizes may skip approve mode (default: none). → R8.04
+- [ ] **T8.03** `USER` Choose MCP token scopes and expiry per client (1d/7d/30d/1y/custom/indefinite with warning); MCP orders always need your approval. → R8.04, R8.08
 
 ### B. Build (`BUILD`, code)
 - [ ] **T8.20** `BUILD` `mt_mcp` server, tool schemas generated from `mt_api` OpenAPI, token auth. → R8.01–R8.03

@@ -40,11 +40,19 @@ The format is in [SCHEMA.md](SCHEMA.md) and the templates are in [templates/](te
 | Claude Code **SessionStart** hook | Logs the session (cloud/local, host, branch, active items) to `SESSIONS.md`; prints the resume brief into the agent's context |
 | Claude Code **PostToolUse** hook | If any item file changed: triage (backlog ↔ ready, auto-unblock, doc-sync flags, phase status) + rebuild all boards |
 | Claude Code **Stop** hook | Once per newly completed item with pending doc sync: asks the agent to update the spec/roadmap/docs and mark doc sync done |
-| git **pre-commit** (`./kanban install-hooks`) | Validate + rebuild + stage generated files, for any agent or human |
+| git **pre-commit** | Validate + rebuild + stage generated files into the same commit, for any agent or human |
+| git **pre-push** | Refuse the push if items are invalid or boards are stale (rebuilds them and tells you to commit); notes pending doc sync |
 | git **post-merge / post-checkout** | Print the resume brief after pulling another machine's work or switching branches |
-| **CI** (`.github/workflows/kanban.yml`) | Validate, run the tool's unit tests, fail if the boards are stale |
+| **CI** (`.github/workflows/kanban.yml`) | **Manual only** (Actions → Run workflow). A backstop for edits made outside a hooked clone (e.g. the GitHub web editor); costs no minutes day to day |
 
 **Phase completion** is automatic: all tasks done/cancelled, no open S1/S2 bugs, and all `PHASE.md` exit criteria ticked. The phase is then marked `done` and its doc sync queued; the next phase unlocks via `opens_after`.
+
+**Which hooks run where:**
+- **Git hooks** run on whatever machine makes the commit or push, for every tool (Claude Code with any model, Codex, Gemini CLI, Cursor, a human in a terminal). They're the universal layer.
+- Git doesn't copy hooks when cloning. The Claude Code SessionStart hook switches them on automatically (`core.hooksPath`); elsewhere, run `./kanban install-hooks` once per clone.
+- **Claude Code hooks** (`.claude/settings.json`) belong to the Claude Code harness. They fire whatever model Claude Code is running, in cloud or local sessions, and add the resume brief, live rebuilds and doc-sync prompts.
+- Other CLIs have their own (or no) hook systems. They read `AGENTS.md` / `GEMINI.md` and rely on the git hooks.
+- **Hooks never push for you.** The pre-commit hook puts the rebuilt boards into your commit, and your normal `git push` carries them. `git commit --no-verify` or edits on github.com skip hooks; that's what the manual CI backstop is for.
 
 ## 5. Cloud ↔ local, and crash recovery
 

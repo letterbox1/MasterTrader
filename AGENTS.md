@@ -94,10 +94,11 @@ Edit the item files, `PHASE.md` or the roadmap phase docs instead. **Never delet
 - **Branches:** `p<N>/<ID>-<slug>`, one item per branch and PR. PR title `<ID>: <title>`.
 - **Commits:** mention the item ID; include the updated item file with the code.
 - **Don't push to `main` directly.** Session-specific branch instructions override this.
-- **Hooks for non-Claude agents and humans:** `./kanban install-hooks`.
-  - **pre-commit:** validate + rebuild boards.
+- **Git hooks** run locally for every tool and model. Claude Code sessions enable them automatically; otherwise run `./kanban install-hooks` once per clone.
+  - **pre-commit:** validate + rebuild boards into the same commit.
+  - **pre-push:** block the push if items are invalid or boards are stale.
   - **post-merge / post-checkout:** print the resume brief.
-- **CI** (`.github/workflows/kanban.yml`) validates items, runs the kanban tool tests and checks the generated boards are current.
+- **CI** (`.github/workflows/kanban.yml`) is **manual only**: a backstop for edits made outside a hooked clone. Day-to-day checking happens locally, so it costs no CI minutes.
 
 ## 6. Commands
 

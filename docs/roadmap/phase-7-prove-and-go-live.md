@@ -41,6 +41,7 @@
 | R7.11 | Continuity: UPS + 4G failover; **fail flat** on link/power loss; resting broker-side stops | [07 §5](../07-security-notes.md#5-network--host) | Pull-the-plug drill |
 | R7.12 | Approvals and mobile polish: phone flows ≤ 3 taps from cold open; PWA installed | [mob §2](../ui/mobile-and-telegram.md#2-phone-flows-must-be--3-taps-from-a-cold-open) | Phone test |
 | R7.13 | Professional-advice items closed or explicitly deferred (venue products blocked until then) | [12 §6](../12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) | Task log |
+| R7.14 | **Static AU egress:** WireGuard/Tailscale exit node with a fixed IP in Sydney; only that IP allow-listed on every key; broadband and 4G both tunnel to it; tunnel down → fail-flat via venue timers + resting stops | [16 §3.2](../16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) | Failover drill |
 
 ## 4. ToDo sets
 
@@ -50,11 +51,12 @@
 - [ ] **T7.03** `USER` Create live keys: trade-only, IP-locked, no withdrawals; pre-register withdrawal addresses (Travel Rule). → R7.04
 - [ ] **T7.04** `USER` Fund micro-live (A$2–5k) only after the gate report passes. → R7.05
 - [ ] **T7.05** `USER` Run the **weekly review** (30–45 min) and sign it off in the journal. → R7.03
-- [ ] **T7.06** `USER` Approve each promotion (approve → auto is C3); approve each capital step after 4 clean weeks. → R7.05, R7.08
+- [ ] **T7.06** `USER` Approve each promotion (bot HITL → autonomous is C3); approve each capital step after 4 clean weeks. → R7.05, R7.08
 - [ ] **T7.07** `USER` Optional professional advice: Hyperliquid exposure, OKX AU derivatives status, a written "private, non-commercial" boundary. → R7.13
 - [ ] **T7.08** `USER` FP Markets: read client-agreement clauses on algo trading/scalping/hedging; set up the Windows VPS near the MT5 server (if MT5 route). → R7.10
 - [ ] **T7.09** `USER` Install the UPS and 4G failover; do the pull-the-plug drill with paper positions. → R7.11
 - [ ] **T7.10** `USER` 12-month review: keep only sleeves with positive live net P&L, live Sharpe > 0.5 and beating the benchmark. → R7.05
+- [ ] **T7.11** `USER` Provision the egress VM (free tier where available, else a small paid VM in Sydney) and allow-list its IP on every live key. → R7.14
 
 ### B. Build (`BUILD`, code)
 - [ ] **T7.20** `BUILD` Gate report generator per strategy (all §8 + harness sections, paper tracking). → R7.01, R7.02
@@ -67,12 +69,14 @@
 ### C. Ops & config (`OPS`)
 - [ ] **T7.40** `OPS` Live engine config per sub-account; separate secrets; alert routing for live incidents. → R7.04
 - [ ] **T7.41** `OPS` Dead-man fail-flat config verified with the 4G link. → R7.11
+- [ ] **T7.42** `OPS` Exit-node tunnel config for broadband and 4G; egress check points at the static IP. → R7.14
 
 ### D. Verify & test (`VERIFY`)
 - [ ] **T7.60** `VERIFY` All runbooks drilled (kill, keys leaked, server down with open positions, bad data, wallet drained). → entry criterion
 - [ ] **T7.61** `VERIFY` Simulated kill-criteria breaches halt the right sleeve or everything. → R7.06
 - [ ] **T7.62** `VERIFY` MT5/cTrader adapter paper parity vs MasterTradingBot outputs. → R7.10
 - [ ] **T7.63** `VERIFY` Venue registry re-check (< 90 days) before each funding. → [12 §2](../12-policy-and-compliance.md#2-venue-access-registry)
+- [ ] **T7.64** `VERIFY` Failover drill: cut broadband → traffic continues via 4G through the tunnel with the same egress IP; then cut the tunnel → venue timers cancel orders, resting stops remain. → R7.14, R7.11
 
 ### E. Run / soak (`RUN`)
 - [ ] **T7.80** `RUN` Paper/approve period per strategy (≥ 8 weeks P1; default ≥ 3 months). → R7.02

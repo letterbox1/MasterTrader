@@ -1,8 +1,9 @@
 name: kanban
+# Manual backstop only. Day to day, the local git hooks (pre-commit / pre-push) and the
+# Claude Code hooks keep the boards valid and current, so this costs no CI minutes.
+# Run it from the Actions tab if you ever edit tracking files outside a hooked clone (e.g. the GitHub web editor).
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
 jobs:
   kanban:
     runs-on: ubuntu-latest

@@ -40,6 +40,7 @@
 | R4.13 | D08 Intel: feed, document detail, events (map ≥ md), calendar with blackout markers, sentiment, sources with provenance flags; **Telegram shown as postures only** | [D08](../ui/dashboards/D08-intel.md) | Playwright |
 | R4.14 | Morning brief on Telegram (news, sentiment movers, events mapped to assets, calendar + blackouts, data/cost health) | [04 Phase 4](../04-plan-of-action.md#phase-4--news-social-events--calendars-weeks-1619) | Daily brief |
 | R4.N1 | Scraped text marked untrusted; LLMs never see secrets; RSS-Bridge has no DB route | [07 §5](../07-security-notes.md#5-network--host), [02 §9.1](../02-v1-architecture.md#91-security) | Network test |
+| R4.15 | **Regulatory & jurisdiction watch:** official sources (ATO, Treasury, AUSTRAC, ASIC, RBA; plus UAE/CY/EG authorities when a move is planned) fetched on schedule (RSS where offered, else low-frequency page fetch/headless browser within terms), diffed, turned into `REG_CHANGE` review tasks; venue status pages feed venue health; **rules are never auto-applied** | [16 §4.3](../16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants) | Diff + task test |
 
 ## 4. ToDo sets
 
@@ -49,6 +50,7 @@
 - [ ] **T4.03** `USER` Give watch keywords/cashtags and the RSS feeds/sites you trust. → R4.01, R4.05
 - [ ] **T4.04** `USER` Label ~200 sampled documents relevant/irrelevant to calibrate the SemIf gate threshold. → R4.12
 - [ ] **T4.05** `USER` Confirm whether Reddit access was granted (if yes it joins as optional). → [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)
+- [ ] **T4.06** `USER` Get the free NASA FIRMS / ACLED keys and confirm the OpenSanctions licence terms for personal use. → R4.08
 
 ### B. Build (`BUILD`, code)
 - [ ] **T4.20** `BUILD` `mt_data.text`: RSS/trafilatura/crawl4ai, RSS-Bridge client, GDELT, EDGAR, central banks, Finnhub, CryptoPanic. → R4.01
@@ -61,6 +63,7 @@
 - [ ] **T4.27** `BUILD` Feature pipelines for sentiment/regime per market type, positioning, nowcasts, Fed path, VIX regime, forecasts. → R4.11
 - [ ] **T4.28** `BUILD` `decision-svc` stage 1: question registry, SemIf readout, KV publishing, determinism logging. → R4.12
 - [ ] **T4.29** `BUILD` D08 Intel + tier B chips on D01/D02; morning brief job. → R4.13, R4.14
+- [ ] **T4.30** `BUILD` Regulatory & venue watch: source list, fetch + diff, `REG_CHANGE` tasks, venue-status inputs to venue health. → R4.15
 
 ### C. Ops & config (`OPS`)
 - [ ] **T4.40** `OPS` RSS-Bridge container (whitelist, auth, scrapers network only). → R4.01, R4.N1

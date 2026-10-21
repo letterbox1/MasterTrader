@@ -57,6 +57,7 @@
 | R5.23 | D12 (radar, detail, wallet & mandates), D13 (inbox, communities, digests, history), D18 view (net worth, allocation, wallet table, transfers, venue health) | [D12](../ui/dashboards/D12-airdrops.md) [D13](../ui/dashboards/D13-tasks-curation.md) [D18](../ui/dashboards/D18-wallets-treasury.md) | Playwright |
 | R5.N1 | Signer and Anvil on the isolated network; no LLM can reach keys | [07 §5](../07-security-notes.md#5-network--host), [02 §3.1](../02-v1-architecture.md#31-networks) | Network test |
 | R5.N2 | Kill switch ON freezes auto-claims and treasury moves | [02 F6](../02-v1-architecture.md#8-end-to-end-flows) | Drill |
+| R5.24 | **Wallet, signer and gas limits are configuration** (floats, per-tx/24 h caps, gas budgets, cost-gate margin, EV hurdle; defaults in 16 §2.7); **signing stays disabled until you confirm them** | [16 §2.7](../16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) | Config test |
 
 ## 4. ToDo sets
 
@@ -68,6 +69,7 @@
 - [ ] **T5.05** `USER` Sign the first **mandates** (C3): wallet, chain, allowed contracts/functions, caps, expiry. → R5.15
 - [ ] **T5.06** `USER` Set the disposal rule (default sell 50% on claim) and EV hurdle. → R5.14, R5.17
 - [ ] **T5.07** `USER` Work the task queue: join/follow communities, do social tasks yourself, ICO reviews. → R5.20, R5.21
+- [ ] **T5.08** `USER` Review and confirm the wallet/signer/gas limits (prefilled defaults) to enable signing. → R5.24
 
 ### B. Build (`BUILD`, code)
 - [ ] **T5.20** `BUILD` `mt_signer`: intent API, builders/decoders (EVM, Solana), allow-lists, caps, hard blocks, durable-nonce rules, simulation hooks, ledger of signatures. → R5.02, R5.03

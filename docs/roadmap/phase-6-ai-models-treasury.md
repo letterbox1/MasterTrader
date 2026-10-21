@@ -86,6 +86,7 @@
 - [ ] **T6.28** `BUILD` `mt_treasury`: allow-list, allocator, treasury split/sweeps, node/validator model, DAO monitor, earn positions. → R6.20–R6.24
 - [ ] **T6.29** `BUILD` UI: D09, D10 (incl. labelling queue), D18 earn/treasury. → R6.40
 - [ ] **T6.30** `BUILD` Optional: Hummingbot adapter (D11), `mt_social` drafts, crowd-sim, LightRAG. → R6.30–R6.32
+- [ ] **T6.31** `BUILD` Prompt and model versioning for agents; confirm every LLM call lands in `audit.llm_call` (writer exists from P0) with model, hashes, tokens, cost, latency. → R6.03
 
 ### C. Ops & config (`OPS`)
 - [ ] **T6.40** `OPS` GPU serving for tier B (vLLM pooling runner or ONNX), Hindsight slim container, Laya/Kev/Clef bake-off containers bound to `127.0.0.1` with API keys. → R6.11, R6.12 · [07 §5](../07-security-notes.md#5-network--host)

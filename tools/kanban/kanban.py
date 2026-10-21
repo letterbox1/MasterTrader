@@ -685,7 +685,9 @@ def roadmap_blocks(phases):
         crow.append(f"| [P{n} {title}]({f.name}) | {nreq} | " + " | ".join(str(c[t]) for t in types) + f" | {sum(c.values())} |")
         for m in re.finditer(r"^- \[[ xX]\] \*\*(T\d\.\d+)\*\* `USER` (.*)$", txt, re.M):
             tid, body = m.groups()
-            act, _, ref = body.partition(" → ")
+            act, sep, ref = body.rpartition(" → ")
+            if not sep:
+                act, ref = body, ""
             reg.append(f"| {tid} | P{n} | {act.strip()} | {ref.strip() or '—'} |")
     counts = ("| Phase | Requirements | `USER` | `BUILD` | `OPS` | `VERIFY` | `RUN` | ToDos |\n|---|---|---|---|---|---|---|---|\n"
               + "\n".join(crow) + "\n| **Total** | | " + " | ".join(f"**{tot[t]}**" for t in types) + f" | **{sum(tot.values())}** |")
@@ -1047,6 +1049,15 @@ def cmd_pause(a):
         print("kanban hooks paused (run `./kanban pause --off` to resume)")
 
 
+def ensure_git_hooks():
+    """Point git at tools/kanban/githooks if it isn't already (fresh clones, new cloud containers)."""
+    r = subprocess.run(["git", "config", "--get", "core.hooksPath"], cwd=ROOT, capture_output=True, text=True)
+    if r.returncode == 0 or not (ROOT / ".git").exists():
+        return False
+    subprocess.run(["git", "config", "core.hooksPath", "tools/kanban/githooks"], cwd=ROOT, check=False)
+    return True
+
+
 def cmd_install_hooks(a):
     subprocess.run(["git", "config", "core.hooksPath", "tools/kanban/githooks"], cwd=ROOT, check=True)
     for p in (Path(__file__).parent / "githooks").iterdir():
@@ -1091,6 +1102,7 @@ def cmd_hook(a):
         sys.exit(0)
     try:
         if a.event == "session-start":
+            ensure_git_hooks()
             log_session("session-start", data.get("source", ""))
             phases, items, _ = build()
             print(brief(phases, items))

@@ -42,6 +42,8 @@
 | R0.N4 | **Backups:** pgBackRest + restic to an encrypted off-site target; automated restore test | [07 §8](../07-security-notes.md#8-data-protection-backups--audit), [02 F11](../02-v1-architecture.md#8-end-to-end-flows) | Restore test passes |
 | R0.N5 | Vendored code under `third_party/` with pinned commit + `LICENSES.md`; images scanned (trivy/grype) | [07 §7](../07-security-notes.md#7-supply-chain), [03 §9](../03-build-spec.md#9-future-proof-hygiene) | CI scan |
 | R0.N6 | Responsive shell passes the viewport matrix 240 → 2560 px, portrait + landscape | [DESIGN §6.8](../../DESIGN.md#68-test-matrix-every-screen-must-pass) | Playwright matrix |
+| R0.12 | **WORM integrity response:** `audit.verify` publishes `audit.integrity` (NATS KV); default action `block_new_entries` (exits continue), options `alert_only`/`halt_all`; cleared by `audit.integrity.ack` (C3); incidents/acks are WORM rows; until Telegram C3 exists, C3 completes via the host-only break-glass CLI `mtctl approve` + TOTP | [16 §2.11, §3.3](../16-configuration-and-safety-model.md#211-worm-integrity), [17 §A](../17-decisions-register.md#a-s2-items-all-resolved) | Integrity drill |
+| R0.13 | `audit.llm_call` written from day one via the LiteLLM callback; `tei-embed` + `tei-rerank` containers; `llm-local` serves the `local-advisor` route | [17 §D](../17-decisions-register.md#d-other-decisions) | Smoke + audit check |
 
 ## 4. ToDo sets
 
@@ -58,6 +60,7 @@
 - [ ] **T0.10** `USER` Free API keys: FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. → gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md)
 - [ ] **T0.11** `USER` **Venue checks:** look up each AU venue you may use on the AUSTRAC register by ABN; note products available to you as a retail client; send the results for the registry seed. → R0.06 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry)
 - [ ] **T0.12** `USER` Set your login password and enrol TOTP on first boot. → R0.08
+- [ ] **T0.13** `USER` Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). → R0.09, R0.13
 
 ### B. Build (`BUILD`, code)
 - [ ] **T0.20** `BUILD` Monorepo skeleton: `uv` workspace, all packages from 03 §3 as stubs, `third_party/LICENSES.md`, ruff/mypy/pytest/pre-commit (gitleaks). → R0.01, R0.N5
@@ -67,6 +70,8 @@
 - [ ] **T0.24** `BUILD` `mt_api` skeleton (FastAPI): auth (Argon2 + TOTP), command bus with idempotency + `audit.command`, confirmation-level engine (C0–C3, Kill; C3 = approve + TOTP + cool-down), problem+json errors, OpenAPI, WebSocket hub with `seq` gap detection. → R0.08 · [02 §7.2](../02-v1-architecture.md#72-commands-rest-write)
 - [ ] **T0.25** `BUILD` `mt_obs`: structlog JSON with `trace_id`, Prometheus metrics helpers, OpenTelemetry setup. → R0.10
 - [ ] **T0.26** `BUILD` Web app: React + TS + Vite PWA, TanStack Router/Query, typed WS client, Tailwind **DESIGN.md v2 preset**, component library v0 (shell, tiles, data states), app shell, D16 System (health, services, backups, keys metadata, settings). → R0.11 · [02 §10](../02-v1-architecture.md#10-frontend-architecture) · [comp](../ui/components.md)
+- [ ] **T0.27** `BUILD` Integrity response: `audit.integrity` KV, M11 hook point, `audit.integrity.ack` (C3), break-glass `mtctl approve` CLI with TOTP. → R0.12
+- [ ] **T0.28** `BUILD` LiteLLM callback → `audit.llm_call` (WORM); split TEI containers; `llm-local` service. → R0.13
 
 ### C. Ops & config (`OPS`)
 - [ ] **T0.40** `OPS` Host hardening: LUKS, firewall, SSH keys, auto security updates, Tailscale, chrony. → R0.N2
@@ -84,6 +89,7 @@
 - [ ] **T0.63** `VERIFY` First restore test from the off-site backup to a scratch DB. → R0.N4
 - [ ] **T0.64** `VERIFY` Playwright viewport matrix + axe on the shell and D16. → R0.N6
 - [ ] **T0.65** `VERIFY` trivy/grype scan; external port scan shows nothing exposed outside Tailscale. → R0.N2, R0.N3, R0.N5
+- [ ] **T0.66** `VERIFY` Integrity drill: tamper a row → mismatch → new entries blocked, exits allowed → ack (C3) clears. → R0.12
 
 ### E. Run / soak (`RUN`)
 - [ ] **T0.80** `RUN` 72-hour idle soak: no restarts, backups ran, alerts quiet.
