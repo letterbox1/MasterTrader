@@ -31,7 +31,7 @@
 | R0.04 | Every fact carries `event_time` + `ingest_time`; research reads only via `mt_store.pit(as_of)`; **CI fails on bypass** | [SPEC NN1](../../SPEC.md#non-negotiable-requirements), [03 §4](../03-build-spec.md#4-data-model-overview) | `pit` CI test |
 | R0.05 | Ingest tables carry provenance columns `source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok` (populated from P1) | [12 §5](../12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) | Schema test |
 | R0.06 | `ops.venue_registry` table exists and is seeded from your venue checks | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) | Seed present |
-| R0.07 | Audit tables are append-only (insert-only roles) with a **daily hash chain**; corrections are new rows | [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs), [07 §8](../07-security-notes.md#8-data-protection-backups--audit) | `audit.verify` test |
+| R0.07 | **WORM** audit/journal tables: offline `worm_owner`, INSERT/SELECT-only app roles, UPDATE/DELETE/TRUNCATE blocked by triggers, **per-row hash chain**, daily Merkle seal anchored outside the DB (object-locked/append-only storage, optional OpenTimestamps, Telegram witness), corrections as new rows; verify mismatch halts trading | [15 §2](../15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many), [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs), [07 §8](../07-security-notes.md#8-data-protection-backups--audit) | WORM test suite |
 | R0.08 | `mt_api`: Argon2 login + **TOTP**, session cookie, `POST /commands/{command}` with idempotency key, every command written to `audit.command`; **C0–C3/Kill enforced server-side**; WebSocket envelope `{topic, seq, ts, data}` | [02 §7](../02-v1-architecture.md#7-api-contract-mt_api), [02 §7.2](../02-v1-architecture.md#72-commands-rest-write) | API tests |
 | R0.09 | LiteLLM ≥ 1.83 pinned by digest (Claude, your custom endpoint, a local model), per-role budgets; TEI with bge-small-en-v1.5 + bge-reranker-v2-m3 | [10 §5](../10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21), [10 §2](../10-memory-rag-and-models.md#2-local-embedders--rerankers) | Smoke calls |
 | R0.10 | Structured logs (structlog) with `trace_id`; Loki/Prometheus/Grafana showing host, DB and NATS health | [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs) | Grafana board |
@@ -49,7 +49,7 @@
 - [ ] **T0.01** `USER` Provision the host: 8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + HDD; decide on a **16–24 GB GPU** now (it shapes P4/P6 speed). → R0.02 · [03 §2](../03-build-spec.md#2-target-environment)
 - [ ] **T0.02** `USER` Order a **UPS** and a **4G failover** router (needed before live, cheap to set up early). → [07 §5](../07-security-notes.md#5-network--host)
 - [ ] **T0.03** `USER` Create the Tailscale account with MFA on the identity provider; buy/assign a YubiKey (or OS keychain) for the age key. → R0.N1, R0.N2
-- [ ] **T0.04** `USER` Open the off-site backup target (e.g. Backblaze B2 or a second box) and store its credentials in the secrets file. → R0.N4
+- [ ] **T0.04** `USER` Open the off-site backup target with **Object Lock** (e.g. Backblaze B2 compliance mode) or a second box running restic `rest-server --append-only`; store credentials in the secrets file. → R0.N4, R0.07
 - [ ] **T0.05** `USER` Keep the GitHub repo **private**; turn on secret scanning. → [SPEC NN8](../../SPEC.md#non-negotiable-requirements)
 - [ ] **T0.06** `USER` **Telegram:** dedicated number (landline voice code or prepaid SIM), `api_id`/`api_hash`, 2-step password, bot via @BotFather. → gates P1 alerts, P4 ingest · [07 §10](../07-security-notes.md#10-social--scraping-accounts)
 - [ ] **T0.07** `USER` **Discord:** private "MasterTrader Feeds" server with `#mt-inbox` + category channels; bot app with Message Content intent; start following announcement channels you already know. → gates P4 · [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)
@@ -63,7 +63,7 @@
 - [ ] **T0.20** `BUILD` Monorepo skeleton: `uv` workspace, all packages from 03 §3 as stubs, `third_party/LICENSES.md`, ruff/mypy/pytest/pre-commit (gitleaks). → R0.01, R0.N5
 - [ ] **T0.21** `BUILD` `mt_core` types: Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent; config, clock, logging. → R0.01
 - [ ] **T0.22** `BUILD` `mt_store`: schemas + Alembic migrations incl. provenance columns and `ops.venue_registry`; `pit(as_of)` API; Parquet catalog helpers. → R0.03–R0.06
-- [ ] **T0.23** `BUILD` Audit writers: insert-only roles, correction rows, daily hash-chain job, `audit.verify` command. → R0.07
+- [ ] **T0.23** `BUILD` WORM layer: `worm_owner` role + grants, blocking triggers, per-row hash-chain trigger, correction rows, daily Merkle seal + external anchoring, `audit.verify` command and incident path. → R0.07 · [15 §2](../15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - [ ] **T0.24** `BUILD` `mt_api` skeleton (FastAPI): auth (Argon2 + TOTP), command bus with idempotency + `audit.command`, confirmation-level engine (C0–C3, Kill; C3 = approve + TOTP + cool-down), problem+json errors, OpenAPI, WebSocket hub with `seq` gap detection. → R0.08 · [02 §7.2](../02-v1-architecture.md#72-commands-rest-write)
 - [ ] **T0.25** `BUILD` `mt_obs`: structlog JSON with `trace_id`, Prometheus metrics helpers, OpenTelemetry setup. → R0.10
 - [ ] **T0.26** `BUILD` Web app: React + TS + Vite PWA, TanStack Router/Query, typed WS client, Tailwind **DESIGN.md v2 preset**, component library v0 (shell, tiles, data states), app shell, D16 System (health, services, backups, keys metadata, settings). → R0.11 · [02 §10](../02-v1-architecture.md#10-frontend-architecture) · [comp](../ui/components.md)
@@ -79,7 +79,7 @@
 
 ### D. Verify & test (`VERIFY`)
 - [ ] **T0.60** `VERIFY` `pit` bypass test in CI (a module reading raw tables fails the build). → R0.04
-- [ ] **T0.61** `VERIFY` Hash-chain tamper test (edit a row → `audit.verify` flags it). → R0.07
+- [ ] **T0.61** `VERIFY` WORM test suite: app-role UPDATE/DELETE/TRUNCATE fail; a direct edit as `worm_owner` is caught by `audit.verify`; seal mismatch → incident + trading halt; restore from immutable backup re-verifies. → R0.07
 - [ ] **T0.62** `VERIFY` Confirmation-level tests: a C3 command cannot apply without approval + TOTP + cool-down; Kill ON is never blocked. → R0.08
 - [ ] **T0.63** `VERIFY` First restore test from the off-site backup to a scratch DB. → R0.N4
 - [ ] **T0.64** `VERIFY` Playwright viewport matrix + axe on the shell and D16. → R0.N6

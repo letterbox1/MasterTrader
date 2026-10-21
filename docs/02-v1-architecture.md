@@ -165,7 +165,7 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 - **IDs:** UUIDv7 (time-ordered). Instruments use the Nautilus `InstrumentId` (`BTCUSDT.BINANCE`).
 - **Money:** `numeric` / `Decimal`, never floats, for prices, sizes, fees and tax. Each instrument's precision comes from instrument metadata.
 - **Point-in-time:** `mt_store.pit(as_of)` is the only read path for research/backtests (CI-enforced).
-- **Append-only:** `audit.*` and `journal.*` are insert-only roles with a daily hash chain; corrections reference the row they supersede.
+- **WORM:** `audit.*`, `journal.*`, `risk.change`, `strategy.bot_version`, mandates and the signer ledger are write-once (offline owner role, INSERT/SELECT-only app roles, blocking triggers, per-row hash chain, daily externally anchored seal); corrections reference the row they supersede. See [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many).
 
 ### 5.3 Core entities (abbreviated; full DDL in migrations)
 
@@ -266,7 +266,8 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 |---|---|
 | Orders | `order.place`, `order.modify`, `order.cancel`, `order.cancel_all`, `position.close`, `position.reduce`, `position.set_brackets` |
 | Approvals | `approval.approve`, `approval.reject` |
-| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.set_mode` (paper / approve / auto) |
+| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.set_mode` (paper / hitl / autonomous) |
+| Bots ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `bot.create`, `bot.update_scope`, `bot.update_params`, `bot.set_mode` (paper/hitl C1, autonomous **C3**), `bot.start`, `bot.pause`, `bot.resume`, `bot.stop`, `bot.approval_policy.set`, `approval.approve_partial` |
 | Lab | `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel` |
 | Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.promote`, `models.rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete` |
 | Market making | `mm.bot.create`, `mm.bot.start`, `mm.bot.stop`, `mm.bot.update`, `mm.bot.cancel_all` |

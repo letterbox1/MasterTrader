@@ -111,7 +111,11 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
 - Research and backtests read only through `mt_store.pit(as_of=…)`.
 - A CI test fails if a module bypasses it.
 
-**Audit tables are append-only:**
+**Audit tables are WORM** (write-once, read-many; full design in [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)):
+- Owned by an offline `worm_owner` role; app roles INSERT/SELECT only; UPDATE/DELETE/TRUNCATE revoked and blocked by triggers.
+- Per-row hash chain (`prev_hash`, `row_hash`) plus a daily Merkle seal anchored outside the DB (object-locked storage, optional OpenTimestamps, Telegram witness).
+
+**Append-only rules:**
 - Insert-only DB roles.
 - A daily hash chain.
 - Corrections are new rows that reference the original.
@@ -428,7 +432,9 @@ Full design: [10](10-memory-rag-and-models.md).
 - **Hard ceilings** live in a file no API can write.
 - Every change is audited and versioned (rollback).
 
-**Modes per mandate:** `paper` / `approve` (Telegram/UI button per order) / `auto`.
+**Modes per mandate / bot:** `paper` / `hitl` (formerly `approve`: Telegram/UI approval card per order) / `autonomous` (formerly `auto`).
+
+**Trading bots:** a bot deploys one strategy version onto a market scope (single instrument, list or dynamic selection) with its own venue account, sleeve, mode and approval policy. You set each bot to **autonomous** or **HITL**; HITL bots send approval cards to Telegram; protective exits never wait for approval; autonomous needs C3 and auto-downgrades to HITL on decay/DQ/ladder events. Full design: [15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots).
 
 ### M12 Execution — `mt_engine`
 

@@ -10,7 +10,7 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 
 Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md).
 
-**Detailed scoping per phase** (requirements with IDs, ToDos split into `USER` / `BUILD` / `OPS` / `VERIFY` / `RUN`, exit criteria, traceability to every doc) lives in the **[roadmap](roadmap/README.md)**. This page is the summary.
+**Detailed scoping per phase** (requirements with IDs, ToDos split into `USER` / `BUILD` / `OPS` / `VERIFY` / `RUN`, exit criteria, traceability to every doc) lives in the **[roadmap](roadmap/README.md)**, and execution is tracked task-by-task on per-phase kanbans in [`tracking/`](../tracking/README.md) (project board: [`KANBAN.md`](../KANBAN.md) / `kanban.html`). This page is the summary.
 
 ## ⚠️ Do this week regardless of phase
 - [ ] **Telegram:**

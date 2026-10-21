@@ -48,7 +48,7 @@
 | R2.17 | **Venue registry check** on every order; **2× crypto-derivatives cap** | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry), [12 §1](../12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) | Rejection tests |
 | R2.18 | Kill switch (manual + automatic triggers) and **dead-man's switch** (heartbeats) | [02 F6](../02-v1-architecture.md#8-end-to-end-flows) | Drill |
 | R2.19 | Change control: tighten instantly; loosen = C3 (Telegram + TOTP + cool-down); **hard-ceilings file no API can write**; versioned with rollback | [02 F5](../02-v1-architecture.md#8-end-to-end-flows), [07 §6](../07-security-notes.md#6-application-controls) | C3 tests |
-| R2.20 | Modes per mandate: paper / approve (button per order, TTL) / auto | [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) | Flow tests |
+| R2.20 | Modes per mandate/bot: paper / **hitl** (approval card per order, TTL, expiry = reject) / **autonomous** (C3, gates required); protective exits never wait for approval | [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) | Flow tests |
 | R2.21 | Daily health check per sleeve (30-day Sharpe < ½ validated or DD > 1.5× backtest max → halt) and decay alerts (rolling 60-trade vs 5th percentile, CUSUM) | [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11), [03 §8 item 8](../03-build-spec.md#8-promotion-gates-per-strategy-configurable) | Simulated decay |
 
 ### Execution (M12)
@@ -78,6 +78,8 @@
 |---|---|---|---|
 | R2.50 | D01 Cockpit, D03 Strategies (builder/registry, manifest fields, validation results), D04 Lab, D05 Execution (manual ticket = `manual` sleeve, flatten-and-halt with reason), D06 Risk (policy editor, sleeves, ladder, venue registry, kill switch) | [D01](../ui/dashboards/D01-cockpit.md) [D03](../ui/dashboards/D03-strategies.md) [D04](../ui/dashboards/D04-research-lab.md) [D05](../ui/dashboards/D05-execution.md) [D06](../ui/dashboards/D06-risk.md) | Playwright |
 | R2.51 | Approvals queue (web + Telegram buttons, TTL); C3 approve + TOTP in Telegram | [mob §3](../ui/mobile-and-telegram.md#3-telegram-bot), [ui §3.3](../ui/README.md#33-actions--confirmation) | Flow tests |
+| R2.53 | **Trading bots:** strategy version × market scope (instrument, list, dynamic selection) × venue/sleeve × mode × approval policy; `bot.*` commands; tighter-only risk overrides; escalation rules; **auto-downgrade** autonomous → HITL on decay/DQ/ladder ≥ 3/model down/registry change; mode history WORM | [15 §1](../15-bots-hitl-and-worm-audit.md#1-trading-bots) | Bot flow tests |
+| R2.54 | **HITL via Telegram:** approval cards (risk preview, reasons, chart link, TTL), Approve / Approve ½ / Reject / Pause bot, TOTP for large orders, `/bots`, `/bot`, `/approvals`, mode commands (auto = C3); D03 Bots tab + wizard | [15 §1](../15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram), [mob §3](../ui/mobile-and-telegram.md#3-telegram-bot), [D03](../ui/dashboards/D03-strategies.md) | E2E approval test |
 | R2.52 | Telegram v1: `/kill`, `/status`, `/pnl`, `/pause <strategy>`; works even if `mt-api` is down (bot → NATS) | [03 M15](../03-build-spec.md#m15-ui--alerts--mt_ui-calls-mt_api), [02 §9.3](../02-v1-architecture.md#93-degraded-modes) | Degraded test |
 
 ### Non-functional
@@ -97,6 +99,7 @@
 - [ ] **T2.05** `USER` Write your first strategy manifests (counterparty sentence, kill criteria, benchmark) for the P1 candidates: trend on majors, funding carry if access permits. → R2.04 · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates)
 - [ ] **T2.06** `USER` Take part in the **kill-switch drill** from your phone (Telegram `/kill`, then C3 to turn off). → R2.18
 - [ ] **T2.07** `USER` Approve a test C3 loosening to prove the TOTP + cool-down path. → R2.19
+- [ ] **T2.09** `USER` Create your first bots (scope + mode) and do one HITL approval from Telegram end to end. → R2.53, R2.54
 - [ ] **T2.08** `USER` Start the **paper clock**: switch the validated P1 candidates to paper at the end of this phase. → unlocks P7
 
 ### B. Build (`BUILD`, code)
@@ -114,6 +117,7 @@
 - [ ] **T2.31** `BUILD` Shared indicator/signal + sizing libraries for MasterTradingBot strategies; "deterministic rule-based" template using them. → R2.48
 - [ ] **T2.32** `BUILD` UI: D01, D03, D04, D05, D06 + approvals queue + manual ticket. → R2.50, R2.51
 - [ ] **T2.33** `BUILD` Telegram v1 commands, approval buttons, C3 TOTP prompt; NATS fallback path for `/kill`. → R2.51, R2.52
+- [ ] **T2.34** `BUILD` Trading bots: `strategy.bot`/`bot_version`, scope resolver (dynamic selections), `bot.*` commands, approval policy + escalation, auto-downgrade, HITL approval cards on Telegram + web, D03 Bots tab. → R2.53, R2.54
 
 ### C. Ops & config (`OPS`)
 - [ ] **T2.40** `OPS` `engine`, `backtest-worker`, `sandbox` containers; gVisor runtime; resource limits. → R2.45
@@ -130,6 +134,7 @@
 - [ ] **T2.66** `VERIFY` Latency benchmarks (risk p99 < 1 ms, tier A p99 < 50 µs, signal → order p99 < 5 ms). → R2.N1
 - [ ] **T2.67** `VERIFY` MasterTradingBot golden files match. → R2.48
 - [ ] **T2.68** `VERIFY` Viewport matrix + axe on D01/D03–D06. → R2.50
+- [ ] **T2.69** `VERIFY` Bot scenarios: HITL approve / approve ½ / reject / expiry (never executes late); protective stop fires without approval; autonomous needs C3 and auto-downgrades on an injected DQ fault; two bots on one strategy with different modes stay isolated. → R2.53, R2.54
 
 ### E. Run / soak (`RUN`)
 - [ ] **T2.80** `RUN` **Paper clock (starts now, runs through P3–P6):** P1 sleeves on paper for ≥ 8 weeks through the real policy/risk/execution path. → gates P7 · [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)

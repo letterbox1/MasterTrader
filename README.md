@@ -20,6 +20,9 @@ Around that it adds:
 
 | File | Contents |
 |---|---|
+| [KANBAN.md](KANBAN.md) · `kanban.html` | **Project kanban** (generated): overall and per-phase progress bars, in progress, blocked, next up, bugs, doc-sync queue. Open the interactive board with `./kanban open` |
+| [tracking/](tracking/README.md) | **Per-phase kanbans**: one Markdown file per task/bug (spec for a branch + PR), `PHASE.md` plans, generated `BOARD.md` per phase, session log for cloud ↔ local resume |
+| [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) | Protocol every coding agent follows (claim → checkpoint → verify → done → doc sync), cardinal rules, git conventions; hooks in `.claude/settings.json` + `tools/kanban/githooks/` |
 | [GOAL.md](GOAL.md) | What we're building and why |
 | [DESIGN.md](DESIGN.md) | **Design system v2:** tokens, type, components, and the full responsive system (1920px+ → 240px, portrait/landscape, laptops, tablets, foldables) |
 | [docs/ui/](docs/ui/README.md) | **Frontend scope:** information architecture & routes, app shell, component library, 18 dashboard specs (widgets, data shown, actions + confirmation levels, states, acceptance criteria, backend contract), mobile/PWA/Telegram |
@@ -30,6 +33,7 @@ Around that it adds:
 | [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | **End-to-end architecture v3:** deployment topology, networks & containers, module ownership, data stores, NATS subjects, `mt_api` REST/WS contract + confirmation levels + command catalogue, end-to-end flows, SLOs, degraded modes, frontend stack, phase-by-phase build plan |
 | [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec v2:** ground rules (free only), stack, repo layout, modules M0–M23 (strategy framework, risk manager, live monitor, observability, journal/tax, curation, MCP), timeframes per asset class, gates |
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phases 0–8 with checklists and a demo per phase (platform first, strategies second, MCP last) |
+| [docs/15-bots-hitl-and-worm-audit.md](docs/15-bots-hitl-and-worm-audit.md) | **Trading bots** (strategy × market scope × mode; autonomous vs HITL via Telegram approval cards) and **WORM records** (tamper-proof Postgres audit/journal with external seals) |
 | [docs/roadmap/](docs/roadmap/README.md) | **Roadmap:** one scoped document per phase (requirements with IDs, ToDos split into your actions / build / ops / verify / run, entry & exit criteria, risks), timeline, dependencies, fixed external dates, a register of every action only you can do, and traceability back to SPEC, GOAL, modules, dashboards and docs |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
 | [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets. **Reddit and X are deferred; Telegram and Discord are the free social feeds** |

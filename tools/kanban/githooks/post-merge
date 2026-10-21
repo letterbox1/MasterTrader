@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# After pulling another machine's work (cloud ↔ local), re-triage and print the resume brief.
+root="$(git rev-parse --show-toplevel)"
+python3 "$root/tools/kanban/kanban.py" resume || true

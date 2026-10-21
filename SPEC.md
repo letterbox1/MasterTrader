@@ -8,7 +8,7 @@
 
 **Detailed docs:**
 - [docs/03-build-spec.md](docs/03-build-spec.md): full module spec M0–M23.
-- [docs/04-plan-of-action.md](docs/04-plan-of-action.md): phased plan; detailed per-phase scope, ToDos and traceability in [docs/roadmap/](docs/roadmap/README.md).
+- [docs/04-plan-of-action.md](docs/04-plan-of-action.md): phased plan; detailed per-phase scope, ToDos and traceability in [docs/roadmap/](docs/roadmap/README.md); execution tracked on per-phase kanbans in [tracking/](tracking/README.md), rolled up in [KANBAN.md](KANBAN.md).
 - [docs/07-security-notes.md](docs/07-security-notes.md)
 - [docs/08-airdrops-and-token-launches.md](docs/08-airdrops-and-token-launches.md)
 - [docs/09-journal-and-tax.md](docs/09-journal-and-tax.md)
@@ -43,6 +43,7 @@
 | Airdrops / launches | Vet (GoPlus, RugCheck, Honeypot.is, blocklists, rug-pull heuristics) → auto-claim only for eligible claims on a mandate-bound hot wallet → everything else becomes user tasks |
 | Curation | **One task queue** for social tasks, Discord/Telegram servers and channels to follow, manual claims, and approvals; daily and weekly digests with Telegram buttons |
 | Command layer | **`mt_api`**: every action (UI, Telegram, later MCP) is a typed, audited command |
+| Trading bots | A **bot** = strategy version × market scope (instrument, list or dynamic selection) × venue/sleeve × mode. Per bot: **autonomous** (C3, gates required, auto-downgrade on decay/DQ) or **HITL** (Telegram approval cards, TTL, protective exits automatic). See [15](docs/15-bots-hitl-and-worm-audit.md) |
 | MCP | **Last (Phase 8), optional.** A thin adapter over `mt_api`: read/analyse, talk to agents, **trade and adjust positions**, strategies, risk, curation. Orders go through the risk manager and default to approve mode |
 | Rejected | VibeTradingLabs/vibetrading, nofx as a platform, threads-scraper, log, Spacebar, Graylog, OpenObserve, TDengine, ArcticDB, Soda Core, paid data |
 
@@ -60,7 +61,7 @@
    - signed mandates;
    - simulation before every signature;
    - never permits/approvals.
-7. **Append-only audit and journal,** kept ≥ 7 years, with tested backups.
+7. **WORM audit and journal** (write-once: offline owner role, blocking triggers, per-row hash chain, externally anchored daily seals, immutable backups), kept ≥ 7 years, verified daily.
 8. **No telemetry or referral tags** in vendored components; the repo stays private.
 9. **Promotion gates** before live capital: out-of-sample after measured costs, robustness statistics, a clean look-ahead check, a paper/approve period.
 10. **Data terms are enforced by provenance tags:** no Telegram text (or any `model_input_ok = false` row) reaches a model, RAG index or training set.

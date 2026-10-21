@@ -112,6 +112,7 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
   - Encrypted at rest (disk) and in backups.
   - Nightly `pg_dump` + WAL archiving (pgBackRest) to an off-site encrypted target (e.g. Backblaze B2 / another box via restic).
   - **Restore tested monthly** by an automated job.
+- **WORM records** ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)): offline `worm_owner`, INSERT/SELECT-only app roles, blocking triggers, per-row hash chain, daily Merkle seal anchored to object-locked storage (+ optional OpenTimestamps, Telegram witness), immutable backups and monthly immutable exports; a verify mismatch halts new trading.
 - **The audit log is append-only:**
   - `order_audit`, `risk_change_audit`, `journal_entry` use insert-only DB roles.
   - A daily hash-chain over rows lets edits be detected.

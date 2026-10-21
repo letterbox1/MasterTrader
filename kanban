@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# MasterTrader kanban CLI wrapper. See tracking/README.md.
+exec python3 "$(dirname "$0")/tools/kanban/kanban.py" "$@"

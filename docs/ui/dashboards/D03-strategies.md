@@ -100,6 +100,13 @@ Create, configure, deploy and supervise **any strategy type on any timeframe**, 
 - The builder refuses templates on the never-build list and shows why.
 - Detail shows **per-year and per-regime** results, **2× and 3× cost stress**, the trial counter and the worst walk-forward fold (from the validation harness).
 
+## Bots tab (`/strategies/bots`; see [15 §1](../../15-bots-hitl-and-worm-audit.md#1-trading-bots))
+
+- **List:** bot, strategy version, market scope (instrument / list / dynamic selection), venue & sleeve, **mode chip (paper · HITL · autonomous)**, status, pending approvals, today P&L.
+- **Create wizard:** strategy version → market scope → venue & sleeve → mode → approval policy (TTL, large-order threshold, escalation rules) → review (risk preview).
+- **Actions:** `bot.create` (C1), `bot.set_mode` → HITL/paper (C1), → **autonomous (C3, disabled while gates fail)**, `bot.pause`/`resume`/`stop` (C1), `bot.approval_policy.set` (tighten C1, loosen C3).
+- **Detail:** mode history (WORM), approvals (shown card, decision, latency, outcome), auto-downgrade events.
+
 ## Acceptance criteria
 
 1. **Template coverage:** every template creates a valid manifest, which a backtest then runs.

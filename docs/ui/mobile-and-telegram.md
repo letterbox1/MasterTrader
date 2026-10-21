@@ -35,6 +35,7 @@ The bot covers the C3 channel and phone-friendly control, using the **same comma
 | Approvals | Order approvals with inline **Approve / Reject**, risk preview text, TTL |
 | **C3 confirmations** | "Approve risk change: raise BTC max position 0.5 → 0.8?" → Approve → bot asks for a **TOTP code** → server verifies → cool-down timer message → "Applied" |
 | Commands | `/status`, `/pnl`, `/positions`, `/kill` (confirm button), `/pause <strategy>`, `/resume <strategy>`, `/tasks`, `/brief` |
+| **Bots** ([15 §1](../15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `/bots`, `/bot <id>`, `/bot <id> pause\|resume\|stop`, `/bot <id> mode paper\|hitl` (immediate), `/bot <id> mode auto` (C3: approve + TOTP + cool-down), `/approvals`. **HITL approval card:** bot, instrument, side, size, stop/target, risk preview, signal reasons, chart link, TTL; **Approve · Approve ½ · Reject · Pause bot**; expiry = reject; large orders need a TOTP reply. Protective exits never wait for approval. |
 | Tasks | Inline **Done · Skip · Snooze 1d · Snooze 1w · Never** |
 | Security | Bound to your Telegram user id only; the bot token lives in secrets. `/kill` works even if the web UI is down (bot → NATS `kill.set`). |
 

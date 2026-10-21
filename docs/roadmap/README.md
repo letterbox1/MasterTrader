@@ -1,6 +1,6 @@
 # MasterTrader Roadmap
 
-This folder breaks the [plan of action](../04-plan-of-action.md) into **one scoped document per phase**. Each one has requirements (with IDs), ToDo sets split by **who or what does the work**, deliverables, exit criteria and risks. Every requirement and task links back to the spec, architecture, UI and research docs it comes from.
+This folder breaks the [plan of action](../04-plan-of-action.md) into **one scoped document per phase**. Execution is tracked per phase on kanbans in [`tracking/`](../../tracking/README.md). Each one has requirements (with IDs), ToDo sets split by **who or what does the work**, deliverables, exit criteria and risks. Every requirement and task links back to the spec, architecture, UI and research docs it comes from.
 
 | Phase | Document | Weeks | If started Mon 2026-10-26 (evenings/weekends) |
 |---|---|---|---|
@@ -15,6 +15,22 @@ This folder breaks the [plan of action](../04-plan-of-action.md) into **one scop
 | 8 | [MCP control plane (last, optional)](phase-8-mcp.md) | 1–2 weeks | Only once the platform is in daily use |
 
 Calendar dates are indicative; halve the durations if you work full-time.
+
+**Live status** (auto-updated from the phase kanbans by `./kanban build`; open [`kanban.html`](../../kanban.html) or [`KANBAN.md`](../../KANBAN.md) for the boards):
+
+<!-- kanban:phase-status:start -->
+| Phase | Status | Progress | Tasks done/total | Board |
+|---|---|---|---|---|
+| P0 Phase 0 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-0/BOARD.md) |
+| P1 Phase 1 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-1/BOARD.md) |
+| P2 Phase 2 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-2/BOARD.md) |
+| P3 Phase 3 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-3/BOARD.md) |
+| P4 Phase 4 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-4/BOARD.md) |
+| P5 Phase 5 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-5/BOARD.md) |
+| P6 Phase 6 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-6/BOARD.md) |
+| P7 Phase 7 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-7/BOARD.md) |
+| P8 Phase 8 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-8/BOARD.md) |
+<!-- kanban:phase-status:end -->
 
 ---
 
@@ -38,18 +54,20 @@ Calendar dates are indicative; halve the durations if you work full-time.
 
 ## 2. Work mix per phase
 
+<!-- kanban:roadmap-counts:start -->
 | Phase | Requirements | `USER` | `BUILD` | `OPS` | `VERIFY` | `RUN` | ToDos |
 |---|---|---|---|---|---|---|---|
 | [P0 Foundations & Security Baseline](phase-0-foundations.md) | 17 | 12 | 8 | 7 | 6 | 1 | 34 |
 | [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 18 | 4 | 13 | 4 | 5 | 1 | 27 |
-| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 39 | 8 | 15 | 3 | 9 | 2 | 37 |
+| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 41 | 9 | 16 | 3 | 10 | 2 | 40 |
 | [P3 Journal & Tax](phase-3-journal-and-tax.md) | 16 | 6 | 11 | 2 | 5 | 1 | 25 |
 | [P4 News, Social, Events & Calendars](phase-4-intel.md) | 15 | 5 | 10 | 3 | 5 | 1 | 24 |
 | [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 22 | 7 | 13 | 3 | 6 | 1 | 30 |
 | [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 21 | 5 | 11 | 2 | 6 | 1 | 25 |
 | [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 13 | 10 | 6 | 2 | 4 | 3 | 25 |
 | [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 7 | 3 | 3 | 1 | 3 | 1 | 11 |
-| **Total** | | **60** | **90** | **27** | **49** | **12** | **238** |
+| **Total** | | **61** | **91** | **27** | **50** | **12** | **241** |
+<!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
 
@@ -125,12 +143,13 @@ flowchart LR
 
 Everything only you can do, in order. The phase documents hold the detail.
 
+<!-- kanban:user-register:start -->
 | ID | Phase | Action | Feeds / blocks |
 |---|---|---|---|
 | T0.01 | P0 | Provision the host: 8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + HDD; decide on a **16–24 GB GPU** now (it shapes P4/P6 speed). | R0.02 · [03 §2](../03-build-spec.md#2-target-environment) |
 | T0.02 | P0 | Order a **UPS** and a **4G failover** router (needed before live, cheap to set up early). | [07 §5](../07-security-notes.md#5-network--host) |
 | T0.03 | P0 | Create the Tailscale account with MFA on the identity provider; buy/assign a YubiKey (or OS keychain) for the age key. | R0.N1, R0.N2 |
-| T0.04 | P0 | Open the off-site backup target (e.g. Backblaze B2 or a second box) and store its credentials in the secrets file. | R0.N4 |
+| T0.04 | P0 | Open the off-site backup target with **Object Lock** (e.g. Backblaze B2 compliance mode) or a second box running restic `rest-server --append-only`; store credentials in the secrets file. | R0.N4, R0.07 |
 | T0.05 | P0 | Keep the GitHub repo **private**; turn on secret scanning. | [SPEC NN8](../../SPEC.md#non-negotiable-requirements) |
 | T0.06 | P0 | **Telegram:** dedicated number (landline voice code or prepaid SIM), `api_id`/`api_hash`, 2-step password, bot via @BotFather. | gates P1 alerts, P4 ingest · [07 §10](../07-security-notes.md#10-social--scraping-accounts) |
 | T0.07 | P0 | **Discord:** private "MasterTrader Feeds" server with `#mt-inbox` + category channels; bot app with Message Content intent; start following announcement channels you already know. | gates P4 · [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) |
@@ -150,6 +169,7 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T2.05 | P2 | Write your first strategy manifests (counterparty sentence, kill criteria, benchmark) for the P1 candidates: trend on majors, funding carry if access permits. | R2.04 · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) |
 | T2.06 | P2 | Take part in the **kill-switch drill** from your phone (Telegram `/kill`, then C3 to turn off). | R2.18 |
 | T2.07 | P2 | Approve a test C3 loosening to prove the TOTP + cool-down path. | R2.19 |
+| T2.09 | P2 | Create your first bots (scope + mode) and do one HITL approval from Telegram end to end. | R2.53, R2.54 |
 | T2.08 | P2 | Start the **paper clock**: switch the validated P1 candidates to paper at the end of this phase. | unlocks P7 |
 | T3.01 | P3 | **Engage a tax agent.** Send the question list (09); the key one is **investor vs trader-in-business, answered before any live trade**. | R3.07 · [09 questions](../09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) |
 | T3.02 | P3 | Ask the agent to confirm the **2027 CGT reform status** and the 30 June 2027 transitional mechanism. | R3.08 |
@@ -187,6 +207,7 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T8.01 | P8 | **Decide whether to build MCP** (decision gate above). | — |
 | T8.02 | P8 | Configure your MCP client (Claude Desktop/Code) with the server and a scoped token. | R8.02 |
 | T8.03 | P8 | Choose MCP policy: which venues/sizes may skip approve mode (default: none). | R8.04 |
+<!-- kanban:user-register:end -->
 
 ## 7. Traceability
 
