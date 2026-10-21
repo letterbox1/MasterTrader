@@ -13,11 +13,12 @@ _(U) = unverified._
 
 | When | What | Action |
 |---|---|---|
-| **By 2026-10-31** | Reddit reportedly stops accepting new public API access requests (U, from secondary reporting of a 2026-09-30 announcement) | If you want Reddit at all, create a Reddit "script" app and request access **now**, then register with the Developer Platform team |
+| **Decision (2026-10-21)** | **Reddit and X are deferred** for v1, unless a free and permitted route appears | Free social coverage comes from **Telegram** (client + Bot API) and **Discord** (own server + followed announcement channels + own bot), plus Bluesky and Mastodon |
+| By 2026-10-31 | Reddit reportedly stops accepting new public API access requests (U, from secondary reporting of a 2026-09-30 announcement) | Deferred, so no action. If you change your mind, apply before this date. |
 | 2026-11-13 | Reddit RSS reportedly ends (U) | Don't build on Reddit RSS (that includes RSS-Bridge's Reddit bridge and listeningkit's Reddit source) |
 | 2027-01 → 2027-03 | Unregistered apps lose access, then the public Data API closes (U) | Treat Reddit as a **sunsetting** source; never core |
 | Now | Telethon's GitHub repo is archived; development moved to Codeberg | Pin the version and keep RSS-Bridge's Telegram bridge as a fallback |
-| Now | Nitter archived after X cease-and-desist letters; snscrape dead | No free legal X route; use the paid official API or accept twscrape's risk |
+| Now | Nitter archived after X cease-and-desist letters; snscrape dead | No free legal X route, so X is deferred |
 
 ---
 
@@ -44,16 +45,16 @@ _(U) = unverified._
 | **Core: news** | Sites without feeds (AP, Reuters, Economist WIB, Substack, Bundesbank, Binance blog, any page) | **RSS-Bridge** (whitelisted; CssSelector/XPath for custom pages) | Low | 15-min to 3-h cache, so context only, not latency signals |
 | **Core: news** | Global news volume and tone | **GDELT** | None | — |
 | **Core: filings** | SEC EDGAR | edgartools / official JSON and Atom (declared User-Agent, ≤10 req/s) | None | Prefer this over RSS-Bridge's StockFilings bridge |
-| **Core: social** | Telegram public channels | **Telethon** (pinned, secondary number), with the RSS-Bridge Telegram bridge as fallback | Low–moderate | Real-time |
+| **Core: social** | Telegram channels and groups | **Telethon** client API (pinned, secondary number) + **Bot API** for channels where your bot is admin; RSS-Bridge Telegram bridge as fallback | Low–moderate | Real-time, free |
+| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own **discord.py** bot (Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** |
 | **Core: social** | Bluesky | **Jetstream firehose + atproto SDK**, filtered on cashtags and keywords | None | Free and explicitly permitted |
 | Core: social | Mastodon / fediverse | Mastodon.py or the RSS-Bridge Mastodon bridge | Low | Low volume |
-| Conditional | Reddit | PRAW, official OAuth | Low | **Access must be requested before 2026-10-31**; sunsetting 2027 |
+| **Deferred** | Reddit | (PRAW, official OAuth) | — | Closing to new apps 2026-10-31, sunset 2027 (U) |
 | Conditional | StockTwits | v2 REST `streams/symbol/{SYM}` (U) | Low–moderate | Most finance-relevant social source if still reachable; test first |
 | Conditional | YouTube | Channel RSS + Data API v3; yt-dlp for subtitles and transcripts | Low | Finance channels, earnings calls |
-| Conditional | X / Twitter | Official API v2 pay-per-use (~$0.005 per post read (U)) with a hard monthly cap | None | Curated list of ~50–200 accounts |
-| Personal-only, **off by default** | X / Twitter | twscrape with burner accounts behind a feature flag | **High** (bans, legal) | Never in a SaaS build |
+| **Deferred** | X / Twitter | (Official API v2 is pay-per-use, ~$0.005 per post read (U)) | — | Revisit if budget allows; scraping (twscrape) not in v1 |
 | Optional | Extra routes (Asian finance/crypto) | **RSSHub** (AGPL, fine for personal use) | Varies | Only for routes RSS-Bridge lacks |
-| **Excluded** | Instagram, TikTok, LinkedIn, Facebook, Threads scrapers, Discord self-bots, Nitter, snscrape, threads-scraper, log, Spacebar | — | — | — |
+| **Excluded** | Instagram, TikTok, LinkedIn, Facebook, Threads scrapers, Discord self-bots / user-token scraping, Nitter, snscrape, twscrape, threads-scraper, log, Spacebar | — | — | — |
 
 **Processing chain (unchanged, plus one step):**
 1. Fetch.

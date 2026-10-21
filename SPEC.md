@@ -16,6 +16,7 @@ Full detail is in [docs/03-build-spec.md](docs/03-build-spec.md) (build spec) an
 | Memory / RAG | **Hindsight** (MIT) + LightRAG on Postgres/pgvector |
 | Storage | Postgres + TimescaleDB + pgvector; Parquet/DuckDB for research |
 | Orchestration | Prefect flows; NATS JetStream / Valkey event bus |
+| Social feeds (v1) | Free only: Telegram (Telethon + Bot API), Discord (own server, followed announcement channels, own bot), Bluesky, Mastodon, RSS/RSS-Bridge. **Reddit and X are deferred** unless free. |
 | Global events | Direct GDELT/USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP ingestion (osiris used as reference only) |
 | Crowd simulation | Optional MiroFish experiment run locally (AGPL is fine for personal use), with a later rebuild on OASIS if needed |
 | Rejected | VibeTradingLabs/vibetrading (redundant, unsafe); nofx as a platform (hidden fees, default-on telemetry, exposed install). Its ideas are borrowed. |

@@ -22,7 +22,7 @@ On top of that it adds free data pipelines, social/news and global-event scraper
 | [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec (personal-use edition):** stack, repo layout, data model, module specs, interfaces, guardrails |
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phased plan of action with checklists and a demo per phase |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
-| [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets; **time-sensitive Reddit deadline** |
+| [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets. **Reddit and X are deferred; Telegram and Discord are the free social feeds** |
 | [docs/research/](docs/research/) | Raw per-repo research notes with file-level evidence |
 
 ## Licensing stance

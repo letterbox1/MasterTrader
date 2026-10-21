@@ -3,7 +3,9 @@
 Personal-use build, one developer plus AI pair-programming. Time estimates assume evenings and weekends; halve them if full-time. Each phase ends with a **demo you can actually use**, so the project is useful early and doesn't stall.
 
 ## ⚠️ Do this week regardless of phase
-- [ ] **Reddit:** create a Reddit "script" app and request API access **before 2026-10-31**, if Reddit data is wanted (see [06 §0](06-aggregators-and-market-providers.md#0-️-time-sensitive-actions)).
+- [ ] **Telegram:** register an `api_id`/`api_hash` at my.telegram.org with a secondary number; create a bot via @BotFather; list the channels to follow.
+- [ ] **Discord:** create a private "MasterTrader Feeds" server; register a bot app (enable the Message Content intent); start following the announcement channels of the exchanges, projects and news communities you care about.
+- _Reddit and X are **deferred** (not free / closing to new apps). No action needed._
 - [ ] Open free demo/practice accounts: OANDA practice, IG demo, Alpaca paper, IBKR paper, a Binance/Bybit testnet. Get free keys for FRED, EIA and Myfxbook.
 
 ## Phase 0 — Foundations (week 1–2)
@@ -41,7 +43,9 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 
 ## Phase 3 — Text, events & memory (week 10–13)
 - [ ] RSS + trafilatura/crawl4ai; **RSS-Bridge sidecar** (whitelist, auth, internal network); GDELT GKG
-- [ ] Telethon (pinned) + Bluesky Jetstream + Mastodon; Reddit/StockTwits/YouTube conditional
+- [ ] Telegram: Telethon listener (pinned) + Bot API + RSS-Bridge fallback
+- [ ] Discord: discord.py bot reading followed announcement channels in your own server
+- [ ] Bluesky Jetstream + Mastodon; StockTwits/YouTube conditional (Reddit/X deferred)
 - [ ] Local-LLM relevance gate before FinBERT
 - [ ] Ticker/entity linking, FinBERT sentiment, local embeddings → `document`
 - [ ] Event feeds (USGS, GDACS, NOAA/NHC, FIRMS, ReliefWeb, UCDP, OpenSanctions) + exposure map + event scores

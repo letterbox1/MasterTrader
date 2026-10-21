@@ -19,7 +19,7 @@ Goal: one unified, self-hostable AI quant platform built from free and open-sour
 | # | Module | Built from | v1 deliverable |
 |---|---|---|---|
 | M1 | **Ingestion** | Prefect + ccxt, OpenBB (Apache), FRED/ALFRED, edgartools, Treasury/BLS/EIA/CFTC, Dukascopy, CoinGecko/DefiLlama | Scheduled flows → TimescaleDB / Parquet with a point-in-time schema |
-| M2 | **News & social** | RSS + trafilatura / crawl4ai, approved Reddit API, Telethon, GDELT, Polymarket Gamma | Archived text store + FinBERT sentiment + entity/ticker linking |
+| M2 | **News & social** | RSS + trafilatura / crawl4ai, RSS-Bridge, Telegram (Telethon + Bot API), Discord (own bot + followed announcement channels), Bluesky, GDELT, Polymarket Gamma; Reddit/X deferred | Archived text store + FinBERT sentiment + entity/ticker linking |
 | M3 | **Global events** | GDELT 2.0, USGS, GDACS, NOAA/NHC, NASA FIRMS, ReliefWeb, UCDP (ACLED only if licensed); ideas from osiris | Geo-tagged event table + an exposure map (event → country → assets: FX, commodities, indices) |
 | M4 | **Crypto alt-data** | CoinGecko new listings, DefiLlama, DEX/on-chain feeds | In-house **airdrop / ICO / token-launch tracker** (no maintained OSS exists) |
 | M5 | **Calendars** | FRED release calendar, agency schedules, EDGAR S-1/424B (IPOs) | In-house economic + IPO calendar |

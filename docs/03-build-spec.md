@@ -126,17 +126,26 @@ _Full source-by-source decisions are in [06-aggregators-and-market-providers.md 
   - **RSS-Bridge** as an internal-only sidecar for sites without feeds: explicit bridge whitelist, auth on, no published port.
   - **GDELT** 2.0 GKG for global news volume and tone.
   - EDGAR's official JSON/Atom feeds.
-- **Social (core):**
-  - **Telethon** for curated public Telegram channels: pinned version, secondary number. RSS-Bridge's Telegram bridge is the fallback.
+- **Social (core, free):**
+  - **Telegram:**
+    1. **Telethon** (the MTProto client API, free with your own `api_id`) reads curated public channels and groups you've joined in real time. Pin the version and use a secondary number.
+    2. The **Telegram Bot API** reads channels and groups where you've added your own bot as admin.
+    3. RSS-Bridge's no-login Telegram bridge is the fallback.
+  - **Discord, via official routes only:**
+    1. Create a private Discord server you own.
+    2. Use Discord's **"Follow" feature on announcement channels** of public servers (exchanges, projects, signal and news communities) so their posts are cross-posted into your channels.
+    3. Your own **discord.py bot** reads those channels, plus any servers whose admins invite it.
+    - No self-bots or user-token scraping: those break Discord's terms and get accounts banned.
+    - Discord message content needs the "Message Content" privileged intent, which is free for bots in fewer than 100 servers.
   - **Bluesky Jetstream** firehose filtered on cashtags and keywords (free, permitted).
   - Mastodon hashtag timelines.
-- **Social (conditional):**
-  - **Reddit** via PRAW: request access **before 2026-10-31**; sunsetting 2027 (U).
-  - StockTwits v2 REST (test first).
-  - YouTube channel RSS + Data API v3.
-  - X via the official pay-per-use API with a budget cap.
-  - twscrape only behind an off-by-default flag (personal use, burner accounts).
-- **Excluded:** Instagram, TikTok, LinkedIn and Facebook scrapers, Discord self-bots, Nitter, snscrape, threads-scraper, log, Spacebar.
+- **Social (conditional, free):** StockTwits v2 REST (test first); YouTube channel RSS + Data API v3 (free quota).
+- **Deferred: Reddit and X/Twitter.** Revisit only if a free, permitted route exists.
+  - Reddit's public API is closing to new apps (deadline 2026-10-31, sunset 2027, (U)).
+  - X's API is paid per use.
+  - Scraping either (twscrape, cookie scrapers) is not in v1.
+  - The `document.source` schema already supports adding them later.
+- **Excluded:** Instagram, TikTok, LinkedIn and Facebook scrapers, Discord self-bots / user-token scraping, Nitter, snscrape, twscrape, threads-scraper, log, Spacebar.
 - **Processing:**
   1. Dedupe (canonical URL + content hash).
   2. **Local-LLM relevance gate** (an idea borrowed from OpenMagpie).
