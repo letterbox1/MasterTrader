@@ -1,7 +1,7 @@
 ---
 id: P2-T052
 kind: task
-title: No-bypass tests: every order source passes M11
+title: "No-bypass tests: every order source passes M11"
 phase: 2
 type: VERIFY
 status: backlog

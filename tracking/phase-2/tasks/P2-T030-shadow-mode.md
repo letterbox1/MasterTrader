@@ -1,7 +1,7 @@
 ---
 id: P2-T030
 kind: task
-title: Shadow mode: parallel paper run of a live or paper strategy
+title: "Shadow mode: parallel paper run of a live or paper strategy"
 phase: 2
 type: BUILD
 status: backlog

@@ -1,7 +1,7 @@
 ---
 id: P2-T033
 kind: task
-title: Modes and approval routing: paper, hitl, autonomous
+title: "Modes and approval routing: paper, hitl, autonomous"
 phase: 2
 type: BUILD
 status: backlog

@@ -1,7 +1,7 @@
 ---
 id: P2-T061
 kind: task
-title: Bot scenarios: HITL approvals, protective exits, autonomous C3 and isolation
+title: "Bot scenarios: HITL approvals, protective exits, autonomous C3 and isolation"
 phase: 2
 type: VERIFY
 status: backlog

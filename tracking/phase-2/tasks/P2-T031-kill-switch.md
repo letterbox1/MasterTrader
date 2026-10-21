@@ -1,7 +1,7 @@
 ---
 id: P2-T031
 kind: task
-title: Kill switch: KV state, manual and automatic triggers, cancel/flatten actions
+title: "Kill switch: KV state, manual and automatic triggers, cancel/flatten actions"
 phase: 2
 type: BUILD
 status: backlog

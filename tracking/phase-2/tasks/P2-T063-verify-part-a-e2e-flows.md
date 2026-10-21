@@ -1,7 +1,7 @@
 ---
 id: P2-T063
 kind: task
-title: Part A end-to-end flows on paper: F2 with HITL, F5 and F6
+title: "Part A end-to-end flows on paper: F2 with HITL, F5 and F6"
 phase: 2
 type: VERIFY
 status: backlog

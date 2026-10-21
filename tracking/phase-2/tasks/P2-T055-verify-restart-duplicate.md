@@ -1,7 +1,7 @@
 ---
 id: P2-T055
 kind: task
-title: Restart-duplicate test: crash mid-order, no duplicates, reconcile
+title: "Restart-duplicate test: crash mid-order, no duplicates, reconcile"
 phase: 2
 type: VERIFY
 status: backlog

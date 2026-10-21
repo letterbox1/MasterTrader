@@ -1,7 +1,7 @@
 ---
 id: P2-T058
 kind: task
-title: Latency benchmarks: pre-trade risk check and kill-to-cancels
+title: "Latency benchmarks: pre-trade risk check and kill-to-cancels"
 phase: 2
 type: VERIFY
 status: backlog

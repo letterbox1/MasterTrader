@@ -1,7 +1,7 @@
 ---
 id: P2-T028
 kind: task
-title: Execution methods: maker-first, TWAP slicing and fixed exit plan
+title: "Execution methods: maker-first, TWAP slicing and fixed exit plan"
 phase: 2
 type: BUILD
 status: backlog

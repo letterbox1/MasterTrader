@@ -1,7 +1,7 @@
 ---
 id: P2-T015
 kind: task
-title: Portfolio-level risk: correlation clusters, concentration, VaR/ES
+title: "Portfolio-level risk: correlation clusters, concentration, VaR/ES"
 phase: 2
 type: BUILD
 status: backlog

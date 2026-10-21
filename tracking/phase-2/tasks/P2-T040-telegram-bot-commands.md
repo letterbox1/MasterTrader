@@ -1,7 +1,7 @@
 ---
 id: P2-T040
 kind: task
-title: Telegram bot commands: /bots, /bot, /approvals and mode changes
+title: "Telegram bot commands: /bots, /bot, /approvals and mode changes"
 phase: 2
 type: BUILD
 status: backlog

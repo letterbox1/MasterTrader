@@ -1,7 +1,7 @@
 ---
 id: P2-T009
 kind: task
-title: Strategy templates batch 2: evidence-catalogue and special types
+title: "Strategy templates batch 2: evidence-catalogue and special types"
 phase: 2
 type: BUILD
 status: backlog

@@ -1,7 +1,7 @@
 ---
 id: P2-T019
 kind: task
-title: Change-control service: tighten/loosen classifier and C3 flow
+title: "Change-control service: tighten/loosen classifier and C3 flow"
 phase: 2
 type: BUILD
 status: backlog

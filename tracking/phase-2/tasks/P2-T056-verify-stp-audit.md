@@ -1,7 +1,7 @@
 ---
 id: P2-T056
 kind: task
-title: STP audit: explicit STP on every order per venue
+title: "STP audit: explicit STP on every order per venue"
 phase: 2
 type: VERIFY
 status: backlog

@@ -1,7 +1,7 @@
 ---
 id: P2-T042
 kind: task
-title: D06 Risk overview: kill, dead-man, gauges, sleeves, ladder, venue registry
+title: "D06 Risk overview: kill, dead-man, gauges, sleeves, ladder, venue registry"
 phase: 2
 type: BUILD
 status: backlog

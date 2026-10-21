@@ -1,7 +1,7 @@
 ---
 id: P2-T068
 kind: task
-title: Runbooks: keys leaked, server down with open positions, kill-switch drill, bad data
+title: "Runbooks: keys leaked, server down with open positions, kill-switch drill, bad data"
 phase: 2
 type: DOC
 status: backlog

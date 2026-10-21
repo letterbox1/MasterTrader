@@ -1,7 +1,7 @@
 ---
 id: P2-T008
 kind: task
-title: Strategy templates batch 1: core trading styles
+title: "Strategy templates batch 1: core trading styles"
 phase: 2
 type: BUILD
 status: backlog
