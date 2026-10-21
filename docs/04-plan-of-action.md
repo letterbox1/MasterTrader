@@ -10,6 +10,8 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 
 Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md).
 
+**Detailed scoping per phase** (requirements with IDs, ToDos split into `USER` / `BUILD` / `OPS` / `VERIFY` / `RUN`, exit criteria, traceability to every doc) lives in the **[roadmap](roadmap/README.md)**. This page is the summary.
+
 ## ⚠️ Do this week regardless of phase
 - [ ] **Telegram:**
   - register `api_id`/`api_hash` at my.telegram.org with a **dedicated number** (try the landline via voice-call code, otherwise a prepaid SIM);

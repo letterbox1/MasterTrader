@@ -8,7 +8,7 @@
 
 **Detailed docs:**
 - [docs/03-build-spec.md](docs/03-build-spec.md): full module spec M0–M23.
-- [docs/04-plan-of-action.md](docs/04-plan-of-action.md): phased plan.
+- [docs/04-plan-of-action.md](docs/04-plan-of-action.md): phased plan; detailed per-phase scope, ToDos and traceability in [docs/roadmap/](docs/roadmap/README.md).
 - [docs/07-security-notes.md](docs/07-security-notes.md)
 - [docs/08-airdrops-and-token-launches.md](docs/08-airdrops-and-token-launches.md)
 - [docs/09-journal-and-tax.md](docs/09-journal-and-tax.md)
