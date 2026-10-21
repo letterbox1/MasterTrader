@@ -699,8 +699,12 @@ def roadmap_blocks(phases):
 
 # ---------------------------------------------------------------- build
 
-def build(quiet=True):
+def build(quiet=True, force=False):
     phases, items, errs = load()
+    if (STATE / "paused").exists() and not force:  # bulk edits in progress: no triage/rewrites until `pause --off`
+        if not quiet:
+            print("kanban paused: skipped triage/build (run `./kanban pause --off && ./kanban build`)")
+        return phases, items, errs
     triage(phases, items, quiet=quiet)
     written = []
     for n, ph in phases.items():
@@ -946,7 +950,7 @@ def cmd_validate(a):
 
 
 def cmd_build(a):
-    _, _, errs = build(quiet=False)
+    _, _, errs = build(quiet=False, force=True)
     for e in errs:
         print("ERROR: " + e)
     if a.check:

@@ -187,6 +187,13 @@ class KanbanCase(unittest.TestCase):
         self.k("hook", "session-start", stdin="{}")
         self.assertEqual(get(), "tools/kanban/githooks")
 
+    def test_pause_stops_cli_triage_but_build_forces(self):
+        self.k("pause")
+        p = self.new(0, "Pausable")
+        self.assertEqual(self.meta(p)["status"], "backlog", "no triage while paused")
+        self.k("build")
+        self.assertEqual(self.meta(p)["status"], "ready", "explicit build still triages")
+
     def test_pause_silences_hooks(self):
         self.new(0, "X")
         self.k("pause")

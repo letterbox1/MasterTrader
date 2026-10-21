@@ -5,6 +5,8 @@ This is the blueprint that backend and frontend work build against.
 - Order of work: [04-plan-of-action.md](04-plan-of-action.md).
 - UI scope: [ui/README.md](ui/README.md).
 - Visual system: [../DESIGN.md](../DESIGN.md).
+- Configurable defaults and failure safety: [16-configuration-and-safety-model.md](16-configuration-and-safety-model.md). Numbers quoted here are defaults; 16 is the reference.
+- Decisions on planning gaps: [17-decisions-register.md](17-decisions-register.md).
 
 **Contents:**
 1. Principles
@@ -55,7 +57,9 @@ This is the blueprint that backend and frontend work build against.
 ```
 
 - **Trust boundary:** everything inbound from data sources, social feeds, LLM outputs and chain data is **untrusted input**.
-- **Outbound traffic** to venues and wallets goes only through the execution service (M12) and the signer, each behind M11 / mandates.
+- **Outbound traffic** to venues and wallets goes only through the execution service (M12) and the signer, each behind M11 / mandates. The one exception is the `deadman` sidecar, which can only cancel and flatten ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)).
+- **Exchange egress:** from Phase 7, all exchange traffic leaves through one fixed-IP WireGuard/Tailscale exit node in Sydney, the only IP allow-listed on the keys; broadband and 4G both tunnel to it ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
+- **Telegram text** is never model input: it becomes structured postures only (F3b, [12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 
 ## 3. Deployment topology
 

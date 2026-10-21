@@ -205,6 +205,7 @@ tailwind.config = {
       lg: '1024px', xl: '1280px', '2xl': '1440px', '3xl': '1920px', '4xl': '2560px',
       'landscape-short': { raw: '(orientation: landscape) and (max-height: 500px)' },
       'tablet-portrait': { raw: '(orientation: portrait) and (min-width: 768px)' },
+      'tablet-landscape': { raw: '(orientation: landscape) and (min-width: 1024px) and (max-height: 820px)' },
       'very-short': { raw: '(max-height: 400px)' },
       touch: { raw: '(hover: none) and (pointer: coarse)' },
     },
@@ -379,7 +380,7 @@ Mock data must reflect the actual product spec, so designs don't promise things 
 - **Data sources:** free sources only. Don't show paid feeds (e.g. Trading Economics, CME FedWatch API, CoinGlass, colocation, VIP-tier venue accounts) as live sources.
 - **Latency:** show measured values with units (µs for Decision One tier A, ms for tier B and feeds). Avoid "0.00ms" claims.
 - **Models:** label them as in the spec: Claude via the gateway for research/debate; local decision models (SemIf / own Qwen-LoRA head) for tier B; compiled trees for tier A.
-- **MCP:** MCP actions default to **approve mode**. Loosening risk shows Telegram + TOTP confirmation. Withdrawals, keys and mandates are never MCP tools.
+- **MCP:** every MCP-originated order creates an **approval card** you approve on Telegram/web (TTL default 5 min, [16 §2.3](docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)); MCP can never approve anything itself. Loosening risk shows Telegram + TOTP confirmation (C3). Withdrawals, keys, mandates, approvals and MCP self-admin are never MCP tools ([16 §2.12](docs/16-configuration-and-safety-model.md#212-mcp-phase-8)).
 - **Airdrops:** no "sybil task pipelines" or automated social tasks. Social and quest tasks appear in the **manual user-task queue**. Auto-claims show the simulation result and mandate.
 - **Tax:**
   - Australian FY labels (FY2025-26) and the 12-month discount rule.
