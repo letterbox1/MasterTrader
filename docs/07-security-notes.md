@@ -21,7 +21,7 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 - **Storage:**
   - v1: `sops` + `age`-encrypted secrets file, decrypted at container start into tmpfs.
   - The age key lives in the OS keychain or on a hardware key (YubiKey), not on the same disk as the backups.
-  - Upgrade path: self-hosted **Infisical** or **OpenBao** (Vault fork).
+  - Upgrade path: self-hosted **OpenBao** (Vault fork, MPL; preferred) or Infisical. Move there once the signer service (13 §2) holds more than one hot key.
 - **Per-service least privilege:** each container gets only the secrets it needs. The LLM agents never see broker keys.
 - **Rotation:** rotate exchange/broker keys every 90 days and immediately after any suspected leak. The secrets file records each key's creation date, and Grafana alerts when a key is older than 90 days.
 
@@ -34,6 +34,8 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 
 ## 4. Crypto wallets (airdrops, on-chain claims)
 
+> **Superseded in detail by [13 §1–2](13-wallets-treasury-and-onchain.md#1-custody-tiers):** six custody tiers (vault / Hyperliquid master / warm / hot / airdrop identity / burner) and an **intents-only signer service**. The rules below still apply to every hot or burner key.
+
 - **Wallet tiers:**
   1. **Cold vault:** hardware wallet, never connected to the system.
   2. **Warm:** manual use only.
@@ -41,7 +43,7 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 - The hot-wallet key is in the secrets store, signing happens in a dedicated signer container, and there is a **per-transaction and per-day value cap**.
 - **Before any autonomous signature:**
   - the target contract is on an allow-list;
-  - simulation (eth_call / Solana `simulateTransaction`) shows no unexpected transfers or approvals;
+  - simulation (local **Anvil** mainnet fork / `eth_call` / Solana `simulateTransaction`) shows no unexpected transfers or approvals;
   - the domain or contract is checked against phishing/drainer blocklists.
   - If any check fails, the transaction goes to the human approval queue.
 - **Never automate:**
@@ -51,6 +53,9 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
   - bridging;
   - anything requiring a seed phrase.
 - Revoke stale approvals weekly (revoke.cash-style checks) and alert on any new approval.
+- **Durable nonces (Solana) are a hard block:** never sign a nonce-advance transaction the system didn't build and decode itself; close unused nonce accounts; alert on nonce-authority changes (pre-signed durable-nonce transactions never expire; see 13 §2).
+- **Approvals are sized to the trade**, never unlimited, and revoked after use where the venue allows.
+- **Seed backup:** vault seeds split with **Shamir (SLIP-39)** or held in a multisig; shares stored in separate physical locations. A sealed **estate letter** says where the shares are and how to unwind positions, without containing secrets.
 
 ## 5. Network & host
 
@@ -58,6 +63,8 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 - All containers bind to `127.0.0.1` or the internal Docker network. **No published ports** except via Tailscale. Remote access is Tailscale with MFA on the identity provider.
 - Scrapers and RSS-Bridge sit in a separate Docker network with outbound internet but **no route to the DB or the signer**. Prefer egress through a separate network namespace.
 - Pin every image by digest (no `:latest`); scan with `trivy`/`grype` in CI.
+- **Continuity:** a UPS on the host and router, and a **4G failover** link. The policy on a lost link or power is **fail flat**: the dead-man's switch cancels orders and, for configured strategies, flattens. Resting broker-side stops cover the gap.
+- Local inference servers (Laya, llama-server, vLLM) bind to `127.0.0.1` and require an API key (`LAYA_API_KEY` etc.), even inside the internal network.
 
 ## 6. Application controls
 
@@ -96,6 +103,8 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 - **LiteLLM:** releases 1.82.7/1.82.8 were malicious (PyPI compromise, March 2026). Use ≥ 1.83, pinned by hash or image digest; give it only the API keys it needs; keep it on the internal network.
 - **Python:** `uv lock` with hashes; Dependabot/Renovate on the private repo; `pip-audit` in CI.
 - No `curl | sh` installers; build from source or pinned images.
+- **Rust components** (Nautilus extensions, signer): `cargo vet` + `cargo deny` (licences, advisories, duplicate crates).
+- **Malicious-repo awareness:** check new trading-bot / wallet repos against the SlowMist and similar malicious-repo lists before cloning; fake "arbitrage bot" repos with drainer payloads are common. Never run cloned bot code outside the sandbox.
 
 ## 8. Data protection, backups & audit
 
@@ -111,7 +120,7 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 
 ## 9. Monitoring & incident response
 
-- **Alerts (Telegram + email):**
+- **Alerts (Telegram + email + self-hosted ntfy push as the second, independent channel; Twilio SMS is an optional paid upgrade):**
   - kill-switch trigger;
   - risk breach;
   - feed stale / data-quality failure;

@@ -90,3 +90,9 @@ Props are TypeScript-style. `?` means optional.
 | `LotTable` | Lots and matches (method, holding days, discount eligibility) |
 | `TaxSummaryCard` | FY figures with rule version + FX source |
 | `AuditRow` | Command/audit entry with hash-chain status |
+| `CustodyTierBadge` | Wallet tier (vault / HL master / warm / hot / identity / burner) with watch-only lock |
+| `CostGateResult` | On-chain cost gate: expected edge vs gas + slippage + MEV + fees, pass/block |
+| `LadderIndicator` | Fallback-ladder rung with trigger reason |
+| `VenueStatusChip` | Registry status, AUSTRAC check age, max leverage |
+| `PostureCard` | Telegram-derived postures (counts only, no text) |
+| `ProvenanceFlags` | `train_ok` / `model_input_ok` / retention badges on sources and rows |

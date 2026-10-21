@@ -17,9 +17,9 @@ DISCOVER → NORMALISE/DEDUP → ENRICH → RISK-SCORE → VIABILITY-SCORE → D
 
 | Stage | Free sources / tools |
 |---|---|
-| Discover | DefiLlama `/protocols` (tokenless protocols with rising TVL); CryptoRank Sandbox (ICO/IDO calendars, launchpads, funding rounds); CoinGecko Demo (new listings, categories); DexScreener (new pairs, profiles); Galxe GraphQL (read-only); Snapshot GraphQL and governance-forum JSON; the **Discord inbox** (followed announcement channels); Telegram channels; news/RSS; manual `/add <url>` via Telegram |
-| Normalise | Key = (chain, contract), else the project slug. **Official domain** resolved from CoinGecko/DefiLlama, cross-checked with WHOIS age and blocklists |
-| Enrich | Etherscan V2 (verified source, proxy/implementation, creator); Helius (Solana RPC, `getAsset`, mint/freeze authority, holders); DexScreener/GeckoTerminal (liquidity, pair age, volume); CryptoRank (funding) |
+| Discover | DefiLlama `/protocols` (tokenless protocols with rising TVL); CryptoRank Sandbox (ICO/IDO calendars, launchpads, funding rounds); CoinGecko Demo (new listings, categories); DexScreener (new pairs, profiles); Galxe GraphQL (read-only); Snapshot GraphQL and governance-forum JSON; the **Discord inbox** (followed announcement channels); Telegram channels (**postures only**: addresses, mention counts, channel spread; text never reaches a model, see [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)); news/RSS; manual `/add <url>` via Telegram |
+| Normalise | Key = (chain, contract), else the project slug. **Official domain** resolved from CoinGecko/DefiLlama, cross-checked with WHOIS age and blocklists. **Corroboration score:** how many independent listing sites/sources (DefiLlama, CryptoRank, CoinGecko, official X/Discord/docs) agree on the domain, contract and dates; < 2 independent sources → watch only |
+| Enrich | **Blockscout** / own RPC (verified source, proxy/implementation, creator; Etherscan for manual lookups only, its terms bar decision use); Helius (Solana RPC, `getAsset`, mint/freeze authority, holders); DexScreener/GeckoTerminal (liquidity, pair age, volume); CryptoRank (funding) |
 | Risk-score | **GoPlus** (EVM, primary) · **Honeypot.is** (EVM sell simulation) · **RugCheck.xyz** (Solana, primary) · re-implemented **solana-rugchecker** heuristics · **CRPWarner** concepts (hidden mint / sell limits / leaking token), plus an optional sandboxed Gigahorse deep-scan worker · optional Slither on verified source · blocklists (MetaMask eth-phishing-detect, ScamSniffer, polkadot-js, Chainabuse) |
 | Calibrate | Private evaluation against the **SoK rug-pull dataset** (2,391 labelled ETH/BSC contracts) + CRPWarner ground truth + our own outcomes. The model is advisory; the rule-based baseline is authoritative |
 | Act / queue | Policy engine → signer container (hot wallet), or the user-task queue |
@@ -95,7 +95,7 @@ The executor only acts inside an active, user-signed, expiring **mandate**: one 
    - the claim contract is verified and cross-referenced from at least 2 official sources;
    - the function is on the mandate allow-list (e.g. Merkle `claim(...)`);
    - no approvals, no Permit/Permit2/EIP-712 signatures, `msg.value = 0`;
-   - simulation (Tenderly free tier / `eth_call` / Solana `simulateTransaction`) shows only "+tokens to me, −gas";
+   - simulation (local **Anvil** mainnet fork / `eth_call` / Solana `simulateTransaction`) shows only "+tokens to me, −gas";
    - gas and daily caps are respected;
    - no hard-fail flags.
 3. **Defensive actions:** revoke flagged approvals on the hot wallet; sweep claimed tokens to an **allow-listed** cold address.
@@ -165,6 +165,36 @@ The executor only acts inside an active, user-signed, expiring **mandate**: one 
 - **When you tap "Done":** the bot confirms that posts from the followed channel are arriving. If nothing arrives within N days, it re-prompts you.
 - **Same queue for other platforms:** Telegram channels to join, X accounts to follow (manual), and Galxe spaces all use this queue and digest.
 
+## Additions from the CryptoTrader review (see [11](11-cryptotrader-crossover-review.md), [13](13-wallets-treasury-and-onchain.md))
+
+### Expected value gate (airdrops, ICOs/IDOs, points programmes)
+
+```
+EV = P(launch) × E[allocation] × E[price at unlock] × (1 − haircut)
+     − gas − fees − capital_lockup_cost − (your_minutes × time_value)
+```
+
+- `P(launch)` from funding, team, testnet/points status and corroboration; `haircut` covers vesting, sell pressure and delisting risk.
+- `capital_lockup_cost` = capital × days locked × your hurdle rate (default: the treasury yield in 13 §5).
+- **Only EV > 0 after the risk score reaches the digest as a task**; the EV and its inputs are shown so you can override.
+
+### Wallet discipline
+- **Burner first:** any new or untrusted dApp interaction runs from a fresh **burner** wallet funded with the minimum. Only after the burner run is clean does the task move to the identity wallet.
+- **One identity wallet per chain** for genuine participation (no wallet farms, no sybil patterns).
+- **Genuine-use tasks:** after a clean burner run, the queue may propose real, modest usage of the protocol from the identity wallet, under a signed mandate with caps. Every step is still your click unless it's a plain claim (see *What may run autonomously*).
+- **Disposal rule** (configurable, default: **sell 50% on claim**, hold the rest under the M22 rules) so airdrop income doesn't silently become an unmanaged position. The sale is an order through the risk manager.
+
+### Records
+- **Campaign record:** one row per campaign: wallet used, tasks done ("activity done to earn it", which matters for the tax classification in 09), dates, costs, outcome.
+- **Project dossier:** domain, contracts, team/funding, corroboration, risk reports, Discord/X/docs links, incidents, our notes. Shown on D12.
+- **Blacklist:** projects, deployers, domains and funding wallets confirmed as scams; any later project linked to them is a hard fail.
+
+### Fresh launches & memecoins
+- **Default-reject fresh launches** (< 24 h, unverified, or no locked liquidity). Only the momentum/memecoin template in 14 §3 may touch them, inside its own sleeve and caps.
+- **Wallet-cluster detection** (MemeTrans-style): funding-graph clustering of early buyers; a large share of supply held by wallets with a common funder → hard fail.
+- **What flags a single wallet:** funded minutes before launch from a mixer or a fresh exchange withdrawal; buys in the deploy block; links to blacklisted deployers; sells into every pump.
+- **Datasets for calibration** (private use only): **SolRPDS** (CC BY), the **Pump.fun corpus** (CC BY), **MemeTrans** (CC BY-NC-SA, so models trained on it are flagged `commercial_ok = false`).
+
 ## Data model (Postgres)
 
 - **Opportunity and scoring:**
@@ -180,5 +210,6 @@ The executor only acts inside an active, user-signed, expiring **mandate**: one 
   - `mandate`
   - `exec_log`
 - **Safety and journal:**
-  - `blocklist_domain` / `blocklist_address`
+  - `blocklist_domain` / `blocklist_address` / `blacklist_project`
+  - `campaign_record`, `project_dossier`, `wallet_cluster`
   - `airdrop_income_journal`

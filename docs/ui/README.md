@@ -6,7 +6,7 @@ This is the complete frontend scope, ready for implementation. It defines what e
 |---|---|
 | **This file** | Information architecture, routes, the app shell, global elements, cross-cutting UI rules |
 | [components.md](components.md) | Component library: every shared component with its props, states and responsive rules |
-| [dashboards/](dashboards/) | One spec per dashboard (D01–D17) using a fixed template |
+| [dashboards/](dashboards/) | One spec per dashboard (D01–D18) using a fixed template |
 | [mobile-and-telegram.md](mobile-and-telegram.md) | Phone-specific flows, PWA, Telegram bot and mini-app views |
 
 **Sources of truth:**
@@ -39,12 +39,13 @@ Visual references are in [../../ui-examples/](../../ui-examples/README.md). Wher
 | D15 | [Tax & Reports](dashboards/D15-tax.md) | `/tax` | M18 | 3 | AU EOFY Tax Ledger |
 | D16 | [System](dashboards/D16-system.md) | `/system` (+ `/system/audit`, `/system/settings`) | M17, ops | 0 | — (new) |
 | D17 | [MCP Console](dashboards/D17-mcp-console.md) | `/mcp` | M20 | 8 (optional) | Claude MCP Control |
+| D18 | [Wallets & Treasury](dashboards/D18-wallets-treasury.md) | `/wallets`, `/wallets/:walletId`, `/wallets/treasury`, `/wallets/earn` | M22, M4, M12, M16 | 5 / 6 | — (new) |
 
 **Navigation groups** (sidebar order):
 - **Trade:** Cockpit, Markets, Execution, Risk.
 - **Build:** Strategies, Research Lab, Agents, Models & Memory, Market Making.
 - **Intel:** Intel, Data & Quality.
-- **Crypto:** Airdrops, Tasks.
+- **Crypto:** Airdrops, Wallets & Treasury, Tasks.
 - **Records:** Journal, Tax.
 - **System:** System, MCP.
 

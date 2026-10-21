@@ -96,6 +96,16 @@ See and control the system's risk:
 | Cancel pending change | `risk.policy.update` (cancel) | C1 |
 | Run stress test | `risk.stress.run` | C1 |
 
+## Additions from the CryptoTrader review
+
+| Widget | Shows |
+|---|---|
+| **Sleeves** | Capital per sleeve (core / carry / momentum / experimental), usage, drawdown vs sleeve stop |
+| **Fallback ladder** | Current rung (normal → reduced size → close-only → flat → kill) and what triggered it; manual step down (C1), step up (C3) |
+| **Venue registry** | Venue, products allowed for your residency, max leverage (crypto derivatives capped at **2×**), STP mode sent, AUSTRAC check date, concentration vs cap, status (`allowed` / `read_only` / `blocked`) | 
+
+Commands: `risk.ladder.set` (down = C1, up = C3), `venue.registry.update` (tighten C1, allow C3). Source: `/risk/state?ladder=1`, `/venues/registry`.
+
 ## Acceptance criteria
 
 1. **Policy classification:** the UI never lets a loosening apply without C3; the server independently enforces this (test both).

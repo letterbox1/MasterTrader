@@ -22,13 +22,13 @@ Around that it adds:
 |---|---|
 | [GOAL.md](GOAL.md) | What we're building and why |
 | [DESIGN.md](DESIGN.md) | **Design system v2:** tokens, type, components, and the full responsive system (1920px+ → 240px, portrait/landscape, laptops, tablets, foldables) |
-| [docs/ui/](docs/ui/README.md) | **Frontend scope:** information architecture & routes, app shell, component library, 17 dashboard specs (widgets, data shown, actions + confirmation levels, states, acceptance criteria, backend contract), mobile/PWA/Telegram |
+| [docs/ui/](docs/ui/README.md) | **Frontend scope:** information architecture & routes, app shell, component library, 18 dashboard specs (widgets, data shown, actions + confirmation levels, states, acceptance criteria, backend contract), mobile/PWA/Telegram |
 | [ui-examples/](ui-examples/README.md) | 13 Stitch reference screens (screenshots + HTML) with a responsive audit and content corrections |
 | [brand/](brand/README.md) | Signal M logo, app icon, palette |
 | [SPEC.md](SPEC.md) | v1 specification and core decisions |
 | [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) | Vetting of 10 open-source repos: licenses, code audit, reputation, overlap and redundancy, verdicts, and the supporting free data/memory/quant ecosystem |
 | [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | **End-to-end architecture v3:** deployment topology, networks & containers, module ownership, data stores, NATS subjects, `mt_api` REST/WS contract + confirmation levels + command catalogue, end-to-end flows, SLOs, degraded modes, frontend stack, phase-by-phase build plan |
-| [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec v2:** ground rules (free only), stack, repo layout, modules M0–M20 (strategy framework, risk manager, live monitor, observability, journal/tax, curation, MCP), timeframes per asset class, gates |
+| [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec v2:** ground rules (free only), stack, repo layout, modules M0–M23 (strategy framework, risk manager, live monitor, observability, journal/tax, curation, MCP), timeframes per asset class, gates |
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phases 0–8 with checklists and a demo per phase (platform first, strategies second, MCP last) |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
 | [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets. **Reddit and X are deferred; Telegram and Discord are the free social feeds** |
@@ -36,6 +36,10 @@ Around that it adds:
 | [docs/08-airdrops-and-token-launches.md](docs/08-airdrops-and-token-launches.md) | Airdrop/ICO/launch pipeline, rug-pull and scam vetting, what may run autonomously vs user tasks, Discord/community curation queue |
 | [docs/09-journal-and-tax.md](docs/09-journal-and-tax.md) | Automatic journal and tax engine: AU EOFY/PAYG (incl. the reported 2027 CGT reform), UAE/Egypt/Cyprus plugins, residency timeline, tax-tool vetting |
 | [docs/10-memory-rag-and-models.md](docs/10-memory-rag-and-models.md) | Hindsight self-hosted memory, local embedders/rerankers, hybrid RAG in Postgres, **Decision One** (µs tree tier + System One decision models: SemIf, own Qwen-LoRA head; Jev/Laya/Clef assessed), LiteLLM routing to Claude / custom endpoint |
+| [docs/11-cryptotrader-crossover-review.md](docs/11-cryptotrader-crossover-review.md) | Review of the CryptoTrader Build Spec v0.1 + Integration catalogue: what was dropped as duplicate, what was added, and how conflicts were resolved |
+| [docs/12-policy-and-compliance.md](docs/12-policy-and-compliance.md) | AU boundary, venue access registry, self-trade prevention, per-platform data/automation rules (incl. Telegram postures-only), row-level data provenance, professional-advice triggers |
+| [docs/13-wallets-treasury-and-onchain.md](docs/13-wallets-treasury-and-onchain.md) | Custody tiers, intents-only signer, unified wallet view, M22 hold-and-earn, treasury, on-chain monitors, on-chain cost gate & DEX execution, M23 social participation |
+| [docs/14-strategy-evidence-and-validation.md](docs/14-strategy-evidence-and-validation.md) | Viability verdict, Sydney edge, evidence-ranked strategy catalogue, trading methods & risk defaults, fallback ladder, validation extensions, capital steps & kill criteria, MasterTradingBot integration |
 | [docs/research/](docs/research/) | Raw per-repo research notes with file-level evidence |
 
 ## Licensing stance

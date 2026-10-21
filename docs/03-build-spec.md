@@ -25,6 +25,8 @@ Companion docs:
 | **Deferred** | Reddit (optional if API access is granted) and X: revisit only if free and permitted. **MCP control plane:** built last (Phase 8), only once the platform is in daily use. |
 | **Never** | Self-bots, fake engagement, sybil farming, scraping that breaks a platform's terms, autonomous wallet signatures outside a mandate (see [07](07-security-notes.md)). |
 | **Jurisdiction** | Australian tax resident now; possible move to the UAE, Egypt or Cyprus later. The journal and tax engine are jurisdiction-pluggable ([09](09-journal-and-tax.md)). |
+| **Policy & compliance** | AU retail boundary, the **venue access registry** (orders blocked to venues/products not lawfully available to you), **2× crypto-derivatives leverage cap**, explicit self-trade prevention, Travel Rule, per-platform data terms: see [12](12-policy-and-compliance.md). |
+| **Data provenance** | Every stored row carries `source`, `licence` and use flags (`train_ok`, `model_input_ok`, `retention_days`, `commercial_ok`). Training and inference paths refuse disallowed rows. **Telegram text never reaches any model, RAG index or training set** (Telegram API terms); Telegram feeds deterministic postures only ([12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). |
 
 ---
 
@@ -71,6 +73,8 @@ MasterTrader/
 │   ├── mt_journal/     # journal ingestion, lot engine, FX service, jurisdiction plugins, reports, exports (M18)
 │   ├── mt_airdrop/     # airdrop/launch discovery, risk & viability scoring, mandates, claim executor (M4)
 │   ├── mt_curation/    # user task queue + community curation (Discord/Telegram/Galxe) + digests (M19)
+│   ├── mt_treasury/    # wallets registry + unified view, custody tiers, signer client, hold-and-earn, yield allocator, DAO/depeg/exploit monitors (M22)
+│   ├── mt_social/      # social participation: drafts → your approval → web-intent post; credibility + shill-burst posture (M23)
 │   ├── mt_api/         # internal command API used by UI, Telegram and (later) MCP; all actions go through it
 │   ├── mt_ui/          # FastAPI web UI + Telegram bot (M15)
 │   └── mt_mcp/         # (Phase 8, last) MCP server: thin adapter over mt_api (M20)
@@ -133,8 +137,12 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
   - pairs/stat-arb;
   - event/news-driven;
   - ML-signal;
-  - LLM-signal (M8).
+  - LLM-signal (M8);
+  - deterministic rule-based (MasterTradingBot strategies, [14 §8](14-strategy-evidence-and-validation.md#8-mastertradingbot-integration));
+  - funding carry, cross-sectional momentum, token-unlock positioning, memecoin momentum with rug filtering (paper first).
 - **Templates are starting points, not limits.** Any custom logic is allowed.
+- **Evidence & priority:** each template shows its evidence and priority (P1/P2/P3) from [14 §3](14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates).
+- **Never-build list:** latency-race patterns (sniping, atomic/latency arbitrage, copy-trading, prediction-market bots) are rated **X**, and **sandwiching is Never**. They have no template, and the manifest validator rejects them.
 - **Any timeframe:** subscribe to raw **ticks / quotes / trades / order-book deltas**, or any **bar spec**:
   - time bars: 1s, 5s, 1m, 3m, 7m, 1h, 4h, 1D, 1W…;
   - tick bars, volume bars, value bars.
@@ -145,7 +153,11 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
   - parameters with types, ranges and defaults (drives the UI forms and optimisation);
   - required features;
   - risk-policy reference;
-  - mode (backtest/paper/approve/auto).
+  - mode (backtest/paper/approve/auto);
+  - **counterparty** (one sentence: who loses to this strategy and why; required);
+  - **sleeve** (capital bucket with its own limits and kill switch);
+  - **kill criteria**, written before deployment;
+  - **benchmark** (asset-class passive alternative).
 - **Lifecycle:** draft → backtested → validated → paper → approve-mode → auto, with gates in §8. Every transition is logged.
 - **Ways to create a strategy:**
   1. write Python;
@@ -217,12 +229,18 @@ See [06 §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-inge
 
 **Social (free):**
 - **Telegram:** Telethon client (dedicated number, e.g. a landline/prepaid) + Bot API + RSS-Bridge fallback.
+  - **Postures only:** regex-extracted contract addresses/tickers and counts (mention velocity, channel count, new-channel share, time since first call) feed **deterministic postures** to code/policy.
+  - **No model ever sees Telegram text**: not FinBERT, tier B, RAG, agents or training ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
+  - Joins go through a `FLOOD_WAIT`-aware queue; cap of 500 channels.
 - **Discord:** your own server + **followed announcement channels** + your own bot.
-- **Bluesky Jetstream**, Mastodon.
+- **Bluesky Jetstream**, Mastodon, **Farcaster** (self-hosted Hubble, free).
 - Conditional: StockTwits, YouTube RSS/API.
+- Extra news APIs (free, personal use):
+  - **Finnhub** (60/min), for equities/FX headlines (read its ML clause first);
+  - CryptoPanic's free tier for crypto news (read its terms first).
 - **Reddit:** optional if API access is granted; **X deferred.**
 
-**Processing:**
+**Processing** (non-Telegram sources; provenance flags checked first):
 1. Dedupe.
 2. Local-LLM relevance gate.
 3. Entity/ticker linking.
@@ -236,7 +254,7 @@ See [06 §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-inge
 - USGS, GDACS, NOAA/NHC, NASA FIRMS, ReliefWeb, UCDP, GDELT, OpenSanctions.
 - ACLED (research account).
 - Central-bank statements and minutes.
-- **Kalshi / Polymarket** public reads as event probabilities.
+- **Kalshi / Polymarket** public reads as event probabilities. **Read-only:** Polymarket is ISP-blocked for Australians, so only where lawfully reachable, never via VPN; no trading.
 
 **Exposure map:** links each event's location to assets (country → FX/index/bond ETF; region → commodity).
 
@@ -250,14 +268,18 @@ Full design: [08](08-airdrops-and-token-launches.md).
 
 **Risk feeds:**
 - **GoPlus** (EVM), **RugCheck** (Solana), **Honeypot.is**.
-- DexScreener, Helius and Etherscan free tiers.
+- DexScreener, Helius and **Blockscout** / own RPC (Etherscan for manual lookups only: its terms bar use as a decision input).
+- **Own wallet-cluster detection** (common funder within 3–5 hops, same-slot/bundled buys, shared CEX-withdrawal origin), the highest-value check.
+- Entity **blacklist** with funding-graph auto-flagging.
+- A cited **project dossier** for campaigns and longer holds.
 - Phishing blocklists.
 - Re-implemented solana-rugchecker heuristics and CRPWarner concepts; optional sandboxed Gigahorse deep scan.
 - Scores calibrated on the SoK rug-pull dataset.
 
 **Autonomous only for:**
 - read-only work;
-- **eligible claims** from a dedicated hot wallet under a signed mandate, with simulation;
+- **eligible claims** from the chain's **airdrop identity wallet** under a signed mandate, with simulation (Anvil / `simulateTransaction`) and the on-chain cost gate;
+- **genuine-use on-chain tasks** (swap, stake, provide liquidity, vote) sized to real usage, under a mandate and the cost gate, after a successful **burner** run. No pattern mimicry, dust loops, volume farming or wash trading for points;
 - defensive revokes/sweeps.
 
 **Everything else**, including all social engagement and ICO/IDO participation, becomes a **user task** with step-by-step instructions.
@@ -275,6 +297,7 @@ Full design: [08](08-airdrops-and-token-launches.md).
 
 ### M6 Features — `mt_features`
 
+- **Sentiment & regime per market type:** separate pipelines for crypto, FX, gold/silver/metals, energy and equities/indices, plus a shared **macro layer** (USD, rates, calendar, risk-on/off). Each outputs a sentiment score, fear/greed gauge, news-impact flags and a **regime label**. Crypto inputs add Fear & Greed, funding, open interest, liquidations and long/short ratios.
 - **Market and factor features:**
   - TA-Lib;
   - Qlib Alpha158;
@@ -369,7 +392,19 @@ Full design: [10](10-memory-rag-and-models.md).
 | Per strategy | Capital allocation, max position, max loss per day/trade, max consecutive losses, cool-down after a loss, allowed timeframes/instruments |
 | Per instrument / asset class | Max position, max spread to trade, min liquidity, news/event blackout windows (via M5) |
 | Portfolio | Correlation/cluster exposure (e.g. USD, crypto beta), VaR/ES estimate, concentration |
-| Sizing models (selectable per strategy) | Fixed size, fixed fractional, volatility target (ATR), Kelly-capped, risk-parity |
+| Sizing models (selectable per strategy) | Fixed size, fixed fractional, volatility target (ATR), **stop-distance sizing**, Kelly (`f = (p·b − q)/b`, quarter-Kelly ceiling, never `2p − 1`), risk-parity |
+| Sleeves | Capital split into sleeves with separate limits/kill switches; exposure **netted per asset across sleeves** |
+| Defaults | Starting limits, **decision deadlines**, API-error pause, exchange concentration cap, drawdown de-risking, 2× crypto-derivatives cap: see [14 §4–5](14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) |
+
+**Fallback ladder** (live state shown in D06):
+1. Healthy + high confidence → normal size.
+2. Low confidence → half size or observe only.
+3. Late decision / stale feed → hold.
+4. Model service down → rules only: exits, no new entries.
+5. Hard limit → halt the sleeve.
+6. Kill switch → halt everything + sweep hot balances to the vault.
+
+**Venue registry check:** orders to venues/products not `allowed` for your residency are rejected ([12 §2](12-policy-and-compliance.md#2-venue-access-registry)).
 
 **Pre-trade checks:**
 - policy limits;
@@ -397,14 +432,18 @@ Full design: [10](10-memory-rag-and-models.md).
 
 ### M12 Execution — `mt_engine`
 
-- **Nautilus adapters:** IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Polymarket, Betfair.
+- **Nautilus adapters:** IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Betfair. These are subject to the **venue access registry**: for an AU resident, offshore perps (Bybit/Bitget…) are data-only, Hyperliquid waits on professional advice, and Polymarket trading is blocked.
 - **Custom adapters:**
   - **Alpaca** (paper/live);
   - **OANDA v20**;
   - **IG**;
   - optionally **cTrader** Open API/FIX and Saxo (SIM);
-  - MT5 (Windows bridge) if needed.
+  - MT5 (Windows bridge) for **FP Markets / MasterTradingBot**, with cTrader Open API as the Linux route ([14 §8](14-strategy-evidence-and-validation.md#8-mastertradingbot-integration));
+  - **AU spot venues via ccxt**: Independent Reserve, BTC Markets, Kraken AU, CoinSpot;
+  - **DEX execution**: Jupiter + Jito (Solana), 1inch free + Flashbots Protect (EVM), via the signer service and the **on-chain cost gate** ([13 §7](13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16)).
 - **Key safety:** keys are trade-only, **withdrawals disabled**, IP allow-listed; separate sub-accounts for paper/approve/auto.
+- **Self-trade prevention:** the STP mode is sent **explicitly on every order** (12 §3).
+- **Idempotent client order IDs** include a restart epoch, so a restarted engine can't duplicate orders. Open orders are reconciled from the venue before trading resumes.
 
 ### M13 Market-making sidecar
 
@@ -588,6 +627,38 @@ Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-fast-accura
 - **Model registry in MLflow:** version, training data range, calibration, benchmark latency.
 - **Latency SLOs** per tier, monitored in M17.
 
+### M22 Wallets, treasury & hold-and-earn — `mt_treasury`
+
+Full design: [13](13-wallets-treasury-and-onchain.md).
+
+- **Wallets:**
+  - **Custody tiers:** vault (cold, manual), Hyperliquid master (hardware EIP-712, if approved), warm, hot, airdrop identity (one per chain), burner.
+  - The **signer service** accepts intents only, with allow-lists, caps, simulation, sized-and-revoked approvals and **durable-nonce hard blocks**.
+- **Unified wallet view:**
+  - an address registry with read-only aggregation (Helius DAS, Blockscout/RPC, Hyperliquid `/info`, ccxt read-only);
+  - monthly rotki reconciliation.
+- **Hold-and-earn:**
+  - LSTs, allow-listed lending (core Aave/Spark/Kamino), Pendle PTs, capped HLP;
+  - a node/validator net-earnings model;
+  - a yield allocator (`apyBase`, ≤ 20% per protocol).
+- **Monitors:**
+  - DAO proposals (Snapshot/Tally);
+  - **stablecoin depeg** (auto-reduce > 50 bps), exploit/oracle/TVL-drop, venue health, bridge policy.
+- **Treasury:** floats per sleeve, daily profit sweeps to the vault, stablecoin concentration caps, a 20–40% reserve.
+
+### M23 Social participation — `mt_social`
+
+Full design: [13 §8](13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social).
+
+- **Drafts:**
+  - written by a local model in your voice, grounded in real activity;
+  - you approve/edit/skip, and a holdings disclosure line is added.
+- **Posting:** an X **web-intent** link that you click to post (no API cost). The proof URL is captured and the quest task marked done.
+- **Signals:**
+  - account **credibility scores** from past calls vs outcomes;
+  - a **shill-burst posture** (mentions vs on-chain unique-buyer growth) as a dump-risk signal.
+- **Not built:** extra accounts, auto-posting, engagement pods, pay-to-post.
+
 ### M20 MCP control plane — `mt_mcp` (built LAST, Phase 8, only if wanted)
 
 **Purpose:** talk to the trading system and its agents through Claude (Desktop/Code) or another MCP client. You can ask, analyse, adjust and trade conversationally.
@@ -658,7 +729,19 @@ The UI shows each instrument's finest available resolution, so you know which st
 5. **Paper / approve trading:**
    - paper or approve mode for a configurable period (default 3 months);
    - P&L and costs track the backtest within tolerance.
-6. **Live:** start small; scale on schedule.
+6. **Live:** start small; scale in **25% capital steps after 4 clean weeks each**, with written kill criteria ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)).
+7. **Harness extensions** ([14 §6](14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8)):
+   - profitable in **each year and each regime** (bull/bear/chop);
+   - survives **2× and 3× measured costs**;
+   - deflated Sharpe > 0.95 with an **automatic trial counter**;
+   - walk-forward judged on the **worst fold** and the share of positive folds;
+   - an **LLM-assisted leakage review** quoting exact lines;
+   - **survivorship-free** universes (delisted/rugged kept);
+   - beats the **asset-class passive benchmark** after costs.
+8. **Decay monitoring live:**
+   - rolling 60-trade Sharpe/hit rate vs the backtest 5th percentile;
+   - CUSUM on P&L residuals;
+   - a daily health check (30-day Sharpe < ½ validated, or DD > 1.5× backtest max → halt for review).
 
 ---
 
@@ -666,5 +749,5 @@ The UI shows each instrument's finest available resolution, so you know which st
 
 1. Third-party code lives under `third_party/` with a licence manifest.
 2. GPL/AGPL code is isolated.
-3. Every data source is tagged `license: personal|commercial_ok|unknown` and `cost: free|paid`.
+3. Every data source is tagged `license: personal|commercial_ok|unknown` and `cost: free|paid`. Every **row** carries provenance + use flags (12 §5), so a SaaS pivot is a retrain on `commercial_ok` rows.
 4. The repo stays **private**.

@@ -8,7 +8,7 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 3. Each phase ends with a **demo you can actually use**.
 4. **MCP is last** (Phase 8), and only if you want it.
 
-Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
+Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md).
 
 ## ⚠️ Do this week regardless of phase
 - [ ] **Telegram:**
@@ -23,7 +23,8 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
 - [ ] **Free demo/practice accounts:**
   - OANDA practice, IG demo, Alpaca paper, IBKR paper;
   - Binance and Bybit testnets.
-- [ ] **Free API keys:** FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Etherscan, Helius, GoPlus, Tenderly.
+- [ ] **Free API keys:** FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. (Blockscout needs no key; Etherscan only for manual lookups; Anvil is local, so no Tenderly.)
+- [ ] **Venue checks:** look up each AU venue on the AUSTRAC register by ABN; pre-register withdrawal addresses (Travel Rule); seed `ops.venue_registry` ([12 §2](12-policy-and-compliance.md#2-venue-access-registry)).
 
 ## Phase 0 — Foundations & security baseline (weeks 1–2)
 - [ ] **Monorepo and code quality:**
@@ -80,6 +81,8 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - fee tiers, funding, swap/financing, spreads by hour-of-week;
   - venue balance/position reconciliation.
 - [ ] Run the open provider checks in [06 §3](06-aggregators-and-market-providers.md#open-checks-do-these-in-phase-1).
+- [ ] **Row-level provenance tags** (`source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`) on every ingested row, plus retention jobs ([12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)).
+- [ ] **ntfy** as the second alert channel; venue-health monitor (AUSTRAC status, withdrawal delays).
 
 **Demo:** Grafana shows live prices at every timeframe from ticks to 1D across all asset classes, plus live spread/funding/swap panels and data-quality alerts arriving on Telegram.
 
@@ -95,11 +98,14 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - dead-man's switch;
   - change control (tighten instantly / loosen with Telegram + TOTP);
   - hard-ceiling file;
-  - audit.
+  - audit;
+  - **venue access registry** check on every order, **2× crypto-derivatives leverage cap**, explicit **STP mode** on every order;
+  - **sleeves** and the **fallback ladder** ([14 §4–5](14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06)).
 - [ ] **M12 engine wrapper:** Nautilus sandbox/paper on testnets/practice accounts. Custom **Alpaca, OANDA and IG** adapters.
 - [ ] **M7 lab:**
   - fast screener + Nautilus truth backtests using **measured costs from M16**;
   - validation suite (walk-forward, purged CV, MC permutation, bootstrap Sharpe, deflated Sharpe);
+  - **validation extensions:** per-year/per-regime breakdown, 2×/3× cost stress, automatic trial counter, worst fold, LLM leakage review, CUSUM decay monitoring ([14 §6](14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8));
   - vendored freqtrade look-ahead/recursive analysers;
   - Optuna;
   - MLflow tracking.
@@ -137,7 +143,8 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
 ## Phase 4 — News, social, events & calendars (weeks 16–19)
 - [ ] **News:** RSS + trafilatura/crawl4ai; **RSS-Bridge** sidecar (whitelist, auth, internal network); GDELT.
 - [ ] **Social:**
-  - Telegram (Telethon + Bot API + RSS-Bridge fallback);
+  - Telegram (Telethon + Bot API + RSS-Bridge fallback) as **postures only** (counts/addresses; no text to models, RAG or training);
+  - Farcaster (Hubble), CryptoPanic;
   - Discord bot on followed announcement channels;
   - Bluesky Jetstream; Mastodon;
   - StockTwits/YouTube conditional.
@@ -155,6 +162,9 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
 **Demo:** a morning Telegram brief covering news, sentiment movers, global events mapped to assets, today's calendar with risk blackouts, and data/cost health.
 
 ## Phase 5 — Airdrops, launches & curation queue (weeks 20–23)
+- [ ] **Custody tiers + intents-only signer** ([13 §1–2](13-wallets-treasury-and-onchain.md#1-custody-tiers)); durable-nonce hard block; sized approvals.
+- [ ] **Wallet-indexer + unified wallet view** (D18), internal-transfer tagging into the journal, approval/nonce/depeg monitors.
+- [ ] **M4 additions:** corroboration score, EV gate, burner-first + one identity wallet per chain, campaign record, project dossier, blacklist, wallet-cluster detection, disposal rule ([08](08-airdrops-and-token-launches.md#additions-from-the-cryptotrader-review-see-11-13)).
 - [ ] **M19 task queue:** Telegram Done/Skip/Snooze/Details/Never; daily and weekly digests.
 - [ ] **M19 community curation:** Discord servers + announcement channels to follow, Telegram channels, Galxe spaces.
 - [ ] **M4 discovery:** DefiLlama tokenless protocols, CryptoRank, CoinGecko, DexScreener, Galxe (read-only), Snapshot/forums, Discord inbox.
@@ -166,7 +176,7 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
 - [ ] **Viability scoring:** includes AU geo/KYC exclusion.
 - [ ] **Hot-wallet claim executor:**
   - signed mandates;
-  - Tenderly/`simulateTransaction` pre-checks;
+  - Anvil fork / `simulateTransaction` pre-checks;
   - caps;
   - approval revokes/sweeps.
 - [ ] **Airdrop/staking income** goes to the journal with tax classification.
@@ -197,6 +207,9 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
 - [ ] **LLM-signal strategy template** (M0) consuming M8 signals.
 - [ ] **Evaluation and cost:** evaluate on post-training-cutoff data; LLM cost cap and spend panel; every call audited.
 - [ ] **Optional:** Hummingbot MM sidecar; MiroFish/OASIS crowd-sim experiment.
+- [ ] **M22 hold-and-earn + treasury** with the on-chain cost gate ([13 §4–7](13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury)).
+- [ ] **Optional M23 social drafts** (approval → web intent; nothing auto-posts).
+- [ ] **Decision-model operating rules:** Kev challenger in the bake-off, 5% shadow checks, D10 labelling queue, per-question thresholds, monthly fine-tune ([10 §4.3](10-memory-rag-and-models.md#43-design)).
 
 **Demo:** ask for an analysis of any instrument and get a sourced signal; anomalies are explained on Telegram; LLM-signal strategies run on paper.
 
@@ -208,7 +221,8 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - DQ incidents;
   - journal reconciliation.
 - [ ] Promote strategies that pass the [gates](03-build-spec.md#8-promotion-gates-per-strategy-configurable) to small live allocations, using separate live sub-accounts with withdrawals disabled.
-- [ ] MT5 bridge / cTrader / Saxo adapters if needed.
+- [ ] MT5 bridge / cTrader / Saxo adapters if needed; share risk, journal and data libraries with **MasterTradingBot** (FP Markets MT5) rather than duplicating them ([14 §8](14-strategy-evidence-and-validation.md#8-mastertradingbot-integration)).
+- [ ] **Capital steps and kill criteria** per [14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7): step up only after each stage's evidence; kill on the pre-declared criteria.
 
 ## Phase 8 — MCP control plane (last; only if you want it)
 - [ ] **`mt_mcp` adapter over `mt_api`:** read & analyse, talk to agents, trade & adjust positions, strategies, risk, curation. See [build spec M20](03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted).

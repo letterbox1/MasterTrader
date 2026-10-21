@@ -94,6 +94,12 @@ Create, configure, deploy and supervise **any strategy type on any timeframe**, 
 | Flatten | `position.close` (strategy scope) | C2 | — |
 | Run backtest / validation | `lab.backtest.run` / `lab.validate.run` | C1 | — |
 
+## Additions from the CryptoTrader review
+
+- **Manifest fields shown on the registry and detail:** `counterparty` (who pays you, the rule from [14 §3](../../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates)), `benchmark` (what it must beat, e.g. buy-and-hold BTC or cash yield), **priority** (P1 / P2 / P3 / X), `sleeve` and **kill criteria**.
+- The builder refuses templates on the never-build list and shows why.
+- Detail shows **per-year and per-regime** results, **2× and 3× cost stress**, the trial counter and the worst walk-forward fold (from the validation harness).
+
 ## Acceptance criteria
 
 1. **Template coverage:** every template creates a valid manifest, which a backtest then runs.

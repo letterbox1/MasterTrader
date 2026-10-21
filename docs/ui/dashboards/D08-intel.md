@@ -53,6 +53,12 @@ Show what the world is saying and doing that could move the user's markets:
 - **Timestamps:** approximate timestamps are flagged ("≈ 2h ago (source-claimed)").
 - **Paywalled/licensed text:** never shown in full; headline + link only.
 
+## Additions from the CryptoTrader review
+
+- **Telegram is shown as postures only:** per contract/ticker, mention velocity, channel count, new-channel share and time since first call. **No Telegram text** is shown with tier-B scores or offered to "Ask agents" (Telegram API ToS; see [12 §4](../../12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
+- Sources tab shows each source's provenance flags (`train_ok`, `model_input_ok`, `retention_days`).
+- New sources: Farcaster, CryptoPanic. Polymarket and Kalshi are read-only probabilities.
+
 ## Acceptance criteria
 
 1. **Speed:** new documents appear within 5 s of ingestion, with scores when available. "Scoring…" shows until tier B returns.

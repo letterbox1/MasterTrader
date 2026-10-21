@@ -45,10 +45,12 @@ _(U) = unverified._
 | **Core: news** | Sites without feeds (AP, Reuters, Economist WIB, Substack, Bundesbank, Binance blog, any page) | **RSS-Bridge** (whitelisted; CssSelector/XPath for custom pages) | Low | 15-min to 3-h cache, so context only, not latency signals |
 | **Core: news** | Global news volume and tone | **GDELT** | None | — |
 | **Core: filings** | SEC EDGAR | edgartools / official JSON and Atom (declared User-Agent, ≤10 req/s) | None | Prefer this over RSS-Bridge's StockFilings bridge |
-| **Core: social** | Telegram channels and groups | **Telethon** client API (pinned, secondary number) + **Bot API** for channels where your bot is admin; RSS-Bridge Telegram bridge as fallback | Low–moderate | Real-time, free |
-| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own **discord.py** bot (Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** |
+| **Core: social** | Telegram channels and groups | **Telethon** client API (pinned, secondary number) + **Bot API** for channels where your bot is admin; RSS-Bridge Telegram bridge as fallback | Low–moderate | Real-time, free. **Postures only:** Telegram API ToS §1.5 bars AI training/deployment on Telegram data, so text never reaches models, RAG or training. Only regex-extracted addresses/tickers and counts feed deterministic postures ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
+| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own **discord.py** bot (Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** Follow works only for **Community-server announcement channels the project actually publishes**; each receiving channel takes ~10–15 follower webhooks, so spread follows over category channels. Message Content intent is self-serve for apps in < 10k servers (U, policy as of Jun 2026) |
 | **Core: social** | Bluesky | **Jetstream firehose + atproto SDK**, filtered on cashtags and keywords | None | Free and explicitly permitted |
 | Core: social | Mastodon / fediverse | Mastodon.py or the RSS-Bridge Mastodon bridge | Low | Low volume |
+| Core: social | **Farcaster** | Self-hosted **Hubble** node or a free hub endpoint | None | Crypto-native; useful for airdrop/launch chatter |
+| Core: news | **CryptoPanic** (free tier) | REST | Low | Crypto headline aggregation with votes; attribution required |
 | **Deferred** | Reddit | (PRAW, official OAuth) | — | Closing to new apps 2026-10-31, sunset 2027 (U) |
 | Conditional | StockTwits | v2 REST `streams/symbol/{SYM}` (U) | Low–moderate | Most finance-relevant social source if still reachable; test first |
 | Conditional | YouTube | Channel RSS + Data API v3; yt-dlp for subtitles and transcripts | Low | Finance channels, earnings calls |
@@ -117,6 +119,19 @@ _(U) = unverified._
 - **Polymarket:** Gamma + CLOB, public reads.
 - Manifold and Metaculus are optional (weak signal / restrictive terms).
 
+### On-chain & crypto-infrastructure providers (M4 / M12 / M22; added from the CryptoTrader review)
+| Provider | Use | Free tier notes |
+|---|---|---|
+| **Blockscout** (API + self-hostable) | Contract source, creator, holders, txs for **decision inputs** | Open source; replaces Etherscan as a decision input (Etherscan terms bar use as a basis for financial gain) |
+| Own RPC + Alchemy / Helius / Chainstack free tiers | Reads, `eth_call`, `simulateTransaction`, webhooks | One account per provider; spread load across *different* providers |
+| **Anvil** (Foundry) mainnet fork | Local transaction simulation before any signature | Free, local; replaces the Tenderly free plan (no simulation API) |
+| The Graph (free query allowance) | Protocol subgraphs (pools, positions, governance) | Key required; cache results |
+| Jupiter (issued key) / 1inch / 0x | DEX quotes and routing | Use issued keys only; deprecated lite-api / V1 endpoints are out |
+| Jito | Solana bundle submission | Tip **inside** the trade transaction, capped from tip-floor percentiles |
+| Flashbots Protect RPC | Private EVM transaction submission (MEV protection) | Free |
+| Finnhub (free) | Equity/FX/crypto quotes, IPO + earnings calendar | Personal use; 60 calls/min |
+| FMP (free) | Earnings/IPO calendar cross-check | 250 calls/day |
+
 ### Skip list
 | Item | Reason |
 |---|---|
@@ -132,6 +147,13 @@ _(U) = unverified._
 | exchangerate.host (100/month), Alpha Vantage (25/day) | Free tiers too small |
 | MT4 ZMQ bridges | Unmaintained; MT4 is end-of-life |
 | Stale libraries: pandasdmx, oandapyV20, saxo_openapi, coinpaprika | Use `sdmx1` or thin httpx clients |
+| **Birdeye** | Terms ban storage and say "not intended for actual trading" |
+| **Etherscan as a decision input** | Terms bar use as a basis for financial gain; manual lookups only → Blockscout / own RPC |
+| **Tenderly** (free plan) | No simulation API on the free plan → Anvil fork / `simulateTransaction` |
+| Dune (free) | View-only for our purposes; no free API worth wiring |
+| Tardis.dev | Paid beyond the free monthly samples |
+| TokenSniffer | No free API; GoPlus/RugCheck/Honeypot.is cover it |
+| CoinGecko as a price archive | Demo terms: cache ≤ 24 h; build long history from exchanges/on-chain instead |
 
 ### Open checks (do these in Phase 1)
 - OANDA order/position book endpoints still work.

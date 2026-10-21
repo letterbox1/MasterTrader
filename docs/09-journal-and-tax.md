@@ -8,6 +8,10 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 2. **Produce Australian EOFY output** (1 July–30 June), and the activity-statement output that actually applies to you (see the BAS section below).
 3. **Pluggable jurisdictions:** Australia now; UAE, Egypt and Cyprus (or anywhere else) later, driven by a **residency timeline**.
 4. **Independent audit trail:** an hledger/Beancount export an accountant can read and diff.
+5. **Three currencies on every event:** native amount, **USD** and **AUD** (RBA daily rate, with the rate source and timestamp stored), so a later change of base currency or residency doesn't need a re-price.
+6. **Wallet registry:** every exchange account and on-chain address you own is registered (M22 unified wallet view, [13 §3](13-wallets-treasury-and-onchain.md#3-unified-wallet-view)). Transfers between your own wallets are tagged **internal** and are never disposals.
+7. **Investment vs trading segregation:** wallets/sub-accounts are tagged `investment` or `trading`, so long-term holdings can be argued as capital even if active trading is treated as revenue (ask your tax agent).
+8. **Optional export** to Syla / Koinly-style CSV so a tax agent can cross-check with their usual tool. Our engine stays primary.
 
 ## ⚠️ Key findings that shape the design
 
@@ -17,6 +21,8 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 | **No existing OSS tool fits.** None handles AU CGT + revenue-account CFD/FX/futures + Div 775 forex + crypto income + the 2027 regime + multiple jurisdictions. Every tool hard-codes "50% if held ≥ 12 months". | **Build the rules engine in-house.** Borrow algorithms from rp2 (Apache) and isaacrowntree/ledger (MIT). |
 | A **high-volume autonomous system may count as "carrying on a business"** (ATO tests). If so, gains are revenue (ordinary income), with no CGT discount. | The tax regime (investor vs trader-in-business vs revenue instrument) is a **per-FY, per-activity setting**, and the engine reports both ways until your tax agent decides. |
 | **BAS:** a private investor needs no ABN, GST or BAS. Share and crypto trades are input-taxed financial supplies, excluded from GST turnover. The statement you're most likely to get is a **PAYG instalment notice**. | "BAS module" = **PAYG-instalment estimator** (quarterly). A GST/BAS mode stays dormant behind a flag in case you later trade through a company or business structure. |
+| **Sources conflict on the 2027 reform's status** (the CryptoTrader research calls it a proposal, not law). | `AU_2027_REFORM` stays **behind a flag** until your tax agent confirms; reports show both regimes side by side. See [11 §3](11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved). |
+| **Airdrop classification turns on what you did to earn it.** Tasks, staking or genuine protocol use point to ordinary income on receipt; a pure initial allocation points to a $0 cost base with CGT on disposal (U). | The campaign record ([08](08-airdrops-and-token-launches.md)) is linked to each airdrop journal event, so the evidence of "activity done to earn it" is attached. |
 | **Egypt: crypto is effectively banned** (CBE Law 194/2020 Art. 206; no licences issued). | A **hard compliance flag**: block crypto mandates while the residency timeline says "Egypt". |
 | **Wash sales:** no mechanical rule, but TR 2008/1 lets the ATO apply Part IVA to sell-and-rebuy losses. | Flag any loss disposal re-entered within N days (especially May–July). The AI must not tax-loss-harvest with reacquisition. |
 

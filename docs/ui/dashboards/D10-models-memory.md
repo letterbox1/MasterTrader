@@ -45,6 +45,13 @@ Govern every model that influences decisions:
 | Adjust gateway budget | `system.settings.update` (budgets) | Raise = C3, lower = C1 |
 | Delete memory item | `memory.delete` | C1 |
 
+## Additions from the CryptoTrader review
+
+- **Labelling queue tab:** tier B decisions sampled for your label (abstentions, teacher disagreements, high-value calls). Labels come from you or from outcomes, **never from shadow-model outputs**. Command `models.label.add` (C0).
+- **Shadow checks:** per-question disagreement with the ~5% teacher shadow sample; per-question thresholds.
+- **Kev-4B/9B** appears as a bake-off challenger.
+- Provenance filter: rows with `train_ok = false` are excluded from training sets, and the UI shows the count excluded.
+
 ## Acceptance criteria
 
 1. **Model metadata:** every production model shows calibration and latency against its SLO. Models out of SLO are flagged red.

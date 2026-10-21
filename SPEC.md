@@ -7,11 +7,12 @@
 - Australian tax resident, with a possible later move to the UAE, Egypt or Cyprus.
 
 **Detailed docs:**
-- [docs/03-build-spec.md](docs/03-build-spec.md): full module spec M0–M20.
+- [docs/03-build-spec.md](docs/03-build-spec.md): full module spec M0–M23.
 - [docs/04-plan-of-action.md](docs/04-plan-of-action.md): phased plan.
 - [docs/07-security-notes.md](docs/07-security-notes.md)
 - [docs/08-airdrops-and-token-launches.md](docs/08-airdrops-and-token-launches.md)
 - [docs/09-journal-and-tax.md](docs/09-journal-and-tax.md)
+- [docs/12-policy-and-compliance.md](docs/12-policy-and-compliance.md), [docs/13-wallets-treasury-and-onchain.md](docs/13-wallets-treasury-and-onchain.md), [docs/14-strategy-evidence-and-validation.md](docs/14-strategy-evidence-and-validation.md): added from the CryptoTrader review ([docs/11](docs/11-cryptotrader-crossover-review.md)).
 - [docs/02-v1-architecture.md](docs/02-v1-architecture.md): architecture overview.
 - [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) and [docs/06](docs/06-aggregators-and-market-providers.md): justify the component choices.
 - [docs/05](docs/05-saas-legal-and-licensing.md): what a SaaS would require.
@@ -32,7 +33,12 @@
 | Journal & tax | In-house jurisdiction-pluggable engine (rp2/ledger ideas): **AU_2026**, **AU_2027_REFORM**, AE, EG, CY; PAYG-instalment estimator; Beancount/hledger audit export |
 | Memory / RAG | **Hindsight** (self-hosted, our Postgres, local TEI embedder bge-small + reranker) + hybrid document RAG in Postgres (pgvector + tsvector, RRF, rerank, point-in-time); LightRAG optional later |
 | Decision One & models | **Tier A:** in-process compiled GBDT (~10–50 µs) in the order path. **Tier B: decision models** (no text generation; SemIf readout → own Qwen3 + LoRA + classification head, ~2–12 ms on GPU) for text/context judgements, feeding tier A. Jev / Microsoft-Decision-1 excluded (closed, paid); Laya and Clef-flash benchmarked. Big-model decisions distilled into both. Research/chat via the **LiteLLM gateway** (Claude / custom endpoint / local fallback, budgets) |
-| News & social | RSS + RSS-Bridge, GDELT, Telegram (Telethon + Bot API), Discord (own server + followed announcement channels), Bluesky, Mastodon. **Reddit optional; X deferred** |
+| News & social | RSS + RSS-Bridge, GDELT, Telegram (Telethon + Bot API, **postures only**: Telegram API ToS bars AI on Telegram data), Discord (own server + followed announcement channels), Bluesky, Mastodon, Farcaster, CryptoPanic. **Reddit optional; X deferred** |
+| Policy & compliance | AU retail boundary; **venue access registry** (AUSTRAC check quarterly, products per residency); **2× crypto-derivatives cap**; explicit **STP** on every order; Travel Rule pre-registered addresses; Polymarket/Kalshi read-only. See [12](docs/12-policy-and-compliance.md) |
+| Data provenance | Every row tagged `train_ok` / `model_input_ok` / `display_ok` / `retention_days` / `commercial_ok`; training and inference refuse disallowed rows |
+| Wallets & treasury | Custody tiers (vault / HL master / warm / hot / identity / burner), **intents-only signer**, durable-nonce hard block, unified wallet view, **M22 hold-and-earn**, on-chain cost gate, Anvil simulation, Blockscout for decisions. See [13](docs/13-wallets-treasury-and-onchain.md) |
+| Strategy evidence | Evidence-ranked catalogue (P1/P2/P3/X/never) with the counterparty rule, sleeves, fallback ladder, extended validation, capital steps and kill criteria; MasterTradingBot shares libraries. See [14](docs/14-strategy-evidence-and-validation.md) |
+| Social participation | **M23** (optional): drafts only, approved by you, posted via web intent from your own account |
 | Global events | GDELT/USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP + Kalshi/Polymarket probabilities |
 | Airdrops / launches | Vet (GoPlus, RugCheck, Honeypot.is, blocklists, rug-pull heuristics) → auto-claim only for eligible claims on a mandate-bound hot wallet → everything else becomes user tasks |
 | Curation | **One task queue** for social tasks, Discord/Telegram servers and channels to follow, manual claims, and approvals; daily and weekly digests with Telegram buttons |
@@ -57,6 +63,8 @@
 7. **Append-only audit and journal,** kept ≥ 7 years, with tested backups.
 8. **No telemetry or referral tags** in vendored components; the repo stays private.
 9. **Promotion gates** before live capital: out-of-sample after measured costs, robustness statistics, a clean look-ahead check, a paper/approve period.
+10. **Data terms are enforced by provenance tags:** no Telegram text (or any `model_input_ok = false` row) reaches a model, RAG index or training set.
+11. **Only `allowed` venues/products** for your current residency; explicit STP on every order; no wash trading, spoofing, VPNs or multiple KYC accounts.
 
 ## Phases
 

@@ -1,7 +1,7 @@
 # MasterTrader — Architecture (v3, end-to-end)
 
 This is the blueprint that backend and frontend work build against.
-- Module behaviour: [03-build-spec.md](03-build-spec.md) (M0–M21).
+- Module behaviour: [03-build-spec.md](03-build-spec.md) (M0–M23).
 - Order of work: [04-plan-of-action.md](04-plan-of-action.md).
 - UI scope: [ui/README.md](ui/README.md).
 - Visual system: [../DESIGN.md](../DESIGN.md).
@@ -48,7 +48,7 @@ This is the blueprint that backend and frontend work build against.
                       │  edge (Caddy) → mt_api (REST/WS) → services → NATS / Postgres / Parquet / models │
                       └───────┬───────────────┬──────────────────┬───────────────────┬──────────────────┘
                               ▼               ▼                  ▼                   ▼
-          Brokers/exchanges (trade)   Free data sources   LLM APIs via gateway   Chains (RPC: Helius/Etherscan,
+          Brokers/exchanges (trade)   Free data sources   LLM APIs via gateway   Chains (RPC: Helius/Blockscout,
           IBKR, Binance, Bybit, OKX,  (M1–M5, quota-       (Claude, your custom   hot-wallet claims only)
           Coinbase, Kraken, Hyperliquid, tracked)          endpoint)
           Alpaca, OANDA, IG
@@ -98,6 +98,12 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `airdrop` | `mt_airdrop` | Discovery, enrichment, risk/viability scoring | 5 |
 | `airdrop-exec` + `signer` | `mt_airdrop.exec` | Mandated claims, simulation, revokes | 5 |
 | `curation` | `mt_curation` | Task queue, digests | 5 |
+| `wallet-indexer` | `mt_treasury.indexer` | Unified wallet view: balances, transfers (internal tagging), approvals, nonce-authority and depeg monitors | 5 |
+| `treasury` | `mt_treasury` | M22 hold-and-earn + treasury allocation, on-chain cost gate | 6 |
+| `signer` (extended) | `mt_signer` | Intents-only signer for hot/burner/identity keys (13 §2); also serves DEX execution | 5 |
+| `anvil` | foundry anvil | Local mainnet-fork simulation before signatures | 5 |
+| `social` | `mt_social` | M23 social drafts (approval → web intent from your account) | 6 (optional) |
+| `ntfy` | ntfy | Second, independent alert channel (push) | 1 |
 | `telegram-bot` | `mt_ui.telegram` | Alerts, digests, approvals, task buttons, `/kill` | 2 (alerts from 1) |
 | `agents` | `mt_agents` | LangGraph debate runs (M8) | 6 |
 | `hindsight` | Hindsight (slim) | Agent memory (schema `hindsight`) | 6 |
@@ -133,6 +139,8 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | M18 Journal & tax | `mt_journal` | journal | `journal.*` | `journal.*` | fills, ledgers, chain, airdrops |
 | M19 Curation | `mt_curation` | curation, telegram-bot | `curation.task`, `curation.community` | `task.*` | `airdrop.*`, `risk.approval.*` |
 | M20 MCP | `mt_mcp` | mcp | — (via `audit.command`) | — | `mt_api` |
+| M22 Treasury & hold-and-earn | `mt_treasury` | treasury, wallet-indexer | `treasury.wallet`, `treasury.transfer`, `treasury.position`, `treasury.policy` | `wallet.*`, `treasury.*` | chain RPC, venues, `risk.*` |
+| M23 Social participation | `mt_social` | social | `curation.social_draft` | `social.draft.*` | `text.doc.*`, `task.*` |
 | M21 Models | `mt_models` | engine (tier A), decision-svc, litellm, tei | `models.registry`, `models.question`, `audit.tierb_decision` | `dec.tierb.*`, KV `tierb_scores` | `text.doc.*`, M8 teacher log |
 
 ## 5. Data architecture
@@ -185,6 +193,10 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `alert.{severity}.{kind}` | Alerts | all → telegram, UI |
 | `task.new` / `task.updated` | User tasks | airdrop, curation, risk → telegram, UI |
 | `journal.event.new` | Journal | journal → UI |
+| `wallet.{chain}.{address}.balance` / `.transfer` / `.approval` / `.nonce_authority` | Wallet events | wallet-indexer → risk, journal, UI |
+| `treasury.intent` / `treasury.result` / `treasury.depeg` | Treasury moves and depeg alerts | treasury ↔ risk, signer; → UI |
+| `social.draft.new` / `social.draft.decision` | Social drafts | social → telegram, UI |
+| `venue.registry.changed` | Venue registry updates | mt-api → risk, engine |
 
 **Rules:**
 - **Dead-man's switch:** the engine's watchdog consumes `sys.heartbeat.*`. A missing critical heartbeat (engine, monitor, risk, postgres, nats) for N seconds triggers cancel-all and, if configured, flatten.
@@ -222,7 +234,9 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment` | Intel |
 | `/mm/bots` (+ `/{id}`, `/{id}/pnl`) | Market-making bots |
 | `/airdrops`, `/airdrops/{id}`, `/airdrops/mandates`, `/airdrops/wallet` | Airdrops |
-| `/tasks` (+ `/{id}`), `/community` | Tasks and curation |
+| `/tasks` (+ `/{id}`), `/community`, `/social/drafts` | Tasks, curation and social drafts |
+| `/wallets` (+ `/{id}`, `/transfers`), `/treasury`, `/treasury/earn` | Unified wallet view, treasury, hold-and-earn |
+| `/venues/registry` | Venue access registry (12 §2) |
 | `/journal/trades` (+ `/{id}`), `/journal/events`, `/journal/lots` | Journal |
 | `/tax/summary?fy=`, `/tax/reports`, `/tax/residency` | Tax |
 | `/system/health`, `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings` | System |
@@ -260,7 +274,9 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | Data | `data.feed.pause`, `data.feed.resume`, `data.backfill.run`, `data.recon.run` |
 | Intel | `intel.source.add`, `intel.source.mute`, `intel.watchlist.update` |
 | Airdrops | `airdrop.add_url`, `airdrop.rescore`, `airdrop.reject`, `airdrop.mandate.create` (C3), `airdrop.mandate.revoke`, `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval`, `wallet.sweep` |
-| Tasks | `task.done`, `task.skip`, `task.snooze`, `task.never` |
+| Tasks | `task.done`, `task.skip`, `task.snooze`, `task.never`, `social.draft.approve` (C1, opens a web intent), `social.draft.reject` |
+| Wallets & treasury | `wallet.register` (C1), `wallet.tag` (C1), `treasury.allocate` (C2; loosening policy C3), `treasury.earn.enter` / `treasury.earn.exit` (C2) |
+| Venues & ladder | `venue.registry.update` (tighten C1, allow C3), `risk.ladder.set` (down C1, up C3) |
 | Journal & tax | `journal.note.add`, `journal.tag`, `tax.report.generate`, `tax.export`, `tax.residency.add`, `tax.regime.set`, `tax.lot.select` |
 | System | `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.settings.update`, `system.service.restart`, `audit.verify` |
 | MCP (Phase 8) | `mcp.tool.set`, `mcp.policy.set`, `mcp.token.revoke` |
@@ -467,8 +483,8 @@ Each phase ends with a usable demo; details are in [04-plan-of-action.md](04-pla
 | 2 Strategies, risk, lab | Strategy framework + templates, **risk manager**, engine paper/testnet, custom adapters (Alpaca/OANDA/IG), lab (backtest/validate/optimise/MLflow), tier A runtime, sandbox generator, Telegram bot v1 | **Cockpit**, **Strategies**, **Research Lab**, **Execution**, **Risk** | Any strategy type created → backtested with measured costs → paper behind risk; kill switch drill passes |
 | 3 Journal & tax | Journal ingestion, FX service, lot engine, AU_2026 (+ 2027 scaffold), residency, exports | **Journal**, **Tax & Reports** | Every paper fill auto-journalled; FY-to-date AU summary + PAYG estimate |
 | 4 Intel | ingest-text/events, RSS-Bridge, nlp pipeline, RAG, calendars, SemIf tier B | **Intel** (news/social/events/calendar), tier B outputs on Markets/Cockpit | Morning brief; calendar blackouts enforce in risk |
-| 5 Airdrops & curation | airdrop pipeline, risk feeds, mandates + signer + simulation, task queue + digests | **Airdrops & Launches**, **Tasks & Curation** | Weekly vetted digest; simulated auto-claim on testnet |
-| 6 AI & models | Agents (debate), Hindsight, decision-svc (own head), distillation, anomaly, optional Hummingbot | **Agents & Decisions**, **Models & Memory**, **Market Making** | Sourced signals; bake-off report; anomaly explanations |
+| 5 Airdrops & curation | airdrop pipeline, risk feeds, mandates + signer + Anvil simulation, task queue + digests, custody tiers, wallet-indexer (unified wallet view) | **Airdrops & Launches**, **Tasks & Curation**, **Wallets & Treasury** (view) | Weekly vetted digest; simulated auto-claim on testnet |
+| 6 AI & models | Agents (debate), Hindsight, decision-svc (own head), distillation, anomaly, optional Hummingbot, M22 hold-and-earn, optional M23 social drafts | **Agents & Decisions**, **Models & Memory**, **Market Making** | Sourced signals; bake-off report; anomaly explanations |
 | 7 Prove → small live | Live sub-accounts, reconciliation hardening | Approvals polish, mobile polish | Gates passed per strategy; ≥ 3 months paper/approve |
 | 8 MCP | `mt_mcp` over `mt_api` | **MCP Console** (audit of MCP sessions) | Claude can analyse/adjust with approvals |
 

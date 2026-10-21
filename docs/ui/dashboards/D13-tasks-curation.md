@@ -48,6 +48,12 @@ Each task comes with exact steps and verified links.
 | Mark community left | `task.done` (leave task) | C0 |
 | Update digest settings | `system.settings.update` | C0 |
 
+## Additions from the CryptoTrader review
+
+- **Social drafts tab (M23):** drafts for posts/replies you might make from your own accounts (e.g. genuine project feedback), with source context. **Approve** opens a web intent from your account (`social.draft.approve`, C1); nothing posts automatically. Shilling/deceptive drafts are refused.
+- **New task types:** `GENUINE_USE` (identity wallet, after a clean burner run), `PRO_ADVICE` (lawyer/tax-agent triggers from [12 §6](../../12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15)), `VENUE_CHECK` (quarterly AUSTRAC/registry re-check).
+- Task cards show the **EV** inputs for airdrop/launch tasks.
+
 ## Acceptance criteria
 
 1. **Links:** every task has official, verified links only. Unverified links can't be rendered as clickable.

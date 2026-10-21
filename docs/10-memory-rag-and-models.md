@@ -180,7 +180,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
     - ~15–40 ms for 4B;
     - 0.6B ONNX int8 on CPU ~100–400 ms (est.; benchmark it).
 - **Benchmark bake-off before adopting anything:**
-  - **Contenders:** our Qwen-LoRA head vs fine-tuned Laya vs self-hosted Clef-flash vs SemIf zero-shot vs the old JSON-generation baseline.
+  - **Contenders:** our Qwen-LoRA head vs fine-tuned Laya vs self-hosted Clef-flash vs **Kev-4B/9B** (challenger, from the CryptoTrader review) vs SemIf zero-shot vs the old JSON-generation baseline.
   - **Data:** our own data, plus the **CLEF-2026 FinMMEval Buy/Hold/Sell** task as an external check.
   - **Metrics:** accuracy, log-loss, **Brier, ECE per regime**, coverage at target precision, latency p50/p95, determinism (flip rate).
   - **Promotion:** only via the §8 gates, with the teacher in shadow.
@@ -188,6 +188,16 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
   - Scores go to NATS KV as tier-A features.
   - A direct **veto** is allowed only above a calibrated high-precision threshold.
   - Scores also feed M4 (airdrop/rug text risk), M2 (relevance), M10 (anomaly explanations) and M8 (pre-screening).
+
+**Operating rules (adopted from the CryptoTrader review):**
+- **Inputs:** Telegram text is **never** a model input (Telegram API ToS §1.5). Rows with `model_input_ok = false` are refused at the question boundary ([12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)).
+- **Question shape:** binary or low-option questions only; each question gets a **state budget of ~320 tokens** (compact, structured state, not raw documents).
+- **Thresholds per question** come from measured disagreement with the teacher and with outcomes, not one global cut-off.
+- **Shadow checks:** ~5% of tier B decisions are re-asked of the teacher (M8 / gateway model) in shadow; disagreement rate is tracked per question in D10.
+- **Labels come from outcomes or from you (D10 labelling queue), never from shadow-model outputs**, so models don't train on each other's mistakes.
+- **Retraining cadence:** monthly fine-tune, promoted only through the gates.
+- **Social battery** (for X/Bluesky/Discord/Farcaster text, never Telegram): `organic`, `bot_like`, `scam_language`, `narrative`, `stance`, `conviction`.
+- **Laya serving:** bind to `127.0.0.1` with `LAYA_API_KEY`; on CPU each question is ~0.7 s and independent, so batch by question. Laya has no ROCm build: on an AMD GPU (e.g. 7900 XTX) use llama.cpp with Vulkan for the Qwen-based models instead.
 
 **Determinism controls (GPU):**
 - **Precision and model:** FP32 head, pinned model revision.
