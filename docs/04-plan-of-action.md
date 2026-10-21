@@ -2,6 +2,10 @@
 
 Personal-use build, one developer plus AI pair-programming. Time estimates assume evenings and weekends; halve them if full-time. Each phase ends with a **demo you can actually use**, so the project is useful early and doesn't stall.
 
+## ⚠️ Do this week regardless of phase
+- [ ] **Reddit:** create a Reddit "script" app and request API access **before 2026-10-31**, if Reddit data is wanted (see [06 §0](06-aggregators-and-market-providers.md#0-️-time-sensitive-actions)).
+- [ ] Open free demo/practice accounts: OANDA practice, IG demo, Alpaca paper, IBKR paper, a Binance/Bybit testnet. Get free keys for FRED, EIA and Myfxbook.
+
 ## Phase 0 — Foundations (week 1–2)
 - [ ] Monorepo skeleton (`uv` workspace, packages per [build spec §3](03-build-spec.md#3-repository-layout)), ruff, mypy, pytest, pre-commit
 - [ ] `docker-compose.yml`: Postgres 16 + TimescaleDB + pgvector, NATS, Prefect server, Grafana, Ollama
@@ -14,7 +18,10 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 ## Phase 1 — Data backbone (week 3–5)
 - [ ] ccxt crypto bars + funding (top 30 pairs)
 - [ ] yfinance stocks/ETFs/futures/indices + Alpaca IEX
-- [ ] Dukascopy/OANDA practice FX and metals
+- [ ] FX and metals: Dukascopy, OANDA practice, IG demo stream, ECB/Frankfurter reference rates
+- [ ] `sdmx1` macro (ECB, IMF, OECD, BIS, Eurostat), plus BoE/BoC/RBA/SNB fetchers
+- [ ] Binance data.binance.vision crypto backfill; FinanceDatabase symbol master
+- [ ] Run the open provider checks in [06 §3](06-aggregators-and-market-providers.md#open-checks-do-these-in-phase-1)
 - [ ] FRED/ALFRED, Treasury curve, EIA, CFTC COT
 - [ ] EDGAR via edgartools (filings, Form 4, 13F, S-1)
 - [ ] Prefect schedules, data-freshness dashboard, gap detection
@@ -33,11 +40,15 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 **Demo:** "Generate a strategy for X" turns into a validated Nautilus backtest report.
 
 ## Phase 3 — Text, events & memory (week 10–13)
-- [ ] RSS + trafilatura/crawl4ai, Reddit API, Telethon, GDELT GKG
+- [ ] RSS + trafilatura/crawl4ai; **RSS-Bridge sidecar** (whitelist, auth, internal network); GDELT GKG
+- [ ] Telethon (pinned) + Bluesky Jetstream + Mastodon; Reddit/StockTwits/YouTube conditional
+- [ ] Local-LLM relevance gate before FinBERT
 - [ ] Ticker/entity linking, FinBERT sentiment, local embeddings → `document`
 - [ ] Event feeds (USGS, GDACS, NOAA/NHC, FIRMS, ReliefWeb, UCDP, OpenSanctions) + exposure map + event scores
 - [ ] Hindsight + LightRAG integration
-- [ ] Calendars (macro, earnings, IPO) and the crypto airdrop/ICO/listing tracker
+- [ ] Calendars: FRED release dates, ForexFactory weekly JSON, central-bank schedules, earnings and IPOs
+- [ ] Retail positioning (Myfxbook, IG, OANDA books), nowcasts, Kalshi/Polymarket probabilities
+- [ ] Crypto airdrop/ICO/listing tracker
 
 **Demo:** a morning Telegram brief covering overnight news, sentiment movers, global events mapped to affected assets, upcoming calendar items, and new airdrops and listings.
 
@@ -52,7 +63,7 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 
 ## Phase 5 — Guard, paper trading & anomalies (week 18–21)
 - [ ] `mt_guard`: mandates, caps, kill switch, approval flow (Telegram buttons), audit log
-- [ ] Paper/testnet connectors: Nautilus (Binance/Bybit testnet, IBKR paper) + custom Alpaca and OANDA practice adapters
+- [ ] Paper/testnet connectors: Nautilus (Binance/Bybit testnet, IBKR paper) + custom Alpaca, OANDA practice and IG demo adapters
 - [ ] Anomaly detectors + explain agent
 - [ ] Streamlit/NiceGUI dashboard: signals, mandates, positions, approvals
 

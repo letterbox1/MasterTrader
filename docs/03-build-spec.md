@@ -102,21 +102,49 @@ mandate(id, name, venues, instruments, max_notional, max_leverage, max_daily_los
 ## 5. Module specs (v1)
 
 ### M1 Market & macro ingestion — `mt_data`
-- Crypto: **ccxt** (OHLCV, funding, order book snapshots) for Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid.
+- Crypto: **ccxt** (OHLCV, funding, order book snapshots) for Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid; **data.binance.vision** for free bulk backfill.
+- Asia futures and commodities: **akshare**. Symbol master: **FinanceDatabase**.
 - Equities/ETFs: **yfinance** (personal use OK) + OpenBB providers; Alpaca market data (free IEX feed).
-- FX & metals: **Dukascopy** history, **OANDA practice** stream; XAU/XAG via OANDA.
+- FX & metals:
+  - **Dukascopy** history (dukascopy-node or our own bi5 parser).
+  - **OANDA practice** stream; XAU/XAG via OANDA.
+  - **IG** streaming (`trading-ig`).
+  - ECB reference rates + self-hosted **Frankfurter**.
+  - TrueFX/HistData for cross-checks.
+  - Twelve Data as backup bars.
+  - **Not LBMA:** it needs a licence.
 - Commodities: **EIA** (energy), **USDA**, **CFTC COT**; futures bars via yfinance (`GC=F`, `CL=F`…) to start.
-- Rates/bonds: **US Treasury** yield curve, **FRED/ALFRED** (with vintages), ECB SDW.
+- Rates/bonds: **US Treasury** yield curve, **FRED/ALFRED** (with vintages).
+- International macro via **`sdmx1`**: ECB, IMF, OECD, BIS, Eurostat. Direct fetchers for BoE IADB, BoC Valet, RBA, SNB, BoJ. **DBnomics** as the catch-all.
 - Fundamentals: **SEC EDGAR via edgartools** (10-K/10-Q XBRL, 13F, Form 4 insiders, S-1/424B for IPOs).
 - Schedules: Prefect deployments (1-minute crypto, hourly/daily others), with idempotent upserts.
 
 ### M2 News & social — `mt_data.text`
-- **RSS** (Reuters, AP, CNBC, central banks, CoinDesk/The Block, regulator feeds) → **trafilatura** full text.
-- **crawl4ai** for sites without RSS.
-- **Reddit**: official API (r/wallstreetbets, r/stocks, r/CryptoCurrency, r/Forex…); Telegram channels via **Telethon** (your own account).
-- **GDELT** 2.0 GKG for global news volume and tone.
-- X/Twitter: official API if you pay; otherwise skip (scraping is against its terms).
-- Processing: language detection → ticker/entity linking → **FinBERT** sentiment (local) → embeddings (local `bge`/`nomic` via Ollama) → `document`.
+_Full source-by-source decisions are in [06-aggregators-and-market-providers.md §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)._
+- **News:**
+  - RSS feeds (wires, financial and crypto news, central banks, regulators) → **trafilatura**; **crawl4ai** for JS-heavy pages.
+  - **RSS-Bridge** as an internal-only sidecar for sites without feeds: explicit bridge whitelist, auth on, no published port.
+  - **GDELT** 2.0 GKG for global news volume and tone.
+  - EDGAR's official JSON/Atom feeds.
+- **Social (core):**
+  - **Telethon** for curated public Telegram channels: pinned version, secondary number. RSS-Bridge's Telegram bridge is the fallback.
+  - **Bluesky Jetstream** firehose filtered on cashtags and keywords (free, permitted).
+  - Mastodon hashtag timelines.
+- **Social (conditional):**
+  - **Reddit** via PRAW: request access **before 2026-10-31**; sunsetting 2027 (U).
+  - StockTwits v2 REST (test first).
+  - YouTube channel RSS + Data API v3.
+  - X via the official pay-per-use API with a budget cap.
+  - twscrape only behind an off-by-default flag (personal use, burner accounts).
+- **Excluded:** Instagram, TikTok, LinkedIn and Facebook scrapers, Discord self-bots, Nitter, snscrape, threads-scraper, log, Spacebar.
+- **Processing:**
+  1. Dedupe (canonical URL + content hash).
+  2. **Local-LLM relevance gate** (an idea borrowed from OpenMagpie).
+  3. Language detection.
+  4. Ticker/entity linking.
+  5. **FinBERT** sentiment (local).
+  6. Embeddings (local `bge`/`nomic` via Ollama).
+  7. Store in `document`. `ts_published` is flagged `approx` when derived from coarse or relative times.
 
 ### M3 Global events — `mt_data.events`
 - **USGS** quakes, **GDACS** disasters, **NOAA/NHC** storms, **NASA FIRMS** fires, **ReliefWeb**, **UCDP** conflict, **GDELT** events, **OpenSanctions**; ACLED with a free research account is OK for personal use.
@@ -129,12 +157,20 @@ mandate(id, name, venues, instruments, max_notional, max_leverage, max_daily_los
 - Output: `crypto_launch` with status pipeline (announced → snapshot → claim → listed), plus Telegram alerts.
 
 ### M5 Calendars — `mt_data.calendar`
-- FRED release calendar, BLS/BEA/Fed/ECB/BoE schedules, EDGAR earnings (8-K) and IPO (S-1/424B) parsing, plus Nasdaq/NYSE IPO calendar pages (personal use).
+- FRED/ALFRED release dates (US backbone).
+- **ForexFactory weekly JSON** for global consensus forecasts (personal use, cached).
+- Central-bank meeting schedules.
+- COT/Baker Hughes/EIA/WASDE release days.
+- EDGAR earnings (8-K) and IPO (S-1/424B) parsing, plus Nasdaq/NYSE IPO calendar pages (personal use).
 
 ### M6 Features — `mt_features`
 - TA-Lib indicators; the **Qlib Alpha158** factor set; Vibe-Trading factor zoo (alpha101/GTJA191).
 - Sentiment aggregates per instrument (count, mean, z-score), event scores, COT positioning, macro surprises (actual − forecast).
 - **Chronos/TimesFM/Kronos** forecasts as *volatility/volume* features.
+- **Retail positioning:** Myfxbook Community Outlook, IG client sentiment, OANDA order/position books.
+- **Nowcasts:** GDPNow, NY Fed, Cleveland Fed. **Projections:** Fed SEP, ECB SPF.
+- **Fed-path probabilities** computed from ZQ futures.
+- **Market-implied probabilities:** BIS effective exchange rates, the VIX regime, Kalshi/Polymarket event probabilities.
 - Features are versioned; there is a feature-to-forward-return evaluator (IC, rank-IC, decay).
 
 ### M7 Research lab — `mt_lab`
@@ -186,7 +222,13 @@ mandate(id, name, venues, instruments, max_notional, max_leverage, max_daily_los
 ### M12 Execution — `mt_engine`
 - **NautilusTrader**, pinned version, behind a thin wrapper.
 - Venues out of the box: IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Polymarket.
-- **Custom adapters to write:** Alpaca (stocks/ETFs/crypto paper), OANDA v20 (FX/metals/CFDs), and MT5 if your broker is MT5-only (Windows bridge).
+- **Custom adapters to write:**
+  - Alpaca (stocks/ETFs/crypto paper).
+  - OANDA v20 (FX/metals/CFDs).
+  - **IG** (`trading-ig`).
+  - Optionally cTrader Open API / FIX and Saxo OpenAPI.
+  - MT5, if your broker is MT5-only (Windows bridge).
+- FXCM is out: its API is deprecated.
 - Start everything on paper/testnet.
 
 ### M13 Market-making sidecar

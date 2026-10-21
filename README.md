@@ -22,6 +22,7 @@ On top of that it adds free data pipelines, social/news and global-event scraper
 | [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec (personal-use edition):** stack, repo layout, data model, module specs, interfaces, guardrails |
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phased plan of action with checklists and a demo per phase |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
+| [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets; **time-sensitive Reddit deadline** |
 | [docs/research/](docs/research/) | Raw per-repo research notes with file-level evidence |
 
 ## Licensing stance
@@ -42,5 +43,10 @@ This is a private project for personal use only. GPL obligations start only when
 | VibeTradingLabs/vibetrading | No LICENSE file | Avoid (redundant) |
 | 666ghj/MiroFish | AGPL-3.0 | Reference only / experiment |
 | simplifaisoul/osiris | MIT | Reference only |
+| RSS-Bridge/rss-bridge | Unlicense | Adopt (internal sidecar for feedless sites) |
+| spacebarchat | AGPL-3.0 | Avoid (a chat server, not a data source) |
+| the-ai-entrepreneur-ai-hub/threads-scraper | None | Avoid (unlicensed paid Apify actor) |
+| matthewdonsemail-lab/listeningkit | Apache-2.0 (fork of obris-dev/openmagpie) | Reference only |
+| matthewdonsemail-lab/log | MIT | Avoid (cookie-harvesting lead-gen) |
 
 > Nothing here is financial advice. No reviewed system has shown durable, cost-adjusted, out-of-sample profitability.
