@@ -178,7 +178,7 @@ function card(i){
 function board(){
   const items=DATA.items.filter(match);
   $("#board").innerHTML=COLS.filter(([k])=>!(state.hidedone&&k==="done")).map(([k,t])=>{
-    const rows=items.filter(i=>i.status===k);
+    const PR={critical:0,high:1,medium:2,low:3};const rows=items.filter(i=>i.status===k).sort((x,y)=>(PR[x.priority]-PR[y.priority])||(x.phase-y.phase)||x.id.localeCompare(y.id));
     return `<div class="col"><h3><span>${t}</span><span class="c">${rows.length}</span></h3><div class="list">${rows.map(card).join("")||`<div class="empty">—</div>`}</div></div>`}).join("");
 }
 function phaseHead(){

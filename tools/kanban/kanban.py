@@ -1007,7 +1007,9 @@ def brief(phases, items) -> str:
         out.append("**Next ready:** " + "; ".join(f"{i.id} {i['title']}" for i in nxt))
     bugs = [i for i in items.values() if i.is_open_bug() and i["severity"] in ("S1", "S2")]
     if bugs:
-        out.append("**Open S1/S2 bugs:** " + "; ".join(f"{i.id} {i['title']}" for i in bugs))
+        bugs = sorted(bugs, key=lambda i: (i["severity"], i.id))
+        shown = "; ".join(f"{i.id} {i['title']}" for i in bugs[:6])
+        out.append(f"**Open S1/S2 bugs ({len(bugs)}):** {shown}" + (f"; … +{len(bugs) - 6} more (see KANBAN.md)" if len(bugs) > 6 else ""))
     out += ["", "Protocol: AGENTS.md. Claim with `./kanban start <ID>`, checkpoint with `./kanban checkpoint <ID> \"…\"`, "
                 "finish with `./kanban done <ID> --evidence \"…\"`, file bugs with `./kanban new --kind bug …`."]
     return "\n".join(out)

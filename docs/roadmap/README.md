@@ -21,15 +21,15 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:phase-status:start -->
 | Phase | Status | Progress | Tasks done/total | Board |
 |---|---|---|---|---|
-| P0 Phase 0 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-0/BOARD.md) |
-| P1 Phase 1 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-1/BOARD.md) |
-| P2 Phase 2 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-2/BOARD.md) |
-| P3 Phase 3 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-3/BOARD.md) |
-| P4 Phase 4 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-4/BOARD.md) |
-| P5 Phase 5 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-5/BOARD.md) |
-| P6 Phase 6 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-6/BOARD.md) |
-| P7 Phase 7 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-7/BOARD.md) |
-| P8 Phase 8 | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/0 | [BOARD](../../tracking/phase-8/BOARD.md) |
+| P0 Foundations & security baseline | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/64 | [BOARD](../../tracking/phase-0/BOARD.md) |
+| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/67 | [BOARD](../../tracking/phase-1/BOARD.md) |
+| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/120 | [BOARD](../../tracking/phase-2/BOARD.md) |
+| P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/54 | [BOARD](../../tracking/phase-3/BOARD.md) |
+| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-4/BOARD.md) |
+| P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/64 | [BOARD](../../tracking/phase-5/BOARD.md) |
+| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/66 | [BOARD](../../tracking/phase-6/BOARD.md) |
+| P7 Prove it, then go small-live | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/64 | [BOARD](../../tracking/phase-7/BOARD.md) |
+| P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/29 | [BOARD](../../tracking/phase-8/BOARD.md) |
 <!-- kanban:phase-status:end -->
 
 ---
