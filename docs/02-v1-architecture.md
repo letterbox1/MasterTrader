@@ -7,7 +7,7 @@ Goal: one unified, self-hostable AI quant platform built from free and open-sour
 1. **Models reason, code computes, a deterministic guard decides whether anything trades.** No LLM output ever reaches a broker without passing hard-coded risk rules (taken from Vibe-Trading's order guard and nofx's Frontier mode, re-implemented).
 2. **Point-in-time everything.** Every record carries `event_time` and `ingest_time`. Research and backtests may only read rows with `ingest_time ≤ simulated now` (the pattern from TradingAgents' date enforcement). Raw news and social snapshots are archived so backtests can be replayed.
 3. **One engine for backtest, paper and live.** That engine is NautilusTrader, so a strategy is the same code at every stage.
-4. **License firewall.**
+4. **License firewall (only needed for a SaaS; for personal use see [03-build-spec §1](03-build-spec.md#1-what-personal-use-changes)).**
    - The core stays permissive (MIT/Apache).
    - Nautilus is an unmodified LGPL dependency behind our `mt_engine` wrapper.
    - GPL/AGPL tools (freqtrade, MiroFish, Grafana) run only as separate processes over an API, or get re-implemented clean-room.

@@ -1,6 +1,6 @@
 # MasterTrader
 
-A unified, open-source AI quant trading platform, currently in the **planning / research stage**.
+A **private, proprietary, personal-use** AI quant trading platform built from open-source parts. Currently in the **planning / research stage**.
 
 MasterTrader will combine what the best open-source trading projects do well into one system:
 - NautilusTrader's execution engine;
@@ -19,7 +19,14 @@ On top of that it adds free data pipelines, social/news and global-event scraper
 | [SPEC.md](SPEC.md) | v1 specification and core decisions |
 | [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) | Vetting of 10 open-source repos: licenses, code audit, reputation, overlap and redundancy, verdicts, and the supporting free data/memory/quant ecosystem |
 | [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | v1 modules, asset coverage, phased roadmap, acceptance gates |
+| [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec (personal-use edition):** stack, repo layout, data model, module specs, interfaces, guardrails |
+| [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phased plan of action with checklists and a demo per phase |
+| [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
 | [docs/research/](docs/research/) | Raw per-repo research notes with file-level evidence |
+
+## Licensing stance
+
+This is a private project for personal use only. GPL obligations start only when software is distributed, and AGPL obligations only when others use it over a network. Neither happens here, so GPL/AGPL code may be used directly. The verdicts below reflect what is **best**, not just what is licence-safe. See [docs/05](docs/05-saas-legal-and-licensing.md) for the SaaS picture. **Keep this repo private.**
 
 ## Repos vetted
 
