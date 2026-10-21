@@ -1,0 +1,15 @@
+_Raw notes from the research agents. They back up [../01-repo-vetting-report.md](../01-repo-vetting-report.md). File paths refer to each upstream repo at its 2026-10-21 HEAD._
+
+# Engines: Nautilus = core, Hummingbot = module, Freqtrade = reference only
+| | Hummingbot Apache-2.0 | Freqtrade GPLv3 | Nautilus LGPLv3+CLA |
+|last commit|2026-09-22|2026-10-20|2026-10-21 (develop)|
+|version|2.17.0|2026.10-dev monthly|v2.0.0rc8|
+|size|~385k Py + ~10k Cython|~149k Py on ccxt|~2.19M Rust + ~121k Py|
+|tests|542 files|~1,713 fns|~31,192 Rust + ~2,477 Py|
+|CI wf|2|9|12 (CodeQL, OpenSSF, audit, perf, nightly)|
+|stars/forks/issues|20.6k/5.0k/73|55.7k/11.5k/24|30.4k/4.1k/126|
+Nautilus: event-driven deterministic, same kernel backtest/live; migrating Cython v1 -> Rust v2 (MIGRATION_V2.md; v1 security-only ~3mo; v2 gaps: BacktestNode no custom data/DataFrames); RELEASES.md 148 "breaking" lines; releases every 2-3 wks. AssetClass FX/Equity/Commodity/Debt/Index/Crypto/Alternative. Adapters (ADAPTERS.md): Architect AX, Betfair, Binance, Bybit, Coinbase, Deribit, Derive, dYdX, Hyperliquid, IB, Kraken, Lighter, OKX, Polymarket; data-only Databento, Tardis, Blockchain, CoinAPI. Multi-asset via IB. No OANDA/MT5/Alpaca. L1/L2/L3 book replay, queue position, pluggable fill/fee/latency (crates/execution/src/models/). ROADMAP: no UI, no built-in ML/optimisation, no distributed backtest. LGPL pip-dep fine; engine mods shared on distribution; no network clause; CLA gives Nautech sub-licensable rights; TRADEMARK.md.
+Freqtrade: crypto only via ccxt (spot: Binance, BingX, Bitget, Bybit, Gate, HTX, Hyperliquid, Kraken, OKX; futures: Binance, Bitget, Bybit, Gate, Hyperliquid, Kraken, OKX). Candle backtest, no slippage (docs/backtesting.md), no latency. Strengths: lookahead/recursive analysis (freqtrade/optimize/analysis/), hyperopt, FreqAI (LightGBM/XGBoost/PyTorch/transformer/RL), FreqUI, Telegram, REST. GPLv3: import => platform GPL on distribution; separate process over REST (ft_client/) OK. No telemetry; OKX broker id hardcoded (freqtrade/exchange/okx.py:62). Overfitting complaints (#7190, #5612; one write-up -40% OOS).
+Hummingbot: crypto only; 27 spot + 20 perp connectors (incl Kalshi USD perp); AMM/CLMM via Gateway. Strength: market making (pure, Avellaneda, XEMM), V2 executors grid/DCA/TWAP/arb/LP; hbot CLI, Condor AI harness. Weak backtester (~2.3k LOC strategy_v2/backtesting, candle-only). Telemetry ON by default: anonymized_metrics_mode (client_config_map.py:845) -> api.coinalpha.com/reporting-proxy-v2 every 15min (connector_metrics_collector.py:29). Broker IDs: Binance x-MG43PCSN (binance_constants.py:6), OKX "Hummingbot". HBOT token governance; sponsor referral links. MM losses documented by own academy.
+Redundancy: Freqtrade-as-engine redundant vs Nautilus; its research tooling is the value. Hummingbot not redundant (MM, arb, AMM LP, long-tail venues MEXC/Gate/KuCoin/Bitget/HTX/Backpack/Injective/XRPL); its backtester redundant.
+Sources: github repos; freqtrade issues 7190, 5612; hummingbot.org governance/academy; pistack.xyz 2026 comparison.

@@ -1,0 +1,13 @@
+_Raw notes from the research agents. They back up [../01-repo-vetting-report.md](../01-repo-vetting-report.md). File paths refer to each upstream repo at its 2026-10-21 HEAD._
+
+# Vibe-Trading (HKUDS) vs vibetrading (VibeTradingLabs)
+Unrelated (no fork/shared code; name collision — VibeTradingLabs PyPI 0.0.2 May 2025 predates HKUDS repo Jul 2026). VibeTradingLabs redundant except DEX perp adapters (Hyperliquid, Paradex, Lighter, Aster, Extended).
+| | HKUDS | VibeTradingLabs |
+|stars/forks| ~36.1k/5.8k, ~3,289 commits | ~102/19, 42 commits|
+|last commit| 2026-10-20 | 2026-03-23 (author "CrabbyClaw", agent-looking)|
+|license| MIT + NOTICE (bundles Qlib factors Apache-2.0)| MIT only in pyproject; NO LICENSE file|
+|size| ~508k Py LOC (~231k tests, 908 test files) + ~44k TS| ~9.5k Py, 20 test files/237 tests|
+|verdict| Borrow components / adopt as research base| Reference only / Avoid|
+HKUDS: LangGraph agent + FastAPI + MCP + CLI + React. ~45 loaders with fallbacks (agent/backtest/loaders/registry.py); LLM writes SignalEngine; 16 engines (~12 markets): CN A-shares, global/India/Korea/Vietnam/Brazil equities, CN+global futures (commodities), crypto perps (fees, 8h funding, liquidation), forex incl. metals spreads/swap, options, composite. Bonds analytics only (quantlib/fixedincome.py). Lookahead protection: signal shift 1 bar, next-open fill + slippage (engines/base.py); validation.py Monte Carlo permutation, bootstrap Sharpe CI, walk-forward. 19 broker connectors (Alpaca, IBKR MCP, Binance, OKX, MT5, Zerodha, Futu, Tiger, Robinhood, Trading212, Upbit...). Live order guard default-deny (agent/src/live/order_guard.py): mandate, kill switch, notional/leverage caps, audit, no auto-retry. 26 LLM provider profiles. Memory = files + optional SQLite FTS, not vector RAG. Risks: LLM strategy code exec_module in-process with denylist only (backtest/runner.py) -> unsandboxed; shell tool. No secrets/telemetry; pickle cache signature-checked. Warns of fake token/X account. Little independent quant review.
+VibeTradingLabs: crypto-only litellm prompt->strategy->CCXT backtest->DEX deploy w/ wallet private keys. Likely 1-bar lookahead (_core/static_sandbox.py ~365-396, 426/476/507). Raw exec() of LLM output in backtest (_core/backtest.py:513) and live (_core/live_runner.py:180) in-process with private key. Flat 0.1% fee, slippage off, 30k step cap. Dormant ~7 months.
+Reuse from HKUDS: engines/*, loaders/* + registry, validation.py, optimizers/, src/live/ (guard/mandate/halt/audit), connectors alpaca/ibkr/binance/okx/mt5, src/factors/zoo. Pin commit; sandbox generated code with no creds.
