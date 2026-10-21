@@ -62,15 +62,18 @@ The scope is a single-user, self-hosted platform that holds broker/exchange API 
 ## 6. Application controls
 
 - **Risk manager is authoritative.** Default-deny; kill switch; daily-loss and drawdown halts; per-venue, per-instrument and portfolio limits (spec M11).
-- **Risk limits changed via MCP or the UI:**
+- **One command layer (`mt_api`).** The UI, Telegram and (later) MCP all issue typed, audited commands; none talks to brokers directly.
+- **Risk limits changed via any front-end:**
   - Lowering a limit is immediate.
   - **Raising a limit or enabling auto mode requires a second confirmation:** a Telegram button plus a TOTP code, with a cool-down (e.g. 15 min) before it takes effect.
+  - Hard ceilings live in a file no API can write.
   - Every change is audited.
-- **MCP server:**
-  - Bound to localhost/Tailscale, with token auth.
-  - Read-only tools are separate from write tools.
-  - Write tools can only *propose* changes that the confirmation flow approves.
-  - No tool can place an order directly.
+- **MCP server (Phase 8, optional):**
+  - Bound to stdio or localhost/Tailscale, with token auth.
+  - It *can* place, modify and cancel orders and adjust or close positions, but only through `mt_api` → risk manager, like any other source.
+  - MCP-originated orders default to **approve mode** (Telegram button); this is configurable per venue and size.
+  - It can never touch withdrawals, API keys or wallet mandates.
+  - Treat Claude conversations as able to be influenced by prompt injection (e.g. a pasted news article). That's why confirmation and risk checks don't rely on the model.
 - **Dead-man's switch:** if the heartbeat from the engine, data feeds or the guard stops for N seconds, cancel open orders and (configurable) flatten positions, then alert.
 - **LLM safety:**
   - Scraped content is wrapped and marked untrusted.

@@ -69,6 +69,8 @@ _(U) = unverified._
 
 ## 3. Additional forex & multi-asset providers
 
+> **Free-only rule (2026-10-21):** only free sources and free tiers are implemented. Paid items mentioned below (CoinGlass, the CME FedWatch API, X API, Trading Economics, Glassnode) are **excluded**; see [03-build-spec §1](03-build-spec.md#1-ground-rules).
+
 ### Execution / broker adapters (M12)
 | Provider | Why | Lib | Priority |
 |---|---|---|---|

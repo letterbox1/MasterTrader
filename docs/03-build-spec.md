@@ -1,38 +1,48 @@
-# MasterTrader — Build Spec (personal-use edition)
+# MasterTrader — Build Spec (personal-use edition, v2)
 
-**Context:** a proprietary, private project for the owner's personal use only. The aim is **minimal hoops**: use whatever works best (including GPL/AGPL code), self-host on one machine, avoid enterprise ceremony. The few disciplines kept are the ones that protect your money and your future options (Section 9).
+**Context:** a proprietary, private, single-user platform. The aim is **minimal hoops**: use whatever works best (including GPL/AGPL code), self-host on one machine, **free data and free tiers only**, and keep only the disciplines that protect money, records and future options.
+
+**Design stance:** MasterTrader is a **platform, not a strategy**.
+- It doesn't presume any trading style or timeframe.
+- Any strategy type can be built, backtested, simulated, paper-traded and run live on any timeframe, from **tick / order-book level up to daily-and-above**.
+- Strategies, risk limits and preferences are **user inputs** (UI, Telegram, and later MCP), not things baked into the code.
+
+Companion docs:
+- [07 security notes](07-security-notes.md)
+- [08 airdrops & curation](08-airdrops-and-token-launches.md)
+- [09 journal & tax](09-journal-and-tax.md)
+- [06 data sources](06-aggregators-and-market-providers.md)
+- [04 plan of action](04-plan-of-action.md)
 
 ---
 
-## 1. What "personal use" changes
+## 1. Ground rules
 
-| Before (SaaS-safe posture) | Now (personal use) |
+| Rule | Meaning |
 |---|---|
-| GPL/AGPL code only as separate services or clean-room rewrites | **Use it directly.** You don't distribute and nobody else uses it over a network, so the GPL/AGPL obligations never trigger. |
-| freqtrade = reference only | You may vendor freqtrade modules (look-ahead analysis, hyperopt loss functions, FreqAI ideas) directly |
-| MiroFish / nofx = reference only | You may run or modify them. Security issues still apply: keep them on localhost, telemetry off, fee/referral tags stripped. |
-| yfinance / Yahoo = avoid | **Fine.** Yahoo's terms allow personal, non-commercial use. |
-| Free-tier APIs marked "non-commercial" | Fine for personal use |
-| Commons Clause (vectorbt), BSL (ArcticDB), TSL (TimescaleDB) | Fine. They only restrict *selling* or *hosting for others*. |
-
-**Still applies even for personal use:**
-- Data-source terms that forbid scraping at all: X/Twitter scraping, Discord self-bots, ForexFactory/Investing.com scraping, CelesTrak rate-limit evasion. The risk is an account ban or IP block, not lawsuits for one person; it's your call, but prefer official APIs and RSS.
-- Broker and exchange terms (no wash trading or spoofing; some venues restrict certain countries' residents, e.g. Hyperliquid for US persons).
-- Tax reporting of your gains.
+| **Personal use** | GPL/AGPL code can be used directly, because nothing is distributed or served to others. Yahoo, Myfxbook, ForexFactory and similar personal-use terms are fine. Keep the repo **private**. |
+| **Free only** | Only free sources and free tiers. A single user should stay under the free limits. **Excluded (paid):** X API, CoinGlass, CME FedWatch API, TokenSniffer, Glassnode, Trading Economics, Databento credits, paid exchange data. **Every connector has a quota tracker that throttles before the limit.** |
+| **Deferred** | Reddit (optional if API access is granted) and X: revisit only if free and permitted. **MCP control plane:** built last (Phase 8), only once the platform is in daily use. |
+| **Never** | Self-bots, fake engagement, sybil farming, scraping that breaks a platform's terms, autonomous wallet signatures outside a mandate (see [07](07-security-notes.md)). |
+| **Jurisdiction** | Australian tax resident now; possible move to the UAE, Egypt or Cyprus later. The journal and tax engine are jurisdiction-pluggable ([09](09-journal-and-tax.md)). |
 
 ---
 
 ## 2. Target environment
 
-| Item | Choice | Why |
-|---|---|---|
-| Host | One Linux box (home server or a ~8 vCPU / 32 GB RAM / 1 TB NVMe VPS); optional GPU for local LLMs | Simple; everything runs on `docker compose` |
-| Language | Python 3.12 (core), small TS UI later if needed | Nautilus, Hummingbot, TradingAgents, FinRobot and Vibe-Trading are all Python |
-| Packaging | `uv` workspace monorepo | Fast, one lockfile |
-| Runtime | Docker Compose | One command up/down |
-| LLMs | Claude API for manager/decision roles; **Ollama** (Qwen/Llama class) for cheap analyst, sentiment and summarisation work | Keeps per-run cost low |
-| Secrets | `.env` (git-ignored) + OS keychain for broker keys; never in the repo | Minimal-hoop but safe |
-| Access | Bound to `127.0.0.1`; remote access only via **Tailscale** (or WireGuard) | No public ports, no auth system to build |
+| Item | Choice |
+|---|---|
+| Host | One Linux box: 8–16 cores, 32–64 GB RAM, **2–4 TB NVMe** (tick/L2 storage), plus a HDD for cold Parquet. Optional GPU for local LLMs. Full-disk encryption. |
+| Language / packaging | Python 3.12, `uv` workspace monorepo |
+| Runtime | Docker Compose, with images pinned by digest |
+| Engine | **NautilusTrader** (pinned), event-driven: the same code runs backtest, sandbox/paper and live |
+| Bus | **NATS JetStream** (market data fan-out, events, alerts) |
+| Databases | **Postgres 16 + TimescaleDB (TSL Community image) + pgvector** is the system of record. **Nautilus ParquetDataCatalog + DuckDB** hold raw ticks/L2. **QuestDB** is optional, only if live SQL over raw ticks is ever needed. |
+| Observability | **Grafana + Loki** (logs, shipped by Vector) + **Prometheus** (metrics) + **OpenTelemetry** traces; Grafana Alerting → Telegram |
+| LLMs | Claude API for decision/manager roles; **Ollama** local models for analysts, relevance gating, sentiment, summarisation |
+| Orchestration | Prefect (batch and scheduled flows); long-running services under Compose |
+| Access | Everything bound to localhost or the internal network; remote access via **Tailscale** only |
+| Secrets | `sops` + `age` encrypted file → tmpfs at start ([07 §2](07-security-notes.md#2-secrets)) |
 
 ---
 
@@ -40,266 +50,552 @@
 
 ```
 MasterTrader/
-├── pyproject.toml              # uv workspace root
-├── docker-compose.yml          # postgres(timescale+pgvector), nats, prefect, grafana, ollama, app services
-├── .env.example
+├── pyproject.toml / uv.lock
+├── docker-compose.yml            # postgres+timescale+pgvector, nats, prefect, grafana, loki, prometheus, vector, ollama, rss-bridge, app services
 ├── packages/
-│   ├── mt_core/                # shared types: Instrument, Bar, Event, Signal, Order, Mandate; config; logging
-│   ├── mt_data/                # ingestion connectors + Prefect flows (M1–M5)
-│   ├── mt_store/               # DB schema, migrations (alembic), point-in-time query helpers
-│   ├── mt_features/            # factors, TA, sentiment, event scores, TS-foundation-model features (M6)
-│   ├── mt_lab/                 # strategy gen + backtest + validation + bias analysers (M7)
-│   ├── mt_agents/              # LangGraph debate graph, valuation tools, prompts (M8)
-│   ├── mt_memory/              # Hindsight + LightRAG adapters, decision settlement/reflection (M9)
-│   ├── mt_anomaly/             # detectors + explain agent (M10)
-│   ├── mt_guard/               # risk/order guard, mandates, kill switch, approvals (M11)
-│   ├── mt_engine/              # NautilusTrader wrapper + custom adapters (Alpaca, OANDA, MT5) (M12)
-│   └── mt_ui/                  # FastAPI + simple dashboard (Streamlit/NiceGUI for v1) + Telegram bot (M15)
-├── services/
-│   ├── hummingbot/             # sidecar config (M13), telemetry off
-│   └── crowdsim/               # optional OASIS/MiroFish experiment (M14)
-├── third_party/                # vendored code; pinned commit + upstream licence kept per folder
-│   └── LICENSES.md             # manifest: what came from where, under what licence (see §9)
-├── strategies/                 # your strategies (Nautilus Strategy classes)
-├── notebooks/                  # research
-├── tests/
-└── docs/
+│   ├── mt_core/        # shared types (Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent), config, clock, logging
+│   ├── mt_store/       # schemas (market, audit, journal, ops, curation), migrations, point-in-time query API, Parquet catalog helpers
+│   ├── mt_data/        # connectors + recorders: market (M1), text/social (M2), events (M3), calendars (M5); quota tracker
+│   ├── mt_features/    # feature library + evaluator (M6)
+│   ├── mt_strategy/    # strategy framework: base classes, templates, registry, parameter schemas, multi-timeframe helpers (M0)
+│   ├── mt_lab/         # backtest/sim orchestration, validation, optimisation, sandboxed LLM strategy generation (M7)
+│   ├── mt_agents/      # LangGraph decision graph + tools (M8)
+│   ├── mt_memory/      # Hindsight + LightRAG + decision settlement (M9)
+│   ├── mt_anomaly/     # anomaly detectors + explain agent (M10)
+│   ├── mt_risk/        # risk manager: policies, pre-trade checks, portfolio risk, kill switch, dead-man's switch (M11)
+│   ├── mt_engine/      # Nautilus wrapper + custom adapters (Alpaca, OANDA, IG, cTrader, MT5) (M12)
+│   ├── mt_monitor/     # live data-quality + cost/TCA monitor (M16)
+│   ├── mt_obs/         # logging/metrics/tracing setup, audit writers, LLM-call audit (M17)
+│   ├── mt_journal/     # journal ingestion, lot engine, FX service, jurisdiction plugins, reports, exports (M18)
+│   ├── mt_airdrop/     # airdrop/launch discovery, risk & viability scoring, mandates, claim executor (M4)
+│   ├── mt_curation/    # user task queue + community curation (Discord/Telegram/Galxe) + digests (M19)
+│   ├── mt_api/         # internal command API used by UI, Telegram and (later) MCP; all actions go through it
+│   ├── mt_ui/          # FastAPI web UI + Telegram bot (M15)
+│   └── mt_mcp/         # (Phase 8, last) MCP server: thin adapter over mt_api (M20)
+├── services/           # hummingbot (M13), crowdsim (M14), rss-bridge config, optional rotki / ghostfolio / beancount-fava
+├── strategies/         # user strategies (any type), each with a manifest
+├── third_party/        # vendored code (pinned commit + licence) + LICENSES.md
+├── notebooks/  tests/  docs/  docs/runbooks/
 ```
+
+**Design choice that keeps MCP cheap later:** every user action (change a risk limit, pause a strategy, adjust a position, approve an order, mark a task) is a typed command in **`mt_api`**.
+- The web UI and the Telegram bot call `mt_api` from day one.
+- The MCP server (M20) is then just a thin adapter that exposes the same commands to Claude.
+- It needs no new business logic, so building it last costs little.
 
 ---
 
-## 4. Data model (point-in-time core)
+## 4. Data model (overview)
 
-All tables live in Postgres + TimescaleDB. Every fact carries **two timestamps**.
+Postgres schemas:
+- **`market`**: instruments, bars (hypertables), cost and spread series, funding/swap rates.
+- **`text`**: documents, events, calendars.
+- **`features`**
+- **`strategy`**: registry, runs, results.
+- **`risk`**: policies, limits, changes.
+- **`audit`**: orders, fills, decisions, LLM calls, DQ/cost events, risk changes, commands.
+- **`journal`**: events, lots, matches, FX rates, residency, reports.
+- **`curation`**: tasks, community, airdrops.
+- **`ops`**
 
-```sql
-instrument(id PK, symbol, venue, asset_class, currency, multiplier, meta jsonb)
+Raw ticks, quotes and L2 live in the **Parquet catalog**.
 
-bar(instrument_id, ts_event, ts_ingest, timeframe, o,h,l,c,v, source)        -- hypertable
-tick/quote (optional, Parquet on disk for heavy data)
+**Point-in-time rule:**
+- Every fact carries an `event_time` and an `ingest_time`.
+- Research and backtests read only through `mt_store.pit(as_of=…)`.
+- A CI test fails if a module bypasses it.
 
-macro_series(series_id, ts_event, ts_vintage, value, source)                -- ALFRED vintages
-filing(cik, form, ts_filed, ts_ingest, url, parsed jsonb)                    -- EDGAR
-document(id, kind[news|social|report], ts_published, ts_ingest, source, url,
-         title, body, lang, entities text[], tickers text[], sentiment float, embedding vector)
-geo_event(id, kind[quake|storm|conflict|fire|disaster|sanction|...], ts_event, ts_ingest,
-          lat, lon, country, severity, source, payload jsonb)
-crypto_launch(id, kind[airdrop|ico|listing|tge], chain, token, ts_announced, ts_event, source, payload)
-calendar_event(id, kind[macro|earnings|ipo], ts_scheduled, ts_ingest, country, importance, actual, forecast, previous)
-exposure_map(country|region|commodity -> instrument_id, weight)              -- event→asset linking
+**Audit tables are append-only:**
+- Insert-only DB roles.
+- A daily hash chain.
+- Corrections are new rows that reference the original.
 
-feature(instrument_id, ts, name, value, version)
-signal(id, ts, instrument_id, direction, conviction 0-1, horizon, rationale, sources jsonb, model, run_id)
-decision_log(signal_id, settled_at, realised_return, alpha_vs_bench, reflection)
-order_audit(id, ts, mandate_id, signal_id, request jsonb, guard_result, broker_response jsonb)
-mandate(id, name, venues, instruments, max_notional, max_leverage, max_daily_loss, mode[paper|approve|auto], active)
-```
-
-**Rule:** research and backtest code reads data only through `mt_store.pit(as_of=...)`, which filters on `ts_ingest <= as_of`. A test fails the build if any module queries the raw tables directly.
+(Full column lists live in each module's spec and in migrations. Earlier tables (`document`, `geo_event`, `calendar_event`, `signal`, `decision_log`, `exposure_map`) are kept.)
 
 ---
 
-## 5. Module specs (v1)
+## 5. Modules
 
-### M1 Market & macro ingestion — `mt_data`
-- Crypto: **ccxt** (OHLCV, funding, order book snapshots) for Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid; **data.binance.vision** for free bulk backfill.
-- Asia futures and commodities: **akshare**. Symbol master: **FinanceDatabase**.
-- Equities/ETFs: **yfinance** (personal use OK) + OpenBB providers; Alpaca market data (free IEX feed).
-- FX & metals:
-  - **Dukascopy** history (dukascopy-node or our own bi5 parser).
-  - **OANDA practice** stream; XAU/XAG via OANDA.
-  - **IG** streaming (`trading-ig`).
-  - ECB reference rates + self-hosted **Frankfurter**.
-  - TrueFX/HistData for cross-checks.
-  - Twelve Data as backup bars.
-  - **Not LBMA:** it needs a licence.
-- Commodities: **EIA** (energy), **USDA**, **CFTC COT**; futures bars via yfinance (`GC=F`, `CL=F`…) to start.
-- Rates/bonds: **US Treasury** yield curve, **FRED/ALFRED** (with vintages).
-- International macro via **`sdmx1`**: ECB, IMF, OECD, BIS, Eurostat. Direct fetchers for BoE IADB, BoC Valet, RBA, SNB, BoJ. **DBnomics** as the catch-all.
-- Fundamentals: **SEC EDGAR via edgartools** (10-K/10-Q XBRL, 13F, Form 4 insiders, S-1/424B for IPOs).
-- Schedules: Prefect deployments (1-minute crypto, hourly/daily others), with idempotent upserts.
+### M0 Strategy framework — `mt_strategy` (strategy-agnostic, any timeframe)
+
+- **Built on Nautilus `Strategy`/`Actor`.** One strategy class runs unchanged in backtest, sandbox/paper and live.
+- **Strategy types supported as first-class templates:**
+  - scalping (tick / order-book driven);
+  - intraday;
+  - trend/EMA/MA crossovers;
+  - mean reversion;
+  - breakout;
+  - swing and position;
+  - grid/DCA;
+  - market making (via Nautilus or the Hummingbot sidecar);
+  - pairs/stat-arb;
+  - event/news-driven;
+  - ML-signal;
+  - LLM-signal (M8).
+- **Templates are starting points, not limits.** Any custom logic is allowed.
+- **Any timeframe:** subscribe to raw **ticks / quotes / trades / order-book deltas**, or any **bar spec**:
+  - time bars: 1s, 5s, 1m, 3m, 7m, 1h, 4h, 1D, 1W…;
+  - tick bars, volume bars, value bars.
+  - Several timeframes can be combined in one strategy (e.g. 1D trend filter + 5m entries + tick execution).
+  - Bars are aggregated from the finest data available for that venue. The framework reports the native minimum per instrument (see §6).
+- **Strategy manifest** (`strategies/<name>/manifest.yaml`):
+  - instruments/universe and data subscriptions (with timeframes);
+  - parameters with types, ranges and defaults (drives the UI forms and optimisation);
+  - required features;
+  - risk-policy reference;
+  - mode (backtest/paper/approve/auto).
+- **Lifecycle:** draft → backtested → validated → paper → approve-mode → auto, with gates in §8. Every transition is logged.
+- **Ways to create a strategy:**
+  1. write Python;
+  2. configure a template in the UI;
+  3. describe it to the LLM strategy generator (M7, sandboxed);
+  4. import/port from other frameworks (freqtrade/Vibe-Trading patterns).
+- **Experimentation:**
+  - parameter sweeps;
+  - A/B comparisons on identical data;
+  - shadow mode (a live strategy runs in parallel paper mode for comparison).
+
+### M1 Market & macro data — `mt_data.market`
+
+**Free only, with a quota tracker per connector.**
+
+**Crypto:**
+- **Real-time:** public WebSockets for trades, L1 and L2 diff depth (Binance, Bybit, OKX, Coinbase, Kraken) via the Nautilus adapters and ccxt.
+- **History:** **data.binance.vision** (trades, aggTrades, klines down to 1s).
+- **Enrichment:** CoinGecko Demo, DefiLlama.
+
+**FX & metals:**
+- **OANDA v20** practice stream (max 4 quotes/s per instrument).
+- **IG** Lightstreamer (demo).
+- **Dukascopy** historical ticks (cross-source reference).
+- TrueFX / HistData for cross-checks.
+- ECB reference rates + self-hosted **Frankfurter**.
+- Twelve Data free tier as backup bars.
+- Spot XAU/XAG from brokers (**no LBMA**: it needs a licence).
+
+**Stocks/ETFs:**
+- **Alpaca Basic** (real-time IEX, 30 WebSocket symbols).
+- yfinance / OpenBB for daily history.
+- FinanceDatabase as the symbol master.
+
+**Futures/commodities:**
+- No free real-time feed, so daily data only (yfinance `GC=F`, `CL=F`; akshare for Asia).
+- EIA, USDA (WASDE/QuickStats), CFTC COT, Baker Hughes.
+- **Futures-like exposure is traded via crypto perps or FX/CFDs** (OANDA/IG).
+
+**Rates & macro:**
+- US Treasury, **FRED/ALFRED** (vintages).
+- **`sdmx1`** for ECB/IMF/OECD/BIS/Eurostat.
+- BoE IADB, BoC Valet, RBA, SNB, BoJ.
+- DBnomics as the catch-all.
+- **ABS CPI** (needed for the 2027 tax indexation).
+- **RBA F11 daily FX** (needed for tax).
+
+**Fundamentals:** SEC EDGAR via edgartools (filings, 13F, Form 4, S-1/424B).
+
+**Recording pipeline:**
+- Venue WS → Nautilus data client → NATS.
+- From NATS:
+  - strategies (in-process);
+  - the **Parquet recorder** (rolled every 1–5 minutes, compacted daily);
+  - the **bar builder** writing 1s/1m bars into Timescale, with continuous aggregates for 5m–1D and arbitrary `time_bucket` sizes.
+
+**Storage budget:** about 0.3–1 TB/year for about 10 liquid crypto symbols at trades + L1 + L2@1s.
 
 ### M2 News & social — `mt_data.text`
-_Full source-by-source decisions are in [06-aggregators-and-market-providers.md §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)._
-- **News:**
-  - RSS feeds (wires, financial and crypto news, central banks, regulators) → **trafilatura**; **crawl4ai** for JS-heavy pages.
-  - **RSS-Bridge** as an internal-only sidecar for sites without feeds: explicit bridge whitelist, auth on, no published port.
-  - **GDELT** 2.0 GKG for global news volume and tone.
-  - EDGAR's official JSON/Atom feeds.
-- **Social (core, free):**
-  - **Telegram:**
-    1. **Telethon** (the MTProto client API, free with your own `api_id`) reads curated public channels and groups you've joined in real time. Pin the version and use a secondary number.
-    2. The **Telegram Bot API** reads channels and groups where you've added your own bot as admin.
-    3. RSS-Bridge's no-login Telegram bridge is the fallback.
-  - **Discord, via official routes only:**
-    1. Create a private Discord server you own.
-    2. Use Discord's **"Follow" feature on announcement channels** of public servers (exchanges, projects, signal and news communities) so their posts are cross-posted into your channels.
-    3. Your own **discord.py bot** reads those channels, plus any servers whose admins invite it.
-    - No self-bots or user-token scraping: those break Discord's terms and get accounts banned.
-    - Discord message content needs the "Message Content" privileged intent, which is free for bots in fewer than 100 servers.
-  - **Bluesky Jetstream** firehose filtered on cashtags and keywords (free, permitted).
-  - Mastodon hashtag timelines.
-- **Social (conditional, free):** StockTwits v2 REST (test first); YouTube channel RSS + Data API v3 (free quota).
-- **Deferred: Reddit and X/Twitter.** Revisit only if a free, permitted route exists.
-  - Reddit's public API is closing to new apps (deadline 2026-10-31, sunset 2027, (U)).
-  - X's API is paid per use.
-  - Scraping either (twscrape, cookie scrapers) is not in v1.
-  - The `document.source` schema already supports adding them later.
-- **Excluded:** Instagram, TikTok, LinkedIn and Facebook scrapers, Discord self-bots / user-token scraping, Nitter, snscrape, twscrape, threads-scraper, log, Spacebar.
-- **Processing:**
-  1. Dedupe (canonical URL + content hash).
-  2. **Local-LLM relevance gate** (an idea borrowed from OpenMagpie).
-  3. Language detection.
-  4. Ticker/entity linking.
-  5. **FinBERT** sentiment (local).
-  6. Embeddings (local `bge`/`nomic` via Ollama).
-  7. Store in `document`. `ts_published` is flagged `approx` when derived from coarse or relative times.
+
+See [06 §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack).
+
+**News:**
+- RSS feeds + **trafilatura** / **crawl4ai**.
+- **RSS-Bridge** as an internal sidecar (whitelisted bridges, auth on).
+- **GDELT**.
+- EDGAR feeds.
+- Central-bank RSS.
+
+**Social (free):**
+- **Telegram:** Telethon client (dedicated number, e.g. a landline/prepaid) + Bot API + RSS-Bridge fallback.
+- **Discord:** your own server + **followed announcement channels** + your own bot.
+- **Bluesky Jetstream**, Mastodon.
+- Conditional: StockTwits, YouTube RSS/API.
+- **Reddit:** optional if API access is granted; **X deferred.**
+
+**Processing:**
+1. Dedupe.
+2. Local-LLM relevance gate.
+3. Entity/ticker linking.
+4. FinBERT sentiment.
+5. Local embeddings.
+6. Store in `document` (approximate timestamps are flagged).
 
 ### M3 Global events — `mt_data.events`
-- **USGS** quakes, **GDACS** disasters, **NOAA/NHC** storms, **NASA FIRMS** fires, **ReliefWeb**, **UCDP** conflict, **GDELT** events, **OpenSanctions**; ACLED with a free research account is OK for personal use.
-- `exposure_map` seeds: country → FX pair, main index ETF, sovereign bond ETF; commodity regions (e.g., Gulf of Mexico → CL/NG; Chile/Peru → copper; Ukraine/Russia → wheat, NG, EUR).
-- Event score = severity × exposure weight × novelty (dedupe within 24h).
-- Optional: run **osiris** locally as a visual map (MIT; remove the token panel).
 
-### M4 Crypto alt-data tracker — `mt_data.crypto_alt`
-- CoinGecko "new coins" + categories, DefiLlama (protocols, airdrops page, raises, unlocks), exchange listing announcement RSS, and on-chain (Etherscan free tier) for token-contract creation and large transfers.
-- Output: `crypto_launch` with status pipeline (announced → snapshot → claim → listed), plus Telegram alerts.
+**Sources:**
+- USGS, GDACS, NOAA/NHC, NASA FIRMS, ReliefWeb, UCDP, GDELT, OpenSanctions.
+- ACLED (research account).
+- Central-bank statements and minutes.
+- **Kalshi / Polymarket** public reads as event probabilities.
+
+**Exposure map:** links each event's location to assets (country → FX/index/bond ETF; region → commodity).
+
+**Event score:** severity × exposure × novelty.
+
+### M4 Airdrops, token launches & ICOs — `mt_airdrop`
+
+Full design: [08](08-airdrops-and-token-launches.md).
+
+**Pipeline:** discover → vet → score → decide (auto-claim / user task / watch / reject) → track → journal.
+
+**Risk feeds:**
+- **GoPlus** (EVM), **RugCheck** (Solana), **Honeypot.is**.
+- DexScreener, Helius and Etherscan free tiers.
+- Phishing blocklists.
+- Re-implemented solana-rugchecker heuristics and CRPWarner concepts; optional sandboxed Gigahorse deep scan.
+- Scores calibrated on the SoK rug-pull dataset.
+
+**Autonomous only for:**
+- read-only work;
+- **eligible claims** from a dedicated hot wallet under a signed mandate, with simulation;
+- defensive revokes/sweeps.
+
+**Everything else**, including all social engagement and ICO/IDO participation, becomes a **user task** with step-by-step instructions.
 
 ### M5 Calendars — `mt_data.calendar`
-- FRED/ALFRED release dates (US backbone).
-- **ForexFactory weekly JSON** for global consensus forecasts (personal use, cached).
-- Central-bank meeting schedules.
-- COT/Baker Hughes/EIA/WASDE release days.
-- EDGAR earnings (8-K) and IPO (S-1/424B) parsing, plus Nasdaq/NYSE IPO calendar pages (personal use).
+
+- **Sources:**
+  - FRED/ALFRED release dates;
+  - **ForexFactory weekly JSON** (consensus forecasts, cached);
+  - central-bank meeting schedules;
+  - COT/EIA/WASDE/Baker Hughes days;
+  - EDGAR earnings and IPO filings;
+  - exchange holiday/session calendars (`exchange_calendars`).
+- **Strategy and risk uses:** strategies and the risk manager can query "event within N minutes", e.g. to pause scalpers around NFP.
 
 ### M6 Features — `mt_features`
-- TA-Lib indicators; the **Qlib Alpha158** factor set; Vibe-Trading factor zoo (alpha101/GTJA191).
-- Sentiment aggregates per instrument (count, mean, z-score), event scores, COT positioning, macro surprises (actual − forecast).
-- **Chronos/TimesFM/Kronos** forecasts as *volatility/volume* features.
-- **Retail positioning:** Myfxbook Community Outlook, IG client sentiment, OANDA order/position books.
-- **Nowcasts:** GDPNow, NY Fed, Cleveland Fed. **Projections:** Fed SEP, ECB SPF.
-- **Fed-path probabilities** computed from ZQ futures.
-- **Market-implied probabilities:** BIS effective exchange rates, the VIX regime, Kalshi/Polymarket event probabilities.
-- Features are versioned; there is a feature-to-forward-return evaluator (IC, rank-IC, decay).
+
+- **Market and factor features:**
+  - TA-Lib;
+  - Qlib Alpha158;
+  - Vibe-Trading factor zoo;
+  - microstructure features from ticks/L2 (order-flow imbalance, spread, depth, trade intensity).
+- **Sentiment, positioning and macro features:**
+  - sentiment and event scores;
+  - COT;
+  - retail positioning (Myfxbook, IG, OANDA books);
+  - nowcasts (GDPNow, NY Fed, Cleveland Fed);
+  - Fed SEP;
+  - Fed-path probabilities computed from ZQ futures;
+  - BIS effective exchange rates;
+  - VIX regime;
+  - prediction-market probabilities.
+- **Forecast models:** Chronos / TimesFM / Kronos for volatility and volume.
+- **Versioning and evaluation:** features are versioned, and an evaluator measures IC, rank-IC and decay.
 
 ### M7 Research lab — `mt_lab`
-- **Fast path:** vectorised candle backtests (Vibe-Trading engines, or vectorbt for personal use) for screening.
-- **Truth path:** **NautilusTrader** backtests with fees, slippage and latency for anything that survives screening.
-- **Validation:** walk-forward, purged K-fold, Monte Carlo permutation, bootstrap Sharpe CI, deflated Sharpe ratio; **freqtrade's lookahead-analysis and recursive-analysis** (vendored; GPL is fine for personal use).
-- **LLM strategy generation** (Vibe-Trading pattern) → code runs in a **Docker sandbox with no network and no secrets**, and strategies must implement the `mt_core.Strategy` interface.
-- **Optimisation:** Optuna, plus a penalty for parameter count to discourage overfitting.
+
+- **Two backtest paths:**
+  - **Screening:** fast vectorised path (vectorbt / Vibe-Trading engines).
+  - **Truth:** **Nautilus** backtests with L1/L2 replay, measured fee/slippage/latency models (fed from M16) and funding/swap costs.
+- **Validation:**
+  - walk-forward;
+  - purged K-fold;
+  - Monte Carlo permutation;
+  - bootstrap Sharpe CI;
+  - deflated Sharpe;
+  - **freqtrade look-ahead/recursive analysers** (vendored).
+- **Optimisation:**
+  - Optuna, with a complexity penalty;
+  - experiment tracking (**MLflow**, self-hosted) of every run: code version, parameters, data range, costs, results.
+- **Sandboxed LLM strategy generation:** no network, no secrets.
 
 ### M8 AI decision layer — `mt_agents`
-- A LangGraph graph adapted from **TradingAgents**:
-  1. Analysts (technical, sentiment, news, fundamentals, **macro/events**) run in parallel.
+
+- **Debate graph:** a TradingAgents-style LangGraph run:
+  1. Analysts: technical, sentiment, news, fundamentals, macro/events.
   2. Bull/bear debate.
   3. Research manager.
-  4. Trader proposal.
+  4. Trader.
   5. Risk debate.
   6. Portfolio manager.
-  7. The output is a `signal` row.
-- Tools: **FinRobot V2 valuation operators** (DCF, WACC, comps), the `mt_store.pit` data tools, memory recall.
-- Model tiers: analysts on Ollama/local; managers on Claude.
-- Every claim in the rationale must cite a `document`/`bar`/`filing` id (provenance).
+- **Tools:** FinRobot V2 valuation operators, `pit` data tools, memory recall.
+- **Output:** a structured `Signal` with provenance.
+- **How strategies use it:** an *LLM-signal* strategy (M0) or any strategy can consume these signals as a feature.
+- **Versioning:** prompts and models are versioned and every call is audited (M17).
 
 ### M9 Memory — `mt_memory`
-- **Hindsight** (MIT) for agent memory: facts, experiences, mental models.
-- **LightRAG** over filings and long reports.
-- **Decision settlement** (TradingAgents): after the horizon expires, compute the realised return and alpha, have the LLM write a reflection, and store it in Hindsight so similar future setups recall it.
+
+- **Hindsight** (agent memory).
+- **LightRAG** (filings/reports).
+- Decision settlement + reflection.
 
 ### M10 Anomaly monitor — `mt_anomaly`
-- Detectors include:
-  - Rolling robust z-scores on returns, volume, spread and funding.
-  - IsolationForest on a multi-feature vector.
-  - Change-point detection (ruptures).
-  - Sentiment and news-volume spikes, and event-score spikes.
-  - Cross-asset correlation breaks.
-- An "Explain" agent pulls the surrounding news, events and filings, writes a short brief, and sends it to Telegram.
 
-### M11 Guard — `mt_guard` (non-negotiable, even for personal use)
-- **Default-deny.** An order passes only if:
-  - an active `mandate` covers the venue and instrument;
-  - it stays within notional, leverage and daily-loss limits and the max open positions;
-  - the price is within X% of the last trade;
-  - the kill switch is off.
-- **Modes per mandate:**
-  - `paper`: simulated fills.
-  - `approve`: Telegram/UI button per order, the nofx "Frontier" idea.
-  - `auto`: unattended, but only after the live-capital gates in §8.
-- Every request and decision goes to `order_audit`. No automatic retries on rejects.
+- **Detectors** on market, sentiment and event streams:
+  - robust z-scores;
+  - IsolationForest;
+  - change points;
+  - correlation breaks.
+- **Explain agent:** writes a brief and sends it to Telegram.
+
+### M11 Risk manager — `mt_risk` (built in; user inputs via UI/Telegram, later MCP)
+
+**Authoritative and default-deny.** It runs as a pre-trade check in front of the Nautilus `RiskEngine`, which also enforces hard limits natively. **Every order passes through it,** whatever its source: strategy, LLM agent, UI, Telegram or MCP.
+
+**Risk policy** is a versioned YAML/DB document, edited through `mt_api`. It covers several levels:
+
+| Level | Examples of configurable limits |
+|---|---|
+| Global | Max gross/net exposure, max daily loss, max drawdown (trailing/peak), max leverage, max open orders, trading hours/blackouts, base currency |
+| Per venue / account | Max notional, leverage, allowed instruments, order-rate limits |
+| Per strategy | Capital allocation, max position, max loss per day/trade, max consecutive losses, cool-down after a loss, allowed timeframes/instruments |
+| Per instrument / asset class | Max position, max spread to trade, min liquidity, news/event blackout windows (via M5) |
+| Portfolio | Correlation/cluster exposure (e.g. USD, crypto beta), VaR/ES estimate, concentration |
+| Sizing models (selectable per strategy) | Fixed size, fixed fractional, volatility target (ATR), Kelly-capped, risk-parity |
+
+**Pre-trade checks:**
+- policy limits;
+- price collar (within X% of the last trade);
+- liquidity/spread check from M16;
+- duplicate-order check (idempotent client order IDs);
+- event blackout;
+- data-quality status (**no trading on a stale/bad feed**).
+
+**Kill switch:**
+- **Triggers:**
+  - manual (UI, Telegram `/kill`, later MCP);
+  - automatic on a breach: daily loss, drawdown, error rate, DQ failure, cost blow-out.
+- **Actions:** cancel all, optionally flatten, block new orders.
+
+**Dead-man's switch:** heartbeats from the engine, feeds, risk and DB. If one is missing for N seconds, cancel open orders and optionally flatten.
+
+**Change control** (see [07 §6](07-security-notes.md#6-application-controls)):
+- **Tightening** applies immediately.
+- **Loosening** (raising a limit, enabling auto) needs Telegram confirmation + TOTP plus a cool-down.
+- **Hard ceilings** live in a file no API can write.
+- Every change is audited and versioned (rollback).
+
+**Modes per mandate:** `paper` / `approve` (Telegram/UI button per order) / `auto`.
 
 ### M12 Execution — `mt_engine`
-- **NautilusTrader**, pinned version, behind a thin wrapper.
-- Venues out of the box: IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Polymarket.
-- **Custom adapters to write:**
-  - Alpaca (stocks/ETFs/crypto paper).
-  - OANDA v20 (FX/metals/CFDs).
-  - **IG** (`trading-ig`).
-  - Optionally cTrader Open API / FIX and Saxo OpenAPI.
-  - MT5, if your broker is MT5-only (Windows bridge).
-- FXCM is out: its API is deprecated.
-- Start everything on paper/testnet.
+
+- **Nautilus adapters:** IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Polymarket, Betfair.
+- **Custom adapters:**
+  - **Alpaca** (paper/live);
+  - **OANDA v20**;
+  - **IG**;
+  - optionally **cTrader** Open API/FIX and Saxo (SIM);
+  - MT5 (Windows bridge) if needed.
+- **Key safety:** keys are trade-only, **withdrawals disabled**, IP allow-listed; separate sub-accounts for paper/approve/auto.
 
 ### M13 Market-making sidecar
-- **Hummingbot** in Docker with `anonymized_metrics_mode: disabled`.
-- Strip the broker IDs if you want (personal use, your call).
-- It is controlled through its API and treated as another "venue" by the guard.
+
+- **Hummingbot** with telemetry off and broker IDs stripped.
+- It's treated as a venue behind M11.
 
 ### M14 Crowd simulation (optional)
-- Run **MiroFish** locally as-is (personal use = fine). Zep Cloud needs an account, so consider swapping in Graphiti later.
-- Use it only for scenario narratives on big events; log its outputs and evaluate them as a feature before trusting it.
 
-### M15 UI & alerts
-- Telegram bot: alerts, daily brief, approval buttons, `/kill`.
-- Grafana: P&L, exposure, data freshness, LLM spend.
-- A Streamlit/NiceGUI app for signals, decisions, the backtest reports viewer and mandates.
+- MiroFish/OASIS scenario narratives, used as a candidate feature only.
+
+### M15 UI & alerts — `mt_ui` (calls `mt_api`)
+
+- **Web UI:**
+  - strategy builder/registry;
+  - backtest/experiment viewer;
+  - risk-policy editor;
+  - positions/P&L;
+  - **manual trade ticket and position adjust** (through M11);
+  - approvals queue;
+  - task queue;
+  - journal/tax views.
+- **Grafana:** markets, costs, DQ, P&L, LLM spend, system health.
+- **Telegram bot:**
+  - alerts and digests;
+  - approve/deny buttons;
+  - task Done/Skip/Snooze;
+  - `/kill`, `/status`, `/pnl`, `/pause <strategy>`.
+
+### M16 Live cost & data-quality monitor — `mt_monitor` (always on, autonomous)
+
+**Data quality**, a streaming service on NATS with rolling state per instrument:
+
+| Check | Method |
+|---|---|
+| Stale feed | Session-aware timeout per instrument and venue |
+| Gaps | Exchange sequence IDs / trade-ID continuity / expected bar counts |
+| Bad ticks | Robust z-score (median/MAD); price outside the spread band; crossed/locked book |
+| Cross-source divergence | Mid-price difference in bps between two free sources (Binance vs Bybit/OKX/Coinbase; OANDA vs Dukascopy/IG) |
+| Clock skew | `recv_ts − exchange_ts` p99; chrony offset |
+| Book integrity | Venue checksums; periodic REST snapshot reconciliation |
+| Batch | Nightly Pandera validation of Parquet; Evidently drift reports |
+
+**Costs, always measured from free APIs:**
+- **Fees:**
+  - commissions per fill and current fee tiers (ccxt `fetchTradingFees`, Binance commission endpoint, IBKR `commissionAndFeesReport`, Alpaca);
+  - borrow rates.
+- **Funding and swaps:**
+  - funding rates (predicted + realised);
+  - swap/financing (OANDA `InstrumentFinancing` + realised financing transactions; IG realised funding).
+- **Spreads:** `spread_bps` by instrument × hour-of-week.
+- **TCA (implementation shortfall)** for every order:
+  - decision price, arrival price, fill VWAP, fees and funding;
+  - broken down into delay / spread-impact / fees;
+  - a rolling **realised-vs-modelled** cost ratio per strategy × venue × instrument.
+
+**Outputs:**
+- Incidents go to `audit.dq_events` / `audit.cost_events`.
+- Metrics go to Prometheus, with Grafana alerts → Telegram.
+- **M11 is told** to pause affected strategies (stale feed, spread > N× normal, cost ratio > 1.5×).
+- Measured costs are **fed back** into the M7 backtest fee/slippage models.
+
+**Reconciliation:**
+- Positions and balances are compared with each venue's own records every N minutes and at end of day.
+- Any mismatch is an incident.
+
+### M17 Observability & audit — `mt_obs`
+
+**System of record (Postgres `audit`)** holds:
+- orders, fills, cancels, fees, funding;
+- decisions and signals;
+- **every LLM call** (model, prompt/response hash + text, tokens, cost, latency);
+- risk-policy changes;
+- DQ/cost incidents;
+- **every `mt_api` command** (source: ui / telegram / mcp / system);
+- mandate changes.
+
+These tables are append-only and hash-chained, and kept ≥ 7 years.
+
+**Logs:**
+- **Loki**, fed by Vector, with structured JSON logs (structlog) and low-cardinality labels.
+- Retention 30–90 days.
+- Every audit row carries a `trace_id` so you can jump from a fill to its logs in Grafana.
+
+**Metrics and traces:** Prometheus + OpenTelemetry (optionally Tempo); optionally **Arize Phoenix** for an LLM-trace UI.
+
+**Not chosen:**
+- Graylog (SSPL, heavy).
+- OpenObserve (AGPL, duplicates Grafana).
+- Soda Core (now ELv2).
+- ArcticDB (BSL).
+- TDengine (AGPL, IoT-focused). This is our reading of "TenentDB".
+
+**Backups:** pgBackRest + restic to an encrypted off-site target, with automated monthly restore tests.
+
+### M18 Trading journal & tax — `mt_journal`
+
+Full design: [09](09-journal-and-tax.md).
+
+- **Journal:** an automatic, append-only journal of every economic event, with home-currency values and FX source (RBA for AUD).
+- **Lot engine:** rp2-style; specific-ID first, FIFO fallback; FX-cash lots.
+- **Jurisdiction plugins:**
+  - **AU_2026** (50% discount, CFDs on revenue account, Div 775, crypto income, wash-sale flags, myTax mapping, **PAYG-instalment estimator**; GST/BAS mode dormant);
+  - **AU_2027_REFORM** (30 June 2027 snapshot, CPI indexation, 30% minimum tax, (U));
+  - **AE**, **EG** (crypto hard-flag), **CY** (8% crypto), **GENERIC**.
+- **Residency timeline:** CGT event I1 modelling.
+- **Trading journal view:**
+  - per trade: strategy, rationale/signal, chart snapshot, tags, notes;
+  - review prompts.
+- **Exports:**
+  - Beancount (or hledger) ledger + Fava UI;
+  - accountant CSV/PDF pack;
+  - CARF reconciliation.
+- **Optional sidecars:** Rotki (on-chain decoding), TaxHacker (expense receipts, local LLM), Ghostfolio (portfolio view).
+
+### M19 User task queue & community curation — `mt_curation`
+
+- **One queue for everything that needs a human.** Covers:
+  - airdrop social tasks;
+  - ICO reviews;
+  - manual claims;
+  - **Discord servers/channels to join and follow**;
+  - Telegram channels to join;
+  - X accounts to follow (manual);
+  - Galxe spaces;
+  - approval revokes;
+  - tax-agent questions;
+  - approve-mode orders.
+- **Discord curation:**
+  - invites discovered from **official sources only** (CoinGecko links, project sites/docs, official X bio) and verified against blocklists;
+  - each entry states **which announcement channel to Follow** and which inbox channel to target;
+  - a "leave when" condition;
+  - the bot confirms delivery after you tap Done.
+- **Cadence (configurable):**
+  - instant alerts for urgent items;
+  - **daily** digest;
+  - **weekly** curation and review digest.
+- **Telegram buttons:** Done / Skip / Snooze / Details / Never. Feedback tunes ranking, and tasks expire automatically.
+
+### M20 MCP control plane — `mt_mcp` (built LAST, Phase 8, only if wanted)
+
+**Purpose:** talk to the trading system and its agents through Claude (Desktop/Code) or another MCP client. You can ask, analyse, adjust and trade conversationally.
+
+**How it's built:**
+- A thin adapter over `mt_api`, using the official `mcp` Python SDK or FastMCP.
+- Transport is **stdio**, or Streamable HTTP on localhost/Tailscale with token auth.
+- **Because the UI and Telegram already use `mt_api`, this is mostly wiring.**
+
+**Scope (all via `mt_api`; every order still passes through M11):**
+
+| Area | Tools |
+|---|---|
+| Read & analyse | Positions, P&L, exposure, orders, fills; strategy status and performance; backtest/experiment results; cost/TCA and DQ status; market data and features; news/event summaries; journal/tax summaries; task queue |
+| Talk to agents | Ask the M8 decision graph for analysis/a signal on an instrument; query memory (M9); request an anomaly explanation (M10) |
+| Trade & adjust | Place/modify/cancel orders; **adjust or close positions**; move stops/targets; scale in/out; flatten an instrument or strategy |
+| Strategies | Create/edit parameters, run backtests and sweeps, promote/demote (gates still apply), pause/resume |
+| Risk | View the policy; tighten instantly; loosen with out-of-band confirmation; kill switch |
+| Curation | Add watchlist items/airdrop URLs, mark tasks |
+
+**Safeguards:**
+- MCP orders go through the same risk manager.
+- By default MCP-originated orders run in **approve mode** (Telegram button), configurable per venue and size.
+- Loosening risk limits needs Telegram + TOTP confirmation.
+- Hard ceilings can't be written.
+- **Never exposed:** withdrawals, API-key management, wallet mandate signing.
+- Every call is audited (`audit.commands`, source = mcp).
 
 ---
 
-## 6. Interfaces (contracts between modules)
+## 6. Smallest free timeframe by asset class
 
-```python
-class Signal(BaseModel):
-    instrument_id: str; ts: datetime; direction: Literal["long","short","flat"]
-    conviction: float  # 0..1
-    horizon: timedelta; rationale: str; sources: list[str]; model: str; run_id: str
+| Asset class | Finest free real-time | Finest free history | Practical note |
+|---|---|---|---|
+| Crypto spot/perps | Tick trades, L1, L2 diff depth (100 ms) via exchange WebSockets | 1s klines, trades, aggTrades (data.binance.vision); L2 history only if self-recorded | Supports scalping |
+| FX / metals (CFD) | ~4 quotes/s per instrument (OANDA); IG streaming | Dukascopy ticks | No L2 in FX; Dukascopy is the reference |
+| US stocks/ETFs | IEX trades/quotes, 30 symbols (Alpaca free) | Alpaca IEX history; daily via yfinance | IEX ≠ NBBO: fine for swing, weak for scalping cost measurement |
+| Futures / commodities | None free (IBKR needs paid data) | Daily | Use perps/CFDs for intraday exposure |
+| Bonds | — | Daily yields (Treasury/FRED) | Trade bond ETFs / Treasury futures via IBKR |
 
-class OrderIntent(BaseModel):
-    mandate_id: str; instrument_id: str; side: Literal["buy","sell"]
-    qty: Decimal | None; notional: Decimal | None; order_type: str; limit_price: Decimal | None
-    signal_id: str | None
-
-class GuardResult(BaseModel):
-    allowed: bool; reasons: list[str]; requires_approval: bool
-```
-
-Position sizing is **deterministic**, never LLM-chosen: volatility-targeted, conviction-scaled and capped by the mandate.
+The UI shows each instrument's finest available resolution, so you know which strategy types are realistic for it.
 
 ---
 
 ## 7. LLM cost control
 
-- Analysts run on local models; only the managers and the final PM call Claude.
-- Run cadence: daily for swing positions, plus event-triggered runs (anomaly or big event) — **not** every minute.
-- Cache tool outputs per (instrument, as_of).
-- A monthly spend cap lives in config; Grafana panel shows LLM spend.
+- **Model tiers:** local models for analysts and gating; Claude for managers.
+- **When agents run:**
+  - per the strategy's configured cadence;
+  - **event-triggered** (anomaly, calendar, big news);
+  - never per tick.
+- **Caching:** tool outputs are cached per (instrument, as_of).
+- **Spending limit:** a monthly cap, with a spend panel in Grafana.
 
 ---
 
-## 8. Live-capital gates (per strategy)
+## 8. Promotion gates (per strategy, configurable)
 
-1. The strategy beats its benchmark on walk-forward, out-of-sample data after fees and slippage.
-2. Monte Carlo permutation p < 0.05, and the deflated Sharpe ratio is above 0.
-3. The look-ahead and recursive analysers come back clean.
-4. LLM-driven strategies were evaluated only on data after the model's training cutoff.
-5. At least 3 months of paper or approve mode, with live P&L tracking the backtest within tolerance.
-6. Start live at a small size; scale only after another 3 months.
+1. **Out-of-sample performance:** beats its benchmark on walk-forward out-of-sample data, after measured costs (M16).
+2. **Robustness statistics:** Monte Carlo permutation p < 0.05; deflated Sharpe > 0.
+3. **Bias checks:** the look-ahead and recursive analysers come back clean.
+4. **LLM strategies:** evaluated on data after the model's training cutoff.
+5. **Paper / approve trading:**
+   - paper or approve mode for a configurable period (default 3 months);
+   - P&L and costs track the backtest within tolerance.
+6. **Live:** start small; scale on schedule.
 
 ---
 
-## 9. Minimal "future-proof" hygiene (cheap now, saves a rewrite if you ever go SaaS)
+## 9. Future-proof hygiene
 
-1. Put all copied third-party code under `third_party/<name>/` with its LICENSE and pinned commit, and list it in `third_party/LICENSES.md`. That's ~1 line per import.
-2. Keep GPL/AGPL-derived code in **separate modules or services** where it costs nothing to do so: freqtrade bits in `mt_lab/thirdparty_gpl/`, MiroFish in `services/crowdsim/`. Then a SaaS version can drop or replace them without untangling the core.
-3. Tag each data source in config with `license: personal|commercial_ok|unknown`. A SaaS build can then filter to `commercial_ok`.
-4. Keep the repo **private**. Making it public would count as distributing any GPL code it contains.
+1. Third-party code lives under `third_party/` with a licence manifest.
+2. GPL/AGPL code is isolated.
+3. Every data source is tagged `license: personal|commercial_ok|unknown` and `cost: free|paid`.
+4. The repo stays **private**.

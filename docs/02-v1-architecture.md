@@ -1,65 +1,76 @@
-# MasterTrader v1 — Build Scope & Architecture
+# MasterTrader — Architecture Overview (v2)
 
-Goal: one unified, self-hostable AI quant platform built from free and open-source parts plus free-tier APIs. It covers ingestion, research, backtesting, simulation, AI decision-making, anomaly detection and automated execution across asset classes. The component choices come from [`01-repo-vetting-report.md`](01-repo-vetting-report.md).
+A one-page view of how the modules fit together. The detail lives in [03-build-spec.md](03-build-spec.md); the order of work is in [04-plan-of-action.md](04-plan-of-action.md).
 
 ## Design principles
 
-1. **Models reason, code computes, a deterministic guard decides whether anything trades.** No LLM output ever reaches a broker without passing hard-coded risk rules (taken from Vibe-Trading's order guard and nofx's Frontier mode, re-implemented).
-2. **Point-in-time everything.** Every record carries `event_time` and `ingest_time`. Research and backtests may only read rows with `ingest_time ≤ simulated now` (the pattern from TradingAgents' date enforcement). Raw news and social snapshots are archived so backtests can be replayed.
-3. **One engine for backtest, paper and live.** That engine is NautilusTrader, so a strategy is the same code at every stage.
-4. **License firewall (only needed for a SaaS; for personal use see [03-build-spec §1](03-build-spec.md#1-what-personal-use-changes)).**
-   - The core stays permissive (MIT/Apache).
-   - Nautilus is an unmodified LGPL dependency behind our `mt_engine` wrapper.
-   - GPL/AGPL tools (freqtrade, MiroFish, Grafana) run only as separate processes over an API, or get re-implemented clean-room.
-5. **Sandbox all generated code.** LLM-written strategies run in a container with no network access and no credentials. They exchange signals only through a typed interface.
-6. **Zero telemetry by default.** Strip or disable phone-home and broker-rebate tags from anything we vendor (Hummingbot metrics, broker IDs).
+1. **A platform, not a strategy.** Any strategy type on any timeframe (tick/L2 → 1D+). Styles, timeframes, capital and risk limits are user inputs.
+2. **Models reason, code computes, the risk manager decides.**
+   - No order from any source (strategy, LLM agent, UI, Telegram, MCP) reaches a broker without passing the deterministic risk manager.
+   - The design borrows from Vibe-Trading's order guard and nofx's "Frontier" mode, re-implemented.
+3. **Point-in-time everything.**
+   - Every record carries `event_time` + `ingest_time`.
+   - Raw news/social is archived so backtests can be replayed.
+4. **One engine for backtest, paper and live:** NautilusTrader.
+5. **Costs and data quality are measured live and fed back.** Backtests use the costs you actually pay. Bad data pauses trading.
+6. **Record everything.** Append-only audit, journal and tax records; logs for operations.
+7. **One command layer (`mt_api`).** The UI, Telegram and (later) MCP are just front-ends to it.
+8. **Free only, personal use, no telemetry**; sandbox generated code; GPL/AGPL code kept isolated.
 
-## Modules
+## Diagram
 
-| # | Module | Built from | v1 deliverable |
-|---|---|---|---|
-| M1 | **Ingestion** | Prefect + ccxt, OpenBB (Apache), FRED/ALFRED, edgartools, Treasury/BLS/EIA/CFTC, Dukascopy, CoinGecko/DefiLlama | Scheduled flows → TimescaleDB / Parquet with a point-in-time schema |
-| M2 | **News & social** | RSS + trafilatura / crawl4ai, RSS-Bridge, Telegram (Telethon + Bot API), Discord (own bot + followed announcement channels), Bluesky, GDELT, Polymarket Gamma; Reddit/X deferred | Archived text store + FinBERT sentiment + entity/ticker linking |
-| M3 | **Global events** | GDELT 2.0, USGS, GDACS, NOAA/NHC, NASA FIRMS, ReliefWeb, UCDP (ACLED only if licensed); ideas from osiris | Geo-tagged event table + an exposure map (event → country → assets: FX, commodities, indices) |
-| M4 | **Crypto alt-data** | CoinGecko new listings, DefiLlama, DEX/on-chain feeds | In-house **airdrop / ICO / token-launch tracker** (no maintained OSS exists) |
-| M5 | **Calendars** | FRED release calendar, agency schedules, EDGAR S-1/424B (IPOs) | In-house economic + IPO calendar |
-| M6 | **Feature store** | Qlib factor zoo (Alpha158), TA-Lib, FinBERT, Chronos/TimesFM (volatility and volume) | Versioned features keyed by (instrument, time) |
-| M7 | **Research lab** | Vibe-Trading-style LLM strategy generation (sandboxed), Vibe-Trading `validation.py` ideas (Monte Carlo permutation, bootstrap Sharpe, walk-forward), freqtrade-style look-ahead/recursive analysers (clean-room) | Prompt → strategy → backtest → robustness report |
-| M8 | **AI decision layer** | TradingAgents debate graph (LangGraph) + FinRobot V2 valuation operators as tools | Structured signal `{instrument, direction, conviction, horizon, rationale, sources}` |
-| M9 | **Memory / RAG** | Hindsight (MIT) on Postgres/pgvector + LightRAG for filings; TradingAgents decision settlement and reflection | Agents recall past decisions, outcomes and lessons |
-| M10 | **Anomaly monitor** | Rolling z-scores, IsolationForest, change-point detection on prices, volumes, spreads, sentiment and event counts | Alerts + an "explain this anomaly" agent |
-| M11 | **Risk & order guard** | Re-implemented from Vibe-Trading `order_guard` + nofx Frontier mode | Default-deny; mandates; notional, leverage and drawdown caps; kill switch; human-approval tier; audit log |
-| M12 | **Execution core** | NautilusTrader (IBKR, Binance, Bybit, OKX, Hyperliquid…) + custom adapters for Alpaca, OANDA v20 and MT5 | Paper first, then live behind a config gate |
-| M13 | **Market-making sidecar** | Hummingbot (telemetry off) | Optional crypto MM / arbitrage / DEX LP |
-| M14 | **Crowd simulation (experimental)** | Clean-room on CAMEL-AI OASIS (Apache) with a local LLM; MiroFish as reference only | Scenario narratives as a *candidate* feature, never a direct signal |
-| M15 | **UI & ops** | FastAPI + web UI, Grafana (unmodified), Telegram alerts | Dashboards, approvals queue, P&L, audit |
+```
+                     ┌──────────────────────────── DATA (free only, quota-tracked) ─────────────────────────────┐
+ Market (M1):  crypto WS ticks/L2 · OANDA/IG streams · Dukascopy · Alpaca IEX · yfinance · data.binance.vision
+ Macro (M1):   FRED/ALFRED · Treasury · sdmx1 (ECB/IMF/OECD/BIS) · central banks · EIA/USDA/COT · ABS CPI · RBA FX
+ Text (M2):    RSS + RSS-Bridge · GDELT · Telegram · Discord (followed channels) · Bluesky · Mastodon · EDGAR
+ Events (M3):  USGS · GDACS · NOAA · FIRMS · ReliefWeb · UCDP · Kalshi/Polymarket     Calendars (M5): FRED dates · ForexFactory · CB schedules
+ Crypto alt (M4): DefiLlama · CryptoRank · CoinGecko · DexScreener · GoPlus · RugCheck · Honeypot.is · blocklists
+                     └───────────────────────────────┬───────────────────────────────────────────────────────────┘
+                                                     ▼  NATS JetStream
+        ┌───────────────────────────┬────────────────┴──────────────┬────────────────────────────┐
+        ▼                           ▼                               ▼                            ▼
+  Parquet catalog (ticks/L2)   Timescale (bars 1s→1D+,        M16 Live monitor              Text/doc store + pgvector
+  + DuckDB                     costs, business data)          (DQ · costs · TCA · recon)    (FinBERT, embeddings)
+        │                           │                               │ pause/alert               │
+        └────────────┬──────────────┴───────────────┬───────────────┘                            │
+                     ▼                              ▼                                            ▼
+          M6 Features ── M7 Research lab ── M0 Strategy framework ◄── M8 AI agents ◄── M9 Memory (Hindsight/LightRAG)
+          (TA, factors,   (backtest/validate/   (any type, any         (debate graph,      M10 Anomaly + explain
+           micro, macro)   optimise, MLflow)     timeframe)              valuation tools)
+                                                     │ OrderIntent
+                                                     ▼
+                              M11 RISK MANAGER (default-deny · limits · sizing · kill/dead-man switch)
+                                                     ▼
+                     M12 NautilusTrader execution (IBKR · Binance/Bybit/OKX/… · Alpaca · OANDA · IG)   M13 Hummingbot (MM)
+                                                     ▼
+                  M17 Audit (Postgres, append-only) + Loki/Prometheus/Grafana   ──►   M18 Journal & tax (AU/AE/EG/CY plugins)
+                                                     ▲
+     mt_api command layer ◄── M15 Web UI · Telegram bot (alerts, approvals, /kill)    M19 Task queue & community curation
+                         ◄── M20 MCP (Phase 8, optional: analyse, talk to agents, trade/adjust, risk)
+     M4 Airdrops: vet → auto-claim (hot wallet, mandate, simulation) | user task → journal
+```
 
-## Asset coverage plan
+## Asset coverage
 
-| Asset class | Data (free) | Execution |
+| Asset class | Free data | Execution |
 |---|---|---|
-| Crypto spot / perps | ccxt, CoinGecko, DefiLlama | Nautilus (Binance, Bybit, OKX, Hyperliquid…), Hummingbot |
-| Stocks / ETFs | OpenBB providers, EDGAR, (yfinance for personal research only) | Alpaca paper (custom adapter), IBKR |
-| Forex | Dukascopy history, OANDA practice, FRED | OANDA v20 (custom adapter), IBKR, MT5 |
-| Commodities / metals | EIA, USDA, CFTC COT, futures via IBKR/Databento credit | IBKR futures, OANDA/MT5 CFDs |
-| Bonds / rates | US Treasury, FRED/ALFRED, ECB | IBKR (bonds/futures); analytics first |
-| IPOs | EDGAR S-1/424B, exchange calendars | IBKR / Alpaca after listing |
-| ICOs / airdrops | M4 tracker | Watch-only in v1 |
-| Prediction markets | Polymarket Gamma | Nautilus Polymarket adapter (optional) |
+| Crypto spot / perps | Exchange WebSockets (ticks, L2), data.binance.vision, CoinGecko, DefiLlama | Nautilus (Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid), Hummingbot |
+| Forex & metals | OANDA/IG streams, Dukascopy ticks, ECB/Frankfurter, FRED | OANDA v20, IG, IBKR; optional cTrader/Saxo/MT5 |
+| Commodities | EIA, USDA, COT, Baker Hughes; daily futures | CFDs (OANDA/IG), crypto perps; IBKR futures (data is paid) |
+| Stocks / ETFs | Alpaca IEX (real-time, 30 symbols), yfinance, EDGAR | Alpaca, IBKR |
+| Bonds / rates | Treasury, FRED/ALFRED, sdmx1 | Bond ETFs, Treasury futures (IBKR) |
+| IPOs | EDGAR S-1/424B, exchange calendars | Alpaca / IBKR after listing |
+| ICOs / airdrops | M4 tracker + risk feeds | Auto-claim (eligible, safe) or user task |
+| Prediction markets | Kalshi / Polymarket public reads | Signal source; Polymarket adapter optional |
 
-## Phased roadmap
+## Promotion gates before live capital
 
-1. **Phase 0 (foundations):** repo skeleton, Postgres/Timescale/pgvector via docker-compose, point-in-time schema, Prefect, M1 for crypto + US equities + FRED.
-2. **Phase 1 (research loop):** Nautilus wrapper + backtests; M6 features; M7 lab with sandboxing, walk-forward and look-ahead analysers.
-3. **Phase 2 (AI layer):** M8 debate graph + M9 memory + M2 news/sentiment + M3 events; signals evaluated only on post-model-cutoff data.
-4. **Phase 3 (paper trading):** M11 guard + M12 paper connectors (Alpaca, OANDA practice, exchange testnets) + M15 UI/alerts. Minimum 3 months of paper trading.
-5. **Phase 4 (expansion):** M4/M5 trackers, M10 anomaly agent, M13 Hummingbot, M14 crowd-sim experiment, then small live allocations behind the guard.
-
-## Acceptance gates before any live capital
-
-- Walk-forward and out-of-sample Sharpe after fees and slippage beat a buy-and-hold / equal-weight benchmark.
-- Monte Carlo permutation p-value < 0.05.
-- The look-ahead analyser is clean.
-- LLM components are tested only on data after the model's training cutoff.
-- The paper-trading P&L matches the backtest within tolerance.
-- The kill switch and caps have been exercised in testing.
+1. **Performance:** walk-forward out-of-sample results beat the benchmark after **measured** costs.
+2. **Robustness statistics:** Monte Carlo permutation p < 0.05; deflated Sharpe > 0.
+3. **Bias checks:** look-ahead and recursive analysers clean.
+4. **LLM components:** tested only on data after the model's training cutoff.
+5. **Paper/approve period:**
+   - configurable, default ≥ 3 months;
+   - P&L and costs track the backtest.
+6. **Safety drills:** kill switch, dead-man's switch and DQ pause exercised in testing.
