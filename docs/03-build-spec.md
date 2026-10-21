@@ -39,7 +39,7 @@ Companion docs:
 | Bus | **NATS JetStream** (market data fan-out, events, alerts) |
 | Databases | **Postgres 16 + TimescaleDB (TSL Community image) + pgvector** is the system of record. **Nautilus ParquetDataCatalog + DuckDB** hold raw ticks/L2. **QuestDB** is optional, only if live SQL over raw ticks is ever needed. |
 | Observability | **Grafana + Loki** (logs, shipped by Vector) + **Prometheus** (metrics) + **OpenTelemetry** traces; Grafana Alerting → Telegram |
-| Models | **Decision One** (M21): tier A = in-process compiled GBDT/ONNX (~10–50 µs) in the order path; tier B = local small LLM (Qwen3.5-4B on vLLM/llama.cpp) as an async advisor. Research/chat/debate go through the **LiteLLM gateway** → Claude API / your custom endpoint / local fallback. Embeddings and rerank via **TEI** (bge-small-en-v1.5 + bge-reranker-v2-m3). See [10](10-memory-rag-and-models.md). |
+| Models | **Decision One** (M21): tier A = in-process compiled GBDT/ONNX (~10–50 µs) in the order path; tier B = **decision models** (SemIf readout → own Qwen3 + LoRA + classification head, ~2–12 ms on GPU) for text/context judgements, async. Research/chat/debate go through the **LiteLLM gateway** → Claude API / your custom endpoint / local fallback. Embeddings and rerank via **TEI** (bge-small-en-v1.5 + bge-reranker-v2-m3). See [10](10-memory-rag-and-models.md). |
 | GPU (recommended) | One consumer GPU (16–24 GB VRAM) makes tier B fast (~150–300 ms/decision); without one, tier B is seconds-scale and used only for slower flags |
 | Orchestration | Prefect (batch and scheduled flows); long-running services under Compose |
 | Access | Everything bound to localhost or the internal network; remote access via **Tailscale** only |
@@ -554,13 +554,20 @@ Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-fast-accura
 - **Output:** a calibrated probability/edge, which M11 sizes.
 - **Applicability:** works for every strategy type, including scalpers.
 
-**Tier B: millisecond advisor, asynchronous and never blocking.**
-- **Model and serving:** **Qwen3.5-4B** (Apache-2.0; alternatives Gemma 4 E4B, Phi-4-mini) on **vLLM** (GPU) or **llama.cpp server** (CPU).
-- **Concurrency:** continuous batching and prefix caching.
-- **Output contract:** strict JSON schema, temperature 0, hard timeout → ignored on a miss.
-- **What it produces:** regime/veto/annotation flags on NATS KV.
+**Tier B: decision models (asynchronous, event-driven; "System One" class, no text generation).**
+- **What they do:** typed questions (choice/score/yes-no) from a versioned registry return **option probabilities in one forward pass**.
+- **Stage 1 (Phase 4):** **SemIf**-style option-logit readout on Qwen3.5-4B (zero-shot; relevance gate, first flags).
+- **Stage 2 (Phase 6):** our own **Qwen3-0.6B/1.7B + LoRA + classification head** (Clef pattern):
+  - distilled from M8 debate decisions and corrected against realised outcomes;
+  - CE + Brier loss, temperature/isotonic calibration, abstention thresholds;
+  - served by the vLLM `/classify` pooling runner or ONNX;
+  - **~2–12 ms per decision on a consumer GPU** (est.).
+- **Bake-off:** against Laya (fine-tuned), self-hosted Clef-flash, SemIf and JSON generation, on our data + FinMMEval Buy/Hold/Sell.
+- **Excluded:** Jev and Microsoft-Decision-1 (closed, paid).
+- **Outputs:** cached on NATS KV as tier-A features; direct veto only above a calibrated high-precision threshold.
+- **Determinism controls:** FP32 head, fixed batch, no prefix cache on the decision path, pinned revisions, logged prompt hash; CPU ONNX FP32 for backtests.
 
-**Distillation:** M8's debate decisions (the teacher) plus realised outcomes train tier A, and optionally LoRA-tune tier B.
+**Distillation:** M8's debate decisions (the teacher) plus realised outcomes train tier A and the tier B decision-model heads.
 - Students are calibrated (isotonic/Platt; Brier/ECE).
 - They are promoted only through §8 gates, with the teacher in shadow.
 
@@ -622,7 +629,7 @@ The UI shows each instrument's finest available resolution, so you know which st
 
 - **Model tiers:**
   - Decision One tier A (no LLM) in the order path;
-  - tier B local small LLM for fast flags;
+  - tier B decision models (single forward pass, no generation) for text/context judgements;
   - local models for analysts and gating;
   - Claude (or your custom endpoint) for managers and research.
   - All non-hot-path calls go through the **LiteLLM gateway** with per-role daily budgets and local fallback.

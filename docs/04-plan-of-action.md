@@ -179,11 +179,18 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - memory banks;
   - decision settlement + reflection;
   - point-in-time recall.
-- [ ] **M21 tier B advisor:**
-  - Qwen3.5-4B on vLLM (GPU) or llama.cpp (CPU);
-  - JSON-schema flags to NATS KV;
-  - timeout fallback.
-- [ ] **M21 distillation loop:** teacher log (M8) + outcomes → tier A retrain / tier B LoRA → calibration → gated promotion; teacher in shadow.
+- [ ] **M21 tier B decision models:**
+  - question registry;
+  - SemIf readout in production;
+  - train our own Qwen3-0.6B/1.7B + LoRA + classification head (distilled + outcome-corrected, calibrated, abstention);
+  - serve via vLLM `/classify` or ONNX;
+  - scores to NATS KV as tier-A features.
+- [ ] **Decision-model bake-off:**
+  - **Contenders:** own head vs fine-tuned Laya vs Clef-flash vs SemIf vs JSON generation.
+  - **Data:** our data + FinMMEval Buy/Hold/Sell.
+  - **Metrics:** Brier/ECE per regime, coverage, latency, flip rate.
+  - **Promotion:** only via gates.
+- [ ] **M21 distillation loop:** teacher log (M8) + outcomes → tier A retrain / tier B decision-head retrain → calibration → gated promotion; teacher in shadow.
 - [ ] **Optional:** LightRAG graph over filings (offline).
 - [ ] **M10:** anomaly detectors + explain agent.
 - [ ] **LLM-signal strategy template** (M0) consuming M8 signals.

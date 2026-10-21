@@ -12,7 +12,7 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 | Reranker | **bge-reranker-v2-m3** or **mxbai-rerank-base-v2**; ms-marco-MiniLM-L-6 if CPU is tight. **Avoid Jina rerankers** (CC-BY-NC) | Apache-2.0 | Tens to hundreds of ms for 30–50 pairs on CPU (U) |
 | Document RAG | Postgres: **pgvector HNSW (halfvec) + native tsvector/`ts_rank_cd` + pg_trgm**, fused with **Reciprocal Rank Fusion**, then cross-encoder rerank, recency decay and a **point-in-time filter** | PostgreSQL | ms-level retrieval + rerank |
 | Hot-path decision, **Decision One tier A** | **LightGBM** (or XGBoost/linear/small MLP) compiled to **ONNX Runtime / Treelite / lleaves**, run **in-process** inside the Nautilus strategy | MIT / Apache-2.0 | **~10–50 µs per prediction** (published benchmarks, indicative) |
-| Fast advisor, **Decision One tier B** | **Qwen3.5-4B** (alternatives: Gemma 4 E4B, Phi-4-mini) on **vLLM** (GPU) or **llama.cpp server** (CPU), strict JSON schema, temperature 0, hard timeout | Apache-2.0 | GPU ~150–300 ms per decision (est.); CPU: seconds |
+| Text/context decisions, **Decision One tier B** | A **decision model** ("System One" class, no text generation). Phase 1: **SemIf**-style logit readout on Qwen3.5-4B (no training). Phase 2: our own **Qwen3 0.6B/1.7B + LoRA + classification head** (Clef pattern), distilled and calibrated. Benchmarked against **Laya** and **Clef-flash** (both Apache-2.0) | Apache-2.0 / MIT | ~2–12 ms GPU for 0.6B (est.); ~15–40 ms for 4B; Clef-flash ~0.4 s local |
 | Research / chat / debate routing | **LiteLLM proxy** (≥ 1.83, pinned by hash or image digest): Claude API → your custom endpoint → local model fallback; per-role budgets | MIT core | A few ms of overhead (U); **never on the hot path** |
 
 ## 1. Hindsight: self-hosted agent memory
@@ -104,64 +104,101 @@ LightRAG is kept as an **optional, offline** graph layer over filings (§3.7).
    - **Optional:** ParadeDB `pg_search` (AGPL, fine privately) if true BM25 is ever needed.
    - **Scale-up:** `pgvectorscale` only above ~10M vectors.
 
-## 4. Decision One: fast, accurate, concurrent decisions
+## 4. Decision One: decision models + microsecond engine
 
-**Honest framing:** no language model is "near-zero latency". Even a 0.6B model on a GPU costs tens of milliseconds, and on CPU hundreds of ms to seconds. So Decision One is **two tiers**, and only the first is in the order path.
+_Evidence: [research/decision-models-system-one.md](research/decision-models-system-one.md)._
 
-### Tier A: microsecond engine (in the order path)
+### 4.1 What "decision models" are (and the candidates)
 
-**Model:** gradient-boosted trees (LightGBM/XGBoost/CatBoost), logistic/linear, or a small MLP, trained on M6 features.
+**What they are:**
+- A new model class (Sep–Oct 2026), usually called **"System One" / decision models**.
+- They **don't generate text**. Given a *state* (text, JSON, image) and typed questions, they return **probabilities over a fixed option set in one forward pass**:
+  - `choice`: pick one;
+  - `score`: an ordinal value;
+  - `noul`: yes/no.
+- There's no decoding, parsing or JSON repair, and no sampling: the same input gives the same scores, apart from the GPU caveats below.
 
-**Compilation and loading:**
-- Compiled to **ONNX Runtime** (MIT), **Treelite** (Apache-2.0) or **lleaves** (LLVM-compiled LightGBM).
-- Loaded **in-process** in the Nautilus strategy/actor. **No network hop**; a NATS round-trip alone is ~50–200 µs.
+| Candidate | Licence / access | Fit for MasterTrader |
+|---|---|---|
+| **Jev** (TypeSafe AI) | Closed, hosted only, **paid** | ❌ Excluded (free-only, no self-hosting). Kept as a published reference point. |
+| **Microsoft-Decision-1** (closest to "DecisionOne") | Closed, **paid** | ❌ Excluded |
+| **Laya** (Convai) | Apache-2.0, ModernBERT encoder 322–421M | ⚠️ Fast (~7 ms/question batched on a T4) but **weak zero-shot** (below the majority baseline), over-confident, 512–1024-token context. Only useful **after fine-tuning**, for short text. Benchmark candidate. |
+| **Clef / Clef-flash** (Cloudflare) | Apache-2.0 weights; Qwen3.5-9B / Qwen3.8-27B + LoRA + joint schema head | ✅ **Reference architecture** and benchmark baseline. Self-hosted Clef-flash is ~0.4 s on a 3090 (8–24 GB VRAM), so it's a "rich context" option, not the fast path. |
+| **SemIf** (formerly OpenJev) | MIT; no training, reads option-token logits on stock Qwen3.5-4B | ✅ **Use where it logically applies:** zero-shot boolean/categorical checks over text when no labels exist yet. ~5× faster than JSON generation. 4B is good (0.81 balanced accuracy); 0.6B is worse than chance. Uncalibrated. |
+| Liquid d1 (~8 ms on a 4090), Vela (ONNX), H2O-Lightning-4B, Intern-Decision (U) | Mostly Apache | Optional extra benchmark candidates |
 
-**Latency:**
-- Published single-row benchmarks: ~10–50 µs per prediction (indicative).
-- Concurrency is trivially high (pure CPU functions, one per strategy instance).
+**Evidence gaps:**
+- **No public evaluation of any decision model on trading/finance decisions, or calibration on market data.**
+- Benchmarks are mostly vendor-reported, and independent tests show shipped models are **miscalibrated for a new domain**.
+- So we *build and calibrate our own* (the Clef pattern on a small Qwen), and adopt only what beats the baseline in our own walk-forward tests.
 
-**Output:** a **calibrated probability / expected edge** (isotonic or Platt calibration on a time-ordered holdout; Brier and ECE tracked). Deterministic sizing (M11) consumes it, never the raw model.
+### 4.2 Verdict: decision models vs trees
 
-**Features:** computed incrementally (Nautilus indicators), plus **cached tier-B flags** read from NATS KV.
+| Input / job | Winner | Why |
+|---|---|---|
+| Numeric, tabular, microstructure features; sub-millisecond; bit-exact backtests | **Tier A: compiled GBDT/linear** | ~10–50 µs, bit-deterministic on CPU, easy isotonic calibration. No decision model has been shown to beat trees on numeric time series. |
+| News, filings, transcripts, social posts, debate rationales, charts (images) | **Tier B: decision model** | Reads text natively. One forward pass instead of decoding (~5× faster than JSON generation, with no parse failures). Outputs real option probabilities, not a generated number. |
+| Brand-new criteria with no labels yet | **SemIf readout** (Qwen3.5-4B) | Zero-shot and runtime-defined, but uncalibrated, so flags and vetoes only |
+| Final trade decision + sizing | **Tier A**, or a small stacker over tier A features + decision-model scores | Keeps determinism and calibration in one place |
 
-### Tier B: millisecond advisor (asynchronous, never blocks an order)
+So the current approach (trees) **stays authoritative for numeric decisions**. **Decision models replace JSON-generating LLMs** for every text and context judgement. Their calibrated scores become **features for tier A**.
 
-**Model:** **Qwen3.5-4B** (Apache-2.0, strongest under 5B per Artificial Analysis).
-- Alternatives: **Gemma 4 E4B** (now Apache-2.0), Phi-4-mini (MIT), Granite 4 (Apache-2.0).
-- **9B** where there's GPU headroom.
+### 4.3 Design
 
-**Serving:**
-- **vLLM** (Apache-2.0; continuous batching, automatic prefix caching, xgrammar/guidance JSON) on a GPU.
-- **llama.cpp server** (MIT; `--parallel` slots, `json_schema`/GBNF) on CPU.
-- SGLang is an equivalent alternative to vLLM.
+**Tier A: microsecond engine (order path, authoritative)**
+- **Model and runtime:**
+  - LightGBM/XGBoost/linear/small MLP;
+  - compiled to **ONNX Runtime / Treelite / lleaves**;
+  - **in-process** in the Nautilus strategy (no network hop).
+- **Latency:** ~10–50 µs.
+- **Calibration:** isotonic/Platt on a time-ordered holdout, tracking Brier/ECE.
+- **Inputs:** M6 numeric features + **cached tier B scores** (from NATS KV).
 
-**Contract:**
-- Fixed system prompt (prefix-cached).
-- Strict JSON schema: an `action` enum (`regime`, `veto`, `annotate`) plus `confidence` and `reason_codes`.
-- `temperature=0`.
-- **Hard timeout.** On timeout or invalid output the result is ignored and tier A carries on.
+**Tier B: decision models (asynchronous, event-driven, never on the tick path)**
+- **Questions are typed and versioned in a registry**, e.g.:
+  - `news_direction{bull,bear,neutral}`;
+  - `event_type{guidance_cut, M&A, hack, listing, regulation, …}`;
+  - `regime{trend,range,crisis}`;
+  - `veto{yes,no}`;
+  - `relevance{yes,no}`;
+  - `rug_risk_text{low,med,high}`;
+  - `debate_quality{sound, stale_data, contradictory}`.
+- **Stage 1 (Phase 4, no training):**
+  - **SemIf-style logit readout** on Qwen3.5-4B for relevance gating (replaces the planned LLM gate) and first-pass flags;
+  - shared-prefix mode for many criteria per document.
+- **Stage 2 (Phase 6): our own decision models.**
+  - **Base:** **Qwen3-0.6B or 1.7B (dense, ONNX-exportable)**.
+  - **LoRA and head:** LoRA (rank 8–64) + **classification head** (`Qwen3ForSequenceClassification` + PEFT `SEQ_CLS`) or a Clef-style joint schema head scoring several questions in one pass.
+  - **Training labels:** distilled from M8 debate decisions (the teacher), then **corrected against realised outcomes** (forward returns / barrier hits) so it doesn't just copy the debate's biases.
+  - **Validation:** purged, embargoed walk-forward CV; option shuffle/rename augmentation.
+  - **Loss:** CE + λ·Brier.
+  - **Calibration:** post-hoc temperature/isotonic on a walk-forward holdout.
+  - **Abstention:** thresholds set at a target precision ("auto-decide coverage"), with abstain as the default.
+  - **Serving:** vLLM pooling runner (`/classify`) on GPU, or ONNX Runtime on CPU (FP32 for reproducible backtests).
+  - **Expected latency:**
+    - **~2–12 ms per decision on a consumer GPU (0.6B)**;
+    - ~15–40 ms for 4B;
+    - 0.6B ONNX int8 on CPU ~100–400 ms (est.; benchmark it).
+- **Benchmark bake-off before adopting anything:**
+  - **Contenders:** our Qwen-LoRA head vs fine-tuned Laya vs self-hosted Clef-flash vs SemIf zero-shot vs the old JSON-generation baseline.
+  - **Data:** our own data, plus the **CLEF-2026 FinMMEval Buy/Hold/Sell** task as an external check.
+  - **Metrics:** accuracy, log-loss, **Brier, ECE per regime**, coverage at target precision, latency p50/p95, determinism (flip rate).
+  - **Promotion:** only via the §8 gates, with the teacher in shadow.
+- **How outputs are used:**
+  - Scores go to NATS KV as tier-A features.
+  - A direct **veto** is allowed only above a calibrated high-precision threshold.
+  - Scores also feed M4 (airdrop/rug text risk), M2 (relevance), M10 (anomaly explanations) and M8 (pre-screening).
 
-**Uses:**
-- Regime and veto flags refreshed per bar or per event.
-- News/event reaction classification (seconds-scale).
-- Fast pre-screening for M8.
+**Determinism controls (GPU):**
+- **Precision and model:** FP32 head, pinned model revision.
+- **Batching:** batch size 1 (or fixed padded batch) on the decision path.
+- **Prefix caching:** off on the decision path (SemIf saw 5–6/777 flips from prefix reuse in BF16).
+- **Audit:** `prompt_hash`, `model_revision` and `question_version` logged on every decision (M17).
+- **Backtests:** run on CPU ONNX FP32 so they reproduce exactly.
 
-**Latency (est.):**
-- GPU (RTX 4090-class): ~20–60 ms time-to-first-token for 1k-token prompts; ~150–300 ms per ~30-token JSON decision.
-- CPU-only: seconds. So **tier B is practical for bars ≥ 1 s, or as precomputed flags.** Scalpers rely on tier A alone.
-
-### Teacher → student distillation (how "high accuracy" is earned)
-
-1. **Log the teacher.** Every M8 debate decision (Claude via the gateway) is logged with its exact point-in-time feature snapshot, prompt hash, rationale and later **realised outcome**.
-2. **Distil into tier A** nightly/weekly. Train LightGBM on features with teacher outputs as soft labels **plus realised forward returns**, using purged walk-forward CV with an embargo.
-3. **Optionally fine-tune tier B.** LoRA/SFT on (context → teacher JSON) so the 4B advisor imitates the debate cheaply.
-4. **Promote by gate only.** A student replaces anything only after matching the teacher's out-of-sample P&L and risk (build spec §8). The teacher keeps running in shadow for disagreement audits.
-
-### Hardware note
-
-- Tier A needs only CPU.
-- Tier B with low latency wants **one consumer GPU** (e.g. 16–24 GB VRAM). Without a GPU, tier B runs on CPU at seconds-scale and is used only for slower flags.
-- Hindsight retain, LightRAG and debate agents all benefit from the GPU too, or go via the gateway to Claude/your endpoint.
+**Hardware:**
+- Tier A: CPU only.
+- Tier B at ~10 ms: one consumer GPU (16–24 GB also covers Clef-flash FP8 and the Hindsight/LightRAG LLM work). Without a GPU, tier B runs on CPU at hundreds of ms and serves slower flags only.
 
 ## 5. Model gateway: research, chat & debate routing (M21)
 
@@ -197,8 +234,8 @@ router_settings:
 | Module | Change |
 |---|---|
 | M6 Features | Feature snapshots logged per decision (for distillation) |
-| M7 Lab | Trains, calibrates, compiles and benchmarks tier-A models; distillation jobs; registers models in MLflow |
+| M7 Lab | Trains, calibrates, compiles and benchmarks tier-A models and tier-B decision models (LoRA + head); runs the decision-model bake-off; distillation jobs; registers models in MLflow |
 | M8 Agents | Run via the gateway; their decisions are the teacher log |
 | M9 Memory & RAG | Hindsight (agent memory) + `rag` schema hybrid retrieval, sharing one TEI embedder/reranker |
-| **M21 Decision One & model serving** | Tier A runtime (in-strategy), tier B advisor service, LiteLLM gateway, TEI, model registry, benchmarks |
+| **M21 Decision One & model serving** | Tier A runtime (in-strategy), tier B decision-model service (SemIf readout → own Qwen-LoRA head), question registry, LiteLLM gateway, TEI, model registry, benchmarks |
 | M17 Observability | Latency histograms per tier, timeout and fallback counts, LLM spend |
