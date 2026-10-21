@@ -417,6 +417,13 @@ Full design: [10](10-memory-rag-and-models.md).
 
 ### M15 UI & alerts — `mt_ui` (calls `mt_api`)
 
+**Design source of truth:** [DESIGN.md](../DESIGN.md) v2.
+- Fully responsive from 1920px+ down to 240px, portrait and landscape, on the shared breakpoint set.
+- Reference screens are in [ui-examples/](../ui-examples/README.md).
+- Tailwind is built locally (no CDN).
+- A Playwright viewport-matrix test runs in CI.
+
+
 - **Web UI:**
   - strategy builder/registry;
   - backtest/experiment viewer;

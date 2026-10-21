@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MasterTrader — Social Sentiment, Macro &amp; Geopolitical Firehose</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline-variant": "#3b4a42",
+            "error-container": "#93000a",
+            "surface-variant": "#31353d",
+            "surface-bright": "#353941",
+            "on-tertiary": "#630f00",
+            "primary-fixed-dim": "#24e1a4",
+            "on-secondary-container": "#e2e7ff",
+            "tertiary-container": "#ffb9a9",
+            "on-error": "#690005",
+            "on-primary-fixed-variant": "#005138",
+            "on-tertiary-container": "#a0270c",
+            "surface-container-highest": "#31353d",
+            "background": "#07090D",
+            "surface-dim": "#07090D",
+            "inverse-surface": "#dfe2ec",
+            "on-secondary-fixed": "#001847",
+            "on-error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-secondary": "#002c72",
+            "on-primary-container": "#006144",
+            "primary": "#6effc5",
+            "secondary": "#b1c5ff",
+            "surface-container": "#1c2027",
+            "surface-container-low": "#11151c",
+            "surface-tint": "#24e1a4",
+            "surface-container-lowest": "#07090D",
+            "inverse-primary": "#006c4c",
+            "secondary-container": "#045fe3",
+            "tertiary-fixed": "#ffdad2",
+            "outline": "#85948b",
+            "surface": "#07090D",
+            "surface-container-high": "#1d232f",
+            "on-surface-variant": "#bacac0",
+            "on-background": "#dfe2ec",
+            "on-primary": "#003826",
+            "error": "#ff6b4a",
+            "inverse-on-surface": "#2d3038",
+            "secondary-fixed": "#dae2ff",
+            "tertiary": "#ffdfd8",
+            "primary-fixed": "#52febf",
+            "on-tertiary-fixed": "#3d0600",
+            "on-surface": "#dfe2ec",
+            "primary-container": "#2be4a7",
+            "on-primary-fixed": "#002115",
+            "on-secondary-fixed-variant": "#0040a0",
+            "secondary-fixed-dim": "#b1c5ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter-desktop": "1rem",
+            "space-lg": "1.25rem",
+            "space-md": "0.75rem",
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "data-mono-md": ["JetBrains Mono"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "data-mono-lg": ["JetBrains Mono"],
+            "label-caps": ["Space Grotesk"],
+            "body-sm": ["Space Grotesk"],
+            "body-md": ["Space Grotesk"],
+            "display-lg": ["Space Grotesk"],
+            "headline-sm": ["Space Grotesk"],
+            "display-lg-mobile": ["Space Grotesk"],
+            "label-code": ["JetBrains Mono"],
+            "headline-md": ["Space Grotesk"],
+            "body-lg": ["Space Grotesk"],
+            "data-mono-sm": ["JetBrains Mono"],
+            "headline-lg": ["Space Grotesk"]
+          },
+          "fontSize": {
+            "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "data-mono-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "data-mono-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Terminal Glass & Candlestick Glow Utilities */
+    .glow-mint {
+      box-shadow: 0 0 12px rgba(43, 228, 167, 0.45);
+    }
+    .glow-coral {
+      box-shadow: 0 0 14px rgba(255, 107, 74, 0.45);
+    }
+    .candlestick-wick {
+      width: 1px;
+    }
+    .candlestick-body {
+      width: 4px;
+    }
+    /* Hide scrollbars for dense terminal panes */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary selection:text-background flex flex-col min-h-screen overflow-x-hidden">
+<!-- ========================================== -->
+<!-- 1. TOP NAVIGATION BAR (Brand Anchor JSON)  -->
+<!-- ========================================== -->
+<header class="fixed top-0 left-0 right-0 z-50 h-14 bg-surface-container-lowest border-b border-outline-variant/30 backdrop-blur-md px-space-lg flex items-center justify-between">
+<!-- Brand & Stream Status -->
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-2">
+<!-- Candlestick Signal M Logo SVG -->
+<svg class="w-6 h-6 shrink-0" fill="none" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Candlestick (Cobalt) -->
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="1.5" x1="10" x2="10" y1="4" y2="36"></line>
+<rect fill="#3A7BFF" height="20" rx="1.5" width="6" x="7" y="10"></rect>
+<!-- Right Candlestick (Mint) -->
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="1.5" x1="30" x2="30" y1="4" y2="36"></line>
+<rect fill="#2BE4A7" height="22" rx="1.5" width="6" x="27" y="8"></rect>
+<!-- Vector Path & Node -->
+<path d="M10 16 L20 28 L30 14" stroke="#2BE4A7" stroke-linejoin="round" stroke-width="2"></path>
+<circle class="animate-pulse" cx="20" cy="28" fill="#2BE4A7" r="3.5"></circle>
+</svg>
+<div class="flex items-baseline">
+<span class="font-headline-sm text-headline-sm tracking-tight font-extrabold text-on-surface">MASTER</span>
+<span class="font-headline-sm text-headline-sm tracking-tight font-extrabold text-primary">TRADER</span>
+</div>
+</div>
+<div class="h-4 w-px bg-outline-variant/30 hidden md:block"></div>
+<!-- Real-time Ingest Banner -->
+<div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-code text-label-code text-on-surface-variant">Firehose Stream:</span>
+<span class="font-data-mono-sm text-data-mono-sm text-primary font-semibold">420 msgs/sec</span>
+</div>
+</div>
+<!-- Central Nav Links (From JSON) -->
+<nav class="hidden xl:flex items-center gap-6">
+<a class="font-label-code text-label-code text-on-surface-variant hover:text-on-surface transition-colors" href="#">Matrix</a>
+<a class="font-label-code text-label-code text-on-surface-variant hover:text-on-surface transition-colors" href="#">Agents</a>
+<a class="font-label-code text-label-code text-on-surface-variant hover:text-on-surface transition-colors" href="#">Execution</a>
+<a class="font-label-code text-label-code text-on-surface-variant hover:text-on-surface transition-colors" href="#">Audit</a>
+<a class="font-label-code text-label-code text-primary border-b-2 border-primary pb-1 font-semibold" href="#">Vetting</a>
+</nav>
+<!-- Trailing Actions & Risk Engine Status -->
+<div class="flex items-center gap-3">
+<!-- Live Engine Badge -->
+<div class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30 font-label-code text-label-code text-primary">
+<span class="material-symbols-outlined text-[14px]">sensors</span>
+        Live Engine
+      </div>
+<!-- Trailing Action Icons -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="p-1.5 hover:bg-surface-container rounded hover:text-on-surface transition-colors" title="Terminal">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded hover:text-on-surface transition-colors relative" title="Alerts">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-error"></span>
+</button>
+</div>
+<!-- Emergency Halt Primary Action -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-error/50 bg-error/15 hover:bg-error hover:text-background text-error font-label-code text-label-code transition-all duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>Emergency Halt</span>
+</button>
+<!-- User Key / Avatar Alt -->
+<div class="w-7 h-7 rounded border border-outline-variant/40 bg-surface-container flex items-center justify-center text-primary font-data-mono-sm text-data-mono-sm font-semibold" title="Chief Risk Officer Master Key">
+        CRO
+      </div>
+</div>
+</header>
+<!-- ========================================== -->
+<!-- 2. SIDEBAR NAVIGATION (Brand Anchor JSON)  -->
+<!-- ========================================== -->
+<aside class="fixed top-14 left-0 h-[calc(100vh-3.5rem-2rem)] w-64 bg-surface-container-low border-r border-outline-variant/30 hidden lg:flex flex-col justify-between py-space-md z-40">
+<div class="flex flex-col gap-1">
+<!-- Node Header Metadata -->
+<div class="px-space-md pb-space-sm mb-2 border-b border-outline-variant/20">
+<div class="font-label-code text-label-code text-on-surface-variant">KERNEL ARCHITECTURE</div>
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">Nautilus Core v2.4</div>
+</div>
+<!-- Navigation Tabs (With Tab 08 Social & Geopolitical Firehose ACTIVE) -->
+<nav class="flex flex-col gap-0.5">
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface px-space-md py-space-xs transition-colors hover:bg-surface-container font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span>Cockpit Matrix</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface px-space-md py-space-xs transition-colors hover:bg-surface-container font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+<span>AI Agent Mesh</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface px-space-md py-space-xs transition-colors hover:bg-surface-container font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">candlestick_chart</span>
+<span>Order Execution</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface px-space-md py-space-xs transition-colors hover:bg-surface-container font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">vital_signs</span>
+<span>Data Pipeline</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface px-space-md py-space-xs transition-colors hover:bg-surface-container font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span>Tax &amp; Compliance</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface px-space-md py-space-xs transition-colors hover:bg-surface-container font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">radar</span>
+<span>Airdrop Vetting</span>
+</a>
+<!-- Custom Focus Destination: Tab 08 Social & Geopolitical Firehose ACTIVE -->
+<a class="flex items-center justify-between bg-surface-container-high text-primary border-l-2 border-primary px-space-md py-space-xs font-semibold font-label-code text-label-code mt-1" href="#">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">hub</span>
+<span>08 Social &amp; Macro Firehose</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+</a>
+</nav>
+<!-- Deploy CTA -->
+<div class="px-space-md mt-4">
+<button class="w-full py-2 px-3 rounded bg-primary-container text-on-primary font-headline-sm text-body-sm font-semibold flex items-center justify-center gap-1.5 hover:brightness-110 active:scale-[0.99] transition-all glow-mint">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span>Deploy Agent</span>
+</button>
+</div>
+</div>
+<!-- Sidebar Footer Actions -->
+<div class="flex flex-col gap-1 border-t border-outline-variant/20 pt-space-sm">
+<a class="flex items-center gap-space-sm text-error/80 hover:text-error hover:bg-surface-container px-space-md py-space-xs transition-colors font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">emergency_home</span>
+<span>Kill Switch Armed</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors font-label-code text-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>System Config</span>
+</a>
+</div>
+</aside>
+<!-- ========================================== -->
+<!-- 3. MAIN WORKSPACE CANVAS                   -->
+<!-- ========================================== -->
+<main class="lg:ml-64 mt-14 mb-8 p-space-md lg:p-space-lg flex-1 flex flex-col gap-space-md bg-background min-h-screen">
+<!-- Top Cockpit Metric Sub-Bar -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-space-sm">
+<div class="bg-surface-container-low border border-outline-variant/30 rounded p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant">
+<span>GLOBAL NLP VELOCITY</span>
+<span class="material-symbols-outlined text-primary text-[14px]">speed</span>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-on-surface">420.8</span>
+<span class="font-data-mono-sm text-data-mono-sm text-primary">+18.4%</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">Parsed packets/sec (Telegram, X, Discord)</span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/30 rounded p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant">
+<span>AGGREGATED MACRO REGIME</span>
+<span class="material-symbols-outlined text-secondary text-[14px]">public</span>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-secondary">ELEVATED HAWK</span>
+<span class="font-data-mono-sm text-data-mono-sm text-on-surface-variant">RBA &amp; Fed</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">68.2% Shipping Risk Node Spike</span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/30 rounded p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant">
+<span>SENTIMENT BIAS RATIO</span>
+<span class="material-symbols-outlined text-primary text-[14px]">psychology_alt</span>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-primary">64.2 / 100</span>
+<span class="font-data-mono-sm text-data-mono-sm text-primary font-medium">BULL CONVERGENCE</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">FinRobot Vibe-Trading Index</span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/30 rounded p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant">
+<span>POLYMARKET ARBITRAGE SPREAD</span>
+<span class="material-symbols-outlined text-error text-[14px]">swap_horizontal_circle</span>
+</div>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-error">4.82%</span>
+<span class="font-data-mono-sm text-data-mono-sm text-error font-medium">Divergence Alert</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">RBA Cut vs TradFi Swaps</span>
+</div>
+</section>
+<!-- Bento Grid Section 1: Firehose Streaming Ingest + Macro Geopolitical Radar -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md">
+<!-- SECTION 1: Multi-Channel Firehose Live Ingest (7 Cols) -->
+<section class="xl:col-span-7 bg-surface-container-low border border-outline-variant/30 rounded flex flex-col h-[520px]">
+<!-- Tile Header -->
+<div class="h-9 px-space-md border-b border-outline-variant/30 flex items-center justify-between shrink-0 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">sensors</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider">Multi-Channel Firehose Live Ingest</span>
+<span class="font-data-mono-sm text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">LLM RAW PIPE</span>
+</div>
+<!-- Channel Filters -->
+<div class="flex items-center gap-1.5 font-label-code text-[10px]">
+<span class="px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">All</span>
+<span class="px-2 py-0.5 rounded hover:bg-surface-container text-on-surface-variant cursor-pointer">Telegram</span>
+<span class="px-2 py-0.5 rounded hover:bg-surface-container text-on-surface-variant cursor-pointer">Discord</span>
+<span class="px-2 py-0.5 rounded hover:bg-surface-container text-on-surface-variant cursor-pointer">Bluesky</span>
+<span class="px-2 py-0.5 rounded hover:bg-surface-container text-on-surface-variant cursor-pointer">X/RSS</span>
+</div>
+</div>
+<!-- Ingest Stream Container -->
+<div class="p-2 overflow-y-auto flex-1 flex flex-col gap-1.5 scrollbar-none font-data-mono-sm text-data-mono-sm">
+<!-- Stream Message 1: Telegram Alpha -->
+<div class="p-2.5 rounded bg-surface-container/60 hover:bg-surface-container border border-outline-variant/20 transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-code font-label-code">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-[#229ED9]/15 text-[#229ED9] border border-[#229ED9]/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#229ED9]"></span> TG: AlphaInsiders
+                </span>
+<span class="text-on-surface-variant text-[11px]">02:14:08.121 UTC</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-semibold border border-primary/30">BULLISH (+0.84)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[10px]">$SOL</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+              Large OTC sweep detected on Deribit: 12,000 contracts for Jan 26 $220 calls filled at ask. Institutional call skew now at 30-day peak.
+            </p>
+<div class="flex items-center gap-3 text-[10px] text-on-surface-variant font-label-code pt-0.5">
+<span>Entity: Solana Foundation Treasury</span>
+<span>•</span>
+<span>Velocity: +42 msgs/min</span>
+<span>•</span>
+<span class="text-secondary">FinRobot Extracted: High Delta Flow</span>
+</div>
+</div>
+<!-- Stream Message 2: Discord Whale Alert -->
+<div class="p-2.5 rounded bg-surface-container/60 hover:bg-surface-container border border-outline-variant/20 transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-code font-label-code">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-[#5865F2]/15 text-[#5865F2] border border-[#5865F2]/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#5865F2]"></span> DC: Monad Devs Guild
+                </span>
+<span class="text-on-surface-variant text-[11px]">02:14:05.489 UTC</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-secondary/15 text-secondary text-[10px] font-semibold border border-secondary/30">NEUTRAL (DEV)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[10px]">$MONAD</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+              Core consensus release v0.9.8 deployed to private canary testnet. Pipeline throughput verified at 9,980 TPS under simulated Byzantine packet drop.
+            </p>
+<div class="flex items-center gap-3 text-[10px] text-on-surface-variant font-label-code pt-0.5">
+<span>Repo: monad-core-consensus</span>
+<span>•</span>
+<span class="text-primary font-medium">Confidence: 99.4%</span>
+<span>•</span>
+<span>Sentiment: Technical Conviction</span>
+</div>
+</div>
+<!-- Stream Message 3: X/Twitter Quant Stream -->
+<div class="p-2.5 rounded bg-surface-container/60 hover:bg-surface-container border border-outline-variant/20 transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-code font-label-code">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-outline/20 text-on-surface border border-outline-variant/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> X: @HedgeRiskMacro
+                </span>
+<span class="text-on-surface-variant text-[11px]">02:13:58.902 UTC</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-error/15 text-error text-[10px] font-semibold border border-error/30">FUD / HAWK (-0.72)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[10px]">$RBA_CASH</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+              Australian headline trimmed mean CPI consensus projected to surprise higher at 3.9% y/y tomorrow. Interbank cash futures dropping to 11% chance of August rate cut.
+            </p>
+<div class="flex items-center gap-3 text-[10px] text-on-surface-variant font-label-code pt-0.5">
+<span>Jurisdiction: AU EOFY Risk</span>
+<span>•</span>
+<span>Source Weight: Institutional</span>
+<span>•</span>
+<span class="text-error">Triggered: Rate Hedge Vector</span>
+</div>
+</div>
+<!-- Stream Message 4: Berachain Internal Discord -->
+<div class="p-2.5 rounded bg-surface-container/60 hover:bg-surface-container border border-outline-variant/20 transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-code font-label-code">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-[#f59e0b]/15 text-[#f59e0b] border border-[#f59e0b]/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#f59e0b]"></span> DC: Berachain Internal
+                </span>
+<span class="text-on-surface-variant text-[11px]">02:13:51.340 UTC</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-semibold border border-primary/30">ACCUMULATION (+0.69)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[10px]">$BERA</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+              Validator bribery marketplace contract upgraded. Proof-of-Liquidity yield multiplier set to activate with 14 DEX pools bridging liquidity.
+            </p>
+<div class="flex items-center gap-3 text-[10px] text-on-surface-variant font-label-code pt-0.5">
+<span>Smart Contract: 0x932...a41c</span>
+<span>•</span>
+<span class="text-primary font-medium">BeraPoL Signal: Bullish</span>
+<span>•</span>
+<span>Audit Hash: OK</span>
+</div>
+</div>
+<!-- Stream Message 5: Bluesky Quant Scraper -->
+<div class="p-2.5 rounded bg-surface-container/60 hover:bg-surface-container border border-outline-variant/20 transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-code font-label-code">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-[#0285FF]/15 text-[#0285FF] border border-[#0285FF]/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#0285FF]"></span> BSKY: QuantMacroFeed
+                </span>
+<span class="text-on-surface-variant text-[11px]">02:13:44.887 UTC</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-secondary/15 text-secondary text-[10px] font-semibold border border-secondary/30">MACRO RISK (+0.44)</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface text-[10px]">CRUDE</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">
+              Bab el-Mandeb strait tanker reroutes escalate by +14% after maritime advisory. Brent premium widening against WTI benchmark.
+            </p>
+<div class="flex items-center gap-3 text-[10px] text-on-surface-variant font-label-code pt-0.5">
+<span>Geo Index: Red Sea Corridors</span>
+<span>•</span>
+<span>Commodity Risk: Up</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Geopolitical & Global Event Sentiment Radar (5 Cols) -->
+<section class="xl:col-span-5 bg-surface-container-low border border-outline-variant/30 rounded flex flex-col h-[520px]">
+<!-- Tile Header -->
+<div class="h-9 px-space-md border-b border-outline-variant/30 flex items-center justify-between shrink-0 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">radar</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider">Geopolitical &amp; Macro Radar</span>
+</div>
+<span class="font-label-code text-label-code text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">LIVE RADAR ACTIVE</span>
+</div>
+<div class="p-space-md flex-1 flex flex-col justify-between gap-3 overflow-y-auto scrollbar-none">
+<!-- Radar Index 1: Global Conflict Escalation -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Global Conflict Escalation Index</span>
+<span class="font-data-mono-sm text-data-mono-sm text-error font-bold px-1.5 py-0.5 rounded bg-error/15 border border-error/30">74.8 / 100 HIGH</span>
+</div>
+<!-- Precision Quant Progress Bar -->
+<div class="w-full bg-background rounded-full h-1.5 overflow-hidden flex">
+<div class="bg-error h-full rounded-full" style="width: 74.8%"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant">
+<span>Driver: Levant drone surveillance spike</span>
+<span>7-Day Delta: <span class="text-error">+6.2%</span></span>
+</div>
+</div>
+<!-- Radar Index 2: US / China Trade Friction -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">US-China Tech &amp; Tariff Friction</span>
+<span class="font-data-mono-sm text-data-mono-sm text-secondary font-bold px-1.5 py-0.5 rounded bg-secondary/15 border border-secondary/30">58.4 / 100 MODERATE</span>
+</div>
+<div class="w-full bg-background rounded-full h-1.5 overflow-hidden flex">
+<div class="bg-secondary h-full rounded-full" style="width: 58.4%"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant">
+<span>Driver: Semiconductor wafer export controls</span>
+<span>7-Day Delta: <span class="text-primary">-2.1%</span></span>
+</div>
+</div>
+<!-- Radar Index 3: Australian RBA Rate Cut Expectations -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">AU RBA Rate Cut Odds (Q3)</span>
+<span class="font-data-mono-sm text-data-mono-sm text-error font-bold px-1.5 py-0.5 rounded bg-error/15 border border-error/30">14.0% IMMINENT HAWK</span>
+</div>
+<div class="w-full bg-background rounded-full h-1.5 overflow-hidden flex">
+<div class="bg-error h-full rounded-full" style="width: 14%"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant">
+<span>Driver: Melbourne housing rent stickiness</span>
+<span>7-Day Delta: <span class="text-error">-18.5%</span></span>
+</div>
+</div>
+<!-- Radar Index 4: Middle East Shipping Route Risk Indicator -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Red Sea / Bab el-Mandeb Freight Disruption</span>
+<span class="font-data-mono-sm text-data-mono-sm text-primary font-bold px-1.5 py-0.5 rounded bg-primary/15 border border-primary/30">88.9 / 100 CRITICAL</span>
+</div>
+<div class="w-full bg-background rounded-full h-1.5 overflow-hidden flex">
+<div class="bg-primary h-full rounded-full glow-mint" style="width: 88.9%"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant">
+<span>Driver: Insurance premiums +42% wow</span>
+<span>Correlation: Crude Alpha Vector</span>
+</div>
+</div>
+<!-- Candlestick Decision Node Footnote -->
+<div class="p-2 rounded bg-surface-container-high/40 border border-outline-variant/20 flex items-center justify-between font-label-code text-[11px]">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>Autonomous Risk Engine:</span>
+</div>
+<span class="text-primary font-semibold">Hedging 12% Crude Volatility overlay</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Bento Grid Section 2: AI Entity & Sentiment Heatmap + Prediction Markets + Curated Communities -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md">
+<!-- SECTION 3: AI Entity & Sentiment Heatmap (5 Cols) -->
+<section class="xl:col-span-5 bg-surface-container-low border border-outline-variant/30 rounded flex flex-col">
+<div class="h-9 px-space-md border-b border-outline-variant/30 flex items-center justify-between shrink-0 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">grid_on</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider">AI Entity &amp; Sentiment Heatmap</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">FinRobot Vibe Engine</span>
+</div>
+<div class="p-space-md flex flex-col gap-2.5">
+<div class="text-[11px] font-label-code text-on-surface-variant flex justify-between px-1">
+<span>ASSET / COMMODITY</span>
+<span>VELOCITY (24H)</span>
+<span>VIBE SCORE</span>
+<span>CLASSIFICATION</span>
+</div>
+<!-- Heatmap Row 1: BTC -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">$BTC</span>
+<span class="text-[11px] text-on-surface-variant">Bitcoin</span>
+</div>
+<span class="text-primary">+14,920 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-primary">82/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary glow-mint"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-semibold border border-primary/30">Bullish Outlier</span>
+</div>
+<!-- Heatmap Row 2: ETH -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">$ETH</span>
+<span class="text-[11px] text-on-surface-variant">Ethereum</span>
+</div>
+<span class="text-on-surface-variant">+6,812 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-secondary">54/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary/15 text-secondary text-[10px] font-semibold border border-secondary/30">Skeptical</span>
+</div>
+<!-- Heatmap Row 3: SOL -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">$SOL</span>
+<span class="text-[11px] text-on-surface-variant">Solana</span>
+</div>
+<span class="text-primary">+9,440 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-primary">78/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary glow-mint"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-semibold border border-primary/30">Strong Bullish</span>
+</div>
+<!-- Heatmap Row 4: MONAD -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">$MONAD</span>
+<span class="text-[11px] text-on-surface-variant">Monad Dev</span>
+</div>
+<span class="text-primary font-medium">+4,210 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-primary">89/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary glow-mint"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-semibold border border-primary/30">Hype Peak</span>
+</div>
+<!-- Heatmap Row 5: BERA -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">$BERA</span>
+<span class="text-[11px] text-on-surface-variant">Berachain</span>
+</div>
+<span class="text-on-surface-variant">+3,190 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-primary">71/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary/15 text-primary text-[10px] font-semibold border border-primary/30">Accumulation</span>
+</div>
+<!-- Heatmap Row 6: Commodities Gold -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">GOLD</span>
+<span class="text-[11px] text-on-surface-variant">XAU/USD</span>
+</div>
+<span class="text-secondary">+2,840 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-secondary">62/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary/15 text-secondary text-[10px] font-semibold border border-secondary/30">Safe Haven</span>
+</div>
+<!-- Heatmap Row 7: Commodities Crude -->
+<div class="p-2.5 rounded bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 flex items-center justify-between font-data-mono-sm text-data-mono-sm transition-all">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">CRUDE</span>
+<span class="text-[11px] text-on-surface-variant">Brent WTI</span>
+</div>
+<span class="text-error font-semibold">+5,110 msgs</span>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-error">79/100</span>
+<div class="w-1.5 h-1.5 rounded-full bg-error glow-coral"></div>
+</div>
+<span class="px-2 py-0.5 rounded bg-error/15 text-error text-[10px] font-semibold border border-error/30">FUD Spike</span>
+</div>
+</div>
+</section>
+<!-- SECTION 4: Prediction Market Probabilities Ingest (4 Cols) -->
+<section class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded flex flex-col">
+<div class="h-9 px-space-md border-b border-outline-variant/30 flex items-center justify-between shrink-0 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">swap_horiz</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider">Prediction Odds Ingest</span>
+</div>
+<span class="font-label-code text-label-code text-primary">POLYMARKET &amp; KALSHI</span>
+</div>
+<div class="p-space-md flex flex-col gap-3">
+<!-- Market Item 1: Fed Rate Decision -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">US Fed 25bps Cut (Sept FOMC)</span>
+<span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-label-code">Polymarket: #882</span>
+</div>
+<div class="flex items-center justify-between font-data-mono-sm text-data-mono-sm">
+<div>
+<span class="text-on-surface-variant text-[11px]">Odds: </span>
+<span class="font-bold text-primary">68% YES</span>
+</div>
+<div>
+<span class="text-on-surface-variant text-[11px]">TradFi Swaps: </span>
+<span class="font-medium text-on-surface">61.5%</span>
+</div>
+<div class="text-primary font-bold">
+                +6.5% Arb
+              </div>
+</div>
+<div class="w-full bg-background rounded-full h-1 flex">
+<div class="bg-primary h-full rounded-full" style="width: 68%"></div>
+</div>
+</div>
+<!-- Market Item 2: Australian CPI Print -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">AU Q2 Headline CPI &gt; 3.8%</span>
+<span class="px-1.5 py-0.5 rounded bg-secondary/10 text-secondary text-[10px] font-label-code">Kalshi: AUD-CPI</span>
+</div>
+<div class="flex items-center justify-between font-data-mono-sm text-data-mono-sm">
+<div>
+<span class="text-on-surface-variant text-[11px]">Odds: </span>
+<span class="font-bold text-error">74% YES</span>
+</div>
+<div>
+<span class="text-on-surface-variant text-[11px]">RBA Swaps: </span>
+<span class="font-medium text-on-surface">69.2%</span>
+</div>
+<div class="text-error font-bold">
+                +4.8% Arb
+              </div>
+</div>
+<div class="w-full bg-background rounded-full h-1 flex">
+<div class="bg-error h-full rounded-full" style="width: 74%"></div>
+</div>
+</div>
+<!-- Market Item 3: Crypto ETF Approval -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Solana Staking ETF Approval 2024</span>
+<span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-label-code">Polymarket: #SOL-ETF</span>
+</div>
+<div class="flex items-center justify-between font-data-mono-sm text-data-mono-sm">
+<div>
+<span class="text-on-surface-variant text-[11px]">Odds: </span>
+<span class="font-bold text-secondary">22% YES</span>
+</div>
+<div>
+<span class="text-on-surface-variant text-[11px]">Implied Skew: </span>
+<span class="font-medium text-on-surface">19.0%</span>
+</div>
+<div class="text-secondary font-bold">
+                +3.0% Spread
+              </div>
+</div>
+<div class="w-full bg-background rounded-full h-1 flex">
+<div class="bg-secondary h-full rounded-full" style="width: 22%"></div>
+</div>
+</div>
+<!-- Market Item 4: Middle East Ceasefire Q3 -->
+<div class="p-3 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Maritime Red Sea Route Normalized Q3</span>
+<span class="px-1.5 py-0.5 rounded bg-outline/10 text-on-surface-variant text-[10px] font-label-code">Polymarket: #SEA</span>
+</div>
+<div class="flex items-center justify-between font-data-mono-sm text-data-mono-sm">
+<div>
+<span class="text-on-surface-variant text-[11px]">Odds: </span>
+<span class="font-bold text-on-surface-variant">16% YES</span>
+</div>
+<div>
+<span class="text-on-surface-variant text-[11px]">Freight Futures: </span>
+<span class="font-medium text-on-surface">12.1%</span>
+</div>
+<div class="text-primary font-bold">
+                +3.9% Arb
+              </div>
+</div>
+<div class="w-full bg-background rounded-full h-1 flex">
+<div class="bg-outline-variant h-full rounded-full" style="width: 16%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: Curated Communities Directory (3 Cols) -->
+<section class="xl:col-span-3 bg-surface-container-low border border-outline-variant/30 rounded flex flex-col">
+<div class="h-9 px-space-md border-b border-outline-variant/30 flex items-center justify-between shrink-0 bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">groups</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider">Curated Communities</span>
+</div>
+<span class="font-label-code text-[10px] text-on-surface-variant">DIRECT HOOKS</span>
+</div>
+<div class="p-space-md flex flex-col gap-3 overflow-y-auto scrollbar-none">
+<!-- Community Item 1 -->
+<div class="p-2.5 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface">Whale Alert Institutional</h4>
+<div class="flex items-center gap-1.5 text-[10px] font-label-code text-on-surface-variant mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-error/15 text-error">Immediate Flash</span>
+<span>•</span>
+<span>Discord</span>
+</div>
+</div>
+<span class="font-data-mono-sm text-[10px] text-primary px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20">FOLLOWING</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant leading-tight">
+              Large whale wallets, cold storage rebalances, exchange deposit surges &gt;$10M.
+            </p>
+<button class="w-full py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-code text-[11px] border border-outline-variant/30 flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[13px]">tune</span>
+<span>Edit Sentiment Weights</span>
+</button>
+</div>
+<!-- Community Item 2 -->
+<div class="p-2.5 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface">Berachain Internal Devs</h4>
+<div class="flex items-center gap-1.5 text-[10px] font-label-code text-on-surface-variant mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-primary/15 text-primary">Daily Alpha</span>
+<span>•</span>
+<span>Discord</span>
+</div>
+</div>
+<button class="font-data-mono-sm text-[10px] text-on-surface hover:text-primary px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/30 transition-colors">
+                JOIN
+              </button>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant leading-tight">
+              Proof-of-Liquidity validator dynamics, vault testnet rewards, deployment triggers.
+            </p>
+<button class="w-full py-1 rounded bg-primary-container text-on-primary font-label-code text-[11px] font-semibold flex items-center justify-center gap-1 hover:brightness-110 glow-mint transition-all">
+<span class="material-symbols-outlined text-[13px]">send</span>
+<span>Direct 1-Click Invite</span>
+</button>
+</div>
+<!-- Community Item 3 -->
+<div class="p-2.5 rounded bg-surface-container border border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface">Monad Dev Core Protocol</h4>
+<div class="flex items-center gap-1.5 text-[10px] font-label-code text-on-surface-variant mt-0.5">
+<span class="px-1.5 py-0.2 rounded bg-secondary/15 text-secondary">Weekly Research</span>
+<span>•</span>
+<span>Telegram</span>
+</div>
+</div>
+<span class="font-data-mono-sm text-[10px] text-primary px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20">FOLLOWING</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant leading-tight">
+              Parallel EVM microbenchmarks, pipeline stress tests, and RPC node metrics.
+            </p>
+<button class="w-full py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-code text-[11px] border border-outline-variant/30 flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[13px]">open_in_new</span>
+<span>Launch Channel</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- ========================================== -->
+<!-- 4. FOOTER STATUS BAR (Brand Anchor JSON)   -->
+<!-- ========================================== -->
+<footer class="fixed bottom-0 left-0 w-full z-30 h-8 bg-surface-container-lowest border-t border-outline-variant/30 flex items-center justify-between px-space-lg text-data-mono-sm font-data-mono-sm text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary glow-mint"></span>
+<span class="font-bold text-on-surface">MASTERTRADER QUANT ENGINE • NAUTILUS CORE 2.4.0 • AU JURISDICTION COMPLIANT</span>
+</div>
+<!-- Audit & Server Telemetry Links (From JSON) -->
+<div class="hidden sm:flex items-center gap-4 text-[11px] font-label-code">
+<span class="hover:text-primary transition-colors cursor-pointer text-primary">Kernel Status: 0.12ms</span>
+<span class="hover:text-primary transition-colors cursor-pointer">EOFY Audit Trail</span>
+<span class="hover:text-primary transition-colors cursor-pointer flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        MCP Server Active
+      </span>
+<span class="text-error font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">shield</span>
+        Kill-Switch Armed
+      </span>
+</div>
+</footer>
+</body></html>

@@ -21,6 +21,9 @@ Around that it adds:
 | File | Contents |
 |---|---|
 | [GOAL.md](GOAL.md) | What we're building and why |
+| [DESIGN.md](DESIGN.md) | **Design system v2:** tokens, type, components, and the full responsive system (1920px+ → 240px, portrait/landscape, laptops, tablets, foldables) |
+| [ui-examples/](ui-examples/README.md) | 13 Stitch reference screens (screenshots + HTML) with a responsive audit and content corrections |
+| [brand/](brand/README.md) | Signal M logo, app icon, palette |
 | [SPEC.md](SPEC.md) | v1 specification and core decisions |
 | [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) | Vetting of 10 open-source repos: licenses, code audit, reputation, overlap and redundancy, verdicts, and the supporting free data/memory/quant ecosystem |
 | [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | One-page architecture: principles, module diagram, asset coverage, promotion gates |

@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASTERTRADER — Cockpit Terminal | Vetted Launches &amp; EOFY Tax Ledger</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts: Space Grotesk & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config verbatim from instructions -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed-dim": "#b1c5ff",
+            "error-container": "#93000a",
+            "on-error": "#690005",
+            "on-primary-container": "#006144",
+            "on-tertiary-fixed": "#3d0600",
+            "background": "#0f141a",
+            "inverse-on-surface": "#2d3038",
+            "surface-variant": "#31353d",
+            "on-primary-fixed-variant": "#005138",
+            "secondary-fixed": "#dae2ff",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-secondary": "#002c72",
+            "surface-tint": "#24e1a4",
+            "on-surface": "#dfe2ec",
+            "on-primary-fixed": "#002115",
+            "surface-dim": "#0f141a",
+            "tertiary-container": "#ffb9a9",
+            "surface-container-high": "#262a32",
+            "surface-container-highest": "#31353d",
+            "primary": "#6effc5",
+            "secondary-container": "#045fe3",
+            "tertiary-fixed": "#ffdad2",
+            "on-primary": "#003826",
+            "on-secondary-fixed-variant": "#0040a0",
+            "tertiary": "#ffdfd8",
+            "surface-container-lowest": "#0a0e15",
+            "outline": "#85948b",
+            "primary-fixed": "#52febf",
+            "inverse-surface": "#dfe2ec",
+            "surface-container": "#1c2027",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "surface": "#0f141a",
+            "on-surface-variant": "#bacac0",
+            "on-error-container": "#ffdad6",
+            "outline-variant": "#3b4a42",
+            "on-tertiary-container": "#a0270c",
+            "on-background": "#dfe2ec",
+            "primary-container": "#2be4a7",
+            "surface-bright": "#353941",
+            "on-secondary-container": "#e2e7ff",
+            "surface-container-low": "#181c23",
+            "error": "#ffb4ab",
+            "on-secondary-fixed": "#001847",
+            "inverse-primary": "#006c4c",
+            "secondary": "#b1c5ff",
+            "primary-fixed-dim": "#24e1a4",
+            "on-tertiary": "#630f00"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter-desktop": "1rem",
+            "space-md": "0.75rem",
+            "margin": "1rem",
+            "margin-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.25rem",
+            "gutter": "0.75rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Space Grotesk"],
+            "label-code": ["JetBrains Mono"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "body-md": ["Space Grotesk"],
+            "body-lg": ["Space Grotesk"],
+            "data-mono-lg": ["JetBrains Mono"],
+            "headline-lg": ["Space Grotesk"],
+            "headline-sm": ["Space Grotesk"],
+            "data-mono-md": ["JetBrains Mono"],
+            "label-caps": ["Space Grotesk"],
+            "body-sm": ["Space Grotesk"],
+            "display-lg": ["Space Grotesk"],
+            "display-lg-mobile": ["Space Grotesk"],
+            "data-mono-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "data-mono-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "data-mono-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Candlestick Signal M Node Glows */
+    .glow-mint {
+      box-shadow: 0 0 12px rgba(43, 228, 167, 0.45);
+    }
+    .glow-coral {
+      box-shadow: 0 0 14px rgba(255, 107, 74, 0.5);
+    }
+    .glow-cobalt {
+      box-shadow: 0 0 12px rgba(58, 123, 255, 0.45);
+    }
+    /* Custom Scrollbar for quant terminal */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e15;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #31353d;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2be4a7;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary">
+<!-- TOP NAV BAR (Shared Components JSON execution) -->
+<header class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center w-full px-space-lg h-14 max-w-full border-b border-outline-variant/30 backdrop-blur-md bg-surface-container-lowest/95">
+<!-- Left Cluster: Brand & Search -->
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-2">
+<!-- Signal M Vector Icon -->
+<svg class="w-7 h-7 text-primary-container flex-shrink-0" fill="none" viewbox="0 0 40 40">
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="2" x1="10" x2="10" y1="4" y2="36"></line>
+<rect fill="#3A7BFF" height="18" rx="1.5" width="6" x="7" y="12"></rect>
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="2" x1="30" x2="30" y1="4" y2="36"></line>
+<rect fill="#2BE4A7" height="20" rx="1.5" width="6" x="27" y="8"></rect>
+<path d="M10 16 L20 28 L30 14" stroke="#2BE4A7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<circle class="filter drop-shadow-[0_0_6px_#2BE4A7]" cx="20" cy="28" fill="#2BE4A7" r="3.5"></circle>
+</svg>
+<span class="text-headline-sm font-headline-sm tracking-tight font-bold text-on-surface">MASTER<span class="text-primary-container font-extrabold">TRADER</span></span>
+</div>
+<!-- Quick Search Bar -->
+<div class="relative hidden lg:flex items-center w-80">
+<span class="material-symbols-outlined absolute left-2.5 text-on-surface-variant text-[16px] pointer-events-none">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/40 rounded px-2.5 pl-8 py-1 font-label-code text-label-code text-on-surface placeholder:text-on-surface-variant/60 focus:border-secondary-container focus:outline-none transition-colors" placeholder="Query token contracts, AU tax lots, ENS, solvers..." type="text"/>
+<span class="absolute right-2 font-label-code text-[10px] text-on-surface-variant/60 border border-outline-variant/50 px-1 rounded">⌘K</span>
+</div>
+</div>
+<!-- Center Navigation Links (Hybrid top-nav sync) -->
+<nav class="hidden md:flex items-center gap-space-lg">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-code text-label-code" href="#matrix">Matrix</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-code text-label-code" href="#agents">Agents</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-code text-label-code" href="#execution">Execution</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold font-label-code text-label-code" href="#audit">Audit</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold font-label-code text-label-code" href="#vetting">Vetting</a>
+</nav>
+<!-- Trailing Actions Cluster -->
+<div class="flex items-center gap-space-sm">
+<!-- Live Engine Telemetry Pill -->
+<div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container border border-outline-variant/40">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-code text-label-code text-primary-container font-medium tracking-wide">Live Engine</span>
+<span class="font-data-mono-sm text-[10px] text-on-surface-variant/80 ml-1">0.12ms</span>
+</div>
+<!-- Trailing Icon Actions -->
+<button class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Quant Terminal">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Sensors">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+</button>
+<!-- Emergency Halt Primary Trailing Button -->
+<button class="flex items-center gap-1.5 px-3 py-1 bg-error-container/20 border border-error/50 hover:bg-error-container/40 text-error rounded font-label-code text-label-code font-bold tracking-wider active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[15px]">power_settings_new</span>
+<span>Emergency Halt</span>
+</button>
+<!-- Profile Avatar -->
+<div class="w-7 h-7 rounded border border-outline-variant/60 bg-surface-container-high flex items-center justify-center font-label-code text-label-code text-primary font-bold ml-1" title="Chief Risk Officer Master Key">
+        CRO
+      </div>
+</div>
+</header>
+<!-- SIDE NAVIGATION BAR (Shared Components JSON execution) -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 flex flex-col justify-between py-space-md border-r border-outline-variant/30 bg-surface-container-low">
+<!-- Top Branding & Nautilus Engine Meta -->
+<div class="px-space-md pt-14 pb-2 border-b border-outline-variant/20">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary-container text-[20px]" data-weight="fill">token</span>
+<span class="font-headline-sm text-headline-sm font-extrabold text-on-surface tracking-tight">MASTERTRADER</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-code text-[10px] text-on-surface-variant font-medium">Nautilus Core v2.4</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-primary font-data-mono-sm text-[9px] border border-outline-variant/40">AU-SYD</span>
+</div>
+</div>
+<!-- 10 Cockpit Dashboards List -->
+<div class="flex-1 overflow-y-auto py-space-sm space-y-0.5 px-2">
+<div class="px-space-md py-1 text-[10px] font-label-caps text-on-surface-variant/60 uppercase tracking-widest font-bold">Trading Modules (1-8)</div>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#cockpit">
+<span class="material-symbols-outlined text-[17px]">grid_view</span>
+<span>01 Cockpit Matrix</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#agents">
+<span class="material-symbols-outlined text-[17px]">psychology</span>
+<span>02 AI Agent Mesh</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#orders">
+<span class="material-symbols-outlined text-[17px]">candlestick_chart</span>
+<span>03 Order Execution</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#pipeline">
+<span class="material-symbols-outlined text-[17px]">vital_signs</span>
+<span>04 Data Pipeline</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#arbitrage">
+<span class="material-symbols-outlined text-[17px]">sync_alt</span>
+<span>05 MEV / Cross-Arb</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#liquidity">
+<span class="material-symbols-outlined text-[17px]">water_drop</span>
+<span>06 Liquidity Routing</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#risk">
+<span class="material-symbols-outlined text-[17px]">shield</span>
+<span>07 VaR Engine &amp; Margin</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-1.5 rounded transition-colors text-label-code font-label-code" href="#telemetry">
+<span class="material-symbols-outlined text-[17px]">monitoring</span>
+<span>08 Cluster Telemetry</span>
+</a>
+<!-- Dashboards 9 & 10 Focus Section -->
+<div class="px-space-md pt-3 pb-1 text-[10px] font-label-caps text-primary/80 uppercase tracking-widest font-bold flex items-center justify-between">
+<span>Vetting &amp; Tax (9-10)</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</div>
+<!-- Dashboard 09: Vetted Airdrop / Early Launch Radar (Active Tab 1) -->
+<a class="flex items-center gap-space-sm bg-surface-container-high text-primary border-l-2 border-primary px-space-md py-1.5 rounded-r font-semibold text-label-code font-label-code active:scale-[0.99] transition-all" href="#dashboard-09">
+<span class="material-symbols-outlined text-[17px]" data-weight="fill">radar</span>
+<div class="flex flex-col">
+<span class="leading-tight">09 Launch &amp; Airdrops</span>
+<span class="text-[9px] text-primary/70 font-normal font-data-mono-sm">Vetted EV Radar</span>
+</div>
+</a>
+<!-- Dashboard 10: Australian EOFY Tax Ledger (Active Tab 2) -->
+<a class="flex items-center gap-space-sm bg-surface-container-high text-secondary-fixed-dim border-l-2 border-secondary-container px-space-md py-1.5 rounded-r font-semibold text-label-code font-label-code active:scale-[0.99] transition-all" href="#dashboard-10">
+<span class="material-symbols-outlined text-[17px]" data-weight="fill">receipt_long</span>
+<div class="flex flex-col">
+<span class="leading-tight text-on-surface">10 EOFY Tax Ledger</span>
+<span class="text-[9px] text-secondary-fixed-dim font-normal font-data-mono-sm">ATO FY24-25 Q3</span>
+</div>
+</a>
+</div>
+<!-- CTA & Footer Controls -->
+<div class="p-space-md space-y-space-sm border-t border-outline-variant/30 bg-surface-container-low">
+<!-- Deploy Agent Button -->
+<button class="w-full flex items-center justify-center gap-2 py-2 px-3 bg-primary-container hover:bg-primary-fixed text-on-primary font-headline-sm text-body-sm font-bold rounded shadow-[0_0_12px_rgba(43,228,167,0.35)] transition-all">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+<span>Deploy Agent</span>
+</button>
+<!-- Sub Footer Links -->
+<div class="space-y-1 pt-1">
+<a class="flex items-center gap-space-sm text-error/80 hover:text-error hover:bg-error-container/20 px-space-sm py-1 rounded transition-colors text-label-code font-label-code" href="#kill-switch">
+<span class="material-symbols-outlined text-[15px]">emergency_home</span>
+<span>Kill Switch</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-sm py-1 rounded transition-colors text-label-code font-label-code" href="#config">
+<span class="material-symbols-outlined text-[15px]">settings</span>
+<span>System Config</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- MAIN QUANT WORKSPACE -->
+<main class="ml-64 pt-14 pb-12 px-space-lg min-h-screen">
+<!-- Workspace Top Header Bar: Dashboards 9 & 10 Command HUD -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 py-space-md border-b border-outline-variant/20 mb-space-md">
+<div>
+<div class="flex items-center gap-2 font-label-code text-[11px] text-on-surface-variant mb-1">
+<span class="text-primary-container">COCKPIT PROTOCOL</span>
+<span>/</span>
+<span>HIGH-VELOCITY ASYMMETRIC ALPHA</span>
+<span>/</span>
+<span class="text-on-surface">ATO REGULATORY HARNESS</span>
+</div>
+<h1 class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight flex items-center gap-3">
+          Launch Radar &amp; Australian EOFY Tax Ledger
+          <span class="font-label-code text-label-code text-primary-container bg-surface-container px-2 py-0.5 rounded border border-primary-container/30">
+            DUAL-ENGINE WORKSPACE
+          </span>
+</h1>
+</div>
+<!-- Quick Metrics Summary HUD -->
+<div class="flex items-center gap-3 flex-wrap">
+<!-- Metric: Total Tracked Launch EV -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded px-3 py-1.5 flex items-center gap-3">
+<div>
+<div class="font-label-caps text-[9px] text-on-surface-variant uppercase">Aggregated Launch EV</div>
+<div class="font-data-mono-md text-data-mono-md text-primary font-bold">$148,220 <span class="text-body-sm font-normal text-on-surface-variant">USD</span></div>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]">trending_up</span>
+</div>
+<!-- Metric: FY24-25 Q3 CGT Provision -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded px-3 py-1.5 flex items-center gap-3">
+<div>
+<div class="font-label-caps text-[9px] text-on-surface-variant uppercase">EOFY CGT Provision (ATO)</div>
+<div class="font-data-mono-md text-data-mono-md text-secondary-fixed-dim font-bold">$9,604.80 <span class="text-body-sm font-normal text-on-surface-variant">AUD</span></div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">account_balance</span>
+</div>
+<!-- Metric: Simulators Active -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded px-3 py-1.5 flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container glow-mint animate-ping"></span>
+<div>
+<div class="font-label-caps text-[9px] text-on-surface-variant uppercase">EVM Simulators</div>
+<div class="font-data-mono-md text-data-mono-md text-on-surface font-semibold">14 Sandboxes Active</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- COMMAND PANEL 1: DASHBOARD 09 — VETTED AIRDROP & EARLY LAUNCH RADAR -->
+<!-- ========================================================================= -->
+<section class="mb-space-xl" id="dashboard-09">
+<!-- Section Header -->
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="p-1 rounded bg-primary-container/15 text-primary-container border border-primary-container/30">
+<span class="material-symbols-outlined text-[18px]">radar</span>
+</span>
+<h2 class="text-headline-md font-headline-md font-bold text-on-surface">
+            09 / Vetted Airdrop &amp; Early Launch Radar
+          </h2>
+<span class="font-data-mono-sm text-[11px] text-on-surface-variant ml-2">
+            Automated De-Anonymization &amp; Sybil-Resistant Task Flow
+          </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-code text-label-code text-on-surface-variant">Scan Frequency: <span class="text-primary-container">Realtime (Sub-Second)</span></span>
+<button class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant/40 hover:border-primary-container text-on-surface text-label-code font-label-code flex items-center gap-1 transition-all">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+<span>Force Re-Audit</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout for Dashboard 09 -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md">
+<!-- Tile 1: Rug-Pull & Scam Vulnerability Scanner (5 cols) -->
+<div class="xl:col-span-5 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<!-- Header bar -->
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/20 mb-space-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">verified_user</span>
+<span class="font-label-caps text-[10px] text-on-surface font-bold tracking-wider uppercase">Scam &amp; Vulnerability Heuristic Engine</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-code text-[10px] text-primary-container border border-primary-container/30">
+                ZK-Snark Verification
+              </span>
+</div>
+<!-- Vulnerability Scorecard: Monad & Berachain Targets -->
+<div class="space-y-space-sm">
+<!-- Item 1: Monad Testnet Phase 2 -->
+<div class="p-2.5 rounded bg-surface-container border border-outline-variant/30 hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-secondary-container/30 border border-secondary text-primary font-bold flex items-center justify-center text-[10px]">M</span>
+<div>
+<div class="font-headline-sm text-body-md font-bold text-on-surface">Monad Devnet / EVM v2</div>
+<div class="font-data-mono-sm text-[10px] text-on-surface-variant">0x742d...44e9 • Dual Pipe Optimistic</div>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-block px-2 py-0.5 rounded bg-primary-container/20 text-primary-container font-data-mono-sm text-[11px] font-bold">
+                      98.4 / 100 Safe
+                    </span>
+</div>
+</div>
+<!-- Verification Telemetry Micro-Pills -->
+<div class="grid grid-cols-3 gap-1.5 pt-1 text-[10px] font-data-mono-sm">
+<div class="bg-surface-container-low p-1.5 rounded border border-outline-variant/20">
+<div class="text-on-surface-variant text-[9px]">Contract Audit</div>
+<div class="text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]">check_circle</span> TrailOfBits
+                    </div>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded border border-outline-variant/20">
+<div class="text-on-surface-variant text-[9px]">Liquidity Lock</div>
+<div class="text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]">lock</span> 48 Mos Unicrypt
+                    </div>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded border border-outline-variant/20">
+<div class="text-on-surface-variant text-[9px]">Team Allocation</div>
+<div class="text-on-surface font-semibold">12.5% Vesting (3y)</div>
+</div>
+</div>
+</div>
+<!-- Item 2: Berachain v2 BGT Node -->
+<div class="p-2.5 rounded bg-surface-container border border-outline-variant/30 hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-surface-bright border border-outline-variant text-tertiary-fixed font-bold flex items-center justify-center text-[10px]">🐻</span>
+<div>
+<div class="font-headline-sm text-body-md font-bold text-on-surface">Berachain Boyco POL Protocol</div>
+<div class="font-data-mono-sm text-[10px] text-on-surface-variant">0x918b...a721 • Proof-of-Liquidity v2</div>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-block px-2 py-0.5 rounded bg-primary-container/20 text-primary-container font-data-mono-sm text-[11px] font-bold">
+                      94.2 / 100 Safe
+                    </span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-1.5 pt-1 text-[10px] font-data-mono-sm">
+<div class="bg-surface-container-low p-1.5 rounded border border-outline-variant/20">
+<div class="text-on-surface-variant text-[9px]">Contract Audit</div>
+<div class="text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]">check_circle</span> OpenZeppelin
+                    </div>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded border border-outline-variant/20">
+<div class="text-on-surface-variant text-[9px]">Liquidity Lock</div>
+<div class="text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]">lock</span> Multi-Sig Vault
+                    </div>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded border border-outline-variant/20">
+<div class="text-on-surface-variant text-[9px]">Team Distribution</div>
+<div class="text-on-surface font-semibold">8.0% Linear Cliff</div>
+</div>
+</div>
+</div>
+<!-- Item 3: Alert Target: SolPulse Meme Liquidity (Flagged) -->
+<div class="p-2.5 rounded bg-surface-container border border-error/30 hover:border-error transition-colors">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-error-container/40 border border-error text-error font-bold flex items-center justify-center text-[10px]">!</span>
+<div>
+<div class="font-headline-sm text-body-md font-bold text-on-surface">SolPulse Teleport Bridge</div>
+<div class="font-data-mono-sm text-[10px] text-error">CRITICAL: Proxy Unchecked Minting</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-error/20 text-error font-data-mono-sm text-[11px] font-bold">
+                    12.0 / 100 RUG RISK
+                  </span>
+</div>
+<div class="text-[10px] font-data-mono-sm text-error/90 bg-surface-container-low p-1.5 rounded">
+                  Team wallet owns 64.2% of unvested supply. No timelock contract detected on deployer wallet 0x33b...829.
+                </div>
+</div>
+</div>
+</div>
+<!-- Bottom Metric Bar -->
+<div class="pt-space-sm mt-space-sm border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-data-mono-sm">
+<span class="text-on-surface-variant">Heuristic Database: 12,480 contracts indexed</span>
+<span class="text-primary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> Zero False Negatives
+            </span>
+</div>
+</div>
+<!-- Tile 2: Autonomous Task Queue & Step Execution Simulator (4 cols) -->
+<div class="xl:col-span-4 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/20 mb-space-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">psychology</span>
+<span class="font-label-caps text-[10px] text-on-surface font-bold tracking-wider uppercase">Autonomous Sybil Task Pipeline</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 font-label-code text-[10px] text-secondary-fixed border border-secondary-container/30">
+                Agent Mesh #7 Active
+              </span>
+</div>
+<div class="space-y-2">
+<!-- Task Item 1: Auto Executed Smart Contract Simulation -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/30">
+<div class="flex items-center justify-between">
+<span class="font-label-code text-[11px] font-bold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">bolt</span> AUTO-SIMULATOR
+                  </span>
+<span class="font-data-mono-sm text-[10px] text-on-surface-variant">Batch #4881</span>
+</div>
+<div class="font-body-sm text-[12px] text-on-surface mt-0.5 font-medium">LayerZero v2 DVN Testnet Message Ping</div>
+<div class="font-data-mono-sm text-[10px] text-on-surface-variant flex items-center justify-between mt-1">
+<span>14 Sepolia → Arbitrum Nitro Packets</span>
+<span class="text-primary">Completed (0.001 ETH gas)</span>
+</div>
+</div>
+<!-- Task Item 2: Manual Social Tasks Queued -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/30">
+<div class="flex items-center justify-between">
+<span class="font-label-code text-[11px] font-bold text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">person_check</span> MANUAL SOCIAL QUEUE
+                  </span>
+<span class="font-data-mono-sm text-[10px] text-tertiary-fixed">Pending Auth</span>
+</div>
+<div class="font-body-sm text-[12px] text-on-surface mt-0.5 font-medium">Berachain Discord Ooga-Booga Role Claim</div>
+<!-- Step-by-Step Micro Checklist -->
+<div class="mt-1.5 space-y-1 text-[11px] font-data-mono-sm">
+<div class="flex items-center justify-between bg-surface-container-low px-2 py-1 rounded">
+<span class="text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">check_box</span> Discord Authenticator
+                    </span>
+<span class="text-primary text-[10px]">Linked</span>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low px-2 py-1 rounded">
+<span class="text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-outline">check_box_outline_blank</span> Telegram Guild Verification
+                    </span>
+<button class="px-1.5 py-0.2 rounded bg-secondary-container text-white text-[9px] hover:bg-secondary">
+                      Launch TG Bot
+                    </button>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low px-2 py-1 rounded">
+<span class="text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-outline">check_box_outline_blank</span> Galxe Passport Mint
+                    </span>
+<span class="text-on-surface-variant text-[10px]">Score 92/100</span>
+</div>
+</div>
+</div>
+<!-- Simulator Status Bar -->
+<div class="p-2 rounded bg-surface-container-high/60 border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-on-surface text-[11px] font-label-code">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>EVM RPC Sandbox: In-Bounds</span>
+</div>
+<span class="font-data-mono-sm text-[10px] text-primary">0% Slashing Risk</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-2 py-1.5 bg-surface-container border border-outline-variant/40 hover:border-secondary text-secondary-fixed text-label-code font-label-code font-bold rounded flex items-center justify-center gap-1 transition-all">
+<span class="material-symbols-outlined text-[14px]">play_arrow</span>
+<span>Trigger Next Automated Micro-Batch</span>
+</button>
+</div>
+<!-- Tile 3: Expected Value (EV) Matrix for Upcoming TGEs (3 cols) -->
+<div class="xl:col-span-3 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/20 mb-space-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">calculate</span>
+<span class="font-label-caps text-[10px] text-on-surface font-bold tracking-wider uppercase">TGE Expected Value (EV) Matrix</span>
+</div>
+<span class="font-data-mono-sm text-[10px] text-on-surface-variant">Q2-Q4 2025</span>
+</div>
+<!-- EV Rankings -->
+<div class="space-y-2">
+<!-- Token 1 -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/20">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-sm font-bold text-on-surface">$MONAD (TGE Q3)</span>
+<span class="font-data-mono-sm text-primary font-bold text-[12px]">+$48,500 EV</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 82%"></div>
+</div>
+<div class="flex justify-between text-[9px] font-data-mono-sm text-on-surface-variant mt-1">
+<span>FDV Model: $6.2B</span>
+<span>Est. Allocation: 0.78%</span>
+</div>
+</div>
+<!-- Token 2 -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/20">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-sm font-bold text-on-surface">$BERA (Boyco Q2)</span>
+<span class="font-data-mono-sm text-primary font-bold text-[12px]">+$34,200 EV</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 65%"></div>
+</div>
+<div class="flex justify-between text-[9px] font-data-mono-sm text-on-surface-variant mt-1">
+<span>FDV Model: $4.5B</span>
+<span>Est. Allocation: 0.76%</span>
+</div>
+</div>
+<!-- Token 3 -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/20">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-sm font-bold text-on-surface">$INITIA (Cosmos Inter-Rollup)</span>
+<span class="font-data-mono-sm text-primary font-bold text-[12px]">+$18,900 EV</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 44%"></div>
+</div>
+<div class="flex justify-between text-[9px] font-data-mono-sm text-on-surface-variant mt-1">
+<span>FDV Model: $1.8B</span>
+<span>Est. Allocation: 1.05%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-2 text-center border-t border-outline-variant/20">
+<span class="font-label-code text-[10px] text-on-surface-variant">Monte-Carlo Probability Confidence: <strong class="text-on-surface">91.4%</strong></span>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- COMMAND PANEL 2: DASHBOARD 10 — AUSTRALIAN EOFY TAX & COMPLIANCE LEDGER -->
+<!-- ========================================================================= -->
+<section class="mb-space-xl" id="dashboard-10">
+<!-- Section Header -->
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="p-1 rounded bg-secondary-container/20 text-secondary border border-secondary/30">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</span>
+<h2 class="text-headline-md font-headline-md font-bold text-on-surface">
+            10 / Australian EOFY Tax &amp; Compliance Audit Trail
+          </h2>
+<span class="font-data-mono-sm text-[11px] text-on-surface-variant ml-2">
+            FY2024–2025 Q3 Provisioning • ATO Subsection 118-20 &amp; Discount Rules
+          </span>
+</div>
+<!-- Export Cluster -->
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 rounded bg-surface-container border border-outline-variant/40 hover:border-primary text-primary font-label-code text-label-code font-bold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[15px]">file_download</span>
+<span>Export ATO XML</span>
+</button>
+<button class="px-3 py-1 rounded bg-surface-container border border-outline-variant/40 hover:border-secondary text-on-surface font-label-code text-label-code flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[15px]">table_view</span>
+<span>CSV Ledger</span>
+</button>
+</div>
+</div>
+<!-- ATO Summary Cards Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-md">
+<!-- Card 1: Real-Time CGT Provision Target ($9,604.80 AUD) -->
+<div class="bg-surface-container-low border border-primary/30 rounded-lg p-space-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/5 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase font-bold tracking-wider">ATO Net CGT Provision</span>
+<div class="font-data-mono-lg text-[26px] text-primary font-extrabold tracking-tight mt-1">
+                $9,604.80 <span class="text-body-sm font-normal text-on-surface-variant">AUD</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary-container font-label-code text-[10px] font-bold">
+              FY24-25 Q3
+            </span>
+</div>
+<div class="mt-2 text-[11px] font-data-mono-sm text-on-surface-variant flex items-center justify-between">
+<span>Gross Gain: $28,410.00</span>
+<span class="text-primary font-medium">50% Disc. Applied</span>
+</div>
+</div>
+<!-- Card 2: 50% CGT Discount Benefit Tracker -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase font-bold tracking-wider">12+ Month Discount Benefit</span>
+<div class="font-data-mono-lg text-[26px] text-secondary-fixed-dim font-extrabold tracking-tight mt-1">
+                -$4,600.20 <span class="text-body-sm font-normal text-on-surface-variant">AUD</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[22px]">verified</span>
+</div>
+<div class="mt-2 text-[11px] font-data-mono-sm text-on-surface-variant flex items-center justify-between">
+<span>Lots Eligible: 14 Positions</span>
+<span class="text-on-surface font-semibold">100% Retained</span>
+</div>
+</div>
+<!-- Card 3: PAYG Instalment Forecast -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase font-bold tracking-wider">PAYG Q3 Instalment Forecast</span>
+<div class="font-data-mono-lg text-[26px] text-on-surface font-extrabold tracking-tight mt-1">
+                $2,401.20 <span class="text-body-sm font-normal text-on-surface-variant">AUD</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-code text-[10px]">
+              Due 28 Apr 2025
+            </span>
+</div>
+<div class="mt-2 text-[11px] font-data-mono-sm text-on-surface-variant flex items-center justify-between">
+<span>ATO Rate: 8.5% Indexed</span>
+<span class="text-primary font-medium">Fully Escrowed</span>
+</div>
+</div>
+<!-- Card 4: Method of Disposal Active & Hash Chain -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-[9px] text-on-surface-variant uppercase font-bold tracking-wider">Lot Matching Method</span>
+<div class="font-data-mono-lg text-[22px] text-on-surface font-extrabold tracking-tight mt-1 flex items-center gap-2">
+                HIFO (Tax Minimised)
+              </div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[20px]">tune</span>
+</div>
+<div class="mt-2 text-[10px] font-data-mono-sm text-on-surface-variant flex items-center justify-between">
+<span class="truncate">Merkle Root: 0x8a1c...e319</span>
+<span class="text-primary font-bold">LOCKED</span>
+</div>
+</div>
+</div>
+<!-- Lot Disposal Ledger & Cryptographic Hash Audit Table -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-lg overflow-hidden">
+<!-- Table Control Toolbar -->
+<div class="p-space-md border-b border-outline-variant/20 flex flex-wrap items-center justify-between gap-3 bg-surface-container-lowest/50">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-[10px] text-on-surface font-bold uppercase tracking-wider">
+              Cryptographic Lot Disposal Ledger (Subsection 108-5 CGT Assets)
+            </span>
+<span class="px-2 py-0.5 rounded bg-primary-container/10 border border-primary-container/20 text-primary-container font-label-code text-[10px]">
+              SHA-256 Immutability Verified
+            </span>
+</div>
+<!-- Matching Method Toggle -->
+<div class="flex items-center gap-1 bg-surface-container rounded p-0.5 border border-outline-variant/40 font-label-code text-[11px]">
+<button class="px-2.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface">FIFO</button>
+<button class="px-2.5 py-0.5 rounded text-on-surface-variant hover:text-on-surface">LIFO</button>
+<button class="px-2.5 py-0.5 rounded bg-secondary-container text-white font-bold">HIFO (Active)</button>
+</div>
+</div>
+<!-- Ledger Table (JetBrains Mono tabular figures) -->
+<div class="overflow-x-auto">
+<table class="w-full text-left font-data-mono-sm text-[11px] whitespace-nowrap">
+<thead class="bg-surface-container-high/40 text-on-surface-variant text-[10px] uppercase font-bold tracking-wider border-b border-outline-variant/20">
+<tr>
+<th class="py-2 px-3">Disposal Timestamp</th>
+<th class="py-2 px-3">Asset Pair</th>
+<th class="py-2 px-3">Acquisition Date</th>
+<th class="py-2 px-3 text-right">Units Disposed</th>
+<th class="py-2 px-3 text-right">Cost Base (AUD)</th>
+<th class="py-2 px-3 text-right">Proceeds (AUD)</th>
+<th class="py-2 px-3 text-center">Holding Period</th>
+<th class="py-2 px-3 text-center">50% Discount</th>
+<th class="py-2 px-3 text-right">Net CGT Gain (AUD)</th>
+<th class="py-2 px-3">SHA-256 Hash Signature</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10 text-on-surface">
+<!-- Row 1: BTC Long term held > 12 months -->
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-2 px-3 text-on-surface-variant font-label-code">2025-03-24 14:12:08 AEDT</td>
+<td class="py-2 px-3 font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span> BTC/AUD
+                </td>
+<td class="py-2 px-3 text-on-surface-variant">2024-01-15</td>
+<td class="py-2 px-3 text-right font-semibold">0.42000000</td>
+<td class="py-2 px-3 text-right text-on-surface-variant">$26,460.00</td>
+<td class="py-2 px-3 text-right font-semibold">$38,200.00</td>
+<td class="py-2 px-3 text-center">
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-primary font-bold">434 Days</span>
+</td>
+<td class="py-2 px-3 text-center">
+<span class="text-primary font-bold">APPLIED (50%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-primary">+$5,870.00</td>
+<td class="py-2 px-3 font-label-code text-[10px] text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer">0x7f88...a941</span>
+</td>
+</tr>
+<!-- Row 2: ETH Long term held > 12 months -->
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-2 px-3 text-on-surface-variant font-label-code">2025-03-18 09:41:22 AEDT</td>
+<td class="py-2 px-3 font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span> ETH/AUD
+                </td>
+<td class="py-2 px-3 text-on-surface-variant">2024-02-10</td>
+<td class="py-2 px-3 text-right font-semibold">4.85000000</td>
+<td class="py-2 px-3 text-right text-on-surface-variant">$16,975.00</td>
+<td class="py-2 px-3 text-right font-semibold">$22,410.00</td>
+<td class="py-2 px-3 text-center">
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-primary font-bold">402 Days</span>
+</td>
+<td class="py-2 px-3 text-center">
+<span class="text-primary font-bold">APPLIED (50%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-primary">+$2,717.50</td>
+<td class="py-2 px-3 font-label-code text-[10px] text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer">0x3b22...10bc</span>
+</td>
+</tr>
+<!-- Row 3: SOL Short term (< 12 months, No Discount) -->
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-2 px-3 text-on-surface-variant font-label-code">2025-03-02 18:05:44 AEDT</td>
+<td class="py-2 px-3 font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> SOL/AUD
+                </td>
+<td class="py-2 px-3 text-on-surface-variant">2024-11-12</td>
+<td class="py-2 px-3 text-right font-semibold">25.00000000</td>
+<td class="py-2 px-3 text-right text-on-surface-variant">$5,250.00</td>
+<td class="py-2 px-3 text-right font-semibold">$6,267.30</td>
+<td class="py-2 px-3 text-center">
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-on-surface-variant">110 Days</span>
+</td>
+<td class="py-2 px-3 text-center">
+<span class="text-on-surface-variant">N/A (Short-Term)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface">+$1,017.30</td>
+<td class="py-2 px-3 font-label-code text-[10px] text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer">0x99e1...df40</span>
+</td>
+</tr>
+<!-- Row 4: Airdrop Reward Claim Disposal (Income Tax Basis) -->
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-2 px-3 text-on-surface-variant font-label-code">2025-02-27 11:20:19 AEDT</td>
+<td class="py-2 px-3 font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span> JUP/AUD
+                </td>
+<td class="py-2 px-3 text-on-surface-variant">2025-01-31</td>
+<td class="py-2 px-3 text-right font-semibold">1,200.000000</td>
+<td class="py-2 px-3 text-right text-on-surface-variant">$1,440.00</td>
+<td class="py-2 px-3 text-right font-semibold">$1,440.00</td>
+<td class="py-2 px-3 text-center">
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-on-surface-variant">27 Days</span>
+</td>
+<td class="py-2 px-3 text-center">
+<span class="text-on-surface-variant">Zero Cost Base Rule</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface">$0.00</td>
+<td class="py-2 px-3 font-label-code text-[10px] text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer">0x110d...ee87</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Ledger Footer Status -->
+<div class="px-space-md py-2 bg-surface-container-high/30 border-t border-outline-variant/20 flex flex-wrap items-center justify-between text-[11px] font-data-mono-sm">
+<div class="flex items-center gap-3">
+<span class="text-on-surface-variant">Ledger Hash: <strong class="text-on-surface">sha256:d894b...8921e</strong></span>
+<span class="text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">lock</span> Compliant with ATO Taxation Ruling TR 2019/1
+            </span>
+</div>
+<div class="text-right">
+<span>Cumulative FY24-25 Q3 Provision Calculated: <strong class="text-primary font-bold">$9,604.80 AUD</strong></span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FIXED FOOTER (Shared Components JSON execution) -->
+<footer class="fixed bottom-0 left-0 w-full z-30 h-8 flex items-center justify-between px-space-lg border-t border-outline-variant/30 text-data-mono-sm font-data-mono-sm bg-surface-container-lowest text-on-surface-variant">
+<div class="flex items-center gap-space-md">
+<span class="font-bold text-on-surface-variant tracking-wider">
+        MASTERTRADER QUANT ENGINE • NAUTILUS CORE 2.4.0 • AU JURISDICTION COMPLIANT
+      </span>
+</div>
+<div class="flex items-center gap-space-lg">
+<span class="text-primary hover:text-primary transition-colors cursor-pointer flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> Kernel Status: 0.12ms
+      </span>
+<span class="hover:text-on-surface transition-colors cursor-pointer">EOFY Audit Trail</span>
+<span class="hover:text-on-surface transition-colors cursor-pointer">MCP Server Active</span>
+<span class="text-tertiary-fixed hover:text-tertiary transition-colors cursor-pointer flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">security</span> Kill-Switch Armed
+      </span>
+</div>
+</footer>
+</body></html>

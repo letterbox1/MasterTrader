@@ -109,6 +109,7 @@ Module numbers (M0–M20) refer to [03-build-spec.md](03-build-spec.md).
   - train → calibrate → compile (ONNX/Treelite) → in-process runtime;
   - latency benchmark (target < 50 µs);
   - MLflow model registry.
+- [ ] **Design system:** implement DESIGN.md v2 tokens/breakpoints as a shared Tailwind preset + component library, with a Playwright viewport-matrix CI check (DESIGN.md §6.8).
 - [ ] **M15 web UI v1:** strategy builder/registry, backtest viewer, risk-policy editor, positions, manual trade ticket. **Telegram bot v1:** alerts, `/kill`, `/status`, `/pause`.
 
 **Demo:** you create any strategy type on any timeframe (template, code or "describe it"), backtest it with realistic costs, validate it, and run it on paper behind the risk manager.

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>MASTERTRADER — Autonomous Quant Mobile Cockpit</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300..800;1,300..800&amp;family=Space+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary": "#003826",
+            "on-secondary": "#002c72",
+            "on-secondary-fixed-variant": "#0040a0",
+            "surface-container-high": "#262a32",
+            "secondary-container": "#045fe3",
+            "primary-fixed-dim": "#24e1a4",
+            "primary-fixed": "#52febf",
+            "surface-bright": "#353941",
+            "tertiary": "#ffdfd8",
+            "error-container": "#93000a",
+            "primary-container": "#2be4a7",
+            "on-secondary-fixed": "#001847",
+            "on-primary-fixed-variant": "#005138",
+            "on-primary-container": "#006144",
+            "secondary-fixed-dim": "#b1c5ff",
+            "surface-dim": "#0f141a",
+            "surface-container-low": "#181c23",
+            "on-tertiary": "#630f00",
+            "outline": "#85948b",
+            "on-secondary-container": "#e2e7ff",
+            "secondary-fixed": "#dae2ff",
+            "background": "#0f141a",
+            "secondary": "#b1c5ff",
+            "on-surface-variant": "#bacac0",
+            "surface-container": "#1c2027",
+            "on-background": "#dfe2ec",
+            "inverse-on-surface": "#2d3038",
+            "surface-variant": "#31353d",
+            "tertiary-container": "#ffb9a9",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-surface": "#dfe2ec",
+            "tertiary-fixed": "#ffdad2",
+            "on-primary-fixed": "#002115",
+            "on-error-container": "#ffdad6",
+            "on-error": "#690005",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "on-tertiary-fixed": "#3d0600",
+            "surface-tint": "#24e1a4",
+            "inverse-primary": "#006c4c",
+            "error": "#ffb4ab",
+            "surface-container-highest": "#31353d",
+            "primary": "#6effc5",
+            "surface": "#0f141a",
+            "outline-variant": "#3b4a42",
+            "surface-container-lowest": "#0a0e15",
+            "inverse-surface": "#dfe2ec",
+            "on-tertiary-container": "#a0270c"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "gutter-desktop": "1rem",
+            "margin-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.25rem",
+            "space-xs": "0.25rem",
+            "space-md": "0.75rem",
+            "gutter": "0.75rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Space Grotesk"],
+            "data-mono-sm": ["JetBrains Mono"],
+            "data-mono-md": ["JetBrains Mono"],
+            "label-code": ["JetBrains Mono"],
+            "headline-sm": ["Space Grotesk"],
+            "data-mono-lg": ["JetBrains Mono"],
+            "body-md": ["Space Grotesk"],
+            "label-caps": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "body-lg": ["Space Grotesk"],
+            "display-lg": ["Space Grotesk"],
+            "display-lg-mobile": ["Space Grotesk"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "body-sm": ["Space Grotesk"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "data-mono-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "data-mono-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom terminal scanline overlay and custom scrollbar suppression */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .candlestick-glow {
+      box-shadow: 0 0 10px rgba(43, 228, 167, 0.45);
+    }
+    .flare-glow {
+      box-shadow: 0 0 10px rgba(255, 107, 74, 0.4);
+    }
+    .node-pulse {
+      animation: pulse-node 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse-node {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(0.9); }
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased font-body-sm selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col justify-between overflow-x-hidden">
+<!-- Mobile Viewport Container: Adaptive 250px up to 430px max, centered on desktop -->
+<div class="w-full max-w-md mx-auto flex flex-col min-h-screen relative pb-20 border-x border-outline-variant/20 bg-surface-container-lowest shadow-2xl">
+<!-- 1. COMPACT TELEMETRY TOP BAR & KILL SWITCH HEADER -->
+<header class="sticky top-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md px-space-md py-space-xs border-b border-outline-variant/30 flex items-center justify-between">
+<!-- Signal M Brand Lockup -->
+<div class="flex items-center gap-2">
+<!-- SVG Signal M Node Candlestick Master Logo from Brand Specs -->
+<div class="w-7 h-7 flex-shrink-0 relative flex items-center justify-center">
+<svg class="w-7 h-7" fill="none" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Upright Candlestick Wick & Body (Cobalt #3A7BFF) -->
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="2" x1="10" x2="10" y1="5" y2="35"></line>
+<rect fill="#3A7BFF" height="18" rx="2" width="6" x="7" y="11"></rect>
+<!-- Right Upright Candlestick Wick & Body (Mint #2BE4A7) -->
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="2" x1="30" x2="30" y1="5" y2="35"></line>
+<rect fill="#2BE4A7" height="20" rx="2" width="6" x="27" y="9"></rect>
+<!-- M Price Path Dip Vector -->
+<path d="M10 16L20 25L30 14" stroke="#2BE4A7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<!-- Data Node Inflection Circle -->
+<circle class="candlestick-glow" cx="20" cy="25" fill="#2BE4A7" r="3.5"></circle>
+</svg>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 leading-none">
+<span class="font-headline-sm text-headline-sm font-extrabold tracking-tight text-on-surface">MASTER<span class="text-primary font-bold">TRADER</span></span>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container node-pulse"></span>
+<span class="font-label-code text-label-code text-primary uppercase">AUTO LIVE</span>
+<span class="text-on-surface-variant font-data-mono-sm text-[10px]">· 0.12ms</span>
+</div>
+</div>
+</div>
+<!-- Controls: Paper/Live Switcher & Arm Kill Switch -->
+<div class="flex items-center gap-1.5">
+<!-- Mode Switcher Pill -->
+<div class="flex items-center bg-surface-container-high rounded px-1 py-0.5 border border-outline-variant/40">
+<button class="px-1.5 py-0.5 rounded text-[10px] font-label-code font-bold bg-primary-container text-on-primary-container" type="button">LIVE</button>
+<button class="px-1.5 py-0.5 rounded text-[10px] font-label-code text-on-surface-variant hover:text-on-surface" type="button">SIM</button>
+</div>
+<!-- Emergency Kill Switch (Compact) -->
+<button class="flex items-center gap-1 bg-error-container/20 border border-tertiary-container/50 hover:bg-error-container/40 active:scale-95 transition-all px-2 py-1 rounded text-tertiary font-label-code text-[11px] font-bold flare-glow" title="Instant Emergency Halt" type="button">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container" data-icon="emergency_home">emergency_home</span>
+<span class="hidden xs:inline">HALT</span>
+</button>
+</div>
+</header>
+<!-- 2. 10-DASHBOARD HORIZONTAL MATRIX SELECTOR -->
+<section class="w-full bg-surface-container-low border-b border-outline-variant/20 px-space-md py-1.5 overflow-x-auto whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant mr-1">MATRIX:</span>
+<!-- 1. Cockpit (Active) -->
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container-highest border border-primary/40 text-primary font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="grid_view">grid_view</span>
+          Cockpit
+        </button>
+<!-- 2. AI Consensus Mesh -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="psychology">psychology</span>
+          AI Mesh
+        </button>
+<!-- 3. Cross-Asset Radar -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="radar">radar</span>
+          Asset Radar
+        </button>
+<!-- 4. Nautilus Lab -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="candlestick_chart">candlestick_chart</span>
+          Strategy Lab
+        </button>
+<!-- 5. Risk Governor -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="shield">shield</span>
+          Risk Gov
+        </button>
+<!-- 6. Hummingbot MM -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="tune">tune</span>
+          HB-MM
+        </button>
+<!-- 7. Data Pipeline -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="sensors">sensors</span>
+          Data Pipe
+        </button>
+<!-- 8. Sentiment Ingest -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="forum">forum</span>
+          Sentiment
+        </button>
+<!-- 9. Vetted Airdrops -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="token">token</span>
+          Airdrops
+        </button>
+<!-- 10. ATO Tax Ledger -->
+<button class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container/60 hover:bg-surface-container text-on-surface-variant font-label-code text-label-code">
+<span class="material-symbols-outlined text-[13px]" data-icon="receipt_long">receipt_long</span>
+          ATO Tax
+        </button>
+</div>
+</section>
+<!-- MAIN SCROLLABLE CONTENT BODY -->
+<main class="flex-1 p-space-md space-y-space-md">
+<!-- 3. LIQUIDITY & PERFORMANCE HUD METRICS -->
+<section class="bg-surface-container border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL NAV (AUD)</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-label-code bg-primary/10 text-primary">PORTFOLIO</span>
+</div>
+<span class="font-data-mono-sm text-data-mono-sm text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+            +2.66% 24h
+          </span>
+</div>
+<div class="flex items-baseline justify-between mb-3">
+<div class="font-headline-lg-mobile text-headline-lg-mobile font-bold tracking-tight text-on-surface">
+            $1,482,910<span class="text-on-surface-variant font-data-mono-md text-data-mono-md">.42</span>
+</div>
+<span class="font-data-mono-sm text-data-mono-sm text-on-surface-variant">AU COMPLIANT</span>
+</div>
+<!-- 3 Key Metric Tiles -->
+<div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-outline-variant/20">
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/20 flex flex-col">
+<span class="font-label-caps text-[9px] text-on-surface-variant">SHARPE RATIO</span>
+<span class="font-data-mono-md text-data-mono-md font-bold text-primary mt-0.5">3.42</span>
+<span class="text-[9px] font-data-mono-sm text-on-surface-variant">Annualized</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/20 flex flex-col">
+<span class="font-label-caps text-[9px] text-on-surface-variant">MARGIN UTIL</span>
+<span class="font-data-mono-md text-data-mono-md font-bold text-secondary-fixed-dim mt-0.5">14.2%</span>
+<span class="text-[9px] font-data-mono-sm text-on-surface-variant">Low Leverage</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/20 flex flex-col">
+<span class="font-label-caps text-[9px] text-on-surface-variant">FREE API QUOTA</span>
+<span class="font-data-mono-md text-data-mono-md font-bold text-primary mt-0.5">88.4%</span>
+<span class="text-[9px] font-data-mono-sm text-on-surface-variant">0 Rejections</span>
+</div>
+</div>
+</section>
+<!-- 4. ACTIVE ASSET & CANDLESTICK TELEMETRY (BTC/USDT) -->
+<section class="bg-surface-container border border-outline-variant/30 rounded-lg overflow-hidden">
+<!-- Tile Header Bar (32px standard) -->
+<div class="h-8 px-space-md bg-surface-container-high/60 border-b border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary candlestick-glow"></span>
+<span class="font-headline-sm text-[12px] font-bold text-on-surface tracking-wider uppercase">BTC/USDT NAUTILUS VECT</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-code text-[10px] text-on-surface-variant bg-surface-container-lowest px-1.5 py-0.5 rounded border border-outline-variant/30">1M INTERVAL</span>
+</div>
+</div>
+<div class="p-space-md">
+<!-- Price Banner -->
+<div class="flex items-end justify-between mb-2">
+<div>
+<div class="font-headline-md text-headline-md font-bold text-on-surface font-headline-lg flex items-center gap-1.5">
+                $67,412.50
+                <span class="text-[12px] px-1.5 py-0.5 rounded font-data-mono-sm font-semibold bg-primary-container/20 text-primary">+2.84%</span>
+</div>
+<div class="flex items-center gap-3 text-[11px] font-data-mono-sm text-on-surface-variant mt-0.5">
+<span>H: <span class="text-on-surface">67,890.00</span></span>
+<span>L: <span class="text-on-surface">65,410.20</span></span>
+<span>VOL: <span class="text-on-surface">4.82k BTC</span></span>
+</div>
+</div>
+<!-- Signal Badge -->
+<div class="text-right">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-container/20 text-secondary border border-secondary-container/40 font-label-code text-[10px] uppercase font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Signal M Inflexion
+              </span>
+</div>
+</div>
+<!-- Micro Candlestick Telemetry Canvas with Signal M Overlay -->
+<div class="w-full h-32 bg-surface-container-lowest rounded border border-outline-variant/25 relative overflow-hidden flex items-center justify-center p-2">
+<!-- Background Grid Lines -->
+<div class="absolute inset-0 grid grid-cols-6 grid-rows-3 opacity-15 pointer-events-none">
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-r border-outline-variant"></div>
+<div class="border-b border-outline-variant"></div>
+</div>
+<!-- Stylized Micro Candlestick Chart (SVG) representing Signal M formation -->
+<svg class="w-full h-full preserve-3d" fill="none" viewbox="0 0 320 100" xmlns="http://www.w3.org/2000/svg">
+<!-- Grid Price Reference line -->
+<line opacity="0.4" stroke="#3b4a42" stroke-dasharray="3 3" stroke-width="0.8" x1="0" x2="320" y1="50" y2="50"></line>
+<!-- Candle 1 (Cobalt Bearish pull) -->
+<line stroke="#3A7BFF" stroke-width="1.2" x1="25" x2="25" y1="20" y2="75"></line>
+<rect fill="#3A7BFF" height="30" rx="1" width="6" x="22" y="30"></rect>
+<!-- Candle 2 (Neutral) -->
+<line stroke="#85948b" stroke-width="1.2" x1="55" x2="55" y1="35" y2="80"></line>
+<rect fill="#31353d" height="20" rx="1" width="6" x="52" y="45"></rect>
+<!-- Candle 3: Left Leg of Signal M (Cobalt / Upright) -->
+<line stroke="#3A7BFF" stroke-width="1.5" x1="90" x2="90" y1="12" y2="85"></line>
+<rect fill="#3A7BFF" height="46" rx="1.5" width="8" x="86" y="24"></rect>
+<!-- Candle 4: Dip to Support -->
+<line stroke="#FF6B4A" stroke-width="1.2" x1="125" x2="125" y1="40" y2="88"></line>
+<rect fill="#FF6B4A" height="24" opacity="0.8" rx="1" width="6" x="122" y="52"></rect>
+<!-- Candle 5: INFLECTION NODE (Center of Signal M) -->
+<line stroke="#2BE4A7" stroke-width="1.5" x1="160" x2="160" y1="48" y2="92"></line>
+<rect fill="#2BE4A7" height="24" rx="1.5" width="8" x="156" y="60"></rect>
+<!-- Brand Inflection Accented Circular Node Center -->
+<circle class="candlestick-glow" cx="160" cy="72" fill="#2BE4A7" r="5" stroke="#07090D" stroke-width="1.5"></circle>
+<!-- Candle 6: Recovery Vector -->
+<line stroke="#2BE4A7" stroke-width="1.2" x1="195" x2="195" y1="30" y2="78"></line>
+<rect fill="#2BE4A7" height="28" rx="1" width="6" x="192" y="38"></rect>
+<!-- Candle 7: Right Leg of Signal M (Mint / Upright Surge) -->
+<line stroke="#2BE4A7" stroke-width="1.5" x1="235" x2="235" y1="8" y2="82"></line>
+<rect fill="#2BE4A7" height="52" rx="1.5" width="8" x="231" y="16"></rect>
+<!-- Candle 8: Consolidation Breakout -->
+<line stroke="#2BE4A7" stroke-width="1.2" x1="270" x2="270" y1="10" y2="60"></line>
+<rect fill="#2BE4A7" height="22" rx="1" width="6" x="267" y="18"></rect>
+<!-- Candle 9 (Live Tick) -->
+<line stroke="#6effc5" stroke-width="1.2" x1="300" x2="300" y1="12" y2="50"></line>
+<rect fill="#6effc5" height="15" rx="1" width="6" x="297" y="14"></rect>
+<circle class="node-pulse" cx="300" cy="14" fill="#6effc5" r="2"></circle>
+<!-- M-Path Overlay Trace (Signal M vector) -->
+<path d="M90 24 L160 72 L235 16 L300 14" stroke="#2BE4A7" stroke-dasharray="2 2" stroke-linecap="round" stroke-width="1.8"></path>
+</svg>
+<!-- Floating Micro Level Badges -->
+<div class="absolute right-2 top-2 bg-surface-container-high/90 px-1.5 py-0.5 rounded text-[10px] font-data-mono-sm text-primary border border-primary/30">
+              67,412.50 ▲
+            </div>
+<div class="absolute left-2 bottom-1.5 text-[9px] font-data-mono-sm text-on-surface-variant">
+              SIGNAL M PATTERN: CONFIRMED
+            </div>
+</div>
+</div>
+</section>
+<!-- 5. AUTONOMOUS AI AGENT MESH CONSENSUS CARD -->
+<section class="bg-surface-container border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/20 mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="psychology">psychology</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">AI Agent Mesh Consensus</span>
+</div>
+<span class="font-label-code text-label-code text-primary bg-primary/10 border border-primary/30 px-2 py-0.5 rounded flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary node-pulse"></span>
+            88.5% BULLISH
+          </span>
+</div>
+<!-- Consensus Progress Meter -->
+<div class="w-full bg-surface-container-lowest h-2 rounded-full overflow-hidden mb-3 p-0.5 border border-outline-variant/30 flex">
+<div class="bg-primary h-full rounded-full candlestick-glow" style="width: 88.5%"></div>
+<div class="bg-tertiary-container h-full rounded-full ml-1" style="width: 11.5%"></div>
+</div>
+<!-- 3 Nested Micro Agent Nodes -->
+<div class="space-y-1.5">
+<!-- Agent 1: FinRobot Fundamentalist -->
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<div>
+<div class="font-headline-sm text-[12px] font-bold text-on-surface">FinRobot Ingest</div>
+<div class="text-[10px] font-data-mono-sm text-on-surface-variant">Macro SEC/Fed Feed + On-Chain Flow</div>
+</div>
+</div>
+<div class="text-right">
+<span class="font-data-mono-sm text-[11px] font-bold text-primary">84/100</span>
+<div class="text-[9px] font-label-code text-primary">BULLISH</div>
+</div>
+</div>
+<!-- Agent 2: Nautilus Strategy Lab Scalper -->
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<div>
+<div class="font-headline-sm text-[12px] font-bold text-on-surface">Nautilus Core v2.4</div>
+<div class="text-[10px] font-data-mono-sm text-on-surface-variant">Order Book Imbalance (OBI) 0.74</div>
+</div>
+</div>
+<div class="text-right">
+<span class="font-data-mono-sm text-[11px] font-bold text-secondary">TRIGGERED</span>
+<div class="text-[9px] font-label-code text-secondary">LONG $67.39k</div>
+</div>
+</div>
+<!-- Agent 3: Autonomous Risk Governor -->
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed-dim"></span>
+<div>
+<div class="font-headline-sm text-[12px] font-bold text-on-surface">Risk Governor v1.8</div>
+<div class="text-[10px] font-data-mono-sm text-on-surface-variant">VaR Threshold: $12,400 max slip</div>
+</div>
+</div>
+<div class="text-right">
+<span class="font-data-mono-sm text-[11px] font-bold text-primary">AUTHORISED</span>
+<div class="text-[9px] font-label-code text-on-surface-variant">0.85 BTC CAP</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. LIVE EXECUTION BLOTTER & DEAD-MAN'S TIMER -->
+<section class="bg-surface-container border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/20 mb-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="terminal">terminal</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Execution Ladder</span>
+</div>
+<!-- Dead-man's heartbeat countdown -->
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-0.5 rounded border border-outline-variant/30">
+<span class="material-symbols-outlined text-[12px] text-tertiary-container" data-icon="timer">timer</span>
+<span class="font-label-code text-[10px] text-on-surface-variant">HEARTBEAT:</span>
+<span class="font-data-mono-sm text-[11px] font-bold text-primary">14.8s</span>
+</div>
+</div>
+<!-- Telemetry Order Blotter Rows -->
+<div class="space-y-1 font-data-mono-sm text-[11px]">
+<!-- Row 1: Fill Active -->
+<div class="flex items-center justify-between p-1.5 bg-surface-container-lowest/80 rounded border-l-2 border-primary">
+<div class="flex items-center gap-1.5">
+<span class="text-primary font-bold">BUY</span>
+<span class="text-on-surface">BTC/USDT</span>
+<span class="text-on-surface-variant text-[10px]">LIMIT</span>
+</div>
+<div class="text-right flex items-center gap-2">
+<span class="text-on-surface">$67,390.10</span>
+<span class="text-primary text-[10px]">+0.018% slip</span>
+<span class="px-1 bg-primary/20 text-primary text-[9px] rounded font-label-code">FILLED</span>
+</div>
+</div>
+<!-- Row 2: Hedge Pending -->
+<div class="flex items-center justify-between p-1.5 bg-surface-container-lowest/80 rounded border-l-2 border-secondary">
+<div class="flex items-center gap-1.5">
+<span class="text-secondary font-bold">SELL</span>
+<span class="text-on-surface">ETH/USD</span>
+<span class="text-on-surface-variant text-[10px]">HEDGE</span>
+</div>
+<div class="text-right flex items-center gap-2">
+<span class="text-on-surface">$3,541.20</span>
+<span class="text-on-surface-variant text-[10px]">12.5 ETH</span>
+<span class="px-1 bg-secondary/20 text-secondary text-[9px] rounded font-label-code">ROUTED</span>
+</div>
+</div>
+<!-- Row 3: Hummingbot Depth Liquidity -->
+<div class="flex items-center justify-between p-1.5 bg-surface-container-lowest/80 rounded border-l-2 border-outline">
+<div class="flex items-center gap-1.5">
+<span class="text-on-surface-variant font-bold">MM</span>
+<span class="text-on-surface">SOL/USDT</span>
+<span class="text-on-surface-variant text-[10px]">SPREAD</span>
+</div>
+<div class="text-right flex items-center gap-2">
+<span class="text-on-surface">0.04% B/A</span>
+<span class="text-on-surface-variant text-[10px]">$45k Vol</span>
+<span class="px-1 bg-surface-variant text-on-surface-variant text-[9px] rounded font-label-code">ACTIVE</span>
+</div>
+</div>
+</div>
+<!-- 7. ONE-TAP QUANT ACTIONS -->
+<div class="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-outline-variant/20">
+<button class="w-full py-2 bg-primary-container text-on-primary-container font-headline-sm text-[13px] font-bold rounded flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform shadow-md hover:bg-primary-fixed" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="bolt">bolt</span>
+            Authorize Mesh Vector
+          </button>
+<button class="w-full py-2 bg-surface-container-high border border-outline-variant/40 hover:bg-surface-bright text-on-surface font-headline-sm text-[13px] font-semibold rounded flex items-center justify-center gap-1 active:scale-[0.98] transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="play_arrow">play_arrow</span>
+            Simulate Stress Run
+          </button>
+</div>
+</section>
+<!-- MCP Engine & System Compliance Micro Status -->
+<section class="p-2.5 rounded bg-surface-container-lowest border border-outline-variant/20 text-data-mono-sm text-[10px] text-on-surface-variant flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[13px] text-primary" data-icon="verified_user">verified_user</span>
+<span>AU EOFY LEDGER: SYNCED</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>MCP SERVER: ACTIVE</span>
+</div>
+</section>
+</main>
+<!-- 8. MOBILE BOTTOM NAVIGATION DOCK (Derived from Shared Components JSON with Semantic Selection) -->
+<!-- Destination Rule applies: Screen is Cockpit Matrix (primary destination) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto bg-surface-container-lowest/95 backdrop-blur-lg border-t border-outline-variant/30 flex items-center justify-around h-14 px-2">
+<!-- 1. Matrix (Active: exact match to Cockpit Matrix intent) -->
+<button class="flex flex-col items-center justify-center flex-1 py-1 text-primary" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="grid_view" data-weight="fill" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-label-code text-[10px] font-semibold mt-0.5">Matrix</span>
+</button>
+<!-- 2. Agents -->
+<button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="psychology">psychology</span>
+<span class="font-label-code text-[10px] mt-0.5">Agents</span>
+</button>
+<!-- 3. Execution -->
+<button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="candlestick_chart">candlestick_chart</span>
+<span class="font-label-code text-[10px] mt-0.5">Execution</span>
+</button>
+<!-- 4. Vetting -->
+<button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="radar">radar</span>
+<span class="font-label-code text-[10px] mt-0.5">Vetting</span>
+</button>
+<!-- 5. Audit -->
+<button class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-code text-[10px] mt-0.5">Audit</span>
+</button>
+</nav>
+</div>
+</body></html>

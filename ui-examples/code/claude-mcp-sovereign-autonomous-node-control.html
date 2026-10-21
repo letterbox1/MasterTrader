@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MasterTrader — Claude &amp; MCP Sovereign Autonomous Node Control</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline-variant": "#3b4a42",
+            "error-container": "#93000a",
+            "surface-variant": "#31353d",
+            "surface-bright": "#353941",
+            "on-tertiary": "#630f00",
+            "primary-fixed-dim": "#24e1a4",
+            "on-secondary-container": "#e2e7ff",
+            "tertiary-container": "#ffb9a9",
+            "on-error": "#690005",
+            "on-primary-fixed-variant": "#005138",
+            "on-tertiary-container": "#a0270c",
+            "surface-container-highest": "#31353d",
+            "background": "#0f141a",
+            "surface-dim": "#0f141a",
+            "inverse-surface": "#dfe2ec",
+            "on-secondary-fixed": "#001847",
+            "on-error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-secondary": "#002c72",
+            "on-primary-container": "#006144",
+            "primary": "#6effc5",
+            "secondary": "#b1c5ff",
+            "surface-container": "#1c2027",
+            "surface-container-low": "#181c23",
+            "surface-tint": "#24e1a4",
+            "surface-container-lowest": "#0a0e15",
+            "inverse-primary": "#006c4c",
+            "secondary-container": "#045fe3",
+            "tertiary-fixed": "#ffdad2",
+            "outline": "#85948b",
+            "surface": "#0f141a",
+            "surface-container-high": "#262a32",
+            "on-surface-variant": "#bacac0",
+            "on-background": "#dfe2ec",
+            "on-primary": "#003826",
+            "error": "#ffb4ab",
+            "inverse-on-surface": "#2d3038",
+            "secondary-fixed": "#dae2ff",
+            "tertiary": "#ffdfd8",
+            "primary-fixed": "#52febf",
+            "on-tertiary-fixed": "#3d0600",
+            "on-surface": "#dfe2ec",
+            "primary-container": "#2be4a7",
+            "on-primary-fixed": "#002115",
+            "on-secondary-fixed-variant": "#0040a0",
+            "secondary-fixed-dim": "#b1c5ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter-desktop": "1rem",
+            "space-lg": "1.25rem",
+            "space-md": "0.75rem",
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "data-mono-md": ["JetBrains Mono"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "data-mono-lg": ["JetBrains Mono"],
+            "label-caps": ["Space Grotesk"],
+            "body-sm": ["Space Grotesk"],
+            "body-md": ["Space Grotesk"],
+            "display-lg": ["Space Grotesk"],
+            "headline-sm": ["Space Grotesk"],
+            "display-lg-mobile": ["Space Grotesk"],
+            "label-code": ["JetBrains Mono"],
+            "headline-md": ["Space Grotesk"],
+            "body-lg": ["Space Grotesk"],
+            "data-mono-sm": ["JetBrains Mono"],
+            "headline-lg": ["Space Grotesk"]
+          },
+          "fontSize": {
+            "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "data-mono-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "data-mono-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom Scrollbar for quant terminal */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e15;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1c2027;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b4a42;
+    }
+    .candlestick-glow {
+      box-shadow: 0 0 12px rgba(43, 228, 167, 0.45);
+    }
+    .coral-glow {
+      box-shadow: 0 0 14px rgba(255, 107, 74, 0.4);
+    }
+    .cobalt-glow {
+      box-shadow: 0 0 12px rgba(58, 123, 255, 0.35);
+    }
+  </style>
+</head>
+<body class="bg-[#07090D] text-on-surface antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-fixed min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TOP APP BAR (from Shared Components JSON: TopNavBar) -->
+<header class="fixed top-0 left-0 w-full z-50 h-14 bg-surface-container-lowest/95 backdrop-blur-md flex items-center justify-between px-space-lg border-b border-outline-variant/30">
+<!-- Left: Brand Lockup & Node Breadcrumb -->
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-space-sm cursor-pointer select-none">
+<!-- MasterTrader Candlestick M Icon directly matching primary lockup -->
+<svg class="w-7 h-7" fill="none" viewbox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Candlestick (Cobalt to Cyan) -->
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="2.5" x1="12" x2="12" y1="4" y2="40"></line>
+<rect fill="#3A7BFF" height="20" rx="1.5" width="6" x="9" y="12"></rect>
+<!-- Right Candlestick (Mint) -->
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="2.5" x1="32" x2="32" y1="4" y2="40"></line>
+<rect fill="#2BE4A7" height="20" rx="1.5" width="6" x="29" y="12"></rect>
+<!-- Price Path connecting M with data node -->
+<path d="M12 22 L22 30 L32 16" stroke="#2BE4A7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+<circle class="candlestick-glow" cx="22" cy="30" fill="#2BE4A7" r="3.5"></circle>
+</svg>
+<div class="flex items-baseline">
+<span class="font-headline-sm text-headline-sm font-extrabold tracking-tight text-on-surface">MASTER</span>
+<span class="font-headline-sm text-headline-sm font-extrabold tracking-tight text-primary">TRADER</span>
+</div>
+</div>
+<!-- Vertical Separator -->
+<div class="h-5 w-px bg-outline-variant/30"></div>
+<!-- Telemetry Breadcrumbs -->
+<div class="hidden lg:flex items-center gap-space-xs font-label-code text-label-code text-on-surface-variant">
+<span>SOVEREIGN NODE</span>
+<span class="text-outline-variant">/</span>
+<span class="text-secondary">MCP CONTROL</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+          CLAUDE 3.5 REASONING
+        </span>
+</div>
+</div>
+<!-- Center: Primary Shared Navigation Links -->
+<nav class="hidden md:flex items-center gap-6 font-label-code text-label-code">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Matrix</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold flex items-center gap-1.5" href="#">
+        Agents
+        <span class="px-1.5 py-0.2 rounded bg-primary/20 text-primary text-[9px] font-mono leading-none">MCP</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Execution</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Audit</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Vetting</a>
+</nav>
+<!-- Right: Status Pill, Quick Actions, Controls -->
+<div class="flex items-center gap-space-md">
+<!-- Port Connection Status Pill -->
+<div class="flex items-center gap-space-xs bg-surface-container-high/80 px-space-sm py-1 rounded border border-outline-variant/40 font-label-code text-label-code">
+<span class="w-2 h-2 rounded-full bg-primary candlestick-glow animate-ping"></span>
+<span class="text-on-surface-variant">MCP:</span>
+<span class="text-primary font-semibold">CONNECTED (8443 TLS)</span>
+</div>
+<!-- Icon Action cluster -->
+<div class="hidden sm:flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded transition-colors" title="Kernel Terminal">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded transition-colors" title="Telemetry Sensors">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded transition-colors" title="MCP Fine Tuning">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded transition-colors relative" title="Alerts">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-1 right-1 w-1.5 h-1.5 bg-[#FF6B4A] rounded-full"></span>
+</button>
+</div>
+<!-- Emergency Halt CTA (Trailing Primary from JSON) -->
+<button class="flex items-center gap-1.5 bg-error-container/30 border border-error/50 hover:bg-[#FF6B4A] hover:text-surface-container-lowest text-error transition-all duration-150 px-3 py-1.5 rounded font-label-code text-label-code font-bold active:scale-[0.98]">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span>Emergency Halt</span>
+</button>
+<!-- CRO Master Key Badge -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant/30">
+<div class="w-7 h-7 rounded bg-secondary-container/40 border border-secondary flex items-center justify-center text-secondary text-xs font-data-mono-md" title="Chief Risk Officer Master Key">
+          CRO
+        </div>
+</div>
+</div>
+</header>
+<!-- APP SHELL CONTAINER (Sidebar + Main Canvas) -->
+<div class="flex pt-14 pb-8 flex-1">
+<!-- LEFT SIDEBAR NAVIGATION (from Shared Components JSON: SideNavBar) -->
+<aside class="fixed top-14 left-0 h-[calc(100vh-3.5rem-2rem)] w-64 bg-surface-container-low border-r border-outline-variant/30 z-40 hidden md:flex flex-col justify-between py-space-md">
+<!-- Top Section: Header & Primary Tabs -->
+<div class="space-y-4">
+<!-- Node Identity sub-badge -->
+<div class="px-space-md pb-2 border-b border-outline-variant/20">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm font-extrabold text-on-surface">MASTERTRADER</span>
+<span class="font-label-code text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/30">PROD-MESH</span>
+</div>
+<div class="font-data-mono-sm text-data-mono-sm text-on-surface-variant mt-0.5">Nautilus Core v2.4</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="space-y-1">
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span class="font-label-code text-label-code">Cockpit Matrix</span>
+</a>
+<!-- Active tab: AI Agent Mesh (MCP Sovereign Node Active) -->
+<a class="flex items-center gap-space-sm bg-surface-container-high text-primary border-l-2 border-primary px-space-md py-space-xs font-semibold" href="#">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-label-code text-label-code">AI Agent Mesh</span>
+<span class="ml-auto w-1.5 h-1.5 rounded-full bg-primary candlestick-glow animate-pulse"></span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">candlestick_chart</span>
+<span class="font-label-code text-label-code">Order Execution</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">vital_signs</span>
+<span class="font-label-code text-label-code">Data Pipeline</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span class="font-label-code text-label-code">Tax &amp; Compliance</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">radar</span>
+<span class="font-label-code text-label-code">Airdrop Vetting</span>
+</a>
+</nav>
+<!-- CTA from JSON: Deploy Agent -->
+<div class="px-space-md pt-2">
+<button class="w-full bg-primary text-surface-container-lowest font-headline-sm font-semibold py-2 px-3 rounded flex items-center justify-center gap-2 text-sm hover:brightness-110 active:scale-[0.98] transition-all candlestick-glow">
+<span class="material-symbols-outlined text-[18px]">add_moderator</span>
+<span>Deploy Agent</span>
+</button>
+</div>
+</div>
+<!-- Bottom System Controls -->
+<div class="space-y-1 pt-3 border-t border-outline-variant/30">
+<div class="px-space-md py-1 font-label-caps text-label-caps text-outline uppercase tracking-wider">Safety Vectors</div>
+<a class="flex items-center gap-space-sm text-[#FF6B4A] hover:bg-[#FF6B4A]/10 px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">emergency_home</span>
+<span class="font-label-code text-label-code font-bold">Kill Switch</span>
+<span class="ml-auto text-[10px] font-data-mono-sm text-[#FF6B4A] border border-[#FF6B4A]/30 px-1 rounded">ARMED</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container px-space-md py-space-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span class="font-label-code text-label-code">System Config</span>
+</a>
+</div>
+</aside>
+<!-- MAIN CONTENT CANVAS -->
+<main class="md:ml-64 flex-1 px-4 lg:px-6 py-4 space-y-4 max-w-[1920px]">
+<!-- 1. TOP QUANT KPI STRIP -->
+<section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
+<!-- KPI 1 -->
+<div class="bg-[#11151C] border border-white/[0.07] p-3 rounded-lg backdrop-blur relative overflow-hidden group hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Mounted MCP Tools</span>
+<span class="material-symbols-outlined text-[16px] text-primary">extension</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-on-surface">48 Tools</span>
+<span class="font-label-code text-[11px] text-primary flex items-center">
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block mr-1"></span>
+              ALL LIVE
+            </span>
+</div>
+<div class="mt-1 font-data-mono-sm text-data-mono-sm text-on-surface-variant">Nautilus Execution Mesh</div>
+<div class="absolute bottom-0 left-0 h-0.5 w-full bg-primary/20">
+<div class="h-full bg-primary w-full"></div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-[#11151C] border border-white/[0.07] p-3 rounded-lg backdrop-blur relative overflow-hidden group hover:border-secondary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">In-Context Latency</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">speed</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-on-surface">410 ms</span>
+<span class="font-label-code text-[11px] text-primary">-18ms jitter</span>
+</div>
+<div class="mt-1 font-data-mono-sm text-data-mono-sm text-on-surface-variant">Direct Tokyo AWS HFT Gateway</div>
+<div class="absolute bottom-0 left-0 h-0.5 w-full bg-secondary/20">
+<div class="h-full bg-secondary w-3/4"></div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-[#11151C] border border-white/[0.07] p-3 rounded-lg backdrop-blur relative overflow-hidden group hover:border-primary-container/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Autonomous Permission</span>
+<span class="material-symbols-outlined text-[16px] text-[#2BE4A7]">verified_user</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-[#2BE4A7]">Level 3</span>
+<span class="font-label-code text-[11px] text-[#2BE4A7] bg-[#2BE4A7]/10 px-1 py-0.2 rounded border border-[#2BE4A7]/30">Guarded</span>
+</div>
+<div class="mt-1 font-data-mono-sm text-data-mono-sm text-on-surface-variant">Max Single Fill: $250k AUD</div>
+<div class="absolute bottom-0 left-0 h-0.5 w-full bg-primary-container/20">
+<div class="h-full bg-primary-container w-3/5"></div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-[#11151C] border border-white/[0.07] p-3 rounded-lg backdrop-blur relative overflow-hidden group hover:border-outline/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Active Context Tokens</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">data_array</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-on-surface">114,200</span>
+<span class="font-label-code text-[11px] text-on-surface-variant">/ 200k (57%)</span>
+</div>
+<div class="mt-1 font-data-mono-sm text-data-mono-sm text-on-surface-variant">Sliding Memory Compression: ON</div>
+<div class="absolute bottom-0 left-0 h-0.5 w-full bg-outline-variant/30">
+<div class="h-full bg-[#3A7BFF] w-[57%]"></div>
+</div>
+</div>
+<!-- KPI 5 -->
+<div class="col-span-2 md:col-span-1 bg-[#11151C] border border-white/[0.07] p-3 rounded-lg backdrop-blur relative overflow-hidden group hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-caps text-label-caps uppercase tracking-wider">RAG Knowledge Nodes</span>
+<span class="material-symbols-outlined text-[16px] text-primary">hub</span>
+</div>
+<div class="mt-2 flex items-baseline gap-2">
+<span class="font-data-mono-lg text-data-mono-lg font-bold text-on-surface">89,400</span>
+<span class="font-label-code text-[11px] text-primary">Triples indexed</span>
+</div>
+<div class="mt-1 font-data-mono-sm text-data-mono-sm text-on-surface-variant">Tax, Orderflow &amp; Macro Graph</div>
+<div class="absolute bottom-0 left-0 h-0.5 w-full bg-primary/20">
+<div class="h-full bg-primary w-4/5"></div>
+</div>
+</div>
+</section>
+<!-- 2 & 3 & 4. MAIN BENTO GRID ARCHITECTURE -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+<!-- LEFT & CENTER COLUMN: Claude Multi-Turn Conversational Terminal (7 Cols) -->
+<div class="xl:col-span-7 flex flex-col space-y-4">
+<!-- Terminal & Command Console Tile -->
+<div class="bg-[#11151C] border border-white/[0.08] rounded-lg flex flex-col h-[650px] shadow-2xl relative overflow-hidden">
+<!-- Terminal Header -->
+<div class="h-9 px-3 bg-[#161B24] border-b border-white/[0.06] flex items-center justify-between select-none">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary candlestick-glow animate-pulse"></span>
+<span class="font-headline-sm text-xs font-semibold text-on-surface tracking-wide uppercase">CLAUDE 3.5 SONNET • AUTONOMOUS REASONING CORE</span>
+<span class="font-label-code text-[10px] text-secondary bg-secondary/10 px-1.5 py-0.5 rounded border border-secondary/20">MCP-HOSTED</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="font-data-mono-sm text-[11px] text-outline">Session ID: mcp-sess-9892f-au</span>
+<button class="p-1 hover:text-on-surface text-outline transition-colors"><span class="material-symbols-outlined text-[14px]">refresh</span></button>
+<button class="p-1 hover:text-on-surface text-outline transition-colors"><span class="material-symbols-outlined text-[14px]">fullscreen</span></button>
+</div>
+</div>
+<!-- Conversational Stream (Scrollable) -->
+<div class="flex-1 p-4 overflow-y-auto space-y-4 text-sm font-body-md" id="terminal-chat">
+<!-- System Bootstrap Message -->
+<div class="bg-[#0A0E15]/80 border border-outline-variant/30 rounded p-3 font-data-mono-sm text-data-mono-sm text-on-surface-variant space-y-1">
+<div class="flex items-center justify-between text-outline">
+<span>[KERNEL BOOTSTRAP 14:02:18.041 UTC]</span>
+<span class="text-primary">SHA256: 8e84bc9... VALIDATED</span>
+</div>
+<div class="text-on-surface">Claude 3.5 Sovereign Agent initialized with 48 MCP Tools mounted via local stdio/SSE socket.</div>
+<div class="text-secondary text-[11px]">Active Guardrail: ATO EOFY Section 104-10 Capital Gains strict tracking loaded. Margin clamp: 3.5x maximum.</div>
+</div>
+<!-- User Prompt 1 -->
+<div class="flex gap-3 justify-end pl-12">
+<div class="bg-surface-container-high border border-outline-variant/40 rounded-lg p-3 text-on-surface max-w-xl">
+<div class="flex items-center justify-between pb-1 mb-1 border-b border-outline-variant/20 font-label-code text-[11px] text-on-surface-variant">
+<span class="text-secondary font-semibold">CHIEF RISK OFFICER (YOU)</span>
+<span>14:04:12</span>
+</div>
+<p class="font-data-mono-sm text-data-mono-sm">
+                    Inspect current BTC/USDT and SOL/USDT liquidity depth on Binance &amp; Bybit. If spread is &gt; 12 bps and Bybit funding rate is positive, simulate a 0.75 BTC delta-neutral funding arbitrage. Check ATO tax implications before proposing execution.
+                  </p>
+</div>
+<div class="w-7 h-7 rounded bg-[#3A7BFF]/20 border border-[#3A7BFF] text-[#3A7BFF] flex items-center justify-center font-data-mono-md text-xs flex-shrink-0">
+                  CRO
+                </div>
+</div>
+<!-- Assistant (Claude) Turn 1 -->
+<div class="flex gap-3 pr-8">
+<div class="w-7 h-7 rounded bg-primary/20 border border-primary text-primary flex items-center justify-center font-headline-sm text-xs font-bold flex-shrink-0 candlestick-glow">
+                  C
+                </div>
+<div class="space-y-2 max-w-2xl">
+<!-- Invoked Tool Pill 1 -->
+<div class="flex items-center gap-1.5 bg-[#161B24] border border-[#2BE4A7]/40 px-2.5 py-1 rounded text-[11px] font-label-code text-primary w-fit candlestick-glow">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>Executed tool: get_orderbook_depth(pairs=['BTC/USDT', 'SOL/USDT'], depth_levels=25)</span>
+<span class="text-on-surface-variant text-[10px] ml-1">[84ms]</span>
+</div>
+<!-- Invoked Tool Pill 2 -->
+<div class="flex items-center gap-1.5 bg-[#161B24] border border-[#3A7BFF]/40 px-2.5 py-1 rounded text-[11px] font-label-code text-secondary w-fit">
+<span class="material-symbols-outlined text-[14px]">account_balance</span>
+<span>Executed tool: query_ato_tax_impact(transaction_type='ARBITRAGE_LEG', jurisdiction='AU')</span>
+<span class="text-on-surface-variant text-[10px] ml-1">[112ms]</span>
+</div>
+<!-- Claude Text Response -->
+<div class="bg-[#11151C] border border-white/[0.08] rounded-lg p-3 text-on-surface space-y-2">
+<div class="flex items-center justify-between pb-1 border-b border-white/[0.06] font-label-code text-[11px] text-on-surface-variant">
+<span class="text-primary font-bold">CLAUDE 3.5 REASONING RESULT</span>
+<span>14:04:13.204 UTC</span>
+</div>
+<p class="font-body-md text-sm leading-relaxed text-on-surface">
+                      I have queried the real-time orderbooks and cross-exchange funding rates via Nautilus Engine.
+                    </p>
+<!-- Data Matrix snippet in response -->
+<div class="bg-[#0A0E15] p-2.5 rounded border border-outline-variant/30 font-data-mono-sm text-[12px] space-y-1">
+<div class="text-secondary font-semibold">Telemetry Snapshot:</div>
+<div class="grid grid-cols-2 gap-2 text-on-surface-variant">
+<div>• BTC/USDT Spread: <span class="text-primary font-bold">14.8 bps</span> (Threshold met)</div>
+<div>• Bybit 8h Funding: <span class="text-primary font-bold">+0.0215%</span> (Annualized 23.5%)</div>
+<div>• 0.75 BTC Notional: <span class="text-on-surface">$50,862.30 USD (~$78,250 AUD)</span></div>
+<div>• Est. ATO Tax Drag: <span class="text-[#FF6B4A]">CGT Event C2 / Ordinary Income</span></div>
+</div>
+</div>
+<p class="font-body-md text-sm text-on-surface">
+<strong>Risk Assessment:</strong> Slipper risk on Binance leg is 1.2 bps ($9.40 AUD). Because autonomous permissions are locked at Level 3, opening this multi-leg spot-perpetual hedge requires your cryptographic approval under the Australian compliance guardrail.
+                    </p>
+<!-- Interactive Tool Call Action Bar -->
+<div class="pt-2 flex flex-wrap items-center gap-2">
+<button class="bg-[#2BE4A7] text-[#07090D] font-headline-sm font-semibold px-3 py-1.5 rounded text-xs hover:brightness-110 transition-all flex items-center gap-1.5 candlestick-glow">
+<span class="material-symbols-outlined text-[15px]">send</span>
+<span>Authorize Execution Payload ($78,250 AUD)</span>
+</button>
+<button class="bg-surface-container-high border border-outline-variant/40 hover:bg-surface-container-highest text-on-surface font-label-code text-xs px-2.5 py-1.5 rounded transition-all">
+                        Simulate Monte Carlo Slippage
+                      </button>
+<button class="text-outline hover:text-[#FF6B4A] font-label-code text-xs px-2 py-1.5 transition-colors">
+                        Reject Proposal
+                      </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Stream ongoing indicator -->
+<div class="flex items-center gap-2 text-outline font-data-mono-sm text-xs pt-2">
+<span class="w-1.5 h-1.5 bg-primary rounded-full animate-ping"></span>
+<span>Claude waiting for user command or YubiKey signature...</span>
+</div>
+</div>
+<!-- Terminal Input Command Line -->
+<div class="p-3 bg-[#161B24] border-t border-white/[0.08]">
+<div class="flex items-center gap-2 mb-2">
+<span class="font-label-code text-[11px] text-outline">Quick Prompt Vectors:</span>
+<button class="font-label-code text-[10px] text-secondary bg-secondary/10 px-2 py-0.5 rounded border border-secondary/20 hover:bg-secondary/20 transition-all">
+                  "Re-balance Bybit inventory"
+                </button>
+<button class="font-label-code text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 hover:bg-primary/20 transition-all">
+                  "Stress test 500 bps drop"
+                </button>
+<button class="font-label-code text-[10px] text-on-surface-variant bg-surface-container-highest px-2 py-0.5 rounded hover:text-on-surface transition-all">
+                  "Show unhedged Greeks"
+                </button>
+</div>
+<div class="relative flex items-center">
+<span class="absolute left-3 text-primary font-data-mono-md">&gt;</span>
+<input class="w-full bg-[#0A0E15] border border-outline-variant/50 focus:border-primary rounded py-2 pl-8 pr-24 font-data-mono-sm text-data-mono-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all" placeholder="Instruct Claude sovereign agent or invoke MCP tool..." type="text" value="Trigger autonomous parameter re-tune for Hummingbot grid: narrow bid spread by 2 bps on Kraken."/>
+<div class="absolute right-2 flex items-center gap-1.5">
+<span class="font-label-code text-[10px] text-outline px-1.5 py-0.5 rounded bg-surface-container-high border border-outline-variant/30">Cmd+Enter</span>
+<button class="bg-primary hover:bg-primary-fixed text-surface-container-lowest p-1.5 rounded transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. REAL-TIME THOUGHT CHAIN & TOOL INVOCATION INSPECTOR (Lower panel) -->
+<div class="bg-[#11151C] border border-white/[0.08] rounded-lg p-3 space-y-3">
+<div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">account_tree</span>
+<span class="font-headline-sm text-xs font-semibold text-on-surface tracking-wide uppercase">REASONING CHAIN &amp; JSON-RPC TOOL INVOCATION INSPECTOR</span>
+</div>
+<span class="font-label-code text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/30">Nautilus Core IPC: 0.12ms</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+<!-- Step 1: Hypothesis -->
+<div class="bg-[#0A0E15] border border-outline-variant/30 rounded p-2.5 space-y-1.5">
+<div class="flex items-center justify-between font-label-code text-[10px]">
+<span class="text-secondary font-bold">1. HYPOTHESIS &amp; RISK</span>
+<span class="text-primary font-mono">✓ PASSED</span>
+</div>
+<p class="font-data-mono-sm text-[11px] text-on-surface-variant leading-tight">
+                  Evaluated liquidity book variance. Volatility regime: Low (IV 42.1%). Positive drift detected on Bybit perps.
+                </p>
+<div class="text-[10px] font-label-code text-outline">Confidence: 94.6%</div>
+</div>
+<!-- Step 2: Guardrail Verification -->
+<div class="bg-[#0A0E15] border border-outline-variant/30 rounded p-2.5 space-y-1.5">
+<div class="flex items-center justify-between font-label-code text-[10px]">
+<span class="text-secondary font-bold">2. GUARDRAIL CLAMP</span>
+<span class="text-primary font-mono">✓ ENFORCED</span>
+</div>
+<p class="font-data-mono-sm text-[11px] text-on-surface-variant leading-tight">
+                  Maximum leverage check clamped at 3.0x. Exposure under $250k single-fill cap. Counterparty risk: AA tier.
+                </p>
+<div class="text-[10px] font-label-code text-outline">Jurisdiction: AU / ATO compliant</div>
+</div>
+<!-- Step 3: JSON-RPC Dispatch -->
+<div class="bg-[#0A0E15] border border-primary/30 rounded p-2.5 space-y-1.5 bg-primary/5">
+<div class="flex items-center justify-between font-label-code text-[10px]">
+<span class="text-primary font-bold">3. DISPATCH PAYLOAD</span>
+<span class="text-secondary font-mono">READY</span>
+</div>
+<div class="font-data-mono-sm text-[10px] text-on-surface overflow-x-auto whitespace-pre bg-black/40 p-1 rounded border border-outline-variant/30">
+{"method": "nautilus.route_order",
+ "pair": "BTC/USDT",
+ "side": "BID",
+ "qty": 0.75,
+ "type": "IOC"}</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Tools Matrix & Hardware Security Chamber (5 Cols) -->
+<div class="xl:col-span-5 flex flex-col space-y-4">
+<!-- 3. MOUNTED MCP TOOL REGISTRY & GUARDRAILS MATRIX -->
+<div class="bg-[#11151C] border border-white/[0.08] rounded-lg p-3 space-y-3">
+<div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">handyman</span>
+<span class="font-headline-sm text-xs font-semibold text-on-surface tracking-wide uppercase">MCP TOOL REGISTRY &amp; ACCESS MATRIX</span>
+</div>
+<span class="font-label-code text-[10px] text-on-surface-variant">4 / 48 Mounted Visible</span>
+</div>
+<!-- Tool Registry List -->
+<div class="space-y-2">
+<!-- Tool 1: Nautilus Execution Engine -->
+<div class="bg-[#161B24] border border-outline-variant/30 rounded-md p-2.5 hover:border-primary/40 transition-all">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary candlestick-glow"></span>
+<span class="font-data-mono-md text-data-mono-md text-on-surface font-semibold">nautilus_execution_core</span>
+</div>
+<span class="font-label-code text-[10px] px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">Autonomous</span>
+</div>
+<p class="font-data-mono-sm text-[11px] text-on-surface-variant">
+                  Low-latency C++ binary order placement, cancellation and smart routing via FIX protocol.
+                </p>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between font-label-code text-[10px] text-outline">
+<span>Latency: 0.14ms</span>
+<span>Safety Cap: $250k / fill</span>
+<span class="text-primary cursor-pointer hover:underline">Config Parameters →</span>
+</div>
+</div>
+<!-- Tool 2: Hummingbot MM Tuning -->
+<div class="bg-[#161B24] border border-outline-variant/30 rounded-md p-2.5 hover:border-secondary/40 transition-all">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-data-mono-md text-data-mono-md text-on-surface font-semibold">hummingbot_mm_tuning</span>
+</div>
+<span class="font-label-code text-[10px] px-2 py-0.5 rounded bg-secondary/20 text-secondary border border-secondary/30">Autonomous</span>
+</div>
+<p class="font-data-mono-sm text-[11px] text-on-surface-variant">
+                  Dynamic grid recalculation, inventory skew damping, and cross-venue spread optimization.
+                </p>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between font-label-code text-[10px] text-outline">
+<span>Frequency: 500ms</span>
+<span>Spread Clamp: &gt; 6 bps</span>
+<span class="text-secondary cursor-pointer hover:underline">Config Parameters →</span>
+</div>
+</div>
+<!-- Tool 3: ATO Tax Ledger Queries -->
+<div class="bg-[#161B24] border border-outline-variant/30 rounded-md p-2.5 hover:border-primary/40 transition-all">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-data-mono-md text-data-mono-md text-on-surface font-semibold">ato_tax_compliance_auditor</span>
+</div>
+<span class="font-label-code text-[10px] px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant border border-outline-variant">Read Only</span>
+</div>
+<p class="font-data-mono-sm text-[11px] text-on-surface-variant">
+                  Evaluates cost basis lots (FIFO/LIFO/HIFO) under Australian Taxation Office ruling TR 2014/26.
+                </p>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between font-label-code text-[10px] text-outline">
+<span>Jurisdiction: AU</span>
+<span>EOFY Audit: Synchronized</span>
+<span class="text-on-surface cursor-pointer hover:underline">View Rules →</span>
+</div>
+</div>
+<!-- Tool 4: Kill Switch Tripper -->
+<div class="bg-[#161B24] border border-[#FF6B4A]/30 rounded-md p-2.5 hover:border-[#FF6B4A]/60 transition-all">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-[#FF6B4A] coral-glow"></span>
+<span class="font-data-mono-md text-data-mono-md text-[#FF6B4A] font-semibold">trip_kill_switch_protocol</span>
+</div>
+<span class="font-label-code text-[10px] px-2 py-0.5 rounded bg-[#FF6B4A]/20 text-[#FF6B4A] border border-[#FF6B4A]/40 font-bold">Hardware Sig Req</span>
+</div>
+<p class="font-data-mono-sm text-[11px] text-on-surface-variant">
+                  Instantly broadcasts global cancel-all across all connected exchange websockets and severs FIX gateways.
+                </p>
+<div class="mt-2 pt-2 border-t border-outline-variant/20 flex items-center justify-between font-label-code text-[10px] text-outline">
+<span>Execution: &lt; 2.1ms</span>
+<span>Requires: CRO YubiKey 5C</span>
+<span class="text-[#FF6B4A] cursor-pointer hover:underline">Test Loopback →</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. HARDWARE CRO YUBIKEY & SOVEREIGN AUTHORIZATION CHAMBER -->
+<div class="bg-[#11151C] border border-white/[0.08] rounded-lg p-3 space-y-3 relative overflow-hidden">
+<!-- Subtle accent border glow -->
+<div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">key</span>
+<span class="font-headline-sm text-xs font-semibold text-on-surface tracking-wide uppercase">HARDWARE CRO YUBIKEY &amp; SOVEREIGN AUTHORIZATION CHAMBER</span>
+</div>
+<span class="font-label-code text-[10px] text-[#2BE4A7] bg-[#2BE4A7]/10 px-2 py-0.5 rounded border border-[#2BE4A7]/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-[#2BE4A7] rounded-full animate-ping"></span>
+                AIR-GAPPED
+              </span>
+</div>
+<!-- Hardware Visual & Status -->
+<div class="bg-[#0A0E15] p-3 rounded-lg border border-outline-variant/30 flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-surface-container-high border border-secondary flex flex-col items-center justify-center text-secondary relative">
+<span class="material-symbols-outlined text-[24px]">usb</span>
+<span class="text-[8px] font-mono font-bold">FIDO2</span>
+<span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-primary candlestick-glow"></span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-data-mono-md text-sm text-on-surface font-bold">YubiKey 5C NFC (Master Node #01)</span>
+<span class="font-label-code text-[10px] text-primary">SLOT 1 ACTIVE</span>
+</div>
+<div class="font-data-mono-sm text-xs text-on-surface-variant mt-0.5">ECDSA P-256 Curve • FIPS 140-2 Level 3 Validated</div>
+<div class="font-data-mono-sm text-[11px] text-outline mt-1 font-mono truncate">
+                  PubKey: 04a29f8c41d994320b9918dfc48831b145fae1
+                </div>
+</div>
+</div>
+<!-- Pending Cryptographic Signing Queue -->
+<div class="space-y-2">
+<div class="flex items-center justify-between font-label-code text-[11px] text-on-surface-variant">
+<span>PENDING AUTHORIZATION PAYLOAD:</span>
+<span class="text-[#FF6B4A]">TTL: 42s remaining</span>
+</div>
+<div class="p-2.5 bg-[#161B24] rounded border border-secondary/40 font-data-mono-sm text-xs space-y-1.5">
+<div class="flex items-center justify-between text-on-surface">
+<span class="font-bold text-secondary">ACTION: RAISE_LEVERAGE_CEILING</span>
+<span class="text-[11px] text-outline">Payload #8821</span>
+</div>
+<div class="text-on-surface-variant text-[11px]">
+                  Request by Claude Agent to widen collateral ratio on Deribit BTC-28JUN25 options from 2.0x to 3.5x for gamma scalp.
+                </div>
+<div class="pt-2 flex items-center gap-2">
+<button class="flex-1 bg-secondary hover:bg-secondary-fixed text-on-secondary-fixed font-headline-sm font-semibold py-1.5 px-3 rounded text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[15px]">touch_app</span>
+<span>Touch YubiKey to Sign ECDSA</span>
+</button>
+<button class="bg-surface-container-high hover:bg-surface-container-highest text-error border border-error/30 py-1.5 px-3 rounded text-xs font-label-code transition-all">
+                    Deny
+                  </button>
+</div>
+</div>
+</div>
+<!-- Audit Trail Checksum -->
+<div class="flex items-center justify-between text-[10px] font-label-code text-outline pt-1">
+<span>Audit Signature Chain: VALID</span>
+<span>Local Enclave: SECURE</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- FIXED FOOTER (from Shared Components JSON: Footer) -->
+<footer class="fixed bottom-0 left-0 w-full z-30 h-8 bg-surface-container-lowest border-t border-outline-variant/30 flex items-center justify-between px-space-lg font-data-mono-sm text-data-mono-sm text-on-surface-variant">
+<!-- Brand & Legal Compliance -->
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="font-bold text-on-surface-variant">MASTERTRADER QUANT ENGINE</span>
+<span class="text-outline-variant">•</span>
+<span>NAUTILUS CORE 2.4.0</span>
+<span class="text-outline-variant">•</span>
+<span class="text-primary/90 font-medium">AU JURISDICTION COMPLIANT</span>
+</div>
+<!-- Active Telemetry Status Links -->
+<div class="hidden sm:flex items-center gap-5">
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2BE4A7]"></span>
+<span>Kernel Status: 0.12ms</span>
+</a>
+<span class="text-outline-variant">•</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">
+        EOFY Audit Trail
+      </a>
+<span class="text-outline-variant">•</span>
+<a class="text-primary hover:text-primary transition-colors flex items-center gap-1 font-semibold" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        MCP Server Active
+      </a>
+<span class="text-outline-variant">•</span>
+<a class="text-[#FF6B4A] hover:text-[#FF6B4A] transition-colors flex items-center gap-1 font-bold" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-[#FF6B4A] coral-glow"></span>
+        Kill-Switch Armed
+      </a>
+</div>
+</footer>
+<!-- Micro-interactions Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Auto scroll conversational stream to bottom
+      const terminalChat = document.getElementById('terminal-chat');
+      if (terminalChat) {
+        terminalChat.scrollTop = terminalChat.scrollHeight;
+      }
+    });
+  </script>
+</body></html>

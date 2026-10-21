@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MasterTrader — Live Free Data Pipeline &amp; Feed Quality Sentinel</title>
+<!-- Material Symbols & Typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "outline-variant": "#3b4a42",
+            "error-container": "#93000a",
+            "surface-variant": "#31353d",
+            "surface-bright": "#353941",
+            "on-tertiary": "#630f00",
+            "primary-fixed-dim": "#24e1a4",
+            "on-secondary-container": "#e2e7ff",
+            "tertiary-container": "#ffb9a9",
+            "on-error": "#690005",
+            "on-primary-fixed-variant": "#005138",
+            "on-tertiary-container": "#a0270c",
+            "surface-container-highest": "#31353d",
+            "background": "#0f141a",
+            "surface-dim": "#0f141a",
+            "inverse-surface": "#dfe2ec",
+            "on-secondary-fixed": "#001847",
+            "on-error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-secondary": "#002c72",
+            "on-primary-container": "#006144",
+            "primary": "#6effc5",
+            "secondary": "#b1c5ff",
+            "surface-container": "#1c2027",
+            "surface-container-low": "#181c23",
+            "surface-tint": "#24e1a4",
+            "surface-container-lowest": "#0a0e15",
+            "inverse-primary": "#006c4c",
+            "secondary-container": "#045fe3",
+            "tertiary-fixed": "#ffdad2",
+            "outline": "#85948b",
+            "surface": "#0f141a",
+            "surface-container-high": "#262a32",
+            "on-surface-variant": "#bacac0",
+            "on-background": "#dfe2ec",
+            "on-primary": "#003826",
+            "error": "#ffb4ab",
+            "inverse-on-surface": "#2d3038",
+            "secondary-fixed": "#dae2ff",
+            "tertiary": "#ffdfd8",
+            "primary-fixed": "#52febf",
+            "on-tertiary-fixed": "#3d0600",
+            "on-surface": "#dfe2ec",
+            "primary-container": "#2be4a7",
+            "on-primary-fixed": "#002115",
+            "on-secondary-fixed-variant": "#0040a0",
+            "secondary-fixed-dim": "#b1c5ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "gutter-desktop": "1rem",
+            "space-lg": "1.25rem",
+            "space-md": "0.75rem",
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem"
+          },
+          fontFamily: {
+            "data-mono-md": ["JetBrains Mono", "monospace"],
+            "headline-lg-mobile": ["Space Grotesk", "sans-serif"],
+            "data-mono-lg": ["JetBrains Mono", "monospace"],
+            "label-caps": ["Space Grotesk", "sans-serif"],
+            "body-sm": ["Space Grotesk", "sans-serif"],
+            "body-md": ["Space Grotesk", "sans-serif"],
+            "display-lg": ["Space Grotesk", "sans-serif"],
+            "headline-sm": ["Space Grotesk", "sans-serif"],
+            "display-lg-mobile": ["Space Grotesk", "sans-serif"],
+            "label-code": ["JetBrains Mono", "monospace"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "body-lg": ["Space Grotesk", "sans-serif"],
+            "data-mono-sm": ["JetBrains Mono", "monospace"],
+            "headline-lg": ["Space Grotesk", "sans-serif"]
+          },
+          fontSize: {
+            "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "data-mono-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "data-mono-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 16px;
+      line-height: 1;
+      display: inline-block;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0a0e15;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #31353d;
+      border-radius: 2px;
+    }
+    @keyframes pulse-node {
+      0%, 100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 6px #2be4a7); }
+      50% { transform: scale(1.15); opacity: 0.85; filter: drop-shadow(0 0 12px #2be4a7); }
+    }
+    .node-pulse {
+      animation: pulse-node 2.2s infinite ease-in-out;
+    }
+    .candlestick-glow {
+      box-shadow: 0 0 12px rgba(43, 228, 167, 0.45);
+    }
+    .coral-glow {
+      box-shadow: 0 0 14px rgba(255, 107, 74, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- TOP APP BAR -->
+<header class="bg-surface-container-lowest text-on-surface flex justify-between items-center w-full px-space-lg h-14 max-w-full border-b border-outline-variant/30 backdrop-blur-md fixed top-0 left-0 z-50">
+<!-- Brand Lockup -->
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-2">
+<!-- Exact Signal M Vector Logo from reference -->
+<svg class="w-7 h-7 flex-shrink-0" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Candlestick (Cobalt to Mint) -->
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="2.5" x1="12" x2="12" y1="6" y2="42"></line>
+<rect fill="#3A7BFF" height="20" rx="1.5" width="5" x="9.5" y="14"></rect>
+<!-- Right Candlestick (Signal Mint) -->
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="2.5" x1="36" x2="36" y1="6" y2="42"></line>
+<rect fill="#2BE4A7" height="22" rx="1.5" width="5" x="33.5" y="10"></rect>
+<!-- M-Connector with central inflection node -->
+<path d="M12 18 L24 30 L36 14" stroke="#2BE4A7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<circle class="node-pulse" cx="24" cy="30" fill="#2BE4A7" r="4.5"></circle>
+</svg>
+<span class="text-headline-sm font-headline-sm tracking-tight font-bold text-on-surface flex items-center">
+          MASTER<span class="text-primary font-bold">TRADER</span>
+</span>
+</div>
+<!-- Telemetry Breadcrumb -->
+<div class="hidden lg:flex items-center gap-1.5 ml-4 pl-4 border-l border-outline-variant/30 text-label-code font-label-code text-on-surface-variant">
+<span>DATA PIPELINE</span>
+<span class="material-symbols-outlined text-[13px] text-outline">chevron_right</span>
+<span>TELEMETRY &amp; INTEGRITY</span>
+<span class="material-symbols-outlined text-[13px] text-outline">chevron_right</span>
+<span class="text-primary font-semibold">ZERO-COST INGESTION</span>
+</div>
+</div>
+<!-- Center Navigation Links -->
+<nav class="hidden md:flex items-center gap-space-lg text-label-code font-label-code">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Matrix</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Agents</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Execution</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Audit</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold" href="#">Vetting</a>
+</nav>
+<!-- Right Telemetry & Actions -->
+<div class="flex items-center gap-space-md">
+<!-- Ingest Status Pill -->
+<div class="hidden sm:flex items-center gap-2 bg-surface-container-high px-space-md py-1 rounded border border-outline-variant/40">
+<span class="w-2 h-2 rounded-full bg-primary-container node-pulse"></span>
+<span class="text-label-code font-label-code text-primary font-medium tracking-wide">Ingest Engine: 100% Free Tiers Active</span>
+</div>
+<!-- Live Engine Tag -->
+<div class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded bg-secondary/10 border border-secondary/20 text-secondary text-label-code font-label-code">
+<span class="material-symbols-outlined text-[14px]">sensors</span>
+<span>Live Engine</span>
+</div>
+<!-- Action Icons -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container hover:text-on-surface transition-all rounded" title="Terminal">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container hover:text-on-surface transition-all rounded" title="Sensors">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container hover:text-on-surface transition-all rounded" title="Tune">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container hover:text-on-surface transition-all rounded" title="Notifications">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+</button>
+</div>
+<!-- Emergency Halt CTA -->
+<button class="flex items-center gap-1.5 px-space-md py-1.5 bg-error-container/20 border border-error/50 hover:bg-error hover:text-surface-container-lowest text-error transition-all rounded text-label-caps font-label-caps uppercase active:scale-[0.98]">
+<span class="material-symbols-outlined text-[15px]">emergency_home</span>
+<span>Emergency Halt</span>
+</button>
+<!-- Risk Officer Key Avatar -->
+<div class="w-8 h-8 rounded border border-primary/40 bg-surface-container-high flex items-center justify-center text-primary" title="Chief Risk Officer Master Key">
+<span class="material-symbols-outlined text-[18px]">vpn_key</span>
+</div>
+</div>
+</header>
+<!-- MAIN WRAPPER (SIDEBAR + WORKSPACE CANVAS) -->
+<div class="pt-14 pb-8 flex flex-1 w-full min-h-screen">
+<!-- FIXED LEFT SIDEBAR NAVIGATION -->
+<aside class="fixed top-14 left-0 h-[calc(100vh-3.5rem)] w-64 z-40 bg-surface-container-low border-r border-outline-variant/30 flex flex-col justify-between py-space-md hidden md:flex">
+<!-- Header Node -->
+<div class="px-space-md pb-space-sm border-b border-outline-variant/20 mb-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<div class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider text-[9px]">Terminal Node</div>
+<div class="text-data-mono-md font-data-mono-md font-bold text-on-surface">Nautilus Core v2.4</div>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-label-code bg-primary-container/15 text-primary border border-primary/30">0.00 AUD/mo</span>
+</div>
+</div>
+<!-- Main Navigation Items -->
+<div class="flex-1 space-y-1 overflow-y-auto custom-scrollbar px-1">
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface px-space-md py-space-xs transition-colors rounded text-label-code font-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span>Cockpit Matrix</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface px-space-md py-space-xs transition-colors rounded text-label-code font-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+<span>AI Agent Mesh</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface px-space-md py-space-xs transition-colors rounded text-label-code font-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">candlestick_chart</span>
+<span>Order Execution</span>
+</a>
+<!-- ACTIVE DESTINATION: Data Pipeline / Free Pipeline Sentinel -->
+<a class="flex items-center justify-between bg-surface-container-high text-primary border-l-2 border-primary px-space-md py-space-xs font-semibold rounded-r text-label-code font-label-code" href="#">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">vital_signs</span>
+<span>Data Pipeline</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-primary node-pulse"></span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface px-space-md py-space-xs transition-colors rounded text-label-code font-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span>Tax &amp; Compliance</span>
+</a>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface px-space-md py-space-xs transition-colors rounded text-label-code font-label-code" href="#">
+<span class="material-symbols-outlined text-[18px]">radar</span>
+<span>Airdrop Vetting</span>
+</a>
+<!-- Sub-item: Specific Free Feed Telemetry Sentinel -->
+<div class="mt-4 pt-3 border-t border-outline-variant/20 px-space-sm">
+<span class="text-[9px] uppercase font-label-caps tracking-widest text-outline px-space-sm">Active Ingest Streams</span>
+<div class="mt-2 space-y-1">
+<div class="flex items-center justify-between px-2 py-1 bg-surface-container/60 rounded text-[11px] font-label-code text-on-surface-variant">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-primary rounded-full"></span>Free WS Ingest</span>
+<span class="text-primary font-data-mono-sm">12/12</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 bg-surface-container/30 rounded text-[11px] font-label-code text-on-surface-variant">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>Scraper Deamons</span>
+<span class="text-secondary font-data-mono-sm">3/3 OK</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1 bg-surface-container/30 rounded text-[11px] font-label-code text-on-surface-variant">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-primary rounded-full"></span>Rust L2 Assembler</span>
+<span class="text-on-surface font-data-mono-sm">0.08ms</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action CTA & Footer Links -->
+<div class="px-space-md pt-space-sm border-t border-outline-variant/20 space-y-2">
+<button class="w-full py-2 bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm text-body-sm font-semibold rounded flex items-center justify-center gap-1.5 transition-all shadow-[0_0_10px_rgba(43,228,167,0.3)]">
+<span class="material-symbols-outlined text-[17px]">rocket_launch</span>
+<span>Deploy Agent</span>
+</button>
+<div class="grid grid-cols-2 gap-1 pt-1">
+<a class="flex items-center gap-1 px-2 py-1 rounded text-on-surface-variant hover:text-error hover:bg-error-container/15 text-[11px] font-label-code transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]">emergency_home</span>
+<span>Kill Switch</span>
+</a>
+<a class="flex items-center gap-1 px-2 py-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container text-[11px] font-label-code transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px]">settings</span>
+<span>System Config</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- MAIN DASHBOARD CONTENT AREA -->
+<main class="flex-1 md:ml-64 p-3 md:p-space-lg w-full max-w-[1920px] mx-auto space-y-4">
+<!-- SECTION 0: DASHBOARD HERO / STATUS HEADER -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md backdrop-blur-md">
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-headline-md font-headline-md text-on-surface font-bold tracking-tight">
+              MasterTrader — Live Free Data Pipeline &amp; Feed Quality Sentinel
+            </h1>
+<span class="px-2 py-0.5 rounded text-[10px] font-label-caps bg-primary-container/20 text-primary border border-primary/30 uppercase tracking-wider">
+              Zero-Sub Engine
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">
+            Real-time telemetry, zero-drop WebSocket pipelines, synthetic order book compilation, and cross-venue latency arb surveillance.
+          </p>
+</div>
+<!-- Global Pipeline Metrics Strip -->
+<div class="flex flex-wrap items-center gap-3">
+<div class="bg-surface-container px-3 py-1.5 rounded border border-outline-variant/30 flex items-center gap-3">
+<span class="text-label-caps font-label-caps text-on-surface-variant">STREAM HEALTH</span>
+<span class="text-data-mono-md font-data-mono-md text-primary font-bold">100.0%</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary node-pulse"></span>
+</div>
+<div class="bg-surface-container px-3 py-1.5 rounded border border-outline-variant/30 flex items-center gap-3">
+<span class="text-label-caps font-label-caps text-on-surface-variant">MONTHLY API SPEND</span>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-bold">$0.00</span>
+<span class="text-[10px] font-label-code text-primary">COMMUNITY TIER</span>
+</div>
+<div class="bg-surface-container px-3 py-1.5 rounded border border-outline-variant/30 flex items-center gap-3">
+<span class="text-label-caps font-label-caps text-on-surface-variant">SYNTHETIC L2 TICKS</span>
+<span class="text-data-mono-md font-data-mono-md text-secondary font-bold">14,892/s</span>
+</div>
+</div>
+</div>
+<!-- COMPONENT 1: FREE FEED HEALTH STRIP -->
+<section class="bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md">
+<div class="flex items-center justify-between mb-3 border-b border-outline-variant/20 pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">wifi_tethering</span>
+<h2 class="text-label-caps font-label-caps text-on-surface uppercase tracking-wider">
+              1. Free Public Feed Health &amp; Latency Telemetry
+            </h2>
+</div>
+<div class="flex items-center gap-3 text-label-code font-label-code text-[11px] text-on-surface-variant">
+<span>Pool: 7 Streams Active</span>
+<span class="text-primary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+              All Transports Operational
+            </span>
+</div>
+</div>
+<!-- 7 Micro-Cards for each requested free source -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-7 gap-2.5">
+<!-- Binance Public -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">Binance Public</span>
+<span class="px-1.5 py-0.2 rounded bg-primary-container/15 text-primary text-[9px]">WS BBO</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-primary font-bold">0.04ms</span>
+<span class="text-[10px] font-label-code text-on-surface-variant">0 drops</span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-primary h-full w-full"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>wss://stream.binance</span>
+<span class="text-primary font-bold">100% OK</span>
+</div>
+</div>
+<!-- Bybit Public WS -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">Bybit Public WS</span>
+<span class="px-1.5 py-0.2 rounded bg-primary-container/15 text-primary text-[9px]">WS Raw</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-primary font-bold">12ms</span>
+<span class="text-[10px] font-label-code text-on-surface-variant">0 drops</span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-primary h-full w-[98%]"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>stream.bybit.com/v5</span>
+<span class="text-primary font-bold">99.98%</span>
+</div>
+</div>
+<!-- Kraken Public -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">Kraken Public</span>
+<span class="px-1.5 py-0.2 rounded bg-primary-container/15 text-primary text-[9px]">WSv2</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-primary font-bold">18ms</span>
+<span class="text-[10px] font-label-code text-on-surface-variant">0 drops</span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-primary h-full w-[96%]"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>ws.kraken.com/v2</span>
+<span class="text-primary font-bold">In-Bounds</span>
+</div>
+</div>
+<!-- Yahoo Finance WS -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-secondary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">Yahoo Finance</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/15 text-secondary text-[9px]">ProtoBuf</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-secondary font-bold">120ms</span>
+<span class="text-[10px] font-label-code text-on-surface-variant">0 drops</span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-secondary h-full w-[88%]"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>streamer.finance.yahoo</span>
+<span class="text-secondary font-bold">Steady</span>
+</div>
+</div>
+<!-- CFTC COT Scraper -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">CFTC COT Scraper</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-variant text-on-surface-variant text-[9px]">Daily</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-md font-data-mono-md text-primary font-bold">Daily Sync OK</span>
+<span class="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-primary h-full w-full"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>cftc.gov/dea/futures</span>
+<span class="text-primary font-bold">Sync: 18:00</span>
+</div>
+</div>
+<!-- TradingEconomics Scraper -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">TradingEconomics</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-variant text-on-surface-variant text-[9px]">Parser</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-md font-data-mono-md text-primary font-bold">In Sync</span>
+<span class="text-[10px] font-label-code text-primary font-bold">0 errors</span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-primary h-full w-[95%]"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>DOM Scraper v1.8</span>
+<span class="text-on-surface-variant">Cached 60s</span>
+</div>
+</div>
+<!-- RBA / Fed Calendar Ingestion -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between text-[11px] font-label-code text-on-surface-variant mb-1">
+<span class="font-bold text-on-surface">RBA / Fed Engine</span>
+<span class="px-1.5 py-0.2 rounded bg-primary-container/15 text-primary text-[9px]">RSS/HTTP</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-data-mono-md font-data-mono-md text-primary font-bold">Active</span>
+<span class="w-2 h-2 rounded-full bg-primary node-pulse"></span>
+</div>
+<div class="mt-2 w-full bg-surface-variant h-1 rounded overflow-hidden">
+<div class="bg-primary h-full w-full"></div>
+</div>
+<div class="mt-1 flex justify-between text-[9px] font-label-code text-outline">
+<span>Federal Reserve &amp; AU</span>
+<span class="text-primary font-bold">Polled 30s</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 2-COLUMN SPLIT: DIVERGENCE SENTINEL (LEFT) + LOSS & DROP ANALYTICS (RIGHT) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- COMPONENT 2: CROSS-SOURCE DIVERGENCE & BAD TICK SENTINEL (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-2 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">troubleshoot</span>
+<h2 class="text-label-caps font-label-caps text-on-surface uppercase tracking-wider">
+                  2. Cross-Source Divergence &amp; Bad Tick Sentinel
+                </h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-label-code font-label-code text-[10px] text-on-surface-variant">
+                  Stale Limit: &gt;200ms
+                </span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary border border-secondary/30 text-[10px] font-label-code">
+                  Wick Filter: 3.5σ
+                </span>
+</div>
+</div>
+<!-- Real-time Divergence Comparison Matrix Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-[10px] font-label-caps uppercase text-outline border-b border-outline-variant/20 pb-1">
+<th class="py-1.5 px-2">Asset / Pair</th>
+<th class="py-1.5 px-2">Binance BBO</th>
+<th class="py-1.5 px-2">Kraken / Bybit</th>
+<th class="py-1.5 px-2">Divergence (Δ)</th>
+<th class="py-1.5 px-2">Stale Warning</th>
+<th class="py-1.5 px-2">Bad Tick / Wick</th>
+<th class="py-1.5 px-2 text-right">Synthetic Action</th>
+</tr>
+</thead>
+<tbody class="text-data-mono-sm font-data-mono-sm divide-y divide-outline-variant/10">
+<!-- Row 1: BTC Divergence (Highlighted from prompt) -->
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-2 px-2 font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                      BTC/USDT
+                    </td>
+<td class="py-2 px-2 text-on-surface">$67,412.50</td>
+<td class="py-2 px-2 text-on-surface-variant">$67,411.10 (Kraken)</td>
+<td class="py-2 px-2 font-bold text-primary bg-primary/5 rounded">
+                      +$1.40 (+0.002%)
+                    </td>
+<td class="py-2 px-2 text-[11px]">
+<span class="text-primary flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-primary"></span> 18ms (OK)
+                      </span>
+</td>
+<td class="py-2 px-2 text-[11px] text-on-surface-variant">
+                      Clean (0.2σ)
+                    </td>
+<td class="py-2 px-2 text-right">
+<span class="text-[10px] font-label-code px-1.5 py-0.5 rounded bg-primary-container/15 text-primary border border-primary/20">
+                        Arbitraged
+                      </span>
+</td>
+</tr>
+<!-- Row 2: ETH Stale tick alert -->
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-2 px-2 font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                      ETH/USDT
+                    </td>
+<td class="py-2 px-2 text-on-surface">$3,524.80</td>
+<td class="py-2 px-2 text-on-surface-variant">$3,525.05 (Bybit)</td>
+<td class="py-2 px-2 text-on-surface font-semibold">
+                      -$0.25 (-0.007%)
+                    </td>
+<td class="py-2 px-2 text-[11px]">
+<span class="text-primary flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-primary"></span> 34ms (OK)
+                      </span>
+</td>
+<td class="py-2 px-2 text-[11px] text-on-surface-variant">
+                      Clean (0.1σ)
+                    </td>
+<td class="py-2 px-2 text-right">
+<span class="text-[10px] font-label-code px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant">
+                        Synthetic Pass
+                      </span>
+</td>
+</tr>
+<!-- Row 3: SOL Phantom Wick Detected and Suppressed -->
+<tr class="hover:bg-surface-container/50 transition-colors bg-error-container/5">
+<td class="py-2 px-2 font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+                      SOL/USDT
+                    </td>
+<td class="py-2 px-2 text-on-surface">$174.12</td>
+<td class="py-2 px-2 text-error font-medium">$169.80 (Anom)</td>
+<td class="py-2 px-2 text-error font-bold">
+                      +$4.32 (+2.48%)
+                    </td>
+<td class="py-2 px-2 text-[11px]">
+<span class="text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">warning</span> 224ms &gt; 200
+                      </span>
+</td>
+<td class="py-2 px-2 text-[11px] text-error font-semibold">
+                      Phantom Wick (4.8σ)
+                    </td>
+<td class="py-2 px-2 text-right">
+<span class="text-[10px] font-label-code px-1.5 py-0.5 rounded bg-error-container/30 text-error border border-error/40 font-bold">
+                        Tick Quarantined
+                      </span>
+</td>
+</tr>
+<!-- Row 4: AUD/USD via Yahoo Free WS -->
+<tr class="hover:bg-surface-container/50 transition-colors">
+<td class="py-2 px-2 font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      AUD/USD
+                    </td>
+<td class="py-2 px-2 text-on-surface">0.6614</td>
+<td class="py-2 px-2 text-on-surface-variant">0.6613 (RBA Ref)</td>
+<td class="py-2 px-2 text-secondary font-medium">
+                      +0.0001
+                    </td>
+<td class="py-2 px-2 text-[11px]">
+<span class="text-primary flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-primary"></span> 112ms (OK)
+                      </span>
+</td>
+<td class="py-2 px-2 text-[11px] text-on-surface-variant">
+                      Clean (0.4σ)
+                    </td>
+<td class="py-2 px-2 text-right">
+<span class="text-[10px] font-label-code px-1.5 py-0.5 rounded bg-secondary/15 text-secondary border border-secondary/20">
+                        Macro Ingested
+                      </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Synthetic Feed Reconstructor Status Banner -->
+<div class="mt-4 p-2.5 rounded bg-surface-container border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">schema</span>
+<div>
+<div class="text-[11px] font-label-code font-bold text-on-surface">
+                  Synthetic Feed Reconstructor: Zero-Sub Consensus Active
+                </div>
+<div class="text-[10px] text-on-surface-variant">
+                  Triangulating Binance Public, Bybit WS, and Kraken REST snapshots into zero-latency synthetic consolidated ticker.
+                </div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-caps font-label-caps text-primary px-2 py-1 rounded bg-primary-container/10 border border-primary/30">
+                Outliers Dropped: 14 today
+              </span>
+</div>
+</div>
+</div>
+<!-- COMPONENT 3: TELEMETRY LOSS & DROP RATE ANALYTICS (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-2 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">query_stats</span>
+<h2 class="text-label-caps font-label-caps text-on-surface uppercase tracking-wider">
+                  3. Telemetry Loss &amp; Drop Rate Analytics
+                </h2>
+</div>
+<span class="text-[10px] font-label-code text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/30">
+                12 Endpoints Active
+              </span>
+</div>
+<!-- Key metrics cluster -->
+<div class="grid grid-cols-3 gap-2 mb-3 text-center">
+<div class="bg-surface-container p-2 rounded border border-outline-variant/20">
+<div class="text-[9px] font-label-caps text-outline uppercase">Dropped Frames</div>
+<div class="text-data-mono-lg font-data-mono-lg font-bold text-primary">0</div>
+<div class="text-[10px] font-label-code text-on-surface-variant">Across 12 WS</div>
+</div>
+<div class="bg-surface-container p-2 rounded border border-outline-variant/20">
+<div class="text-[9px] font-label-caps text-outline uppercase">Jitter Monitor</div>
+<div class="text-data-mono-lg font-data-mono-lg font-bold text-secondary">0.8ms</div>
+<div class="text-[10px] font-label-code text-on-surface-variant">Average std dev</div>
+</div>
+<div class="bg-surface-container p-2 rounded border border-outline-variant/20">
+<div class="text-[9px] font-label-caps text-outline uppercase">Free Memory Pool</div>
+<div class="text-data-mono-lg font-data-mono-lg font-bold text-on-surface">242 MB</div>
+<div class="text-[10px] font-label-code text-primary">/ 4.0 GB alloc</div>
+</div>
+</div>
+<!-- Packet Stream Graph Visual (Zero Dropped Frames Across 12 WS) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between text-[10px] font-label-code text-on-surface-variant">
+<span>Packet Ingestion Waveform (Past 60 Seconds)</span>
+<span class="text-primary">100% Retained (0% Loss)</span>
+</div>
+<!-- SVG Visual Waveform Bar Graph -->
+<div class="h-24 w-full bg-surface-container-lowest rounded border border-outline-variant/30 p-2 flex items-end gap-1 overflow-hidden relative">
+<!-- Grid background lines -->
+<div class="absolute inset-0 flex flex-col justify-between p-2 pointer-events-none opacity-20">
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+<div class="border-b border-outline-variant w-full"></div>
+</div>
+<!-- Generated SVG Telemetry Waveform -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 300 70">
+<defs>
+<lineargradient id="streamGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#2be4a7" stop-opacity="0.45"></stop>
+<stop offset="100%" stop-color="#2be4a7" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Baseline Grid -->
+<path d="M0 65 L300 65" stroke="#31353d" stroke-dasharray="2 2" stroke-width="1"></path>
+<!-- Stream Line -->
+<path d="M0,45 Q20,38 40,42 T80,35 T120,40 T160,32 T200,38 T240,30 T280,36 T300,34 L300,70 L0,70 Z" fill="url(#streamGrad)"></path>
+<path d="M0,45 Q20,38 40,42 T80,35 T120,40 T160,32 T200,38 T240,30 T280,36 T300,34" fill="none" stroke="#2be4a7" stroke-width="2"></path>
+<!-- Candlestick Decision Inflection Node -->
+<circle class="candlestick-glow" cx="160" cy="32" fill="#2be4a7" r="3.5"></circle>
+<circle cx="240" cy="30" fill="#3a7bff" r="3.5"></circle>
+</svg>
+</div>
+</div>
+</div>
+<!-- Ring buffer telemetry footer -->
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-label-code">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+              Rust Circular Lock-Free Ring Buffer: 1,048,576 slots
+            </span>
+<span class="text-primary font-bold">Overrun: 0</span>
+</div>
+</div>
+</div>
+<!-- 2-COLUMN SPLIT: FREE QUOTA MONITOR (LEFT) + SYNTHETIC L2 ASSEMBLER (RIGHT) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- COMPONENT 4: FREE QUOTA & RATE LIMIT MONITOR (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-2 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">speed</span>
+<h2 class="text-label-caps font-label-caps text-on-surface uppercase tracking-wider">
+                  4. Free Quota &amp; Rate Limit Sentinel
+                </h2>
+</div>
+<span class="text-[10px] font-label-code text-on-surface-variant">Zero Cost Guard</span>
+</div>
+<!-- Rate Limit Meter Rows -->
+<div class="space-y-3">
+<!-- Binance API Weight: 120 / 1200 -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20">
+<div class="flex items-center justify-between text-[11px] font-label-code mb-1">
+<span class="font-bold text-on-surface flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span> Binance Public IP Weight
+                  </span>
+<span class="text-primary font-bold">120 / 1,200 (10.0%)</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded overflow-hidden">
+<div class="bg-primary h-full rounded" style="width: 10%;"></div>
+</div>
+<div class="flex justify-between text-[9px] font-label-code text-outline mt-1">
+<span>Rolling 1m window</span>
+<span class="text-primary">1,080 weight headroom</span>
+</div>
+</div>
+<!-- Yahoo Finance: 42 / 2000 calls -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20">
+<div class="flex items-center justify-between text-[11px] font-label-code mb-1">
+<span class="font-bold text-on-surface flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span> Yahoo Finance Free Calls
+                  </span>
+<span class="text-secondary font-bold">42 / 2,000 (2.1%)</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded overflow-hidden">
+<div class="bg-secondary h-full rounded" style="width: 2.1%;"></div>
+</div>
+<div class="flex justify-between text-[9px] font-label-code text-outline mt-1">
+<span>Hourly anonymous IP limit</span>
+<span class="text-secondary">1,958 calls remain</span>
+</div>
+</div>
+<!-- SEC EDGAR: 3 / 10 req/sec -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20">
+<div class="flex items-center justify-between text-[11px] font-label-code mb-1">
+<span class="font-bold text-on-surface flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span> SEC EDGAR Public Scraper
+                  </span>
+<span class="text-on-surface font-bold">3 / 10 req/s (30%)</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded overflow-hidden">
+<div class="bg-primary h-full rounded" style="width: 30%;"></div>
+</div>
+<div class="flex justify-between text-[9px] font-label-code text-outline mt-1">
+<span>Hard Gov Limit: max 10/s</span>
+<span class="text-primary">User-Agent Declared (Nautilus)</span>
+</div>
+</div>
+<!-- Discord / Telegram Bot Firehose: 94% available -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20">
+<div class="flex items-center justify-between text-[11px] font-label-code mb-1">
+<span class="font-bold text-on-surface flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span> Community Bot Firehose Quota
+                  </span>
+<span class="text-primary font-bold">94% Available</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded overflow-hidden">
+<div class="bg-primary h-full rounded" style="width: 6%;"></div>
+</div>
+<div class="flex justify-between text-[9px] font-label-code text-outline mt-1">
+<span>Discord + Telegram Scraping Engine</span>
+<span class="text-primary font-bold">0 bans / 0 backoffs</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-label-code text-on-surface-variant">
+<span>Adaptive Rate Limiter: Active</span>
+<span class="text-primary font-semibold">Autonomous Backoff Armed</span>
+</div>
+</div>
+<!-- COMPONENT 5: SYNTHETIC L2 ORDER BOOK ASSEMBLER (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-low border border-outline-variant/30 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-2 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">layers</span>
+<h2 class="text-label-caps font-label-caps text-on-surface uppercase tracking-wider">
+                  5. Synthetic L2 Order Book Assembler (Rust Native)
+                </h2>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container/10 border border-primary/30 text-primary text-[10px] font-label-code">
+                Saved ~$1,850/mo vs Paid Feeds
+              </span>
+</div>
+<!-- Architectural Explanation Visual: How Free Ticks Merge into L2 -->
+<div class="bg-surface-container-lowest p-3 rounded border border-outline-variant/30 mb-3">
+<div class="text-[11px] font-label-code text-primary font-bold mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">account_tree</span>
+<span>HOW IT WORKS: FREE PUBLIC STREAMS MERGED INTO LIVE ORDER BOOK</span>
+</div>
+<!-- Pipeline flow chart steps -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-center text-[10px] font-label-code">
+<!-- Step 1 -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/30">
+<div class="text-primary font-bold">1. Free Ingest</div>
+<div class="text-on-surface-variant text-[9px] mt-0.5">Binance + Bybit Public BBO &amp; aggTrade WebSockets</div>
+</div>
+<!-- Step 2 -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/30">
+<div class="text-secondary font-bold">2. Rust Normalizer</div>
+<div class="text-on-surface-variant text-[9px] mt-0.5">Microsecond timestamp sync &amp; deduplication</div>
+</div>
+<!-- Step 3 -->
+<div class="p-2 rounded bg-surface-container border border-outline-variant/30">
+<div class="text-on-surface font-bold">3. Depth Synthesis</div>
+<div class="text-on-surface-variant text-[9px] mt-0.5">Reconstruct 25x25 ladder via trade delta flow</div>
+</div>
+<!-- Step 4 -->
+<div class="p-2 rounded bg-surface-container border border-primary/40 bg-primary/5">
+<div class="text-primary font-bold">4. Synthetic L2</div>
+<div class="text-primary text-[9px] mt-0.5">0.08ms internal latency to AI Agent Mesh</div>
+</div>
+</div>
+</div>
+<!-- Live Compiled Synthetic L2 Book Sample (Compact Ladder) -->
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] font-label-caps uppercase text-outline px-2">
+<span>Asks / Bids (Compiled Depth)</span>
+<span>Synthetic Size</span>
+<span>Total Accumulated</span>
+</div>
+<!-- Ask Rows (Red/Flare) -->
+<div class="space-y-0.5">
+<div class="relative flex items-center justify-between px-2 py-0.5 text-data-mono-sm font-data-mono-sm rounded bg-surface-container/40 overflow-hidden">
+<div class="absolute inset-y-0 right-0 bg-error/15 w-[42%]"></div>
+<span class="text-error font-medium z-10">67,414.20</span>
+<span class="text-on-surface-variant z-10 text-[11px]">1.842 BTC</span>
+<span class="text-outline z-10 text-[11px]">7.420 BTC</span>
+</div>
+<div class="relative flex items-center justify-between px-2 py-0.5 text-data-mono-sm font-data-mono-sm rounded bg-surface-container/40 overflow-hidden">
+<div class="absolute inset-y-0 right-0 bg-error/15 w-[28%]"></div>
+<span class="text-error font-medium z-10">67,413.50</span>
+<span class="text-on-surface-variant z-10 text-[11px]">0.950 BTC</span>
+<span class="text-outline z-10 text-[11px]">5.578 BTC</span>
+</div>
+</div>
+<!-- Spread Indicator -->
+<div class="py-1 px-3 bg-surface-container-high rounded text-center text-[10px] font-label-code text-primary flex items-center justify-between border-y border-outline-variant/30">
+<span class="text-outline">SYNTHETIC SPREAD</span>
+<span class="font-bold text-primary">$0.60 (0.0008%) • ARB CONSENSUS REACHED</span>
+<span class="text-outline">TICK DRIFT: 0.02ms</span>
+</div>
+<!-- Bid Rows (Mint/Primary) -->
+<div class="space-y-0.5">
+<div class="relative flex items-center justify-between px-2 py-0.5 text-data-mono-sm font-data-mono-sm rounded bg-surface-container/40 overflow-hidden">
+<div class="absolute inset-y-0 right-0 bg-primary/15 w-[35%]"></div>
+<span class="text-primary font-medium z-10">67,412.90</span>
+<span class="text-on-surface-variant z-10 text-[11px]">1.240 BTC</span>
+<span class="text-outline z-10 text-[11px]">1.240 BTC</span>
+</div>
+<div class="relative flex items-center justify-between px-2 py-0.5 text-data-mono-sm font-data-mono-sm rounded bg-surface-container/40 overflow-hidden">
+<div class="absolute inset-y-0 right-0 bg-primary/15 w-[65%]"></div>
+<span class="text-primary font-medium z-10">67,412.10</span>
+<span class="text-on-surface-variant z-10 text-[11px]">3.110 BTC</span>
+<span class="text-outline z-10 text-[11px]">4.350 BTC</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-label-code text-on-surface-variant">
+<span>Book State: 100% Deterministic</span>
+<span class="text-primary font-bold">Rust Engine Memory: 14.2 MB</span>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- FIXED BOTTOM FOOTER / SYSTEM TELEMETRY BAR -->
+<footer class="bg-surface-container-lowest text-on-surface-variant fixed bottom-0 left-0 w-full z-50 h-8 flex items-center justify-between px-space-lg border-t border-outline-variant/30 text-data-mono-sm font-data-mono-sm backdrop-blur-md">
+<!-- Brand & Legal Compliance -->
+<div class="flex items-center gap-3 text-[11px]">
+<span class="text-data-mono-sm font-data-mono-sm font-bold text-on-surface-variant">
+        MASTERTRADER QUANT ENGINE • NAUTILUS CORE 2.4.0 • AU JURISDICTION COMPLIANT
+      </span>
+<span class="hidden xl:inline text-outline text-[10px]">• FREE COMMUNITY DATA SENTINEL</span>
+</div>
+<!-- Active System Telemetry Nodes -->
+<div class="flex items-center gap-space-lg text-[11px]">
+<a class="text-primary hover:text-primary transition-colors flex items-center gap-1 font-semibold" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary node-pulse"></span>
+<span>Kernel Status: 0.12ms</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hidden sm:inline" href="#">
+        EOFY Audit Trail
+      </a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hidden md:flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[13px] text-primary">dns</span>
+<span>MCP Server Active</span>
+</a>
+<a class="text-error hover:text-error transition-colors flex items-center gap-1 font-semibold" href="#">
+<span class="material-symbols-outlined text-[13px]">shield</span>
+<span>Kill-Switch Armed</span>
+</a>
+</div>
+</footer>
+<!-- Light dynamic script to emulate live WebSocket tick changes -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simulate real-time tick pulse on the synthetic book without modifying DOM layout
+      setInterval(() => {
+        const pingNodes = document.querySelectorAll('.node-pulse');
+        pingNodes.forEach(node => {
+          node.style.opacity = (Math.random() * 0.4 + 0.6).toFixed(2);
+        });
+      }, 1500);
+    });
+  </script>
+</body></html>

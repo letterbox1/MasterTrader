@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASTERTRADER — Multi-Agent Debate &amp; Deliberation Matrix</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed": "#001847",
+            "surface-container-lowest": "#0a0e15",
+            "surface-container-high": "#262a32",
+            "primary-container": "#2be4a7",
+            "tertiary": "#ffdfd8",
+            "surface-bright": "#353941",
+            "outline": "#85948b",
+            "on-primary-container": "#006144",
+            "on-primary": "#003826",
+            "error-container": "#93000a",
+            "inverse-on-surface": "#2d3038",
+            "on-surface-variant": "#bacac0",
+            "surface-container-low": "#181c23",
+            "surface-container-highest": "#31353d",
+            "on-tertiary": "#630f00",
+            "primary": "#6effc5",
+            "on-tertiary-container": "#a0270c",
+            "on-background": "#dfe2ec",
+            "on-secondary-fixed-variant": "#0040a0",
+            "on-secondary-container": "#e2e7ff",
+            "on-error-container": "#ffdad6",
+            "surface-container": "#1c2027",
+            "secondary-container": "#045fe3",
+            "on-tertiary-fixed": "#3d0600",
+            "on-secondary": "#002c72",
+            "on-error": "#690005",
+            "on-surface": "#dfe2ec",
+            "secondary-fixed-dim": "#b1c5ff",
+            "surface-tint": "#24e1a4",
+            "error": "#ffb4ab",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "surface-dim": "#0f141a",
+            "background": "#0f141a",
+            "outline-variant": "#3b4a42",
+            "tertiary-container": "#ffb9a9",
+            "surface-variant": "#31353d",
+            "on-primary-fixed": "#002115",
+            "inverse-surface": "#dfe2ec",
+            "surface": "#0f141a",
+            "inverse-primary": "#006c4c",
+            "secondary": "#b1c5ff",
+            "primary-fixed": "#52febf",
+            "secondary-fixed": "#dae2ff",
+            "tertiary-fixed": "#ffdad2",
+            "on-primary-fixed-variant": "#005138",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "primary-fixed-dim": "#24e1a4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "space-lg": "1.25rem",
+            "space-md": "0.75rem",
+            "margin": "1rem",
+            "margin-desktop": "1.5rem",
+            "gutter": "0.75rem",
+            "space-xs": "0.25rem",
+            "gutter-desktop": "1rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "data-mono-md": ["JetBrains Mono"],
+            "data-mono-lg": ["JetBrains Mono"],
+            "headline-sm": ["Space Grotesk"],
+            "body-lg": ["Space Grotesk"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "body-md": ["Space Grotesk"],
+            "data-mono-sm": ["JetBrains Mono"],
+            "display-lg": ["Space Grotesk"],
+            "label-code": ["JetBrains Mono"],
+            "body-sm": ["Space Grotesk"],
+            "headline-lg": ["Space Grotesk"],
+            "label-caps": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "display-lg-mobile": ["Space Grotesk"]
+          },
+          "fontSize": {
+            "data-mono-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+            "data-mono-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "data-mono-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom terminal scrollbars */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e15;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #31353d;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2be4a7;
+    }
+    .candlestick-glow-node {
+      box-shadow: 0 0 10px rgba(43, 228, 167, 0.45);
+    }
+    .pulse-dot {
+      animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- ================= TOP APP BAR (Shared Component Anchor) ================= -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest flex justify-between items-center w-full px-space-lg h-14 max-w-full border-b border-outline-variant/30 backdrop-blur-md sticky top-0 z-50">
+<!-- Brand Lockup & Search -->
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-2">
+<!-- SVG Signal M Candlestick Brand Mark -->
+<svg class="w-7 h-7 flex-shrink-0" fill="none" viewbox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Candlestick Wick (Cobalt Blue #3A7BFF) -->
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="1.75" x1="8" x2="8" y1="3" y2="29"></line>
+<!-- Left Candlestick Body -->
+<rect fill="#3A7BFF" height="15" rx="1.5" width="5" x="5.5" y="8"></rect>
+<!-- Right Candlestick Wick (Signal Mint #2BE4A7) -->
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="1.75" x1="24" x2="24" y1="3" y2="29"></line>
+<!-- Right Candlestick Body -->
+<rect fill="#2BE4A7" height="17" rx="1.5" width="5" x="21.5" y="6"></rect>
+<!-- Connecting M Dynamic Vector -->
+<path d="M8 12L16 21L24 10" stroke="#EEF2F6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+<!-- Candlestick Center Inflection Node with Halo -->
+<circle class="candlestick-glow-node" cx="16" cy="21" fill="#2BE4A7" r="3.2"></circle>
+<circle cx="16" cy="21" fill="#07090D" r="1.5"></circle>
+</svg>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-headline-sm font-headline-sm tracking-tight font-bold text-on-surface dark:text-on-surface">MASTER<span class="text-primary font-bold">TRADER</span></span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary border border-primary/30 font-label-code text-label-code">v2.4.0</span>
+</div>
+</div>
+</div>
+<!-- Quick Command Input on Left -->
+<div class="hidden xl:flex items-center bg-surface-container-low px-space-sm py-1 rounded border border-outline-variant/30 text-data-mono-sm font-data-mono-sm w-72 text-on-surface-variant focus-within:border-secondary transition-colors">
+<span class="material-symbols-outlined text-outline text-base mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none p-0 text-on-surface focus:outline-none focus:ring-0 placeholder-on-surface-variant/50 w-full text-data-mono-sm font-data-mono-sm" placeholder="Query agent mesh / symbol / RAG..." type="text"/>
+<span class="text-outline text-label-code font-label-code bg-surface-container px-1 py-0.5 rounded">⌘K</span>
+</div>
+</div>
+<!-- Navigation Tabs Cluster (Desktop) -->
+<nav class="hidden md:flex items-center gap-space-lg h-full">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors font-headline-sm text-body-md h-full flex items-center" href="#">Matrix</a>
+<!-- Active navigation item for current view -->
+<a class="text-primary dark:text-primary border-b-2 border-primary dark:border-primary pb-1 font-semibold font-headline-sm text-body-md h-full flex items-center gap-1.5" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary pulse-dot"></span>
+        Agents
+      </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors font-headline-sm text-body-md h-full flex items-center" href="#">Execution</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors font-headline-sm text-body-md h-full flex items-center" href="#">Audit</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-on-surface transition-colors font-headline-sm text-body-md h-full flex items-center" href="#">Vetting</a>
+</nav>
+<!-- Trailing Actions & Node Telemetry -->
+<div class="flex items-center gap-space-md">
+<!-- Live Status Pill -->
+<div class="hidden sm:flex items-center gap-2 bg-surface-container-low px-2.5 py-1 rounded border border-outline-variant/30">
+<span class="w-2 h-2 rounded-full bg-primary pulse-dot"></span>
+<span class="text-primary font-label-code text-label-code uppercase tracking-wider">Live Engine</span>
+<span class="text-outline-variant text-label-code font-label-code">|</span>
+<span class="text-on-surface-variant font-label-code text-label-code">4 MCP Nodes</span>
+</div>
+<!-- Icon Actions Defined in JSON -->
+<div class="flex items-center text-on-surface-variant gap-1">
+<button class="p-1.5 rounded hover:bg-surface-container dark:hover:bg-surface-container hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-[0.98]" title="Terminal Stream">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container dark:hover:bg-surface-container hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-[0.98]" title="Live Sensors">
+<span class="material-symbols-outlined text-lg text-primary" data-icon="sensors">sensors</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container dark:hover:bg-surface-container hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-[0.98]" title="Tune Parameters">
+<span class="material-symbols-outlined text-lg" data-icon="tune">tune</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container dark:hover:bg-surface-container hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-[0.98] relative" title="Notifications">
+<span class="material-symbols-outlined text-lg" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-1.5 h-1.5 bg-tertiary-container rounded-full"></span>
+</button>
+</div>
+<div class="h-5 w-[1px] bg-outline-variant/40 mx-1"></div>
+<!-- Emergency Halt CTA -->
+<button class="bg-error-container/20 text-error hover:bg-error hover:text-on-error border border-error/50 font-label-code text-label-code px-3 py-1.5 rounded flex items-center gap-1.5 transition-all duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined text-sm" data-icon="emergency_home">emergency_home</span>
+        Emergency Halt
+      </button>
+<!-- User Key Avatar / Auth Token -->
+<div class="w-7 h-7 rounded bg-surface-container-high border border-outline-variant/60 flex items-center justify-center font-data-mono-sm text-data-mono-sm text-secondary font-bold" title="Chief Risk Officer Master Key">
+        CRO
+      </div>
+</div>
+</header>
+<!-- ================= TOP INSTITUTIONAL KPI TELEMETRY STRIP ================= -->
+<section class="w-full bg-surface-container-low border-b border-outline-variant/30 px-space-lg py-2">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-sm items-center">
+<!-- KPI 1: Consensus Score -->
+<div class="flex flex-col border-r border-outline-variant/20 pr-2">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Consensus Score</span>
+<span class="material-symbols-outlined text-primary text-xs" data-icon="trending_up">trending_up</span>
+</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-primary font-data-mono-lg text-data-mono-lg tracking-tight">88.5%</span>
+<span class="text-primary font-label-code text-label-code">BULLISH</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 88.5%"></div>
+</div>
+</div>
+<!-- KPI 2: Agreement Ratio -->
+<div class="flex flex-col border-r border-outline-variant/20 pr-2">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Agreement Ratio</span>
+<span class="text-primary font-label-code text-label-code">QUORUM</span>
+</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-on-surface font-data-mono-lg text-data-mono-lg">3 / 4</span>
+<span class="text-on-surface-variant font-label-code text-label-code">AGENTS (75%)</span>
+</div>
+<div class="flex gap-1 mt-1.5">
+<span class="h-1 flex-1 bg-primary rounded-full"></span>
+<span class="h-1 flex-1 bg-primary rounded-full"></span>
+<span class="h-1 flex-1 bg-primary rounded-full"></span>
+<span class="h-1 flex-1 bg-surface-container-highest rounded-full"></span>
+</div>
+</div>
+<!-- KPI 3: Deliberation Turn -->
+<div class="flex flex-col border-r border-outline-variant/20 pr-2">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Deliberation Turn</span>
+<span class="text-secondary font-label-code text-label-code">CYCLE 3</span>
+</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-on-surface font-data-mono-lg text-data-mono-lg">Turn #14</span>
+<span class="text-on-surface-variant font-label-code text-label-code">/ 20 MAX</span>
+</div>
+<span class="text-on-surface-variant font-data-mono-sm text-[10px] truncate mt-0.5">Dialectic Convergence</span>
+</div>
+<!-- KPI 4: Average Latency -->
+<div class="flex flex-col border-r border-outline-variant/20 pr-2">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Avg Agent Latency</span>
+<span class="text-primary font-label-code text-label-code">FAST</span>
+</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-primary font-data-mono-lg text-data-mono-lg">48ms</span>
+<span class="text-on-surface-variant font-label-code text-label-code">Rust Engine</span>
+</div>
+<div class="flex items-center gap-1 text-[10px] text-on-surface-variant font-data-mono-sm mt-0.5">
+<span class="text-primary">●</span> Rust L2: 1.2ms <span class="text-secondary">●</span> RAG: 46ms
+        </div>
+</div>
+<!-- KPI 5: RAG Vector Depth -->
+<div class="flex flex-col border-r border-outline-variant/20 pr-2">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps">RAG Memory Depth</span>
+<span class="material-symbols-outlined text-secondary text-xs" data-icon="storage">storage</span>
+</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-secondary font-data-mono-lg text-data-mono-lg">42,890</span>
+<span class="text-on-surface-variant font-label-code text-label-code">VECTORS</span>
+</div>
+<span class="text-on-surface-variant font-data-mono-sm text-[10px] truncate mt-0.5">Cosine Similarity &gt; 0.91</span>
+</div>
+<!-- KPI 6: Reflection Confidence -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant font-label-caps text-label-caps">Reflection Confidence</span>
+<span class="text-primary font-label-code text-label-code">NOMINAL</span>
+</div>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-primary font-data-mono-lg text-data-mono-lg">94.2%</span>
+<span class="text-on-surface-variant font-label-code text-label-code">σ = 0.04</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-1 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 94.2%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- ================= SUB-NAVIGATION BAR (Identity & Quick Filters) ================= -->
+<section class="bg-surface-container-lowest border-b border-outline-variant/30 px-space-lg py-1.5 flex flex-wrap items-center justify-between text-data-mono-sm font-data-mono-sm">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="psychology">psychology</span>
+<span class="text-on-surface font-headline-sm text-sm font-medium">AI Agent Mesh</span>
+<span class="text-outline">/</span>
+<span class="text-primary font-medium">Multi-Agent Debate &amp; Deliberation Matrix</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-label-code font-label-code">
+        Session: #DELIB-2024-BTC-092
+      </span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-on-surface-variant text-label-code font-label-code">TARGET ASSET:</span>
+<span class="px-2 py-0.5 bg-surface-container rounded border border-outline-variant/40 text-on-surface font-data-mono-sm font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+        BTC/USDT Perpetual • $67,412.50
+        <span class="text-primary text-xs font-normal">+1.84%</span>
+</span>
+<button class="text-on-surface-variant hover:text-on-surface flex items-center gap-1 text-label-code font-label-code border border-outline-variant/30 px-2 py-0.5 rounded bg-surface-container-low">
+<span class="material-symbols-outlined text-xs" data-icon="refresh">refresh</span> Auto-Sync (1s)
+      </button>
+</div>
+</section>
+<!-- ================= MAIN THREE-COLUMN WORKSPACE ================= -->
+<main class="w-full px-space-lg py-4 grid grid-cols-1 lg:grid-cols-12 gap-space-md mb-10">
+<!-- ======================================================== -->
+<!-- LEFT COLUMN (3 cols): Active Agents Directory & Status -->
+<!-- ======================================================== -->
+<div class="lg:col-span-3 flex flex-col gap-space-md">
+<!-- Panel Header Card -->
+<div class="bg-surface-container-low rounded border border-outline-variant/30 p-space-md">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-2 mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-base" data-icon="group_work">group_work</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-medium">Active Agent Mesh</h2>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">4 Nodes</span>
+</div>
+<p class="text-on-surface-variant font-body-sm text-body-sm leading-relaxed">
+          Autonomous quorum deliberation engine with weighted quadratic voting &amp; dynamic hypothesis counter-arguing.
+        </p>
+</div>
+<!-- Agent 1: FinRobot Fundamentalist -->
+<div class="bg-surface-container-low rounded border-l-4 border-l-primary border-t border-r border-b border-outline-variant/30 p-space-md relative overflow-hidden group hover:border-primary/50 transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<div class="font-headline-sm text-sm font-semibold text-on-surface">FinRobot Fundamentalist</div>
+<div class="text-[10px] text-on-surface-variant font-data-mono-sm">DeepSeek-R1 / Llama-3-Quant</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary/15 text-primary text-label-code font-label-code border border-primary/25">
+            BULLISH 84
+          </span>
+</div>
+<div class="mt-3 space-y-1.5 text-data-mono-sm font-data-mono-sm">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Specialization:</span>
+<span class="text-on-surface">Macro &amp; SEC Filings, Fed Rate Cut</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Voting Power:</span>
+<span class="text-primary font-bold">30% (Quadratic W)</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Latest Stance:</span>
+<span class="text-primary truncate max-w-[150px]">Net ETF inflows +$412M</span>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-label-code font-label-code">
+<span class="text-on-surface-variant">Round #14 Stance: LOCKED</span>
+<span class="flex items-center gap-1 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary pulse-dot"></span> Online
+          </span>
+</div>
+</div>
+<!-- Agent 2: Nautilus Micro-Scalper -->
+<div class="bg-surface-container-low rounded border-l-4 border-l-secondary border-t border-r border-b border-outline-variant/30 p-space-md relative overflow-hidden group hover:border-secondary/50 transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-secondary/10 border border-secondary/30 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-lg" data-icon="candlestick_chart">candlestick_chart</span>
+</div>
+<div>
+<div class="font-headline-sm text-sm font-semibold text-on-surface">Nautilus Micro-Scalper</div>
+<div class="text-[10px] text-on-surface-variant font-data-mono-sm">Rust Engine Q-Learner v4</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary/15 text-secondary text-label-code font-label-code border border-secondary/25">
+            TRIGGER LONG
+          </span>
+</div>
+<div class="mt-3 space-y-1.5 text-data-mono-sm font-data-mono-sm">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Specialization:</span>
+<span class="text-on-surface">L2 Orderbook OBI (0.74 Ask Depth)</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Voting Power:</span>
+<span class="text-secondary font-bold">35% (Alpha Weight)</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Target Fill:</span>
+<span class="text-on-surface">$67,390.10 Limit</span>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-label-code font-label-code">
+<span class="text-on-surface-variant">Signal Latency: 1.2ms</span>
+<span class="flex items-center gap-1 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Ready
+          </span>
+</div>
+</div>
+<!-- Agent 3: Macro Event Sentinel -->
+<div class="bg-surface-container-low rounded border-l-4 border-l-outline border-t border-r border-b border-outline-variant/30 p-space-md relative overflow-hidden group hover:border-outline transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant/40 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="travel_explore">travel_explore</span>
+</div>
+<div>
+<div class="font-headline-sm text-sm font-semibold text-on-surface">Macro Event Sentinel</div>
+<div class="text-[10px] text-on-surface-variant font-data-mono-sm">Claude 3.5 Sonnet / Vibe-Quant</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-label-code font-label-code border border-outline-variant/30">
+            NEUTRAL / SAFE
+          </span>
+</div>
+<div class="mt-3 space-y-1.5 text-data-mono-sm font-data-mono-sm">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Specialization:</span>
+<span class="text-on-surface">Fed/RBA Geopolitics &amp; Speeches</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Voting Power:</span>
+<span class="text-on-surface font-bold">15%</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Black Swan Alert:</span>
+<span class="text-on-surface-variant">Nil • 0 Warnings</span>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-label-code font-label-code">
+<span class="text-on-surface-variant">Next Fed Window: 42m</span>
+<span class="flex items-center gap-1 text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Active
+          </span>
+</div>
+</div>
+<!-- Agent 4: Autonomous Risk Governor -->
+<div class="bg-surface-container-low rounded border-l-4 border-l-tertiary-container border-t border-r border-b border-outline-variant/30 p-space-md relative overflow-hidden group hover:border-tertiary-container transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-error-container/20 border border-error/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-lg" data-icon="shield">shield</span>
+</div>
+<div>
+<div class="font-headline-sm text-sm font-semibold text-on-surface">Autonomous Risk Governor</div>
+<div class="text-[10px] text-on-surface-variant font-data-mono-sm">Monte Carlo VaR Engine 99%</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary/10 text-primary text-label-code font-label-code border border-primary/20">
+            AUTHORIZED
+          </span>
+</div>
+<div class="mt-3 space-y-1.5 text-data-mono-sm font-data-mono-sm">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Max Allocation:</span>
+<span class="text-on-surface font-bold">0.85 BTC (~$57,300)</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Voting Power:</span>
+<span class="text-tertiary-fixed-dim font-bold">20% (Veto Capable)</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Stop Hard Constraint:</span>
+<span class="text-error font-mono">&lt; -1.25% ($66,910)</span>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant/20 flex items-center justify-between text-label-code font-label-code">
+<span class="text-on-surface-variant">Gate Status: CONDITIONAL OK</span>
+<span class="text-primary font-bold">Armed</span>
+</div>
+</div>
+<!-- Quick Mesh Action Button -->
+<button class="w-full py-2 bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 rounded text-on-surface text-label-code font-label-code flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="add_circle">add_circle</span>
+        Deploy Auxiliary Model Node
+      </button>
+</div>
+<!-- ======================================================== -->
+<!-- CENTER COLUMN (6 cols): Live Deliberation & Dialectic Feed -->
+<!-- ======================================================== -->
+<div class="lg:col-span-6 flex flex-col gap-space-md">
+<!-- Top Dialectic Telemetry Bar & Vector Polar Dial -->
+<div class="bg-surface-container-low rounded border border-outline-variant/30 p-space-md">
+<div class="flex flex-col sm:flex-row items-center justify-between border-b border-outline-variant/30 pb-3 gap-3">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base" data-icon="swap_calls">swap_calls</span>
+<h2 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Deliberation Feed &amp; Dialectic Debate</h2>
+</div>
+<p class="text-on-surface-variant font-data-mono-sm text-xs mt-0.5">
+              Round-robin consensus synthesis • Round 14 of 20 • Multi-turn CoT
+            </p>
+</div>
+<!-- Deliberation State Indicators -->
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded bg-surface-container text-secondary border border-secondary/30 text-label-code font-label-code flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              MCP Active
+            </span>
+<span class="px-2 py-1 rounded bg-primary/10 text-primary border border-primary/30 text-label-code font-label-code">
+              Quorum: Met (3/4)
+            </span>
+</div>
+</div>
+<!-- Consensus Convergence Vector Visualizer -->
+<div class="mt-3 pt-1 grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+<!-- Consensus Circular Vector Gauge (CSS/SVG) -->
+<div class="flex items-center gap-3 bg-surface-container-lowest p-2 rounded border border-outline-variant/20 col-span-1">
+<div class="relative w-14 h-14 flex items-center justify-center">
+<svg class="w-14 h-14 transform -rotate-90">
+<circle cx="28" cy="28" fill="transparent" r="22" stroke="#1c2027" stroke-width="4"></circle>
+<circle cx="28" cy="28" fill="transparent" r="22" stroke="#2be4a7" stroke-dasharray="138" stroke-dashoffset="16" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-primary font-data-mono-sm text-xs font-bold">88.5%</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface font-headline-sm text-xs font-semibold">Mesh Convergence</span>
+<span class="text-primary font-label-code text-[10px]">EXECUTION BIAS: LONG</span>
+<span class="text-on-surface-variant text-[10px] font-data-mono-sm">Deviation: ±0.038</span>
+</div>
+</div>
+<!-- Dialectic Timeline Progress -->
+<div class="col-span-2 bg-surface-container-lowest p-2.5 rounded border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex justify-between items-center text-label-code font-label-code mb-1">
+<span class="text-on-surface-variant">DELIBERATION CONVERGENCE PROGRESSION</span>
+<span class="text-primary font-mono">14/20 TURNS</span>
+</div>
+<!-- Interactive timeline steps -->
+<div class="w-full flex items-center gap-1 my-1">
+<span class="h-1.5 flex-1 bg-primary rounded-l" title="Turn 1: Thesis"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 2: Macro Analysis"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 3: OBI Detection"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 4: VaR Boundary"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 5: Counter-Thesis"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 6: ETF Inflow Validation"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 7: Volatility Projection"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 8: Depth Check"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 9: Liquidity Sweep"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 10: RAG Wyckoff Match"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 11: VaR Approval"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 12: Micro Structure"></span>
+<span class="h-1.5 flex-1 bg-primary" title="Turn 13: Risk Mitigated"></span>
+<span class="h-1.5 flex-1 bg-primary ring-2 ring-primary ring-offset-1 ring-offset-surface-container-lowest" title="Turn 14: Final Rebuttal (CURRENT)"></span>
+<span class="h-1.5 flex-1 bg-surface-container-high" title="Turn 15: Synthesis"></span>
+<span class="h-1.5 flex-1 bg-surface-container-high" title="Turn 16: Parameter Lock"></span>
+<span class="h-1.5 flex-1 bg-surface-container-high" title="Turn 17: Signatures"></span>
+<span class="h-1.5 flex-1 bg-surface-container-high" title="Turn 18: Nonce Gen"></span>
+<span class="h-1.5 flex-1 bg-surface-container-high" title="Turn 19: Order Staging"></span>
+<span class="h-1.5 flex-1 bg-surface-container-high rounded-r" title="Turn 20: Broadcast"></span>
+</div>
+<div class="flex justify-between text-[10px] text-on-surface-variant font-data-mono-sm">
+<span>T1: Hypothesis</span>
+<span class="text-primary font-bold">T14: Liquidity Rebuttal [Active]</span>
+<span>T20: Exec Order</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Dialogue & Dialectic Conversation Feed (High Density) -->
+<div class="bg-surface-container-low rounded border border-outline-variant/30 p-space-md flex flex-col gap-3 max-h-[580px] overflow-y-auto">
+<!-- Turn 12 Message: FinRobot Fundamentalist (Accumulation Thesis) -->
+<div class="bg-surface-container rounded border-l-2 border-l-primary p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary font-label-code text-label-code font-bold">TURN #12</span>
+<span class="font-headline-sm font-semibold text-on-surface">FinRobot Fundamentalist</span>
+<span class="text-on-surface-variant text-[10px] font-data-mono-sm">via DeepSeek-R1 (2,108 tokens CoT)</span>
+</div>
+<span class="text-on-surface-variant font-data-mono-sm text-[11px]">02:14:18.421 UTC</span>
+</div>
+<div class="text-body-md text-sm text-on-surface leading-relaxed font-body-md pl-1">
+<p>
+<strong class="text-primary font-medium">Accumulation Thesis Validated:</strong> Spot Bitcoin ETF net flows registered <span class="text-primary font-mono font-semibold">+$412.8M</span> in the last 14h across institutional desks. On-chain exchange reserves dipped by 8,420 BTC (Glassnode Vector 98.4% match). Realized price gradient slopes at +1.4σ. Model posits high probability of breakout through the $67,500 local liquidity cluster.
+            </p>
+</div>
+<div class="flex items-center gap-3 text-label-code font-label-code text-[10px] text-on-surface-variant pt-1 border-t border-outline-variant/20">
+<span>RAG Reference: <span class="text-secondary">#CHUNKS-ETF-FLOWS-094</span></span>
+<span>Confidence: <span class="text-primary">89.4%</span></span>
+<span>Vote: <span class="text-primary font-bold">LONG 0.85 BTC</span></span>
+</div>
+</div>
+<!-- Turn 13 Message: Autonomous Risk Governor (Counter-Argument / CPI Window) -->
+<div class="bg-surface-container rounded border-l-2 border-l-tertiary-container p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-tertiary-container/20 text-tertiary-fixed-dim font-label-code text-label-code font-bold">TURN #13</span>
+<span class="font-headline-sm font-semibold text-on-surface">Autonomous Risk Governor</span>
+<span class="text-on-surface-variant text-[10px] font-data-mono-sm">via Monte Carlo VaR (10,000 runs)</span>
+</div>
+<span class="text-on-surface-variant font-data-mono-sm text-[11px]">02:14:19.012 UTC</span>
+</div>
+<div class="text-body-md text-sm text-on-surface leading-relaxed font-body-md pl-1">
+<p class="text-on-surface">
+<strong class="text-tertiary-fixed-dim font-medium">Counter-Argument / Volatility Horizon Warning:</strong> While on-chain flow is undeniably bullish, Macro Sentinel data shows Federal Reserve blackout expiration in <span class="text-tertiary-fixed-dim font-mono font-semibold">42 minutes</span> accompanied by preliminary CPI whispers. If market tests $67,500 resistance without sustained orderbook bid depth, a sharp mean reversion to $66,800 creates a <span class="text-error font-mono">1.82% downside risk</span>, breaching our max portfolio intraday drawdown limit (-1.00%).
+            </p>
+<div class="mt-2 p-2 bg-surface-container-lowest rounded border border-outline-variant/30 text-xs font-data-mono-sm text-tertiary-fixed-dim flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-tertiary-fixed-dim" data-icon="warning">warning</span>
+<span>Conditional Veto Warning: Trade rejected unless Stop-Loss is clamped strictly above $66,910 with hard slippage protection.</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-label-code font-label-code text-[10px] text-on-surface-variant pt-1 border-t border-outline-variant/20">
+<span>VaR Intraday: <span class="text-error">-1.22% Max</span></span>
+<span>Constraint: <span class="text-on-surface font-semibold">SL ≥ $66,910</span></span>
+<span>Vote: <span class="text-tertiary-fixed-dim font-bold">CONDITIONAL APPROVAL</span></span>
+</div>
+</div>
+<!-- Turn 14 Message: Nautilus Micro-Scalper (Rebuttal with L2 Orderbook Liquidity Wall) -->
+<div class="bg-surface-container rounded border-l-2 border-l-secondary p-3 flex flex-col gap-2 relative">
+<div class="absolute right-3 top-3">
+<span class="flex items-center gap-1 text-[10px] font-label-code text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary pulse-dot"></span> CURRENT REBUTTAL
+            </span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-secondary/20 text-secondary font-label-code text-label-code font-bold">TURN #14</span>
+<span class="font-headline-sm font-semibold text-on-surface">Nautilus Micro-Scalper</span>
+<span class="text-on-surface-variant text-[10px] font-data-mono-sm">via Rust Engine L2 Kernel (1.2ms)</span>
+</div>
+</div>
+<span class="text-on-surface-variant font-data-mono-sm text-[11px]">02:14:19.489 UTC</span>
+<div class="text-body-md text-sm text-on-surface leading-relaxed font-body-md pl-1">
+<p>
+<strong class="text-secondary font-medium">Rebuttal to Risk Governor's Volatility Thesis:</strong> The proposed $66,800 retracement is mathematically neutralized by immediate microstructure depth. Live WebSocket inspection reveals an active institutional limit buy wall of <span class="text-primary font-mono font-semibold">$48.2M</span> anchored between <span class="text-primary font-mono">$67,150 and $67,280</span> across Binance &amp; Coinbase L2 books. Order Book Imbalance (OBI) is currently tilted at <span class="text-primary font-mono">0.74</span> towards bids.
+            </p>
+<p class="mt-2">
+              We propose structuring a precision limit execution at <span class="text-primary font-mono font-semibold">$67,390.10</span> with a tight Stop at <span class="text-on-surface font-mono font-semibold">$66,910.00</span> (honoring Risk Governor's boundary), targeting <span class="text-primary font-mono font-semibold">$69,450.00</span> for an asymmetric <strong class="text-primary">4.2:1 Risk/Reward Ratio</strong>.
+            </p>
+</div>
+<!-- Micro Structure Depth Snippet -->
+<div class="mt-2 bg-surface-container-lowest p-2 rounded border border-outline-variant/30 grid grid-cols-3 gap-2 text-data-mono-sm font-data-mono-sm text-xs">
+<div>
+<span class="text-on-surface-variant block text-[10px]">L2 BID WALL</span>
+<span class="text-primary font-bold">$48,240,000</span>
+</div>
+<div>
+<span class="text-on-surface-variant block text-[10px]">OBI RATIO</span>
+<span class="text-primary font-bold">0.74 (Heavy Bid)</span>
+</div>
+<div>
+<span class="text-on-surface-variant block text-[10px]">EST. EXEC SLIPPAGE</span>
+<span class="text-secondary font-bold">0.002% (~$1.34)</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-label-code font-label-code text-[10px] text-on-surface-variant pt-1 border-t border-outline-variant/20">
+<span>Calculated Edge: <span class="text-primary">+1.82% Expected Value</span></span>
+<span>Vote: <span class="text-primary font-bold">UNANIMOUS RATIFICATION REQ</span></span>
+</div>
+</div>
+<!-- Deliberation Prompt / Input Node -->
+<div class="bg-surface-container-lowest rounded p-2.5 border border-outline-variant/40 flex items-center justify-between gap-2 mt-1">
+<div class="flex items-center gap-2 flex-1">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="terminal">terminal</span>
+<input class="bg-transparent border-none p-0 text-on-surface text-data-mono-sm font-data-mono-sm focus:ring-0 focus:outline-none w-full placeholder-on-surface-variant/40" placeholder="Inject human CRO thesis or override prompt into deliberation loop..." type="text"/>
+</div>
+<button class="bg-secondary-container text-on-secondary-container hover:bg-secondary font-label-code text-label-code px-3 py-1 rounded transition-colors flex items-center gap-1 active:scale-[0.98]">
+<span>Inject</span>
+<span class="material-symbols-outlined text-xs" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ======================================================== -->
+<!-- RIGHT COLUMN (3 cols): RAG Memory, Synthesis & Action -->
+<!-- ======================================================== -->
+<div class="lg:col-span-3 flex flex-col gap-space-md">
+<!-- Synthesized Trade Proposal Action Card (Institutional Signal Mint) -->
+<div class="bg-surface-container-low rounded border-2 border-primary/40 p-space-md relative overflow-hidden shadow-lg shadow-primary/5">
+<!-- Candlestick Telemetry Accent -->
+<div class="absolute -right-4 -top-4 w-20 h-20 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-7xl text-primary" data-icon="candlestick_chart">candlestick_chart</span>
+</div>
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-2 mb-3">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary pulse-dot"></span>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Synthesized Trade Proposal</h3>
+</div>
+<span class="font-label-code text-label-code text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/25">READY</span>
+</div>
+<!-- Synthesized Order Details -->
+<div class="bg-surface-container-lowest rounded p-3 border border-outline-variant/30 space-y-2 mb-3">
+<div class="flex justify-between items-center text-xs font-data-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Action &amp; Symbol:</span>
+<span class="text-primary font-bold text-sm bg-primary/10 px-2 py-0.5 rounded">BUY BTC/USDT</span>
+</div>
+<div class="flex justify-between items-center text-xs font-data-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Order Type:</span>
+<span class="text-on-surface font-medium">Post-Only Limit (Maker)</span>
+</div>
+<div class="flex justify-between items-center text-xs font-data-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Limit Price:</span>
+<span class="text-on-surface font-bold font-mono">$67,390.10</span>
+</div>
+<div class="flex justify-between items-center text-xs font-data-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Stop Loss:</span>
+<span class="text-error font-bold font-mono">$66,910.00 (-0.71%)</span>
+</div>
+<div class="flex justify-between items-center text-xs font-data-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Take Profit:</span>
+<span class="text-primary font-bold font-mono">$69,450.00 (+3.05%)</span>
+</div>
+<div class="flex justify-between items-center text-xs font-data-mono-sm border-t border-outline-variant/20 pt-2">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Risk / Reward:</span>
+<span class="text-primary font-bold font-mono text-sm">4.2 : 1 Ratio</span>
+</div>
+<div class="flex justify-between items-center text-xs font-data-mono-sm">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Position Sizing:</span>
+<span class="text-on-surface font-mono">0.85 BTC ($57,281.58)</span>
+</div>
+</div>
+<!-- Primary & Secondary Action Controls -->
+<div class="flex flex-col gap-2">
+<!-- Primary Action: Approve & Execute via Nautilus Core -->
+<button class="w-full py-2.5 bg-primary-container text-on-primary-container hover:bg-primary font-headline-sm text-body-md font-bold rounded flex items-center justify-center gap-2 shadow-md hover:shadow-primary-container/30 transition-all duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined text-lg" data-icon="check_circle">check_circle</span>
+            Approve &amp; Execute via Nautilus Core
+          </button>
+<!-- Secondary Actions -->
+<div class="grid grid-cols-2 gap-2">
+<button class="py-1.5 px-2 bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 rounded text-on-surface font-label-code text-label-code flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="science">science</span>
+              Simulate (Paper)
+            </button>
+<button class="py-1.5 px-2 bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 rounded text-on-surface font-label-code text-label-code flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xs text-outline" data-icon="fork_right">fork_right</span>
+              Fork Thread
+            </button>
+</div>
+<button class="w-full py-1 text-on-surface-variant hover:text-on-surface text-label-code font-label-code text-center hover:underline">
+            Override Parameters &amp; Re-Prompt Mesh
+          </button>
+</div>
+</div>
+<!-- RAG Memory & Knowledge Graph Matches Card -->
+<div class="bg-surface-container-low rounded border border-outline-variant/30 p-space-md">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-2 mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="database">database</span>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">RAG Memory Vectors</h3>
+</div>
+<span class="font-label-code text-label-code text-secondary">Cosine &gt; 0.90</span>
+</div>
+<div class="space-y-2.5">
+<!-- Vector Match 1 -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20 hover:border-secondary/40 transition-colors">
+<div class="flex items-center justify-between text-xs">
+<span class="font-data-mono-sm font-medium text-on-surface truncate pr-2">2024 Post-Halving Wyckoff</span>
+<span class="text-primary font-data-mono-sm font-bold text-xs bg-primary/10 px-1.5 py-0.5 rounded">98.4% MATCH</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-snug">
+              Phase D re-accumulation springboard matching current 4H volume absorption profile.
+            </p>
+<div class="text-[10px] text-outline font-data-mono-sm mt-1.5 flex justify-between">
+<span>Embedding: text-emb-v3-large</span>
+<span>1,536 Dim</span>
+</div>
+</div>
+<!-- Vector Match 2 -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20 hover:border-secondary/40 transition-colors">
+<div class="flex items-center justify-between text-xs">
+<span class="font-data-mono-sm font-medium text-on-surface truncate pr-2">SEC ETF Daily Settlement Shift</span>
+<span class="text-secondary font-data-mono-sm font-bold text-xs bg-secondary/10 px-1.5 py-0.5 rounded">94.1% MATCH</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-snug">
+              Institutional settlement window (14:00-16:00 EST) produces consistent +0.8% delta.
+            </p>
+<div class="text-[10px] text-outline font-data-mono-sm mt-1.5 flex justify-between">
+<span>Memory Node #8,912</span>
+<span>Source: SEC EDGAR</span>
+</div>
+</div>
+<!-- Vector Match 3 -->
+<div class="bg-surface-container p-2.5 rounded border border-outline-variant/20 hover:border-secondary/40 transition-colors">
+<div class="flex items-center justify-between text-xs">
+<span class="font-data-mono-sm font-medium text-on-surface truncate pr-2">Orderbook Spoofing Cluster $67.5k</span>
+<span class="text-tertiary-fixed-dim font-data-mono-sm font-bold text-xs bg-tertiary-container/15 px-1.5 py-0.5 rounded">87.6% MATCH</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-snug">
+              Phantom sell walls pulled within 300ms of price arrival in 8 out of 9 prior instances.
+            </p>
+<div class="text-[10px] text-outline font-data-mono-sm mt-1.5 flex justify-between">
+<span>Nautilus Historical L3 Log</span>
+<span>Nov 2024</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-3 py-1.5 bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 rounded text-label-code font-label-code text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xs" data-icon="search_insights">search_insights</span>
+          Inspect Full Knowledge Graph (42.8k)
+        </button>
+</div>
+</div>
+</main>
+<!-- ================= FOOTER DOCKED STATUS BAR (Shared Component Anchor) ================= -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest fixed bottom-0 left-0 w-full z-30 h-8 flex items-center justify-between px-space-lg border-t border-outline-variant/30 text-data-mono-sm font-data-mono-sm">
+<div class="flex items-center gap-3">
+<!-- Candlestick Mini Node -->
+<span class="flex items-center gap-1 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary candlestick-glow-node"></span>
+<span class="text-data-mono-sm font-data-mono-sm font-bold text-on-surface-variant dark:text-on-surface-variant">MASTERTRADER QUANT ENGINE • NAUTILUS CORE 2.4.0 • AU JURISDICTION COMPLIANT</span>
+</span>
+</div>
+<!-- Telemetry Links from JSON -->
+<div class="hidden sm:flex items-center gap-4 text-xs">
+<span class="text-primary dark:text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="speed">speed</span>
+        Kernel Status: 0.12ms
+      </span>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors" href="#">
+        EOFY Audit Trail
+      </a>
+<a class="text-secondary flex items-center gap-1" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+        MCP Server Active
+      </a>
+<span class="text-error font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="lock">lock</span>
+        Kill-Switch Armed
+      </span>
+</div>
+</footer>
+<!-- Inline Lightweight Micro-Interactions Script -->
+<script>
+    // Lightweight interactive pulse & mock update trigger
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('MASTERTRADER AI Agent Mesh Deliberation Screen Initialized.');
+      
+      // Auto-scroll the deliberation log to the latest turn
+      const feed = document.querySelector('.overflow-y-auto');
+      if (feed) {
+        feed.scrollTop = feed.scrollHeight;
+      }
+    });
+  </script>
+</body></html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASTERTRADER - Autonomous Command Cockpit &amp; Multi-Dashboard Terminal</title>
+<!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary": "#003826",
+            "on-secondary": "#002c72",
+            "on-secondary-fixed-variant": "#0040a0",
+            "surface-container-high": "#262a32",
+            "secondary-container": "#045fe3",
+            "primary-fixed-dim": "#24e1a4",
+            "primary-fixed": "#52febf",
+            "surface-bright": "#353941",
+            "tertiary": "#ffdfd8",
+            "error-container": "#93000a",
+            "primary-container": "#2be4a7",
+            "on-secondary-fixed": "#001847",
+            "on-primary-fixed-variant": "#005138",
+            "on-primary-container": "#006144",
+            "secondary-fixed-dim": "#b1c5ff",
+            "surface-dim": "#0f141a",
+            "surface-container-low": "#181c23",
+            "on-tertiary": "#630f00",
+            "outline": "#85948b",
+            "on-secondary-container": "#e2e7ff",
+            "secondary-fixed": "#dae2ff",
+            "background": "#07090D",
+            "secondary": "#3A7BFF",
+            "on-surface-variant": "#bacac0",
+            "surface-container": "#11151C",
+            "on-background": "#dfe2ec",
+            "inverse-on-surface": "#2d3038",
+            "surface-variant": "#31353d",
+            "tertiary-container": "#ffb9a9",
+            "tertiary-fixed-dim": "#ffb4a3",
+            "on-surface": "#EEF2F6",
+            "tertiary-fixed": "#ffdad2",
+            "on-primary-fixed": "#002115",
+            "on-error-container": "#ffdad6",
+            "on-error": "#690005",
+            "on-tertiary-fixed-variant": "#8c1900",
+            "on-tertiary-fixed": "#3d0600",
+            "surface-tint": "#24e1a4",
+            "inverse-primary": "#006c4c",
+            "error": "#FF6B4A",
+            "surface-container-highest": "#31353d",
+            "primary": "#2BE4A7",
+            "surface": "#07090D",
+            "outline-variant": "#3b4a42",
+            "surface-container-lowest": "#07090D",
+            "inverse-surface": "#dfe2ec",
+            "on-tertiary-container": "#a0270c"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xl": "2rem",
+            "gutter-desktop": "1rem",
+            "margin-desktop": "1.5rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.25rem",
+            "space-xs": "0.25rem",
+            "space-md": "0.75rem",
+            "gutter": "0.75rem",
+            "margin": "1rem"
+          },
+          fontFamily: {
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "data-mono-sm": ["JetBrains Mono", "monospace"],
+            "data-mono-md": ["JetBrains Mono", "monospace"],
+            "label-code": ["JetBrains Mono", "monospace"],
+            "headline-sm": ["Space Grotesk", "sans-serif"],
+            "data-mono-lg": ["JetBrains Mono", "monospace"],
+            "body-md": ["Space Grotesk", "sans-serif"],
+            "label-caps": ["Space Grotesk", "sans-serif"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "body-lg": ["Space Grotesk", "sans-serif"],
+            "display-lg": ["Space Grotesk", "sans-serif"],
+            "display-lg-mobile": ["Space Grotesk", "sans-serif"],
+            "headline-lg-mobile": ["Space Grotesk", "sans-serif"],
+            "body-sm": ["Space Grotesk", "sans-serif"]
+          },
+          fontSize: {
+            "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
+            "data-mono-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            "data-mono-md": ["14px", { lineHeight: "20px", fontWeight: "500" }],
+            "label-code": ["11px", { lineHeight: "14px", letterSpacing: "0.06em", fontWeight: "500" }],
+            "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "500" }],
+            "data-mono-lg": ["20px", { lineHeight: "26px", letterSpacing: "-0.02em", fontWeight: "600" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "label-caps": ["10px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "700" }],
+            "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.03em", fontWeight: "700" }],
+            "display-lg-mobile": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Precision Terminal & Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07090D;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1C2027;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2BE4A7;
+    }
+
+    .pulse-glow-mint {
+      box-shadow: 0 0 10px rgba(43, 228, 167, 0.45);
+    }
+    .pulse-glow-error {
+      box-shadow: 0 0 12px rgba(255, 107, 74, 0.5);
+    }
+
+    /* Grid layout simulation */
+    .quant-bg-grid {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(238, 242, 246, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(238, 242, 246, 0.02) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col quant-bg-grid selection:bg-primary selection:text-on-primary">
+<!-- TOP APP BAR -->
+<header class="flex justify-between items-center w-full px-space-lg h-14 max-w-full border-b border-outline-variant/30 backdrop-blur-md bg-surface-container-lowest sticky top-0 z-50">
+<div class="flex items-center gap-space-lg">
+<!-- Signal M Candlestick Mark + Wordmark -->
+<a class="flex items-center gap-2 group" href="#">
+<svg class="w-7 h-7 transform transition-transform group-hover:scale-105" fill="none" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Candlestick (Cobalt) -->
+<line stroke="#3A7BFF" stroke-linecap="round" stroke-width="2" x1="10" x2="10" y1="4" y2="36"></line>
+<rect fill="#3A7BFF" height="18" rx="1.5" width="6" x="7" y="10"></rect>
+<!-- Right Candlestick (Mint) -->
+<line stroke="#2BE4A7" stroke-linecap="round" stroke-width="2" x1="30" x2="30" y1="4" y2="36"></line>
+<rect fill="#2BE4A7" height="20" rx="1.5" width="6" x="27" y="8"></rect>
+<!-- Connecting Price Vector Path -->
+<polyline fill="none" points="10,14 20,27 30,12" stroke="#2BE4A7" stroke-linejoin="round" stroke-width="2"></polyline>
+<!-- Signal Node in Dip -->
+<circle class="pulse-glow-mint" cx="20" cy="27" fill="#2BE4A7" r="3.5"></circle>
+</svg>
+<span class="text-headline-sm font-headline-sm tracking-tight font-bold text-on-surface flex items-center">
+          MASTER<span class="text-primary font-bold">TRADER</span>
+</span>
+</a>
+<!-- Divider -->
+<div class="h-5 w-[1px] bg-outline-variant/40 hidden md:block"></div>
+<!-- Autonomous State Indicator -->
+<div class="hidden lg:flex items-center gap-2 bg-surface-container-low px-2.5 py-1 rounded border border-outline-variant/20">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary -ml-2.5"></span>
+<span class="text-label-code font-label-code text-primary">AUTONOMOUS LIVE</span>
+<span class="text-label-code font-label-code text-on-surface-variant">• MCP SERVER 2.4 ONLINE</span>
+</div>
+<!-- Mode Selector Tabs -->
+<div class="hidden xl:flex items-center bg-surface-container-low p-0.5 rounded border border-outline-variant/30 text-label-code font-label-code">
+<button class="px-2 py-0.5 rounded bg-primary text-on-primary font-semibold">LIVE</button>
+<button class="px-2 py-0.5 text-on-surface-variant hover:text-on-surface">PAPER</button>
+<button class="px-2 py-0.5 text-on-surface-variant hover:text-on-surface">BACKTEST</button>
+<button class="px-2 py-0.5 text-on-surface-variant hover:text-on-surface">MONTE CARLO</button>
+</div>
+</div>
+<!-- Center Navigation Links (Predictive JSON Mapping) -->
+<nav class="hidden 2xl:flex items-center gap-6 text-label-code font-label-code">
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold" href="#">Matrix</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Agents</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Execution</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Audit</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Vetting</a>
+</nav>
+<!-- Trailing Actions & Risk Override -->
+<div class="flex items-center gap-space-md">
+<!-- Latency & AU Tax Engine Status -->
+<div class="hidden sm:flex flex-col text-right">
+<span class="text-label-code font-label-code text-primary">0.12ms <span class="text-on-surface-variant">NAUTILUS</span></span>
+<span class="text-label-code font-label-code text-secondary font-semibold">AU TAX: ATO-SYNCED</span>
+</div>
+<!-- Hardware Profile Avatar -->
+<div class="relative hidden sm:block">
+<button class="w-8 h-8 rounded border border-secondary/40 flex items-center justify-center bg-surface-container-high text-secondary hover:border-secondary transition-colors" title="Chief Risk Officer Master Key">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</button>
+<span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary border border-background"></span>
+</div>
+<!-- Live Engine Secondary Action -->
+<button class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-secondary/15 border border-secondary/40 text-secondary hover:bg-secondary hover:text-on-surface rounded text-label-code font-label-code transition-all">
+<span class="material-symbols-outlined text-[16px]">sensors</span>
+<span>Live Engine</span>
+</button>
+<!-- Emergency Halt Kill Switch Trigger -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-error/15 border border-error/50 text-error hover:bg-error hover:text-background rounded font-headline-sm text-label-code font-label-code tracking-wider uppercase font-bold transition-all active:scale-95 pulse-glow-error">
+<span class="material-symbols-outlined text-[16px]">e911_emergency</span>
+<span>Emergency Halt</span>
+</button>
+</div>
+</header>
+<!-- 10-DASHBOARD MATRIX TAB STRIP (HORIZONTALLY SCROLLABLE NAVIGATION) -->
+<div class="w-full bg-surface-container-low border-b border-outline-variant/30 px-space-lg flex items-center overflow-x-auto no-scrollbar py-1">
+<div class="flex items-center gap-1 min-w-max text-label-code font-label-code">
+<!-- 1. Cockpit & Execution (ACTIVE) -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high text-primary border-b-2 border-primary font-semibold">
+<span class="material-symbols-outlined text-[15px]">grid_view</span>
+<span>1. Cockpit &amp; Execution</span>
+</button>
+<!-- 2. AI Multi-Agent Debate -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">psychology</span>
+<span>2. Multi-Agent Debate &amp; Consensus</span>
+<span class="px-1 py-0.2 rounded bg-primary/20 text-primary text-[9px] font-bold">4 LIVE</span>
+</button>
+<!-- 3. Cross-Asset Terminal -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">candlestick_chart</span>
+<span>3. Cross-Asset Terminal</span>
+</button>
+<!-- 4. Strategy Lab -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">science</span>
+<span>4. Strategy Lab &amp; NautilusTrader</span>
+</button>
+<!-- 5. Risk Manager -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">security</span>
+<span>5. Risk Manager &amp; Dead-Man's Switch</span>
+</button>
+<!-- 6. Market Making & Hummingbot -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">stacked_bar_chart</span>
+<span>6. Market Making (Hummingbot)</span>
+</button>
+<!-- 7. Free Data Pipeline -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">stream</span>
+<span>7. Free Data Pipeline &amp; Quality</span>
+</button>
+<!-- 8. Social Ingest & Sentiment -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">forum</span>
+<span>8. Social Sentiment (TG/Discord/BSky)</span>
+</button>
+<!-- 9. Vetted Launch Queue -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">radar</span>
+<span>9. Airdrop &amp; Launch Vetting</span>
+</button>
+<!-- 10. Australian EOFY Journal -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[15px]">receipt_long</span>
+<span>10. AU EOFY / PAYG Tax Ledger</span>
+</button>
+</div>
+</div>
+<!-- MAIN TELEMETRY CONTENT CANVAS (BENTO WORKSPACE) -->
+<main class="flex-1 p-space-md lg:p-space-lg flex flex-col gap-space-md max-w-[1920px] mx-auto w-full mb-10">
+<!-- KPI STRIP -->
+<section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-space-sm">
+<!-- KPI 1: Net Liquidity -->
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/30 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Portfolio Net Liquidity</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">account_balance_wallet</span>
+</div>
+<div class="mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-on-surface font-semibold tracking-tight">$1,482,910.42</span>
+<span class="text-label-code font-label-code text-on-surface-variant ml-1">AUD</span>
+</div>
+<div class="flex items-center gap-1 mt-1 text-label-code font-label-code text-primary">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>+$38,419.20</span>
+<span class="text-on-surface-variant">(+2.66% 24h)</span>
+</div>
+</div>
+<!-- KPI 2: Sharpe Ratio -->
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/30 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Nautilus Sharpe Ratio</span>
+<span class="material-symbols-outlined text-primary text-[16px]">monitoring</span>
+</div>
+<div class="mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-primary font-bold">3.42</span>
+<span class="text-label-code font-label-code text-on-surface-variant ml-1.5">ANNUALISED</span>
+</div>
+<div class="text-label-code font-label-code text-on-surface-variant mt-1">
+          Sortino: <span class="text-on-surface">4.18</span> • Calmar: <span class="text-on-surface">2.89</span>
+</div>
+</div>
+<!-- KPI 3: Max Drawdown -->
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/30 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Max Intraday DD</span>
+<span class="material-symbols-outlined text-outline text-[16px]">vertical_align_bottom</span>
+</div>
+<div class="mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-on-surface font-semibold">1.18%</span>
+<span class="text-label-code font-label-code text-primary ml-1.5">SAFE &lt; 3.0%</span>
+</div>
+<div class="text-label-code font-label-code text-on-surface-variant mt-1">
+          Peak-to-Trough: <span class="text-error">-$17,498 AUD</span>
+</div>
+</div>
+<!-- KPI 4: Margin Utilisation -->
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/30 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Margin Utilisation</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">pie_chart</span>
+</div>
+<div class="mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-secondary font-semibold">14.2%</span>
+<span class="text-label-code font-label-code text-on-surface-variant ml-1.5">LEVERAGE 1.8x</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 14.2%;"></div>
+</div>
+</div>
+<!-- KPI 5: Free API Feeds & Rates -->
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/30 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Free Ingest Quota</span>
+<span class="material-symbols-outlined text-primary text-[16px]">data_thresholding</span>
+</div>
+<div class="mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-primary font-semibold">88.4%</span>
+<span class="text-label-code font-label-code text-on-surface-variant ml-1">REMAINING</span>
+</div>
+<div class="text-label-code font-label-code text-on-surface-variant mt-1">
+          Binance: 120/1200 • Yahoo: 42/2000
+        </div>
+</div>
+<!-- KPI 6: Australian EOFY Unsettled Provision -->
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/30 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">AU CGT Tax Provision</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">receipt</span>
+</div>
+<div class="mt-1">
+<span class="text-data-mono-lg font-data-mono-lg text-on-surface font-semibold">$9,604.80</span>
+<span class="text-label-code font-label-code text-on-surface-variant ml-1">AUD</span>
+</div>
+<div class="text-label-code font-label-code text-on-surface-variant mt-1">
+          FY24-25 Q3 • 50% CGT Discount Applied
+        </div>
+</div>
+</section>
+<!-- CORE BENTO WORKSPACE GRID (24 Fractional Columns equivalent) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md">
+<!-- LEFT COLUMN: MULTI-AGENT DEBATE & DELIBERATION CONSENSUS (4 COLS) -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- Multi-Agent Consensus Matrix Tile -->
+<div class="bg-surface-container rounded border border-outline-variant/30 flex flex-col h-full">
+<!-- Tile Header -->
+<div class="h-8 bg-surface-container-low px-space-md border-b border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-label-caps font-label-caps uppercase text-on-surface font-bold tracking-wider">AI Multi-Agent Consensus Mesh</span>
+</div>
+<div class="flex items-center gap-1 text-label-code font-label-code text-primary">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>Consensus: 88.5% Bullish</span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm flex-1">
+<!-- Agent 1: FinRobot Fundamentalist -->
+<div class="bg-surface-container-low p-space-sm rounded border border-outline-variant/20 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-label-code font-label-code font-bold text-on-surface">FinRobot Fundamentalist</span>
+</div>
+<span class="text-label-code font-label-code text-primary bg-primary/10 px-1.5 py-0.5 rounded">Bullish (84/100)</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-tight">
+                "Hashrate all-time high + institutional custody inflows show zero spot distribution. Macro discount factor is minimal. Recommend spot accumulation."
+              </p>
+<div class="flex items-center justify-between text-label-code font-label-code text-on-surface-variant text-[10px] mt-1 pt-1 border-t border-outline-variant/10">
+<span>Model: Llama-3-Quant-70B</span>
+<span>Latency: 82ms</span>
+</div>
+</div>
+<!-- Agent 2: Nautilus Scalper -->
+<div class="bg-surface-container-low p-space-sm rounded border border-outline-variant/20 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-label-code font-label-code font-bold text-on-surface">Nautilus Micro-Scalper</span>
+</div>
+<span class="text-label-code font-label-code text-primary bg-primary/10 px-1.5 py-0.5 rounded">Entry Triggered</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-tight">
+                "Orderbook imbalance at $67,380 ask depth evaporated. Bid delta +1,420 BTC. Microsecond volume breakout confirmed on tick stream."
+              </p>
+<div class="flex items-center justify-between text-label-code font-label-code text-on-surface-variant text-[10px] mt-1 pt-1 border-t border-outline-variant/10">
+<span>Rust Engine Core v2.4</span>
+<span>Latency: 0.08ms</span>
+</div>
+</div>
+<!-- Agent 3: Macro Event Sentinel -->
+<div class="bg-surface-container-low p-space-sm rounded border border-outline-variant/20 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-label-code font-label-code font-bold text-on-surface">Macro Event Sentinel</span>
+</div>
+<span class="text-label-code font-label-code text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">Neutral / Clear</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-tight">
+                "US Core PCE factored. Australian RBA rate statement dovish. No critical tier-1 calendar alerts within next 240 minutes."
+              </p>
+<div class="flex items-center justify-between text-label-code font-label-code text-on-surface-variant text-[10px] mt-1 pt-1 border-t border-outline-variant/10">
+<span>Feed: TradingEconomics &amp; FedWire</span>
+<span>Latency: 310ms</span>
+</div>
+</div>
+<!-- Agent 4: Autonomous Risk Governor -->
+<div class="bg-surface-container-low p-space-sm rounded border border-primary/40 bg-primary/5 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-primary">verified</span>
+<span class="text-label-code font-label-code font-bold text-primary">Autonomous Risk Governor</span>
+</div>
+<span class="text-label-code font-label-code text-on-primary bg-primary px-1.5 py-0.5 rounded font-bold">ORDER AUTHORISED</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface leading-tight">
+                "Monte Carlo VaR 99% check: $1,420 AUD max excursion. Sizing approved: 0.85 BTC (~$57,280 USD). Trailing stop set at $66,910."
+              </p>
+<div class="flex items-center justify-between text-label-code font-label-code text-on-surface-variant text-[10px] mt-1 pt-1 border-t border-outline-variant/20">
+<span>Dead-Man's Timer: 14.8s</span>
+<span class="text-primary font-semibold">Slip Limit: 0.02%</span>
+</div>
+</div>
+<!-- Consensus Summary Trigger Action -->
+<div class="mt-auto pt-2 flex items-center gap-2">
+<button class="flex-1 py-2 px-3 bg-primary text-on-primary font-headline-sm text-body-md font-semibold rounded flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all pulse-glow-mint">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span>Authorize Mesh Vector (0.85 BTC)</span>
+</button>
+<button class="py-2 px-3 bg-surface-container-high border border-outline-variant/40 text-on-surface hover:text-primary rounded text-label-code font-label-code">
+                Simulate
+              </button>
+</div>
+</div>
+</div>
+</div>
+<!-- CENTER-RIGHT COLUMN: REALTIME EXECUTION CANDLESTICK CANVAS & ORDER BLOTTER (8 COLS) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<!-- Candlestick Chart Window with Candlestick M Telemetry Overlay -->
+<div class="bg-surface-container rounded border border-outline-variant/30 flex flex-col">
+<!-- Chart Header Toolbar -->
+<div class="h-10 bg-surface-container-low px-space-md border-b border-outline-variant/20 flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface">BTC/USDT</span>
+<span class="text-data-mono-md font-data-mono-md text-primary font-bold">$67,412.50</span>
+<span class="text-label-code font-label-code text-primary bg-primary/10 px-1 py-0.2 rounded">+2.84%</span>
+</div>
+<div class="hidden sm:flex items-center gap-1 text-label-code font-label-code text-on-surface-variant">
+<span>24h H: 67,890.00</span>
+<span>•</span>
+<span>24h L: 65,410.20</span>
+<span>•</span>
+<span>Vol: 28,491.4 BTC</span>
+</div>
+</div>
+<!-- Micro Controls & Timeframes -->
+<div class="flex items-center gap-1 text-label-code font-label-code">
+<button class="px-2 py-0.5 rounded text-on-surface-variant hover:text-on-surface">1s</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-semibold">1m</button>
+<button class="px-2 py-0.5 rounded text-on-surface-variant hover:text-on-surface">5m</button>
+<button class="px-2 py-0.5 rounded text-on-surface-variant hover:text-on-surface">15m</button>
+<button class="px-2 py-0.5 rounded text-on-surface-variant hover:text-on-surface">1H</button>
+<div class="w-[1px] h-3 bg-outline-variant/40 mx-1"></div>
+<button class="text-on-surface-variant hover:text-on-surface" title="Chart Settings">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface" title="Fullscreen">
+<span class="material-symbols-outlined text-[16px]">fullscreen</span>
+</button>
+</div>
+</div>
+<!-- Synthetic High-Precision Candlestick & Quant Execution Canvas -->
+<div class="relative h-72 sm:h-80 w-full bg-surface-container-lowest p-space-md flex flex-col justify-between overflow-hidden">
+<!-- Grid Lines and Y-Axis Prices -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none p-space-md opacity-25">
+<div class="border-b border-outline-variant/30 w-full flex justify-end"><span class="text-label-code font-label-code text-on-surface-variant">67,800.00</span></div>
+<div class="border-b border-outline-variant/30 w-full flex justify-end"><span class="text-label-code font-label-code text-on-surface-variant">67,600.00</span></div>
+<div class="border-b border-outline-variant/30 w-full flex justify-end"><span class="text-label-code font-label-code text-on-surface-variant">67,400.00</span></div>
+<div class="border-b border-outline-variant/30 w-full flex justify-end"><span class="text-label-code font-label-code text-on-surface-variant">67,200.00</span></div>
+<div class="border-b border-outline-variant/30 w-full flex justify-end"><span class="text-label-code font-label-code text-on-surface-variant">67,000.00</span></div>
+</div>
+<!-- Stylised MasterTrader Candlestick Telemetry Visualisation -->
+<div class="relative w-full h-full flex items-end justify-between gap-1 sm:gap-2 pt-6 pb-2 z-10 px-4">
+<!-- Bar 1 (Red) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<div class="w-[1px] h-10 bg-error/70"></div>
+<div class="w-2.5 sm:w-3.5 h-16 bg-error rounded-sm"></div>
+<div class="w-[1px] h-6 bg-error/70"></div>
+</div>
+<!-- Bar 2 (Red) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<div class="w-[1px] h-6 bg-error/70"></div>
+<div class="w-2.5 sm:w-3.5 h-12 bg-error rounded-sm"></div>
+<div class="w-[1px] h-8 bg-error/70"></div>
+</div>
+<!-- Bar 3 (Green) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<div class="w-[1px] h-12 bg-primary/70"></div>
+<div class="w-2.5 sm:w-3.5 h-14 bg-primary rounded-sm"></div>
+<div class="w-[1px] h-6 bg-primary/70"></div>
+</div>
+<!-- Bar 4 (Green) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<div class="w-[1px] h-8 bg-primary/70"></div>
+<div class="w-2.5 sm:w-3.5 h-20 bg-primary rounded-sm"></div>
+<div class="w-[1px] h-10 bg-primary/70"></div>
+</div>
+<!-- Bar 5: THE LEFT CANDLESTICK OF SIGNAL M (COBALT BLUE) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end relative">
+<!-- Highlight Indicator -->
+<div class="absolute -top-3 text-[9px] font-label-code text-secondary font-bold whitespace-nowrap hidden sm:block">UPRIGHT 1</div>
+<div class="w-[2px] h-14 bg-secondary shadow-[0_0_8px_#3A7BFF]"></div>
+<div class="w-3.5 sm:w-4.5 h-28 bg-secondary rounded-sm border border-secondary shadow-[0_0_10px_rgba(58,123,255,0.4)]"></div>
+<div class="w-[2px] h-10 bg-secondary shadow-[0_0_8px_#3A7BFF]"></div>
+</div>
+<!-- Bar 6: PRICE PATH VALLEY (DATA NODE DIP) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end relative">
+<!-- Glowing Decision Node in center dip -->
+<div class="absolute top-28 w-4 h-4 rounded-full bg-primary border-2 border-background pulse-glow-mint flex items-center justify-center z-20">
+<div class="w-1.5 h-1.5 rounded-full bg-background"></div>
+</div>
+<div class="w-[1px] h-12 bg-outline-variant"></div>
+<div class="w-2.5 sm:w-3.5 h-10 bg-surface-container-high border border-primary/40 rounded-sm"></div>
+<div class="w-[1px] h-8 bg-outline-variant"></div>
+</div>
+<!-- Bar 7: THE RIGHT CANDLESTICK OF SIGNAL M (SIGNAL MINT RECOVERY) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end relative">
+<!-- Highlight Indicator -->
+<div class="absolute -top-3 text-[9px] font-label-code text-primary font-bold whitespace-nowrap hidden sm:block">UPRIGHT 2</div>
+<div class="w-[2px] h-16 bg-primary shadow-[0_0_8px_#2BE4A7]"></div>
+<div class="w-3.5 sm:w-4.5 h-36 bg-primary rounded-sm border border-primary shadow-[0_0_12px_rgba(43,228,167,0.5)]"></div>
+<div class="w-[2px] h-12 bg-primary shadow-[0_0_8px_#2BE4A7]"></div>
+</div>
+<!-- Bar 8 (Green Continuation) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end group">
+<div class="w-[1px] h-8 bg-primary/70"></div>
+<div class="w-2.5 sm:w-3.5 h-24 bg-primary rounded-sm"></div>
+<div class="w-[1px] h-6 bg-primary/70"></div>
+</div>
+<!-- Bar 9 (Current Tick Ingest) -->
+<div class="flex-1 flex flex-col items-center h-full justify-end relative">
+<div class="absolute -top-1 w-2 h-2 rounded-full bg-primary animate-ping"></div>
+<div class="w-[1px] h-10 bg-primary"></div>
+<div class="w-2.5 sm:w-3.5 h-28 bg-primary/80 border border-primary rounded-sm"></div>
+<div class="w-[1px] h-4 bg-primary"></div>
+</div>
+</div>
+<!-- Floating Overlay: Order Execution Vector -->
+<div class="absolute top-12 left-10 bg-surface-container-high/90 border border-secondary/40 backdrop-blur-md p-2 rounded text-label-code font-label-code flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<div>
+<span class="text-on-surface font-semibold">LIMIT BUY FILLED</span>
+<span class="text-secondary ml-1.5">0.85 BTC @ $67,390.10</span>
+</div>
+<span class="text-on-surface-variant">Slip: 0.018%</span>
+</div>
+<!-- Chart Footer Metadata -->
+<div class="flex items-center justify-between text-label-code font-label-code text-on-surface-variant z-10 pt-2 border-t border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="text-primary font-semibold">SIGNAL M PATTERN CONFIRMED</span>
+<span>• Vol Spread: +18.4%</span>
+</div>
+<div>Free Feed: Binance Public WebSocket Tick (0.00ms delay)</div>
+</div>
+</div>
+</div>
+<!-- EXECUTION ORDER BLOTTER & ACTIVE ARBITRAGE LADDER -->
+<div class="bg-surface-container rounded border border-outline-variant/30 flex flex-col">
+<!-- Blotter Header -->
+<div class="h-8 bg-surface-container-low px-space-md border-b border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-label-caps font-label-caps uppercase text-on-surface font-bold">Autonomous Execution Blotter</span>
+<span class="text-label-code font-label-code text-primary bg-primary/10 px-1 rounded">3 Active Fill Orders</span>
+</div>
+<div class="flex items-center gap-2 text-label-code font-label-code">
+<span class="text-on-surface-variant">Funding Arb:</span>
+<span class="text-primary font-bold">+11.4% APR</span>
+</div>
+</div>
+<!-- Table of Realtime Orders -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-label-code font-label-code">
+<thead>
+<tr class="border-b border-outline-variant/20 text-on-surface-variant text-[10px]">
+<th class="py-1.5 px-3">TIMESTAMP</th>
+<th class="py-1.5 px-3">INSTRUMENT</th>
+<th class="py-1.5 px-3">SIDE</th>
+<th class="py-1.5 px-3 text-right">SIZE</th>
+<th class="py-1.5 px-3 text-right">EXEC PRICE</th>
+<th class="py-1.5 px-3 text-right">SLIPPAGE</th>
+<th class="py-1.5 px-3">STRATEGY / AGENT</th>
+<th class="py-1.5 px-3 text-center">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10 text-data-mono-sm font-data-mono-sm">
+<!-- Order 1 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="py-1.5 px-3 text-on-surface-variant text-label-code font-label-code">14:28:09.112</td>
+<td class="py-1.5 px-3 font-semibold text-on-surface">BTC/USDT</td>
+<td class="py-1.5 px-3 text-primary font-bold">BUY</td>
+<td class="py-1.5 px-3 text-right">0.8500 BTC</td>
+<td class="py-1.5 px-3 text-right font-medium">$67,390.10</td>
+<td class="py-1.5 px-3 text-right text-primary">+0.018%</td>
+<td class="py-1.5 px-3 text-on-surface-variant text-label-code font-label-code">Nautilus-Mesh-Scalp</td>
+<td class="py-1.5 px-3 text-center">
+<button class="text-error hover:text-error/80 text-label-code font-label-code underline">Cancel</button>
+</td>
+</tr>
+<!-- Order 2 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="py-1.5 px-3 text-on-surface-variant text-label-code font-label-code">14:27:54.408</td>
+<td class="py-1.5 px-3 font-semibold text-on-surface">ETH/USDT</td>
+<td class="py-1.5 px-3 text-secondary font-bold">SELL (HEDGE)</td>
+<td class="py-1.5 px-3 text-right">12.40 ETH</td>
+<td class="py-1.5 px-3 text-right font-medium">$3,541.80</td>
+<td class="py-1.5 px-3 text-right text-on-surface-variant">0.000%</td>
+<td class="py-1.5 px-3 text-on-surface-variant text-label-code font-label-code">Delta-Neutral-Arb</td>
+<td class="py-1.5 px-3 text-center">
+<span class="text-primary text-label-code font-label-code">FILLED</span>
+</td>
+</tr>
+<!-- Order 3 -->
+<tr class="hover:bg-surface-container-high/50 transition-colors">
+<td class="py-1.5 px-3 text-on-surface-variant text-label-code font-label-code">14:26:12.890</td>
+<td class="py-1.5 px-3 font-semibold text-on-surface">AUD/USD</td>
+<td class="py-1.5 px-3 text-primary font-bold">BUY</td>
+<td class="py-1.5 px-3 text-right">150,000 AUD</td>
+<td class="py-1.5 px-3 text-right font-medium">0.65824</td>
+<td class="py-1.5 px-3 text-right text-primary">-0.004%</td>
+<td class="py-1.5 px-3 text-on-surface-variant text-label-code font-label-code">Macro-FX-Sentry</td>
+<td class="py-1.5 px-3 text-center">
+<span class="text-primary text-label-code font-label-code">FILLED</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- LOWER SECTION: CROSS-ASSET RADAR & LIVE TELEMETRY INGEST CONSOLE -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Cross-Asset Multi-Watchlist (Crypto, Forex, Metals, Commodities) (7 COLS) -->
+<div class="lg:col-span-7 bg-surface-container rounded border border-outline-variant/30 flex flex-col">
+<div class="h-8 bg-surface-container-low px-space-md border-b border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-label-caps font-label-caps uppercase text-on-surface font-bold">Cross-Asset Radar &amp; Free Feed Liquidity</span>
+</div>
+<span class="text-label-code font-label-code text-on-surface-variant">Sources: Public WS / Yahoo / Free Tick</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-space-xs p-space-sm">
+<!-- Asset 1: BTC -->
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-code font-label-code font-bold text-on-surface">BTC/USDT</span>
+<span class="text-primary text-label-code font-label-code">+2.84%</span>
+</div>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-semibold mt-1">$67,412.50</span>
+<span class="text-[10px] text-on-surface-variant font-data-mono-sm">Vol: $48.2B • High Liq</span>
+</div>
+<!-- Asset 2: ETH -->
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-code font-label-code font-bold text-on-surface">ETH/USDT</span>
+<span class="text-primary text-label-code font-label-code">+1.92%</span>
+</div>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-semibold mt-1">$3,542.10</span>
+<span class="text-[10px] text-on-surface-variant font-data-mono-sm">Vol: $19.4B • Staked 31%</span>
+</div>
+<!-- Asset 3: Gold XAU/USD -->
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-code font-label-code font-bold text-on-surface">XAU/USD (Gold)</span>
+<span class="text-secondary text-label-code font-label-code">+0.48%</span>
+</div>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-semibold mt-1">$2,384.40</span>
+<span class="text-[10px] text-on-surface-variant font-data-mono-sm">Central Bank Squeeze</span>
+</div>
+<!-- Asset 4: AUD/USD -->
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-code font-label-code font-bold text-on-surface">AUD/USD</span>
+<span class="text-error text-label-code font-label-code">-0.12%</span>
+</div>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-semibold mt-1">0.6582</span>
+<span class="text-[10px] text-on-surface-variant font-data-mono-sm">RBA Neutral Stance</span>
+</div>
+<!-- Asset 5: Brent Crude Oil -->
+<div class="p-2 rounded bg-surface-container-low border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-code font-label-code font-bold text-on-surface">BRENT CRUDE</span>
+<span class="text-primary text-label-code font-label-code">+0.75%</span>
+</div>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-semibold mt-1">$82.15</span>
+<span class="text-[10px] text-on-surface-variant font-data-mono-sm">OPEC+ Quota Freeze</span>
+</div>
+<!-- Asset 6: Vetted Launch (Solana Ecosystem) -->
+<div class="p-2 rounded bg-surface-container-low border border-primary/40 flex flex-col">
+<div class="flex items-center justify-between">
+<span class="text-label-code font-label-code font-bold text-primary">VETTED: $DEPIN-SOL</span>
+<span class="text-label-code font-label-code text-on-primary bg-primary px-1 rounded font-bold">AUDIT A+</span>
+</div>
+<span class="text-data-mono-md font-data-mono-md text-on-surface font-semibold mt-1">$1.428</span>
+<span class="text-[10px] text-primary font-data-mono-sm">Launch Queue #1 Approved</span>
+</div>
+</div>
+</div>
+<!-- Live Telemetry Free-Tier Ingest Console (5 COLS) -->
+<div class="lg:col-span-5 bg-surface-container rounded border border-outline-variant/30 flex flex-col">
+<div class="h-8 bg-surface-container-low px-space-md border-b border-outline-variant/20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span class="text-label-caps font-label-caps uppercase text-on-surface font-bold">Telemetry Ingest Stream</span>
+</div>
+<span class="text-label-code font-label-code text-primary">Zero Dropped Frames</span>
+</div>
+<div class="p-space-sm flex-1 flex flex-col gap-1 text-label-code font-label-code bg-surface-container-lowest font-mono text-[11px] overflow-y-auto max-h-40">
+<div class="text-on-surface-variant flex gap-2">
+<span class="text-outline">14:28:10.012</span>
+<span class="text-secondary">[INGEST-BINANCE]</span>
+<span class="text-on-surface">BookTicker diff packet 849,201 parsed (0.04ms)</span>
+</div>
+<div class="text-on-surface-variant flex gap-2">
+<span class="text-outline">14:28:09.980</span>
+<span class="text-primary">[SENTIMENT-BLUESKY]</span>
+<span class="text-on-surface">Firehose index 'bitcoin' velocity +320 posts/min</span>
+</div>
+<div class="text-on-surface-variant flex gap-2">
+<span class="text-outline">14:28:09.840</span>
+<span class="text-primary">[NAUTILUS-ACTOR]</span>
+<span class="text-on-surface">Order #N-8841 filled on exchange edge. Zero drift.</span>
+</div>
+<div class="text-on-surface-variant flex gap-2">
+<span class="text-outline">14:28:09.610</span>
+<span class="text-secondary">[AU-EOFY-LEDGER]</span>
+<span class="text-on-surface">Lot #819 tagged for Capital Gains Tax (FIFO method)</span>
+</div>
+<div class="text-on-surface-variant flex gap-2">
+<span class="text-outline">14:28:09.200</span>
+<span class="text-primary">[DATA-QUALITY]</span>
+<span class="text-primary">100% feed coherence across 8 free API sources.</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FOOTER (SHARED COMPONENT JSON COMPLIANT) -->
+<footer class="fixed bottom-0 left-0 w-full z-30 h-8 flex items-center justify-between px-space-lg border-t border-outline-variant/30 text-data-mono-sm font-data-mono-sm bg-surface-container-lowest">
+<div class="text-data-mono-sm font-data-mono-sm font-bold text-on-surface-variant truncate">
+      MASTERTRADER QUANT ENGINE • NAUTILUS CORE 2.4.0 • AU JURISDICTION COMPLIANT
+    </div>
+<div class="flex items-center gap-space-md text-label-code font-label-code">
+<span class="text-primary hover:text-primary transition-colors flex items-center gap-1 cursor-pointer">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        Kernel Status: 0.12ms
+      </span>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hidden md:inline" href="#">EOFY Audit Trail</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hidden sm:inline" href="#">MCP Server Active</a>
+<span class="text-error font-semibold flex items-center gap-1 cursor-pointer">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+        Kill-Switch Armed
+      </span>
+</div>
+</footer>
+</body></html>
