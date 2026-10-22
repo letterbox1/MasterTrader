@@ -1487,7 +1487,7 @@ def cmd_detect(a):
     print(f"detected: {t}" + (f"   (config says: {cfg_t})" if cfg_t and cfg_t != t else ""))
     for sg in signals:
         print(f"  - {sg}")
-    print("research agendas: skills/pm-research/references/research-agendas.md (section for this type)")
+    print("research agendas: pm-research skill, references/research-agendas.md (section for this type)")
 
 
 def cmd_init(a):
