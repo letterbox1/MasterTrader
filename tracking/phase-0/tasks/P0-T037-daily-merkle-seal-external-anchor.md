@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T031, P0-T022, P0-T006, P0-T002]
-requirements: [R0.07]
+depends_on: [P0-T031]
+requirements: [R0.07, R0.N7]
 roadmap_todos: [T0.23]
 modules: [M17]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server, minio]
 branch: p0/P0-T037-daily-merkle-seal-external-anchor
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T037 · Implement the daily Merkle seal with external anchoring
@@ -39,8 +44,8 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 - [Roadmap P0 R0.07](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Daily seal)
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
-- Related: P0-T006 (bucket), P0-T002 (bot), P0-T038 (consumes seals)
-- Depends on: P0-T031, P0-T022, P0-T006, P0-T002
+- Related: P0-T006 (real bucket), P0-T002 (real bot), P0-T038 (consumes seals), P0-T063 (soak: first real anchors and witnesses)
+- Depends on: P0-T031. Build first, keys last: built and tested against MinIO with Object Lock and a mocked Telegram Bot API (no real keys); the real bucket and bot are exercised in the soak (P0-T063).
 
 ## Requirements
 
@@ -74,13 +79,13 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 - Given a row for yesterday arrives at 00:20 (after sealing), then it is flagged `late_rows` in today's seal and verify does not report a mismatch.
 
 ### Stress / failure injection
-- Seal 5 M rows/day for one table in < 2 min on the host; inserts into `audit.command` during sealing keep p99 < 5 ms (provisional, P0-B004).
+- Seal 5 M rows/day for one table in < 2 min; inserts into `audit.command` during sealing keep p99 < 5 ms (SLO, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B004; gated in P0-T066).
 
 ## Acceptance criteria
 
 - [ ] Daily seal rows for every registered WORM table
 - [ ] Anchor object present with compliance retention and recorded version id
-- [ ] Telegram witness received for a real day (log)
+- [ ] Telegram witness delivered to the mocked Bot API with the message id stored (the real-day witness is checked in P0-T063)
 - [ ] Partial-anchor path alerts and retries (tested)
 - [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
 
@@ -113,3 +118,4 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: MinIO + mocked Bot API, live anchors/witness move to P0-T063; seals never block inserts (R0.N7); run fields added)

@@ -10,22 +10,27 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P0-T003, P0-T022]
+depends_on: [P0-T003, P0-T022, P0-T031, P0-T061]
 requirements: [R0.07, R0.N1]
 roadmap_todos: [T0.23]
 modules: [M17]
 dashboards: []
+tools: [sops, age, age-plugin-yubikey, openssl, psql]
+mcp: []
+env: []
+services: [postgres, yubikey]
 branch: p0/P0-T013-worm-owner-offline-credential
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T013 · Generate the offline worm_owner credential
@@ -40,13 +45,13 @@ The Postgres `worm_owner` password exists **only** in an offline sops file encry
 - [03 §4 data model](../../../docs/03-build-spec.md#4-data-model-overview)
 - [07 §2 secrets](../../../docs/07-security-notes.md#2-secrets)
 - Related: P0-T029 (role + grants), P0-T061 (ceremony runbook)
-- Depends on: P0-T003, P0-T022
-- Unblocks: P0-T029 WORM migrations
+- Depends on: P0-T003 (offline identity), P0-T022 (secrets layout), P0-T031 (the WORM migrations to run), P0-T061 (the ceremony runbook)
+- Unblocks: production WORM migrations on the host, needed before the soak (P0-T063). P0-T029–P0-T031 are built and tested with a throwaway `worm_owner` password in CI/dev scratch DBs, so they don't wait for this task (build first, keys last)
 
 ## Requirements
 
 - Password: ≥ 32 random chars (`openssl rand -base64 36`), generated on your laptop, not the host.
-- Stored in `offline/worm_owner.sops.yaml` encrypted **only** to the `mt-offline` age recipient; kept on removable media + a copy in your password manager's secure notes; never copied into `/etc/mastertrader/secrets.sops.yaml`.
+- Stored in `offline/worm_owner.sops.yaml` encrypted **only** to the `mt-offline` age recipient; kept on removable media + a copy in your password manager's secure notes; never copied into `~/.config/mastertrader/secrets.sops.yaml`.
 - Ceremony (documented in P0-T061): plug key → `sops exec-env offline/worm_owner.sops.yaml 'uv run mt-migrate --worm'` → unplug; the password lives only in that process's environment.
 - Rotation: on any suspicion and yearly; rotation is itself a ceremony (`ALTER ROLE` from the Postgres console).
 
@@ -54,13 +59,13 @@ The Postgres `worm_owner` password exists **only** in an offline sops file encry
 
 - [ ] Generate the password on your laptop and create the offline sops file with the `mt-offline` recipient.
 - [ ] Copy the file to two removable media (one off-site with the spare YubiKey) and add the password to the password manager.
-- [ ] During P0-T029 review, set the role password from the Postgres console (`\password worm_owner`) with the key plugged in.
+- [ ] Before the first production WORM migration, set the role password from the Postgres console (`\password worm_owner`) with the key plugged in.
 - [ ] Run the first WORM migration via the ceremony and log the date.
 
 ## Verification
 
 ### Tests
-- Confirmation: on the host, a search of `/etc/mastertrader` and running process environments finds no worm_owner password after the ceremony; P0-T055 asserts app roles can't `SET ROLE worm_owner`.
+- Confirmation: on the host, a search of `~/.config/mastertrader`, `/run/secrets` and running process environments finds no worm_owner password after the ceremony; P0-T055 asserts app roles can't `SET ROLE worm_owner`.
 
 ### Scenarios
 - Given the host is compromised, when an attacker reads tmpfs secrets, then they do not obtain `worm_owner` credentials.
@@ -98,3 +103,4 @@ The Postgres `worm_owner` password exists **only** in an offline sops file encry
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys-last: no longer blocks P0-T029 (CI uses a throwaway password); depends on the migrations + ceremony runbook; secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)

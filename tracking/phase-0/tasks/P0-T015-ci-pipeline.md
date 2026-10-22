@@ -15,17 +15,22 @@ requirements: [R0.01, R0.N5, R0.N1]
 roadmap_todos: [T0.20, T0.65]
 modules: [ops]
 dashboards: []
+tools: [git, uv, python>=3.12, gh, actionlint]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T015-ci-pipeline
 pr: ""
 doc_sync: [README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T015 · Set up the CI pipeline (lint, types, tests, audit, secrets)
@@ -107,3 +112,4 @@ GitHub Actions runs on every PR and on `main`: `uv sync --locked`, ruff, mypy, p
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; CI stays keyless; run fields added)

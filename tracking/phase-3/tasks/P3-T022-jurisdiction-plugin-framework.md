@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T019]
+depends_on: [P3-T008]
 requirements: [R3.06, R3.12, R3.09]
 roadmap_todos: [T3.24, T3.26]
 modules: [M18]
 dashboards: []
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T022-jurisdiction-plugin-framework
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T022 · Jurisdiction plugin framework with dated rule versions and report provenance
@@ -39,19 +44,21 @@ The `JurisdictionRules` protocol from 09 is implemented with a registry of dated
 - Roadmap: [R3.06, R3.09, R3.12, T3.24, T3.26](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - Interface: [09 jurisdiction plugin interface](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · [09 quality](../../../docs/09-journal-and-tax.md#quality) (rule version + FX source on every report)
 - Reproducibility: [D15 acceptance 2](../../../docs/ui/dashboards/D15-tax.md) (same inputs → same hash)
+- `fx_policy`: RBA F11 for AUD (last published business day; non-F11 via USD) and the crypto valuation hierarchy ([16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal), P3-T011)
+- Related: P3-T019 (lot engine supplies `lot_policy` inputs; the framework only defines the types, so it can start once the event model exists)
 
 ## Requirements
 
 - Protocol fields/methods exactly as 09: `code`, `valid_from`, `valid_to`, `home_currency`, `tax_year`, `is_resident`, `classify`, `lot_policy`, `fx_policy`, `compute`, `on_residency_change`, `reports`, `compliance_flags`.
 - Registry: plugins discovered via entry points `mt_journal.jurisdictions`; selection by (residency period, FY, feature flags); `AU_2026` default for AU through FY2026-27.
-- `TaxComputation` result (msgspec): inputs manifest (event ids + computation ids + FX rate ids), rule version (`AU_2026@<semver>+<git sha>`), FX/price sources summary, regime, totals, line items; canonical JSON → sha256 `result_hash`.
+- `TaxComputation` result (msgspec): inputs manifest (event ids + computation ids + FX rate ids), rule version (`AU_2026@<semver>+<git sha>`), FX/price sources and valuation-method summary, regime, totals, line items; canonical JSON → sha256 `result_hash`.
 - Persist each computation to `journal.tax_report` (WORM) with `rule_version`, `fx_sources`, `inputs_hash`, `result_hash`, `generated_by` (command id).
 - Determinism: no wall-clock in computations; `as_of` explicit; Decimal context fixed.
 
 ## ToDo
 
 - [ ] Implement `packages/mt_journal/rules/base.py` (Protocol, TaxYear, Treatment enum, TaxComputation)
-- [ ] Registry + selection in `rules/registry.py`; feature flags in `config/journal/flags.yaml` (`AU_2027_REFORM: false`, `GST_BAS_MODE: false`)
+- [ ] Registry + selection in `rules/registry.py`; feature flags in `config/journal/flags.yaml` (`AU_2027_REFORM: false`, `GST_BAS_MODE: false`) and tax settings in `config/journal/au_settings.yaml` (wash-sale window default 30 days, [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags)); every setting value used is recorded in the report provenance
 - [ ] Report provenance writer in `reports/provenance.py`
 - [ ] Tests; docs
 
@@ -105,3 +112,4 @@ The `JurisdictionRules` protocol from 09 is implemented with a registry of dated
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (fx_policy = RBA rule + 16 §4.1 valuation; settings recorded in provenance; depends_on trimmed to P3-T008 for parallel start; tools/services filled)

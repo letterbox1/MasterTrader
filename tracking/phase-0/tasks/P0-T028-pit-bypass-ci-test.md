@@ -15,17 +15,22 @@ requirements: [R0.04]
 roadmap_todos: [T0.60]
 modules: [mt_store]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p0/P0-T028-pit-bypass-ci-test
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T028 · Add the pit bypass test to CI
@@ -103,3 +108,4 @@ CI fails the build if any research-side module reads raw tables instead of `mt_s
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes (note: roadmap T0.28 is the LiteLLM callback, not this task); run fields added)

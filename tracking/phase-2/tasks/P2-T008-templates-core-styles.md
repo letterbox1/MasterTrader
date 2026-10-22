@@ -15,17 +15,22 @@ requirements: [R2.02, R2.03]
 roadmap_todos: [T2.21]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T008-templates-core-styles
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T008 · Strategy templates batch 1: core trading styles
@@ -48,6 +53,8 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 - Scalping: tick/L2 driven, flagged 'deep books only'; intraday: session-aware; breakout + mean reversion: P3 per 14 §3.
 - Every template fixes the exit plan at entry (stop, target, time stop) in the `OrderIntent`.
 - Params flagged `risk_increasing` where they raise size/leverage.
+- Each template declares its **horizon class** (`scalping` / `intraday` / `swing` / `position`), which picks the proposed defaults from [16](../../../docs/16-configuration-and-safety-model.md): decision deadline (1 s / 10 s / 5 min / 1 h, 16 §2.3), stale-data class (fast 2 s for scalping/intraday, slow 60 s for swing/position, 16 §2.2), HITL TTL (60 s intraday · 15 min swing · 4 h position) and `event_sensitive` (true for scalping/intraday, 16 §2.8). These are manifest proposals only; the effective values come from the layered config (P2-T069).
+- Template parameter defaults (e.g. vol target, ATR multiple) are defaults the user edits, never constants; Kelly is never stacked on vol targeting (14 §4).
 
 ## ToDo
 
@@ -67,6 +74,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 ### Scenarios
 - Given the trend template on BTCUSDT 4h, when price is below the slow MA, then no long entries are emitted.
 - Given the scalping template on an instrument without L2, when saved, then validation fails with `TimeframeUnavailable`.
+- Given the intraday template, when its manifest is generated, then it proposes decision deadline 10 s, stale class `fast` and `event_sensitive: true`, each linked to its 16 section.
 
 ### Stress / failure injection
 - Run all 7 templates over 1 year of 1m bars in CI nightly; no exceptions; runtime recorded.
@@ -106,3 +114,4 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (horizon class proposes 16 §2.2/§2.3/§2.8 defaults (deadline, stale class, TTL, event_sensitive))

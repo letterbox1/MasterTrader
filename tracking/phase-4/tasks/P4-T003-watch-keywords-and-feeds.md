@@ -15,17 +15,22 @@ requirements: [R4.01, R4.05]
 roadmap_todos: [T4.03]
 modules: [M2]
 dashboards: [D08]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p4/P4-T003-watch-keywords-and-feeds
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T003 · Provide watch keywords, cashtags and trusted feeds/sites
@@ -38,14 +43,15 @@ checkpoint: ""
 
 - Roadmap: [R4.01, R4.05](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.03](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) (feeds, RSS-Bridge for sites without feeds, Jetstream filtered on cashtags/keywords)
-- Cross-phase: P1 T1.01 universe/watchlist (reuse it as the starting cashtag list).
-- Unblocks: P4-T011 (RSS), P4-T012 (RSS-Bridge bridges), P4-T021–T023 (social keyword filters).
+- Cross-phase: P1-T001 (T1.01 universe/watchlist): reuse it as the starting cashtag list if it's done (not a blocker).
+- Used by: P4-T060 (live run with your sources) and P4-T066 (YouTube channels). The connectors (P4-T011, P4-T012, P4-T021–T023) are built on fixtures and the example files, so they don't wait for this.
 
 ## Requirements
 
 - `watchlist.yaml`: `cashtags` (e.g. `$BTC`, `$EURUSD`, `$SPY`), `keywords` (e.g. `FOMC`, `rate cut`, `ETF approval`), `exclude` (spam terms), per-market-type grouping (crypto/FX/metals/energy/equities/macro).
 - `feeds.yaml`: per feed `url`, `kind` (rss/atom/site), `market_types`, `paywalled` (bool), `notes`. Sites without a feed are marked `kind: site` and become RSS-Bridge candidates.
 - Only free sources; paywalled sites are headline + link only.
+- Optional `youtube_channels` list in `feeds.yaml` (channel id, why, tickers): used only by the YouTube check (P4-T066) and, if it passes, the YouTube connector (P4-T024).
 
 ## ToDo
 
@@ -92,3 +98,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (connectors no longer wait for this list (build on fixtures); optional YouTube channel list for P4-T066)

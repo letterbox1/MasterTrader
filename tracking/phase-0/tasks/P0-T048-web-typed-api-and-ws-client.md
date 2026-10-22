@@ -15,17 +15,22 @@ requirements: [R0.08, R0.11]
 roadmap_todos: [T0.26]
 modules: [M15]
 dashboards: []
+tools: [git, node>=20, pnpm]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T048-web-typed-api-and-ws-client
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T048 · Build the typed API client and WebSocket client with gap re-sync
@@ -46,7 +51,7 @@ The web app talks to mt-api through a generated, typed REST client (TanStack Que
 ## Requirements
 
 - REST: `fetch` wrapper with `credentials: 'same-origin'`, CSRF header, problem+json → typed `ApiError` (with `trace_id`), 401 → login route.
-- Commands: `useCommand(name)` → `preview()` then `execute({args, idempotency_key: uuidv7(), confirmation_token})`; handles 428 `confirmation_required`, 409 replay, C3 pending states.
+- Commands: `useCommand(name)` → `preview()` then `execute({args, idempotency_key: uuidv7(), confirm_token})` (02 §7.2); handles 428 `confirmation_required` and `reauth_required` (C2 needs a re-auth within 12 h → re-auth prompt, then retry), 409 replay, C3 pending states (incl. 'Waiting for break-glass approval', ui §3.3).
 - WS: single connection, auto-reconnect (backoff 0.5 s → 30 s, jitter), subscriptions restored on reconnect; per-topic `lastSeq`; on gap (`seq != lastSeq+1`) mark topic `resyncing`, invalidate the mapped query, resume after refetch.
 - Background tabs: drop to 0.2 Hz except `kill`, `notifications` (ui §3.4).
 - Decimals stay strings in JS (no `parseFloat` on money); formatters in P0-T049.
@@ -61,7 +66,7 @@ The web app talks to mt-api through a generated, typed REST client (TanStack Que
 
 ### Tests
 - Unit: gap detection triggers refetch exactly once; reconnect restores subscriptions.
-- Unit: 428 → preview flow; 409 replay surfaces the original result.
+- Unit: 428 → preview flow; 428 `reauth_required` → re-auth prompt → retry; 409 replay surfaces the original result.
 - Unit: no `parseFloat` on decimal fields (eslint rule + test).
 
 ### Scenarios
@@ -103,3 +108,4 @@ The web app talks to mt-api through a generated, typed REST client (TanStack Que
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (confirm_token name and C2 12 h re-auth handling (02 §7.2, 17 §D P0-B003); run fields added)

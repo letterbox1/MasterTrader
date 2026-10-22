@@ -15,17 +15,22 @@ requirements: [R2.02, R2.03]
 roadmap_todos: [T2.21]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T009-templates-evidence-catalogue
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T009 · Strategy templates batch 2: evidence-catalogue and special types
@@ -43,11 +48,11 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 
 ## Requirements
 
-- Funding carry: long spot / short perp same venue, only when trailing 7-day annualised funding > fees + buffer (start 8%), hedged 1×; flagged `requires: perps` so the venue registry can keep it paper-only (14 §3 'regime-gated').
-- Memecoin momentum: enter 5–60 min after launch (never first slot), rug filter hook, time stops, partial profits, never average down; manifest flag `paper_only: true` enforced by lifecycle until ≥ 300 paper trades.
+- Funding carry: long spot / short perp same venue, only when trailing 7-day annualised funding > fees + buffer (start 8%), hedged 1×; flagged `requires: perps`; while perps are `blocked` for AU retail it runs on paper only where the product is marked `paper_ok` ([12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry), 17 §D P2-B008).
+- Memecoin momentum: enter 5–60 min after launch (never first slot), rug filter hook, time stops, partial profits, never average down; manifest flag `paper_only: true` enforced by the lifecycle mode ceiling; the memecoin gate profile needs ≥ 300 paper trades (16 §2.4).
 - Cross-sectional momentum: top-20 liquid, survivorship-free universe input (dynamic selection rule).
 - Token-unlock: short into large team cliffs, needs a perp (paper-only under current registry).
-- Event-driven: entry windows keyed on `cal.*`/`evt.*` events (blackout-aware; calendars land in P4, so P2 uses manual event lists).
+- Event-driven: entry windows keyed on `cal.*`/`evt.*` events (blackout-aware: 15 min before to 15 min after high-importance events for `event_sensitive` bots by default, 16 §2.8; calendars land in P4, so P2 uses manual event lists).
 - ML-signal: consumes a tier-A model id from the MLflow registry via an interface (`ModelSignalProvider`).
 - Grid/DCA and pairs/stat-arb (P3 evidence) with explicit inventory caps.
 
@@ -69,7 +74,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 
 ### Scenarios
 - Given funding drops below the threshold, when the carry strategy holds a position, then it emits an exit intent (exit plan) and no new entry.
-- Given the venue registry marks perps `blocked`, when a carry bot tries a live-mode order, then M11 rejects it while paper mode continues.
+- Given the venue registry marks perps `blocked` + `paper_ok`, when a carry bot in `hitl` mode tries a testnet order, then M11 rejects it, while the same bot in `paper` mode continues; without `paper_ok`, paper is rejected too.
 
 ### Stress / failure injection
 - Nightly: run all batch-2 templates over 1 year of fixture data; no exceptions.
@@ -110,3 +115,4 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper_ok rule for blocked perps, memecoin ≥ 300 trades gate, blackout defaults)

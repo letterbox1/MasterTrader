@@ -15,17 +15,22 @@ requirements: [R0.02, R0.10]
 roadmap_todos: [T0.41, T0.46]
 modules: [M17]
 dashboards: []
+tools: [docker, uv]
+mcp: []
+env: []
+services: [prometheus, loki, vector, alertmanager, grafana]
 branch: p0/P0-T023-observability-containers
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T023 · Add the observability containers (Prometheus, Loki, Vector, Alertmanager, Grafana, exporters)
@@ -104,3 +109,4 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)

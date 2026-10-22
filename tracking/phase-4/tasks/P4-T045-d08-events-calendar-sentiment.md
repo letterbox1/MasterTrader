@@ -15,17 +15,22 @@ requirements: [R4.13, R4.10]
 roadmap_todos: [T4.29]
 modules: [M3, M5, M6]
 dashboards: [D08]
+tools: [pnpm, node>=20, git]
+mcp: []
+env: []
+services: [mt-api]
 branch: p4/P4-T045-d08-events-calendar-sentiment
 pr: ""
 doc_sync: [docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T045 · D08 Intel: Events, Calendar (blackout markers) and Sentiment tabs
@@ -39,6 +44,7 @@ The Events tab (map ≥ md with MapLibre, list < md; severity, location, exposur
 - Roadmap: [R4.13, R4.10](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.29](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - UI spec: [D08 tabs](../../../docs/ui/dashboards/D08-intel.md) · [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
 - Related: P4-T038 (blackouts), P4-T035 (events), P4-T040/T041 (features).
+- Blackout defaults shown: [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts) (15 min either side of high-importance events, `event_sensitive` bots); the UI only renders what the API returns.
 
 ## Requirements
 
@@ -99,3 +105,4 @@ The Events tab (map ≥ md with MapLibre, list < md; severity, location, exposur
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout markers follow 16 §2.8 defaults via the API (no client-side rule))

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010]
+depends_on: [P4-T010, P2-T120]
 requirements: [R4.09, R4.11]
-roadmap_todos: [T4.25]
+roadmap_todos: [T4.25, T4.32]
 modules: [M3, M6]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p4/P4-T036-prediction-markets-readonly
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T036 · Polymarket and Kalshi read-only probability clients (lawful reach only)
@@ -39,7 +44,8 @@ Read-only httpx clients pull public market probabilities from Kalshi (`api.elect
 - Roadmap: [R4.09, R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Policy: [12 §1 Polymarket](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) (ACMA warning 2 Jul 2025, ISP block 13 Aug 2025; never via VPN/proxy; Kalshi read-only)
 - Providers: [06 §3 prediction markets](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (official Kalshi library has a proprietary licence → httpx)
-- Verified by P4-T056 (config review).
+- Verified by P4-T056 (config review). Also feeds the D02 positioning widget (P4-T065, roadmap T4.32).
+- Cross-phase: P2-T120 (feature registry) is a `depends_on` entry; the venue registry rows (`read_only`) come from P0-T025/P0-T026.
 
 ## Requirements
 
@@ -104,3 +110,4 @@ Read-only httpx clients pull public market probabilities from Kalshi (`api.elect
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (also mapped to new roadmap ToDo T4.32 (prediction-market probabilities for D02); explicit depends_on P2-T120)

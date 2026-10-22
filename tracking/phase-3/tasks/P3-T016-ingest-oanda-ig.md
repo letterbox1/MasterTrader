@@ -15,30 +15,35 @@ requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18]
 dashboards: []
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T016-ingest-oanda-ig
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T016 · Ingestion adapters for OANDA transactions and IG statements
 
 ## Goal / expected outcome
 
-OANDA v20 transaction stream/history and IG transaction/trade history become journal events (CFD/FX trades, financing, commission, spread costs, deposits/withdrawals), so CFD and FX activity has the revenue-account inputs AU_2026 needs.
+OANDA v20 transaction stream/history and IG transaction/trade history become journal events (CFD/FX trades, financing, commission, spread costs, deposits/withdrawals), so CFD and FX activity has the revenue-account inputs AU_2026 needs. Built against recorded API responses and sample CSVs (no tokens); the live practice/demo pull is the late check P3-T061.
 
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - CFD treatment: revenue account ([09 AU_2026](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface)); financing as `cfd_financing`
-- Cross-phase: P2 T2.25 (OANDA/IG adapters; practice/demo accounts), P1 T1.02 (read-only keys)
+- Context: P2-T025/P2-T026 (OANDA/IG adapters and their practice/demo payload shapes), P1-T002 (read-only tokens, used only by P3-T061 and the RUN P3-T053)
 
 ## Requirements
 
@@ -52,7 +57,7 @@ OANDA v20 transaction stream/history and IG transaction/trade history become jou
 
 - [ ] Implement `packages/mt_journal/ingest/oanda.py` and `ig.py`
 - [ ] Dedupe/enrich logic against fill events
-- [ ] Golden fixtures from practice/demo accounts (scrubbed); tests; docs
+- [ ] Golden fixtures: recorded v20 / IG REST responses and sample CSVs (scrubbed, no tokens); tests; docs
 
 ## Verification
 
@@ -105,3 +110,4 @@ OANDA v20 transaction stream/history and IG transaction/trade history become jou
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: recorded responses only, live pull moved to P3-T061; tools/services filled)

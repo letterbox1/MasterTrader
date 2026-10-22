@@ -10,48 +10,54 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T022]
 requirements: [R4.02, R4.04]
 roadmap_todos: [T4.42]
 modules: [M2]
 dashboards: [D16]
+tools: [docker, sops, age, uv, git]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p4/P4-T006-telethon-discord-secrets
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/runbooks/social-accounts.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T006 · Encrypt the Telethon session and store the Discord bot token
 
 ## Goal / expected outcome
 
-The Telethon `.session` file is created once interactively, encrypted with sops/age and decrypted into tmpfs only for `ingest-text`; the Discord bot token, Telegram `api_id`/`api_hash` and Bot API token are scoped to `ingest-text` only. No social credential exists on disk in plaintext or in git.
+The Telethon `.session` file is created once interactively, encrypted with sops/age and decrypted into tmpfs only for `ingest-text`; the Discord bot token, Telegram `api_id`/`api_hash` and Bot API token are scoped to `ingest-text` only. No social credential exists on disk in plaintext or in git. This task builds and tests the mechanism with a fake session and fake tokens; you run the real login yourself in P4-T001 (keys last).
 
 ## Context & references
 
 - Roadmap: [R4.02, R4.04](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.42](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Security: [07 §2](../../../docs/07-security-notes.md#2-secrets) (sops + age → tmpfs, per-service scoping) · [07 §10](../../../docs/07-security-notes.md#10-social--scraping-accounts) (encrypted session file, 2FA password)
-- Cross-phase: P0 T0.43 (sops/age → tmpfs mechanism), T0.06, T0.07.
+- Cross-phase: P0-T022 (T0.43: sops/age → per-service tmpfs `/run/secrets/<service>/<name>`) is a `depends_on` entry. The real Telegram/Discord credentials (P0-T002, P0-T008) are only needed by P4-T001 and P4-T068.
+- Decision: the secrets file lives **outside the repo** ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B018, [07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
 ## Requirements
 
-- Session bootstrap script `ops/scripts/telethon_login.py` runs once on the host (phone code + 2FA password typed by you), writes the session to tmpfs, then `sops --encrypt` to `secrets/telethon.session.sops`.
-- At container start the entrypoint decrypts to `/run/secrets/telethon.session` (tmpfs, mode 0400, uid of the service).
+- Session bootstrap script `ops/scripts/telethon_login.py` runs once on the host (phone code + 2FA password typed by you), writes the session to tmpfs, then `sops --encrypt` to `/etc/mastertrader/telethon.session.sops` (outside the repo, next to the main secrets file, backed up by restic).
+- At stack start `infra/scripts/secrets-up.sh` (P0-T022) decrypts it to `/run/secrets/ingest-text/telethon.session` (tmpfs, mode 0400, uid of the service).
 - Secrets scoped per service: only `ingest-text` gets `telegram.*` and `discord.bot_token`; `telegram-bot` keeps its own alerts token.
 - Session file never leaves tmpfs unencrypted; on shutdown the tmpfs copy is gone.
 
 ## ToDo
 
 - [ ] Write `ops/scripts/telethon_login.py` (interactive, prints no secrets).
-- [ ] Add the sops creation rule for `secrets/telethon.session.sops` and the `ingest-text` entrypoint decrypt step.
-- [ ] Add `discord.bot_token`, `telegram.api_id`, `telegram.api_hash`, `telegram.ingest_bot_token` keys to the secrets schema and the `ingest-text` scope.
+- [ ] Add the sops creation rule for `/etc/mastertrader/telethon.session.sops` to `infra/secrets/.sops.yaml` and its decrypt step to `infra/scripts/secrets-up.sh` (scope `ingest-text`).
+- [ ] Add `discord.bot_token`, `telegram.api_id`, `telegram.api_hash`, `telegram.ingest_bot_token` key names to `infra/secrets/secrets.example.yaml` (names only) and the `ingest-text` scope.
 - [ ] Add gitleaks custom rules for Telethon session strings and Discord token format.
 - [ ] Document the bootstrap + rotation in `docs/runbooks/social-accounts.md`.
 
@@ -71,7 +77,7 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 ## Acceptance criteria
 
-- [ ] Encrypted session committed; plaintext never written to persistent disk
+- [ ] Encrypted-session path proven end to end with a fake session (the real session is created by you in P4-T001 and never committed); plaintext never written to persistent disk
 - [ ] Only `ingest-text` can read Telegram/Discord secrets (per-service scope test)
 - [ ] Runbook written
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
@@ -102,3 +108,4 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets outside the repo per 17 §D (P0-B018) and P0-T022 paths; keys last: built with fake session/tokens, real login in P4-T001; depends on P0-T022)

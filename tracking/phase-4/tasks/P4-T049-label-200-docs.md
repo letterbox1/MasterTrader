@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P4-T048]
-requirements: [R4.12]
+depends_on: [P4-T062, P4-T030]
+requirements: [R4.12, R4.16]
 roadmap_todos: [T4.04]
 modules: [M21]
 dashboards: [D08]
+tools: []
+mcp: []
+env: []
+services: [mt-web]
 branch: p4/P4-T049-label-200-docs
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T049 · Label ~200 sampled documents for the SemIf relevance gate
@@ -37,7 +42,7 @@ You have labelled the ~200-document batch relevant/irrelevant (and, where obviou
 ## Context & references
 
 - Roadmap: [R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.04](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Tool: P4-T048 (Label mode in D08).
+- Tool: P4-T062 (minimal labelling tool, D08 Label mode, `models.label.add`; [R4.16](../../../docs/roadmap/phase-4-intel.md#3-requirements)). Calibration on your labels: P4-T048.
 - Unblocks: P4-T053.
 
 ## Requirements
@@ -67,7 +72,7 @@ You have labelled the ~200-document batch relevant/irrelevant (and, where obviou
 ## Acceptance criteria
 
 - [ ] ≥ 180 non-skip labels recorded
-- [ ] Agent confirms calibration ran (P4-T048)
+- [ ] Agent confirms calibration ran on your labels (P4-T048)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,4 @@ You have labelled the ~200-document batch relevant/irrelevant (and, where obviou
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (labelling tool is now P4-T062 (R4.16, 17 §D P4-B007))

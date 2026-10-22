@@ -15,17 +15,22 @@ requirements: [R0.N1, R0.N2]
 roadmap_todos: [T0.03]
 modules: [ops]
 dashboards: []
+tools: [age, age-plugin-yubikey, tailscale]
+mcp: []
+env: []
+services: [tailscale, yubikey]
 branch: p0/P0-T003-tailscale-mfa-and-age-hardware-key
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T003 · Create the Tailscale tailnet with MFA and assign a hardware key for age
@@ -41,7 +46,7 @@ A Tailscale tailnet whose identity provider has MFA, with your laptop/phone join
 - [07 §5 network & host](../../../docs/07-security-notes.md#5-network--host)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (offline `worm_owner`)
 - Related: P0-T019 host hardening, P0-T022 secrets, P0-T013 worm_owner ceremony
-- Unblocks: P0-T019 host hardening, P0-T022 secrets, P0-T013 worm_owner ceremony
+- Unblocks: P0-T019 host hardening, P0-T013 worm_owner ceremony and the production secrets file on the host. P0-T022 is built and tested with a throwaway age key, so it doesn't wait for this task (build first, keys last)
 
 ## Requirements
 
@@ -49,7 +54,7 @@ A Tailscale tailnet whose identity provider has MFA, with your laptop/phone join
 - Tailnet settings: device approval on, key expiry on for user devices, MagicDNS + HTTPS certificates enabled (Caddy uses `*.ts.net` certs).
 - Two YubiKeys (primary + spare) or one YubiKey + OS keychain backup. age identities via `age-plugin-yubikey`: slot 1 = `host` (PIN cached once at boot, touch policy *never* so restarts decrypt unattended), slot 2 = `offline` (touch *always*, never left plugged in).
 - The age identity must **not** live on the backup disk or in any backup set (07 §2).
-- Outputs: tailnet name and the two age **recipients** (public `age1yubikey…` strings, not secret) for P0-T022; PIN/PUK in the password manager.
+- Outputs: tailnet name and the two age **recipients** (public `age1yubikey…` strings, not secret) in `infra/secrets/recipients.txt`, from which P0-T022 generates `.sops.yaml`; PIN/PUK in the password manager.
 
 ## ToDo
 
@@ -58,7 +63,7 @@ A Tailscale tailnet whose identity provider has MFA, with your laptop/phone join
 - [ ] Join your laptop and phone; leave the host for P0-T019.
 - [ ] Buy two YubiKey 5 series (or decide on one + OS keychain) and log the choice.
 - [ ] Install `age` and `age-plugin-yubikey`; generate slot 1 (`--touch-policy never --pin-policy once --name mt-host`) and slot 2 (`--touch-policy always --name mt-offline`); repeat on the spare key.
-- [ ] Record the recipients (public) for P0-T022; store the YubiKey PINs/PUKs in your password manager.
+- [ ] Put the two public recipients in `infra/secrets/recipients.txt` (or hand them to the agent for a PR) and run `sops updatekeys` on the secrets file; store the YubiKey PINs/PUKs in your password manager.
 - [ ] Label the spare key and store it in a separate physical location from the backup disk.
 
 ## Verification
@@ -78,7 +83,7 @@ A Tailscale tailnet whose identity provider has MFA, with your laptop/phone join
 
 - [ ] Tailnet exists, IdP MFA on, MagicDNS + HTTPS certs on
 - [ ] Two age identities (host, offline) on two keys, round trip passes
-- [ ] Recipients handed to P0-T022; PIN/PUK in password manager
+- [ ] Recipients in `infra/secrets/recipients.txt`; PIN/PUK in password manager
 - [ ] No identity file on any backup disk
 
 ## Exceptions & edge cases
@@ -106,3 +111,4 @@ A Tailscale tailnet whose identity provider has MFA, with your laptop/phone join
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys-last: P0-T022 builds with a test age key; recipients go to infra/secrets/recipients.txt; run fields added)

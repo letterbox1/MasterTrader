@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T033, P2-T020]
+depends_on: [P2-T033, P2-T020, P0-T036, P0-T048, P0-T049]
 requirements: [R2.51, R2.54]
 roadmap_todos: [T2.32, T2.34]
 modules: [M15, M11]
 dashboards: [D01, D05, D03]
+tools: [uv, pnpm]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T038-approvals-api-approvalcard
 pr: ""
 doc_sync: [docs/ui/components.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T038 · Approvals API, ApprovalCard component and approvals sheet
@@ -39,12 +44,15 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 - Roadmap: [R2.51, R2.54](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDos T2.32, T2.34
 - Design: [15 §1.3 card content](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) · [components ApprovalCard](../../../docs/ui/components.md) · [ui §3.3 C2 hold-to-confirm](../../../docs/ui/README.md#33-actions--confirmation)
 - UI: [D05 Approvals](../../../docs/ui/dashboards/D05-execution.md) · [D01 Needs you](../../../docs/ui/dashboards/D01-cockpit.md)
-- Part B owns D01/D05 layouts; this task delivers the component + API.
+- Decisions: [17 §D P2-B058](../../../docs/17-decisions-register.md#d-other-decisions) (web card = Telegram card capabilities; **no bulk approve** except the batched dynamic-selection card, 15 §1.3) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (TTLs; large orders > 2% of sleeve or > A$5,000 → hold-to-confirm on web; MCP cards TTL 5 min).
+- Cross-phase (`depends_on`): WS hub (P0-T036), typed API/WS client (P0-T048), component library v0 incl. confirm sheets (P0-T049).
+- P2-T142 (D01) and P2-T149 (D05) own the page layouts; this task delivers the component + API.
 
 ## Requirements
 
 - Queries: `/approvals?status=pending|decided`, `/bots/{id}/approvals`; WS topic `approvals` (new, decided, expired).
-- Commands: `approval.approve` (C2), `approval.approve_partial` (C2, fraction 0.5), `approval.reject` (C1); large orders require TOTP (web: hold-to-confirm + TOTP field).
+- Commands: `approval.approve` (C2), `approval.approve_partial` (C2, fraction 0.5, bot requests), `approval.reject` (C1), `bot.pause` (C1); large orders (default > 2% of sleeve or > A$5,000 notional) need **hold-to-confirm** on web (TOTP on Telegram, P2-T039).
+- Batched card for one dynamic-selection bot: per-line toggles, one combined risk preview, `approval.approve` with the selected lines (C2). No other bulk approve.
 - `ApprovalCard` props: request (bot, instrument, side, size, type/price, stop/target, risk preview R & % of sleeve, exposure after fill, blackout/DQ warnings, reasons, chart deep link), TTL countdown synced to server time, buttons Approve / Approve ½ / Reject / Pause bot; expired → moves to history automatically.
 - Top-bar approvals icon count + sheet listing pending cards.
 - Phone: approve in ≤ 2 taps after opening (D05 acceptance 1).
@@ -86,7 +94,7 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 ## Cardinal rules (do NOT)
 
 - Do NOT let the UI decide expiry; the server decides.
-- Do NOT approve multiple cards with one tap except the D05 bulk rule (≤ 5, same strategy, C2).
+- Do NOT approve multiple cards with one tap; the only exception is the batched card of one dynamic-selection bot (17 §D, 15 §1.3).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
@@ -107,3 +115,4 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no bulk approve except batched dynamic card (17 §D), large-order hold-to-confirm per 16 §2.3, cross-phase UI deps)

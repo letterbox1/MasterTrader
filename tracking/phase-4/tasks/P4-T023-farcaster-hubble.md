@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010]
+depends_on: [P4-T010, P4-T008]
 requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [uv, git, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p4/P4-T023-farcaster-hubble
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T023 · Farcaster ingestion via a self-hosted Hubble node
@@ -98,3 +103,4 @@ A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T008 dependency (Hubble container on the scrape network))

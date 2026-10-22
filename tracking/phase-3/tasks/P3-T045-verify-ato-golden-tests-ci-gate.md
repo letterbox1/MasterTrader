@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T023, P3-T024, P3-T025, P3-T027]
-requirements: [R3.06, R3.N2]
+depends_on: [P3-T011, P3-T023, P3-T024, P3-T025, P3-T026, P3-T027, P0-T015]
+requirements: [R3.06, R3.N2, R3.15]
 roadmap_todos: [T3.60]
 modules: [M18]
 dashboards: []
+tools: [git, uv, gh]
+mcp: []
+env: []
+services: []
 branch: p3/P3-T045-verify-ato-golden-tests-ci-gate
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T045 · ATO golden-file tests and mandatory tax-golden CI gate
@@ -37,12 +42,13 @@ A curated golden suite of ATO-style worked examples (discount boundary, loss ord
 ## Context & references
 
 - Roadmap: [R3.06, R3.N2, T3.60](../../../docs/roadmap/phase-3-journal-and-tax.md) · standing rule [04 standing rules](../../../docs/04-plan-of-action.md#standing-rules) (tax golden tests mandatory)
-- [09 quality](../../../docs/09-journal-and-tax.md#quality) (golden files from ATO worked examples) · [D15 acceptance 3](../../../docs/ui/dashboards/D15-tax.md) (rule-check panel)
+- [09 quality](../../../docs/09-journal-and-tax.md#quality) (golden files from ATO worked examples) · [D15 acceptance 3](../../../docs/ui/dashboards/D15-tax.md) (rule-check panel) · valuation hierarchy [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) (R3.15 is verified by golden tests) · wash-sale default [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags)
+- Cross-phase prerequisite (depends_on): P0-T015 (CI pipeline, required checks)
 
 ## Requirements
 
 - Golden cases in `tests/golden/au_2026/*.yaml` (input events + expected outputs), each with a `source` field citing the ATO page/example used (URL + retrieval date) or `synthetic` with derivation.
-- Minimum set: (1) bought 2 Feb 2018 → eligible from 3 Feb 2019, not on 2 Feb 2019; (2) leap-year boundary; (3) loss ordering non-discount first; (4) carry-forward; (5) brokerage in cost base; (6) crypto↔crypto; (7) staking/established airdrop income cost base; (8) initial-allocation $0 cost base; (9) CFD revenue + financing; (10) Div 775 FX-cash realisation; (11) PAYG excludes capital gains; (12) trader regime removes the discount for trading-tagged lots; (13) FY boundary at 30 June/1 July local.
+- Minimum set: (1) bought 2 Feb 2018 → eligible from 3 Feb 2019, not on 2 Feb 2019; (2) leap-year boundary; (3) loss ordering non-discount first; (4) carry-forward; (5) brokerage in cost base; (6) crypto↔crypto; (7) staking/established airdrop income cost base; (8) initial-allocation $0 cost base; (9) CFD revenue + financing; (10) Div 775 FX-cash realisation; (11) PAYG excludes capital gains; (12) trader regime removes the discount for trading-tagged lots; (13) FY boundary at 30 June/1 July local; (14) wash-sale flag at 30 days either side (flag only, loss unchanged) and not at 31; (15) valuation hierarchy: fill price for a trade, AUD-venue VWAP for a staking reward, USD VWAP × RBA when no AUD trades, pool price for a long-tail token; (16) PAYG both ATO methods side by side.
 - CI job `tax-golden` is a required status check on `main` (branch protection) and runs on every PR touching `packages/mt_journal/**`, `config/journal/**` or `tests/golden/**`.
 - Golden files change only with a reviewer note explaining the rule change and a rule-version bump.
 
@@ -70,7 +76,7 @@ A curated golden suite of ATO-style worked examples (discount boundary, loss ord
 
 ## Acceptance criteria
 
-- [ ] ≥ 13 golden cases pass
+- [ ] ≥ 16 golden cases pass
 - [ ] `tax-golden` is a required check
 - [ ] Mutation check recorded
 - [ ] Rule-check panel fed
@@ -103,3 +109,4 @@ A curated golden suite of ATO-style worked examples (discount boundary, loss ord
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (added golden cases for wash-sale 30 days (16 §4.4), valuation hierarchy (R3.15, 16 §4.1) and PAYG both methods (P3-B005); explicit P0-T015 depends_on; tools filled)

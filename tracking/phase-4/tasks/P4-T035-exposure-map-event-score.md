@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T033, P4-T034]
+depends_on: [P4-T033, P4-T034, P2-T120]
 requirements: [R4.08]
 roadmap_todos: [T4.25]
 modules: [M3, M6]
 dashboards: [D08, D02]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p4/P4-T035-exposure-map-event-score
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T035 · Exposure map and event score (severity × exposure × novelty)
@@ -39,6 +44,7 @@ checkpoint: ""
 - Roadmap: [R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents) (exposure map; event score) · [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features) (event scores as features)
 - UI: [D08 Events](../../../docs/ui/dashboards/D08-intel.md) (exposure-map links, event score)
+- Cross-phase: P2-T120 (feature registry, R2.46) is a `depends_on` entry.
 
 ## Requirements
 
@@ -99,3 +105,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P2-T120 (feature registry))

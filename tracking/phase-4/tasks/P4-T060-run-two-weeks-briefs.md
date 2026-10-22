@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T047, P4-T030, P4-T044, P4-T049]
+depends_on: [P4-T047, P4-T030, P4-T044, P4-T049, P4-T003, P4-T067, P4-T068]
 requirements: [R4.14, R4.01]
 roadmap_todos: [T4.80]
 modules: [M2, M15]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [telegram-bot, postgres, nats, decision-svc]
 branch: p4/P4-T060-run-two-weeks-briefs
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T060 · Run two weeks of morning briefs and tune sources by relevance hit-rate
@@ -37,7 +42,8 @@ For 14 consecutive days the morning brief is delivered, you mark items useful/no
 ## Context & references
 
 - Roadmap: [R4.14](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.80](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Risk 'Source volume overwhelms the relevance gate'
-- Related: P4-T047 (brief), P4-T030 (hit-rate), P4-T044 (Sources tab).
+- Related: P4-T047 (brief), P4-T030 (hit-rate), P4-T044 (Sources tab). This is the first run on your live sources: it depends on your feed/keyword lists (P4-T003) and the live checks (P4-T067 keyed sources, P4-T068 Telegram/Discord).
+- Brief contents: canonical list in [mobile-and-telegram §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) (17 §D P4-B011).
 
 ## Requirements
 
@@ -47,6 +53,7 @@ For 14 consecutive days the morning brief is delivered, you mark items useful/no
 
 ## ToDo
 
+- [ ] Load your `feeds.yaml`/`watchlist.yaml` (P4-T003); bridge or reject every `kind: site` entry (P4-T012 tooling).
 - [ ] Start the run (record start date in this file).
 - [ ] Daily: check brief delivered; you vote on items (≈ 2 min).
 - [ ] Day 7 tuning pass + log.
@@ -96,3 +103,4 @@ For 14 consecutive days the morning brief is delivered, you mark items useful/no
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (first live run: depends on your lists (P4-T003) and live checks P4-T067/T068; brief per mob §3 (17 §D P4-B011))

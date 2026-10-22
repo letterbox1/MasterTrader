@@ -10,42 +10,50 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T021]
+depends_on: [P2-T021, P1-T041, P1-T042]
 requirements: [R2.32]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p2/P2-T027-epoch-client-ids-reconcile
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T027 · Epoch-based idempotent client order IDs and restart reconciliation
 
 ## Goal / expected outcome
 
-Client order IDs are deterministic from the signal/intent so retries and restarts can't duplicate orders, carry the restart epoch for traceability, and the engine reconciles open orders and positions from every venue before it resumes trading after any start.
+Client order IDs follow the decided format **`{bot}-{engine_epoch}-{seq}`**, with a **signal hash stored separately** for idempotency so a restarted engine can't resubmit the same signal, and the engine reconciles open orders and positions from every venue before it resumes trading after any start.
 
 ## Context & references
 
 - Roadmap: [R2.32](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Spec: [03 M12 idempotent IDs](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [07 §6 IDs derived from signal ID](../../../docs/07-security-notes.md#6-application-controls)
 - Degraded modes: [02 §9.3 venue disconnect](../../../docs/02-v1-architecture.md#93-degraded-modes)
-- Related: P2-B007 (ID derivation ambiguity), P2-T055 restart-duplicate test; P1 recon (R1.12).
+- Decision: [17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions) (client order ID = `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) · defaults [16 §2.9 reconciliation](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)
+- Cross-phase (`depends_on`): P1 reconciliation jobs and report parsers (P1-T041 crypto testnets, P1-T042 practice brokers, T1.29).
+- Related: P2-T055 restart-duplicate test; P2-T074 restart-flat flow (bots paused, residue flattened/cancelled per policy) runs after this reconciliation.
 
 ## Requirements
 
 - `ops.engine_epoch` (monotonic int incremented on every engine boot, persisted before any submit).
-- ID = `{env}{epoch:base36}-{short_hash(intent_id, leg)}`; intent_id is derived from signal id (+ leg) for strategy orders and from the command idempotency key for manual orders. Before submit, the engine checks the **intent ledger** (`ops.intent_ledger`, insert-only) for the intent_id across all epochs; a hit → no resubmit, attach to existing order.
-- Venue field length/charset limits handled per adapter (IG ≤ 30 chars, Binance ≤ 36, OANDA ≤ 128).
+- Client order ID = `{bot}-{engine_epoch}-{seq}`: `bot` is the bot's short code (manual tickets use `manual`), `engine_epoch` the boot counter, `seq` a per-epoch monotonic counter persisted before submit.
+- **Signal hash** = hash(signal id, leg) for strategy orders, or the command idempotency key for manual orders, stored separately in the **intent ledger** (`ops.intent_ledger`, insert-only, maps signal hash → client order IDs). Before submit, the engine checks the ledger across all epochs; a hit → no resubmit, attach to the existing order.
+- Venue field length/charset limits handled per adapter (IG ≤ 30 chars, Binance ≤ 36, OANDA ≤ 128): bot short codes sized so the full ID fits every venue; a too-long ID is a config error at bot creation, never truncated silently.
 - Startup: state `RECONCILING` blocks new entries; pulls open orders, fills since last checkpoint and positions from each venue (Nautilus reconciliation on); matches by client id; unknown venue orders → incident + optional cancel (policy); missing local orders → imported with `origin=reconciled`; then `READY`.
 - Reconciliation timeout per venue (default 30 s) → venue stays `unconfirmed` (positions shown 'unconfirmed') and new orders there are held.
 
@@ -60,7 +68,7 @@ Client order IDs are deterministic from the signal/intent so retries and restart
 ## Verification
 
 ### Tests
-- Unit: same intent → same ID within and across epochs prevented via ledger; different legs → different IDs; length limits.
+- Unit: IDs match `{bot}-{engine_epoch}-{seq}`; the same signal hash in a later epoch is blocked by the ledger; different legs → different signal hashes; every venue length limit respected.
 - Integration (sandbox): kill -9 the engine after submit before ack; restart → reconciles, no second submit.
 - Unit: unknown venue order triggers incident.
 
@@ -94,7 +102,7 @@ Client order IDs are deterministic from the signal/intent so retries and restart
 
 ## Doc sync on completion
 
-- `docs/03-build-spec.md` M12 + `docs/07-security-notes.md` §6: ID format and ledger (resolves P2-B007).
+- `docs/03-build-spec.md` M12 + `docs/07-security-notes.md` §6: confirm the `{bot}-{engine_epoch}-{seq}` format and the signal-hash ledger as built.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.25 when all tasks mapped to it are done.
 
 ## Branch & PR
@@ -106,3 +114,4 @@ Client order IDs are deterministic from the signal/intent so retries and restart
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (client order ID {bot}-{engine_epoch}-{seq} + separate signal hash (17 §D P2-B007), recon defaults 16 §2.9, restart-flat handoff to P2-T074)

@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T0.06]
 modules: [M2, M15]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [telegram]
 branch: p0/P0-T002-telegram-account-and-bot
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T002 · Set up the dedicated Telegram identity, api_id/api_hash and alert bot
@@ -42,7 +47,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - [12 §4 platform rules](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Telegram witness of the daily seal)
 - [P1 roadmap](../../../docs/roadmap/phase-1-data-and-monitoring.md) (T1.31 alerts bot)
-- Unblocks: P0-T037 seal witness, P0-T045 Alertmanager Telegram route, P1 alerts (T1.31), P4 Telethon ingest
+- Unblocks: the live seal witness and real alert receipt checked in the soak (P0-T063); P0-T037 and P0-T045 are built against a mocked Bot API, so they don't wait for this task; P1 alerts (T1.31); P4 Telethon ingest
 
 ## Requirements
 
@@ -51,7 +56,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - `api_id` / `api_hash` from my.telegram.org → *API development tools* (app title `MasterTrader`, platform Desktop).
 - Bot via @BotFather: name `MasterTrader Alerts`, username ending `_bot`; `/setjoingroups` → Disable; `/setprivacy` → Enable. Store the bot token.
 - Find your personal chat id with the bot (send `/start`, then call `getUpdates` from the host) and record it as `telegram.owner_chat_id`.
-- Outputs → the sops secrets file `/etc/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `telegram:` (`api_id`, `api_hash`, `bot_token`, `owner_chat_id`). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `telegram:` (`api_id`, `api_hash`, `bot_token`, `owner_chat_id`). The late live checks (P0-T063) use the env names `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_CHAT_ID` (names only; values stay in the secrets file). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 
@@ -60,7 +65,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - [ ] Create the app at my.telegram.org and note `api_id`/`api_hash` in your password manager.
 - [ ] Create the bot with @BotFather and apply `/setjoingroups` Disable and `/setprivacy` Enable.
 - [ ] From your **personal** Telegram account, open the bot and send `/start`; read your chat id via `getUpdates`.
-- [ ] Once P0-T022 lands, run `sops /etc/mastertrader/secrets.sops.yaml` and add the `telegram:` block.
+- [ ] Once P0-T022 lands, run `sops ~/.config/mastertrader/secrets.sops.yaml` and add the `telegram:` block.
 - [ ] Log completion date and 'stored in secrets file' in the progress log.
 
 ## Verification
@@ -110,3 +115,4 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); keys-last: P0-T037/P0-T045 no longer wait for this, live check in P0-T063; env names named; run fields added)

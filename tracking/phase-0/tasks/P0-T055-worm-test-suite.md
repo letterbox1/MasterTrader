@@ -10,29 +10,34 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T029, P0-T030, P0-T031, P0-T037, P0-T038, P0-T040, P0-T039]
-requirements: [R0.07]
+depends_on: [P0-T038, P0-T040, P0-T041]
+requirements: [R0.07, R0.12, R0.N7]
 roadmap_todos: [T0.61]
 modules: [M17]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats, minio]
 branch: p0/P0-T055-worm-test-suite
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T055 · Run the full WORM test suite
 
 ## Goal / expected outcome
 
-A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for every table in `audit.worm_registry`: app-role UPDATE/DELETE/TRUNCATE fail; a direct edit as `worm_owner` or superuser is caught by `audit.verify`; a seal mismatch triggers the incident path and trading halt; a restore from immutable backup re-verifies cleanly; insert throughput with hashing stays within target. Later phases re-run it automatically for their new WORM tables.
+A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for every table in `audit.worm_registry`: app-role UPDATE/DELETE/TRUNCATE fail; a direct edit as `worm_owner` or superuser is caught by `audit.verify`; a seal mismatch triggers the incident path and the integrity response (`audit.integrity` = `block_new_entries` by default); a restore from immutable backup re-verifies cleanly; insert throughput with hashing stays within target. Later phases re-run it automatically for their new WORM tables.
 
 ## Context & references
 
@@ -50,10 +55,11 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 - Privilege tests per table and per app role: UPDATE, DELETE, TRUNCATE, `ALTER TABLE DISABLE TRIGGER`, `DROP`, `DETACH PARTITION` → all fail; `SET ROLE worm_owner` from app roles fails.
 - Owner tests: as `worm_owner`, UPDATE/DELETE → `MT001` (trigger).
 - Tamper detection: as superuser with triggers disabled, (a) modify a payload field, (b) delete a middle row, (c) insert a forged row with recomputed chain, (d) rewrite a whole day consistently and the `audit.seal` row → `audit.verify` reports mismatch for each; (d) is caught **only** via the external anchor.
-- Seal mismatch → `audit.incident` critical, `alert.critical.audit_verify` published, KV `risk_state.trading_halt = on`, D16 banner data via `/system/health`.
+- Seal mismatch → `audit.integrity_incident` critical row, `alert.critical.audit_verify` published, KV `audit.integrity` = the configured action (default `block_new_entries`), `mt_risk.integrity_gate` rejects an entry and passes an exit, and only a C3 `audit.integrity.ack` clears it, as a new row (15 §2.4, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)); D16 banner data via `/audit/integrity`.
+- Ack rows: an integrity ack adds a row and never updates the incident (15 §2.4).
 - Restore re-verify: restore the latest pgBackRest backup to a scratch DB (P0-T041) and run `audit.verify` full → ok; also `verify-export` on the latest monthly export.
 - No `ON DELETE CASCADE` reaches a WORM table (lint).
-- Throughput: `audit.command` insert ≥ 1,000 rows/s, p99 < 5 ms while a seal runs (provisional target, P0-B004).
+- Throughput: `audit.command` insert ≥ 1,000 rows/s, p99 < 5 ms while a seal runs (SLO, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B004; the gated benchmark is P0-T066).
 
 ## ToDo
 
@@ -72,7 +78,7 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 - Given OS-root tampering rewrites a day and its DB seal, then verify detects it against the Object-Locked anchor.
 
 ### Stress / failure injection
-- Throughput under concurrent seal + verify on 5 M rows (logged against the provisional target).
+- Throughput under concurrent seal + verify on 5 M rows (logged against the p99 < 5 ms SLO).
 
 ## Acceptance criteria
 
@@ -107,3 +113,4 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response (16 §2.11) replaces trading_halt; ack-as-new-row test; insert SLO (R0.N7); deps trimmed to true preconditions; run fields added)

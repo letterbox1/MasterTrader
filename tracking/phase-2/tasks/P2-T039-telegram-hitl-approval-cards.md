@@ -15,17 +15,22 @@ requirements: [R2.54, R2.51]
 roadmap_todos: [T2.33, T2.34]
 modules: [M15]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T039-telegram-hitl-approval-cards
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T039 · HITL approval cards on Telegram
@@ -44,8 +49,9 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 
 - Card text (MarkdownV2, ≤ 4096 chars): bot, instrument, side, size, order type/price, stop/target; risk in R and % of sleeve, exposure after fill, blackout/DQ warnings; 'Why' = top reasons (features/tier-B flags/agent summary from signal metadata, never Telegram-sourced text); chart deep link (Tailscale URL); TTL countdown edited every 10 s (≤ 1 edit/s overall to respect Bot API limits).
 - Buttons → `approval.approve|approve_partial|reject` and `bot.pause`; callback data signed + idempotent; bound to your user id.
-- Large orders (above the bot's notional threshold): after Approve, bot asks for a TOTP reply within the TTL; wrong/missing → reject.
-- Batching for dynamic-selection bots: one card with per-line toggles + 'Approve selected'.
+- Large orders (above the bot's threshold, default > 2% of sleeve or > A$5,000 notional, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)): after Approve, the bot asks for a TOTP reply within the TTL; wrong/missing → reject.
+- TTLs come from the bot (defaults 60 s intraday · 15 min swing · 4 h position); expiry = reject.
+- Batching for dynamic-selection bots: one card with per-line toggles + 'Approve selected' (the only bulk approve allowed, 17 §D).
 - Expiry: card edited to 'Expired — not executed'; late taps answered 'Expired'.
 - Snapshot of exactly what was shown stored in `risk.approval.card_snapshot` with decision latency.
 
@@ -109,3 +115,4 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (large-order and TTL defaults from 16 §2.3, batched card as the only bulk approve; keyless (fake Bot API))

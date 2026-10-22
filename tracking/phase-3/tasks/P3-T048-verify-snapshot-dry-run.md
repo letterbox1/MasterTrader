@@ -15,17 +15,22 @@ requirements: [R3.08]
 roadmap_todos: [T3.62]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server, journal]
 branch: p3/P3-T048-verify-snapshot-dry-run
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T048 · Snapshot dry run on a test date
@@ -41,7 +46,7 @@ The snapshot flow runs end-to-end in production configuration for a test valuati
 ## Requirements
 
 - Run via Prefect with `kind = dry_run` (separate key space; never confused with `reform_2027`).
-- Checks: completeness = 100% of open lots; every row has price + source + timestamp; re-run creates 0 rows; worker kill mid-run recovers; late-run (next day) gives identical values; AU_2027_REFORM comparison computes for a synthetic post-date disposal.
+- Checks: completeness = 100% of open lots; every row has price + source + method + timestamps per the [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) convention (crypto rows show the 23:55:00–23:59:59 AEST VWAP window); re-run creates 0 rows; worker kill mid-run recovers; late-run (next day) gives identical values; AU_2027_REFORM comparison computes for a synthetic post-date disposal.
 - Runbook steps exercised and timed.
 
 ## ToDo
@@ -94,3 +99,4 @@ The snapshot flow runs end-to-end in production configuration for a test valuati
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (dry run checks the 16 §4.2 convention and method recording (P3-B002); fields filled)

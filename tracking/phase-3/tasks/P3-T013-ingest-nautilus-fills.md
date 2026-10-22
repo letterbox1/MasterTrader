@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T008, P3-T011, P3-T012, P3-T009]
+depends_on: [P3-T008, P3-T011, P3-T012, P2-T021]
 requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18, M12]
 dashboards: [D14]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p3/P3-T013-ingest-nautilus-fills
 pr: ""
 doc_sync: [docs/ui/dashboards/D14-journal.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T013 · Ingestion adapter for Nautilus fills and positions
@@ -38,13 +43,14 @@ Every paper (and later live) fill published by the engine on `fill.{venue}` beco
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1
 - [02 F2 step 7 and F9](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · subjects `fill.{venue}` / `pos.{account}` in [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [D14 acceptance 1](../../../docs/ui/dashboards/D14-journal.md) (≤ 5 s)
-- Cross-phase: P2 T2.25 (`mt_engine`, `audit.fill`), P2 T2.34 (bots), P2 R2.31 (STP cancels recorded as non-fills)
+- Cross-phase prerequisite (depends_on): P2-T021 (`mt_engine` wrapper, `fill.{venue}` payload and `audit.fill`); context: P2-T036 (bots carry `bot_id`), P2-T022 (STP cancels recorded as non-fills)
+- Client order IDs `{bot}-{engine_epoch}-{seq}` ([17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions)); bot modes `paper` / `hitl` / `autonomous` ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer))
 
 ## Requirements
 
 - Durable consumer `journal-fills` on `fill.>`; map each Nautilus `OrderFilled` → `trade_open`/`trade_close` (position-aware) with `source = nautilus`, `source_ref = venue exec id` (fallback `trade_id + client_order_id`).
 - Fees: commission, exchange, regulatory split when the venue provides it; otherwise `commission` with `fee_split = venue_total`; spread markup for CFDs from `audit.fill` if present.
-- Link `strategy_id`, `bot_id`, `signal_id`, `decision_run_id`, `client_order_id` so D14 can show the provenance chain.
+- Link `strategy_id`, `bot_id`, `bot_mode` (`paper`/`hitl`/`autonomous`), `signal_id`, `decision_run_id`, `client_order_id` so D14 can show the provenance chain.
 - Paper vs live: `mode` from the account registry; paper events are journalled and reported separately (D14 toggle; tax reports exclude `mode = paper` by default with an explicit include switch for demos).
 - Latency: p95 fill-published → row committed + `journal.event.new` < 5 s.
 - STP cancels and rejected orders never create events (non-fills).
@@ -54,7 +60,7 @@ Every paper (and later live) fill published by the engine on `fill.{venue}` beco
 - [ ] Implement `packages/mt_journal/ingest/nautilus_fills.py` (Adapter protocol)
 - [ ] Position-aware open/close classification (per account × instrument, netting vs hedging accounts)
 - [ ] Prometheus histogram `journal_fill_ingest_seconds`; alert if p95 > 5 s for 10 min
-- [ ] Golden fixtures from P2 paper runs (Binance testnet, OANDA practice, IG demo, Alpaca paper)
+- [ ] Golden fixtures: recorded `fill.*` messages (Binance testnet, OANDA practice, IG demo, Alpaca paper shapes) checked into `tests/journal/fixtures/fills/`; no keys needed to build or test
 - [ ] Tests; docs
 
 ## Verification
@@ -110,3 +116,4 @@ Every paper (and later live) fill published by the engine on `fill.{venue}` beco
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (built on recorded fill fixtures (no keys); bot modes paper/hitl/autonomous; trimmed P3-T009 from depends_on; explicit P2-T021 depends_on; tools/services filled)

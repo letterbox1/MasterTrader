@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T0.10]
 modules: [M1, M2, M4, M5]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [fred, eia, myfxbook, coingecko, cryptorank, helius, alchemy, goplus, finnhub, cryptopanic]
 branch: p0/P0-T010-free-data-api-keys
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T010 · Register the free data API keys
@@ -48,7 +53,7 @@ Free-tier API keys exist for FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank San
 - One account per provider (12 §4: no multi-accounting, no key multiplexing).
 - Record each key's free limit (e.g. Myfxbook 100 calls/day; Finnhub 60 calls/min; CoinGecko Demo cache ≤ 24 h with attribution) in the log for P1's quota tracker.
 - Blockscout needs no key; Etherscan is manual lookups only (never a decision input); Anvil is local.
-- Outputs → the sops secrets file `/etc/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `data_keys:` (`fred`, `eia`, `myfxbook`, `coingecko_demo`, `cryptorank`, `helius`, `alchemy`, `goplus`, `finnhub`, `cryptopanic`). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `data_keys:` (`fred`, `eia`, `myfxbook`, `coingecko_demo`, `cryptorank`, `helius`, `alchemy`, `goplus`, `finnhub`, `cryptopanic`). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 
@@ -98,3 +103,4 @@ Free-tier API keys exist for FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank San
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)

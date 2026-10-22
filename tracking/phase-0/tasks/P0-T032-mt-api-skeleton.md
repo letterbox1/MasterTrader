@@ -15,17 +15,22 @@ requirements: [R0.08]
 roadmap_todos: [T0.24]
 modules: [mt_api]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p0/P0-T032-mt-api-skeleton
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T032 · Build the mt_api FastAPI skeleton (OpenAPI, problem+json, health)
@@ -109,3 +114,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)

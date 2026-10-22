@@ -10,37 +10,43 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T002, P4-T006]
 requirements: [R4.02]
 roadmap_todos: [T4.01]
 modules: [M2]
 dashboards: [D08]
+tools: []
+mcp: []
+env: []
+services: [telegram-account]
 branch: p4/P4-T001-telegram-channel-list
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T001 · List the Telegram channels to monitor (postures only)
 
 ## Goal / expected outcome
 
-A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls, project announcements, macro/news channels) exists in `config/intel/telegram_channels.yaml`, ranked by priority so the `FLOOD_WAIT`-aware join queue (P4-T018) can join them slowly from the dedicated account. It unblocks Telegram posture ingestion.
+A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls, project announcements, macro/news channels) exists in `config/intel/telegram_channels.yaml`, ranked by priority so the `FLOOD_WAIT`-aware join queue (P4-T018) can join them slowly from the dedicated account. You also create the Telethon session once on the host with the P4-T006 login script. Together these unblock the live Telegram check (P4-T068); the build tasks run on fixtures and don't wait for this.
 
 ## Context & references
 
 - Roadmap: [R4.02](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.01](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Policy: [12 §4 Telegram row](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (own long-standing account, joined channels only, cap 500 / 1,000 with Premium)
 - Accounts: [07 §10](../../../docs/07-security-notes.md#10-social--scraping-accounts) (dedicated number, 2FA password, encrypted session)
-- Cross-phase: P0 T0.06 (dedicated Telegram number, `api_id`/`api_hash`) must be done.
-- Unblocks: P4-T018 (join queue), P4-T019 (postures).
+- Cross-phase: P0-T002 (T0.06: dedicated Telegram number, `api_id`/`api_hash`) is a `depends_on` entry; so is P4-T006 (the login script).
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B002/B003): Telegram is postures only, stored in `text.telegram_posture`, published on `posture.telegram.*`, consumed only by M4/M11 rules (D08 shows the numbers).
+- Unblocks: P4-T068 (live check of the join queue and postures on your account).
 
 ## Requirements
 
@@ -56,6 +62,7 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 - [ ] Remove any channel that requires a phone-number reveal, payment, or a bot-captcha that asks for more than a button tap.
 - [ ] Commit the file on branch `p4/P4-T001-telegram-channel-list` (or hand it to the agent) and note the count in the progress log.
 - [ ] Confirm the dedicated account (T0.06) is logged in only on your phone + the server session; never on a shared device.
+- [ ] Once P4-T006 has landed, run `ops/scripts/telethon_login.py` on the host yourself and type the login code and 2FA password at its prompt. It writes the session straight into the encrypted file outside the repo (`/etc/mastertrader/telethon.session.sops`). Never paste the code or password into a chat, issue or log.
 
 ## Verification
 
@@ -74,6 +81,7 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 - [ ] `config/intel/telegram_channels.yaml` exists with ≤ 500 public entries and priorities set
 - [ ] Validator passes with 0 errors
 - [ ] Progress log records the count and the date
+- [ ] Telethon session created on the host by you (the agent confirms only that the encrypted file exists, never its contents)
 
 ## Exceptions & edge cases
 
@@ -101,3 +109,4 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (posture table/subject names per 17 §D; session login moved here as your step; depends on P0-T002 + P4-T006; build tasks no longer wait for this list)

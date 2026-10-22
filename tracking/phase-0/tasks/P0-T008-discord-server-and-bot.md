@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T0.07]
 modules: [M2, M19]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [discord]
 branch: p0/P0-T008-discord-server-and-bot
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T008 · Create the private Discord feeds server and bot application
@@ -49,7 +54,7 @@ A private Discord server "MasterTrader Feeds" with `#mt-inbox` and category chan
 - Server: private; channels `#mt-inbox` + categories (e.g. `crypto-projects`, `exchanges`, `macro`, `airdrops`), ≤ ~10–15 follower webhooks per receiving channel.
 - Bot app at the Discord developer portal: name `MasterTrader Reader`, **Message Content intent** on (self-serve under 10k servers), permissions View Channels + Read Message History only; added only to your server.
 - Follows: use Discord's **Follow** button on public announcement channels you already know; spread across category channels.
-- Outputs: `bot_token`, `application_id`, `guild_id`, channel ids → the sops secrets file `/etc/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `discord:`. Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs: `bot_token`, `application_id`, `guild_id`, channel ids → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `discord:`. Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 
@@ -101,3 +106,4 @@ A private Discord server "MasterTrader Feeds" with `#mt-inbox` and category chan
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)

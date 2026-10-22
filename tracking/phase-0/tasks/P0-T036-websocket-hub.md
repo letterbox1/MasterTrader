@@ -15,17 +15,22 @@ requirements: [R0.08]
 roadmap_todos: [T0.24]
 modules: [mt_api]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p0/P0-T036-websocket-hub
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T036 · Implement the WebSocket hub with seq gap detection
@@ -48,7 +53,7 @@ checkpoint: ""
 - Envelope: `{topic, seq, ts, data}`; `seq` starts at 1 per (connection, topic) and increments per **delivered or dropped** message, so server-side drops (slow consumer) appear as gaps.
 - Backpressure: per-connection queue 1,000 messages; overflow drops oldest and increments seq (client re-syncs); `mt_ws_dropped_total` metric.
 - Throttle: per-topic max rate (P0 topics 1 Hz except `kill`/`notifications` unthrottled); coalesce to latest value.
-- Bridges: `sys.heartbeat.*` → `heartbeat`; KV `kill` watch → `kill`; `audit.command.*` + `alert.*` → `notifications`; service status → `system`.
+- Bridges: `sys.heartbeat.*` → `heartbeat`; KV `kill` watch → `kill`; `audit.command.*` + `alert.*` → `notifications`; service status and the WORM integrity status (KV `audit.integrity`) → `system`.
 - Snapshot on subscribe: first message after `sub` is a full snapshot (seq 1) so clients start consistent.
 - Ping/pong every 20 s; close code 4401 on auth expiry, 4429 on abuse.
 
@@ -106,3 +111,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity status bridged to the system topic; run fields added)

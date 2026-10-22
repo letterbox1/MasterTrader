@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T011, P2-T012, P2-T013, P2-T014, P2-T015, P2-T016]
+depends_on: [P2-T011, P2-T012, P2-T013, P2-T014, P2-T015, P2-T016, P2-T069, P2-T070, P1-T030, P1-T040]
 requirements: [R2.10, R2.16, R2.N1]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
+tools: [uv]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T017-pre-trade-risk-gate
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T017 · Default-deny pre-trade RiskGate in front of Nautilus RiskEngine
@@ -39,15 +44,16 @@ checkpoint: ""
 - Roadmap: [R2.10, R2.16, R2.N1](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Spec: [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [SPEC NN2, NN3](../../../SPEC.md#non-negotiable-requirements) · SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos)
 - Flow: [02 F2 step 4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · NATS: [02 §6 `ord.intent.*` → `ord.risk.{decision}`](../../../docs/02-v1-architecture.md#6-messaging-nats)
-- Cross-phase: `dq.status.*` + KV `feed_status` (P1 R1.10), `cost.*` spreads (P1 R1.11).
-- Related: P2-B003 (collar %, deadlines), P2-T052 bypass tests, P2-T058 latency benchmark.
+- Cross-phase (`depends_on`): `dq.status.*` + KV `feed_status` from the DQ monitor (P1-T030, R1.10); `cost.*` spreads by hour-of-week (P1-T040, R1.11).
+- Decisions/defaults: [16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown) (collar 2% / 0.5% / 1%, venue cap 25%) · [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) (spread > 3× normal → pause) · [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts) (blackouts) · [17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions) (client order ID `{bot}-{engine_epoch}-{seq}` + separate signal hash).
+- Related: P2-T069 (effective limits = strictest across L0–L4), P2-T070 (inline safety-state checks: data age, `audit.integrity`, `egress.status`, decision deadline), P2-T052 bypass tests, P2-T058 latency benchmark.
 
 ## Requirements
 
-- Check order (first failure wins, all results recorded): kill (global/sleeve) → ceilings present → venue registry + leverage → mode/approval routing marker → DQ status of instrument (`stale|bad` → hold) → data staleness (2 s/60 s) + decision deadline → event blackout (manual windows now; `cal.*` from P4) → duplicate (client-order-ID / intent-ID seen) → price collar (within X% of last trade; X from policy) → liquidity/spread (`spread_bps` vs policy max, `cost.*` spread > N× normal) → limits (P2-T012) → sleeve/netting (P2-T014) → portfolio (P2-T015) → sizing cap (P2-T013) → ladder adjustment (P2-T018).
+- Check order (first failure wins, all results recorded): kill (global/sleeve) → L0 ceilings present → venue registry (incl. `paper_ok` rule by mode) + leverage → mode/approval routing marker (bot mode capped by the strategy mode ceiling) → **inline safety state (P2-T070)**: data age vs the bot's threshold, WORM integrity (`audit.integrity`), `egress.status`, decision deadline → DQ status of instrument (`stale|bad` → hold) → event blackout (default 15 min before/after high-importance events for `event_sensitive` bots; manual windows now, `cal.*` from P4) → duplicate (signal hash already submitted / client order ID seen) → price collar (default 2% crypto majors / 0.5% FX majors / 1% ETFs from the last trade) → liquidity/spread (`spread_bps` vs policy max; `cost.*` spread > 3× normal → pause) → effective limits (strictest across L0–L4, P2-T069 + P2-T012) → sleeve/netting (P2-T014) → portfolio (P2-T015) → sizing cap (P2-T013) → ladder adjustment (P2-T018). Every number is read from the compiled policy (16 defaults), none hard-coded.
 - Default-deny: any exception, missing state or unknown field → reject with `internal_default_deny`.
 - Decision record: `ord.risk.{approve|reject|hold|needs_approval}` with reason codes, observed vs limit; `risk.event` for rejects/holds; latency histogram `mt_risk_check_seconds`.
-- Protective exits (stop, TP set at entry, kill flatten, risk-forced reduce) are flagged `protective=true`: they skip approval routing and staleness holds but still run kill/venue/duplicate checks and can only reduce exposure.
+- Protective exits (stop, TP set at entry, kill flatten, risk-forced reduce) are flagged `protective=true`: they skip approval routing and staleness holds and still pass under `audit.integrity = block_new_entries` and drawdown stages, but still run kill (except kill-initiated flatten)/venue/duplicate checks and can only reduce exposure.
 - Nautilus `RiskEngine` configured as second line with ceilings (`max_notional_per_order`, `max_order_submit_rate`).
 - In-process, no network or DB calls in the hot path; state from in-memory caches fed by NATS KV.
 - `POST /risk/preview` runs the same pipeline with no side effects (used by `RiskPreview`, approval cards).
@@ -119,3 +125,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (check order with inline safety-state slot (P2-T070), strictest-layer limits (P2-T069), 16 defaults for collar/spread/blackout, signal-hash duplicate check, cross-phase deps)

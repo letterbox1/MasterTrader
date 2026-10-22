@@ -10,47 +10,52 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010]
+depends_on: [P4-T010, P1-T056]
 requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p4/P4-T024-stocktwits-youtube-conditional
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T024 · Conditional StockTwits and YouTube connectors (behind reachability checks)
 
 ## Goal / expected outcome
 
-StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metadata; yt-dlp subtitles for earnings calls) connectors exist **behind feature flags** that are switched on only when their reachability/terms checks pass: StockTwits from P1 T1.60, YouTube from a check run in this task (P1 has none). If a check fails, the source shows as disabled with the reason in D08.
+StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metadata; yt-dlp subtitles for earnings calls) connectors exist **behind feature flags** that are switched on only when their reachability/terms checks pass: StockTwits from P1-T056 (T1.60), YouTube from the Phase 4 check P4-T066 (T4.65), which runs after this build and flips the flag. If a check fails, the source shows as disabled with the reason in D08.
 
 ## Context & references
 
 - Roadmap: [R4.05](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.22](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Sources: [06 §2 conditional rows](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · [06 §3 open checks](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
-- Cross-phase: P1 T1.60 (StockTwits reachability).
-- Gap: P4-B005 (no YouTube check in P1).
+- Cross-phase: P1-T056 (T1.60 StockTwits reachability) is a `depends_on` entry.
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B005): the YouTube check moved to Phase 4 as its own VERIFY task, P4-T066 ([R4.05](../../../docs/roadmap/phase-4-intel.md#3-requirements), [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)).
 
 ## Requirements
 
 - Feature flags `sources.stocktwits.enabled`, `sources.youtube.enabled` default false.
-- YouTube check script: channel RSS reachable, Data API v3 key quota (10,000 units/day free) within budget, yt-dlp subtitle fetch allowed for the chosen channels.
+- `ops.source_check` table (source, check, result, reason, checked_at) that P4-T066 writes; the YouTube flag reads it.
 - StockTwits: per-symbol polling within published limits; skip silently if T1.60 failed.
 - YouTube transcripts stored as documents (`doc_type=transcript`), linked to tickers via the channel config.
 
 ## ToDo
 
-- [ ] `ops/checks/youtube_check.py` and record its result in `ops.source_check`.
+- [ ] `ops.source_check` migration + flag resolver (the YouTube check script itself is P4-T066).
 - [ ] StockTwits connector (flagged).
 - [ ] YouTube RSS + metadata + subtitle connector (flagged).
 - [ ] D08 Sources disabled-reason field.
@@ -61,7 +66,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 ### Tests
 - Unit: both connectors on fixtures.
 - Unit: flag off → connector never schedules.
-- Integration: check script writes pass/fail to `ops.source_check`.
+- Integration: a seeded `ops.source_check` pass/fail row switches the YouTube flag on/off.
 
 ### Scenarios
 - Given T1.60 recorded StockTwits as unreachable, then the StockTwits source is disabled with that reason.
@@ -72,7 +77,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 ## Acceptance criteria
 
-- [ ] Check results recorded for both; connectors enabled only if checks pass
+- [ ] StockTwits flag set from the P1-T056 result; YouTube stays off until P4-T066 records a pass; connectors enabled only if checks pass
 - [ ] Disabled reasons visible in D08 Sources
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
 
@@ -103,3 +108,4 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (YouTube check moved to new VERIFY P4-T066 (17 §D P4-B005, T4.65); depends on P1-T056 for StockTwits)

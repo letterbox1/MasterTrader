@@ -11,21 +11,26 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P0-T029]
-requirements: [R0.07]
+requirements: [R0.07, R0.N7]
 roadmap_todos: [T0.23]
 modules: [M17, mt_store]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p0/P0-T030-worm-row-hash-chain
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T030 · Implement the per-row hash chain trigger and canonical JSON
@@ -71,14 +76,14 @@ Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_h
 - Given a transaction inserting into the chain rolls back, then `seq` has no gap (head updated in the same transaction).
 
 ### Stress / failure injection
-- Throughput: ≥ 1,000 inserts/s sustained into one chain with p99 insert latency < 5 ms on the host (provisional target; see P0-B004); results logged for P0-T059.
+- Throughput: ≥ 1,000 inserts/s sustained into one chain with p99 insert latency < 5 ms (SLO, 02 §9.2, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B004); quick check here, the gated benchmark is P0-T066.
 
 ## Acceptance criteria
 
 - [ ] Trigger + chain head + Python reference implemented
 - [ ] Golden and property tests pass (SQL ≡ Python)
 - [ ] Concurrency test passes
-- [ ] Throughput numbers logged against the provisional target
+- [ ] Throughput numbers logged against the p99 < 5 ms SLO
 - [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
@@ -107,3 +112,4 @@ Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_h
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (WORM insert p99 < 5 ms is the SLO (17 §D P0-B004, R0.N7), benchmark in P0-T066; run fields added)

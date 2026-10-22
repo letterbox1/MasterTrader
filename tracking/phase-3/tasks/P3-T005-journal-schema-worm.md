@@ -10,45 +10,51 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T024, P0-T029, P0-T030]
 requirements: [R3.02, R3.01]
 roadmap_todos: [T3.20]
 modules: [M18]
 dashboards: []
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T005-journal-schema-worm
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T005 · Journal schema migrations registered as WORM tables
 
 ## Goal / expected outcome
 
-Alembic migrations create every `journal.*` table (event, raw payload, lot, lot_match, fx_rate, account registry link, transfer_link, residency_period, regime_setting, tax_report, lot_snapshot, note, tag) and register each with the P0 WORM layer (owner `worm_owner`, INSERT/SELECT grants, blocking triggers, per-row hash chain, daily seal), so nothing downstream can ever edit a journal row.
+Alembic migrations create every `journal.*` table (event, raw payload, lot, lot_match, fx_rate, valuation, account_tag, transfer_link, residency_period, regime_setting, tax_report, lot_snapshot, note, tag) and register each with the P0 WORM layer (owner `worm_owner`, INSERT/SELECT grants, blocking triggers, per-row hash chain, daily seal), so nothing downstream can ever edit a journal row.
 
 ## Context & references
 
 - Roadmap: [R3.02, R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - WORM design: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · [SPEC NN7](../../../SPEC.md#non-negotiable-requirements) · [03 §4](../../../docs/03-build-spec.md#4-data-model-overview)
 - Event fields: [09 journal event](../../../docs/09-journal-and-tax.md#journal-event-captured-per-transaction) · entities `journal_event`, `lot`, `lot_match`, `fx_rate`, `residency_period`, `tax_report` in [02 §5.3](../../../docs/02-v1-architecture.md#53-core-entities-abbreviated-full-ddl-in-migrations)
-- Cross-phase prerequisites (text only): P0 T0.22 (`journal` schema + Alembic), P0 T0.23 (WORM layer: `worm_owner`, triggers, hash chain, seal, `audit.verify`)
+- Cross-phase prerequisites (depends_on): P0-T024 (`journal` schema, roles, Alembic baseline), P0-T029 (WORM privileges + blocking triggers), P0-T030 (per-row hash chain)
 - Next: P3-T006 (roles/keys), P3-T008 (writer)
 
 ## Requirements
 
-- Tables (all `numeric` for money/qty/rates, `timestamptz` UTC, UUIDv7 PKs): `journal.event`, `journal.raw_payload` (encrypted blob + `raw_payload_hash`), `journal.lot`, `journal.lot_match`, `journal.fx_rate`, `journal.transfer_link`, `journal.residency_period`, `journal.regime_setting`, `journal.lot_snapshot`, `journal.tax_report`, `journal.note`, `journal.tag`, `journal.ingest_cursor` (adapter cursors; append-only, latest row wins).
-- `journal.event` columns per 09: identity (`event_id`, `source`, `source_ref`, `ingested_at`, `supersedes_event_id`, `raw_payload_hash`), time (`ts_utc` + `ts_ns`, venue tz, local time, `taxpayer_local_date`), venue/account (`account_id`, wallet address, chain, counterparty, custodial flag, counterparty residency), instrument (id, ISIN/ticker, asset class, multiplier, expiry, settlement ccy), economics (side, qty, price, gross, fee columns by type), three-currency amounts (`amt_native`, `ccy_native`, `amt_usd`, `amt_aud`, `fx_rate_usd`, `fx_rate_aud`, `fx_source`, `fx_ts`), `event_type` enum (all 09 types), tax context (`residency_code`, `regime`, `wash_sale_flag`, `strategy_id`, `bot_id`, `mode` paper/live), provenance columns (`source`, `licence`, `model_input_ok=false`, `train_ok=false`, `retention_days` ≥ 2557).
+- Tables (all `numeric` for money/qty/rates, `timestamptz` UTC, UUIDv7 PKs): `journal.event`, `journal.raw_payload` (encrypted blob + `raw_payload_hash`), `journal.lot`, `journal.lot_match`, `journal.fx_rate`, `journal.valuation` (per-event value with method `fill|vwap_aud|vwap_usd_x_rba|pool_price` and source refs, [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal)), `journal.account_tag` (P3-T012), `journal.transfer_link`, `journal.residency_period`, `journal.regime_setting`, `journal.lot_snapshot`, `journal.tax_report`, `journal.note` (text + optional `attachment_sha256`; the file itself is stored content-addressed under `data/attachments/<sha256>`, [17 §D P3-B013](../../../docs/17-decisions-register.md#d-other-decisions)), `journal.tag`, `journal.ingest_cursor` (adapter cursors; append-only, latest row wins).
+- `journal.event` columns per 09: identity (`event_id`, `source`, `source_ref`, `ingested_at`, `supersedes_event_id`, `raw_payload_hash`), time (`ts_utc` + `ts_ns`, venue tz, local time, `taxpayer_local_date`), venue/account (`account_id`, wallet address, chain, counterparty, custodial flag, counterparty residency), instrument (id, ISIN/ticker, asset class, multiplier, expiry, settlement ccy), economics (side, qty, price, gross, fee columns by type), three-currency amounts (`amt_native`, `ccy_native`, `amt_usd`, `amt_aud`, `fx_rate_usd`, `fx_rate_aud`, `fx_source`, `fx_ts`, `fx_prior_day`; for non-trade crypto values `valuation_id` → `journal.valuation`), `event_type` enum (all 09 types), tax context (`residency_code`, `regime`, `wash_sale_flag`, `strategy_id`, `bot_id`, `mode` paper/live), provenance columns (`source`, `licence`, `model_input_ok=false`, `train_ok=false`, `retention_days` ≥ 2557).
 - Unique `(source, source_ref, supersedes_event_id IS NULL)` partial index for idempotency; `current_event` view = latest row per correction chain.
-- Every table: `chain_id`, `seq`, `prev_hash`, `row_hash` via the P0 trigger; partitions never dropped inside 7 years; no `ON DELETE CASCADE` into `journal.*`.
+- Every table: `chain_id`, `seq`, `prev_hash`, `row_hash` via the P0 trigger (WORM insert p99 < 5 ms, [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)); partitions never dropped inside 7 years; no `ON DELETE CASCADE` into `journal.*`.
 - Migration is reversible only in test DBs (downgrade guarded by env flag).
+- Not in `journal.*` and **not WORM**: the envelope-encryption key table `ops.journal_data_key` (P3-T006), so key rotation can re-wrap keys without touching any journal row ([17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions)). `journal.fy_lock` and `journal.ingest_held` are added by P3-T055.
 
 ## ToDo
 
@@ -113,3 +119,4 @@ Alembic migrations create every `journal.*` table (event, raw payload, lot, lot_
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit P0 depends_on (P0-T024/T029/T030); added `journal.valuation` (16 §4.1) and content-addressed attachment hash on `journal.note` (P3-B013); key table kept out of WORM (P3-B009); tools/services filled)

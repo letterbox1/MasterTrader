@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010]
+depends_on: [P4-T010, P1-T028, P1-T009]
 requirements: [R4.01]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats]
 branch: p4/P4-T014-edgar-filings-feed
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T014 · EDGAR filings feed connector (Atom/JSON, ≤ 10 req/s)
@@ -39,7 +44,7 @@ checkpoint: ""
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
 - RAG chunking: [10 §3 item 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres)
-- Cross-phase: P1 R1.07/T1.24 (edgartools fundamentals flow; reuse its client and User-Agent).
+- Cross-phase: P1-T028 (R1.07 EDGAR client, User-Agent, ≤ 10 req/s) and P1-T009 (symbol master for CIK → ticker) are `depends_on` entries.
 - Related: P4-T031 (filing chunker), P4-T037 (earnings/IPO calendar uses the same client).
 
 ## Requirements
@@ -105,3 +110,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T028, P1-T009)

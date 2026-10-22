@@ -15,17 +15,22 @@ requirements: [R0.01, R0.N1]
 roadmap_todos: [T0.21]
 modules: [mt_core]
 dashboards: []
+tools: [git, uv, python>=3.12]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T017-mt-core-config-clock
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T017 · Implement mt_core config, clock and ID helpers
@@ -48,12 +53,14 @@ Services load typed settings from environment + files where secrets come only fr
 - `Clock` protocol with `now_utc()`, `monotonic_ns()`; `SystemClock`, `FrozenClock`, `SimClock`. A ruff banned-api rule forbids `datetime.now()`/`time.time()` outside `mt_core.clock`.
 - Display timezone default `Australia/Sydney`; storage always UTC.
 - Settings dumps redact every `SecretStr`.
+- **Defaults, not literals:** the [16](../../../docs/16-configuration-and-safety-model.md) values P0 uses (C3 cool-down 15 min and C2 re-auth 12 h (§2.3), LLM budgets (§2.10), WORM integrity action `block_new_entries` and chain-check cadence (§2.11), NATS WORM buffer 1 GB / 24 h / 80 % (§3.3), key rotation 90 days (§2.3)) live in one typed, versioned defaults file `infra/config/defaults.yaml` loaded by `mt_core.config.defaults`; services read the effective value from settings and never hard-code it.
 
 ## ToDo
 
 - [ ] Implement the Settings base with a file-secret source and the prod guard.
 - [ ] Implement Clock variants and the banned-api config.
-- [ ] Tests for redaction, prod guard and clock behaviour.
+- [ ] Add `infra/config/defaults.yaml` + the typed loader for the P0 defaults from 16, each with its 16 section reference.
+- [ ] Tests for redaction, prod guard, defaults loading and clock behaviour.
 
 ## Verification
 
@@ -71,6 +78,7 @@ Services load typed settings from environment + files where secrets come only fr
 
 - [ ] Settings + Clock implemented with tests
 - [ ] Banned-api rule active and passing
+- [ ] P0 defaults load from `infra/config/defaults.yaml`; a test fails if a 16 default is duplicated as a literal in P0 packages
 - [ ] No secret appears in any log or repr (tested)
 - [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
 
@@ -99,3 +107,4 @@ Services load typed settings from environment + files where secrets come only fr
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (one defaults file for the 16 values P0 uses (nothing hard-coded); run fields added)

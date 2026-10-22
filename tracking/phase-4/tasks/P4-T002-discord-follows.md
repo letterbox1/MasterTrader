@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T008]
 requirements: [R4.04]
 roadmap_todos: [T4.02]
 modules: [M2]
 dashboards: [D08]
+tools: []
+mcp: []
+env: []
+services: [discord-feeds-server]
 branch: p4/P4-T002-discord-follows
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T002 · Follow Discord announcement channels into the feeds server
@@ -39,8 +44,9 @@ Your private "MasterTrader Feeds" Discord server receives cross-posts from the p
 - Roadmap: [R4.04](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.02](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Source stack: [06 §2 Discord row](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) (Follow works only for Community-server announcement channels)
 - Policy: [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (own bot, added by an admin; no self-bots/user tokens)
-- Cross-phase: P0 T0.07 (feeds server + bot app with Message Content intent).
-- Unblocks: P4-T020 ingest test; P5 discovery (Discord inbox).
+- Cross-phase: P0-T008 (T0.07: feeds server + bot app with Message Content intent) is a `depends_on` entry.
+- Defaults: a followed channel that delivers nothing in **7 days** is re-prompted ([16 §2.13](../../../docs/16-configuration-and-safety-model.md#213-curation), configurable).
+- Unblocks: P4-T068 (live Discord check); P5 discovery (Discord inbox). P4-T020 is built on fixtures and doesn't wait for this.
 
 ## Requirements
 
@@ -53,7 +59,7 @@ Your private "MasterTrader Feeds" Discord server receives cross-posts from the p
 - [ ] In each project's server, open its announcement channel → **Follow** → choose `MasterTrader Feeds` → the receiving channel.
 - [ ] When a receiving channel reaches ~12 follows, create the next category channel and continue there.
 - [ ] Fill `config/intel/discord_follows.yaml` (no secrets) and commit it, or hand it to the agent.
-- [ ] After P4-T020 is deployed, check D08 Sources shows each receiving channel with items/day > 0 within 48 h.
+- [ ] After P4-T068 runs, check D08 Sources shows each receiving channel with items/day > 0 within 48 h.
 
 ## Verification
 
@@ -74,7 +80,7 @@ Your private "MasterTrader Feeds" Discord server receives cross-posts from the p
 
 ## Exceptions & edge cases
 
-- Projects that delete or rename the announcement channel break the webhook silently; P4-T020 flags channels with no posts in 14 days.
+- Projects that delete or rename the announcement channel break the webhook silently; P4-T020 flags channels with no posts in 7 days (16 §2.13 default, configurable).
 
 ## Cardinal rules (do NOT)
 
@@ -96,3 +102,4 @@ Your private "MasterTrader Feeds" Discord server receives cross-posts from the p
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day delivery check per 16 §2.13; depends on P0-T002→P0-T008 (T0.07); unblocks the live check P4-T068 instead of the build)

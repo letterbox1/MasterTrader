@@ -15,17 +15,22 @@ requirements: [R0.10]
 roadmap_todos: [T0.25]
 modules: [M17, mt_obs]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p0/P0-T018-mt-obs-logging-metrics-tracing
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T018 · Implement mt_obs structured logging, metrics and tracing
@@ -49,7 +54,7 @@ Every Python service calls `mt_obs.setup(service_name)` once and gets structlog 
 - Redaction processor masks keys matching `(?i)(secret|token|password|api_key|authorization|cookie|totp)` and any `SecretStr` value.
 - OpenTelemetry SDK with W3C traceparent propagation (HTTP + NATS headers); OTLP exporter **off** by default (no telemetry leaves the box).
 - Prometheus helpers: counter/histogram/gauge factories with a `service` label; buckets for µs–s; `/metrics` ASGI app.
-- Heartbeat: publish `{service, ts, version, status}` to `sys.heartbeat.{service}` every 5 s and update NATS KV `heartbeat`.
+- Heartbeat: publish `{service, ts, version, status}` to `sys.heartbeat.{service}` at the configured interval (default **1 s**, the cadence the three-layer dead-man watches, [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) and update NATS KV `heartbeat`.
 - Audit writers (later) take the current `trace_id` so a row links to its logs (03 M17).
 
 ## ToDo
@@ -64,7 +69,7 @@ Every Python service calls `mt_obs.setup(service_name)` once and gets structlog 
 ### Tests
 - Unit: `api_key='abc'` is emitted masked.
 - Unit: an incoming `traceparent` id appears in every log line of the request.
-- Integration: heartbeat on NATS every 5 s ± 1 s (nats-server test container).
+- Integration: heartbeat on NATS at the configured interval (default 1 s) ± 20 % (nats-server test container).
 
 ### Scenarios
 - Given NATS is down, when a service starts, then heartbeats retry with backoff and logging/metrics still work.
@@ -95,7 +100,7 @@ Every Python service calls `mt_obs.setup(service_name)` once and gets structlog 
 
 ## Doc sync on completion
 
-- `docs/03-build-spec.md` M17: note label conventions and the heartbeat interval.
+- `docs/03-build-spec.md` M17: note label conventions and the heartbeat interval setting.
 - `docs/roadmap/phase-0-foundations.md`: tick T0.25 when every item mapped to it is done.
 
 ## Branch & PR
@@ -107,3 +112,4 @@ Every Python service calls `mt_obs.setup(service_name)` once and gets structlog 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (heartbeat interval is a setting, default 1 s (16 §3.1); run fields added)

@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T0.08]
 modules: [M2]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [reddit]
 branch: p0/P0-T001-reddit-api-decision
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T001 · Decide on Reddit and apply for API access before 2026-10-31
@@ -49,7 +54,7 @@ A recorded yes/no decision on Reddit as an optional source, made **before 2026-1
 - Deadline: application submitted (or decision 'no' recorded) by **2026-10-31** (target 2026-10-28 to leave slack).
 - Dedicated Reddit account (not your personal one), 2FA on, used read-only; official OAuth API only (PRAW), never scraping or Reddit RSS (reported to end 2026-11-13).
 - Reddit is a *sunsetting* source (06 §0): never core; no AI training on Reddit data without approval (12 §4).
-- Outputs: client id / secret / user agent → the sops secrets file `/etc/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs: client id / secret / user agent → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 
@@ -105,3 +110,4 @@ A recorded yes/no decision on Reddit as an optional source, made **before 2026-1
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)

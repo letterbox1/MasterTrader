@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T022, P0-T038, P0-T013]
-requirements: [R0.N1, R0.07]
+depends_on: [P0-T022, P0-T038]
+requirements: [R0.N1, R0.07, R0.12]
 roadmap_todos: [T0.90]
 modules: [ops, M17]
 dashboards: []
+tools: [sops, age, docker]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T061-runbooks-secret-rotation-worm-incident
 pr: ""
 doc_sync: [docs/runbooks/README.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T061 · Write runbooks: secret rotation, WORM incident and worm_owner ceremony
@@ -41,13 +46,13 @@ checkpoint: ""
 - [07 §9 monitoring & incident response](../../../docs/07-security-notes.md#9-monitoring--incident-response)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers)
 - [15 §2.3 threat coverage](../../../docs/15-bots-hitl-and-worm-audit.md#23-what-this-protects-against)
-- Inputs: P0-T022, P0-T038, P0-T013
-- Depends on: P0-T022, P0-T038, P0-T013
+- Inputs: P0-T022, P0-T038; the ceremony runbook is then used by P0-T013 (USER)
+- Depends on: P0-T022, P0-T038
 
 ## Requirements
 
-- Secret rotation: per class — where it's issued, how to rotate with zero downtime (dual-key where supported), `sops` edit, `mt-secrets.service` reload, container restart order, verify, update `created` date; age identity rotation (`sops updatekeys`); quarterly drill entry.
-- WORM incident: triage (which table/seq/day), preserve evidence (export the affected range + anchors to a new locked prefix), keep trading halted, compare with monthly export and restored backup, root-cause (bug vs tamper), corrections as **new rows** only, `risk.halt.clear` via C3, post-incident note.
+- Secret rotation: per class (exchange/broker keys every 90 days by default and immediately after a suspected leak, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), 07 §2) — where it's issued, how to rotate with zero downtime (dual-key where supported), `sops` edit, `mt-secrets.service` reload, container restart order, verify, update `created` date; age identity rotation (`sops updatekeys`); quarterly drill entry.
+- WORM incident: triage (which table/seq/day), preserve evidence (export the affected range + anchors to a new locked prefix), keep the integrity response in force (default `block_new_entries`: no new entries, exits continue, no loosening; [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)), compare with monthly export and restored backup, root-cause (bug vs tamper), corrections as **new rows** only, then `audit.integrity.ack` via C3 (break-glass `mtctl approve` + TOTP until Telegram C3 in P2), post-incident note.
 - worm_owner ceremony: prerequisites, plug-in, `sops exec-env` command, migration, unplug, verify `pg_stat_activity` has no lingering `worm_owner` session, audit note.
 - Each runbook dry-run once (scratch environment).
 
@@ -60,7 +65,7 @@ checkpoint: ""
 ## Verification
 
 ### Tests
-- Dry runs: rotate the Grafana admin password and the LiteLLM master key on the host following the text; simulate a WORM mismatch on scratch and follow the incident runbook to `risk.halt.clear`.
+- Dry runs: rotate the Grafana admin password and the LiteLLM master key on the host following the text; simulate a WORM mismatch on scratch and follow the incident runbook to `audit.integrity.ack`.
 
 ### Scenarios
 - Given a venue key leaks (P2+), then the rotation runbook plus the P2 'keys leaked' runbook cover revoke → rotate → verify withdrawals.
@@ -98,3 +103,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (incident runbook ends with audit.integrity.ack (16 §2.11, 17 §A P0-B001) instead of risk.halt.clear; no longer waits on P0-T013 (P0-T013 uses this runbook); rotation default 90 d; run fields added)

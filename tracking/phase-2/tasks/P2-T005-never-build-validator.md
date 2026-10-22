@@ -15,17 +15,22 @@ requirements: [R2.05]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T005-never-build-validator
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T005 · Never-build validator for X/Never strategy patterns
@@ -39,7 +44,7 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 - Roadmap: [R2.05](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
 - Spec: [14 §2 no speed edge](../../../docs/14-strategy-evidence-and-validation.md#2-where-a-solo-operator-in-sydney-has-an-edge) · [14 §3 X/Never rows](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [03 M0 never-build list](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe)
 - Policy: [12 §1 Polymarket blocked](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) · [12 §3 conduct](../../../docs/12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention)
-- Related: P2-T004 manifest; Part B's sandboxed generator must call this validator on generated strategies.
+- Related: P2-T004 manifest; the sandboxed generator (P2-T116) calls this validator on generated strategies.
 
 ## Requirements
 
@@ -104,3 +109,4 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; generator link)

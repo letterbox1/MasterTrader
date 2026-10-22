@@ -10,29 +10,34 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P4-T006, P4-T002]
+depends_on: [P4-T010]
 requirements: [R4.04]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats]
 branch: p4/P4-T020-discord-bot-ingest
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T020 · Discord bot ingesting followed announcement channels
 
 ## Goal / expected outcome
 
-A discord.py bot (your bot application, added by you as admin to your own feeds server) with the Message Content intent ingests cross-posted announcements from the receiving channels in `discord_follows.yaml`, maps each post back to its source server/channel, and publishes `raw.text.discord` items.
+A discord.py bot (your bot application, added by you as admin to your own feeds server) with the Message Content intent ingests cross-posted announcements from the receiving channels in `discord_follows.yaml`, maps each post back to its source server/channel, and publishes `raw.text.discord` items. Built and tested with discord.py test doubles and recorded gateway fixtures; the live run on your feeds server is P4-T068 (keys last).
 
 ## Context & references
 
@@ -46,7 +51,7 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 - Intents: guilds, guild_messages, message_content; bot only in servers you administer (startup check: leave any other guild and alert).
 - Ingest only channels listed as receiving channels; capture `webhook_id`/crosspost reference → original server/channel name.
 - Store message content as text (attachments as links only), embeds flattened, `untrusted=true`.
-- Flag receiving channels with no posts for 14 days ('follow broken?').
+- Flag receiving channels with no posts for **7 days** ('follow broken?'; default from [16 §2.13](../../../docs/16-configuration-and-safety-model.md#213-curation), configurable).
 - Backfill the last 100 messages per channel on first start (rate-limit aware).
 
 ## ToDo
@@ -66,14 +71,14 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 
 ### Scenarios
 - Given Discord gateway disconnects, then the bot resumes with session resume and backfills missed messages from the last seen id.
-- Given a followed project deletes its channel, then the receiving channel goes quiet and is flagged after 14 days.
+- Given a followed project deletes its channel, then the receiving channel goes quiet and is flagged after 7 days (16 §2.13).
 
 ### Stress / failure injection
 - Burst of 1,000 messages in 1 min across channels: no drops, respects Discord rate limits on backfill.
 
 ## Acceptance criteria
 
-- [ ] Receiving channels ingest live for 48 h
+- [ ] Recorded gateway fixtures replay end to end (live 48-h ingest is P4-T068)
 - [ ] Guild allow-list guard proven by test
 - [ ] No user token anywhere in the code path
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
@@ -107,3 +112,4 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day delivery default per 16 §2.13; build first, keys last: live 48-h ingest moved to P4-T068; dropped P4-T006/P4-T002 dependencies)

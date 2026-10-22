@@ -15,17 +15,22 @@ requirements: [R0.N1, R0.N5]
 roadmap_todos: [T0.05]
 modules: [ops]
 dashboards: []
+tools: [git, gh]
+mcp: []
+env: []
+services: [github]
 branch: p0/P0-T004-github-private-secret-scanning
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T004 · Keep the GitHub repo private and enable secret scanning
@@ -101,3 +106,4 @@ The MasterTrader repository is private, GitHub secret scanning and push protecti
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)

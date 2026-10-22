@@ -10,22 +10,27 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P0-T050, P0-T033]
+depends_on: [P0-T050, P0-T019]
 requirements: [R0.08]
 roadmap_todos: [T0.12]
 modules: [mt_api]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [mt-api, tailscale]
 branch: p0/P0-T062-set-password-enrol-totp
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T062 · Set your login password and enrol TOTP on first boot
@@ -40,7 +45,7 @@ You own the only login: a strong password and a TOTP enrolment on your authentic
 - [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt_api)
 - [ui §3.6 sessions](../../../docs/ui/README.md#36-permissions--sessions)
 - Implementation: P0-T033, P0-T050
-- Depends on: P0-T050, P0-T033
+- Depends on: P0-T050 (brings in P0-T033), P0-T019 (the production host)
 - Unblocks: exit criterion 2 demo (P0-T064)
 
 ## Requirements
@@ -99,3 +104,4 @@ You own the only login: a strong password and a TOTP enrolment on your authentic
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (deps trimmed and production host added; run fields added)

@@ -15,17 +15,22 @@ requirements: [R3.09]
 roadmap_todos: [T3.26]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: []
 branch: p3/P3-T032-plugins-ae-eg-cy-generic
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T032 · AE, EG, CY and GENERIC jurisdiction plugin stubs
@@ -103,3 +108,4 @@ Stub plugins for the UAE, Egypt, Cyprus and a GENERIC fallback implement the ful
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; tools/services filled)

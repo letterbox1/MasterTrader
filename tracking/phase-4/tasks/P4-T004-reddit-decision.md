@@ -10,22 +10,27 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T001]
 requirements: []
 roadmap_todos: [T4.05]
 modules: [M2]
 dashboards: [D08]
+tools: []
+mcp: []
+env: []
+services: [reddit-api]
 branch: p4/P4-T004-reddit-decision
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T004 · Confirm whether Reddit API access was granted
@@ -38,17 +43,18 @@ A recorded yes/no on Reddit API access (applied for in P0 T0.08, before 2026-10-
 
 - Roadmap: ToDo [T4.05](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Scope 'Out' (Reddit optional)
 - Timeline: [06 §0](../../../docs/06-aggregators-and-market-providers.md#0-️-time-sensitive-actions) (new access closes 2026-10-31; RSS ends 2026-11-13; Data API closes 2027-01 → 03, all U)
-- Gap: P4-B009 (Reddit timeline likely makes this moot by P4).
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B009): Reddit stays optional. If access wasn't granted by the 2026-10-31 deadline, Reddit stays out and needs no build item.
+- Cross-phase: P0-T001 (T0.08, the application before 2026-10-31) is a `depends_on` entry.
 
 ## Requirements
 
 - Record: was access granted (yes/no), client id stored in secrets if yes, and the date checked.
-- If yes: the agent files `P4-T0xx Reddit connector (optional)` with official OAuth only; `train_ok = false` by default (12 §4).
+- If yes: the agent files `P4-T0xx Reddit connector (optional)` with official OAuth only; `train_ok = false` by default (12 §4), and only if the public Data API isn't closing before it would be useful (06 §0: 2027-01 → 03 (U)).
 
 ## ToDo
 
 - [ ] Check the email account used in T0.08 for Reddit's API decision.
-- [ ] If granted: put `client_id`/`client_secret` into the sops/age secrets file (`secrets/mt.sops.yaml`, see [07 §2](../../../docs/07-security-notes.md#2-secrets)); never paste them anywhere else.
+- [ ] If granted: put `client_id`/`client_secret` into the sops/age secrets file outside the repo (`/etc/mastertrader/secrets.sops.yaml`, P0-T022; see [07 §2](../../../docs/07-security-notes.md#2-secrets)); never paste them anywhere else.
 - [ ] Write the yes/no outcome in this task's progress log.
 
 ## Verification
@@ -91,3 +97,4 @@ A recorded yes/no on Reddit API access (applied for in P0 T0.08, before 2026-10-
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Reddit optional per 17 §D (P4-B009); secrets file outside the repo (17 §D P0-B018); depends on P0-T001)

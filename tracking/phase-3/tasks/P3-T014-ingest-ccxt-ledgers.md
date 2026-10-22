@@ -10,35 +10,40 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T008, P3-T011, P3-T012]
+depends_on: [P3-T008, P3-T011, P3-T012, P1-T006]
 requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18]
 dashboards: [D14]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p3/P3-T014-ingest-ccxt-ledgers
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T014 · Ingestion adapter for ccxt ledgers (funding, fees, transfers)
 
 ## Goal / expected outcome
 
-Funding payments, trading fees not on fills, deposits, withdrawals, transfers between sub-accounts, interest and rebates from crypto venues are pulled via ccxt `fetchLedger` (and `fetchFundingHistory`/`fetchDeposits`/`fetchWithdrawals` where needed) with read-only keys, and journalled in three currencies.
+Funding payments, trading fees not on fills, deposits, withdrawals, transfers between sub-accounts, interest and rebates from crypto venues are pulled via ccxt `fetchLedger` (and `fetchFundingHistory`/`fetchDeposits`/`fetchWithdrawals` where needed) with read-only keys, and journalled in three currencies. The adapter is built and tested against **recorded ledger responses** with no keys; the live testnet pull is the separate late check P3-T061.
 
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1 (funding payments)
 - [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · keys policy [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys)
-- Cross-phase: P1 T1.02 (read-only IP-locked keys), P1 T1.29 (ccxt reconciliation jobs), P2 T2.03 (per-mode sub-accounts)
+- Cross-phase prerequisite (depends_on): P1-T006 (shared quota tracker); context: P1-T041 (ccxt reconciliation clients), P1-T002 (read-only keys, used only by P3-T061 and the RUN P3-T053)
 
 ## Requirements
 
@@ -46,7 +51,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 - Schedule: Prefect flow `journal-ccxt-ledger` every 15 min per account + EOD full sweep; cursor per account in `journal.ingest_cursor`; respects the P1 quota tracker.
 - Mapping: `funding` → `funding_payment` (sign preserved), `fee` → `fee_only`, `transfer` between own sub-accounts → `internal_transfer` candidate, `deposit`/`withdrawal` → candidates for P3-T018, `rebate`/`interest` → `interest`.
 - `source = ccxt_ledger`, `source_ref = venue ledger id`; dedupe against fill-fee events (a fee already on a fill is not double counted: match on trade id).
-- Keys read from sops (`<VENUE>_READONLY_KEY`), never logged.
+- At runtime keys are read from the sops file (`<VENUE>_TESTNET_READONLY_KEY` / `_SECRET`), never logged; the build needs none.
 
 ## ToDo
 
@@ -62,7 +67,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 
 - Golden: recorded ledger JSON → expected events (funding sign, fee dedupe).
 - Unit: venue paging/cursor edge (same timestamp, multiple entries).
-- Integration (testnet, optional in CI): one real funding payment appears.
+- Integration: recorded HTTP cassettes (secrets scrubbed) replayed through ccxt; the real testnet run is P3-T061.
 
 ### Scenarios
 
@@ -109,3 +114,4 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: recorded fixtures only, live testnet pull moved to P3-T061; explicit P1-T006 depends_on; tools/services filled)

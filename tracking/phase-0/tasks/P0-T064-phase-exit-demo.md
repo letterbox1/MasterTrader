@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T020, P0-T023, P0-T045, P0-T062, P0-T058, P0-T057, P0-T053, P0-T063, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T042, P0-T043, P0-T044, P0-T021, P0-T040]
-requirements: [R0.01, R0.02, R0.03, R0.04, R0.05, R0.06, R0.07, R0.08, R0.09, R0.10, R0.11, R0.N1, R0.N2, R0.N3, R0.N4, R0.N5, R0.N6]
+depends_on: [P0-T063, P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069]
+requirements: [R0.01, R0.02, R0.03, R0.04, R0.05, R0.06, R0.07, R0.08, R0.09, R0.10, R0.11, R0.12, R0.13, R0.14, R0.N1, R0.N2, R0.N3, R0.N4, R0.N5, R0.N6, R0.N7]
 roadmap_todos: [T0.80]
 modules: [ops, mt_api, M17, M15, M21]
 dashboards: [D16]
+tools: [docker, uv, gh]
+mcp: []
+env: []
+services: [tailscale]
 branch: p0/P0-T064-phase-exit-demo
 pr: ""
 doc_sync: [tracking/phase-0/PHASE.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T064 · Phase 0 exit demo: run every exit criterion
@@ -39,7 +44,7 @@ A recorded walkthrough on the production host proves all four roadmap exit crite
 - [Roadmap P0 §6 exit criteria](../../../docs/roadmap/phase-0-foundations.md#6-exit-criteria-demo)
 - [Roadmap P0 §5 deliverables](../../../docs/roadmap/phase-0-foundations.md#5-deliverables)
 - [Roadmap P0 §3 requirements (Verified by column)](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
-- Depends on: P0-T020, P0-T023, P0-T045, P0-T062, P0-T058, P0-T057, P0-T053, P0-T063, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T042, P0-T043, P0-T044, P0-T021, P0-T040
+- Depends on: P0-T063 (soak; brings in the whole stack), P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069
 
 ## Requirements
 
@@ -47,7 +52,7 @@ A recorded walkthrough on the production host proves all four roadmap exit crite
 - Exit 2: log in with password + TOTP; a test command appears in `audit.command` with a valid hash chain (D16 Audit ✓ + `recompute_chain` output).
 - Exit 3: restore from the off-site backup succeeds (latest `ops.restore_test` pass, from P0-T057 or a fresh run).
 - Exit 4: the shell passes the viewport matrix 240 → 2560 px (latest green CI run of P0-T053).
-- Requirement evidence: CI green on `main` (R0.01, R0.N5 scans); migration test (R0.03); `pit` CI check (R0.04); schema test for provenance (R0.05); venue registry seeded (R0.06); WORM suite (R0.07); API + C-level tests (R0.08); LiteLLM/TEI smoke (R0.09); Grafana board (R0.10); D16 Playwright (R0.11); gitleaks + secrets review (R0.N1); host checklist (R0.N2); port scan + netprobe (R0.N3); restore test (R0.N4); viewport matrix (R0.N6); soak report.
+- Requirement evidence: CI green on `main` (R0.01, R0.N5 scans); migration test with all 13 schemas (R0.03); `pit` CI check (R0.04); schema test for provenance (R0.05); venue registry seeded (R0.06); WORM suite (R0.07); API + C-level tests (R0.08); live LiteLLM/TEI smoke with `audit.llm_call` rows (R0.09, R0.13, P0-T068); integrity drill (R0.12, P0-T069); restart refusal (R0.14, P0-T067); WORM insert benchmark (R0.N7, P0-T066); Grafana board (R0.10); D16 Playwright (R0.11); gitleaks + secrets review (R0.N1); host checklist (R0.N2); port scan + netprobe (R0.N3); restore test (R0.N4); viewport matrix (R0.N6); soak report.
 - Open S1/S2 bugs in Phase 0 = 0; all tasks done/cancelled.
 
 ## ToDo
@@ -101,3 +106,4 @@ A recorded walkthrough on the production host proves all four roadmap exit crite
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit evidence covers R0.12–R0.14 and R0.N7 via P0-T066–P0-T069; deps trimmed; run fields added)

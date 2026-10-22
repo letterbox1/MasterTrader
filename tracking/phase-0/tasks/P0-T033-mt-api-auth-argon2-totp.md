@@ -15,17 +15,22 @@ requirements: [R0.08]
 roadmap_todos: [T0.24, T0.12]
 modules: [mt_api]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p0/P0-T033-mt-api-auth-argon2-totp
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T033 · Implement single-user auth: Argon2 password, TOTP and sessions
@@ -50,9 +55,9 @@ Single-user login works end to end: Argon2id password + RFC 6238 TOTP, first-boo
 - TOTP: SHA-1, 6 digits, 30 s step, ±1 step window, **replay protection** (store last accepted counter); 10 single-use recovery codes (Argon2-hashed) shown once.
 - Login `POST /auth/login` {password, totp}; on success creates `ops.session` (random 256-bit id, stored hashed), cookie `mt_session`: `HttpOnly; Secure; SameSite=Strict; Path=/`.
 - Idle timeout 12 h (configurable, `ops.setting`), absolute lifetime 7 d; re-login needs TOTP (ui §3.6). CSRF: SameSite=Strict + required header `X-MT-CSRF` matching a non-HttpOnly cookie (double submit) on unsafe methods.
-- Brute force: 5 failures / 15 min → exponential lockout (15 min doubling, max 24 h) and a `alert.warn.auth_lockout` NATS message; per-IP and global counters.
-- Scoped tokens table `ops.api_token` (purpose `telegram|mcp`, scopes, hashed secret, expiry) — model + verification code only; issuing UI comes in P2/P8.
-- `POST /auth/logout`, `GET /auth/session` (who/expiry/TOTP status) for D16 Security.
+- Brute force (defaults in `ops.setting`, configurable): 5 failures / 15 min → exponential lockout (15 min doubling, max 24 h) and a `alert.warn.auth_lockout` NATS message; per-IP and global counters.
+- Scoped tokens table `ops.api_token` (purpose `telegram|mcp`, scopes, secret stored as HMAC-SHA-256 with a server pepper, expiry, last-used, client identity; [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8), 17 §A P8-B004) — model + verification code only; issuing UI comes in P2/P8.
+- `POST /auth/logout`, `GET /auth/session` (who/expiry/TOTP status/`last_reauth_at`) for D16 Security; `POST /auth/reauth` {password, totp} refreshes `last_reauth_at`, which C2 commands require within 12 h (default, configurable; 02 §7.2, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B003).
 
 ## ToDo
 
@@ -86,7 +91,7 @@ Single-user login works end to end: Argon2id password + RFC 6238 TOTP, first-boo
 
 ## Exceptions & edge cases
 
-- Lost TOTP device: recovery code login forces re-enrolment; with no recovery codes left, reset needs host console (`mt-admin reset-totp`, audited `source=system`).
+- Lost TOTP device: recovery code login forces re-enrolment; with no recovery codes left, reset needs host console (`mtctl reset-totp`, audited `source=system`).
 - Clock skew > 30 s breaks TOTP: chrony keeps it < 50 ms (P0-T019); the error message says 'check device time'.
 
 ## Cardinal rules (do NOT)
@@ -112,3 +117,4 @@ Single-user login works end to end: Argon2id password + RFC 6238 TOTP, first-boo
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (re-auth endpoint for the C2 12 h rule (17 §D P0-B003), token hashing per 16 §2.12, break-glass CLI renamed mtctl, lockout values as settings; run fields added)

@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P4-T005, P4-T013]
+depends_on: [P4-T010, P4-T013]
 requirements: [R4.08]
 roadmap_todos: [T4.25]
 modules: [M3]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p4/P4-T034-events-conflict-sanctions
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T034 · Global events: ReliefWeb, UCDP, GDELT events, OpenSanctions and ACLED
@@ -38,7 +43,7 @@ Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP
 
 - Roadmap: [R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents)
-- Related: P4-T005 (ACLED/OpenSanctions terms), P4-T013 (GDELT).
+- Related: P4-T005 (your ACLED key and OpenSanctions licence decision, 17 §D P4-B008), P4-T013 (GDELT), P4-T067 (live check). ACLED and OpenSanctions are built on recorded fixtures; the live run is P4-T067.
 
 ## Requirements
 
@@ -67,7 +72,7 @@ Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP
 
 ## Acceptance criteria
 
-- [ ] Sources ingesting (or disabled with reason); severity mapping tested
+- [ ] ReliefWeb, UCDP and GDELT events ingesting live (keyless); ACLED and OpenSanctions proven on fixtures (disabled with reason until P4-T067); severity mapping tested
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
 
 ## Exceptions & edge cases
@@ -95,3 +100,4 @@ Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: ACLED/OpenSanctions on fixtures, live in P4-T067; dropped P4-T005 dependency)

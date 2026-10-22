@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T036, P2-T037, P2-T038]
+depends_on: [P2-T036, P2-T037, P2-T038, P0-T049, P0-T050]
 requirements: [R2.54, R2.50]
 roadmap_todos: [T2.34]
 modules: [M15]
 dashboards: [D03]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T041-d03-bots-tab-wizard
 pr: ""
 doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T041 · D03 Bots tab, create wizard and bot detail
@@ -39,13 +44,15 @@ checkpoint: ""
 - Roadmap: [R2.54, R2.50](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.34
 - UI: [D03 Bots tab](../../../docs/ui/dashboards/D03-strategies.md) · [components](../../../docs/ui/components.md) · Design: [15 §1.5](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots)
 - Test matrix: [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
-- Part B: D03 registry/builder/detail tabs.
+- Decisions: the wizard shows the manifest's proposals next to your sleeve/system limits; you accept or tighten (16 §1); `on_system_failure` (default `flatten`) and `auto_resume_after_crash` are bot settings (16 §3.1); modes `paper`/`hitl`/`autonomous` with labels "Paper", "Approve (HITL)", "Autonomous" (components `StatusChip`).
+- Cross-phase (`depends_on`): component library v0 (P0-T049), app shell (P0-T050).
+- P2-T143/P2-T144: D03 registry/builder/detail tabs.
 
 ## Requirements
 
 - List: bot, strategy version, scope, venue & sleeve, mode chip (paper · HITL · autonomous), status, pending approvals, today P&L; `DataTable` priorities + card renderer ≤ ph.
-- Wizard steps with zod validation from the manifest/param schema; review shows `RiskPreview` and the confirmation level the server will require.
-- Actions: `bot.create` (C1), `bot.set_mode` (paper/HITL C1/C2 per server; autonomous C3 via `C3Flow`, disabled with the failing gate shown), `bot.pause|resume|stop` (C1), `bot.approval_policy.set` (tighten C1, loosen C3).
+- Wizard steps with zod validation from the manifest/param schema; the risk step shows each manifest **proposal** next to the effective sleeve/system limit and its layer (from `/risk/policy`, P2-T069), lets you accept or tighten, and blocks anything looser than a parent layer; it also sets `on_system_failure` (default `flatten`) and `auto_resume_after_crash` (default off); review shows `RiskPreview` and the confirmation level the server will require.
+- Actions: `bot.create` (C1), `bot.set_mode` (→ paper C1; → HITL C2 from paper, C1 from autonomous; → autonomous C3 via `C3Flow`, disabled with the failing gate shown), `bot.pause|resume|stop` (C1), `bot.approval_policy.set` (tighten C1, loosen C3).
 - Detail: mode history from `strategy.bot_version`, approvals table (shown card, decision, latency, outcome), downgrade events.
 - All data states (loading/empty/error/stale) per ui README §3.1.
 
@@ -104,3 +111,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (wizard shows manifest proposals vs layer limits, failure policy fields, mode levels per 16 §2.3)

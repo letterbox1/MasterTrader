@@ -10,41 +10,47 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T005, P3-T006]
+depends_on: [P3-T005, P3-T006, P0-T025, P0-T018]
 requirements: [R3.N1]
 roadmap_todos: [T3.41]
 modules: [M18]
 dashboards: []
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T007-column-encryption-prompt-exclusion
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T007 · pgcrypto column encryption and prompt exclusion for tax-sensitive fields
 
 ## Goal / expected outcome
 
-Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, counterparty personal details, residency evidence notes) are encrypted with pgcrypto using the versioned key, and every such column plus all `journal.*` rows are tagged `model_input_ok = false` so the LLM/RAG paths refuse them.
+Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, counterparty personal details, residency evidence notes) are encrypted with pgcrypto under the FY's data key (envelope encryption, P3-T006), and every such column plus all `journal.*` rows are tagged `model_input_ok = false` so the LLM/RAG paths refuse them.
 
 ## Context & references
 
 - Roadmap: [R3.N1, T3.41](../../../docs/roadmap/phase-3-journal-and-tax.md) · verified by P3-T050 (prompt audit)
 - [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · provenance mechanism [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
-- Cross-phase: P0 R0.05 provenance columns; P6 agents will read journal summaries only through allowed views
+- Cross-phase prerequisites (depends_on): P0-T025 (provenance columns), P0-T018 (`mt_obs` logging for the redaction processor); P6 agents will read journal summaries only through allowed views
+- Decision: [17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions) (envelope encryption, rotation re-wraps keys only)
 
 ## Requirements
 
-- Encrypted columns: `journal.taxpayer_profile.tfn`, `.address`, `journal.raw_payload.blob`, `journal.residency_period.evidence_notes`, `journal.event.counterparty_name` (if present); stored as `bytea` via `pgp_sym_encrypt(text, key)` with a `key_id` column.
+- Encrypted columns: `journal.taxpayer_profile.tfn`, `.address`, `journal.raw_payload.blob`, `journal.residency_period.evidence_notes`, `journal.event.counterparty_name` (if present); stored as `bytea` via `pgp_sym_encrypt(text, data_key)` with a `key_id` column naming the FY data key in `ops.journal_data_key`.
 - New table `journal.taxpayer_profile` (append-only; latest row wins) for TFN/address used only by the accountant pack and myTax worksheet.
-- Python helper `mt_journal.crypto.encrypt/decrypt` that pulls the key from tmpfs; decrypt only inside the `journal` service.
+- Python helper `mt_journal.crypto.encrypt/decrypt` that unwraps the FY data key with the master key from tmpfs (P3-T006) and caches it in memory only; decrypt only inside the `journal` service.
 - Provenance: every `journal.*` row sets `model_input_ok = false`, `train_ok = false`; a DB view `journal.llm_safe_summary` (aggregates only: P&L by strategy/period, no identifiers) is the only object `agents`' role may read.
 - Logging: structlog processor redacts any field named in a deny-list (`tfn`, `address`, `raw_payload`, `evidence_notes`).
 
@@ -60,7 +66,7 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 
 ### Tests
 
-- Unit: round-trip encrypt/decrypt with key v1 and v2; wrong key fails closed.
+- Unit: round-trip encrypt/decrypt under two FY data keys; after a master-key rewrap both still decrypt; wrong master key fails closed.
 - Integration: a raw SELECT of `journal.taxpayer_profile` as `journal_ro` returns ciphertext/permission denied.
 - Unit: log redaction test (log a dict containing `tfn`; output shows `***`).
 
@@ -84,7 +90,7 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 ## Exceptions & edge cases
 
 - Hash of raw payload is computed on plaintext before encryption (so duplicates are detected without decrypting).
-- Key rotation: old rows keep their `key_id`; decrypt picks the right key.
+- Key rotation: rows keep their `key_id`; only the wrap changes, so decrypt picks the same data key (P3-T059 drills it).
 
 ## Cardinal rules (do NOT)
 
@@ -109,3 +115,4 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (encryption helpers use FY data keys wrapped by the master key (P3-B009); explicit P0 depends_on; tools/services filled)

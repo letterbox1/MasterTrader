@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T020, P2-T018, P2-T031, P2-T032, P2-T014, P2-T016]
+depends_on: [P2-T020, P2-T018, P2-T031, P2-T032, P2-T014, P2-T016, P2-T069, P2-T070, P0-T049, P0-T050]
 requirements: [R2.50, R2.15, R2.18]
 roadmap_todos: [T2.32]
 modules: [M15, M11]
 dashboards: [D06]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T042-d06-overview-sleeves-ladder-venues
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T042 · D06 Risk overview: kill, dead-man, gauges, sleeves, ladder, venue registry
@@ -39,16 +44,18 @@ checkpoint: ""
 - Roadmap: [R2.50, R2.15, R2.18](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.32
 - UI: [D06 Overview + CryptoTrader additions](../../../docs/ui/dashboards/D06-risk.md) · [components LimitBar, LadderIndicator, VenueStatusChip, KillSwitchButton](../../../docs/ui/components.md)
 - Test matrix: [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
-- Cross-phase: app shell + kill placeholder (P0 R0.11).
-- Related: P2-B004 ladder rungs/sleeve names.
+- Cross-phase (`depends_on`): app shell + top-bar kill placeholder (P0-T050, R0.11); component library v0 (P0-T049).
+- Decisions: six-rung ladder and sleeves from policy ([17 §D P2-B004](../../../docs/17-decisions-register.md#d-other-decisions)); two-stage sleeve/system drawdowns ([16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)); three-layer dead-man ([16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)); kill actions per bot `on_system_failure`, no sweep in P2 ([17 §B P2-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)); venue cap 25%.
+- Related: P2-T069 (effective value + layer per limit), P2-T070 (safety state), P2-T072/P2-T073 (dead-man layers 2–3).
 
 ## Requirements
 
 - Layout per tier exactly as D06 (≥ 2xl rows; xl/lg; md; ≤ ph stacked with kill card first).
-- Kill tile: ARMED/HALTED, last trigger (reason, source, time), actions on halt (cancel all; flatten per config), HALT button (Kill level single confirm); Resume = C3 with cause check.
-- Dead-man tile: per service last beat + threshold, countdown when late (±1 s vs server), configured action; Ack (C1).
-- Risk state, `LimitBar` gauges (used/limit/warn/breach), exposure breakdown + VaR/ES, recent `risk.event`s.
-- Sleeves widget (capital, usage, DD vs sleeve stop), ladder widget (6 rungs, current + trigger; step down C1, up C3), venue registry widget (status, products, max leverage capped 2× for crypto derivatives, STP mode, AUSTRAC check age, concentration vs cap; tighten C1 / allow C3).
+- Kill tile: ARMED/HALTED, last trigger (reason, source, time), actions on halt (stop new trading, cancel all, each bot's `on_system_failure`, treasury/earn moves frozen; "vault sweep: from P5"), HALT button (Kill level single confirm); Resume = C3 with cause check.
+- Dead-man tile: the **three layers** (in-engine watchdog per service, `deadman` sidecar heartbeat, venue timers refreshed/age per venue), last beat + thresholds (defaults 5 s cancel / 10 s `on_system_failure`), countdown when late (±1 s vs server); Ack (C1).
+- Risk state: bot mode summary (paper / hitl / autonomous counts), trading allowed + reasons, ladder rung, **system drawdown stage**, **audit-integrity status** (`ok` / mismatch + action), **egress IP/country check**, active blackouts, DQ-paused instruments.
+- `LimitBar` gauges (used/limit/warn/breach + the layer that set the limit): drawdown from peak with **both stages** marked (system 10% no new entries / 25% flatten + 30-day lock; sleeve 10% halve / 15% halt), daily loss, exposure, leverage, open orders, order rate, venue concentration vs the 25% cap; exposure breakdown + VaR/ES, recent `risk.event`s.
+- Sleeves widget (sleeves from policy, never a fixed list; capital, usage, drawdown vs its two stages, daily loss, status), ladder widget (6 rungs rendered from the API, current + trigger; step down C1, up C3), venue registry widget (status, `paper_ok`, products, max leverage capped 2× for crypto derivatives, STP mode or `n/a (netting)`, AUSTRAC check age, concentration vs cap; tighten C1 / allow C3).
 - WS topics `kill`, `heartbeat`, `risk.state`, `risk.event`, `dq.status`; REST fallbacks.
 
 ## ToDo
@@ -95,7 +102,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D06-risk.md`: ladder rungs and sleeve names fixed (P2-B004), widgets as built.
+- `docs/ui/dashboards/D06-risk.md`: Overview widgets as built (six rungs and policy sleeves already in the doc).
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.32 when all tasks mapped to it are done.
 
 ## Branch & PR
@@ -107,3 +114,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (risk state with integrity/egress/drawdown stage, two-stage gauges with layer, three-layer dead-man tile, kill actions per decision, sleeves from policy)

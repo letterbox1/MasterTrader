@@ -15,17 +15,22 @@ requirements: [R3.06]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T026-wash-sale-flags
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T026 · Wash-sale flags on loss disposals reacquired within the window
@@ -38,13 +43,13 @@ Every loss disposal followed by reacquisition of the same (or substantially iden
 
 - Roadmap: [R3.06, T3.24](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - [09 key findings: wash sales (TR 2008/1, Part IVA)](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) · D15 rules (wash-sale warnings inline) [D15](../../../docs/ui/dashboards/D15-tax.md)
-- Gap: P3-B004 (N unspecified)
+- Default: [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags) (30 days either side, flag only) · decision [17 §C P3-B004](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) · tax-agent question 12 (window and near-identical assets)
 
 ## Requirements
 
-- Default window N = 30 days either side of the loss disposal (configurable in `config/journal/au_settings.yaml`; P3-B004 asks the agent); heightened flag `eofy_window` when the disposal is between 1 May and 31 July.
-- Same asset = same instrument id or same underlying across venues (BTC on two exchanges counts); mapping table for substantially identical (e.g. BTC spot vs BTC ETF) flagged (U).
-- Output: `wash_sale_flag` on CGT line items + a `compliance_flags()` entry; the flag never changes the computed loss (ATO discretion), it informs the agent.
+- Window = re-acquisition within **30 days either side** of a loss disposal (default from 16 §4.4, a setting in `config/journal/au_settings.yaml`, never a constant; the agent confirms via 09 question 12); marker `eofy_window` when the disposal is between 1 May and 31 July (extra attention, 09).
+- Same asset = the same instrument (the same asset on two venues counts, e.g. BTC on two exchanges). Near-identical assets (e.g. BTC spot vs a BTC ETF) are a tax-agent question; the mapping table ships **empty** and any entry you add is labelled (U).
+- Output: `wash_sale_flag` on CGT line items + a `compliance_flags()` entry; **flag only**: nothing is blocked or adjusted automatically and the computed loss is unchanged (16 §4.4).
 - Publish `alert.info.wash_sale` once per flagged disposal; M8/M21 guard rule (documented for P6) that agents must not propose sell-and-rebuy for tax reasons.
 
 ## ToDo
@@ -102,3 +107,4 @@ Every loss disposal followed by reacquisition of the same (or substantially iden
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (30-day window and flag-only from 16 §4.4 (P3-B004 closed); same asset = same instrument, near-identical is agent Q12; tools/services filled)

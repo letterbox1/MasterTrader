@@ -15,17 +15,22 @@ requirements: [R3.08, R3.11]
 roadmap_todos: [T3.25, T3.28]
 modules: [M18]
 dashboards: []
+tools: [git]
+mcp: []
+env: []
+services: []
 branch: p3/P3-T044-runbooks-snapshot-recon
 pr: ""
 doc_sync: [docs/runbooks/journal-snapshot-2027-06-30.md, docs/runbooks/journal-recon-break.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T044 · Runbooks for the 2027 snapshot and reconciliation breaks
@@ -41,8 +46,8 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 
 ## Requirements
 
-- `docs/runbooks/journal-snapshot-2027-06-30.md`: T-30 days checks (backups, price feeds, Prefect schedule, P3-T002 answer), on-the-day verification (completeness query, D15 Lots), host-down recovery (late run is identical), `needs_valuation` handling (manual valuation via audited command with evidence), never edit rows.
-- `docs/runbooks/journal-recon-break.md`: read the break, common causes (late funding, venue delay, missing ledger type, unmatched transfer), explain (annotation) vs correct (superseding event), when to escalate (> 2 days, any WORM verify failure → halt per 15 §2).
+- `docs/runbooks/journal-snapshot-2027-06-30.md`: T-30 days checks (backups, price feeds, Prefect schedule, P3-T002 answer), on-the-day checks that the crypto recorders cover the 23:55:00–23:59:59 AEST VWAP window and every price source in the [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) convention, verification (completeness query, D15 Lots), host-down recovery (late run is identical), `needs_valuation` handling (manual valuation via `journal.manual_event.add` (C2) with evidence, or a superseding snapshot row), never edit rows.
+- `docs/runbooks/journal-recon-break.md`: read the break, common causes (late funding, venue delay, missing ledger type, unmatched transfer), explain (annotation; "explained" = matched to a known journal event within 24 h, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)) vs correct (superseding event), when to escalate (unexplained after 24 h; any WORM verify failure → the configured integrity action, default `block_new_entries` with exits continuing, cleared only by `audit.integrity.ack` (C3) after investigation, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)).
 - Each runbook has exact commands/queries and links to Grafana panels.
 
 ## ToDo
@@ -72,7 +77,7 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 
 ## Exceptions & edge cases
 
-- Runbook must cover the case where the WORM verify fails during an investigation (halt + incident).
+- Runbook must cover the case where the WORM verify fails during an investigation (`block_new_entries` by default + `audit.integrity_incident`; ack is C3).
 
 ## Cardinal rules (do NOT)
 
@@ -95,3 +100,4 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (recon explain window 24 h (16 §2.9), WORM mismatch → `block_new_entries` + C3 ack (16 §2.11), snapshot convention 16 §4.2; fields filled)

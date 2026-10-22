@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T024, P0-T029, P0-T030]
 requirements: [R4.12]
 roadmap_todos: [T4.28]
 modules: [M21]
 dashboards: [D10]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres]
 branch: p4/P4-T028-question-registry-v1
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T028 · Tier B question registry v1, models schema and decision audit
@@ -39,19 +44,19 @@ checkpoint: ""
 - Roadmap: [R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.28](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (typed, versioned questions; ~320-token state budget; binary/low-option only) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
 - Architecture: [02 §4 M21 row](../../../docs/02-v1-architecture.md#4-logical-components) (`models.registry`, `models.question`, `audit.tierb_decision`)
-- Gap: P4-B006 (`models`/`rag` schemas absent from P0 R0.03).
+- Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P4-B006): all 13 schemas incl. `models` and `rag` are created in P0 (P0-T024); this task only adds tables. Cross-phase `depends_on`: P0-T024 (schemas), P0-T029/P0-T030 (WORM triggers and hash chain for `audit.tierb_decision`).
 - UI: [D10 Decision questions](../../../docs/ui/dashboards/D10-models-memory.md) (full UI in P6).
 
 ## Requirements
 
-- `models.question`: id, version, type (choice/score/yes-no), options[], prompt template, state builder ref, state token budget (default 320), threshold(s), status (draft/active/retired); a new version is a new row.
+- `models.question`: id, version, type (choice/score/yes-no), options[], prompt template, state builder ref, state token budget (default 320), threshold(s), status (draft/active/retired); a new version is a new row. Threshold defaults come from [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) (auto-decide at ≥ 0.75 precision, direct veto only at ≥ 0.90 precision, ECE ≤ 0.05), configurable per question.
 - `audit.tierb_decision` (WORM, hash-chained): decision id, question id+version, subject (doc id / instrument), probabilities, model revision, `prompt_hash`, backend, latency, abstained bool.
 - State builders produce compact structured state (title, first 2 paragraphs, tickers, source, time) within budget; **refuse** Telegram/`model_input_ok=false` subjects via the P4-T025 guard.
 - Endpoints (via P4-T043): `/models/questions`, `/models/tierb/decisions`; command `models.question.update` (C1).
 
 ## ToDo
 
-- [ ] Alembic migrations for `models` schema + `audit.tierb_decision` (WORM triggers from P0).
+- [ ] Alembic migrations for `models.registry`, `models.question` and `audit.tierb_decision` (tables only; schemas exist from P0; WORM triggers from P0-T029/T030). `models.label` is added by P4-T062.
 - [ ] Question YAMLs in `config/models/questions/*.yaml` + loader.
 - [ ] State builders + token-budget enforcer (tokenizer of the pinned model).
 - [ ] Tests.
@@ -78,7 +83,7 @@ checkpoint: ""
 
 ## Exceptions & edge cases
 
-- Migrations create the `models` schema if P0 didn't (see P4-B006); idempotent.
+- The `models` schema exists from P0 (17 §B); migrations only add tables and fail loudly if the schema is missing.
 
 ## Cardinal rules (do NOT)
 
@@ -102,3 +107,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (schemas created in P0 per 17 §B (P4-B006); tier-B threshold defaults linked to 16 §2.10; explicit P0 depends_on)

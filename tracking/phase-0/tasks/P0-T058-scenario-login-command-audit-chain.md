@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T050, P0-T034, P0-T038, P0-T052]
+depends_on: [P0-T050, P0-T052]
 requirements: [R0.08, R0.07, R0.11]
 roadmap_todos: [T0.24, T0.23]
 modules: [mt_api, M17, M15]
 dashboards: [D16]
+tools: [git, node>=20, pnpm, playwright, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats, mt-api, caddy, loki]
 branch: p0/P0-T058-scenario-login-command-audit-chain
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T058 · Scenario: login with TOTP, run a command, see it chained and verified
@@ -41,13 +46,13 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 - [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers)
 - [D16 System](../../../docs/ui/dashboards/D16-system.md)
-- Depends on: P0-T050, P0-T034, P0-T038, P0-T052
+- Depends on: P0-T050, P0-T052 (which bring in P0-T034 and P0-T038)
 
 ## Requirements
 
 - Runs against the full compose stack in CI (and on the host for the exit demo) with a seeded test credential.
 - Steps: setup/login (TOTP via test secret) → C0 command → C1 preview + execute → `audit.verify` → D16 Audit shows rows with chain ✓ → click `trace_id` → Loki logs contain the same id.
-- Unhappy paths: wrong TOTP → 401 + `auth_event`; replayed idempotency key → replay; missing confirmation token on C1 → 428.
+- Unhappy paths: wrong TOTP → 401 + `auth_event`; replayed idempotency key → replay; missing `confirm_token` on C1 → 428.
 - Asserts the DB chain directly (`recompute_chain`) as well as through the UI.
 
 ## ToDo
@@ -102,3 +107,4 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (confirm_token name (02 §7.2); deps trimmed to true preconditions; run fields added)

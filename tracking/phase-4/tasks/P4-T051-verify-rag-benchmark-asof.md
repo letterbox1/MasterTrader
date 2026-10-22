@@ -15,17 +15,22 @@ requirements: [R4.07]
 roadmap_todos: [T4.61]
 modules: [M9]
 dashboards: [D10]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, tei-embed, tei-rerank, mlflow]
 branch: p4/P4-T051-verify-rag-benchmark-asof
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T051 · RAG retrieval benchmark and as_of leakage test
@@ -96,3 +101,4 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)

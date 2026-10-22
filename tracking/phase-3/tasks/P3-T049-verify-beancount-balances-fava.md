@@ -15,17 +15,22 @@ requirements: [R3.10]
 roadmap_todos: [T3.63]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv, bean-check, bean-query]
+mcp: []
+env: []
+services: [journal, fava, caddy]
 branch: p3/P3-T049-verify-beancount-balances-fava
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T049 · Beancount export balances and Fava opens it
@@ -94,3 +99,4 @@ The Beancount export of the real paper-trading period passes `bean-check`, its b
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; tools/services filled)

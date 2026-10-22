@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T026]
+depends_on: [P4-T026, P0-T043]
 requirements: [R4.06]
 roadmap_todos: [T4.23]
 modules: [M2, M9]
 dashboards: [D08]
+tools: [uv, git, docker]
+mcp: []
+env: []
+services: [nats, postgres, tei-embed]
 branch: p4/P4-T027-nlp-finbert-embeddings-store
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T027 · nlp stages: FinBERT sentiment, TEI embeddings, store and publish
@@ -38,7 +43,7 @@ Relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/
 
 - Roadmap: [R4.06](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.23](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Flow: [02 F3](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · Embedders: [10 §2](../../../docs/10-memory-rag-and-models.md#2-local-embedders--rerankers) (TEI, bge-small 384-d, embedding cache)
-- Cross-phase: P0 R0.09 (TEI container).
+- Cross-phase: P0-T043 (R0.09 `tei-embed` container, 17 §D P0-B007) is a `depends_on` entry.
 
 ## Requirements
 
@@ -102,3 +107,4 @@ Relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P0-T043 (tei-embed))

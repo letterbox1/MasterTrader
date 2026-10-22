@@ -15,17 +15,22 @@ requirements: [R4.01, R4.08]
 roadmap_todos: [T4.20, T4.25]
 modules: [M2, M3]
 dashboards: [D07, D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats]
 branch: p4/P4-T013-gdelt-connector
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T013 · GDELT news volume, tone and event feed connector
@@ -104,3 +109,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)

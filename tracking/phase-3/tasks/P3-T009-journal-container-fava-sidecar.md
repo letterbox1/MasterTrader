@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T008]
+depends_on: [P3-T008, P0-T020, P0-T021, P0-T023]
 requirements: [R3.10, R3.01]
 roadmap_todos: [T3.40]
 modules: [M18]
 dashboards: []
+tools: [git, docker]
+mcp: []
+env: []
+services: [postgres, nats, prefect-server, caddy, grafana]
 branch: p3/P3-T009-journal-container-fava-sidecar
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T009 · journal container and Fava sidecar on the internal network
@@ -39,14 +44,15 @@ A `journal` service (image pinned by digest, `mt_journal` entrypoint) runs on th
 - Roadmap: [T3.40, R3.10](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - Containers + networks: [02 §3](../../../docs/02-v1-architecture.md#3-deployment-topology) (`journal` in phase 3, `core` network)
 - Optional sidecars: `services/beancount-fava` in [03 §3](../../../docs/03-build-spec.md#3-repository-layout)
-- Cross-phase: P0 T0.41 (compose with digests), T0.42 (networks), P0 Prefect; P1 Grafana/alerting
+- Cross-phase prerequisites (depends_on): P0-T020 (compose stack pinned by digest, incl. Prefect), P0-T021 (Docker networks), P0-T023 (observability containers)
+- Write-path buffer: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (owned by P3-T057)
 - Related: P3-T035 (export), P3-T049 (Fava opens it)
 
 ## Requirements
 
-- `journal` service: non-root user, read-only root FS, tmpfs for secrets, bind mounts `/srv/mastertrader/journal/inbox` (ro) and `/srv/mastertrader/journal/exports` (rw); networks `core` only; resource limits (1–2 CPU, 2 GB RAM baseline).
+- `journal` service: non-root user, read-only root FS, tmpfs for secrets, bind mounts `/srv/mastertrader/journal/inbox` (ro), `/srv/mastertrader/journal/exports` (rw) and `data/attachments/` (rw, content-addressed files referenced by hash from `journal.note`); networks `core` only; resource limits (1–2 CPU, 2 GB RAM baseline).
 - Heartbeat `sys.heartbeat.journal` every 5 s; `/healthz` reports DB, NATS consumer lag, last FX update.
-- NATS durable consumers: `journal-fills` on `fill.>`, `journal-wallet` on `wallet.*.*.transfer`, explicit ack, max-deliver unlimited with backoff; stream retention for `fill.>` must cover the Postgres-down buffer (see P3-B015).
+- NATS durable consumers: `journal-fills` on `fill.>`, `journal-wallet` on `wallet.*.*.transfer`, explicit ack (only after commit), max-deliver unlimited with backoff; the Postgres-down buffer is the bounded `WORM_BUFFER` stream (default 1 GB or 24 h, configurable) defined in P3-T057.
 - `fava` sidecar: pinned digest, serves `/srv/mastertrader/journal/exports/current.beancount` read-only, behind Caddy route `/fava/` with the same session auth as the web app; no egress.
 - Grafana panel: journal consumer lag, events/min, quarantine count, last recon result.
 
@@ -84,7 +90,7 @@ A `journal` service (image pinned by digest, `mt_journal` entrypoint) runs on th
 
 ## Exceptions & edge cases
 
-- Postgres down → consumer stops acking; NATS buffers within stream limits; alert at 50% of the limit (02 §9.3).
+- Postgres down → consumer stops acking; writes buffer within the configured bound (default 1 GB or 24 h; above 80% new entries stop, exits continue; [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check), P3-T057).
 - Exports dir full → export job fails loudly, ingestion unaffected.
 
 ## Cardinal rules (do NOT)
@@ -109,3 +115,4 @@ A `journal` service (image pinned by digest, `mt_journal` entrypoint) runs on th
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Postgres-down buffer now the 16 §3.3 bound owned by P3-T057 (P3-B015); attachments mount (P3-B013); explicit P0 depends_on; tools/services filled)

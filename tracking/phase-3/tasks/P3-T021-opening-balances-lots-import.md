@@ -10,46 +10,51 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T015, P3-T016, P3-T019]
+depends_on: [P3-T015, P3-T016, P3-T019, P3-T055]
 requirements: [R3.01, R3.05]
 roadmap_todos: [T3.20, T3.23]
 modules: [M18]
 dashboards: []
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, mt-api]
 branch: p3/P3-T021-opening-balances-lots-import
 pr: ""
-doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-3-journal-and-tax.md]
+doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T021 · Opening balances and opening lots import from historical statements
 
 ## Goal / expected outcome
 
-Historical statements from P3-T003 (and a manual CSV template for anything without a parser) produce opening lots with original acquisition dates and cost bases plus opening cash balances per account, reconciled against each statement's closing positions.
+The historical import (built and tested on scrubbed sample statements; your real P3-T003 exports are run in P3-T061) and a manual CSV template for anything without a parser produce opening lots with original acquisition dates and cost bases plus opening cash balances per account, reconciled against each statement's closing positions.
 
 ## Context & references
 
 - Roadmap: [R3.01, R3.05, T3.20, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Inputs: P3-T003 (USER exports) · adapters P3-T014/T015/T016
+- Inputs: sample statements in `tests/journal/fixtures/statements/` for the build; P3-T003 (USER exports) only in the late check P3-T061 · adapters P3-T014/T015/T016 · command `journal.manual_event.add` (C2) from P3-T055
 - 12-month rule depends on true acquisition dates: [09 AU_2026](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface)
 
 ## Requirements
 
 - Import mode `historical` runs all statement adapters over the inbox in chronological order, producing full history where available (preferred) rather than synthetic opening lots.
-- Where history is incomplete, a manual template `config/journal/opening_lots.csv` (asset, account, acquired_date, qty, cost_base_aud, cost_base_ccy, evidence_ref) creates `source = manual` opening lots via an audited `mt_api` command, flagged `cost_base_estimated` if evidence is missing.
+- Where history is incomplete, a manual template `config/journal/opening_lots.csv` (asset, account, acquired_date, qty, cost_base_aud, cost_base_ccy, evidence_ref) creates `source = manual` opening lots via `journal.manual_event.add` (C2, reason required, [17 §D P3-B006](../../../docs/17-decisions-register.md#d-other-decisions)), flagged `cost_base_estimated` if evidence is missing.
 - Reconcile: per account, computed holdings at statement end = statement closing positions (qty exact; cash within 0.01 of the currency).
 - Import report saved to `journal.tax_report` (type `import_report`) with file hashes.
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/ingest/historical.py` orchestrator + manual CSV loader (through `mt_api` command `journal.manual_event.add`, C1 — propose in 02 §7.2)
+- [ ] Implement `packages/mt_journal/ingest/historical.py` orchestrator + manual CSV loader (one `journal.manual_event.add` C2 command per row, with the CSV row as the reason reference)
 - [ ] Reconciliation against statement closing positions
 - [ ] Import report generator; tests with scrubbed fixtures; docs
 
@@ -71,7 +76,7 @@ Historical statements from P3-T003 (and a manual CSV template for anything witho
 
 ## Acceptance criteria
 
-- [ ] Every account in P3-T003's list reconciles or has a documented acknowledged mismatch
+- [ ] Every account in the sample fixture set reconciles or has a documented acknowledged mismatch (your real accounts are checked in P3-T061)
 - [ ] Import report stored with file hashes
 - [ ] Manual events audited in `audit.command`
 - [ ] CI green (lint, types, tests, `pit` check; `tax-golden` once P3-T045 lands)
@@ -93,7 +98,7 @@ Historical statements from P3-T003 (and a manual CSV template for anything witho
 
 ## Doc sync on completion
 
-- `docs/02-v1-architecture.md` §7.2: add `journal.manual_event.add` (C1) to the Journal & tax commands.
+- `docs/02-v1-architecture.md` §7.2: none (`journal.manual_event.add` C2 already listed).
 - `docs/roadmap/phase-3-journal-and-tax.md`: tick T3.20, T3.23 once every item mapped to it is done.
 
 ## Branch & PR
@@ -105,3 +110,4 @@ Historical statements from P3-T003 (and a manual CSV template for anything witho
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (manual events are C2 via P3-T055 (was C1, P3-B006); built on sample statements, real exports moved to P3-T061; tools/services filled)

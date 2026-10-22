@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T039, P0-T041, P0-T019]
+depends_on: [P0-T041, P0-T019]
 requirements: [R0.N4, R0.N2]
 roadmap_todos: [T0.90]
 modules: [ops]
 dashboards: []
+tools: [docker, pgbackrest, restic, sops]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T060-runbooks-backup-restore-host-rebuild
 pr: ""
 doc_sync: [docs/runbooks/README.md, docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T060 · Write runbooks: backup & restore, host rebuild
@@ -42,13 +47,13 @@ checkpoint: ""
 - [02 §8 flows (F5, F6, F11)](../../../docs/02-v1-architecture.md#8-end-to-end-flows) (F11)
 - [Roadmap §5 runbooks track](../../../docs/roadmap/README.md#5-cross-phase-tracks)
 - Inputs: P0-T039, P0-T041, P0-T019, P0-T057 (measured RTO)
-- Depends on: P0-T039, P0-T041, P0-T019
+- Depends on: P0-T041 (brings in P0-T039), P0-T019
 
 ## Requirements
 
 - Format per runbook: purpose, when to use, prerequisites (keys, access), numbered steps with exact commands, verification, rollback, measured duration (RTO/RPO), last tested date.
-- Backup & restore: PITR to a timestamp, full-cluster restore to a new host, single-table inspection via scratch restore, restic file restore; RPO target ≤ 1 min (WAL `archive_timeout=60`); RTO measured from P0-T057.
-- Host rebuild: OS + LUKS install, `infra/host` playbook, Tailscale join, secrets file restore from restic + age identity on YubiKey, `docker compose up`, restore DB, verify (`audit.verify`, health), re-enable schedules.
+- Backup & restore: schedule per 17 §B P0-B011 (continuous WAL, nightly incremental, weekly full, monthly restore test, monthly WORM export); PITR to a timestamp, full-cluster restore to a new host, single-table inspection via scratch restore, restic file restore; RPO target ≤ 1 min (WAL `archive_timeout=60`); RTO measured from P0-T057.
+- Host rebuild: OS + LUKS install, `infra/host` playbook, Tailscale join, secrets file restore from restic to `~/.config/mastertrader/` (outside the repo, 17 §D P0-B018) + age identity on YubiKey, `docker compose up`, restore DB, verify (`audit.verify`, health), re-enable schedules.
 - No secrets in the runbooks; reference secret **names** only.
 - `docs/runbooks/README.md` index listing all runbooks (P0 + placeholders for later phases: keys leaked, server down with positions, bad data, wallet drained).
 
@@ -98,3 +103,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (backup schedule (P0-B011) and secrets location (P0-B018); deps trimmed; run fields added)

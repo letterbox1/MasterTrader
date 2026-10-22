@@ -15,17 +15,22 @@ requirements: [R2.33]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T028-execution-algos-maker-twap
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T028 · Execution methods: maker-first, TWAP slicing and fixed exit plan
@@ -42,9 +47,9 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 
 ## Requirements
 
-- `MakerFirst` ExecAlgorithm: post-only at best bid/ask, reprice up to N times, timeout (default 30 s, policy), then escalate to taker within collar; never beyond the decision deadline.
+- `MakerFirst` ExecAlgorithm: post-only at best bid/ask, reprice up to N times, timeout (default 30 s, an L4 setting), then escalate to taker within the price collar (defaults 16 §2.1); never beyond the bot's decision deadline (defaults scalping 1 s · intraday 10 s · swing 5 min · position 1 h, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)).
 - `TWAP` ExecAlgorithm: triggers when order qty > 1% of trailing 1-min volume (from `md.*.bar.1m`), slices evenly over horizon H with jitter; each child passes M11.
-- Exit plan (`stop`, `target`, `time_stop`, `trail`) required on every entry intent; stored immutable in `audit.order`; changes only via `position.set_brackets` (C2) and logged as new rows.
+- Exit plan (`stop`, `target`, `time_stop`, `trail`) required on every entry intent; the stop is also placed as a **resting venue-side stop** at entry where the venue supports it (dead-man layer 3, P2-T073); stored immutable in `audit.order`; changes only via `position.set_brackets` (C2) and logged as new rows.
 - Memecoin rule: never average down (adds to a losing position rejected).
 
 ## ToDo
@@ -102,3 +107,4 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (decision-deadline and collar defaults from 16, exit-plan stop rests at the venue)

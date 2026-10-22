@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T025]
+depends_on: [P4-T025, P1-T009]
 requirements: [R4.06]
 roadmap_todos: [T4.23]
 modules: [M2]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p4/P4-T026-nlp-dedupe-entity-linking
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T026 · nlp stages: dedupe and entity/ticker linking
@@ -38,7 +43,7 @@ Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + cont
 
 - Roadmap: [R4.06](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.23](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M2 processing](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) · [06 §2 processing chain](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · [10 §3 item 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) (MinHash or cosine > 0.95)
-- Cross-phase: P1 FinanceDatabase symbol master (R1.05).
+- Cross-phase: P1-T009 (R1.05 symbol master / instrument master) is a `depends_on` entry.
 
 ## Requirements
 
@@ -101,3 +106,4 @@ Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + cont
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T009)

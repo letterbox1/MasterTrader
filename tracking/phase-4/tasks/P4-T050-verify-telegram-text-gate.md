@@ -15,17 +15,22 @@ requirements: [R4.03, R4.02]
 roadmap_todos: [T4.60]
 modules: [M2, M9, M21]
 dashboards: [D08]
+tools: [uv, git, docker]
+mcp: []
+env: []
+services: [postgres, nats, loki]
 branch: p4/P4-T050-verify-telegram-text-gate
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T050 · Telegram-text gate test (never reaches FinBERT, tier B, RAG, agents or training)
@@ -39,6 +44,7 @@ An automated end-to-end test suite, run in CI and as part of the exit demo, prov
 - Roadmap: [R4.03](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.60](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Exit criterion 3
 - Policy: [12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [SPEC NN10](../../../SPEC.md#non-negotiable-requirements) · [10 §4.3 operating rules](../../../docs/10-memory-rag-and-models.md#43-design)
 - Related: P4-T025 guard, P4-T019 postures.
+- Decisions: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B001: F3 provenance-first, Telegram only via F3b) and [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B003: `text.telegram_posture`, `posture.telegram.*`, consumers M4/M11 rules only).
 
 ## Requirements
 
@@ -46,7 +52,8 @@ An automated end-to-end test suite, run in CI and as part of the exit demo, prov
 - Probes: request spies on FinBERT runner, TEI client, decision-svc client, LiteLLM client, RAG writer; DB scan (`text.*`, `rag.*`, `models.*`, `audit.*`) for the canary; NATS tap on `>`; Loki query for the canary; API crawl of `/intel/*` and `/rag/search?q=<canary>`.
 - Training-set exporters (`mt_lab`/`mt_models` dataset builders) run with Telegram rows present → zero Telegram rows exported.
 - Forged-flag case: a Telegram row with `model_input_ok=true` forced in a test DB is still refused by every boundary.
-- Positive control: the canary address **does** appear in `text.tg_mention` and postures.
+- Positive control: the canary address **does** appear in `text.telegram_mention` and `text.telegram_posture` / `posture.telegram.*`.
+- Consumer probe: only the allow-listed consumers (M4 rules, M11 rules, intel-writer, mt-api display) hold subscriptions on `posture.telegram.>`; MCP responses (P8) are out of scope here but use the same provenance filter.
 
 ## ToDo
 
@@ -77,7 +84,7 @@ An automated end-to-end test suite, run in CI and as part of the exit demo, prov
 
 ## Exceptions & edge cases
 
-- Allowed locations: in-memory extractor only; `text.tg_mention` stores the extracted address, never the canary text.
+- Allowed locations: in-memory extractor only; `text.telegram_mention` stores the extracted address, never the canary text.
 
 ## Cardinal rules (do NOT)
 
@@ -100,3 +107,4 @@ An automated end-to-end test suite, run in CI and as part of the exit demo, prov
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical posture names and consumer allow-list probe (17 §A P4-B001, §D P4-B003))

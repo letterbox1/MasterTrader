@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T043]
+depends_on: [P4-T043, P0-T049]
 requirements: [R4.13]
 roadmap_todos: [T4.29]
 modules: [M2, M21, M9]
 dashboards: [D08]
+tools: [pnpm, node>=20, git]
+mcp: []
+env: []
+services: [mt-api]
 branch: p4/P4-T044-d08-feed-detail-sources
 pr: ""
 doc_sync: [docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T044 · D08 Intel: Feed, Document detail and Sources tabs
@@ -38,8 +43,8 @@ checkpoint: ""
 
 - Roadmap: [R4.13](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.29](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - UI spec: [D08](../../../docs/ui/dashboards/D08-intel.md) (layout by tier, tabs, actions, states & rules, acceptance) · [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
-- Cross-phase: P0 R0.11 component library; P2 D01/D02.
-- Gap: P4-B002 (Feed source list includes Telegram).
+- Cross-phase: P0-T049 (R0.11 component library) is a `depends_on` entry.
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B002): D08 shows Telegram only as postures; the Feed never lists Telegram ([D08 Feed + Telegram postures panel](../../../docs/ui/dashboards/D08-intel.md)). Label mode is P4-T062.
 
 ## Requirements
 
@@ -47,7 +52,7 @@ checkpoint: ""
 - Approximate timestamps shown as '≈ 2h ago (source-claimed)'.
 - New docs appear within 5 s of ingestion; 'Scoring…' until tier B returns.
 - Feed stays smooth at 1,000+ items on phones (virtualised list).
-- Telegram never appears as a `DocumentCard`; a 'Telegram postures' panel shows per subject velocity/channel count/new-channel share/time since first call.
+- Telegram never appears as a `DocumentCard`; a 'Telegram postures' panel (`PostureCard`s from `/intel/postures`, numbers only) shows per subject velocity/channel count/new-channel share/time since first call. In Sources, Telegram channels show status and counts only, never text.
 - Sources tab shows `train_ok`, `model_input_ok`, `retention_days`, attribution (CryptoPanic) and disabled reasons.
 
 ## ToDo
@@ -94,7 +99,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D08-intel.md`: mark implemented widgets; add the Telegram postures panel
+- `docs/ui/dashboards/D08-intel.md`: mark implemented widgets (the Telegram postures panel is already specified)
 - `docs/roadmap/phase-4-intel.md`: tick T4.29 when all items mapped to it are done
 
 ## Branch & PR
@@ -106,3 +111,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (postures panel from /intel/postures, Telegram never in the Feed (17 §D P4-B002); explicit depends_on P0-T049)

@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T004]
+depends_on: [P2-T004, P0-T024, P0-T034]
 requirements: [R2.04, R2.06]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p2/P2-T006-strategy-registry-versions
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T006 · Strategy registry, versions and strategy commands
@@ -39,14 +44,14 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 - Roadmap: [R2.04, R2.06](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
 - Architecture: [02 §4 M0 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 command catalogue](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - UI: [D03 registry + versions tab](../../../docs/ui/dashboards/D03-strategies.md)
-- Cross-phase: Alembic migrations + `strategy` schema (P0 R0.03); `audit.command` (P0 R0.08).
+- Cross-phase (`depends_on`): Alembic baseline + `strategy` schema (P0-T024, R0.03); command bus + `audit.command` (P0-T034, R0.08).
 
 ## Requirements
 
 - Tables (Alembic): `strategy.registry(id uuid7, name unique, template, created_at, archived_at)`, `strategy.versions(id, strategy_id, version int, manifest jsonb, manifest_hash, code_hash, git_sha, created_at, created_by)` (insert-only), `strategy.runs(id, version_id, kind backtest|paper|shadow|live, started_at, ended_at, metrics jsonb)`.
 - A new version is created on any manifest or code change; versions are never mutated.
 - Queries: `/strategies`, `/strategies/{id}` (+`?versions=1`), `/strategies/{id}/runs`, `/strategies/templates` (template catalogue with evidence + priority).
-- Commands: `strategy.create` (C1), `strategy.update_params` (C1 paper / C2 live mode / C3 when a `risk_increasing` param increases, classified by P2-T019), `strategy.clone` (C1), `strategy.archive` (C1).
+- Commands: `strategy.create` (C1), `strategy.update_params` (tightening C1; any `risk_increasing` param increase is a loosening = C3, classified by P2-T019 per [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)), `strategy.clone` (C1), `strategy.archive` (C1).
 - Every command written to `audit.command`; problem+json errors.
 
 ## ToDo
@@ -67,7 +72,7 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 
 ### Scenarios
 - Given a strategy with 3 versions, when a bot pins v2, then later edits create v4 and the bot still runs v2.
-- Given `strategy.update_params` raises position size on a live-mode strategy, when submitted, then it is routed to C3.
+- Given `strategy.update_params` raises position size on a strategy whose bots run in `hitl` or `autonomous`, when submitted, then it is routed to C3 (Telegram + TOTP + 15 min cool-down).
 
 ### Stress / failure injection
 - n/a: CRUD; check `/strategies` p95 < 100 ms with 500 strategies × 20 versions.
@@ -107,3 +112,4 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (update_params levels per 16 §1 (loosen = C3), cross-phase deps)

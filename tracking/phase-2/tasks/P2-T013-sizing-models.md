@@ -15,17 +15,22 @@ requirements: [R2.12]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T013-sizing-models
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T013 · Position sizing models including capped Kelly
@@ -38,7 +43,8 @@ checkpoint: ""
 
 - Roadmap: [R2.12](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Spec: [14 §4 sizing](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M11 sizing models](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)
-- Related: Part B's MasterTradingBot sizing library must agree with these models (golden files).
+- Related: the MasterTradingBot sizing library (P2-T131) must agree with these models (golden files).
+- Defaults: risk per trade 1% of sleeve equity [0.1–2%], Kelly quarter-Kelly ceiling ([16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)); every model parameter is an L4 setting with its 16 default.
 - Golden tests are mandatory for merge (R2.N2, P2-T051).
 
 ## Requirements
@@ -47,7 +53,7 @@ checkpoint: ""
 - Reject the `(2p − 1)` shortcut: Kelly requires measured b; b missing → model error, never default b = 1.
 - Never stack Kelly on a vol-targeted sleeve: policy validation error if a sleeve has `vol_target` and a strategy in it selects Kelly.
 - f ≤ 0 → size 0 (no trade). All outputs then capped by risk/trade and max position limits (P2-T012) and rounded down to lot size.
-- Ladder rung 2 multiplies size by 0.5 (P2-T018).
+- Size multipliers applied after the model: ladder rung 2 × 0.5 (P2-T018) and sleeve drawdown stage 1 × 0.5 (P2-T012); multipliers come from policy, not code.
 
 ## ToDo
 
@@ -106,3 +112,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (risk-per-trade default and multipliers from policy (16 §2.1); MTB link)

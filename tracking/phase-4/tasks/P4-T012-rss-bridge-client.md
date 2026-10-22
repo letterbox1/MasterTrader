@@ -15,17 +15,22 @@ requirements: [R4.01, R4.N1]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [uv, git, docker]
+mcp: []
+env: []
+services: [nats, rss-bridge]
 branch: p4/P4-T012-rss-bridge-client
 pr: ""
 doc_sync: [docs/runbooks/rss-bridge.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T012 · RSS-Bridge client and bridged-site configuration
@@ -39,7 +44,7 @@ checkpoint: ""
 - Roadmap: [R4.01, R4.N1](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
 - Research: [social-aggregators](../../../docs/research/social-aggregators.md)
-- Related: P4-T007 (sidecar), P4-T019 (Telegram fallback bridge).
+- Related: P4-T007 (sidecar), P4-T019 (Telegram fallback bridge: its items go only to the posture extractor, never to `raw.text.*` or `nlp`, 02 F3b).
 
 ## Requirements
 
@@ -50,7 +55,7 @@ checkpoint: ""
 ## ToDo
 
 - [ ] Implement the JSON Feed parser + bridge URL builder.
-- [ ] Write `bridges.yaml` for the `kind: site` sources from P4-T003.
+- [ ] Write `bridges.yaml` for the example `kind: site` sources (your P4-T003 sites are bridged or rejected during P4-T060).
 - [ ] Whitelist consistency check in CI.
 - [ ] Fixtures + tests.
 
@@ -70,7 +75,7 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] All `kind: site` sources from P4-T003 bridged or explicitly rejected with a reason
+- [ ] All example `kind: site` sources bridged or explicitly rejected with a reason
 - [ ] Context-only flag set on every bridged item
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
 
@@ -103,3 +108,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Telegram bridge output routed only to postures (17 §A P4-B001); site list from P4-T003 handled in P4-T060)

@@ -15,17 +15,22 @@ requirements: [R0.11, R0.N6, R0.08]
 roadmap_todos: [T0.26]
 modules: [M15]
 dashboards: [D16]
+tools: [git, node>=20, pnpm, playwright]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T050-app-shell-login-totp
 pr: ""
 doc_sync: [docs/ui/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T050 · Build the app shell, navigation, banners, status bar and login/TOTP screens
@@ -49,8 +54,8 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 
 - Layouts per tier: 3xl/2xl sidebar 240 + top 56 + status 28 (+ right dock slot); xl sidebar collapsible; lg/md rail 64; ph/sm/xs top 48 + bottom nav 56 (+ safe area); xxs top 44 (mark only) + bottom nav 4 + More; `landscape-short` rail 56, top 40, no bottom nav; `very-short` drops decorative headers.
 - Kill switch and mode badge visible at **every** tier (icon + accessible name ≤ sm); kill wired to `risk.kill.on` (Kill level) and shows `HALTED` + reason from WS `kill`; OFF opens `C3Flow`.
-- Mode badge in P0 reads `PAPER` (no strategies yet) from `/risk/state` stub.
-- Banners (ui §2.2) driven by WS: kill ON (red), verify-mismatch/trading halt (red, from P0-T038), read-only mode (grey) when `db: down`.
+- Mode badge in P0 reads `PAPER` (no strategies yet) from `/risk/state` stub; the only mode values are `PAPER` / `HITL` / `AUTONOMOUS` ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
+- Banners (ui §2.2) driven by WS: kill ON (red), audit integrity (red: shows the configured action, default `block_new_entries`, until `audit.integrity.ack`; ui §2.2, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity); from P0-T038), read-only mode (grey) when `db: down`.
 - Status bar: engine version (`n/a` in P0), feed summary (`n/a`), risk state `ARMED/HALTED`, backup age, local clock with UTC tooltip; sticky with reserved space (no overlap).
 - Nav groups and order from ui §1; phone bottom nav Cockpit · Markets · Execution · Tasks · More; unbuilt dashboards show `EmptyState` 'Arrives in Phase N'.
 - Auth screens: first-boot setup (setup token + password + QR from provisioning URI rendered client-side + confirm code + recovery codes shown once), login (password + TOTP), session-expired re-login preserving the route.
@@ -113,3 +118,4 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (modes paper/hitl/autonomous (17 §B); integrity banner replaces 'trading halt' (16 §2.11); run fields added)

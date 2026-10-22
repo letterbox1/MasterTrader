@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T024, P0-T013]
+depends_on: [P0-T024]
 requirements: [R0.07]
 roadmap_todos: [T0.23]
 modules: [M17, mt_store]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p0/P0-T029-worm-privileges-blocking-triggers
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T029 · Implement WORM privileges and blocking triggers
@@ -43,7 +48,7 @@ A reusable migration helper `create_worm_table()` makes a table WORM: owned by `
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
 - [03 §4 data model](../../../docs/03-build-spec.md#4-data-model-overview)
 - [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) (NN7)
-- Depends on: P0-T024, P0-T013
+- Depends on: P0-T024. Build first, keys last: CI and dev set a throwaway `worm_owner` password in scratch DBs; the production ceremony with the offline credential is P0-T013, which runs these migrations later.
 
 ## Requirements
 
@@ -52,7 +57,7 @@ A reusable migration helper `create_worm_table()` makes a table WORM: owned by `
 - Catalog table `audit.worm_registry` (itself WORM) lists every WORM table, chain key and retention (≥ 2557 days).
 - FK lint: `mt_store.lint` fails if any FK referencing a WORM table has `ON DELETE CASCADE`/`SET NULL`.
 - Alembic: migrations touching WORM tables are tagged `worm=True` and refuse to run unless connected as `worm_owner` (ceremony from P0-T013); non-WORM migrations run as `mt_migrator`.
-- 15 §2.1 scope list is recorded for later phases (journal, risk.change, strategy.bot_version, curation.mandate/exec_log, signer ledger) — they must use this helper.
+- 15 §2.1 scope list is recorded for later phases (`journal.*`, `risk.approval`, `risk.change`, `strategy.bot_version`, `curation.mandate`/`exec_log`, signer ledger) — they must use this helper.
 
 ## ToDo
 
@@ -111,3 +116,4 @@ A reusable migration helper `create_worm_table()` makes a table WORM: owned by `
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: no longer waits on the worm_owner ceremony P0-T013; 15 §2.1 scope list; run fields added)

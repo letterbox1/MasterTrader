@@ -15,17 +15,22 @@ requirements: [R0.11, R0.N6]
 roadmap_todos: [T0.26]
 modules: [M15]
 dashboards: []
+tools: [git, node>=20, pnpm, playwright]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T049-component-library-v0
 pr: ""
 doc_sync: [docs/ui/components.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T049 · Build component library v0 (tiles, states, chips, confirm sheets)
@@ -53,7 +58,7 @@ checkpoint: ""
 - `StatusChip` always has text; up/down never colour-only (▲/▼ + sign) per DESIGN §2.
 - `DataTable`: column priorities (hide P3 < xl, P2 < md), `cardRenderer` ≤ ph, own `overflow-x-auto` box with scroll shadow, TanStack Table + Virtual for > 200 rows.
 - `ConfirmSheet`: dialog ≥ md, bottom sheet < md, full screen at xxs; hold-to-confirm 600 ms on touch, Enter on desktop; generates the idempotency key; destructive buttons Flare with ≥ 8px spacing and specific labels.
-- `C3Flow`: states awaiting approval (countdown) → TOTP prompt → cool-down timer → applied; cancellable; matches the server state machine in P0-T035.
+- `C3Flow`: states awaiting approval (countdown; in P0–P1 it reads 'Waiting for break-glass approval', ui §3.3) → TOTP prompt → cool-down timer (the configured cool-down, default 15 min, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) → applied; cancellable; matches the server state machine in P0-T035.
 - `KillSwitchButton`: Flare `HALT` / solid `HALTED + reason`; reachable within 2 tabs of the top bar; opens a Kill-level confirm, never `window.confirm`.
 - Touch targets ≥ 44px on `touch`, ≥ 32px desktop; min text 11px; contrast ≥ 4.5:1 (body); reduced motion removes pulses/glows.
 - A dev route `/__components` renders every component in every state for Playwright + axe.
@@ -112,3 +117,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (C3Flow break-glass state and cool-down from settings (16 §2.3, 17 §D P0-B002); run fields added)

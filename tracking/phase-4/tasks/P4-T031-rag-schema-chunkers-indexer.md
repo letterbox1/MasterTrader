@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T027]
+depends_on: [P4-T027, P0-T024]
 requirements: [R4.07]
 roadmap_todos: [T4.24]
 modules: [M9]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, tei-embed]
 branch: p4/P4-T031-rag-schema-chunkers-indexer
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T031 · Document RAG: rag schema, section-aware chunkers and indexer
@@ -38,7 +43,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 
 - Roadmap: [R4.07](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.24](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Design: [10 §3 items 1, 3, 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory)
-- Gap: P4-B006 (`rag` schema ownership).
+- Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P4-B006): the `rag` schema is created in P0 (P0-T024, a `depends_on` entry); this task adds tables only.
 - Related: P4-T014 (filings), P4-T032 (retrieval).
 
 ## Requirements
@@ -51,7 +56,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 
 ## ToDo
 
-- [ ] Migrations (`rag` schema, extension checks for pgvector/pg_trgm).
+- [ ] Migrations (`rag.doc_chunk` table and indexes in the P0 `rag` schema; extension checks for pgvector/pg_trgm).
 - [ ] Chunkers (`mt_memory.rag.chunk_filing`, `chunk_news`).
 - [ ] Indexer consumer on `text.doc.new` (relevant only) + backfill command.
 - [ ] Tests.
@@ -102,3 +107,4 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (rag schema from P0 per 17 §B (P4-B006); explicit depends_on P0-T024)

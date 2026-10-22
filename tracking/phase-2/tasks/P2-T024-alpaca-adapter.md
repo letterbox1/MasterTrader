@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T022, P2-T001]
+depends_on: [P2-T022, P1-T021]
 requirements: [R2.30, R2.31, R2.32]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T024-alpaca-adapter
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T024 · Alpaca paper adapter
@@ -38,14 +43,16 @@ A Nautilus live data + execution client for **Alpaca** in `packages/mt_engine/ad
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Spec: [03 M12 custom adapters](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [12 §2 registry row](../../../docs/12-policy-and-compliance.md#2-venue-access-registry)
-- Cross-phase: P1 data streams for this venue (R1.04/R1.05) and read-only recon (R1.12) — reuse their clients/parsers.
-- Related: P2-T001 keys, P2-T022 STP, P2-T027 IDs/reconcile, P2-T057 conformance tests.
+- Cross-phase (`depends_on`): the P1 Alpaca stream client (P1-T021, T1.22): reuse its auth/parsers; read-only recon (P1 R1.12) shares report parsing.
+- Build first, keys last: built and tested keyless against recorded HTTP/WS cassettes; the live practice-account run with your keys is P2-T071.
+- Related: P2-T022 STP (`stp: n/a (netting)`), P2-T027 IDs/reconcile, P2-T057 conformance tests, P2-T073 venue-side stops.
 
 ## Requirements
 
 - Alpaca paper REST (`/v2/orders`, `/v2/positions`, `/v2/account`) + `trade_updates` WebSocket; IEX data stays with P1.
 - Supports market/limit/stop/stop-limit, TIF day/gtc/ioc/fok, bracket/OCO via `order_class`.
-- No native STP: engine self-cross guard (P2-T022) applies; `stp_mode=engine_guard` recorded.
+- No native STP: registry `stp: n/a (netting)`; `stp_mode=n/a_netting` recorded; one strategy per account (P2-T022).
+- Resting stop orders at the venue for every position (bracket/OTO legs) so layer 3 of the dead-man works (P2-T073); Alpaca has no cancel-after timer (record (U) and rely on resting stops).
 - Implements Nautilus `LiveExecutionClient`: submit/modify/cancel, order status reports, fill reports, position reports (`generate_order_status_reports`, `generate_fill_reports`, `generate_position_status_reports`) for restart reconciliation.
 - Maps `client_order_id` to the venue's client reference field; maps venue errors to Nautilus rejects with reason text.
 - Rate limits read from response headers where available; backoff with jitter; never retry a submit without checking status by client id first.
@@ -64,7 +71,7 @@ A Nautilus live data + execution client for **Alpaca** in `packages/mt_engine/ad
 ### Tests
 - Unit: payload mapping per order type (market, limit, stop, stop-limit, brackets where supported).
 - Integration (CI, cassettes): submit → ack → fill → report round-trip; cancel; reject mapping.
-- Manual/nightly: live practice-account smoke via P2-T057.
+- Live practice-account smoke with your keys: P2-T071.
 
 ### Scenarios
 - Given a limit order on Alpaca practice, when filled partially then cancelled, then audit shows one order, one partial fill, cancel status, all with the same client id.
@@ -109,3 +116,4 @@ A Nautilus live data + execution client for **Alpaca** in `packages/mt_engine/ad
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (stp n/a (netting), resting venue stops, keyless cassettes with live run in P2-T071, cross-phase reuse)

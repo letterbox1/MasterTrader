@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P2-T120, P2-T046, P1-T013]
 requirements: [R4.11]
 roadmap_todos: [T4.27]
 modules: [M6, M21]
 dashboards: [D02]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, mlflow, prefect-server]
 branch: p4/P4-T042-vol-forecast-models
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T042 · Volatility and volume forecasts with Chronos, TimesFM and Kronos
@@ -38,7 +43,7 @@ A nightly (and optional intraday hourly) batch produces realised-volatility and 
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M6 forecast models](../../../docs/03-build-spec.md#m6-features--mt_features)
-- Cross-phase: P1 bars (R1.02), P2 MLflow + feature framework (R2.44, R2.46).
+- Cross-phase (`depends_on`): P1-T013 (R1.02 bars), P2-T046 (R2.44 MLflow), P2-T120 (R2.46 feature framework).
 
 ## Requirements
 
@@ -99,3 +104,4 @@ A nightly (and optional intraday hourly) batch produces realised-volatility and 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T013, P2-T046, P2-T120)

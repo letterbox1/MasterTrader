@@ -15,43 +15,48 @@ requirements: [R3.06]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p3/P3-T027-payg-instalment-estimator
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T027 · PAYG instalment estimator (quarterly)
 
 ## Goal / expected outcome
 
-D15 PAYG shows, for each quarter of the FY, the estimated instalment income (excluding capital gains) and the estimated instalment under both regimes, using the instalment rate or amount from your ATO notice, with due dates, history and rule version — part of exit criterion 2.
+D15 PAYG shows, for each quarter of the FY, the estimated instalment income (excluding capital gains) and the instalment computed by **both ATO methods** — the instalment amount from your notice, and instalment rate × instalment income — under both regimes, with due dates, history and rule version; your notice decides which method applies — part of exit criterion 2.
 
 ## Context & references
 
 - Roadmap: [R3.06, T3.24](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 2 (PAYG estimate)
 - [09 BAS finding](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) ("BAS module" = PAYG-instalment estimator; GST/BAS dormant) · [02 F9 step 5](../../../docs/02-v1-architecture.md#8-end-to-end-flows) (quarterly output) · D15 PAYG tab [D15](../../../docs/ui/dashboards/D15-tax.md)
-- Gap: P3-B005 (method details unspecified)
+- Decision: [17 §D P3-B005](../../../docs/17-decisions-register.md#d-other-decisions) (both methods computed; your notice decides; (U), tax agent) · tax-agent question 11
 
 ## Requirements
 
-- Inputs: instalment method from your ATO notice (`rate` with instalment rate %, or `amount`) entered in `config/journal/payg.yaml` (no TFN); FY quarters Q1 Jul–Sep, Q2 Oct–Dec, Q3 Jan–Mar, Q4 Apr–Jun; default due dates 28 Oct, 28 Feb, 28 Apr, 28 Jul (configurable; (U) until confirmed on your notice).
+- Inputs (from your ATO notice, both optional, entered in `config/journal/payg.yaml`, no TFN): instalment amount per quarter, instalment rate %, and which method the notice uses (`applies: amount | rate | unknown`); FY quarters Q1 Jul–Sep, Q2 Oct–Dec, Q3 Jan–Mar, Q4 Apr–Jun; default due dates 28 Oct, 28 Feb, 28 Apr, 28 Jul (configurable; (U) until confirmed on your notice).
 - Instalment income = gross ordinary income in the quarter (revenue trading gains, interest, dividends incl. franking gross-up, staking/airdrop income, net Div 775 gains) **excluding capital gains**; under the trader regime, trading gains are included.
-- Estimate = instalment income × rate (rate method) or notice amount (amount method); both regimes shown; negative instalment income → 0 with a note (variation is your call with the agent).
-- Quarterly Prefect flow `journal-payg-quarterly` runs on the 1st day after each quarter end and stores the estimate as a `journal.tax_report` (type `payg`) + a `task.new` reminder 14 days before each due date.
+- Both methods are always computed when their input exists: **amount method** = the notice amount; **rate method** = instalment income × rate. The method marked `applies` is shown as primary, the other as a comparison; with `unknown` both show side by side. Both regimes shown; negative instalment income → 0 with a note (variation is your call with the agent).
+- Quarterly Prefect flow `journal-payg-quarterly` runs on the 1st day after each quarter end and stores the estimate as a `journal.tax_report` (type `payg`), plus an `alert.info.payg_due` reminder through the alert path a configurable number of days (default 14) before each due date.
 
 ## ToDo
 
 - [ ] Implement `rules/au_2026/payg.py`
 - [ ] Config schema + validation
-- [ ] Prefect deployment + reminder task
+- [ ] Prefect deployment + due-date reminder alert
 - [ ] Tests; docs
 
 ## Verification
@@ -59,7 +64,7 @@ D15 PAYG shows, for each quarter of the FY, the estimated instalment income (exc
 ### Tests
 
 - Golden: fixture quarter with revenue 10,000, interest 500, capital gain 20,000, rate 8% → estimate 840 (capital gain excluded).
-- Unit: amount method returns the notice amount.
+- Unit: amount method returns the notice amount; with both inputs present both figures are produced and the `applies` one is primary.
 - Unit: quarter boundaries use taxpayer-local dates.
 
 ### Scenarios
@@ -74,7 +79,7 @@ D15 PAYG shows, for each quarter of the FY, the estimated instalment income (exc
 ## Acceptance criteria
 
 - [ ] PAYG estimates per quarter under both regimes, with rule version and FX source
-- [ ] Reminder tasks created
+- [ ] Both ATO methods computed and labelled; reminders scheduled
 - [ ] Capital gains excluded (test)
 - [ ] CI green (lint, types, tests, `pit` check; `tax-golden` once P3-T045 lands)
 
@@ -106,3 +111,4 @@ D15 PAYG shows, for each quarter of the FY, the estimated instalment income (exc
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (both ATO PAYG methods computed, notice decides (P3-B005 closed); reminder via alert path; tools/services filled)

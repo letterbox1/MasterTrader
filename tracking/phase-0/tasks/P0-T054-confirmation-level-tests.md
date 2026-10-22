@@ -11,21 +11,26 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P0-T035, P0-T036]
-requirements: [R0.08]
+requirements: [R0.08, R0.12]
 roadmap_todos: [T0.62]
 modules: [mt_api]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p0/P0-T054-confirmation-level-tests
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T054 · Verify confirmation levels: C3 needs approval + TOTP + cool-down, Kill ON never blocked
@@ -47,8 +52,8 @@ An adversarial test suite proves that confirmation levels are enforced server-si
 ## Requirements
 
 - C3 negative cases (each must leave state unchanged and audit a rejection): no approval; approval without TOTP; TOTP before approval; replayed TOTP; wrong TOTP; approval after 10 min TTL; apply attempt at cool-down − 1 s (SimClock); session expired at apply time; cancel during cool-down; args changed between preview and execute; approval for a different pending id.
-- C3 positive: approve → TOTP → wait 900 s → applied exactly once; restart mt-api mid cool-down → still applies at the original `apply_at`.
-- C1/C2: missing token → 428; expired token (121 s) → 428; token reused → 428; token for other args → 428.
+- C3 positive: `mtctl approve` → TOTP → wait the configured cool-down (default 900 s, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) → applied exactly once; restart mt-api mid cool-down → still applies at the original `apply_at`.
+- C1/C2: missing `confirm_token` → 428; expired token (TTL + 1 s) → 428; token reused → 428; token for other args → 428; C2 with a mismatched risk-preview hash → 428; C2 with a session re-authenticated more than 12 h ago (default) → 428 `reauth_required` ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B003).
 - Kill ON: succeeds with Postgres paused, with the user locked out of login (uses existing session), under 200 req/s load, with the idempotency store down; p99 < 200 ms; KV `kill` set; audit row appears once DB returns.
 - Kill OFF is C3 (all C3 negatives apply).
 - Direct API calls (no UI) cannot skip any level.
@@ -105,3 +110,4 @@ An adversarial test suite proves that confirmation levels are enforced server-si
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (C1 confirm_token, C2 preview hash + 12 h re-auth cases (17 §D P0-B003), break-glass mtctl, cool-down from settings; run fields added)

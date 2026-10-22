@@ -15,17 +15,22 @@ requirements: [R0.N2]
 roadmap_todos: [T0.02]
 modules: [ops]
 dashboards: []
+tools: [upsc]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T012-ups-and-4g-failover
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T012 · Order a UPS and a 4G failover router
@@ -45,7 +50,8 @@ A UPS covering the host and router, and a 4G failover router (or failover-capabl
 
 - UPS: line-interactive or online, ≥ 15 min runtime at host + router load (log estimated W), USB HID for NUT.
 - 4G failover: router with automatic WAN failover and a prepaid/data SIM; Tailscale must keep working over it.
-- Policy reminder: on lost power/link the system fails **flat** (dead-man cancels; P2).
+- Policy reminder: on lost power/link the system fails **flat**: venue cancel-after timers and resting venue stops protect positions ([16 §3.1–3.2](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)); the three-layer dead-man arrives in P2.
+- From P7, broadband and 4G both tunnel to one fixed-IP Sydney exit node, so the exchanges always see the allow-listed IP ([16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)); the router must allow that WireGuard/Tailscale tunnel over 4G.
 
 ## ToDo
 
@@ -76,7 +82,7 @@ A UPS covering the host and router, and a 4G failover router (or failover-capabl
 
 ## Cardinal rules (do NOT)
 
-- Do NOT route trading traffic through a VPN on the failover link.
+- Do NOT send exchange traffic directly over the 4G link (its CGNAT IP isn't allow-listed): from P7 it always leaves via the fixed-IP Sydney exit node, which isn't location masking (12 §3, 16 §3.2).
 
 ## Doc sync on completion
 
@@ -92,3 +98,4 @@ A UPS covering the host and router, and a 4G failover router (or failover-capabl
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (fail-flat via venue timers + resting stops and fixed-IP exit node over 4G (16 §3.1–3.2) replaces the 'no VPN on failover' rule; run fields added)

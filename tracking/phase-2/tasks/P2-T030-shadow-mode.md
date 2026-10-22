@@ -12,33 +12,38 @@ owner: agent
 claimed_by: ""
 depends_on: [P2-T021, P2-T008]
 requirements: [R2.07]
-roadmap_todos: [T2.25, T2.20]
+roadmap_todos: [T2.37]
 modules: [M0, M12]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T030-shadow-mode
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T030 · Shadow mode: parallel paper run of a live or paper strategy
 
 ## Goal / expected outcome
 
-Any running strategy version can be shadowed by another version (or itself) in paper mode on the same inputs, with a divergence report (signals, intents, P&L) — the shadow part of R2.07; sweeps and A/B on identical data are lab features delivered by Part B.
+Any running strategy version can be shadowed by another version (or itself) in paper mode on the same inputs, with a divergence report (signals, intents, P&L) — the shadow part of R2.07 (roadmap T2.37: a live or paper bot mirrored in paper); sweeps and A/B on identical data are delivered by P2-T115 under the same ToDo.
 
 ## Context & references
 
-- Roadmap: [R2.07](../../../docs/roadmap/phase-2-strategies-risk-lab.md) (shadow part) · ToDos T2.20/T2.25 (no dedicated ToDo, see P2-B014)
-- Spec: [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe)
-- Part B: sweeps + A/B (lab).
+- Roadmap: [R2.07](../../../docs/roadmap/phase-2-strategies-risk-lab.md) (shadow part) · ToDo **T2.37** (added for gap P2-B014)
+- Spec: [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · command `strategy.run_shadow` (C1, [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)) via `engine.cmd.*`
+- Related: P2-T115 (sweeps + A/B on identical data).
 
 ## Requirements
 
@@ -85,7 +90,7 @@ Any running strategy version can be shadowed by another version (or itself) in p
 ## Doc sync on completion
 
 - `docs/03-build-spec.md` M0: shadow mode semantics.
-- `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.25, T2.20 when all tasks mapped to it are done.
+- `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.37 when all tasks mapped to it are done.
 
 ## Branch & PR
 
@@ -96,3 +101,4 @@ Any running strategy version can be shadowed by another version (or itself) in p
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (mapped to roadmap T2.37 (experimentation), run_shadow via engine.cmd.*)

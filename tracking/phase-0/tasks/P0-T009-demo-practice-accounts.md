@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T0.09]
 modules: [M1, M12]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [oanda-practice, ig-demo, alpaca-paper, ibkr-paper, binance-testnet, bybit-testnet]
 branch: p0/P0-T009-demo-practice-accounts
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T009 · Open free demo, paper and testnet accounts
@@ -49,7 +54,8 @@ Free practice/testnet accounts exist at OANDA (practice), IG (demo), Alpaca (pap
 - Accounts: OANDA v20 **practice**, IG **demo**, Alpaca **paper**, IBKR **paper** (may require a live application first; log if blocked), Binance **Spot testnet**, Bybit **testnet**.
 - Each with a unique strong password + 2FA where offered; account ids recorded (not secret).
 - No real money deposited anywhere in P0.
-- Outputs: logins in your password manager; any key you already created → the sops secrets file `/etc/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022).
+- Practice/paper accounts use their normal credentials (no money at risk, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B008). Paper/testnet keys stay separate from the later `hitl`/`autonomous` keys and sub-accounts (07 §3).
+- Outputs: logins in your password manager; any key you already created → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022).
 
 ## ToDo
 
@@ -99,3 +105,4 @@ Free practice/testnet accounts exist at OANDA (practice), IG (demo), Alpaca (pap
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (practice credentials per 17 §D P1-B008, separate keys per mode (07 §3); secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)

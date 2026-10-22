@@ -15,24 +15,29 @@ requirements: [R4.06, R4.01, R4.04, R4.05, R4.13]
 roadmap_todos: []
 modules: [M2, M9, M21]
 dashboards: [D08, D01, D02]
+tools: [uv, git, docker, pnpm]
+mcp: []
+env: []
+services: [postgres, nats, rss-bridge, decision-svc, tei-embed]
 branch: p4/P4-T057-verify-f3-e2e-scenarios
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T057 · End-to-end F3 scenarios: feed → document → tier B → KV → D08 per source
 
 ## Goal / expected outcome
 
-A scenario suite runs flow F3 end to end on the Compose stack for each source family (RSS, RSS-Bridge, GDELT, EDGAR, central bank, Discord, Bluesky, Mastodon, Farcaster) with recorded fixtures: item fetched → deduped → gated → linked → scored → stored → chunked → `text.doc.new` → `dec.tierb.*` → KV `tierb_scores` → visible in D08 within 5 s — plus the Telegram branch ending in postures only.
+A scenario suite runs flow F3 end to end on the Compose stack for each source family (RSS, RSS-Bridge, GDELT, EDGAR, central bank, Discord, Bluesky, Mastodon, Farcaster) with recorded fixtures: item fetched → deduped → gated → linked → scored → stored → chunked → `text.doc.new` → `dec.tierb.*` → KV `tierb_scores` → visible in D08 within 5 s — plus the Telegram branch (F3b) ending in `text.telegram_posture` / `posture.telegram.*` only. Everything runs on recorded fixtures; the live checks are P4-T067/P4-T068.
 
 ## Context & references
 
@@ -93,3 +98,4 @@ A scenario suite runs flow F3 end to end on the Compose stack for each source fa
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3/F3b split (17 §A P4-B001); fixtures only, live checks in P4-T067/T068)

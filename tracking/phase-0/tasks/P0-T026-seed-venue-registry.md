@@ -15,17 +15,22 @@ requirements: [R0.06]
 roadmap_todos: [T0.11, T0.22]
 modules: [ops, M11]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p0/P0-T026-seed-venue-registry
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T026 · Seed ops.venue_registry from your venue checks
@@ -44,7 +49,7 @@ checkpoint: ""
 ## Requirements
 
 - Seed is idempotent: re-running with the same file creates no new versions; a changed row creates one new version.
-- Unverified fields carry `(U)` in `reason`; OKX AU derivatives `blocked` (paper only); Bybit/Bitget/MEXC/Gate/KuCoin `read_only`; Hyperliquid `read_only` pending advice; Polymarket `blocked`.
+- Unverified fields carry `(U)` in `reason`; OKX AU derivatives `blocked` (paper only); Bybit/Bitget/MEXC/Gate/KuCoin `read_only`; Hyperliquid `read_only` pending advice; Polymarket `blocked`; netting brokers `stp: n/a (netting)` ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P2-B006).
 - No secrets in the YAML (venue names, ABNs and public facts only).
 
 ## ToDo
@@ -96,3 +101,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (netting STP per 17 §D; run fields added)

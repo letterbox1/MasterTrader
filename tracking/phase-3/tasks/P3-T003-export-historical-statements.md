@@ -15,29 +15,34 @@ requirements: [R3.01, R3.05]
 roadmap_todos: [T3.03]
 modules: [M18]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [IBKR, OANDA, IG, crypto exchanges]
 branch: p3/P3-T003-export-historical-statements
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T003 · Export historical broker and exchange statements for opening balances
 
 ## Goal / expected outcome
 
-Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, any wallets) is exported in machine-readable form and dropped into the journal inbox, so P3-T021 can build opening balances and opening lots with their original acquisition dates and cost bases.
+Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, any wallets) is exported in machine-readable form and dropped into the journal inbox, so the late check P3-T061 can import them through the adapters built on sample files (P3-T015/T016/T021) into opening balances and opening lots with their original acquisition dates and cost bases. CommSec is optional ([17 §D P3-B014](../../../docs/17-decisions-register.md#d-other-decisions)); include it only if you hold shares there.
 
 ## Context & references
 
 - Roadmap: [R3.01, R3.05, T3.03](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Formats used by the adapters: P3-T015 (IBKR Flex XML), P3-T016 (OANDA v20 transactions / IG history CSV), P3-T014 (ccxt ledgers), P3-T021 (opening lots)
+- Formats used by the adapters: P3-T015 (IBKR Flex XML), P3-T016 (OANDA v20 transactions / IG history CSV), P3-T014 (ccxt ledgers), P3-T021 (opening lots); the import of your real files is P3-T061 (keys/data last)
 - Security: [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) — statements are tax-sensitive and encrypted at column level (P3-T007)
 
 ## Requirements
@@ -55,18 +60,18 @@ Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, an
 - [ ] Export statements per the formats above; name files `<venue>_<account>_<from>_<to>.<ext>`
 - [ ] Copy them into the inbox paths on the host (scp over Tailscale); confirm checksums
 - [ ] If using the IBKR Flex Web Service: create a read-only Flex token + query ids; add them to the sops file (`sops secrets/journal.enc.yaml`)
-- [ ] Note any gaps (closed accounts, lost records) in the progress log so P3-T021 can flag those lots as `cost_base_estimated`
+- [ ] Note any gaps (closed accounts, lost records) in the progress log so P3-T061 can flag those lots as `cost_base_estimated`
 - [ ] Tell the agent (comment here) when the drop is complete
 
 ## Verification
 
 ### Tests
 
-- Confirmation is P3-T021's import report: every file parsed, opening lots per asset listed, zero unparsed rows.
+- Confirmation is P3-T061's import report: every file parsed, opening lots per asset listed, zero unparsed rows.
 
 ### Scenarios
 
-- Given a statement for a closed account, when P3-T021 imports it, then its lots appear as fully disposed history and nothing stays open.
+- Given a statement for a closed account, when P3-T061 imports it, then its lots appear as fully disposed history and nothing stays open.
 - Given a missing year, when imported, then the affected lots carry `cost_base_estimated = true` and a D15 warning.
 
 ### Stress / failure injection
@@ -104,3 +109,4 @@ Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, an
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (real exports now feed late VERIFY P3-T061 (build first, keys last); CommSec optional per P3-B014; services filled)

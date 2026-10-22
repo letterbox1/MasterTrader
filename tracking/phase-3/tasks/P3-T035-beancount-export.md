@@ -15,17 +15,22 @@ requirements: [R3.10]
 roadmap_todos: [T3.27]
 modules: [M18]
 dashboards: [D14, D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T035-beancount-export
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T035 · Beancount v3 ledger export with lots for Fava
@@ -44,7 +49,7 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 
 - Account naming: `Assets:<Venue>:<Account>:<Asset>`, `Income:Trading:<Class>`, `Income:Staking`, `Expenses:Fees:<Type>`, `Equity:Opening`; operating currency AUD.
 - Each journal event → one transaction with metadata `event_id`, `source_ref`, `fx_source`; acquisitions carry `{cost, date}` lots; disposals reference the lot cost per `lot_match` (so Beancount's booking = our matching, booking method `NONE` with explicit lots).
-- `price` directives for every rate used (from `journal.fx_rate` and crypto price sources).
+- `price` directives for every rate used (from `journal.fx_rate` and `journal.valuation`, with the valuation method as metadata).
 - `balance` assertions per account/asset at each daily recon date with status ok.
 - Output `/srv/mastertrader/journal/exports/<fy>/ledger.beancount` + `current.beancount` symlink for Fava; deterministic ordering; hash recorded in `journal.tax_report` (type `beancount`).
 - Command `tax.export` (C0) with `format = beancount`, scope FY or journal.
@@ -103,3 +108,4 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (prices from `journal.valuation` (16 §4.1); tools/services filled)

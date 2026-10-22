@@ -15,17 +15,22 @@ requirements: [R3.05]
 roadmap_todos: [T3.23]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T019-lot-engine-specific-id-fifo
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T019 · Lot engine with specific-ID matching and FIFO fallback
@@ -90,7 +95,7 @@ Every acquisition (trade, income receipt, airdrop, staking reward, FX cash inflo
 
 - Short sales/derivatives: perps, futures and CFDs are not lot-based CGT assets under the default AU treatment; they're realised P&L events (handled in P3-T020/P3-T024).
 - Dust remainders below instrument precision are kept exact (no rounding away).
-- FY locked (lodged) → `tax.lot.select` refused (P3-B006).
+- FY locked (lodged) via `tax.fy.lock` (C3) → `tax.lot.select` refused with 423 until a C3 unlock (P3-T055; decision [17 §D P3-B006](../../../docs/17-decisions-register.md#d-other-decisions)).
 
 ## Cardinal rules (do NOT)
 
@@ -116,3 +121,4 @@ Every acquisition (trade, income receipt, airdrop, staking reward, FX cash inflo
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (locked-FY refusal now via `tax.fy.lock` C3 (P3-T055, P3-B006); tools/services filled)

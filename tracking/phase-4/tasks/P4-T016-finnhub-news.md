@@ -10,35 +10,40 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P4-T005]
+depends_on: [P4-T010]
 requirements: [R4.01]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats]
 branch: p4/P4-T016-finnhub-news
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T016 · Finnhub news connector (60 calls/min, terms-aware)
 
 ## Goal / expected outcome
 
-`mt_data.text.finnhub` pulls Finnhub general market news (forex, crypto, general) and company news for the equity watchlist within the free 60 calls/min limit, with provenance flags set from the terms decision in P4-T005 (if the ML clause forbids model use, `model_input_ok = false`).
+`mt_data.text.finnhub` pulls Finnhub general market news (forex, crypto, general) and company news for the equity watchlist within the free 60 calls/min limit, with provenance flags set from `source_terms.yaml` (conservative default `model_input_ok = false` until your P4-T005 decision; if the ML clause forbids model use it stays false). Built and tested on recorded fixtures without a key; the live run with your key is P4-T067.
 
 ## Context & references
 
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Risk 'Free-API terms change'
 - Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
-- Related: P4-T005 (terms), P4-T037 (Finnhub IPO/earnings calendar).
+- Related: P4-T005 (terms, your USER task), P4-T067 (live check with your key), P4-T037 (Finnhub IPO/earnings calendar).
 
 ## Requirements
 
@@ -67,7 +72,7 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] 24-h run with zero 429s
+- [ ] Recorded-fixture replay of a 24-h schedule with zero over-budget calls (the live 24-h run is P4-T067)
 - [ ] Provenance flags match `source_terms.yaml`
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
 
@@ -99,3 +104,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: fixtures only, live run moved to P4-T067; dropped P4-T005 dependency (conservative default flags))

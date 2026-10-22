@@ -15,17 +15,22 @@ requirements: [R0.N4, R0.07]
 roadmap_todos: [T0.04]
 modules: [M17]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [backblaze-b2]
 branch: p0/P0-T006-offsite-object-lock-backup-target
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T006 · Open the off-site backup target with Object Lock
@@ -41,17 +46,18 @@ An off-site, immutable target exists for (a) the pgBackRest repo + WAL archive, 
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
 - [02 §5.1 stores](../../../docs/02-v1-architecture.md#51-stores)
 - Related: P0-T039 backups, P0-T037 seals, P0-T040 exports
-- The roadmap README §6 register omits 'Object Lock' for T0.04; the phase doc wins (see P0-B015).
-- Unblocks: P0-T039 backups, P0-T037 seal anchoring, P0-T040 exports, P0-T057 restore test
+- The roadmap README §6 register row for T0.04 now matches the phase doc (Object Lock / append-only, R0.07; P0-B015 closed).
+- Unblocks: the live checks against the real target: P0-T057 (first off-site backup + restore test) and P0-T063 (soak: seals and exports anchored). P0-T037, P0-T039 and P0-T040 are built and tested against MinIO with Object Lock, so they don't wait for this task (build first, keys last)
 
 ## Requirements
 
 - Three private buckets with Object Lock enabled **at creation** (it can't be added later on B2):
 - `mt-pgbackrest`: compliance retention **35 days** (must not exceed pgBackRest's effective retention, or expiry fails); `mt-restic`: compliance 35 days; `mt-worm-seal`: compliance **2557 days (7 years)** for seals and monthly WORM exports.
-- One application key **per bucket**, limited to that bucket (list/read/write; no delete on `mt-worm-seal`); key ids/secrets → the sops secrets file `/etc/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `pgbackrest:`, `restic:`, `worm_seal:`.
+- One application key **per bucket**, limited to that bucket (list/read/write; no delete on `mt-worm-seal`); key ids/secrets → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `pgbackrest:`, `restic:`, `worm_seal:`.
 - Free alternative: second box (e.g. a Raspberry Pi + USB disk at another location) running `rest-server --append-only --private-repos`, reachable over Tailscale only.
 - Cost note: B2 is pay-as-you-go storage (first 10 GB free); it is storage, not data, and is the docs' named default. Log the expected size (~50–200 GB in year 1).
 - Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Env names the late live checks use (names only; values stay in the secrets file): `PGBACKREST_REPO1_S3_KEY`, `PGBACKREST_REPO1_S3_KEY_SECRET`, `PGBACKREST_REPO1_CIPHER_PASS`, `RESTIC_PASSWORD`, `B2_ACCOUNT_ID`, `B2_ACCOUNT_KEY`, `MT_WORM_SEAL_S3_KEY_ID`, `MT_WORM_SEAL_S3_SECRET`.
 
 ## ToDo
 
@@ -60,12 +66,12 @@ An off-site, immutable target exists for (a) the pgBackRest repo + WAL archive, 
 - [ ] Create one restricted application key per bucket; record key id + key in the password manager.
 - [ ] Generate a restic repository password and a pgBackRest `repo1-cipher-pass` (≥ 32 random chars each) in the password manager.
 - [ ] Once P0-T022 lands, add all values to the secrets file; log 'stored'.
-- [ ] Write the bucket names/endpoint (not secret) into the P0-T039 PR description.
+- [ ] Write the bucket names/endpoint (not secret) into `infra/backup/targets.yaml` for P0-T057.
 
 ## Verification
 
 ### Tests
-- Object Lock probe (after P0-T039): upload a test object to `mt-worm-seal`, then try to delete it with the same key → must fail.
+- Object Lock probe (run in P0-T057): upload a test object to `mt-worm-seal`, then try to delete it with the same key → must fail.
 
 ### Scenarios
 - Given an attacker has the host's B2 key, when they try to delete or overwrite a locked object, then B2 refuses until retention expires.
@@ -106,3 +112,4 @@ An off-site, immutable target exists for (a) the pgBackRest repo + WAL archive, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); keys-last: build tasks use MinIO, live use in P0-T057/P0-T063; env names named; P0-B015 closed; run fields added)

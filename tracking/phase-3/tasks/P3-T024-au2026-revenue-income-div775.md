@@ -15,17 +15,22 @@ requirements: [R3.06]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T024-au2026-revenue-income-div775
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T024 · AU_2026 revenue, income and Div 775 forex computations
@@ -41,7 +46,7 @@ checkpoint: ""
 
 ## Requirements
 
-- Treatment map in `classify(event, regime)`: CFD → REVENUE; futures → REVENUE (override table `config/journal/instrument_overrides.yaml`, (U)); perps → REVENUE by default (U, agent question added); funding/financing/borrow → REVENUE (deductible or assessable by sign); staking/established airdrop/interest → INCOME; dividends → INCOME with franking credits and withholding; FX-cash realisations → Div 775 REVENUE.
+- Treatment map in `classify(event, regime)`: CFD → REVENUE; futures → REVENUE (override table `config/journal/instrument_overrides.yaml`, (U)); perps → REVENUE by default, funding revenue (U, 09 question 8; [17 §D P3-B016](../../../docs/17-decisions-register.md#d-other-decisions)); funding/financing/borrow → REVENUE (deductible or assessable by sign); staking/established airdrop/interest → INCOME; dividends → INCOME with franking credits and withholding; FX-cash realisations → Div 775 REVENUE.
 - Foreign income: income with a foreign source (US dividends, offshore exchange interest) aggregated with foreign tax paid (withholding) for item 20 mapping.
 - Outputs: revenue P&L by instrument class, Div 775 net, income by type, foreign income + tax paid — each with event drill-down ids.
 
@@ -102,3 +107,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (perps default revenue (U) per P3-B016 and 09 Q8; tools/services filled)

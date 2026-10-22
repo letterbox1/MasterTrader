@@ -15,17 +15,22 @@ requirements: [R0.N4, R0.07]
 roadmap_todos: [T0.44]
 modules: [M17, ops]
 dashboards: []
+tools: [git, uv, python>=3.12, docker, pgbackrest]
+mcp: []
+env: []
+services: [postgres, minio, prefect-server]
 branch: p0/P0-T041-restore-test-flow-and-backup-commands
 pr: ""
 doc_sync: [docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T041 · Build the monthly restore-test Prefect flow
@@ -65,7 +70,7 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 - Unit: check result aggregation and status rules.
 
 ### Scenarios
-- Given the restored DB's audit chain differs from the anchored seal, then the restore test fails and raises a critical incident (backup tampering).
+- Given the restored DB's audit chain differs from the anchored seal, then the restore test fails and raises a critical incident with the integrity response ([16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)).
 
 ### Stress / failure injection
 - Restore of a 50 GB fixture completes within 60 min on the host (log actual).
@@ -104,3 +109,4 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response wording (16 §2.11); keyless on MinIO, real target in P0-T057; run fields added)

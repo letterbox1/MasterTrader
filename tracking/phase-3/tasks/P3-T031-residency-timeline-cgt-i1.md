@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T022, P3-T030]
-requirements: [R3.09]
+depends_on: [P3-T022, P3-T030, P3-T055]
+requirements: [R3.09, R3.16]
 roadmap_todos: [T3.26]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, nats, mt-api]
 branch: p3/P3-T031-residency-timeline-cgt-i1
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T031 · Residency timeline and CGT event I1 modelling
@@ -38,12 +43,12 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 
 - Roadmap: [R3.09, T3.26](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - [09 residency timeline + cross-border events](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · D15 Residency tab [D15](../../../docs/ui/dashboards/D15-tax.md) · command `tax.residency.add` (C1, re-computation preview first)
-- Gap: P3-B007 (residency → M11 contract; C-level when loosening)
+- Contract: a residency change emits `tax.residency.changed`; the venue registry recomputes; any loosening that results is C3 ([17 §D P3-B006/B007](../../../docs/17-decisions-register.md#d-other-decisions), [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats), [12 §1](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption)); schema and registry consumer in P3-T055
 
 ## Requirements
 
 - `journal.residency_period` (WORM): country, from, to (nullable), residency basis notes, domicile, evidence notes (encrypted, P3-T007), source (manual / passport-stamp report).
-- `tax.residency.add` (C1): validates no overlaps/gaps (gap = `unknown` period warning), shows a recomputation preview (which FYs and plugins change) before applying.
+- `tax.residency.add` (C1): validates no overlaps/gaps (gap = `unknown` period warning), shows a recomputation preview (which FYs and plugins change, and the venue-registry diff split into tightening vs loosening) before applying. After commit it publishes `tax.residency.changed` (schema in P3-T055); tightening applies immediately, any registry loosening waits for C3; the I1 snapshot uses the 16 §4.2 convention.
 - Each plugin's `is_resident(timeline, tax_year)` evaluates its own tests (AU default: resident while an AU period is active; CY 183/60-day; AE 183 or 90 + conditions; EG 183) — dual-residency → tie-breaker note (DTA status (U)).
 - I1: at the AU exit date, snapshot (`kind = residency_I1`) of all non-TAP lots via P3-T030's API; two computations stored: `elect_s104_165 = false` (deemed disposal now) and `= true` (deferral; lots remain with TAP status tracking).
 - Lots carry `tap` flag (default false for crypto/foreign shares; true only for Australian real property interests — not expected).
@@ -65,7 +70,7 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 ### Scenarios
 
 - Given you enter a move to the UAE from 2028-03-01, when previewed, then D15 shows FY2027-28 split AU/AE, the I1 snapshot to be taken and both s104-165 outcomes.
-- Given residency `EG` is entered, when applied, then P3-T033's hard flag activates.
+- Given residency `EG` is entered, when applied, then `tax.residency.changed` is emitted and the registry recompute blocks crypto (P3-T033); removing EG later waits for C3.
 
 ### Stress / failure injection
 
@@ -80,7 +85,7 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 
 ## Exceptions & edge cases
 
-- Retroactive entry (past move) → recomputation writes superseding reports; locked FYs require unlock first.
+- Retroactive entry (past move) → recomputation writes superseding reports; locked FYs require a C3 unlock first (`tax.fy.unlock`, P3-T055).
 - Timezone of the move date → taxpayer-local date in the departure country.
 
 ## Cardinal rules (do NOT)
@@ -106,3 +111,4 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (emits `tax.residency.changed` via the P3-T055 contract; loosening C3 (P3-B007 closed); R3.16 mapped; I1 snapshot per 16 §4.2; tools/services filled)

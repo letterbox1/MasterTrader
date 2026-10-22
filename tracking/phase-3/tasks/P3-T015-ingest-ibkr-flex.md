@@ -15,30 +15,35 @@ requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18]
 dashboards: []
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T015-ingest-ibkr-flex
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T015 · Ingestion adapter for IBKR Flex statements
 
 ## Goal / expected outcome
 
-IBKR Flex Activity statements (XML), from the inbox or the Flex Web Service, are parsed into journal events (trades, commissions, dividends with withholding, interest, FX conversions, transfers, corporate actions) with golden-file tests per format version.
+IBKR Flex Activity statements (XML), from the inbox or the Flex Web Service, are parsed into journal events (trades, commissions, dividends with withholding, interest, FX conversions, transfers, corporate actions) with golden-file tests per format version. Built against scrubbed **sample** Flex files and recorded Flex Web Service responses; your real statements are imported in the late check P3-T061.
 
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - Importer references: LibreFolio / Investment-Portfolio-Tracker IBKR Flex importers in [09 tools vetted](../../../docs/09-journal-and-tax.md#tools-vetted)
-- Related: P3-T003 (your exports), P3-T021 (opening lots), P3-T007 (raw payload encryption)
+- Related: P3-T003 (your exports, used by P3-T061), P3-T021 (opening lots), P3-T007 (raw payload encryption); CommSec stays optional ([17 §D P3-B014](../../../docs/17-decisions-register.md#d-other-decisions)) and has no adapter in P3
 
 ## Requirements
 
@@ -52,14 +57,14 @@ IBKR Flex Activity statements (XML), from the inbox or the Flex Web Service, are
 
 - [ ] Implement `packages/mt_journal/ingest/ibkr_flex.py` (lxml, secure parser: no external entities)
 - [ ] Inbox watcher (Prefect flow `journal-inbox`, every 30 min) shared by statement adapters
-- [ ] Flex Web Service client (optional) with token from sops
+- [ ] Flex Web Service client (optional), tested with recorded responses; at runtime it uses `IBKR_FLEX_TOKEN` from sops only if you created one
 - [ ] Golden files (scrubbed) per Flex version; tests; docs
 
 ## Verification
 
 ### Tests
 
-- Golden: sample Flex XML (paper account) → expected events.
+- Golden: sample Flex XML (paper account / IBKR sample format, scrubbed) → expected events.
 - Security: XXE payload file is rejected.
 - Unit: dividend with withholding produces dividend + foreign tax paid fields.
 
@@ -106,3 +111,4 @@ IBKR Flex Activity statements (XML), from the inbox or the Flex Web Service, are
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: sample files and recorded responses only, real statements in P3-T061; CommSec optional (P3-B014); tools/services filled)

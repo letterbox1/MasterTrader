@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T003, P2-T017]
+depends_on: [P2-T003, P2-T017, P0-T031, P1-T004]
 requirements: [R2.30, R2.10, R2.01]
 roadmap_todos: [T2.25]
 modules: [M12, M11, M0]
 dashboards: [D05]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T021-engine-tradingnode-wrapper
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T021 · mt_engine TradingNode wrapper, intent actor and order audit
@@ -39,17 +44,19 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 - Roadmap: [R2.30, R2.10, R2.01](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) · Architecture: [02 §3.2 `engine` container](../../../docs/02-v1-architecture.md#32-containers) · [02 §4 M12 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §6 subjects](../../../docs/02-v1-architecture.md#6-messaging-nats)
 - Flow: [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
-- Cross-phase: NATS, audit WORM tables (P0), market data `md.*` + Parquet catalog (P1), recon jobs (P1 R1.12).
+- Cross-phase (`depends_on`): WORM audit tables (P0-T031, T0.23); NATS JetStream streams (P1-T004). Market data `md.*` (P1) and recon jobs (P1 R1.12) are used at runtime; tests use recorded fixtures and the Nautilus sandbox venue.
+- Decisions: [17 §D P2-B009](../../../docs/17-decisions-register.md#d-other-decisions) engine control subject `engine.cmd.*` · [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) canonical audit names (`audit.order`, `audit.fill`) · [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) write path (JetStream buffer 1 GB / 24 h, stop new entries above 80%).
+- Build first, keys last: built and tested against the sandbox venue and recorded fixtures with no keys; the live testnet/practice run is P2-T071.
 - Related: P2-T022 STP, P2-T023–T026 venues, P2-T027 IDs/reconcile, P2-T031 kill, P2-T033 modes.
 
 ## Requirements
 
 - `packages/mt_engine/node.py`: builds `TradingNodeConfig` from `config/engine.<env>.yaml` (venues, accounts by mode, strategies by version id, cache/msgbus settings).
 - `IntentActor`: subscribes `ord.intent.{source}` (manual, telegram, agent, bot) via a NATS bridge, validates schema, calls `RiskGate`, then submits; publishes `ord.risk.{decision}`.
-- Strategy control: `strategy.start|pause|resume|stop` and bot lifecycle reach the node through a control subject (proposed `ctl.engine.{command}`, see P2-B009) and update `strat.status.{strategy}`.
-- Audit writers: `audit.order` (intent, decision, client order id, venue id, STP mode, exit plan, trace_id, bot_id, sleeve), `audit.fill`, `audit.position_snapshot`; inserts never block the order path (async queue, bounded, spill to NATS JetStream when Postgres is down).
+- Strategy control: `strategy.start|pause|resume|stop`, mode, shadow runs and bot lifecycle reach the node through `engine.cmd.{command}` (02 §6) and update `strat.status.{strategy}` / `bot.{id}.status`.
+- Audit writers: `audit.order` (intent, decision, client order id, venue id, STP mode, exit plan, trace_id, bot_id, sleeve), `audit.fill`, `audit.position_snapshot`; inserts never block the order path (async queue, bounded, spill to NATS JetStream when Postgres is down: bounded at 1 GB or 24 h by default; above 80% of the buffer new entries stop and exits continue; nothing is executed without a record, 16 §3.3).
 - Publishes `fill.{venue}`, `pos.{account}` for journal (P3) and monitor (TCA).
-- Heartbeat `sys.heartbeat.engine` every 1 s (P2-T032 library).
+- Heartbeat `sys.heartbeat.engine` every 1 s (P2-T032 library), watched by the in-engine watchdog (layer 1) and the external `deadman` sidecar (layer 2, P2-T072).
 - Signal → order submitted p99 < 5 ms (excl. venue) budget: gate + submit path measured with OTel spans.
 
 ## ToDo
@@ -86,7 +93,8 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 ## Exceptions & edge cases
 
 - Venue disconnect: orders flagged `unknown` until reconciled (P2-T027).
-- JetStream spill full: stop accepting new entries (hold) and alert; exits still allowed.
+- JetStream buffer above 80%: stop accepting new entries (hold) and alert; exits still allowed.
+- Unplanned restart: the node starts with every bot paused and flat (P2-T074).
 
 ## Cardinal rules (do NOT)
 
@@ -112,3 +120,4 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (engine.cmd.* control subject, canonical audit names, 16 §3.3 buffer bounds, deadman heartbeat consumer, keyless build)

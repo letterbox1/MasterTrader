@@ -10,29 +10,34 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T044, P4-T045, P4-T046, P4-T048]
+depends_on: [P4-T044, P4-T045, P4-T046, P4-T062, P4-T065]
 requirements: [R4.13]
 roadmap_todos: []
 modules: [M15]
 dashboards: [D08, D01, D02]
+tools: [pnpm, node>=20, git]
+mcp: []
+env: []
+services: [mt-api]
 branch: p4/P4-T059-verify-d08-viewport-axe
 pr: ""
 doc_sync: [docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T059 · D08 and tier-B overlays: Playwright viewport matrix and axe
 
 ## Goal / expected outcome
 
-D08 (all tabs + document sheet + label mode) and the new D01/D02 tier-B/overlay elements pass the DESIGN.md §6.8 viewport matrix (240 → 2560 px, portrait + landscape) and axe with zero serious/critical violations; the feed stays smooth at 1,000+ items on the phone profile.
+D08 (all tabs + document sheet + label mode) and the new D01/D02 tier-B/overlay elements and live positioning/nowcast widgets (P4-T065) pass the DESIGN.md §6.8 viewport matrix (240 → 2560 px, portrait + landscape) and axe with zero serious/critical violations; the feed stays smooth at 1,000+ items on the phone profile.
 
 ## Context & references
 
@@ -90,3 +95,4 @@ D08 (all tabs + document sheet + label mode) and the new D01/D02 tier-B/overlay 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (label mode now P4-T062; added D02 widgets P4-T065)

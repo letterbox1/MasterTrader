@@ -15,17 +15,22 @@ requirements: [R0.06]
 roadmap_todos: [T0.11]
 modules: [M11, ops]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [austrac-register]
 branch: p0/P0-T011-venue-austrac-checks
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T011 · Check AU venues on the AUSTRAC register and send results for the registry seed
@@ -46,7 +51,8 @@ For every venue you may use, you've looked up the AUSTRAC register entry by ABN,
 ## Requirements
 
 - Venues (12 §2 starting list): Independent Reserve, BTC Markets, Kraken AU (Bit Trade), Binance AU, OKX AU, CoinSpot, Swyftx, CoinJar; brokers IBKR, OANDA, IG, Alpaca, FP Markets; data-only Bybit, Bitget, MEXC, Gate, KuCoin, Hyperliquid.
-- Per venue: legal entity, ABN/AFSL ids, AUSTRAC status + **date checked**, products allowed to you (spot/margin/perps/CFDs) + max leverage (crypto derivatives ≤ 2× regardless), key model (scopes, IP allow-list, withdrawal whitelist), proposed status `allowed` / `read_only` / `blocked` + reason.
+- Per venue: legal entity, ABN/AFSL ids, AUSTRAC status + **date checked**, products allowed to you (spot/margin/perps/CFDs) + max leverage (crypto derivatives ≤ 2×, the L0 ceiling default in [16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)), key model (scopes, IP allow-list, withdrawal whitelist), proposed status `allowed` / `read_only` / `blocked` + reason.
+- Netting brokers (OANDA, IG, Alpaca, IBKR) have no STP field: record `stp: n/a (netting)` ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P2-B006). Products blocked for live may be marked `paper_ok` (P2-B008).
 - Mark unverified items `(U)`; OKX AU derivatives stay **unresolved → paper only**; Hyperliquid read-only until professional advice; Polymarket blocked.
 - Output file: `infra/seed/venue_registry.yaml` (no secrets) using the field names from 12 §2 and the template from P0-T025.
 
@@ -99,3 +105,4 @@ For every venue you may use, you've looked up the AUSTRAC register entry by ABN,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (L0 leverage ceiling as a 16 §2.1 default; netting STP n/a and paper_ok per 17 §D; run fields added)

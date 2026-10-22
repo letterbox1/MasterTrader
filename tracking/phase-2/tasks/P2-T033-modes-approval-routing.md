@@ -15,31 +15,37 @@ requirements: [R2.20]
 roadmap_todos: [T2.25]
 modules: [M11, M12]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T033-modes-approval-routing
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T033 · Modes and approval routing: paper, hitl, autonomous
 
 ## Goal / expected outcome
 
-After the gate approves an intent, routing follows the strategy/bot mode: `paper` → simulated fill, `hitl` → `risk.approval.request` with TTL (expiry = reject), `autonomous` → submit; protective exits never wait for approval; every approval decision is recorded in `risk.approval` (WORM).
+After the gate approves an intent, routing follows the bot's mode (capped by its strategy's mode ceiling; the stricter applies): `paper` → simulated fill, `hitl` → `risk.approval.request` with TTL (expiry = reject), `autonomous` → submit; protective exits never wait for approval; every approval decision is recorded in `risk.approval` (WORM).
 
 ## Context & references
 
 - Roadmap: [R2.20](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Spec: [03 M11 modes](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [15 §1.2 modes + rules](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [15 §1.3 TTL defaults](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram)
 - Flow: [02 F2 step 5](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Related: P2-T037 bot policy, P2-T038/T039 approval UIs, P2-B053 naming, P2-B005 levels.
+- Decisions: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) modes `paper`/`hitl`/`autonomous` per bot (P2-B053) and paper → HITL = C2 (P2-B005) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) TTLs, large-order rule, MCP cards.
+- Related: P2-T037 bot policy, P2-T038/T039 approval UIs.
 
 ## Requirements
 
@@ -47,8 +53,9 @@ After the gate approves an intent, routing follows the strategy/bot mode: `paper
 - NATS `risk.approval.request` / `risk.approval.result` with `bot_id`; TTL timer in engine; expiry → reject + log 'expired' (never act late).
 - On approve: re-run `RiskGate` with current state (prices may have moved) before submit; on 'approve ½' re-size to 50% (rounded down) and re-check; on reject → done; on 'pause bot' → reject + bot paused.
 - Protective classification: stop-loss, take-profit set at entry, kill flatten, risk-forced reductions bypass approval but not the gate.
-- TTL defaults by bot/timeframe: 60 s intraday/scalping, 15 min swing, 4 h position.
-- Mode names: `paper|hitl|autonomous` canonical; `approve|auto` accepted as aliases.
+- TTL defaults by bot horizon ([16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), L4 settings): 60 s intraday/scalping · 15 min swing · 4 h position; expiry = reject. MCP-originated orders (P8) always need an approval card, TTL 5 min, whatever the bot's mode.
+- **Large orders** (default > 2% of sleeve or > A$5,000 notional) are flagged `large_order` on the request so Telegram asks for TOTP and the web for hold-to-confirm (P2-T038/T039).
+- Mode names: `paper|hitl|autonomous` canonical; `approve|auto` are retired aliases (accepted, normalised).
 
 ## ToDo
 
@@ -109,3 +116,4 @@ After the gate approves an intent, routing follows the strategy/bot mode: `paper
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (bot mode capped by strategy ceiling, TTL and large-order defaults from 16 §2.3, MCP cards always need approval)

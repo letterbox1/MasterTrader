@@ -15,38 +15,44 @@ requirements: [R2.53, R2.20]
 roadmap_todos: [T2.34]
 modules: [M11]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T037-bot-modes-policy-downgrade
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T037 · Bot modes, approval policy, escalation and auto-downgrade
 
 ## Goal / expected outcome
 
-Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalation rules are enforced server-side; autonomous needs C3 and passing gates, and drops automatically to `hitl` (or `paused`) on decay, ladder ≥ 3, DQ degraded on its instruments, N consecutive losses, model service down or a venue registry change, with the mode history kept in WORM.
+Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalation rules are enforced server-side; autonomous needs C3 and passing gates, and drops automatically to `hitl` (or `paused`) on a decay signal (rolling Sharpe/hit rate, CUSUM, 5 consecutive losing trades; 16 §2.6), ladder ≥ 3, DQ degraded on its instruments, model service down or a venue registry change, with the mode history kept in WORM. A bot's effective mode is capped by its strategy's mode ceiling (16 §2.3).
 
 ## Context & references
 
 - Roadmap: [R2.53, R2.20](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.34
 - Design: [15 §1.2 modes + auto-downgrade + escalation](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [15 §1.3 settings](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram)
-- Related: P2-B005 (paper→hitl level), P2-T034 decay events, P2-T018 ladder, P2-T016 registry changes, P2-T060/T061 tests.
+- Decisions: [17 §B P2-B005](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (paper → HITL is C2 everywhere) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (mode levels, TTLs, large-order rule, strategy mode ceiling) · [16 §2.6](../../../docs/16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each) (decay → downgrade).
+- Related: P2-T034 decay events, P2-T018 ladder, P2-T016 registry changes, P2-T060/T061 tests.
 
 ## Requirements
 
-- `bot.set_mode`: → paper C1; → hitl from autonomous C1 (tightening); → hitl from paper C2 (per 15 §1.2; see P2-B005); → autonomous **C3** and only while the strategy version passes all gates (P2-T007).
-- `bot.approval_policy.set`: TTL, large-order notional threshold (needs TOTP/hold-to-confirm), escalation rules (notional above X, outside hours, newly added instruments), quiet hours with 'wake me', batching for dynamic bots; tighten C1, loosen C3.
+- `bot.set_mode`: → paper C1; → hitl from autonomous C1 (tightening); → hitl from paper **C2**; → autonomous **C3** and only while the strategy version passes every gate of its profile and its mode ceiling allows it (P2-T007). When the strategy ceiling is restricted, bots above it drop to it immediately (audited).
+- `bot.approval_policy.set`: TTL (defaults 60 s intraday · 15 min swing · 4 h position), large-order threshold (default > 2% of sleeve or > A$5,000 → TOTP on Telegram / hold-to-confirm on web), escalation rules (notional above X, outside hours, newly added instruments), quiet hours with 'wake me', batching for dynamic bots; tighten C1, loosen C3.
 - Escalation: an autonomous bot's order matching a rule becomes an approval card instead of executing.
 - Quiet hours: hitl bots open no new entries during your quiet hours unless 'wake me'.
-- Auto-downgrade triggers → target configurable (`hitl` default, or `paused`): decay alert, ladder rung ≥ 3, `dq.status` degraded/stale/bad on any scoped instrument, N consecutive losses (policy, see P2-B003), model service heartbeat missing, `venue.registry.changed` for its venue. Downgrade is immediate, audited as a new `bot_version` row + `risk.event{type: bot_downgrade, trigger}`, alerts you. Upgrade back = C3.
+- Auto-downgrade triggers → target configurable (`hitl` default, or `paused`): decay signal from P2-T034 (rolling 60-trade Sharpe/hit rate below the 5th percentile, CUSUM break, **5 consecutive losing trades** by default), ladder rung ≥ 3, `dq.status` degraded/stale/bad on any scoped instrument, model service heartbeat missing, `venue.registry.changed` for its venue. (A failed daily health check halts the bot instead, P2-T034.) Downgrade is immediate, audited as a new `bot_version` row + `risk.event{type: bot_downgrade, trigger}`, alerts you. Upgrade back = C3.
 
 ## ToDo
 
@@ -95,7 +101,7 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 
 ## Doc sync on completion
 
-- `docs/15-bots-hitl-and-worm-audit.md` §1.2: final level for paper→hitl and N consecutive losses default.
+- `docs/15-bots-hitl-and-worm-audit.md` §1.2: confirm the mode levels (paper → HITL C2) and the downgrade triggers as built.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.34 when all tasks mapped to it are done.
 
 ## Branch & PR
@@ -107,3 +113,4 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper→HITL C2, strategy ceiling caps bots, decay signals per 16 §2.6 incl. 5 losing trades, TTL/large-order defaults)

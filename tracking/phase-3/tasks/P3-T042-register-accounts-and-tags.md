@@ -10,22 +10,27 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P3-T012]
-requirements: [R3.04]
+depends_on: [P3-T012, P3-T056]
+requirements: [R3.04, R3.17]
 roadmap_todos: [T3.04]
 modules: [M18]
 dashboards: [D15]
+tools: []
+mcp: []
+env: []
+services: [your venue accounts and wallets]
 branch: p3/P3-T042-register-accounts-and-tags
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T042 · Register your accounts and tag each investment or trading
@@ -37,19 +42,19 @@ Every exchange/broker account, sub-account and on-chain address you own is in th
 ## Context & references
 
 - Roadmap: [R3.04, T3.04](../../../docs/roadmap/phase-3-journal-and-tax.md) · [09 goals §6–7](../../../docs/09-journal-and-tax.md#goals) · [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view)
-- Mechanism: P3-T012 (seed file + `wallet.register`/`wallet.tag` commands)
+- Mechanism: the Accounts page in D16 Settings (P3-T056) or the seed file loaded through it; both issue `wallet.register`/`wallet.tag` (C1) from P3-T012 · decision [17 §D P3-B011](../../../docs/17-decisions-register.md#d-other-decisions)
 
 ## Requirements
 
-- Edit `config/journal/accounts.yaml` on the host (masked account ids, public addresses only; **no keys, no seed phrases**).
+- Use **D16 → Settings → Accounts** (P3-T056) to register each entry, or fill `config/journal/accounts.yaml` on the host and load it from that page (masked account ids, public addresses only; **no keys, no seed phrases**).
 - For each entry: venue/chain, masked account id or public address, provider label, role, custody, mode (paper/live), tag `investment` or `trading`, effective_from.
-- Run the loader: `python -m mt_journal.registry.seed config/journal/accounts.yaml` (it issues C1 commands through `mt_api`; confirm each in the UI/CLI prompt).
+- Each registration and tag is a C1 command through `mt_api`; confirm each in the UI prompt (the CLI loader `python -m mt_journal.registry.seed` remains as a fallback).
 - Ask the agent (via a TAX_QUESTION) if any account mixes both purposes.
 
 ## ToDo
 
 - [ ] List all accounts/addresses (include paper/testnet ones used by P2)
-- [ ] Fill the seed file; run the loader; confirm the C1 prompts
+- [ ] Register and tag them on the Accounts page (or load the seed file there); confirm the C1 prompts
 - [ ] Check D14 Events: no `unknown_account` quarantine items remain
 - [ ] Commit the seed file only if it contains no personal identifiers beyond masked ids (otherwise keep it host-only and git-ignored)
 
@@ -96,3 +101,4 @@ Every exchange/broker account, sub-account and on-chain address you own is in th
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (registration now on the D16 Accounts page (P3-T056, R3.17, P3-B011); services filled)

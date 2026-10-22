@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T020, P0-T039]
 requirements: [R2.44, R2.47]
 roadmap_todos: [T2.41]
 modules: [M7, M21]
 dashboards: []
+tools: [docker, uv]
+mcp: []
+env: []
+services: [mlflow, postgres]
 branch: p2/P2-T046-mlflow-artifacts-registry-stages
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T046 · MLflow artefact storage and model registry stages
@@ -38,8 +43,8 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 
 - Roadmap: [R2.44, R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.41
 - Architecture: [02 §5.1 stores: MLflow forever, restic](../../../docs/02-v1-architecture.md#51-stores)
-- Cross-phase: mlflow container (P0 T0.41), restic (P0 T0.44).
-- Consumer: Part B (lab, tier A).
+- Cross-phase (`depends_on`): mlflow container (P0-T020, T0.41), restic backups (P0-T039, T0.44).
+- Consumers: lab (P2-T107), tier A (P2-T125–T128; training via `models.tiera.train`, C1).
 
 ## Requirements
 
@@ -100,3 +105,4 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps; consumers named)

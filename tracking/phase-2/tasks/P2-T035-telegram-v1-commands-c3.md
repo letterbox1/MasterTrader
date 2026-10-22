@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T020, P2-T031]
+depends_on: [P2-T020, P2-T031, P1-T045, P0-T033]
 requirements: [R2.52, R2.51, R2.19]
 roadmap_todos: [T2.33]
 modules: [M15]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T035-telegram-v1-commands-c3
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T035 · Telegram v1 commands, C3 TOTP prompt and /kill NATS fallback
@@ -39,16 +44,17 @@ The `telegram-bot` service (alerts-only since P1) gains `/kill` (confirm button)
 - Roadmap: [R2.52, R2.51](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.33
 - Spec: [03 M15 Telegram bot](../../../docs/03-build-spec.md#m15-ui--alerts--mt_ui-calls-mt_api) · [mob §3 Telegram bot](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) · [mob §4 acceptance](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria)
 - Degraded: [02 §9.3 mt-api down](../../../docs/02-v1-architecture.md#93-degraded-modes) · API: [02 §7.4 Telegram](../../../docs/02-v1-architecture.md#7-api-contract-mt_api)
-- Cross-phase: bot token + user id (P0 T0.06), alerts consumer (P1 T1.31), TOTP verification in mt_api (P0 T0.24).
-- Related: P2-B012 (audit path for NATS-direct kill), P2-T039/T040 bot commands, P2-T059 degraded test.
+- Cross-phase (`depends_on`): the P1 `telegram-bot` alerts service and fan-out (P1-T045, T1.31); TOTP verification in mt_api (P0-T033, T0.24). The bot token + your user id (P0-T002, T0.06) are needed only for the live phone checks (P2-T064, P2-T066); this task is built and tested against a fake Bot API with no secrets.
+- Decisions: [17 §D P2-B012](../../../docs/17-decisions-register.md#d-other-decisions) (NATS credentials limited to publishing `kill.set`; the engine writes the kill event to WORM with source `telegram`) · [17 §D P0-B002](../../../docs/17-decisions-register.md#d-other-decisions) (Telegram C3 replaces the break-glass CLI) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (C3 cool-down 15 min).
+- Related: P2-T039/T040 bot commands, P2-T059 degraded test, P2-T019 (break-glass retirement setting).
 
 ## Requirements
 
 - Bound to your Telegram user id only; any other user id → ignored + `alert.warning.telegram_foreign_user` (no reply).
 - All commands call `mt_api` with a scoped token (commands: `risk.kill.on`, `strategy.pause|resume`, approvals, C3 confirm) and source `telegram`.
-- `/kill`: shows a confirm button; on tap → `risk.kill.on` via mt_api; if mt_api fails/times out in 300 ms → publish `kill.set` on NATS with a signed payload (NATS account `telegram` may publish only `kill.set` and `audit.telegram.*`) and write an `audit.telegram.kill` event to JetStream for later ingestion into `audit.command`.
+- `/kill`: shows a confirm button; on tap → `risk.kill.on` via mt_api; if mt_api fails/times out in 300 ms → publish `kill.set` on NATS with a signed payload. The bot's NATS credentials may publish **only `kill.set`** (nothing else); the **engine** writes the kill event to WORM with source `telegram` (02 §6, mob §3).
 - Kill latency: confirm tap → KV ON < 300 ms on the NATS path, and all cancels < 1 s end to end.
-- C3 flow: message 'Approve risk change: raise BTC max position 0.5 → 0.8?' → Approve → bot asks for TOTP → mt_api verifies → 'Cool-down 15:00' message edited each minute → 'Applied' (or 'Cancelled').
+- C3 flow (replaces the P0 break-glass path for day-to-day use): message 'Approve risk change: raise BTC max position 0.5 → 0.8?' → Approve → bot asks for TOTP → mt_api verifies → 'Cool-down 15:00' (default 15 min, a setting) message edited each minute → 'Applied' (or 'Cancelled').
 - `/status`: trading allowed Y/N, kill, ladder rung, modes, DQ-paused instruments; `/pnl`: today/30d per sleeve; `/positions`: open positions (compact).
 - No message text received by the bot is stored beyond the command parse (and never fed to any model).
 
@@ -57,7 +63,7 @@ The `telegram-bot` service (alerts-only since P1) gains `/kill` (confirm button)
 - [ ] Command handlers in `packages/mt_ui/telegram/commands/`
 - [ ] Scoped token + NATS account config
 - [ ] C3 conversation state machine (TOTP prompt with 120 s timeout)
-- [ ] Audit ingestion of `audit.telegram.*` when mt-api returns
+- [ ] NATS credentials for the bot limited to publishing `kill.set`; engine-side WORM write of NATS-direct kills with source `telegram`
 - [ ] Tests (python-telegram-bot test harness with fake Bot API)
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
 
@@ -65,7 +71,8 @@ The `telegram-bot` service (alerts-only since P1) gains `/kill` (confirm button)
 
 ### Tests
 - Unit: foreign user id ignored.
-- Integration: `/kill` with mt-api up → command audited; with mt-api stopped → KV `kill=ON` via NATS and later ingested into `audit.command`.
+- Integration: `/kill` with mt-api up → command audited (source `telegram`); with mt-api stopped → KV `kill=ON` via NATS and the engine writes the WORM kill event with source `telegram`.
+- Security: the bot's NATS credentials can't publish any subject other than `kill.set` (publish to `ord.intent.*` denied).
 - Flow test: C3 approve with wrong TOTP rejected; right TOTP → cool-down → applied.
 
 ### Scenarios
@@ -112,3 +119,4 @@ The `telegram-bot` service (alerts-only since P1) gains `/kill` (confirm button)
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (/kill NATS creds limited to kill.set with engine-side WORM write (17 §D P2-B012), Telegram C3 replaces break-glass, keyless build)

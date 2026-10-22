@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T020, P0-T021, P0-T022]
 requirements: [R4.01, R4.N1]
 roadmap_todos: [T4.40]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [docker, git, trivy]
+mcp: []
+env: []
+services: [rss-bridge]
 branch: p4/P4-T007-rss-bridge-container
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/runbooks/rss-bridge.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T007 · Harden the RSS-Bridge sidecar (whitelist, auth, scrape network)
@@ -39,11 +44,11 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 - Roadmap: [R4.01, R4.N1](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.40](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Verdict and config: [06 §1 RSS-Bridge row](../../../docs/06-aggregators-and-market-providers.md#1-verdicts-on-the-tools-you-proposed) · research [social-aggregators](../../../docs/research/social-aggregators.md) (`enabled_bridges[] = *` by default → whitelist)
 - Networks: [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) (`scrape`: ingest-text, rss-bridge, crawl4ai; no route to postgres or signer) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
-- Cross-phase: P0 T0.42 (networks), T0.43 (secrets).
+- Cross-phase: P0-T020 (Compose stack), P0-T021 (T0.42 networks) and P0-T022 (T0.43 secrets) are `depends_on` entries.
 
 ## Requirements
 
-- `services/rss-bridge/config.ini.php`: `enabled_bridges[]` limited to the whitelist (e.g. `CssSelectorBridge`, `XPathBridge`, `TelegramBridge` (fallback only), `MastodonBridge`, `FilterBridge`, `MrssBridge`) plus any bridge P4-T012 requests; everything else off.
+- `services/rss-bridge/config.ini.php`: `enabled_bridges[]` limited to the whitelist (e.g. `CssSelectorBridge`, `XPathBridge`, `TelegramBridge` (fallback only; its output goes only to the posture extractor, P4-T019, never to `nlp`), `MastodonBridge`, `FilterBridge`, `MrssBridge`) plus any bridge P4-T012 requests; everything else off.
 - Auth on (`[authentication] enable = true`), credentials from secrets; `ingest-text` is the only client.
 - Cache 15 min minimum per bridge (context only, not latency signals); max 3 h.
 - Container: read-only root FS, non-root user, no published ports, `scrape` network only, egress allowed to the internet; memory limit 256 MB.
@@ -104,3 +109,4 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on (P0-T020/T021/T022); TelegramBridge output limited to the posture extractor (17 §A P4-B001))

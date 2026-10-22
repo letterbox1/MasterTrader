@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T050, P0-T046]
-requirements: [R0.11]
+depends_on: [P0-T050, P0-T046, P0-T065]
+requirements: [R0.11, R0.14]
 roadmap_todos: [T0.26]
 modules: [M15, M17]
 dashboards: [D16]
+tools: [git, node>=20, pnpm, playwright]
+mcp: []
+env: []
+services: [mt-api]
 branch: p0/P0-T051-d16-health-and-backups
 pr: ""
 doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T051 · Build D16 System: Health and Backups pages
@@ -41,15 +46,15 @@ checkpoint: ""
 - [ui §3.1 data states](../../../docs/ui/README.md#31-data-states-every-tile-implements-all-of-them)
 - [02 §9.2 SLOs](../../../docs/02-v1-architecture.md#92-observability--slos)
 - Backend: P0-T046
-- Depends on: P0-T050, P0-T046
+- Depends on: P0-T050, P0-T046, P0-T065 (`docker-proxy` restart path)
 
 ## Requirements
 
 - Layout ≥ xl: service grid + host panel + SLO panel; ≤ ph: host summary card → service cards → SLOs (D16 table).
 - Live via WS `system`/`heartbeat`; every tile implements all data states; stale after 15 s without updates.
 - Logs: filters service, level, text, time range; virtualised `LogStream`; clicking a `trace_id` filters by it.
-- Backups: KPIs (backup age, size, WAL lag, last restore test pass/fail + date), seal/verify last status, schedule; actions `system.backup.run` (C1), `system.restore.test` (C1) via `ConfirmSheet`; results toast with audit link.
-- Restart buttons rendered disabled with reason while `system.service.restart` is 501 (P0-B012).
+- Backups: KPIs (backup age, size, WAL lag, last restore test pass/fail + date), seal/verify last status, schedule (defaults: nightly incremental, weekly full, monthly restore test, monthly WORM export, 17 §B P0-B011); actions `system.backup.run` (C1), `system.restore.test` (C1) via `ConfirmSheet`; results toast with audit link.
+- Restart action (`system.service.restart`, C2 via `ConfirmSheet` showing dependents) enabled only for allow-listed containers (`restartable` from `/system/services`); the rest show the button disabled with the reason (D16, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012).
 - Loads with Postgres down (read-only; D16 acceptance 1).
 
 ## ToDo
@@ -61,7 +66,7 @@ checkpoint: ""
 ## Verification
 
 ### Tests
-- Unit: each tile in loading/live/stale/error states.
+- Unit: each tile in loading/live/stale/error states; restart button disabled for a non-allow-listed container.
 - Integration (Playwright): with Postgres paused, `/system` renders with read-only banner and live host data.
 
 ### Scenarios
@@ -102,3 +107,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (restart via docker-proxy allow-list (17 §D P0-B012, R0.14); backup schedule per P0-B011; run fields added)

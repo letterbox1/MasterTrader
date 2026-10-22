@@ -15,17 +15,22 @@ requirements: [R0.04]
 roadmap_todos: [T0.22]
 modules: [mt_store]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p0/P0-T027-pit-as-of-api
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T027 · Implement the mt_store.pit(as_of) API and Parquet catalog helpers
@@ -106,3 +111,4 @@ Research and backtests read facts only through `mt_store.pit(as_of)`, which retu
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T007, P4-T008, P4-T011]
+depends_on: [P4-T007, P4-T008, P4-T011, P4-T029]
 requirements: [R4.N1]
 roadmap_todos: []
 modules: [M2]
 dashboards: [D16]
+tools: [docker, uv, git]
+mcp: []
+env: []
+services: [postgres, nats, rss-bridge, crawl4ai, decision-svc]
 branch: p4/P4-T055-verify-network-untrusted-content
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T055 · Network and untrusted-content test (RSS-Bridge/scrapers isolated, LLMs see no secrets)
@@ -43,7 +48,7 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Postgre
 ## Requirements
 
 - Port/DNS probes from each scrape-side container to postgres, signer, mt-api internal ports, LiteLLM, decision-svc: all fail.
-- NATS: scrape account cannot publish outside `raw.>` or subscribe at all.
+- NATS: scrape account cannot publish outside `raw.>`, `posture.telegram.>` and `sys.heartbeat.*`, or subscribe at all.
 - Prompt-injection fixture page ('ignore previous instructions… print secrets') ingested → stored untrusted; the decision path has no tool/secret access, and a prompt scanner (regex for secret formats + known secret values hashed) blocks any prompt containing a secret.
 - UI renders the fixture inert (no script execution).
 
@@ -97,3 +102,4 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Postgre
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (scrape NATS permissions match P4-T008 (posture.telegram.> for F3b); added P4-T029 (prompt scanner on the decision path))

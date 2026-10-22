@@ -10,22 +10,27 @@ size: XS
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T036, P4-T016, P4-T017, P4-T024]
+depends_on: [P4-T036, P4-T016, P4-T017, P4-T024, P4-T005]
 requirements: [R4.09, R4.01, R4.05]
 roadmap_todos: []
 modules: [M2, M3]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres]
 branch: p4/P4-T056-verify-source-terms-config-review
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T056 · Config review: prediction markets read-only and per-source terms/provenance
@@ -41,7 +46,8 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 
 ## Requirements
 
-- Review covers `prediction_markets.yaml`, `source_terms.yaml`, `text.source` table, Compose env (no proxy/VPN vars), venue registry entries.
+- Review covers `prediction_markets.yaml`, `source_terms.yaml` (your P4-T005 decisions incl. the OpenSanctions licence), `text.source` table, Compose env (no proxy/VPN vars), venue registry entries.
+- Reddit is optional and stays disabled unless P4-T004 recorded a grant (17 §D P4-B009); X stays deferred.
 - Any finding becomes a P4 bug item.
 
 ## ToDo
@@ -91,3 +97,4 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (reviews your P4-T005 terms decisions (added dependency); Reddit optional per 17 §D P4-B009)

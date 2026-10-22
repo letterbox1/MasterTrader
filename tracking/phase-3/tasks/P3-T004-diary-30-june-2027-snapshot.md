@@ -15,17 +15,22 @@ requirements: [R3.08]
 roadmap_todos: [T3.06]
 modules: [M18]
 dashboards: [D15]
+tools: []
+mcp: []
+env: []
+services: [your calendar]
 branch: p3/P3-T004-diary-30-june-2027-snapshot
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T004 · Diary the 30 June 2027 snapshot hard date
@@ -38,7 +43,7 @@ The 30 June 2027 end-of-day AEST market-value snapshot of every open lot is in y
 
 - Roadmap: [R3.08, T3.06](../../../docs/roadmap/phase-3-journal-and-tax.md) · [roadmap README §4 fixed dates](../../../docs/roadmap/README.md#4-fixed-external-dates)
 - Design: [09 key findings](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) (snapshot of every open lot, price source recorded)
-- Related: P3-T030 (job), P3-T044 (runbook), P3-B002 (price convention)
+- Related: P3-T030 (job), P3-T044 (runbook); price convention per asset class: [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) (crypto uses the 23:55:00–23:59:59 AEST VWAP window, so the host and recorders must be up through midnight)
 
 ## Requirements
 
@@ -93,3 +98,4 @@ The 30 June 2027 end-of-day AEST market-value snapshot of every open lot is in y
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (snapshot convention 16 §4.2 linked; P3-B002 closed; services filled)

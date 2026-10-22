@@ -15,17 +15,22 @@ requirements: [R2.15]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
+tools: [uv]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T018-fallback-ladder
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T018 · Six-rung fallback ladder state machine
@@ -38,13 +43,14 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 
 - Roadmap: [R2.15](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Spec: [03 M11 fallback ladder](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [D06 ladder widget](../../../docs/ui/dashboards/D06-risk.md)
-- Related: P2-B004 (D06 lists 5 rungs), P2-T037 (auto-downgrade at rung ≥ 3), P2-T060 ladder tests.
+- Decisions: six rungs, rendered from the API ([17 §D P2-B004](../../../docs/17-decisions-register.md#d-other-decisions), D06 ladder row); kill has no vault sweep in P2 ([17 §B P2-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
+- Related: P2-T037 (auto-downgrade at rung ≥ 3), P2-T060 ladder tests, P2-T070 (a failing inline safety-state check holds the ladder).
 
 ## Requirements
 
-- Rungs: 1 healthy + high confidence → normal size; 2 low confidence → half size or observe only (policy); 3 late decision / stale feed → hold (no new orders); 4 model service down → rules only: manage exits, no new entries; 5 hard limit breached → halt sleeve, cancel open orders, close per sleeve rule, alert; 6 kill switch → halt everything (+ vault sweep hook, delivered in P5 R5.07).
-- Inputs: tier-A confidence (from signal metadata; absent = rung 1 for rule strategies), `dq.status`, decision timestamp vs deadline, heartbeats (`sys.heartbeat.decision-svc` when present, model loader health), limit breaches, KV `kill`.
-- Effective rung = max(automatic, manual floor); manual step **down** (more cautious) C1, step **up** C3; automatic recovery only from rungs 2–4 when inputs clear for a hysteresis window (default 60 s); rungs 5–6 need manual action.
+- Rungs: 1 healthy + high confidence → normal size; 2 low confidence → half size or observe only (policy); 3 late decision / stale feed → hold (no new orders); 4 model service down → rules only: manage exits, no new entries; 5 hard limit breached → halt sleeve, cancel open orders, close per sleeve rule, alert; 6 kill switch → halt everything (no vault sweep in P2; P5 R5.07 adds it behind a logged hook).
+- Inputs: tier-A confidence (from signal metadata; absent = rung 1 for rule strategies), `dq.status`, decision timestamp vs deadline, inline safety-state failures from P2-T070 (data age, `audit.integrity`, `egress.status` → rung 3 hold for the affected scope, R2.58), heartbeats (`sys.heartbeat.decision-svc` when present, model loader health), limit breaches, KV `kill`.
+- Effective rung = max(automatic, manual floor); manual step **down** (more cautious) C1, step **up** C3; automatic recovery only from rungs 2–4 when inputs clear for a hysteresis window (default 60 s, an L1 setting); rungs 5–6 need manual action.
 - KV `risk_state.ladder.{scope}`, `risk.event{type: ladder_change}`, `/risk/state?ladder=1`.
 
 ## ToDo
@@ -92,7 +98,7 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D06-risk.md`: ladder widget shows six rungs (fix per P2-B004).
+- `docs/ui/dashboards/D06-risk.md`: confirm the six-rung ladder widget matches the API as built.
 - `docs/14-strategy-evidence-and-validation.md` §5: inputs and hysteresis.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.22 when all tasks mapped to it are done.
 
@@ -105,3 +111,4 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (six rungs per decision, safety-state failures hold the ladder, no sweep in P2)

@@ -15,31 +15,36 @@ requirements: [R4.02, R4.03]
 roadmap_todos: [T4.21]
 modules: [M2]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p4/P4-T019-telegram-postures
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T019 · Telegram regex extractors, posture calculators, Bot API and RSS-Bridge fallback
 
 ## Goal / expected outcome
 
-Telegram messages are reduced, in memory, to regex-extracted contract addresses/tickers + counts; these become deterministic **postures** per subject (mention velocity, channel count, new-channel share, time since first call) stored in `text.tg_posture` with `model_input_ok = false`, `train_ok = false`, published on `posture.tg.{subject}` for code/policy consumers (P5 airdrop rules, D08). The Bot API (for channels where your bot is admin) and RSS-Bridge's Telegram bridge feed the same extractor as fallbacks.
+Telegram messages are reduced, in memory, to regex-extracted contract addresses/tickers + counts; these become deterministic **postures** per subject (mention velocity, channel count, new-channel share, time since first call) stored in `text.telegram_posture` with `model_input_ok = false`, `train_ok = false`, published on `posture.telegram.{subject}` for code/policy consumers only: **M4 airdrop rules and M11 rules** (D08 and the morning brief display the numbers). The Bot API (for channels where your bot is admin) and RSS-Bridge's Telegram bridge feed the same extractor as fallbacks.
 
 ## Context & references
 
 - Roadmap: [R4.02, R4.03](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.21](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Policy: [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (allowed: regex-extracted addresses/tickers and counts → postures used by code/policy only; no Telegram-derived feature in a model input) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
 - UI: [D08 Additions](../../../docs/ui/dashboards/D08-intel.md) (Telegram shown as postures only)
-- Gap: P4-B003 (no posture subject/table in 02 §4/§6 yet).
+- Decisions: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B001: F3 split, F3b) and [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B002/B003: table `text.telegram_posture`, subject `posture.telegram.*`, consumers M4/M11 rules only) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [03 M2/M6](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
 - Cross-phase: P5 R5.10 consumes postures for discovery.
 
 ## Requirements
@@ -48,18 +53,18 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 - Stored per mention: hashed channel id, message id, ts, extracted value, chain. **No text, no sender, no usernames.**
 - Postures per subject over windows 15 m / 1 h / 24 h: `mention_velocity` (mentions/h), `channel_count`, `new_channel_share` (channels first seen < 7 d ago / total), `time_since_first_call`.
 - Posture rows carry `source=telegram`, `model_input_ok=false`, `train_ok=false`, `retention_days` = 90 for mentions.
-- Publish `posture.tg.{subject}` and maintain KV `tg_posture`; consumers must be deterministic code/policy (P5 rules, D08), **not** M6 features for tier A, tier B, agents or RAG.
+- `ingest-text` (scrape) publishes structured mentions and posture snapshots on `posture.telegram.{subject}` (no text); the core `intel-writer` (P4-T008) persists them to `text.telegram_mention` / `text.telegram_posture`. No extra KV bucket: consumers read the last message per subject from the stream. Consumers: M4 airdrop rules, M11 rules, and the display paths (`/intel/postures` → D08, morning brief). **Never** M6 features, tier A/B, agents, RAG or MCP.
 - Bot API path: bot updates from admin channels → same extractor; RSS-Bridge `TelegramBridge` for public channels the account can't join (context-only cadence).
 
 ## ToDo
 
 - [ ] `extractors.py` with validators + golden test corpus (synthetic messages, no real Telegram text in the repo).
 - [ ] `postures.py` sliding-window calculators (pure functions, deterministic).
-- [ ] Writers for `text.tg_mention`/`text.tg_posture`; NATS publisher; KV updater.
+- [ ] Publisher for `posture.telegram.{subject}` and the `intel-writer` handlers for `text.telegram_mention`/`text.telegram_posture`.
 - [ ] Bot API listener (python-telegram-bot or aiogram, pinned) limited to channel posts.
 - [ ] RSS-Bridge Telegram fallback via P4-T012 client.
-- [ ] Consumer allow-list: `posture.tg.>` subscribers declared in `config/provenance/consumers.yaml`; CI fails if a model/feature service subscribes.
-- [ ] Retention job entry for `text.tg_mention` (90 d).
+- [ ] Consumer allow-list: `posture.telegram.>` subscribers declared in `config/provenance/consumers.yaml` (M4 rules, M11 rules, intel-writer, mt-api display); CI fails if any other service subscribes.
+- [ ] Retention job entry for `text.telegram_mention` (90 d default, configurable).
 
 ## Verification
 
@@ -67,7 +72,7 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 - Golden: synthetic message corpus → exact extracted values and posture numbers.
 - Property: postures are deterministic and order-independent within a window.
 - Unit: invalid checksum EVM address rejected; random base58 noise rejected.
-- CI: consumer allow-list check fails if `nlp`, `decision-svc`, `mt_features` or `agents` subscribe to `posture.tg.>`.
+- CI: consumer allow-list check fails if `nlp`, `decision-svc`, `mt_features`, `agents`, `mt_memory` or `mcp` subscribe to `posture.telegram.>`.
 
 ### Scenarios
 - Given 40 channels mention the same new Solana address within 1 h, 30 of them new, then `new_channel_share = 0.75` and velocity is computed for the 1-h window.
@@ -90,7 +95,7 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 
 ## Cardinal rules (do NOT)
 
-- Do NOT feed postures into M6 features used by tier A/B models, agents or RAG.
+- Do NOT feed postures into M6 features, tier A/B models, agents, RAG or MCP; only M4/M11 rules consume them.
 - Do NOT log message text, even at debug level.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
@@ -112,3 +117,4 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical table/subject/consumers per 17 §D (P4-B002/B003) and F3b (17 §A P4-B001); no posture KV bucket; core intel-writer persists)

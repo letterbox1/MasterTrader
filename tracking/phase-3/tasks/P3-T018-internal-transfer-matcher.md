@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T012, P3-T014, P3-T017]
+depends_on: [P3-T008, P3-T012]
 requirements: [R3.04]
 roadmap_todos: [T3.22]
 modules: [M18, M22]
 dashboards: []
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T018-internal-transfer-matcher
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T018 · Internal-transfer matcher across own accounts and wallets
@@ -38,11 +43,11 @@ Every withdrawal from one registered account that lands as a deposit in another 
 
 - Roadmap: [R3.04, T3.22](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - [09 goals §6](../../../docs/09-journal-and-tax.md#goals) (internal transfers never disposals) · [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view)
-- Related: P3-T012 registry, P3-T019 lot engine (lot relocation), P3-T046 property tests
+- Related: P3-T012 registry (`ops.wallets`), P3-T019 lot engine (lot relocation), P3-T014/T017 (transfer legs; tests use synthetic events so this can be built in parallel), P3-T046 property tests
 
 ## Requirements
 
-- Match keys in order: (1) same tx hash / venue transfer id on both legs; (2) same asset, amount_out − fee = amount_in within 0.1% or the venue's fee, time window ≤ 6 h (configurable, ≤ 72 h for fiat bank rails), destination address = registered address.
+- Match keys in order: (1) same tx hash / venue transfer id on both legs; (2) same asset, amount_out − fee = amount_in within 0.1% or the venue's fee, time window ≤ 6 h (setting, default; ≤ 72 h for fiat bank rails) in `config/journal/transfers.yaml`, destination address = registered address.
 - Writes `journal.transfer_link` (WORM) with both event ids, method, confidence; legs re-labelled via superseding events `internal_transfer` (never edits).
 - Lot relocation: lots move `account_id` with unchanged `acquired_at`/cost base; the fee is a separate `fee_only` (gas/withdrawal) event — whether the fee is a disposal of a small amount of the asset is an AU_2026 classification (default: CGT disposal of the fee quantity, flagged (U)).
 - Unmatched after the window → `transfer_unmatched` review item in D14 and a reconciliation note; never auto-classified as a disposal.
@@ -104,3 +109,4 @@ Every withdrawal from one registered account that lands as a deposit in another 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends_on trimmed to true preconditions (writer + registry) for parallel work; windows are settings; tools/services filled)

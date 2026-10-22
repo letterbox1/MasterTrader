@@ -15,17 +15,22 @@ requirements: [R0.02]
 roadmap_todos: [T0.41]
 modules: [ops, mt_store]
 dashboards: []
+tools: [docker, make, uv]
+mcp: []
+env: []
+services: [postgres, nats, prefect-server, mlflow, caddy, mt-api]
 branch: p0/P0-T020-compose-core-services-digest-pinned
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T020 · Build the Compose stack for core services pinned by digest
@@ -42,7 +47,7 @@ checkpoint: ""
 - [02 §5.1 stores](../../../docs/02-v1-architecture.md#51-stores)
 - [03 §2 target environment](../../../docs/03-build-spec.md#2-target-environment)
 - [07 §5 network & host](../../../docs/07-security-notes.md#5-network--host)
-- Observability: P0-T023; models: P0-T042, P0-T043, P0-T044; networks: P0-T021; secrets: P0-T022
+- Observability: P0-T023; models: P0-T042, P0-T043, P0-T044; networks: P0-T021; secrets: P0-T022; `docker-proxy`: P0-T065
 - Depends on: P0-T014
 
 ## Requirements
@@ -50,7 +55,7 @@ checkpoint: ""
 - Images (digest-pinned, recorded in `infra/images.lock` as `name tag digest`): `timescale/timescaledb-ha:pg16` (TSL, includes pgvector and pgBackRest; enable `pg_trgm`), `nats:2.10-alpine`, `prefecthq/prefect:3-python3.12`, `ghcr.io/mlflow/mlflow`, `caddy:2`, and `mt-api` built from `packages/mt_api/Dockerfile` (base image digest-pinned).
 - Health checks: postgres `pg_isready` + `SELECT 1`; nats `/healthz?js-enabled-only=true`; prefect `/api/health`; mlflow `/health`; caddy static `/healthz`; mt-api `/api/v1/system/live`.
 - Postgres: databases `mastertrader`, `prefect`, `mlflow`, `litellm`; `shared_preload_libraries='timescaledb,pg_stat_statements'`; `wal_level=replica`, `archive_mode=on` (archive_command set by P0-T039); `timescaledb.telemetry_level=off`; data on NVMe.
-- NATS: JetStream file store on NVMe; accounts `SYS`, `CORE`, `SCRAPE` (scrape may publish only `text.raw.>`); KV buckets from an init job: `risk_state`, `kill`, `feed_status`, `tierb_scores`, `heartbeat` (02 §5.1).
+- NATS: JetStream file store on NVMe; accounts `SYS`, `CORE`, `SCRAPE` (scrape may publish only `text.raw.>`); KV buckets from an init job: `risk_state`, `kill`, `feed_status`, `tierb_scores`, `heartbeat` and the WORM integrity status `audit.integrity` (02 §5.1; stored as bucket `audit`, key `integrity`, because KV bucket names can't contain dots). The same job creates the JetStream stream `AUDIT_BUFFER` for the WORM write buffer with the [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) defaults read from settings (max 1 GB or 24 h).
 - Prefect: server on the `prefect` DB; work pool `mt-default`; analytics off (`PREFECT_SERVER_ANALYTICS_ENABLED=false`, `DO_NOT_TRACK=1`).
 - MLflow: backend store Postgres `mlflow`, artifacts on a local volume (restic-backed by P0-T039).
 - Caddy: serves `apps/web/dist`, proxies `/api/*` (incl. WebSocket) to mt-api; TLS via Tailscale `*.ts.net` certs; binds **only** to the Tailscale IP; headers CSP `default-src 'self'`, HSTS, `X-Frame-Options DENY`.
@@ -74,6 +79,7 @@ checkpoint: ""
 - Integration: `docker compose up -d` then `make health` → all services healthy within 180 s.
 - Lint: compose-lint fails on a fixture with `image: postgres:16` (no digest) and on `ports: ['5432:5432']`.
 - Postgres: `pg_extension` includes `timescaledb`, `vector`, `pg_trgm`; telemetry off.
+- NATS: KV `audit` bucket and `AUDIT_BUFFER` stream exist with the configured limits (not literals).
 
 ### Scenarios
 - Given a service crashes, when Docker restarts it, then the health check returns to healthy and the restart count is visible (D16 via cAdvisor).
@@ -117,3 +123,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (KV audit.integrity + AUDIT_BUFFER stream with 16 §3.3 defaults; run fields added)

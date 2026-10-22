@@ -15,24 +15,29 @@ requirements: [R0.03]
 roadmap_todos: [T0.22]
 modules: [mt_store]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p0/P0-T024-mt-store-schemas-roles-alembic
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T024 · Create the Postgres schemas, DB roles and Alembic baseline
 
 ## Goal / expected outcome
 
-Alembic (in `migrations/`, helpers in `mt_store.migrate`) creates the nine schemas `market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, the role model (owner/migrator/app/read-only roles, `worm_owner` placeholder) and the shared conventions (UUIDv7, `timestamptz` UTC, `event_time` + `ingest_time`). A migration test proves upgrade → downgrade → upgrade on a clean DB.
+Alembic (in `migrations/`, helpers in `mt_store.migrate`) creates all 13 canonical schemas `market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight` (later phases only add tables), the role model (owner/migrator/app/read-only roles, `worm_owner` placeholder) and the shared conventions (UUIDv7, `timestamptz` UTC, `event_time` + `ingest_time`). A migration test proves upgrade → downgrade → upgrade on a clean DB.
 
 ## Context & references
 
@@ -42,7 +47,7 @@ Alembic (in `migrations/`, helpers in `mt_store.migrate`) creates the nine schem
 - [02 §5.1 stores](../../../docs/02-v1-architecture.md#51-stores)
 - [02 §5.2 key conventions](../../../docs/02-v1-architecture.md#52-key-conventions)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers)
-- Schema-list conflict (02 §5.1 lists 12 schemas incl. `models`, `rag`, `hindsight`; M22 uses `treasury`) is P0-B005: P0 creates the nine in R0.03; later phases add theirs.
+- Schema list decided in [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P0-B005, closed): the 13 schemas of 03 §4 / 02 §5.1 are all created in P0; later phases add tables only.
 - Depends on: P0-T016, P0-T017, P0-T020
 
 ## Requirements
@@ -78,7 +83,7 @@ Alembic (in `migrations/`, helpers in `mt_store.migrate`) creates the nine schem
 
 ## Acceptance criteria
 
-- [ ] Nine schemas + roles exist after `alembic upgrade head`
+- [ ] All 13 schemas + roles exist after `alembic upgrade head`
 - [ ] Migration test green in CI
 - [ ] Lint enforces event_time/ingest_time/numeric/uuid conventions
 - [ ] Privilege tests pass
@@ -112,3 +117,4 @@ Alembic (in `migrations/`, helpers in `mt_store.migrate`) creates the nine schem
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (all 13 canonical schemas in P0 (17 §B P0-B005); run fields added)

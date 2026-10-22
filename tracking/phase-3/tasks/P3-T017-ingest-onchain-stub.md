@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T008, P3-T011, P3-T012]
+depends_on: [P3-T008, P3-T011, P3-T012, P0-T016]
 requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18, M22]
 dashboards: []
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p3/P3-T017-ingest-onchain-stub
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T017 · On-chain event adapter stub and wallet-transfer contract
@@ -38,7 +43,9 @@ The journal consumes on-chain transfers via a defined `wallet.{chain}.{address}.
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · scope note: on-chain decoding at scale is P5 (wallet-indexer)
 - Subjects in [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view) · Rotki sidecar in [09 tools vetted](../../../docs/09-journal-and-tax.md#tools-vetted)
-- Boundary: P5 T5.22 (wallet-indexer publishes transfers), P5 T5.29 (airdrop income linking)
+- Boundary: P5 T5.22 (wallet-indexer publishes transfers and extends `ops.wallets` additively, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)), P5 T5.29 (airdrop income linking)
+- Cross-phase prerequisite (depends_on): P0-T016 (`mt_core` versioned message schemas)
+- Values: non-trade transfers and airdrops are valued by P3-T011 per [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) (long-tail tokens via pool price)
 
 ## Requirements
 
@@ -83,7 +90,7 @@ The journal consumes on-chain transfers via a defined `wallet.{chain}.{address}.
 
 ## Cardinal rules (do NOT)
 
-- Do NOT decode contracts or call RPC providers from the journal (P5 owns that).
+- Do NOT decode contracts or index chains from the journal (P5 owns that); the only RPC read in the journal is P3-T011's pool-price valuation.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
@@ -104,3 +111,4 @@ The journal consumes on-chain transfers via a defined `wallet.{chain}.{address}.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (valuation via 16 §4.1 service; `ops.wallets` boundary per 17 §B; RPC rule aligned with pool-price tier; explicit P0-T016 depends_on; tools/services filled)

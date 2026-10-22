@@ -15,17 +15,22 @@ requirements: [R2.11]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
+tools: [uv]
+mcp: []
+env: []
+services: [nats]
 branch: p2/P2-T015-portfolio-risk-clusters
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T015 · Portfolio-level risk: correlation clusters, concentration, VaR/ES
@@ -38,13 +43,14 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 
 - Roadmap: [R2.11](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Spec: [03 M11 portfolio level](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [D06 Exposure breakdown](../../../docs/ui/dashboards/D06-risk.md)
-- Data: bars via `pit(as_of)` (P1). Related: P2-B013 (stress tab has no roadmap item).
+- Data: bars via `pit(as_of)` (P1). The D06 Stress tab is a placeholder in P2 (R2.57, P2-T043); the historical shock replay and `risk.stress.run` are built in P7 (R7.16, T7.27).
+- Defaults: cluster caps, concentration and the VaR confidence/horizon are L1 settings with documented defaults; venue concentration ≤ 25% of total equity is evaluated in P2-T012 ([16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
 
 ## Requirements
 
 - Clusters from policy (`clusters: {usd: [...], crypto_beta: [...]}`) plus rolling 90d correlation clustering as an advisory view.
 - Pre-trade: post-trade cluster exposure ≤ cluster cap; single-instrument concentration ≤ cap.
-- VaR/ES: historical simulation, 1-day, 99% (configurable), recomputed every 5 min off the order path and cached in KV; pre-trade uses the cached marginal estimate (no heavy compute in the check).
+- VaR/ES: historical simulation, default 1-day, 99% (L1 settings, editable), recomputed every 5 min off the order path and cached in KV; pre-trade uses the cached marginal estimate (no heavy compute in the check).
 - `/risk/state?breakdown=1` returns by asset class, currency, venue, strategy, cluster + VaR/ES.
 
 ## ToDo
@@ -99,3 +105,4 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (stress tab placeholder (R2.57) and P7 replay noted; caps as L1 settings)

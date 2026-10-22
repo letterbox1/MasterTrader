@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T020, P3-T022]
+depends_on: [P3-T019, P3-T022]
 requirements: [R3.06]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T023-au2026-cgt-engine
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T023 · AU_2026 capital gains with 12-month discount and loss ordering
@@ -45,8 +50,8 @@ The `AU_2026` plugin computes investor-regime CGT per FY: per-parcel 50% discoun
 - Discount eligibility: disposal local date ≥ acquisition local date + 1 year + 1 day (bought 2 Feb 2018 → eligible on disposals from 3 Feb 2019); leap years handled by calendar arithmetic, not 365 days.
 - Cost base = purchase price + incidental costs (brokerage, fees on acquisition) in AUD at acquisition FX; proceeds = gross − disposal costs.
 - Loss ordering per FY: current-year capital losses + carried-forward losses applied first to non-discount gains, then to discount gains; then 50% discount on the remaining discount gains; net capital loss carried forward to the next FY (`journal.tax_report` stores the carry-forward).
-- Crypto: every disposal incl. crypto↔crypto is a CGT event (proceeds = AUD market value of what's received); fee-in-crypto disposals per P3-T018 default.
-- Income-linked lots: staking rewards and `airdrop_established` → ordinary income at AUD value and that value is the cost base; `airdrop_initial` → $0 cost base; `needs_classification` → excluded from totals with a blocking D15 warning.
+- Crypto: every disposal incl. crypto↔crypto is a CGT event (proceeds = AUD value of what's received, valued by the fill price or the 16 §4.1 hierarchy via P3-T011); fee-in-crypto disposals per P3-T018 default.
+- Income-linked lots: staking rewards and `airdrop_established` → ordinary income at AUD value (16 §4.1 valuation, method recorded) and that value is the cost base; `airdrop_initial` → $0 cost base; `needs_classification` → excluded from totals with a blocking D15 warning.
 - Personal-use asset and other exemptions are out of scope (flag only).
 - Lines carry: asset, acquired, disposed, holding days (both excluded), discount eligible, cost base, proceeds, gain/loss, method (specific ID / FIFO), wash-sale flag.
 
@@ -111,3 +116,4 @@ The `AU_2026` plugin computes investor-regime CGT per FY: per-parcel 50% discoun
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (values via 16 §4.1 hierarchy; depends_on trimmed to lot engine + framework (P3-T020 not needed for CGT); tools/services filled)

@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T027, P4-T039]
+depends_on: [P4-T027, P4-T039, P2-T120]
 requirements: [R4.11]
 roadmap_todos: [T4.27]
 modules: [M6]
 dashboards: [D08, D02]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p4/P4-T040-sentiment-regime-per-market
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T040 · Sentiment and regime pipelines per market type plus the macro layer
@@ -38,15 +43,16 @@ checkpoint: ""
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M6 sentiment & regime](../../../docs/03-build-spec.md#m6-features--mt_features) (crypto adds Fear & Greed, funding, OI, liquidations, long/short ratios)
-- Cross-phase: P2 R2.46 (feature framework, IC evaluator), P1 funding/OI from crypto feeds.
+- Cross-phase: P2-T120 (R2.46 feature framework) is a `depends_on` entry; P1 funding/OI from crypto feeds are reused.
+- Decisions: Telegram postures are never M6 features ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P4-B003; [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features)); per-asset regime labels for validation are defined once in [16 §2.4.1](../../../docs/16-configuration-and-safety-model.md#241-regime-labels-for-per-regime-results).
 - Verified by P4-T054 (IC report).
 
 ## Requirements
 
 - Inputs: FinBERT doc sentiment (relevance-weighted, dedup-cluster-weighted), GDELT tone, CryptoPanic votes, event scores, positioning (P4-T039), and for crypto: Fear & Greed index (alternative.me free), funding, OI, liquidations, Binance free long/short ratios.
-- **Excluded:** Telegram postures (not model/feature inputs, 12 §4).
+- **Excluded:** Telegram postures (`posture.telegram.*` / `text.telegram_posture` are consumed only by M4/M11 rules; never features, 12 §4, 17 §D). CI check: `mt_features` never imports or subscribes to them.
 - Sentiment index per instrument: EWMA over 1 h / 24 h / 7 d; z-scored vs 90-day history; mention volume series.
-- Regime label per market type: `{risk_on, risk_off, neutral}` macro and `{trend, range, crisis}` market regimes from deterministic rules (vol percentile, trend strength, sentiment z, VIX regime) — versioned definitions.
+- Regime label per market type: `{risk_on, risk_off, neutral}` macro and `{trend, range, crisis}` market regimes from deterministic rules (vol percentile, trend strength, sentiment z, VIX regime), versioned, thresholds configurable. The per-asset **bull/bear/chop** label is the 16 §2.4.1 definition (200-day average and ±10% 90-day return, configurable per asset class); it's published as a feature from the shared implementation, never redefined here.
 - Features registered in `features.def` with version, inputs, PIT semantics; computed incrementally every 5 min and backfilled for history.
 
 ## ToDo
@@ -103,3 +109,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (postures excluded from features (17 §D P4-B003); bull/bear/chop regime from 16 §2.4.1; explicit depends_on P2-T120)

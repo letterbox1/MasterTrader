@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T001, P2-T044]
+depends_on: [P2-T044, P0-T022]
 requirements: [R2.N3]
 roadmap_todos: [T2.03, T2.40]
 modules: [M12]
 dashboards: [D05]
+tools: [uv, sops]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T045-engine-secrets-key-audit
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T045 · Engine secret wiring per mode and automated key audit
@@ -38,11 +43,14 @@ Venue keys from the sops file reach only the services and modes that need them, 
 
 - Roadmap: [R2.N3](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDos T2.03, T2.40
 - Security: [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) · [07 §2 rotation 90 days](../../../docs/07-security-notes.md#2-secrets) · [SPEC NN5](../../../SPEC.md#non-negotiable-requirements)
-- Related: P2-T001 (your keys), D05 Venues tab shows key age (Part B UI).
+- Build first, keys last: wiring and the audit tool are built and tested keyless (dummy secrets, recorded permission-endpoint responses); the audit runs on your real keys in P2-T071, after P2-T001.
+- Cross-phase (`depends_on`): sops → tmpfs per-service secret scoping (P0-T022); the sops file lives outside the repo ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Defaults: key rotation every 90 days, alert when older ([16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)); one fixed egress IP allow-listed ([16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
+- Related: P2-T001 (your keys), P2-T072 (`deadman` keys), D05 Venues tab shows key age (P2-T147).
 
 ## Requirements
 
-- Secret paths `venues.<venue>.<mode>` mapped to engine account configs; `deadman` gets cancel-only where the venue supports it.
+- Secret paths `venues.<venue>.<mode>` mapped to engine account configs; `venues.<venue>.deadman` mapped only into the `deadman` container (its own trade-only keys, cancel/flatten use); no service sees keys it doesn't need (LLM agents never see broker keys).
 - Audit checks: Binance `GET /sapi/v1/account/apiRestrictions` (`enableWithdrawals=false`, `ipRestrict=true`) on testnet where available; Alpaca/OANDA/IG: account id per mode distinct, manual attestation recorded from P2-T001; all: no key shared across modes.
 - Output: `/system/keys` masked metadata (venue, mode, created, age, checks pass/fail) + Prometheus `mt_key_age_days`.
 - Audit runs at engine start (fail → that account disabled) and nightly.
@@ -59,7 +67,8 @@ Venue keys from the sops file reach only the services and modes that need them, 
 
 ### Tests
 - Unit: duplicate key across modes detected.
-- Integration (testnet): Binance restrictions parsed; withdrawal-enabled key → account disabled + alert.
+- Integration (recorded Binance `apiRestrictions` responses, no keys): restrictions parsed; withdrawal-enabled key → account disabled + alert; IP restriction off → account disabled.
+- Unit: key older than the rotation default (90 days) → `mt_key_age_days` alert.
 
 ### Scenarios
 - Given a key with withdrawals enabled, when the engine starts, then that account is disabled and a critical alert names the venue/mode (no secret printed).
@@ -69,7 +78,7 @@ Venue keys from the sops file reach only the services and modes that need them, 
 
 ## Acceptance criteria
 
-- [ ] Every P2 key audited with results visible (masked)
+- [ ] Audit tool proven on fixtures; the run on your P2 keys is recorded in P2-T071 (masked)
 - [ ] Withdrawal-enabled or shared keys block trading on that account
 - [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
 
@@ -98,3 +107,4 @@ Venue keys from the sops file reach only the services and modes that need them, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build of wiring + audit (real-key run in P2-T071), separate deadman keys, rotation default 90 days)

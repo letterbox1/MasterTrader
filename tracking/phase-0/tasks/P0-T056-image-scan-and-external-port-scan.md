@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T019, P0-T021, P0-T023, P0-T015, P0-T020]
+depends_on: [P0-T019, P0-T021, P0-T023, P0-T015]
 requirements: [R0.N2, R0.N3, R0.N5]
 roadmap_todos: [T0.65]
 modules: [ops]
 dashboards: []
+tools: [docker, trivy, grype, syft, nmap]
+mcp: []
+env: []
+services: [tailscale]
 branch: p0/P0-T056-image-scan-and-external-port-scan
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T056 · Scan images (trivy/grype) and verify nothing is exposed outside Tailscale
@@ -50,6 +55,7 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 - Vendored-code check: `third_party/` grep for telemetry/referral/`eval`/`exec`/network calls (07 §7) — empty in P0 but the job exists.
 - External scan: from a machine on the LAN, `nmap -Pn -p- <LAN IP>` and `nmap -sU --top-ports 100` → nothing open; from a tailnet device, only 22 and 443 open.
 - Internet exposure: confirm no router port-forward / UPnP mapping (router UI) and `tailscale funnel status` off.
+- `docker-proxy` is reachable only on `ctl` (netprobe from `core`/`scrape` fails) and mt-api has no Docker socket mounted.
 - Re-run `infra/host/checklist.sh` and the `scrape` netprobe; record results and scan date for D16 Security posture.
 
 ## ToDo
@@ -105,3 +111,4 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (docker-proxy exposure check (R0.14 context); deps trimmed; run fields added)

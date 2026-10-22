@@ -15,17 +15,22 @@ requirements: [R4.06, R4.02, R4.12, R4.13]
 roadmap_todos: []
 modules: [M2, M21, M9]
 dashboards: [D07, D08]
+tools: [docker, uv, git]
+mcp: []
+env: []
+services: [postgres, nats, rss-bridge, decision-svc, tei-embed]
 branch: p4/P4-T058-verify-stress-failure-injection
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T058 · Stress and failure injection for the intel pipeline
@@ -42,7 +47,7 @@ Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood v
 ## Requirements
 
 - Flood: one source at 10× normal (e.g. 2,000 items/h): caps engage, gate queue bounded, D08 warns, other sources' latency p95 ≤ 2× baseline.
-- decision-svc down 30 min: keyword fallback, 'Tier B unavailable' in UI, tier A unaffected, backlog drained after recovery.
+- decision-svc down 30 min: keyword fallback, 'Tier B unavailable' in UI, tier A unaffected, no order-path call waits (R4.N2), backlog drained after recovery.
 - TEI down: docs stored without embeddings, backfilled on recovery.
 - RSS-Bridge down: bridged sources stale; others unaffected.
 - Postgres down 5 min: JetStream buffers; zero loss/duplicates after recovery.
@@ -97,3 +102,4 @@ Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood v
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (decision-svc outage asserts nothing on the order path waits (R4.N2, 17 §A P4-B010))

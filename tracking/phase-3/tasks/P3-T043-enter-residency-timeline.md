@@ -15,17 +15,22 @@ requirements: [R3.09]
 roadmap_todos: [T3.05]
 modules: [M18]
 dashboards: [D15]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p3/P3-T043-enter-residency-timeline
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T043 · Enter your residency timeline
@@ -42,7 +47,7 @@ The residency timeline holds your Australian residency period (from your arrival
 
 - In D15 → Residency → Add period: country AU, from (date you became an AU tax resident), to empty; evidence notes (encrypted) optional.
 - Planned moves: **do not** enter future periods until dates are firm; record intentions as a TAX_QUESTION (DTA/tie-breaker) instead.
-- Review the recomputation preview and confirm (C1).
+- Review the recomputation preview and confirm (C1). Saving emits `tax.residency.changed` and the venue registry recomputes; if the change would loosen the registry (e.g. removing a block), it waits for your C3 approval (Telegram + TOTP + cool-down) ([17 §D P3-B007](../../../docs/17-decisions-register.md#d-other-decisions)).
 
 ## ToDo
 
@@ -93,3 +98,4 @@ The residency timeline holds your Australian residency period (from your arrival
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (residency change contract and C3-on-loosening noted (P3-B007); fields filled)

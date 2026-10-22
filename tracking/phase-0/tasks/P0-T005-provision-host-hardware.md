@@ -15,17 +15,22 @@ requirements: [R0.02]
 roadmap_todos: [T0.01]
 modules: [ops]
 dashboards: []
+tools: [lsblk, nproc]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T005-provision-host-hardware
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T005 · Provision the host hardware and decide on the GPU
@@ -47,7 +52,7 @@ One Linux box that meets 03 §2 (8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + a
 ## Requirements
 
 - CPU 8–16 cores; RAM 32–64 GB (ECC preferred); NVMe 2–4 TB (Postgres, hot Parquet 90 d); HDD ≥ 4 TB (cold Parquet, local staging); wired Ethernet.
-- GPU decision: 16–24 GB VRAM recommended (tier B ~150–300 ms/decision, vLLM, Hindsight). Without one, tier B is seconds-scale and local models run on CPU. **Decide by P4 at the latest.**
+- GPU decision: 16–24 GB VRAM recommended (tier B ~2–12 ms per decision on GPU, p95 SLO < 50 ms; vLLM; Hindsight). Without one, tier B runs on CPU at ~100–400 ms per decision ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer), P6-B002) and `llm-local` serves `local-advisor` on CPU. **Decide by P4 at the latest.**
 - OS: Ubuntu Server 24.04 LTS (or Debian 12) minimal; LUKS2 on root and data volumes **at install**; separate volume for Docker data on NVMe.
 - BIOS: Secure Boot on, restore-on-AC-loss on (pairs with the UPS), virtualisation on.
 - Outputs: hardware spec + GPU decision in this task's progress log; LUKS passphrase in your password manager (never in git/chat).
@@ -104,3 +109,4 @@ One Linux box that meets 03 §2 (8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + a
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (tier-B latency per 17 §B P6-B002 (the 150–300 ms figure is retired); run fields added)

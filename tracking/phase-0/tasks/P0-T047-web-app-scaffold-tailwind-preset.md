@@ -15,17 +15,22 @@ requirements: [R0.11]
 roadmap_todos: [T0.26]
 modules: [M15]
 dashboards: []
+tools: [git, node>=20, pnpm]
+mcp: []
+env: []
+services: []
 branch: p0/P0-T047-web-app-scaffold-tailwind-preset
 pr: ""
 doc_sync: [DESIGN.md, docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T047 · Scaffold the web app with the DESIGN.md v2 Tailwind preset
@@ -43,7 +48,7 @@ checkpoint: ""
 - [DESIGN §6](../../../DESIGN.md#6-responsive-system-1920px--240px-portrait--landscape)
 - [DESIGN §2 colour](../../../DESIGN.md#2-colour)
 - [mobile & Telegram](../../../docs/ui/mobile-and-telegram.md#1-pwa) (PWA)
-- `tablet-landscape` is described in DESIGN §6.2 but missing from the §6.3 config: P0-B013.
+- `tablet-landscape` is now in the DESIGN §6.3 config ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B013, closed).
 - Depends on: P0-T014
 
 ## Requirements
@@ -100,7 +105,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `DESIGN.md` §6.3: add the `tablet-landscape` raw screen if adopted (P0-B013); `docs/02-v1-architecture.md` §10: note Tailwind 3.4 and pnpm.
+- `DESIGN.md` §6.3: no change expected (the preset is generated from it); `docs/02-v1-architecture.md` §10: note Tailwind 3.4 and pnpm.
 - `docs/roadmap/phase-0-foundations.md`: tick T0.26 when every item mapped to it is done.
 
 ## Branch & PR
@@ -112,3 +117,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (P0-B013 closed (tablet-landscape in DESIGN §6.3); run fields added)

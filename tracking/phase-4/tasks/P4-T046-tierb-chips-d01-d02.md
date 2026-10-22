@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T043, P4-T029]
+depends_on: [P4-T043, P4-T029, P2-T142, P1-T050]
 requirements: [R4.13, R4.12]
 roadmap_todos: [T4.29]
 modules: [M21, M5, M3]
 dashboards: [D01, D02]
+tools: [pnpm, node>=20, git]
+mcp: []
+env: []
+services: [mt-api]
 branch: p4/P4-T046-tierb-chips-d01-d02
 pr: ""
 doc_sync: [docs/ui/dashboards/D02-markets.md, docs/ui/dashboards/D01-cockpit.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T046 · Tier B chips on D01/D02 and calendar/event overlays on D02 charts
@@ -38,11 +43,12 @@ D01 'Signals & decisions' lists tier-B decisions (question, probability, model v
 
 - Roadmap: [R4.13, R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.29](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - UI: [D01](../../../docs/ui/dashboards/D01-cockpit.md) · [D02](../../../docs/ui/dashboards/D02-markets.md) (tier-B and intel overlays in Phase 4)
-- Cross-phase: P2 D01, P1 D02.
+- Cross-phase (`depends_on`): P2-T142 (D01 Cockpit), P1-T050 (D02 instrument detail).
+- Thresholds: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) (auto-decide ≥ 0.75 precision, veto ≥ 0.90 precision, ECE ≤ 0.05, ≥ 14 days shadow).
 
 ## Requirements
 
-- Stage-1 scores carry an 'uncalibrated' badge until P4-T048 thresholds exist.
+- Stage-1 scores carry an 'uncalibrated' badge until P4-T048/P4-T053 show the question meets its 16 §2.10 thresholds.
 - WS `tierb`, `cal`, `evt` subscriptions throttled per DESIGN rules (≤ 4 Hz charts).
 - No Telegram-derived chips on D01/D02.
 
@@ -96,3 +102,4 @@ D01 'Signals & decisions' lists tier-B decisions (question, probability, model v
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (uncalibrated badge tied to 16 §2.10 thresholds; explicit depends_on P2-T142, P1-T050)

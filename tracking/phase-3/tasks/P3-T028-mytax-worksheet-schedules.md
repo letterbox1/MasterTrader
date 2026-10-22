@@ -15,17 +15,22 @@ requirements: [R3.06, R3.12]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T028-mytax-worksheet-schedules
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T028 · myTax worksheet, CGT and income schedules with GST/BAS mode dormant
@@ -43,7 +48,7 @@ For any FY, the system generates a myTax worksheet (item mapping 18 capital gain
 
 - Report types: `mytax_worksheet`, `cgt_schedule`, `income_schedule`, each per FY and regime (both when undecided).
 - Each line: myTax item/label (U-labelled), amount AUD, drill-down event ids, notes (e.g. `needs_classification` exclusions).
-- Outputs: JSON (canonical, hashed) + CSV + PDF (WeasyPrint, local fonts, no network); footer "Not tax advice. Confirm with a registered tax agent." + rule version + FX source + hash.
+- Outputs: JSON (canonical, hashed) + CSV + PDF (WeasyPrint, local fonts, no network); footer "Not tax advice. Confirm with a registered tax agent." + rule version + FX source + valuation methods + hash.
 - Stored in `journal.tax_report` + file under `/srv/mastertrader/journal/exports/<fy>/`; same inputs → same hash (no timestamps in the hashed body).
 - `GST_BAS_MODE` flag (default false): when false, no GST computation code path runs; a stub returns `dormant`.
 
@@ -80,7 +85,7 @@ For any FY, the system generates a myTax worksheet (item mapping 18 capital gain
 
 ## Exceptions & edge cases
 
-- Locked FY → generation allowed (read-only) but no regime/lot changes.
+- Locked FY (`tax.fy.lock`, P3-T055) → generation allowed (read-only) but no regime/lot changes.
 - Item label uncertainty → shown with (U) until the agent confirms.
 
 ## Cardinal rules (do NOT)
@@ -106,3 +111,4 @@ For any FY, the system generates a myTax worksheet (item mapping 18 capital gain
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (locked FY via P3-T055; valuation methods in footer (R3.12); tools/services filled)

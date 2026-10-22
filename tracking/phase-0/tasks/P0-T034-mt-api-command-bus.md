@@ -15,17 +15,22 @@ requirements: [R0.08]
 roadmap_todos: [T0.24]
 modules: [mt_api, M17]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats, prefect-server]
 branch: p0/P0-T034-mt-api-command-bus
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T034 · Implement the command bus with idempotency and audit.command
@@ -46,7 +51,7 @@ checkpoint: ""
 ## Requirements
 
 - Registry: `@command(name, level, args=Struct, result=Struct, scopes=...)`; unknown command → 404 problem+json; schema in OpenAPI per command.
-- P0 commands: `system.settings.update` (C0 for UI prefs; C1 for others; C3 for loosening budgets/DQ thresholds via diff classifier hook), `system.backup.run` (C1), `system.restore.test` (C1), `audit.verify` (C1), `risk.kill.on` (Kill), `risk.kill.off` (C3), `system.key.rotate_reminder` (C0), `system.service.restart` (C2, returns 501 until P0-B012 is decided).
+- P0 commands: `system.settings.update` (C0 for preferences, layout and digests; C1 to tighten or for schedules; C3 to loosen, e.g. raise an LLM budget or a DQ threshold, via the diff classifier hook; 02 §7.2), `system.backup.run` (C1), `system.restore.test` (C1), `audit.verify` (C1), `risk.kill.on` (Kill), `risk.kill.off` (C3), `system.key.rotate_reminder` (C0), `system.service.restart` (C2; registered here with a 501 stub; P0-T065 wires it through `docker-proxy`, allow-listed containers only, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012), `audit.integrity.ack` (C3; handler in P0-T038).
 - Idempotency: `ops.idempotency_key (key, command, args_hash, status, response, created_at)`, TTL 24 h; same key + same args → replay stored response (200, header `Idempotent-Replay: true`); same key + different args → 409; in-flight duplicate → 409 `in_progress`.
 - Audit: `accepted` row written **before** the handler runs (if it fails to write → 503, handler never runs); terminal row (`applied|failed|rejected`) after; `source` from the authenticated principal (`web` session, `telegram`/`mcp` token, `system` for internal).
 - Args redaction before audit; `args_hash` = sha256 of canonical args (unredacted) for idempotency comparison.
@@ -72,7 +77,7 @@ checkpoint: ""
 - Given an unknown command name, then 404 problem+json and an `audit.command` row `rejected` (so probing is visible).
 
 ### Stress / failure injection
-- 200 commands/s mixed (C0) for 5 min: p99 < 50 ms excluding handler time; chain valid afterwards (provisional target, P0-B004).
+- 200 commands/s mixed (C0) for 5 min: p99 < 50 ms excluding handler time (SLO, 02 §9.2); chain valid afterwards.
 
 ## Acceptance criteria
 
@@ -84,12 +89,12 @@ checkpoint: ""
 
 ## Exceptions & edge cases
 
-- Kill ON must not be blocked by idempotency storage being down: Kill path writes NATS KV first, audits with retry, and still returns success (see P0-T035).
+- Kill ON must not be blocked by idempotency storage being down: Kill path writes NATS KV first, records through the JetStream WORM buffer (P0-T031, 16 §3.3), and still returns success (see P0-T035).
 
 ## Cardinal rules (do NOT)
 
 - Do NOT add any write endpoint outside `/commands/{command}`.
-- Do NOT execute a handler before its audit row exists (except Kill ON, which audits immediately after with retry).
+- Do NOT execute a handler before its audit row exists (except Kill ON, whose record goes through the JetStream buffer right after the KV write).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE WORM rows, ever; corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
@@ -109,3 +114,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (settings levels per 02 §7.2, restart via docker-proxy (17 §D P0-B012), audit.integrity.ack registered, Kill recorded via JetStream buffer, command-bus SLO; run fields added)

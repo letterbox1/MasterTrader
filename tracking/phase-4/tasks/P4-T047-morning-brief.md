@@ -10,41 +10,48 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T043, P4-T035, P4-T038, P4-T040]
+depends_on: [P4-T043, P4-T035, P4-T038, P4-T040, P2-T035]
 requirements: [R4.14]
 roadmap_todos: [T4.29]
 modules: [M15, M2, M3, M5, M6, M16]
 dashboards: [D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, nats, telegram-bot, prefect-server]
 branch: p4/P4-T047-morning-brief
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/runbooks/morning-brief.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T047 · Morning brief job on Telegram (and /brief)
 
 ## Goal / expected outcome
 
-A Prefect flow composes and sends a **deterministic, template-based** morning brief to your Telegram at a configured time (default 07:00 Australia/Sydney) and on `/brief`: top sourced news (titles + links, relevance-ranked, deduped), sentiment movers, global events mapped to assets with scores, today's calendar with **risk blackouts**, Telegram postures summary (numbers only), positions/P&L summary, and data/cost health — each item with a deep link into `/intel`.
+A Prefect flow composes and sends a **deterministic, template-based** morning brief to your Telegram at the time you set in D13 Digests (configurable default 07:00 Australia/Sydney) and on `/brief`. Its contents are the **canonical list in [mobile-and-telegram §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot)**: overnight news for your positions and watchlist, sentiment movers, events mapped to assets, today's calendar with trading blackouts, Telegram postures as numbers only, positions and P&L (paper and live labelled separately), data and cost health, and new vetted airdrops (that section arrives with Phase 5). Each item deep-links to its dashboard.
 
 ## Context & references
 
 - Roadmap: [R4.14](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.29](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Exit criterion 1
 - Telegram digests: [mobile-and-telegram §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) · [04 Phase 4 demo](../../../docs/04-plan-of-action.md#phase-4--news-social-events--calendars-weeks-1619)
 - Cross-phase: P1 R1.14 (Telegram alerts bot), P2 R2.52 (`/status` etc.).
-- Gap: P4-B011 (brief contents differ between docs).
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B011): the morning-brief contents are canonical in [mobile-and-telegram §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot); 04 and the roadmap link there.
+- Cross-phase: P2-T035 (Telegram v1 commands, where `/brief` registers) is a `depends_on` entry; the P1 alerts bot (P1-T045) is reused.
+- Blackout defaults in the calendar section: [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts).
 
 ## Requirements
 
 - Built from `mt_api` queries only; no LLM summarisation in P4 (template + numbers) so no text flows to a model and the brief is reproducible.
-- Sections: News (≤ 8 items, each 'title — source — link'), Sentiment movers (top 5 Δ24h z), Events (≤ 5 with mapped instruments + score), Calendar today (high/med importance, consensus/previous, blackout windows), Telegram postures (top 5 subjects by velocity; numbers only), Portfolio (positions/P&L), Health (feeds stale, quota > 80%, DQ incidents, LLM/gateway spend).
+- Sections, in the canonical mob §3 order (item counts are configurable defaults): 1 News (≤ 8 items, each 'title — source — link'), 2 Sentiment movers (top 5 Δ24h z), 3 Events (≤ 5 with mapped instruments + score), 4 Calendar today (high/med importance, consensus/previous, blackout windows from the M11 API), 5 Telegram postures (top 5 subjects by velocity; numbers only), 6 Positions and P&L (paper and live labelled separately), 7 Data and cost health (stale/bad feeds, cost blow-outs, quota headroom, LLM spend), 8 New vetted airdrops (hidden until P5 provides it; the template has the slot so P5 adds no P4 change). Deep links to D08, D01, D07, D12.
 - Telegram limits: ≤ 4,096 chars per message, split into ≤ 3 messages; Bot API ≤ 30 msg/s respected.
 - Brief record stored in `ops.notification` with content hash; idempotent per day (no double send on retry).
 - Feedback buttons 'useful/not useful' per news item update source hit-rate (for P4-T060 tuning).
@@ -94,7 +101,7 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 
 ## Doc sync on completion
 
-- `docs/ui/mobile-and-telegram.md`: §3 Digests: final brief sections
+- `docs/ui/mobile-and-telegram.md`: §3 stays the canonical list; only correct it if the built brief differs
 - `docs/runbooks/morning-brief.md`: new: schedule, resend, troubleshooting
 - `docs/roadmap/phase-4-intel.md`: tick T4.29 when all items mapped to it are done
 
@@ -107,3 +114,4 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (contents follow the canonical mob §3 list (17 §D P4-B011), incl. paper/live labels and P5 airdrop slot; time set in D13; explicit depends_on P2-T035)

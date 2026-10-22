@@ -10,43 +10,48 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T037]
+depends_on: [P4-T037, P2-T010, P2-T017, P2-T019, P2-T036]
 requirements: [R4.10]
 roadmap_todos: [T4.26]
 modules: [M5, M11]
 dashboards: [D06, D08, D02]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p4/P4-T038-blackout-api-m11
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D06-risk.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T038 · Blackout query API ("event within N minutes") wired into M11
 
 ## Goal / expected outcome
 
-`mt_data.calendar.blackouts.active(instrument, at)` and `upcoming(instrument, within_min)` answer "is there an event within N minutes affecting this instrument?" from one source of truth; the P2 M11 event-blackout hook calls it (in-process cache refreshed by `cal.*`), so new entries are blocked inside blackout windows defined by D06 policy rules, while protective exits are never blocked.
+`mt_data.calendar.blackouts.active(instrument, at)` and `upcoming(instrument, within_min)` answer "is there an event within N minutes affecting this instrument?" from one source of truth; the P2 M11 event-blackout hook calls it (in-process cache refreshed by `cal.*`), so new entries are blocked inside blackout windows for bots marked `event_sensitive`, while exits and protective orders are never blocked. Defaults come from [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts), configurable per bot and per event type.
 
 ## Context & references
 
 - Roadmap: [R4.10](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.26](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Exit criterion 2
 - Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar) · [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · UI [D06 Blackouts](../../../docs/ui/dashboards/D06-risk.md) · [D08 Calendar](../../../docs/ui/dashboards/D08-intel.md) (blackout windows match the risk manager's)
-- Cross-phase: P2 R2.16 (event blackout hook), R2.11 policy model, D06 policy tree.
-- Gap: P4-B004 (blackout defaults unspecified).
+- Cross-phase (`depends_on`): P2-T017 (R2.16 RiskGate blackout check), P2-T010 (R2.11 policy model), P2-T019 (C3 change control), P2-T036 (bot model, where `event_sensitive` lives).
+- Decision: [17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (P4-B004) → [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts), [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar), [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11).
 
 ## Requirements
 
-- Policy rules (from `risk.policy` blackout node): match by importance/kind/country/instrument tags/strategy tags; window `pre_min`/`post_min`; action `block_new_entries` (default) or `pause_strategy`.
-- Seed default (tightening only, editable in D06): high-importance macro releases and CB decisions → 15 min before to 15 min after, `block_new_entries` for strategies tagged `scalper`/`intraday` (proposed; confirm via P4-B004).
+- Policy rules (from `risk.policy` blackout node): match by importance/kind/country/instrument and the bot's `event_sensitive` flag; window `pre_min`/`post_min`; action `block_new_entries` (default) or `pause_bot`; overrides per bot and per event type.
+- Default (16 §2.8, configurable): high-importance events (central-bank decisions, CPI, NFP, …) → **15 min before to 15 min after**, `block_new_entries` for bots marked `event_sensitive` (scalping/intraday templates set it by default); exits and protective orders continue. If P2's bot model lacks `event_sensitive`, this task adds it as an L4 bot setting (tightening = C1, loosening = C3).
 - In-process index (interval tree per instrument) rebuilt on `cal.*` and policy change; lookup p99 < 20 µs so the pre-trade p99 < 1 ms budget holds.
-- Calendar feed stale (> 24 h without refresh) → treat as **unknown**: M11 applies the configured fail-safe (default block new entries for scalpers in the hour around typical release times) and raises DQ.
+- Calendar feed stale (> 24 h without refresh, configurable) → treat as **unknown**: M11 applies the configured fail-safe (default: block new entries for `event_sensitive` bots in the hour around typical release times) and raises DQ.
 - Rejections carry reason `blackout:{event_id}`; D06 'active blackouts' and D08 calendar markers read the same API.
 - Endpoints: `/intel/calendar?with_blackouts=1`; risk state includes active blackouts (WS `cal`, `risk.state`).
 
@@ -55,7 +60,7 @@ checkpoint: ""
 - [ ] Blackout rule evaluator + interval index.
 - [ ] M11 hook adapter (calls into `mt_risk` P2 interface).
 - [ ] Stale-calendar fail-safe.
-- [ ] Seed default rule as a C1 tightening change via `risk.policy.update`.
+- [ ] Seed the 16 §2.8 default rule as a C1 tightening change via `risk.policy.update` (recorded as a WORM version row).
 - [ ] Tests + latency micro-benchmark.
 
 ## Verification
@@ -67,7 +72,7 @@ checkpoint: ""
 - Property: the D08 markers and M11 decisions agree for random times.
 
 ### Scenarios
-- Given NFP at 08:30 ET and a USD scalper, then at 08:20 ET a new entry is rejected `blackout:NFP` and at 08:46 it passes.
+- Given NFP at 08:30 ET and a USD scalper bot marked `event_sensitive`, then at 08:20 ET a new entry is rejected `blackout:NFP` and at 08:46 it passes; a swing bot not marked `event_sensitive` is unaffected.
 - Given a meeting moved by a day, then windows move after the superseding row.
 - Given the calendar is stale, then the fail-safe applies and an alert fires.
 
@@ -110,3 +115,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout defaults from 16 §2.8 (17 §C P4-B004): ±15 min, event_sensitive bots, exits continue, per bot/event type; explicit P2 depends_on)

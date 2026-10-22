@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T023]
+depends_on: [P3-T023, P1-T027]
 requirements: [R3.08]
 roadmap_todos: [T3.25]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T029-au2027-reform-scaffold-flag
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T029 · AU_2027_REFORM plugin scaffold behind a feature flag
@@ -38,7 +43,8 @@ An `AU_2027_REFORM` plugin (valid from FY2027-28) exists behind the `AU_2027_REF
 
 - Roadmap: [R3.08, T3.25](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - [09 key findings: 2027 reform](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) · [11 §3 conflict](../../../docs/11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) · [02 F9 step 4](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Cross-phase: P1 T1.24 (ABS CPI series via `pit`)
+- Cross-phase prerequisite (depends_on): P1-T027 (ABS CPI via `pit`; series All groups, weighted average of eight capital cities, A2325846C (U), [17 §D P1-B016](../../../docs/17-decisions-register.md#d-other-decisions); tax-agent question 9)
+- Snapshot convention: [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change)
 - Related: P3-T002 (agent confirmation), P3-T030 (snapshot), P3-T048 (dry run)
 
 ## Requirements
@@ -109,3 +115,4 @@ An `AU_2027_REFORM` plugin (valid from FY2027-28) exists behind the `AU_2027_REF
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (CPI series A2325846C (U) and 16 §4.2 snapshot linked; explicit P1-T027 depends_on; tools/services filled)

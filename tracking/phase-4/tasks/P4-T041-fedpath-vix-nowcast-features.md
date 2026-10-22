@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T039, P4-T036]
+depends_on: [P4-T039, P4-T036, P4-T037, P2-T120]
 requirements: [R4.11]
 roadmap_todos: [T4.27]
 modules: [M6]
 dashboards: [D08, D02]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres]
 branch: p4/P4-T041-fedpath-vix-nowcast-features
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T041 · Fed-path from ZQ, VIX regime, nowcast, positioning and prediction-market features
@@ -38,7 +43,7 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M6 sentiment, positioning and macro features](../../../docs/03-build-spec.md#m6-features--mt_features) · [06 §3 Fed-path from ZQ](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
-- Cross-phase: P1 COT and BIS (`sdmx1`) flows.
+- Cross-phase: P2-T120 (feature registry) is a `depends_on` entry; P1 COT and BIS (`sdmx1`) flows (P1-T025, P1-T026) are reused. P4-T037 provides the FOMC meeting calendar.
 
 ## Requirements
 
@@ -101,3 +106,4 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T037 (meeting calendar) and P2-T120 dependencies)

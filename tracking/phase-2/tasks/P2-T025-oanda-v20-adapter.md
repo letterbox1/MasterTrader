@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T022, P2-T001]
+depends_on: [P2-T022, P1-T016]
 requirements: [R2.30, R2.31, R2.32]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T025-oanda-v20-adapter
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T025 · OANDA v20 practice adapter
@@ -38,14 +43,16 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Spec: [03 M12 custom adapters](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [12 §2 registry row](../../../docs/12-policy-and-compliance.md#2-venue-access-registry)
-- Cross-phase: P1 data streams for this venue (R1.04/R1.05) and read-only recon (R1.12) — reuse their clients/parsers.
-- Related: P2-T001 keys, P2-T022 STP, P2-T027 IDs/reconcile, P2-T057 conformance tests.
+- Cross-phase (`depends_on`): the P1 OANDA price-stream client (P1-T016, T1.23): reuse its session/auth and parsers; read-only recon (P1 R1.12) shares report parsing.
+- Build first, keys last: built and tested keyless against recorded HTTP/stream cassettes; the live practice-account run with your credentials is P2-T071.
+- Related: P2-T022 STP (`stp: n/a (netting)`), P2-T027 IDs/reconcile, P2-T057 conformance tests, P2-T073 venue-side stops.
 
 ## Requirements
 
 - OANDA v20 practice REST (`/v3/accounts/{id}/orders`, `/trades`, `/positions`, `/transactions`) + transaction stream; pricing stream stays with P1.
 - Units-based sizing (FX), `clientExtensions.id` = client order id; stop-loss/take-profit on fill; financing transactions forwarded to M16.
-- No native STP: engine self-cross guard; `stp_mode=engine_guard`.
+- No STP field (netting broker): registry `stp: n/a (netting)`; `stp_mode=n/a_netting` recorded; one strategy per account/sub-account where netting would merge bots (P2-T022, 17 §D P2-B006).
+- Every position carries a resting venue stop from entry (dead-man layer 3, P2-T073); OANDA has no cancel-after timer (U): rely on resting stop-loss on fill.
 - Hedging vs netting account mode read at start and recorded.
 - Implements Nautilus `LiveExecutionClient`: submit/modify/cancel, order status reports, fill reports, position reports (`generate_order_status_reports`, `generate_fill_reports`, `generate_position_status_reports`) for restart reconciliation.
 - Maps `client_order_id` to the venue's client reference field; maps venue errors to Nautilus rejects with reason text.
@@ -65,7 +72,7 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 ### Tests
 - Unit: payload mapping per order type (market, limit, stop, stop-limit, brackets where supported).
 - Integration (CI, cassettes): submit → ack → fill → report round-trip; cancel; reject mapping.
-- Manual/nightly: live practice-account smoke via P2-T057.
+- Live practice-account smoke with your credentials: P2-T071.
 
 ### Scenarios
 - Given a limit order on OANDA v20 practice, when filled partially then cancelled, then audit shows one order, one partial fill, cancel status, all with the same client id.
@@ -110,3 +117,4 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (stp n/a (netting) + one strategy per account, resting venue stops, keyless cassettes with live run in P2-T071, cross-phase reuse)

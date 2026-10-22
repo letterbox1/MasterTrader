@@ -15,17 +15,22 @@ requirements: [R0.07, R0.N4]
 roadmap_todos: [T0.23, T0.44]
 modules: [M17]
 dashboards: []
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, minio, prefect-server]
 branch: p0/P0-T040-monthly-immutable-worm-export
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T040 · Implement the monthly immutable export of WORM tables
@@ -102,3 +107,4 @@ On the 1st of each month a Prefect flow exports every WORM table's previous-mont
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: MinIO in CI/dev, real anchoring checked in the soak P0-T063; run fields added)

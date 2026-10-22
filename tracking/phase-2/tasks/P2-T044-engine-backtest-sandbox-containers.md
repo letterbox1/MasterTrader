@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T020, P0-T021, P0-T022]
 requirements: [R2.45, R2.N3]
 roadmap_todos: [T2.40]
 modules: [M12, M7]
 dashboards: []
+tools: [docker, runsc]
+mcp: []
+env: []
+services: [docker]
 branch: p2/P2-T044-engine-backtest-sandbox-containers
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T044 · engine, backtest-worker and sandbox containers with gVisor and limits
@@ -39,13 +44,14 @@ checkpoint: ""
 - Roadmap: [R2.45, R2.N3](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.40
 - Architecture: [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) · [02 §3.1 networks](../../../docs/02-v1-architecture.md#31-networks)
 - Security: [SPEC NN4](../../../SPEC.md#non-negotiable-requirements) · [07 §6 LLM safety](../../../docs/07-security-notes.md#6-application-controls) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
-- Cross-phase: compose base, networks, sops tmpfs (P0 T0.41–T0.43).
-- Part B: sandbox runner + generator (T2.28).
+- Cross-phase (`depends_on`): compose base pinned by digest (P0-T020, T0.41), network segmentation (P0-T021, T0.42), sops → tmpfs secret scoping (P0-T022, T0.43).
+- Decisions: `deadman` sidecar with its own trade-only keys and venue connections, cancel/flatten only ([16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch), 02 §3.2); venue traffic via the fixed egress exit node from P7 ([16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
+- Related: P2-T072 (`deadman` sidecar code), P2-T116 (sandbox runner + generator, T2.28).
 
 ## Requirements
 
 - `engine`: network `core`, egress allow-list to testnet/practice venue hosts only; secrets = venue trade keys for its modes; limits e.g. 4 CPU / 8 GB (tune); `restart: unless-stopped`; healthcheck on heartbeat freshness.
-- `deadman`: network `core`; only cancel-capable keys; 0.5 CPU / 256 MB.
+- `deadman`: separate container on `core`, its **own** trade-only keys (`venues.<venue>.deadman`, used only to cancel and flatten) and its own venue connections; 0.5 CPU / 256 MB; `restart: always`; healthcheck on its own heartbeat.
 - `backtest-worker`: `core` (Postgres read via `pit`, MLflow), **no venue keys**, limits e.g. 6 CPU / 16 GB, scalable replicas.
 - `sandbox`: `runtime: runsc`, `network_mode: none`, no secrets, `read_only: true`, tmpfs `/tmp` 512 MB, `pids_limit`, CPU/mem/time limits (e.g. 2 CPU / 4 GB / 10 min wall), non-root user, seccomp default; code + data passed via a mounted job dir; results written back to that dir only.
 - All images pinned by digest; trivy/grype scan in CI.
@@ -107,3 +113,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (deadman container with its own trade-only keys (16 §3.1), egress note, cross-phase deps)

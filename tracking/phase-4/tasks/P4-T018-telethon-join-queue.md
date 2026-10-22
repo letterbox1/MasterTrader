@@ -10,29 +10,34 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P4-T006, P4-T001]
+depends_on: [P4-T010]
 requirements: [R4.02]
 roadmap_todos: [T4.21]
 modules: [M2]
 dashboards: [D07, D08]
+tools: [uv, git]
+mcp: []
+env: []
+services: [nats]
 branch: p4/P4-T018-telethon-join-queue
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/runbooks/social-accounts.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T018 · Telethon client and FLOOD_WAIT-aware join queue (≤ 500 channels)
 
 ## Goal / expected outcome
 
-`mt_data.text.telegram` runs a pinned Telethon client on the dedicated account, joins channels from `telegram_channels.yaml` through a persistent, rate-limited join queue that honours `FLOOD_WAIT` exactly, never exceeds 500 joined channels, and streams new messages **in memory only** to the posture extractor (P4-T019).
+`mt_data.text.telegram` runs a pinned Telethon client on the dedicated account, joins channels from `telegram_channels.yaml` through a persistent, rate-limited join queue that honours `FLOOD_WAIT` exactly, never exceeds 500 joined channels, and streams new messages **in memory only** to the posture extractor (P4-T019). Built and tested against a fake Telethon client and a fixture channel list; joining real channels on your account is the live check P4-T068 (keys last).
 
 ## Context & references
 
@@ -40,12 +45,12 @@ checkpoint: ""
 - Policy: [12 §4 Telegram](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (honour FLOOD_WAIT, rate-limited queue, cap 500; no mass-join, member lists, auto-DM/forward, read-receipt tricks)
 - Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) · Accounts: [07 §10](../../../docs/07-security-notes.md#10-social--scraping-accounts)
 - Time-sensitive: [06 §0](../../../docs/06-aggregators-and-market-providers.md#0-️-time-sensitive-actions) (Telethon archived on GitHub, moved to Codeberg → pin)
-- Related: P4-T006 (session), P4-T019 (postures).
+- Related: P4-T006 (session mechanism), P4-T019 (postures), P4-T068 (live check). Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B001): Telegram → regex extractor → postures → code/policy only ([02 F3b](../../../docs/02-v1-architecture.md#8-end-to-end-flows)).
 
 ## Requirements
 
 - Join queue persisted in `ops.tg_join_queue` (handle, priority, state, attempts, next_attempt_at, last_error).
-- Join pacing: at most 1 join per 10–20 min (jittered) and ≤ 20 per day by default; on `FloodWaitError(seconds)` sleep **exactly** `seconds` + jitter and pause the whole queue.
+- Join pacing (configurable defaults in `config/intel/telegram.yaml`): at most 1 join per 10–20 min (jittered) and ≤ 20 per day; on `FloodWaitError(seconds)` sleep **exactly** `seconds` + jitter and pause the whole queue.
 - Hard cap: refuse to join when joined count ≥ 500; leaving a channel is manual (or on ban/private).
 - Read-only: no sending, forwarding, reacting, read-receipt manipulation or member-list calls; client wrapper exposes only the allowed methods.
 - Messages are handed to the extractor in memory; **message text is never persisted** and never published to NATS.
@@ -113,3 +118,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3b postures-only per 17 §A P4-B001; built on a fake client, live joins moved to P4-T068; dropped P4-T006/P4-T001 dependencies)

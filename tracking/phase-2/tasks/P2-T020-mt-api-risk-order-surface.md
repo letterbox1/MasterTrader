@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T017, P2-T019]
+depends_on: [P2-T017, P2-T019, P0-T034, P0-T035, P0-T036]
 requirements: [R2.10, R2.11, R2.16]
 roadmap_todos: [T2.22, T2.24]
 modules: [M11, M12]
 dashboards: [D06, D05]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p2/P2-T020-mt-api-risk-order-surface
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T020 · mt_api risk, venue and order command surface
@@ -39,15 +44,16 @@ checkpoint: ""
 - Roadmap: [R2.10, R2.11, R2.16](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDos T2.22, T2.24
 - API: [02 §7.1 queries](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · WS topics in 02 §7.3
 - UI: [D06 backend contract](../../../docs/ui/dashboards/D06-risk.md) · [D05 manual ticket = manual sleeve](../../../docs/ui/dashboards/D05-execution.md)
-- Cross-phase: mt_api command bus, idempotency, audit, WS hub (P0 T0.24).
+- Cross-phase (`depends_on`): mt_api command bus, idempotency, `audit.command` (P0-T034), confirmation levels (P0-T035), WS hub (P0-T036), all T0.24.
+- Related: P2-T069 (effective-limits API `/risk/policy` with layer per value), P2-T070 (safety state in `/risk/state`).
 
 ## Requirements
 
-- Queries: `/risk/policy`, `/risk/state` (+`breakdown`, `ladder`), `/risk/events`, `/risk/changes`, `/venues/registry`, `/positions`, `/orders`, `/fills`; `POST /risk/preview`.
-- Commands: `risk.policy.update`, `risk.kill.on|off`, `risk.deadman.ack`, `risk.ladder.set`, `risk.sleeve.resume`, `venue.registry.update`; `order.place|modify|cancel|cancel_all`, `position.close|reduce|set_brackets`, and **flatten-and-halt** (`position.close` with `halt=true`, required `reason`).
+- Queries: `/risk/policy` (effective values with layer and default, from P2-T069), `/risk/state` (+`breakdown`, `ladder`; includes bot mode counts, system drawdown stage, `audit.integrity` status and egress check, per D06), `/risk/events`, `/risk/changes`, `/venues/registry`, `/positions`, `/orders`, `/fills`; `POST /risk/preview`.
+- Commands: `risk.policy.update` (any layer L0–L4), `risk.kill.on|off`, `risk.deadman.ack`, `risk.ladder.set`, `risk.sleeve.restart` (**C3**, after a sleeve drawdown or health halt), `venue.registry.update`; `order.place|modify|cancel|cancel_all`, `position.close|reduce|set_brackets`, and **flatten-and-halt** (`position.close {halt: true, reason}` = flatten and halt the bot; reason required).
 - Order commands publish `ord.intent.manual` (sleeve `manual` unless a strategy scope is given) → engine → M11; response returns the risk decision; C2 server-side.
 - WS topics: `risk.state`, `risk.event`, `kill`, `heartbeat`, `orders`, `fills`, `positions` with `{topic, seq, ts, data}` envelope and throttling (≤ 1 Hz tables).
-- Telegram uses a scoped token with only the commands it needs.
+- Telegram uses a scoped token with only the commands it needs; its `/kill` fallback uses NATS credentials limited to publishing `kill.set` (P2-T035).
 
 ## ToDo
 
@@ -93,7 +99,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/02-v1-architecture.md` §7: mark endpoints as implemented; add `risk.sleeve.resume` if kept.
+- `docs/02-v1-architecture.md` §7: mark endpoints as implemented (`risk.sleeve.restart` C3 as built).
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.22, T2.24 when all tasks mapped to it are done.
 
 ## Branch & PR
@@ -105,3 +111,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (risk.sleeve.restart C3 replaces resume, effective-limit and safety-state fields, flatten-and-halt form, cross-phase deps)

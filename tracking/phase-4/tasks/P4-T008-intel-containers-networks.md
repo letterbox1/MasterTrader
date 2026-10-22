@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T007]
+depends_on: [P0-T020, P0-T021, P1-T004]
 requirements: [R4.N1, R4.06]
 roadmap_todos: [T4.40]
 modules: [M2, M3, M21]
 dashboards: [D16]
+tools: [docker, git, nats]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p4/P4-T008-intel-containers-networks
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T008 · Wire Phase 4 containers, networks and NATS accounts
@@ -39,22 +44,24 @@ checkpoint: ""
 - Roadmap: [R4.N1, R4.06](../../../docs/roadmap/phase-4-intel.md#3-requirements) · containers listed in the phase header
 - Architecture: [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats)
 - Related: P4-T007 (rss-bridge), P4-T009 (model serving).
-- Cross-phase: P0 T0.41/T0.42 (Compose, networks), P1 T1.41 (Prefect schedules).
+- Cross-phase: P0-T020 (T0.41 Compose), P0-T021 (T0.42 networks) and P1-T004 (JetStream stream/KV pattern) are `depends_on` entries; P1-T053 (Prefect schedules) is reused. The old P4-T007 dependency was dropped: rss-bridge is wired separately.
 
 ## Requirements
 
-- `ingest-text` + `crawl4ai` on `scrape` only; they publish to `raw.text.{source}` with a NATS account allowed **publish-only** on `raw.text.>` and `sys.heartbeat.ingest-text`.
+- `ingest-text` + `crawl4ai` on `scrape` only; they publish to `raw.text.{source}` with a NATS account allowed **publish-only** on `raw.>` (`raw.text.>`, `raw.evt.>`, `raw.reg.>`), `posture.telegram.>` (structured postures and mentions, no text; F3b) and `sys.heartbeat.*`.
+- An `intel-writer` worker on `core` (no model clients; DB role limited to INSERT on its tables) persists scrape-side outputs: `raw.evt.>` → `text.geo_event`, `posture.telegram.>` → `text.telegram_mention` / `text.telegram_posture`. `nlp` never subscribes to `posture.telegram.>` or `raw.text.telegram*` ([02 F3b](../../../docs/02-v1-architecture.md#8-end-to-end-flows)).
 - `nlp` on `core`: subscribes `raw.text.>`, writes Postgres, publishes `text.doc.new`.
-- `ingest-events` on `scrape` publishing `raw.evt.>`; an `events` worker on `core` normalises into `text.geo_event` and publishes `evt.{kind}` (same pattern).
+- `ingest-events` on `scrape` publishing `raw.evt.>`; the `intel-writer` on `core` normalises into `text.geo_event` and publishes `evt.{kind}` (same pattern).
 - `decision-svc` on `core`, bound to the internal network, API-key protected.
-- JetStream stream `RAW_TEXT` (limits: 7 d, 5 GB) and `RAW_EVT` (7 d, 1 GB); `TEXT_DOC` 24 h.
+- JetStream stream `RAW_TEXT` (limits: 7 d, 5 GB), `RAW_EVT` (7 d, 1 GB), `RAW_REG` (30 d, 1 GB), `POSTURE_TG` (7 d, 1 GB); `TEXT_DOC` 24 h. Limits are configurable defaults in `ops/nats/streams/*.json`.
 - Every service emits `sys.heartbeat.{service}`; resource limits set (nlp 4 GB RAM; crawl4ai 2 GB).
 
 ## ToDo
 
 - [ ] Add the services to `docker-compose.yml` (digest-pinned; read-only FS where possible).
 - [ ] Create NATS accounts/users in `ops/nats/accounts.conf`: `scrape` (publish `raw.>` only), `core` (normal).
-- [ ] Define JetStream streams in `ops/nats/streams/*.json` and the KV bucket `tierb_scores`, `feed_status` (exists from P1) reuse.
+- [ ] Define JetStream streams in `ops/nats/streams/*.json` and the KV bucket `tierb_scores`; reuse `feed_status` (exists from P1).
+- [ ] Add the `intel-writer` service on `core` with its narrow DB role.
 - [ ] Add Grafana panels for the new services' heartbeats and stream lag.
 - [ ] Network test: from `ingest-text`, Postgres/signer unreachable; publishing outside `raw.>` denied.
 
@@ -103,3 +110,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3/F3b split (17 §A P4-B001): scrape account may publish posture.telegram.> and raw.reg.>, core intel-writer persists postures; dropped P4-T007 dep; explicit P0/P1 depends_on)

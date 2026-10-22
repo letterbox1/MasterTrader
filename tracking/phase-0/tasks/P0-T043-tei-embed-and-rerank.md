@@ -11,21 +11,26 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P0-T020]
-requirements: [R0.09]
-roadmap_todos: [T0.41, T0.45]
+requirements: [R0.09, R0.13]
+roadmap_todos: [T0.41, T0.45, T0.28]
 modules: [M21, M9]
 dashboards: []
+tools: [docker, curl]
+mcp: []
+env: []
+services: [tei-embed, tei-rerank]
 branch: p0/P0-T043-tei-embed-and-rerank
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T043 · Deploy TEI for bge-small-en-v1.5 embeddings and bge-reranker-v2-m3
@@ -39,8 +44,8 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 - [Roadmap P0 R0.09](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [10 §2 embedders](../../../docs/10-memory-rag-and-models.md#2-local-embedders--rerankers)
 - [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) (TEI container)
-- [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) (single `tei` row)
-- One-model-per-TEI-instance means two containers: P0-B007.
+- [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) (`tei-embed`, `tei-rerank` rows)
+- Two containers (`tei-embed`, `tei-rerank`) decided in [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P0-B007, closed).
 - Depends on: P0-T020
 
 ## Requirements
@@ -88,7 +93,7 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 
 ## Doc sync on completion
 
-- `docs/02-v1-architecture.md` §3.2: split `tei` into `tei-embed` and `tei-rerank`.
+- `docs/02-v1-architecture.md` §3.2: confirm the `tei-embed` / `tei-rerank` rows match the images and model revisions used.
 - `docs/roadmap/phase-0-foundations.md`: tick T0.41, T0.45 when every item mapped to it is done.
 
 ## Branch & PR
@@ -100,3 +105,4 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (two TEI containers per 17 §D P0-B007 (closed); R0.13/T0.28; run fields added)

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T010]
+depends_on: [P2-T010, P0-T025]
 requirements: [R2.17]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p2/P2-T016-venue-registry-check-2x-cap
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T016 · Venue registry check and 2x crypto-derivatives cap
@@ -39,15 +44,16 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 - Roadmap: [R2.17](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Policy: [12 §2 venue access registry](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) · [12 §1 2× cap](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) · [SPEC NN11](../../../SPEC.md#non-negotiable-requirements)
 - UI: [D06 Venue registry widget](../../../docs/ui/dashboards/D06-risk.md) · NATS: [02 §6 `venue.registry.changed`](../../../docs/02-v1-architecture.md#6-messaging-nats)
-- Cross-phase: table seeded in P0 (R0.06), health fields from P1 (R1.13).
-- Related: P2-B008 (paper/testnet semantics).
+- Cross-phase (`depends_on`): `ops.venue_registry` table from P0 (P0-T025, R0.06); seed rows (P0-T026) and health fields from P1 (P1-T043, R1.13) are used at runtime, tests use fixtures.
+- Decisions: [17 §D P2-B008](../../../docs/17-decisions-register.md#d-other-decisions) paper/testnet semantics (`paper_ok`) · [17 §D P2-B006](../../../docs/17-decisions-register.md#d-other-decisions) netting brokers `stp: n/a (netting)` · [17 §D P3-B006/7](../../../docs/17-decisions-register.md#d-other-decisions) residency change recompute · venue registry is the **L2** layer ([16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)).
 
 ## Requirements
 
 - Check: `status == allowed` for (venue, entity, product ∈ spot/margin/perps/CFD) under current residency; `read_only`/`blocked` → reject with the registry reason.
 - Leverage: `min(policy, registry.max_leverage, ceiling, 2× if crypto derivative)`.
-- Concentration cap per venue (default ≤ 25–30% of equity) evaluated with P2-T012.
-- Mode semantics: paper/testnet orders follow the rule decided in P2-B008 (default until decided: paper allowed for `read_only`/`blocked` products, flagged `paper_only_venue`).
+- Concentration cap per venue (default ≤ 25% of total equity, range 10–30%, 16 §2.1) evaluated with P2-T012.
+- Mode semantics (12 §2): **paper/testnet orders** are allowed for venues/products marked `allowed` or `read_only`; a `blocked` product takes paper orders only if it's also marked **`paper_ok`**; never for `hitl`/`autonomous` venue orders. Testnets are registered as their own rows.
+- Registry columns read by the check include `stp` (mode, or `n/a (netting)` for OANDA, IG, Alpaca, IBKR; used by P2-T022) and `paper_ok`.
 - `venue.registry.update` command: status tighten (allowed → read_only/blocked) C1; any loosening C3; AUSTRAC check date stale > 90 days → warning in D06.
 - Registry cached in-engine; `venue.registry.changed` reload < 1 s; bots on a changed venue get an auto-downgrade signal (P2-T037).
 
@@ -62,7 +68,7 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 ## Verification
 
 ### Tests
-- Rejection tests: Bybit perps (blocked) live order rejected; OKX AU derivatives (unresolved → paper only) rejected live; Binance AU spot allowed.
+- Rejection tests: Bybit perps (`blocked`, not `paper_ok`) rejected in every mode; a `blocked` + `paper_ok` perp accepted for a `paper` bot and rejected for a `hitl` bot; a `read_only` venue accepted for paper, rejected for `hitl`; Binance AU spot (`allowed`) accepted.
 - Unit: 3× leverage on a crypto perp clamps/rejects to 2× even if registry says 5×.
 - Unit: loosening `venue.registry.update` requires C3.
 
@@ -83,7 +89,7 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 ## Exceptions & edge cases
 
 - Registry unreachable at start: default-deny.
-- Residency change (P3 timeline): registry rows switch with the residency period; until then current residency only.
+- Residency change (P3 timeline): `tax.residency.changed` makes the registry recompute; any loosening that results is C3 (17 §D P3-B006/7); until then current residency only.
 
 ## Cardinal rules (do NOT)
 
@@ -109,3 +115,4 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper_ok semantics, venue cap 25%, stp n/a (netting) column, residency recompute C3, L2 layer)

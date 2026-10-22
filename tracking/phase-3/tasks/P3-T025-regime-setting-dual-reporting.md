@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T023, P3-T024]
+depends_on: [P3-T023, P3-T024, P3-T038]
 requirements: [R3.07]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, mt-api]
 branch: p3/P3-T025-regime-setting-dual-reporting
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T025 · Per-FY per-activity regime setting with dual investor and trader reporting
@@ -45,7 +50,7 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 - `journal.regime_setting` (WORM): FY, activity scope (tag, asset class), regime, `decided_by` (agent answer ref | default), effective_from, reason.
 - Default for every FY/activity = `both` (dual computation).
 - Trader-in-business computation: all trading gains/losses (incl. crypto and shares in `trading`-tagged accounts) are ordinary income/loss; no CGT discount; `investment`-tagged accounts stay capital (argument per 09 goal 7).
-- `tax.regime.set` (C1) requires a linked `TAX_QUESTION` answer id (P3-T038) unless setting back to `both`; audited.
+- `tax.regime.set` (C1) requires a linked `TAX_QUESTION` answer id recorded with `task.answer` (C1, P3-T038) unless setting back to `both`; audited.
 - Summary output: two columns (Investor, Trader) with the delta, each with rule version + FX source; D15 badge shows `both` / chosen regime.
 
 ## ToDo
@@ -81,7 +86,7 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 ## Exceptions & edge cases
 
 - Mid-FY regime change → split by effective date with a warning (agent to confirm).
-- Locked FY → regime change refused.
+- Locked FY (`tax.fy.lock`, C3) → regime change refused with 423 until a C3 unlock (P3-T055).
 
 ## Cardinal rules (do NOT)
 
@@ -107,3 +112,4 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (answer link via `task.answer` C1 (P3-T038 added to depends_on); locked FY via P3-T055; tools/services filled)

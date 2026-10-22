@@ -11,28 +11,33 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P0-T032, P0-T036, P0-T023, P0-T038]
-requirements: [R0.08, R0.11]
+requirements: [R0.08, R0.11, R0.12]
 roadmap_todos: [T0.24, T0.26]
 modules: [mt_api, M17]
 dashboards: [D16]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats, prometheus, loki]
 branch: p0/P0-T046-mt-api-system-audit-queries
 pr: ""
 doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T046 · Implement the System and audit queries for D16
 
 ## Goal / expected outcome
 
-mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings`, `/audit/log` with chain-verification status, and the `system` WS topic — all working read-only when Postgres is down.
+mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings`, `/audit/log` with chain-verification status, `/audit/integrity`, and the `system` WS topic — all working read-only when Postgres is down.
 
 ## Context & references
 
@@ -50,7 +55,8 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 - `/system/logs`: Loki proxy with server-side allow-listed LogQL (service, level, text contains, time range ≤ 24 h, limit ≤ 1,000), never raw LogQL from the client; responses pass through the secret redactor again.
 - `/system/backups`: last backup per kind, WAL lag, last restore test, last seal + verify status (from `ops.backup_run`, `ops.restore_test`, `audit.seal`, `audit.verify_run`).
 - `/system/keys`: from `key_age.prom` and secrets **metadata** only: name, service, created, age, rotate_due — **never values** (D16 acceptance 2).
-- `/system/settings`: read `ops.setting`/`ops.user_pref`; writes go through `system.settings.update`.
+- `/system/settings`: read `ops.setting`/`ops.user_pref`; each setting returns its effective value, the layer that set it, its 16 default and change history (ui §3.7); writes go through `system.settings.update`.
+- `/audit/integrity`: KV `audit.integrity` status, the configured action, open incident and ack history from `audit.integrity_incident`, and the last hourly incremental + daily full verify ([16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity), D16 Integrity).
 - `/audit/log`: filters source/command/date, cursor paging, columns per D16 incl. `hash` and per-row chain status from the latest `audit.verify_run`.
 - Postgres down: `/system/health` and `/system/services` still answer from Prometheus/NATS with a `db: down` flag (D16 acceptance 1).
 
@@ -77,14 +83,14 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 
 ## Acceptance criteria
 
-- [ ] All D16 backend contract queries implemented and documented in OpenAPI
+- [ ] All D16 backend contract queries (incl. `/audit/integrity`) implemented and documented in OpenAPI
 - [ ] No secret value can be returned (tested)
 - [ ] Postgres-down read-only behaviour proven
 - [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
-- `system.service.restart` stays 501 until P0-B012 is resolved; D16 shows the button disabled with the reason.
+- `system.service.restart` is wired through `docker-proxy` by P0-T065 ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012); `/system/services` marks each container `restartable: true|false` from the allow-list so D16 disables the rest.
 
 ## Cardinal rules (do NOT)
 
@@ -108,3 +114,4 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (/audit/integrity (R0.12), settings show effective value/layer/default, restartable flag for the docker-proxy allow-list (17 §D P0-B012); run fields added)

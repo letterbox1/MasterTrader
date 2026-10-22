@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T040, P4-T041, P4-T042]
+depends_on: [P4-T040, P4-T041, P4-T042, P4-T035, P2-T123]
 requirements: [R4.11]
 roadmap_todos: [T4.64]
 modules: [M6]
 dashboards: [D04]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, mlflow]
 branch: p4/P4-T054-verify-feature-ic-report
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P4-T054 · Feature IC report for the new sentiment, regime, positioning and macro features
@@ -38,7 +43,7 @@ The P2 IC evaluator produces an IC / rank-IC / decay report for every new P4 fea
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.64](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M6 evaluator](../../../docs/03-build-spec.md#m6-features--mt_features)
-- Cross-phase: P2 R2.46 (IC evaluator).
+- Cross-phase: P2-T123 (R2.46 IC evaluator) is a `depends_on` entry.
 
 ## Requirements
 
@@ -95,3 +100,4 @@ The P2 IC evaluator produces an IC / rank-IC / decay report for every new P4 fea
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P2-T123; added P4-T035 (event-score features))

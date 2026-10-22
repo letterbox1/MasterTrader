@@ -15,17 +15,22 @@ requirements: [R3.05]
 roadmap_todos: [T3.23]
 modules: [M18]
 dashboards: [D15]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p3/P3-T020-fx-cash-lots-div775-derivatives
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T020 · FX-cash lots for Div 775 and realised P&L for derivatives
@@ -44,7 +49,7 @@ Every non-AUD cash balance (USD at IBKR, USDT on an exchange, EUR at OANDA) is t
 
 - Cash inflows in a foreign currency (sale proceeds, deposits, interest, funding received) open FX lots at the RBA AUD rate of that day; outflows match FX lots FIFO (default; configurable) and produce `fx_realisation` derived rows with AUD gain/loss.
 - Stablecoins (USDT/USDC) are **crypto assets for CGT** by default, not foreign currency (setting per asset; agent question) — flagged (U).
-- Derivatives: per position, realised P&L on close + funding/financing/variation margin as revenue items; no CGT discount; position lots tracked for P&L attribution only.
+- Derivatives: per position, realised P&L on close + funding/financing/variation margin as revenue items; no CGT discount; position lots tracked for P&L attribution only. Perpetual swaps and their funding are revenue by default, (U) pending the tax agent (09 question 8; [17 §D P3-B016](../../../docs/17-decisions-register.md#d-other-decisions)).
 - Div 775 elections/thresholds (e.g. limited balance election) are config flags defaulting to **off** with (U) labels; computations show the flag state.
 
 ## ToDo
@@ -105,3 +110,4 @@ Every non-AUD cash balance (USD at IBKR, USDT on an exchange, EUR at OANDA) is t
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (perps revenue by default (U, tax-agent Q8, P3-B016); tools/services filled)
