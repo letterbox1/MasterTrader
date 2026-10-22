@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P8-T018, P8-T019, P8-T020, P8-T021, P8-T022, P8-T023, P8-T024, P8-T025, P8-T026, P8-T027]
+depends_on: [P8-T018, P8-T019, P8-T020, P8-T021, P8-T022, P8-T023, P8-T024, P8-T025, P8-T026, P8-T027, P8-T033, P8-T034, P8-T035]
 requirements: [R8.04, R8.07]
 roadmap_todos: [T8.80]
 modules: [M20]
 dashboards: [D17]
+tools: [uv, git]
+mcp: []
+env: []
+services: [postgres, tailscale, telegram-bot]
 branch: p8/P8-T028-run-two-week-use
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P8-T028 · Two weeks of MCP use, then review the D17 audit
@@ -43,8 +48,8 @@ You use MasterTrader through Claude for 14 consecutive days (paper/practice, or 
 ## Requirements
 
 - Clock: start date logged; 14 consecutive days; at least one MCP session per day (gaps noted).
-- Day-7 and day-14 review (agent prepares, you sign off): calls per tool and group; denied/never attempts; approvals approved/rejected/expired and median approval latency; any calls you don't recognise; injection-like reasons; tools never used (candidates to disable); token expiry status.
-- Invariants for the whole window: zero orders executed without approval (unless a C3-approved auto rule matched); zero successful never-exposed calls; daily `audit.verify` green.
+- Day-7 and day-14 review (agent prepares, you sign off): calls per tool and group (reads included, from `audit.mcp_call`); denied/never attempts; rate-limited and capped calls; approvals approved/rejected/expired and median approval latency against the 5-min TTL; any calls you don't recognise; injection-like reasons; tools never used (candidates to disable); token expiry status and any indefinite tokens.
+- Invariants for the whole window: zero MCP orders executed without your approval; zero successful never-exposed calls (incl. `approval.*`, `mcp.*`); zero loosening applied without C3; daily `audit.verify` green.
 - Each surprise → a `P8-Bnnn` bug with session id and severity.
 
 ## ToDo
@@ -79,10 +84,10 @@ You use MasterTrader through Claude for 14 consecutive days (paper/practice, or 
 
 ## Cardinal rules (do NOT)
 
-- Do NOT extend auto rules during the window to "try it out"; changes restart the clock.
-- Do NOT treat an expired approval as a failure to fix by lengthening TTLs without a decision.
+- Do NOT loosen MCP policy, widen token scopes or add indefinite tokens during the window to "try it out"; such changes restart the clock.
+- Do NOT treat an expired approval as a failure to fix by lengthening the TTL without your decision (it's a 16 §2.3 setting).
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
-- Do NOT commit secrets or paste them into chats/issues (including into the Claude conversation); secrets live in the sops/age file (07 §2).
+- Do NOT commit secrets or paste them into chats/issues (including the Claude conversation); secrets live in the sops/age file (07 §2).
 
 ## Doc sync on completion
 
@@ -97,3 +102,4 @@ You use MasterTrader through Claude for 14 consecutive days (paper/practice, or 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (auto-rule exception removed (no skip-approval), invariants incl. `approval.*`/`mcp.*` and C3 loosening, reads from `audit.mcp_call`, indefinite-token check, TTL is a setting; deps P8-T033/T034/T035; tools/env/services)

@@ -10,43 +10,49 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P8-T017, P8-T019, P8-T020, P8-T021, P8-T022, P8-T023, P8-T024, P8-T025, P8-T026, P8-T027, P8-T028]
-requirements: [R8.01, R8.02, R8.03, R8.04, R8.05, R8.06, R8.07]
+depends_on: [P8-T017, P8-T019, P8-T020, P8-T021, P8-T022, P8-T023, P8-T024, P8-T025, P8-T026, P8-T027, P8-T028, P8-T033, P8-T034, P8-T035]
+requirements: [R8.01, R8.02, R8.03, R8.04, R8.05, R8.06, R8.07, R8.08, R8.09, R8.10]
 roadmap_todos: []
 modules: [M20, M11, M17]
 dashboards: [D17, D06, D05]
+tools: [uv, pnpm, docker, git, claude-desktop]
+mcp: []
+env: []
+services: [postgres, nats, tailscale, telegram-bot, mt-engine]
 branch: p8/P8-T029-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md, docs/roadmap/README.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P8-T029 · Phase 8 exit demo
 
 ## Goal / expected outcome
 
-The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked with evidence. From Claude: "how are my strategies doing, tighten BTC max position to X, and close half my EURUSD" → the tighten applies instantly, the close waits for your Telegram approval, and both appear in D17 and `audit.command`.
+The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked with evidence. From Claude: "how are my strategies doing, tighten BTC max position to X, and close half my EURUSD" → the tighten applies instantly, the close waits for your Telegram approval, and both appear in D17, `audit.mcp_call` and `audit.command`.
 
 ## Context & references
 
-- Roadmap: [§6 Exit criteria](../../../docs/roadmap/phase-8-mcp.md#6-exit-criteria-demo) · all of [R8.01–R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements)
+- Roadmap: [§6 Exit criteria](../../../docs/roadmap/phase-8-mcp.md#6-exit-criteria-demo) · all of [R8.01–R8.10](../../../docs/roadmap/phase-8-mcp.md#3-requirements)
+- Decisions: [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) · [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)
 - PHASE.md exit-criteria checklist (tracking/phase-8/PHASE.md)
-- Evidence items: P8-T020 (auth), T021/T022 (bypass, C3), T023 (tool list), T024 (injection), T025 (audit), T026 (scenarios), T027 (stress), T028 (RUN).
+- Evidence items: P8-T020 (auth + transport), T021/T022 (bypass, C3), T023 (tool list), T024 (injection), T025 (audit), T026 (scenarios), T027 (stress), T033 (response guard), T034 (limits), T035 (live client), T028 (RUN).
 
 ## Requirements
 
 - Demo on paper/practice accounts (or micro-live only if P7 already allows it and you choose to).
 - Step 1: Claude reads strategy status (C0, read tools).
-- Step 2: `risk_policy_update` tightening BTC max position to X → `applied` immediately; D06 Changes shows who = mcp.
-- Step 3: `position_reduce(EURUSD, 0.5)` → `pending_approval`; Telegram MCP card; you approve; M11 passes; fill on the practice account.
-- Step 4: D17 shows the session with all calls; `audit.command` has both writes with `source = mcp`; `audit.verify` green.
+- Step 2: `risk_policy_update` tightening BTC max position to X (C1, `risk_tighten` scope) → `applied` immediately; D06 Changes shows source = mcp.
+- Step 3: `position_reduce(EURUSD, 0.5)` → `pending_approval`; Telegram MCP card (TTL default 5 min); you approve on Telegram; M11 passes; fill on the practice account.
+- Step 4: D17 shows the session with all calls; `audit.mcp_call` has every call (the reads included); `audit.command` has both writes with `source = mcp`; `audit.verify` green.
 - Step 5: confirm each PHASE.md exit box with a link to its evidence (CI runs, reports, reviews).
 
 ## ToDo
@@ -59,10 +65,10 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 ## Verification
 
 ### Tests
-- Re-run the bypass (P8-T021), C3 (P8-T022) and tool-list (P8-T023) suites on the demo build; all green.
+- Re-run the bypass (P8-T021), C3 (P8-T022), tool-list (P8-T023), response-guard (P8-T033) and limit (P8-T034) suites on the demo build; all green.
 
 ### Scenarios
-- Given the demo prompt, when Claude acts, then tighten = instant, close = waits for Telegram, both in D17 + `audit.command`.
+- Given the demo prompt, when Claude acts, then tighten = instant, close = waits for Telegram, both in D17 + `audit.mcp_call` + `audit.command`.
 - Given you reject the close card instead, then nothing trades and the audit shows `rejected` (run once as a negative check).
 
 ### Stress / failure injection
@@ -87,8 +93,8 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 - Do NOT make loosening risk, autonomous mode, mandates or kill-switch OFF anything less than C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT update or delete WORM rows; corrections are new rows (15 §2).
-- Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code (including the MCP SDK).
-- Do NOT commit secrets or paste them into chats/issues (including into the Claude conversation); secrets live in the sops/age file (07 §2).
+- Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
+- Do NOT commit secrets or paste them into chats/issues (including the Claude conversation); secrets live in the sops/age file (07 §2).
 
 ## Doc sync on completion
 
@@ -104,3 +110,4 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (demo evidence now includes `audit.mcp_call`; R8.08–R8.10 and new verify tasks P8-T033/T034/T035 added as dependencies and evidence; TTL 5 min; tools/env/services)
