@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T8.01]
 modules: [M20]
 dashboards: [D16]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p8/P8-T001-decision-gate
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P8-T001 · Decide whether to build MCP (decision gate)
@@ -39,7 +44,8 @@ You make and record a go / no-go decision on Phase 8 after **at least 4 weeks (2
 - Roadmap: [§2 Entry criteria](../../../docs/roadmap/phase-8-mcp.md#2-entry-criteria) · ToDo [T8.01](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Plan: [04 Phase 8](../../../docs/04-plan-of-action.md) ("only if you want it") · [03 §1 Deferred row](../../../docs/03-build-spec.md)
 - Evidence source: [D16 System → Audit](../../../docs/ui/dashboards/D16-system.md) (`/audit/log` filtered by source = web / telegram)
-- Cross-phase: the phase only opens after P6 (`opens_after: [6]`); the roadmap flow also expects daily use after P7.
+- Cross-phase: Phase 8 is **hard-gated** ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): it opens only after its prerequisite phases exit (`opens_after: [6]`) and this decision; the roadmap flow also expects daily use after P7.
+- What you'd get: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes, never-exposed list, limits) and [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (every MCP order needs your approval card; MCP can never approve).
 - Unblocks: P8-T002 and, through it, every other P8 item.
 
 ## Requirements
@@ -86,7 +92,7 @@ You make and record a go / no-go decision on Phase 8 after **at least 4 weeks (2
 
 - Do NOT let the agent start P8 BUILD work before this item is done.
 - Do NOT decide on behalf of the user; only the user records this decision.
-- Do NOT commit secrets or paste them into chats/issues (including into the Claude conversation); secrets live in the sops/age file (07 §2).
+- Do NOT commit secrets or paste them into chats/issues (including the Claude conversation); secrets live in the sops/age file (07 §2).
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 
 ## Doc sync on completion
@@ -102,3 +108,4 @@ You make and record a go / no-go decision on Phase 8 after **at least 4 weeks (2
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (hard gate per 17 §E and what MCP would allow per 16 §2.3/§2.12; tools/env/services fields)

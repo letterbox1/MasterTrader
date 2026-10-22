@@ -15,17 +15,22 @@ requirements: [R6.13]
 roadmap_todos: [T6.62]
 modules: [M21]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p6/P6-T056-verify-label-provenance
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T056 · Label-provenance test: shadow outputs never become labels; Telegram excluded
@@ -95,3 +100,4 @@ Tests prove that no shadow/model output can be written or used as a training lab
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; labels never from shadow outputs (10 §4.3))

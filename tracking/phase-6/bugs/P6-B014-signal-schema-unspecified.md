@@ -4,7 +4,7 @@ kind: gap
 title: `Signal` fields are not specified in any doc (only 'structured Signal with provenance')
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.01]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B014-signal-schema-unspecified
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M8; docs/02-v1-architecture.md §5.3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B014 · `Signal` fields are not specified in any doc (only 'structured Signal with provenance')
@@ -50,8 +55,10 @@ The docs agree and are specific enough to build from: 03 M8 (or 02 §5.3) lists 
 
 ## ToDo
 
-- [ ] Copy the P6-T004 field list into 03 M8 when merged.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B004/P6-B014): `Signal` fields defined in 03 M8: id, ts, as_of, instrument, horizon, direction, edge, calibrated confidence, rationale summary, sources[], model/prompt versions, run id
+- [x] Owning docs carry it: 03 M8 Output; 02 §4 M8 row and §5.1 `audit.signal`; roadmap R6.01 and T6.20; 04 Phase 6 M8 bullet
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T004 (schema), P6-T067 (sample-run field check, T6.66)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -66,8 +73,9 @@ The docs agree and are specific enough to build from: 03 M8 (or 02 §5.3) lists 
 
 ## Acceptance criteria
 
-- [ ] Field list documented.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (03 M8 Output; 02 §4 M8 row and §5.1 `audit.signal`; roadmap R6.01 and T6.20; 04 Phase 6 M8 bullet)
+- [x] Affected tasks consistent with it (P6-T004 (schema), P6-T067 (sample-run field check, T6.66))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +100,7 @@ The docs agree and are specific enough to build from: 03 M8 (or 02 §5.3) lists 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P6-B004/P6-B014: `Signal` fields defined in 03 M8: id, ts, as_of, instrument, horizon, direction, edge, calibrated confidence, rationale summary, sources[], model/prompt versions, run id. Docs now carry it: 03 M8 Output; 02 §4 M8 row and §5.1 `audit.signal`; roadmap R6.01 and T6.20; 04 Phase 6 M8 bullet. Implementation owned by P6-T004 (schema), P6-T067 (sample-run field check, T6.66). Root cause: the core AI output had no field list.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B004/P6-B014); docs updated: 03 M8 Output fields, 02 §4/§5.1 audit.signal, roadmap R6.01/T6.20, 04 Phase 6; implementation owned by P6-T004, P6-T067
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

@@ -4,7 +4,7 @@ kind: gap
 title: D18 WebSocket topics `wallet`, `treasury`, `alert` are not in the 02 §7.3 topic list
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R6.40]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B007-ws-topics-wallet-treasury-missing
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D18-wallets-treasury.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D18-wallets-treasury.md (Backend contract) vs docs/02-v1-architecture.md §7.3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B007 · D18 WebSocket topics `wallet`, `treasury`, `alert` are not in the 02 §7.3 topic list
@@ -50,8 +55,10 @@ The docs agree and are specific enough to build from: 02 §7.3 lists `wallet` an
 
 ## ToDo
 
-- [ ] Propose the edits.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P5-B005/P6-B007): add WS topics `wallet`, `treasury`, `alert` to 02 §7.3
+- [x] Owning docs carry it: 02 §7.3 topic list (`alert`, `wallet` (P5), `treasury` (P6)); D18 backend contract
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T045 (D18 treasury/earn), P5-T050
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -66,8 +73,9 @@ The docs agree and are specific enough to build from: 02 §7.3 lists `wallet` an
 
 ## Acceptance criteria
 
-- [ ] Topic lists consistent.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (02 §7.3 topic list (`alert`, `wallet` (P5), `treasury` (P6)); D18 backend contract)
+- [x] Affected tasks consistent with it (P6-T045 (D18 treasury/earn), P5-T050)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +100,7 @@ The docs agree and are specific enough to build from: 02 §7.3 lists `wallet` an
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P5-B005/P6-B007: add WS topics `wallet`, `treasury`, `alert` to 02 §7.3. Docs now carry it: 02 §7.3 topic list (`alert`, `wallet` (P5), `treasury` (P6)); D18 backend contract. Implementation owned by P6-T045 (D18 treasury/earn), P5-T050. Root cause: D18's contract was written before the topic list was updated.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P5-B005/P6-B007); docs updated: 02 §7.3 topics alert, wallet (P5), treasury (P6); D18 backend contract; implementation owned by P6-T045, P5-T050
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

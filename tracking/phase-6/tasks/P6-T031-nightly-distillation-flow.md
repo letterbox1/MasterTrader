@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T020, P6-T022, P6-T030]
+depends_on: [P6-T020, P6-T022, P6-T030, P2-T125]
 requirements: [R6.14]
 roadmap_todos: [T6.27]
 modules: [M21, M7]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [prefect, mlflow, gpu]
 branch: p6/P6-T031-nightly-distillation-flow
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T031 · Nightly distillation flow with gated promotion
@@ -38,7 +43,7 @@ A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B
 
 - Roadmap: [R6.14](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.27
 - Spec: [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 5–6 · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) (distillation into tier A and tier B) · [10 §6](../../../docs/10-memory-rag-and-models.md#6-where-this-lands-in-the-build)
-- Cross-phase: P2 R2.47 tier-A pipeline
+- Cross-phase: P2-T125 (tier-A training pipeline; teacher labels added as an extra source without changing existing model versions, 10 §4.3)
 - Depends on (this phase): P6-T020, P6-T022, P6-T030
 
 ## Requirements
@@ -100,3 +105,4 @@ A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T125; run fields)

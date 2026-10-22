@@ -4,7 +4,7 @@ kind: gap
 title: Crowd-sim: MiroFish needs Zep Cloud (no local fallback), open CORS and a default secret — conflicts with self-hosted/free/no-telemetry
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.32]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B009-mirofish-zep-cloud-conflict
 pr: ""
 doc_sync: [docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M14; docs/research/mirofish.md
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B009 · Crowd-sim: MiroFish needs Zep Cloud (no local fallback), open CORS and a default secret — conflicts with self-hosted/free/no-telemetry
@@ -50,8 +55,10 @@ The docs agree and are specific enough to build from: M14 states the allowed pat
 
 ## ToDo
 
-- [ ] Propose the M14 wording.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B009): MiroFish/OASIS only with a local memory backend and hardened config; no Zep Cloud; otherwise M14 is skipped
+- [x] Owning docs carry it: 03 M14; roadmap R6.32 and T6.30; 04 Phase 6 optional bullet
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T050 (crowd-sim, optional), P6-T003 (your decision)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -66,8 +73,9 @@ The docs agree and are specific enough to build from: M14 states the allowed pat
 
 ## Acceptance criteria
 
-- [ ] M14 names the clean-room path.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (03 M14; roadmap R6.32 and T6.30; 04 Phase 6 optional bullet)
+- [x] Affected tasks consistent with it (P6-T050 (crowd-sim, optional), P6-T003 (your decision))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +100,7 @@ The docs agree and are specific enough to build from: M14 states the allowed pat
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P6-B009: MiroFish/OASIS only with a local memory backend and hardened config; no Zep Cloud; otherwise M14 is skipped. Docs now carry it: 03 M14; roadmap R6.32 and T6.30; 04 Phase 6 optional bullet. Implementation owned by P6-T050 (crowd-sim, optional), P6-T003 (your decision). Root cause: MiroFish's default stack depends on Zep Cloud and ships an insecure default config.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B009); docs updated: 03 M14, roadmap R6.32/T6.30, 04 Phase 6 optional bullet; implementation owned by P6-T050, P6-T003
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

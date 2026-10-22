@@ -15,17 +15,22 @@ requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [prefect, mlflow, gpu]
 branch: p6/P6-T032-monthly-finetune-flow
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T032 · Monthly fine-tune flow
@@ -91,3 +96,4 @@ On the first weekend of each month a full fine-tune (not warm-start) of each pro
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; promotion stays gated per 16 §2.10)

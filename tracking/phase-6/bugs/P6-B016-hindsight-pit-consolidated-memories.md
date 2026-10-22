@@ -4,7 +4,7 @@ kind: gap
 title: Hindsight point-in-time recall unverified, especially for consolidated/reflected memories
 phase: 6
 type: BUILD
-status: backlog
+status: done
 priority: high
 size: S
 severity: S2
@@ -15,17 +15,22 @@ requirements: [R6.04]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B016-hindsight-pit-consolidated-memories
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/10-memory-rag-and-models.md §1 (Point-in-time recall)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B016 · Hindsight point-in-time recall unverified, especially for consolidated/reflected memories
@@ -50,10 +55,10 @@ Memory recall in backtests provably never returns information created after `as_
 
 ## ToDo
 
-- [ ] Inspect Hindsight 1.0.0 API for time filters and derived-memory lineage.
-- [ ] Choose mechanism; implement in P6-T012.
-- [ ] Prove with P6-T055.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §A P6-B016): every memory carries `observed_at`/`ingested_at`; consolidated/reflection memories carry the latest source time and are excluded when > `as_of`; if Hindsight can't enforce it, backtests run with memory disabled or from a frozen per-`as_of` snapshot; PIT recall test mandatory
+- [x] Owning docs carry it: 10 §1 point-in-time recall; 03 M9; roadmap R6.04, T6.21 and T6.63; 04 Phase 6 M9 bullet
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T012 (filter, lineage, frozen/off modes), P6-T013 (timestamps on settlement memories), P6-T055 (mandatory PIT test, T6.63)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -68,8 +73,9 @@ Memory recall in backtests provably never returns information created after `as_
 
 ## Acceptance criteria
 
-- [ ] Mechanism documented and P6-T055 green.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (10 §1 point-in-time recall; 03 M9; roadmap R6.04, T6.21 and T6.63; 04 Phase 6 M9 bullet)
+- [x] Affected tasks consistent with it (P6-T012 (filter, lineage, frozen/off modes), P6-T013 (timestamps on settlement memories), P6-T055 (mandatory PIT test, T6.63))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ Memory recall in backtests provably never returns information created after `as_
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §A P6-B016: every memory carries `observed_at`/`ingested_at`; consolidated/reflection memories carry the latest source time and are excluded when > `as_of`; if Hindsight can't enforce it, backtests run with memory disabled or from a frozen per-`as_of` snapshot; PIT recall test mandatory. Docs now carry it: 10 §1 point-in-time recall; 03 M9; roadmap R6.04, T6.21 and T6.63; 04 Phase 6 M9 bullet. Implementation owned by P6-T012 (filter, lineage, frozen/off modes), P6-T013 (timestamps on settlement memories), P6-T055 (mandatory PIT test, T6.63). Root cause: 10 §1 filtered on creation time only, which lets derived memories leak later facts.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A P6-B016); docs updated: 10 §1 point-in-time recall, 03 M9, roadmap R6.04/T6.21/T6.63, 04 Phase 6 M9; implementation owned by P6-T012, P6-T013, P6-T055
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

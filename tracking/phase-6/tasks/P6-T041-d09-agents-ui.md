@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T008, P6-T013, P6-T015]
+depends_on: [P6-T008, P6-T013, P6-T015, P0-T048, P0-T049]
 requirements: [R6.40, R6.01]
 roadmap_todos: [T6.29]
 modules: [M15, M8, M9, M10, M21]
 dashboards: [D09]
+tools: [git, pnpm, node>=20, playwright]
+mcp: []
+env: []
+services: [mt-api]
 branch: p6/P6-T041-d09-agents-ui
 pr: ""
 doc_sync: [docs/ui/dashboards/D09-agents.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T041 · D09 Agents & Decisions UI
@@ -41,11 +46,13 @@ checkpoint: ""
 - API: [02 §7.1](../../../docs/02-v1-architecture.md#71-queries-rest-read) · [02 §7.3](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws)
 - Exit: [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 1
 - Depends on (this phase): P6-T008, P6-T013, P6-T015
+- Cross-phase: P0-T048 (typed API + WS client), P0-T049 (component library v0)
 
 ## Requirements
 
 - Widgets and data sources exactly as D09 tables; actions `agents.run_analysis` (C1 with budget), `models.tierb.ask` (C0), `journal.note.add` (C0), schedule via `system.settings.update` (C1).
 - Acceptance from D09: numbers link to provenance; unsourced numbers flagged; cost/model visible on every run; budget-exhausted runs show local fallback; settlement only after horizon.
+- Final signal card shows every 03 M8 field (direction, edge, calibrated confidence, horizon, sources, model/prompt versions, run id).
 - Responsive tiers: ≥ 2xl three columns; xl–md stacked; ≤ ph tabs; debate detail timeline/drawer/thread per tier.
 - Live updates via WS `agents.run`, `signals`, `tierb`, `notifications` with seq gap re-sync.
 
@@ -102,3 +109,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (signal card shows 03 M8 fields; cross-phase deps P0-T048/P0-T049; run fields)

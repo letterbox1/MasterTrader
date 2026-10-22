@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T002]
+depends_on: [P5-T029]
 requirements: [R6.23]
 roadmap_todos: [T6.28]
 modules: [M22, M19]
 dashboards: [D18, D13]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [snapshot-hub, postgres, prefect]
 branch: p6/P6-T040-dao-monitor-drafted-votes
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T040 · DAO proposal monitor with drafted votes
@@ -38,8 +43,8 @@ Snapshot (GraphQL, keyless 100 req/min) and Tally (free key) are polled for prop
 
 - Roadmap: [R6.23](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.28
 - Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (DAO monitoring, votes drafted for your confirmation, dedicated governance key, one wallet per DAO)
-- Cross-phase: P5 R5.20 task queue
-- Depends on (this phase): P6-T002
+- Cross-phase: P5-T029 (task queue)
+- Depends on (this phase): none. Built keyless against recorded Snapshot (keyless GraphQL) and Tally responses; the live Tally check with your key (P6-T002) is P6-T070.
 
 ## Requirements
 
@@ -96,3 +101,4 @@ Snapshot (GraphQL, keyless 100 req/min) and Tally (free key) are polled for prop
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: no dependency on the Tally key (live check P6-T070); cross-phase dep P5-T029; run fields)

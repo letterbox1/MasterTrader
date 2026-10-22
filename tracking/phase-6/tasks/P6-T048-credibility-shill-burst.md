@@ -15,17 +15,22 @@ requirements: [R6.31]
 roadmap_todos: [T6.30]
 modules: [M23, M6]
 dashboards: [D13, D12]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p6/P6-T048-credibility-shill-burst
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T048 · Optional: account credibility scoring and shill-burst posture
@@ -97,3 +102,4 @@ Accounts you follow get credibility scores from past calls vs outcomes, and a sh
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; Telegram counts only (12 §4))

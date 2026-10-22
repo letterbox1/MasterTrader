@@ -1,7 +1,7 @@
 ---
 id: P8-T022
 kind: task
-title: "C3 tests: loosening via MCP needs Telegram + TOTP; hard ceilings unwritable"
+title: "C3 tests: every loosening reachable from MCP needs Telegram + TOTP + cool-down; MCP tightening (L0 included) is instant"
 phase: 8
 type: VERIFY
 status: backlog
@@ -15,37 +15,44 @@ requirements: [R8.05]
 roadmap_todos: [T8.60]
 modules: [M11, M20]
 dashboards: [D06, D17]
+tools: [uv, docker, git]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p8/P8-T022-verify-c3-loosening
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
-# P8-T022 · C3 tests: loosening via MCP needs Telegram + TOTP; hard ceilings unwritable
+# P8-T022 · C3 tests: every loosening reachable from MCP needs Telegram + TOTP + cool-down; MCP tightening (L0 included) is instant
 
 ## Goal / expected outcome
 
-Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests": every loosening reachable from MCP needs Telegram approve + TOTP and waits out the cool-down, and hard ceilings can't be written.
+Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests" and T8.60's loosening half: loosening is never an MCP scope; every loosening reachable from MCP (any layer, L0 hard ceilings included) is applied only after your Telegram approve + TOTP and the cool-down, out of band; MCP tightening applies instantly. Fake Telegram + TOTP harness and an injected clock; no keys.
 
 ## Context & references
 
 - Roadmap: [R8.05](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.60](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Spec: [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [02 §7.2 C3](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [02 F5](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · [15 §1.2](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots)
-- Cross-phase: P2 R2.19 / T2.24 (change control), R2.51 (C3 TOTP in Telegram).
+- Decisions: [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance) (tighten immediate, loosen C3, every layer) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) (L0 ceilings in the bot strategy settings, loosening C3) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (cool-down 15 min) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (loosening never a scope)
+- Precedent: P2-T053 (change-control C3 and hard-ceilings tests).
 
 ## Requirements
 
-- Loosening paths covered: `risk.policy.update` loosen fields; `risk.kill.off`; `strategy.set_mode autonomous`; promotion to auto; `bot.set_mode autonomous`; `bot.update_scope` widening an autonomous bot; `bot.approval_policy.set` loosen; `risk.ladder.set` up (if enabled).
+- Loosening paths covered: `risk.policy.update` loosen fields on each layer L0–L4; `risk.kill.off`; `strategy.set_mode` allow `autonomous`; `strategy.promote` to the autonomous stage; `bot.set_mode autonomous`; `bot.update_scope` / `bot.update_params` loosening (incl. widening an autonomous bot's scope); `bot.approval_policy.set` loosen; `strategy.update_params` that increases risk.
 - Each case: no Telegram approval → not applied; approval without TOTP → not applied; wrong TOTP ×3 → locked + alert; correct TOTP → applied only after the cool-down (default 15 min, using an injected clock); cancel during cool-down works.
-- Hard ceilings: a value above the ceiling is rejected even with valid TOTP; static scan shows no route writes the file; the file is read-only in the container.
-- MCP can't call `mcp.policy.set` / `mcp.tool.set` / `mcp.token.create` at all (never).
+- L0 hard ceilings: tightening from MCP applies instantly; loosening from MCP follows the same C3 path; a value that would exceed the effective L0 on a lower layer is rejected at save time (16 §1 validation).
+- No token scope, policy setting or tool flag makes any of these C1 (scope matrix test).
+- MCP can't call `mcp.policy.set` / `mcp.tool.set` / `mcp.token.create` / `approval.*` at all (never exposed).
 
 ## ToDo
 
@@ -67,7 +74,7 @@ Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests": every loosen
 ## Acceptance criteria
 
 - [ ] Every loosening path needs C3 via MCP
-- [ ] Hard ceilings rejected even with TOTP; no writer exists
+- [ ] L0 tightening instant; L0 loosening C3; values above a parent layer rejected at save time
 - [ ] CI green (lint, types, tests, `pit` check)
 
 ## Exceptions & edge cases
@@ -78,7 +85,7 @@ Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests": every loosen
 
 - Do NOT shorten cool-downs in production config to make tests fast; inject the clock.
 - Do NOT make loosening risk, autonomous mode, mandates or kill-switch OFF anything less than C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
-- Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code (including the MCP SDK).
+- Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
 
@@ -87,9 +94,10 @@ Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests": every loosen
 ## Branch & PR
 
 - Branch: `p8/P8-T022-verify-c3-loosening`
-- PR title: `P8-T022: C3 tests: loosening via MCP needs Telegram + TOTP; hard ceilings unwritable`
+- PR title: `P8-T022: C3 tests: every loosening reachable from MCP needs Telegram + TOTP + cool-down; MCP tightening (L0 included) is instant`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P8-T022` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (hard-ceilings file replaced by L0 in settings (17 §E): L0 tighten instant, loosen C3; loosening never a scope; path list per 02 §7.2; tools/env/services)

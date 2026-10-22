@@ -15,17 +15,22 @@ requirements: [R6.11]
 roadmap_todos: [T6.61]
 modules: [M21]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker, nvidia-smi]
+mcp: []
+env: []
+services: [decision-svc, gpu]
 branch: p6/P6-T057-verify-determinism-flip-rate
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T057 · Determinism: flip rate on repeated inputs and CPU ONNX FP32 reproducibility
@@ -39,6 +44,7 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 - Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.61
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) determinism controls (SemIf saw 5–6/777 flips with prefix reuse in BF16) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
 - Depends on (this phase): P6-T024
+- Defaults: flip rate ≤ 0.1% ([16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); prefix caching off on the decision path ([17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) P4-B010)
 
 ## Requirements
 
@@ -92,3 +98,4 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (flip-rate default 16 §2.10, prefix caching off (17 §A); run fields)

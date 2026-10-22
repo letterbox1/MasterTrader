@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T024, P6-T023]
-requirements: [R6.11]
-roadmap_todos: [T6.61]
+depends_on: [P6-T024, P6-T023, P0-T005]
+requirements: [R6.11, R6.N3]
+roadmap_todos: [T6.71]
 modules: [M21]
 dashboards: [D10]
+tools: [git, docker, k6, nvidia-smi]
+mcp: []
+env: []
+services: [decision-svc, gpu, grafana]
 branch: p6/P6-T058-verify-tierb-latency-slo
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T058 · Stress: tier B p95 < 50 ms on GPU and degraded CPU behaviour
@@ -36,9 +41,10 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 
 ## Context & references
 
-- Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.61
+- Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.N3](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.71
 - SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (expected ~2–12 ms GPU; 100–400 ms CPU int8 est.)
-- Gap: P6-B002
+- Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P6-B002: ~2–12 ms per decision on GPU (0.6B), p95 SLO < 50 ms; CPU 100–400 ms)
+- Cross-phase: P0-T005 (GPU on the host)
 - Depends on (this phase): P6-T024, P6-T023
 
 ## Requirements
@@ -47,6 +53,7 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 - Measure p50/p95/p99, queue depth, GPU memory, errors; batch=1 determinism settings on.
 - CPU mode: same profiles; record latencies and which questions should be disabled on CPU.
 - Tier A unaffected (its p99 < 50 µs reading KV) during the test.
+- Never on the order path (R6.N3): a static/trace check shows no engine or strategy order path awaits `decision-svc`.
 
 ## ToDo
 
@@ -84,7 +91,7 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 
 - `docs/10-memory-rag-and-models.md` §4.3: measured latency.
 - `docs/02-v1-architecture.md` §9.2: confirm SLO.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.61 (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.71 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -95,3 +102,4 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.71 + R6.N3; latency per 17 §B P6-B002; dep P0-T005 (GPU); run fields)

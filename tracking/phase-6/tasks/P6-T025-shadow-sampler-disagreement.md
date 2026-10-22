@@ -15,17 +15,22 @@ requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21, M8]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [decision-svc, litellm, nats, postgres]
 branch: p6/P6-T025-shadow-sampler-disagreement
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T025 · 5% teacher shadow sampler and per-question disagreement
@@ -44,7 +49,7 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 ## Requirements
 
 - Sampler: Bernoulli 5% per question (configurable 1–10%), stratified so low-traffic questions get ≥ 20 checks/week.
-- Teacher call: compact prompt with the same state (≤ 320 tokens) → JSON option answer; runs async via gateway role `shadow` (budgeted; when exhausted, sampling pauses rather than falling back to the same local model being checked).
+- Teacher call: compact prompt with the same state (≤ 320 tokens) → JSON option answer; runs async via gateway role `shadow` (own daily budget, default $0.30, 16 §2.10; when exhausted, sampling pauses rather than falling back to the same local model being checked).
 - Store `models.shadow_check` (decision_id, teacher model, teacher answer, agreement, cost); separate from labels (no grant to `models.label`).
 - Metrics: disagreement rate per question/model (7d, 30d), Prometheus + `/models/questions` fields; alert when disagreement jumps > 2× baseline.
 - Disagreements are offered to the labelling queue (P6-T019) for **your** label.
@@ -102,3 +107,4 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (shadow role budget default $0.30 (16 §2.10); run fields)

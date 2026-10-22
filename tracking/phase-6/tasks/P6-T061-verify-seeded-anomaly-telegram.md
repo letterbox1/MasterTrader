@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T015]
+depends_on: [P6-T015, P1-T060]
 requirements: [R6.05]
-roadmap_todos: []
+roadmap_todos: [T6.68]
 modules: [M10, M15]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERT_CHAT_ID]
+services: [anomaly, telegram-bot-api]
 branch: p6/P6-T061-verify-seeded-anomaly-telegram
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T061 · Seeded anomaly is detected and explained on Telegram
@@ -36,9 +41,10 @@ End-to-end proof for R6.05: a seeded anomaly in a replayed bar stream is detecte
 
 ## Context & references
 
-- Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting item)
+- Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.68
 - Roadmap: R6.05 'Seeded anomaly' · [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor--mt_anomaly) · [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 2
-- Gap: P6-B001 (no roadmap VERIFY ToDo)
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B001: VERIFY ToDo added, this is T6.68)
+- Cross-phase: P1-T060 (alert path to Telegram verified with your existing bot; no new key)
 - Depends on (this phase): P6-T015
 
 ## Requirements
@@ -83,7 +89,7 @@ End-to-end proof for R6.05: a seeded anomaly in a replayed bar stream is detecte
 ## Doc sync on completion
 
 - `docs/03-build-spec.md` M10: verified latency.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick the matching ToDo (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.68 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -94,3 +100,4 @@ End-to-end proof for R6.05: a seeded anomaly in a replayed bar stream is detecte
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.68; Telegram uses the P1 alert bot (P1-T060), CI mocked; run fields)

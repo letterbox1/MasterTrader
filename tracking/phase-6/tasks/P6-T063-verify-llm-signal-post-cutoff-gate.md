@@ -12,20 +12,25 @@ owner: agent
 claimed_by: ""
 depends_on: [P6-T017, P6-T016]
 requirements: [R6.06]
-roadmap_todos: []
+roadmap_todos: [T6.69]
 modules: [M0, M7]
 dashboards: [D03, D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, mlflow]
 branch: p6/P6-T063-verify-llm-signal-post-cutoff-gate
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T063 · LLM-signal strategy gate check on post-cutoff data
@@ -36,9 +41,9 @@ A sample LLM-signal strategy is run through the full gate set; the cutoff gate r
 
 ## Context & references
 
-- Roadmap: [R6.06](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting item)
+- Roadmap: [R6.06](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.69
 - Roadmap: R6.06 'Gate check' · [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) item 4 · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8)
-- Gap: P6-B001
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B001: VERIFY ToDo added, this is T6.69) · modes [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)
 - Depends on (this phase): P6-T017, P6-T016
 
 ## Requirements
@@ -74,7 +79,7 @@ A sample LLM-signal strategy is run through the full gate set; the cutoff gate r
 
 ## Cardinal rules (do NOT)
 
-- Do NOT move the strategy to approve/auto in P6.
+- Do NOT run bots on this strategy in `hitl` or `autonomous` in P6 (paper only).
 - Do NOT touch live money or live keys; keys stay trade-only, IP-locked, withdrawals disabled (live is gated to P7).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
@@ -83,7 +88,7 @@ A sample LLM-signal strategy is run through the full gate set; the cutoff gate r
 ## Doc sync on completion
 
 - `docs/14-strategy-evidence-and-validation.md` §6: example result.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick the matching ToDo (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.69 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -94,3 +99,4 @@ A sample LLM-signal strategy is run through the full gate set; the cutoff gate r
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.69; modes paper/hitl/autonomous (17 §B); run fields)

@@ -15,17 +15,22 @@ requirements: [R6.31]
 roadmap_todos: [T6.05]
 modules: [M23]
 dashboards: [D13]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-T049-approve-social-drafts
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T049 · Optional: approve, edit or skip social drafts and click Post yourself
@@ -93,3 +98,4 @@ You review drafts in D13 (or Telegram), approve/edit/skip each, and click Post y
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only)

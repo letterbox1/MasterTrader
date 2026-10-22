@@ -15,17 +15,22 @@ requirements: [R6.07, R6.11, R6.04, R6.24]
 roadmap_todos: []
 modules: [M8, M9, M21, M22, M10]
 dashboards: [D09, D10, D18]
+tools: [docker, uv, nvidia-smi]
+mcp: []
+env: []
+services: [litellm, llm-local, hindsight, decision-svc, postgres, gpu]
 branch: p6/P6-T064-verify-degraded-modes-drill
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T064 · Degraded-mode drill for the AI layer and treasury
@@ -96,3 +101,4 @@ A chaos drill shows each P6 component degrades as 02 §9.3 says: gateway/budget 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; local fallback runs keyless on P0 llm-local; budgets per 16 §2.10)

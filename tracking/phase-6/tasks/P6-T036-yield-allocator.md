@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T033, P6-T035]
+depends_on: [P6-T033, P6-T035, P5-T020, P5-T022]
 requirements: [R6.21, R6.24]
 roadmap_todos: [T6.28]
 modules: [M22]
 dashboards: [D18]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p6/P6-T036-yield-allocator
 pr: ""
-doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
+doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/16-configuration-and-safety-model.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T036 · Yield allocator: net apyBase minus amortised gas and risk haircut, within caps
@@ -38,16 +43,17 @@ The allocator ranks allow-listed pools by **net yield = apyBase − amortised en
 
 - Roadmap: [R6.21](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.24](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.28
 - Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (net yield formula, ≤ 20% per protocol, per-chain/per-stablecoin caps) · [13 §7](../../../docs/13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) (cost gate) · [13 §5](../../../docs/13-wallets-treasury-and-onchain.md#5-treasury) (reserve)
-- Cross-phase: P5 R5.02 signer, R5.04 cost gate, R5.05 wallet view, R5.06 monitors, R5.07 sweeps, R5.N2 kill freeze; P2 R2.10 M11, R2.19 C3
+- Cross-phase: P5-T020 (`mt_onchain.costgate` verdicts), P5-T022 (wallet-indexer balances); M11 via P6-T033/P2-T017
+- Defaults: [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) (per-protocol ≤ 20%, HLP cap, cost-gate margin 2×)
 - Depends on (this phase): P6-T033, P6-T035
 
 ## Requirements
 
 - Idle capital = balances above floats + reserve target, from the unified wallet view (P5).
 - Gas amortisation: entry + exit cost from the P5 cost gate quote, divided over the expected hold (default 90 days; PT to maturity).
-- Constraints: per protocol ≤ 20% of treasury, per chain, per stablecoin, HLP cap, reserve band 20–40% after the move; integer-feasible solution via greedy with cap checks (documented) or small LP.
+- Constraints (policy values from P6-T033; defaults 16 §2.7 / 13 §5): per protocol ≤ 20% of treasury, per chain, per stablecoin, HLP cap (≤ 10% of stables and ≤ 5% of portfolio, whichever is smaller), reserve band 20–40% after the move; integer-feasible solution via greedy with cap checks (documented) or small LP.
 - Output: `treasury.proposal` rows (from → to, amount, net yield, gate quote, rationale); `auto_ok` only for stablecoin lending within allow-list and caps; everything else becomes an approval task.
-- Rebalance only if net improvement ≥ hurdle (default 1.0% APY and ≥ 3× round-trip cost).
+- Rebalance only if net improvement ≥ hurdle (default 1.0% APY, a setting proposed for 16 §2.7) **and** the cost gate allows it (expected benefit ≥ 2× all-in cost, 16 §2.7).
 
 ## ToDo
 
@@ -89,6 +95,7 @@ The allocator ranks allow-listed pools by **net yield = apyBase − amortised en
 ## Doc sync on completion
 
 - `docs/13-wallets-treasury-and-onchain.md` §4: hurdle defaults and solver choice.
+- `docs/16-configuration-and-safety-model.md` §2.7: add the rebalance hurdle as a default.
 - `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.28 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
@@ -100,3 +107,4 @@ The allocator ranks allow-listed pools by **net yield = apyBase − amortised en
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (caps/HLP/cost-gate margin from 16 §2.7 (hurdle as a setting, gate 2× instead of an extra 3×); cross-phase deps P5-T020/P5-T022; run fields)

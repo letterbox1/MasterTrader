@@ -15,17 +15,22 @@ requirements: [R6.04]
 roadmap_todos: [T6.63]
 modules: [M9, M7]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [hindsight, postgres]
 branch: p6/P6-T055-verify-pit-memory-recall
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T055 · PIT test: memory recall in a backtest never returns later episodes
@@ -38,13 +43,14 @@ A backtest that replays agent decisions across a year with memory recall enabled
 
 - Roadmap: [R6.04](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.63
 - Roadmap: R6.04 'PIT recall test' · [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) NN1
-- Gap: P6-B016
+- Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P6-B016: PIT recall test mandatory in CI; `observed_at`/`ingested_at`; derived memories carry the latest source time)
 - Depends on (this phase): P6-T012, P6-T013
 
 ## Requirements
 
-- Seed Hindsight with dated episodes, settlements and reflections over 12 months, plus consolidated observations spanning periods.
-- Run a walk-forward replay with recall at each step; assert every returned memory has `created_at ≤ as_of` and all source memories ≤ as_of.
+- Seed Hindsight with dated episodes, settlements and reflections over 12 months, plus consolidated observations spanning periods, including one that summarises older facts plus one newer fact (10 §1).
+- Run a walk-forward replay with recall at each step; assert every returned memory has `observed_at ≤ as_of` and `ingested_at ≤ as_of`, and every derived memory's latest source time ≤ `as_of`.
+- Run the replay in all three lab memory modes (`filtered`, `frozen`, `off`); the report states which mode the lab defaults to.
 - Also test `/memory/search?as_of=` and D10 search.
 
 ## ToDo
@@ -95,3 +101,4 @@ A backtest that replays agent decisions across a year with memory recall enabled
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (PIT test per 17 §A P6-B016 (observed_at/ingested_at, consolidated memory case, frozen/off modes); run fields)

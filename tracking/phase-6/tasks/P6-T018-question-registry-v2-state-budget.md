@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P4-T028, P4-T029, P4-T025]
 requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, decision-svc]
 branch: p6/P6-T018-question-registry-v2-state-budget
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T018 · Question registry v2, ~320-token state builder and per-question thresholds
@@ -39,7 +44,8 @@ The tier-B question registry (from P4) is extended so every question is binary/l
 - Roadmap: [R6.13](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.26
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) operating rules (state budget, per-question thresholds, social battery, Telegram refusal) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`models.question.update` C1, new version)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Decision questions tab
-- Cross-phase: P4 R4.12 (registry v1, SemIf), P4 R4.03 (Telegram gate)
+- Cross-phase: P4-T028 (registry v1, `models` tables), P4-T029 (decision-svc stage 1), P4-T025 (provenance gate / Telegram refusal)
+- Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) · [17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (P6-B015: tier-B thresholds)
 
 ## Requirements
 
@@ -47,6 +53,7 @@ The tier-B question registry (from P4) is extended so every question is binary/l
 - State builder: compact structured state (JSON fields, numeric features, ≤ N short text spans) rendered and **tokenizer-counted** for the serving model; over budget → deterministic truncation by field priority, never raw documents.
 - Boundary check: any input row with `model_input_ok=false` (Telegram, Birdeye, Etherscan…) raises `ProvenanceRefused` before tokenisation; counter per question.
 - Social battery questions (X/Bluesky/Discord/Farcaster text only): `organic`, `bot_like`, `scam_language`, `narrative`, `stance`, `conviction`.
+- Threshold defaults come from the settings (16 §2.10, never hard-coded): auto-decide coverage at ≥ 0.75 precision (`target_precision`), direct veto only at ≥ 0.90 precision, ECE ≤ 0.05, flip rate ≤ 0.1%. A question may be stricter freely; setting one below its default bar is C3 (02 §7.2 `models.question.update`).
 - Edits create a new version (old rows immutable); decisions log `question_version`.
 
 ## ToDo
@@ -104,3 +111,4 @@ The tier-B question registry (from P4) is extended so every question is binary/l
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (per-question threshold defaults from 16 §2.10 (17 §C P6-B015), below-default = C3; cross-phase deps P4-T028/T029/T025; run fields)

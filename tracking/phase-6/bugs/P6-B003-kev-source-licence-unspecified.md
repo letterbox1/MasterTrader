@@ -10,22 +10,27 @@ size: S
 severity: S3
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P6-T068]
 requirements: [R6.12]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B003-kev-source-licence-unspecified
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/research/decision-models-system-one.md]
 doc_sync_status: n/a
 found_in: docs/10-memory-rag-and-models.md §4.3 (bake-off contenders)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B003 · Kev-4B/9B bake-off challenger has no source, licence or serving notes anywhere
@@ -50,9 +55,10 @@ The docs agree and are specific enough to build from: Kev has a row in 10 §4.1 
 
 ## ToDo
 
-- [ ] Collect Kev details via P6-T002.
-- [ ] Draft the 10 §4.1 row.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B003): Kev-4B/9B is in the bake-off only if a public, licence-compatible release exists; otherwise dropped (U)
+- [x] Docs carry the rule: 10 §4.3 contenders, D10 Bake-off row, 04 Phase 6, roadmap R6.12 and T6.72
+- [ ] Real-world (U) check done by P6-T068 (agent, T6.72): source, licence and weights location recorded, or "no public release"
+- [ ] 10 §4.1 candidate table gets the Kev row or "dropped" (P6-T068 doc sync); link the resolving commit here
 
 ## Verification
 
@@ -67,8 +73,9 @@ The docs agree and are specific enough to build from: Kev has a row in 10 §4.1 
 
 ## Acceptance criteria
 
-- [ ] 10 §4.1 lists Kev with licence or exclusion; D10 and R6.12 consistent.
-- [ ] Root cause noted in the progress log.
+- [ ] P6-T068 done with the Kev outcome recorded and cited
+- [ ] 10 §4.1 and the research note reflect the outcome
+- [ ] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +101,4 @@ The docs agree and are specific enough to build from: Kev has a row in 10 §4.1 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · decision recorded (17 §D P6-B003) and the rule is in 10 §4.3, D10, 04 and roadmap R6.12/T6.72, but whether a public, licence-compatible Kev release exists is still an unverified (U) real-world fact and 10 §4.1 has no Kev row yet. Left open (S3); owned by P6-T068 (agent check, T6.72), which P6-T027/P6-T029 depend on. Root cause: Kev was named as a contender before anyone checked its source.

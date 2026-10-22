@@ -4,7 +4,7 @@ kind: gap
 title: DefiLlama rule says `api.llama.fi` only, but the free yields API the allocator needs is served from the yields host
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.21]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B006-defillama-yields-endpoint-terms
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/06-aggregators-and-market-providers.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/12-policy-and-compliance.md §4 (DefiLlama row) vs docs/13-wallets-treasury-and-onchain.md §4
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B006 · DefiLlama rule says `api.llama.fi` only, but the free yields API the allocator needs is served from the yields host
@@ -50,9 +55,10 @@ The docs agree and are specific enough to build from: 12 §4 names every DefiLla
 
 ## ToDo
 
-- [ ] Check DefiLlama's official API docs for hosts and terms.
-- [ ] Propose the 12 §4 wording.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B006): DefiLlama official free API hosts `api.llama.fi` and `yields.llama.fi` are allowed; site scraping isn't
+- [x] Owning docs carry it: 12 §4 DefiLlama row; 06 DefiLlama rows; 13 §4 discovery bullet; roadmap R6.21
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T035
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -67,8 +73,9 @@ The docs agree and are specific enough to build from: 12 §4 names every DefiLla
 
 ## Acceptance criteria
 
-- [ ] 12 §4 and 13 §4 consistent; P6-T035 cites the rule.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (12 §4 DefiLlama row; 06 DefiLlama rows; 13 §4 discovery bullet; roadmap R6.21)
+- [x] Affected tasks consistent with it (P6-T035)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +101,7 @@ The docs agree and are specific enough to build from: 12 §4 names every DefiLla
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P6-B006: DefiLlama official free API hosts `api.llama.fi` and `yields.llama.fi` are allowed; site scraping isn't. Docs now carry it: 12 §4 DefiLlama row; 06 DefiLlama rows; 13 §4 discovery bullet; roadmap R6.21. Implementation owned by P6-T035. Root cause: 12 §4 named only the TVL host.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B006); docs updated: 12 §4 DefiLlama row, 06 DefiLlama rows, 13 §4, roadmap R6.21; implementation owned by P6-T035
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

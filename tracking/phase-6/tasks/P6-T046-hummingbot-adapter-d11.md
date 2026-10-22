@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T003]
+depends_on: [P6-T003, P2-T017, P2-T031]
 requirements: [R6.30]
 roadmap_todos: [T6.30]
 modules: [M13, M11, M16]
 dashboards: [D11]
+tools: [git, docker, uv]
+mcp: []
+env: []
+services: [hummingbot, nats]
 branch: p6/P6-T046-hummingbot-adapter-d11
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D11-market-making.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T046 · Optional: Hummingbot market-making sidecar behind M11 with D11
@@ -42,13 +47,14 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 - UI: [D11](../../../docs/ui/dashboards/D11-market-making.md)
 - Kill: [02 F6](../../../docs/02-v1-architecture.md#8-end-to-end-flows) (Hummingbot stops)
 - Depends on (this phase): P6-T003
+- Cross-phase: P2-T017 (M11 RiskGate), P2-T031 (kill switch)
 
 ## Requirements
 
 - Pinned image/commit; telemetry disabled check and broker-ID stripping check both block start if failing.
 - Adapter: Hummingbot API ↔ `mt_engine` venue abstraction; every order intent passes M11 (exposure counts toward global limits).
 - Kill switch → all bots stop within 1 s; `mm.bot.cancel_all` (C1).
-- Commands `mm.bot.create|start|stop|update|cancel_all` with D11 levels (paper C1; live C2; risk-increasing C3).
+- Commands `mm.bot.create|start|stop|update|cancel_all` with D11 levels: create/start paper C1; live start C3 (quotes on its own, like `autonomous`); edit live C2, risk-increasing C3; stop and cancel_all C1. Live is out of scope in P6.
 - Paper P&L decomposition (spread capture, inventory, fees/rebates, funding) vs HLP APR on the same notional, weekly.
 
 ## ToDo
@@ -105,3 +111,4 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (D11 levels incl. live start C3; cross-phase deps P2-T017/P2-T031; run fields)

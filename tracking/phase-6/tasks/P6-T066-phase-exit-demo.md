@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010]
+depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070]
 requirements: [R6.01, R6.05, R6.10, R6.12, R6.20, R6.21, R6.22, R6.24, R6.40]
 roadmap_todos: []
 modules: [M8, M9, M10, M21, M22]
 dashboards: [D09, D10, D18]
+tools: [git, uv, docker, pnpm, playwright]
+mcp: []
+env: []
+services: [mt-api, agents, anvil, telegram-bot-api]
 branch: p6/P6-T066-phase-exit-demo
 pr: ""
 doc_sync: [tracking/phase-6/PHASE.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T066 · Phase 6 exit demo
@@ -39,7 +44,7 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.12](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.20](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.21](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.22](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.24](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.40](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting item)
 - [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) · Roadmap §5 deliverables
 - All VERIFY items in this phase
-- Depends on (this phase): P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010
+- Depends on (this phase): P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034 (your approved treasury policy), P6-T067 (sample runs), P6-T069 (port check), P6-T070 (live keys)
 
 ## Requirements
 
@@ -52,7 +57,8 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - [ ] Demo 1: D09 → analysis of a tester-chosen instrument → Signal with provenance.
 - [ ] Demo 2: seeded anomaly → Telegram brief.
 - [ ] Demo 3: open the signed-off bake-off report (P6-T059) and the registry entry.
-- [ ] Demo 4: allocate idle test stables on fork → gate allow → position within caps; reserve ≥ min.
+- [ ] Demo 4: allocate idle test stables on fork under your approved policy (P6-T034) → gate allow → position within caps; reserve ≥ min.
+- [ ] Link the evidence of P6-T067 (sample runs), P6-T069 (port check) and P6-T070 (live key check).
 - [ ] Confirm no open S1/S2 bugs; tick PHASE.md exit boxes.
 
 ## Verification
@@ -98,3 +104,4 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo now also depends on P6-T034, P6-T067, P6-T069, P6-T070 (new T6.66/T6.73 and the live check); run fields)

@@ -12,20 +12,25 @@ owner: agent
 claimed_by: ""
 depends_on: [P6-T005, P6-T008, P6-T013, P6-T015]
 requirements: [R6.02, R6.03]
-roadmap_todos: []
+roadmap_todos: [T6.67]
 modules: [M8, M17]
 dashboards: [D09, D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [litellm, postgres, nats]
 branch: p6/P6-T052-verify-llm-audit-scheduler
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T052 · Verify every LLM call is audited and agents never run per tick
@@ -36,9 +41,9 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 
 ## Context & references
 
-- Roadmap: [R6.02](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.03](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting item)
+- Roadmap: [R6.02](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.03](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.67 (scheduler test; also the R6.03 audit check)
 - Roadmap: R6.02 verified by 'Scheduler tests', R6.03 by 'Audit check' · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) · [15 §2.4](../../../docs/15-bots-hitl-and-worm-audit.md#24-tests-part-of-every-phase-that-adds-a-worm-table)
-- Gap: P6-B001 (no roadmap VERIFY ToDo for these)
+- Decisions: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B001: missing VERIFY ToDos added, this is T6.67; P6-B010: `audit.llm_call` written from P0, so the reconciliation covers P0–P6 callers)
 - Depends on (this phase): P6-T005, P6-T008, P6-T013, P6-T015
 
 ## Requirements
@@ -89,7 +94,7 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 ## Doc sync on completion
 
 - `docs/03-build-spec.md` M17: link the reconciliation check.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick the matching ToDo (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.67 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -100,3 +105,4 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.67; audit.llm_call from P0 (17 §D P6-B010); run fields)

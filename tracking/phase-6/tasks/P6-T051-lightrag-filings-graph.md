@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T003]
+depends_on: [P6-T003, P4-T031]
 requirements: [R6.32]
 roadmap_todos: [T6.30]
 modules: [M9]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, gpu]
 branch: p6/P6-T051-lightrag-filings-graph
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T051 · Optional: LightRAG offline graph over filings (research path)
@@ -40,6 +45,7 @@ An offline batch LightRAG graph (suppliers, customers, subsidiaries, litigation)
 - Optional: only if P6-T003 recorded `yes`; otherwise cancel this item.
 - Spec: [10 §3](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) item 7 · [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (LightRAG needs ~30B-A3B-class model for extraction) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory)
 - Depends on (this phase): P6-T003
+- Cross-phase: P4-T031 (`rag` schema, chunker)
 
 ## Requirements
 
@@ -95,3 +101,4 @@ An offline batch LightRAG graph (suppliers, customers, subsidiaries, litigation)
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P4-T031; run fields)

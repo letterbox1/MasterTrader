@@ -11,21 +11,26 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P6-T007, P6-T008, P6-T015, P6-T012, P6-T024]
-requirements: [R6.01, R6.05]
+requirements: [R6.01, R6.05, R6.N1]
 roadmap_todos: [T6.65]
 modules: [M8, M10, M21, M9]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [agents, litellm, llm-local, hindsight, decision-svc]
 branch: p6/P6-T054-verify-prompt-injection
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T054 · Prompt-injection test: scraped text can't trigger commands
@@ -36,7 +41,7 @@ A red-team corpus of scraped texts with embedded instructions is pushed through 
 
 ## Context & references
 
-- Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.65
+- Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.N1](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.65
 - Spec: [02 §9.1](../../../docs/02-v1-architecture.md#91-security) (untrusted input; LLMs never see secrets) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (LLM safety; read-only tools; Signal only)
 - Cross-phase: P4 R4.N1 untrusted marking; P8 repeats this for MCP
 - Depends on (this phase): P6-T007, P6-T008, P6-T015, P6-T012, P6-T024
@@ -97,3 +102,4 @@ A red-team corpus of scraped texts with embedded instructions is pushed through 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (R6.N1 added (prompt-injection resistance, 02 §9.1); keyless (recorded + local model); run fields)

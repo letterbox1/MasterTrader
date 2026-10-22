@@ -15,17 +15,22 @@ requirements: [R6.32]
 roadmap_todos: [T6.30]
 modules: [M14]
 dashboards: []
+tools: [git, docker, uv]
+mcp: []
+env: []
+services: [llm-local]
 branch: p6/P6-T050-crowd-sim-experiment
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/research/mirofish.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T050 · Optional: crowd-simulation experiment (OASIS, local, research only)
@@ -39,7 +44,7 @@ A walled-off crowd-sim experiment (clean-room on CAMEL-AI OASIS with a local LLM
 - Roadmap: [R6.32](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.30
 - Optional: only if P6-T003 recorded `yes`; otherwise cancel this item.
 - Spec: [03 M14](../../../docs/03-build-spec.md#m14-crowd-simulation-optional) (candidate feature only) · [research: MiroFish](../../../docs/research/mirofish.md) (AGPL, Zep Cloud mandatory, no auth, CORS *, default secret, non-deterministic)
-- Gap: P6-B009
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B009: MiroFish/OASIS only with a local memory backend and a hardened config (auth on, no default secrets, no open CORS); no Zep Cloud; otherwise M14 is skipped) · [03 M14](../../../docs/03-build-spec.md#m14-crowd-simulation-optional)
 - Depends on (this phase): P6-T003
 
 ## Requirements
@@ -48,6 +53,7 @@ A walled-off crowd-sim experiment (clean-room on CAMEL-AI OASIS with a local LLM
 - Seeded, recorded runs; ≤ 40 rounds; outputs to `research.crowdsim_run` only.
 - Evaluation: does the narrative score add information vs existing features on post-cutoff events? Report IC with CI.
 - No path to strategies unless a later gated feature promotion.
+- Allowed paths only: (a) MiroFish with its memory swapped to a local backend (our Postgres/Hindsight) and the hardened config, or (b) clean-room OASIS (Apache-2.0). If neither runs locally, M14 is skipped: record it and cancel this item.
 
 ## ToDo
 
@@ -99,3 +105,4 @@ A walled-off crowd-sim experiment (clean-room on CAMEL-AI OASIS with a local LLM
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (M14 local-memory-backend/hardened-config rule, else skipped (17 §D P6-B009); run fields)

@@ -15,17 +15,22 @@ requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, prefect]
 branch: p6/P6-T026-per-question-threshold-tuner
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T026 · Per-question threshold tuner from measured disagreement
@@ -40,13 +45,14 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (thresholds per question from measured disagreement with teacher and outcomes)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Decision questions (Edit question C1)
 - Depends on (this phase): P6-T025, P6-T022
+- Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)
 
 ## Requirements
 
 - Inputs: last N weeks of decisions, shadow checks, settled outcomes, user labels per question.
 - Objective: maximise coverage subject to precision ≥ target (outcome/user labels) and teacher disagreement ≤ configured ceiling; bootstrap CI reported.
 - Output: proposal row (`models.question_proposal`) with old/new thresholds, expected coverage/precision; never auto-applied.
-- Veto thresholds can only move **up** without C2 review; lowering a veto threshold is treated as loosening (C3).
+- Applying a proposal is `models.question.update` (C1, new version); a threshold below its default bar in 16 §2.10 (auto-decide precision < 0.75, veto precision < 0.90) is loosening and needs C3 (02 §7.2).
 
 ## ToDo
 
@@ -63,7 +69,7 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 
 ### Scenarios
 - Given precision on `relevance` is 0.92 at threshold 0.6, then the tuner proposes a lower threshold with higher coverage and shows the CI.
-- Given a request to lower a veto threshold via C1, then the server requires C3.
+- Given a C1 request that sets veto precision below 0.90, then the server requires C3.
 
 ### Stress / failure injection
 - n/a: weekly batch over bounded data.
@@ -98,3 +104,4 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (C3 only below the 16 §2.10 default bars (02 §7.2); run fields)

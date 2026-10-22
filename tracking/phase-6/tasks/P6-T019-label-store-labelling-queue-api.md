@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T018]
+depends_on: [P6-T018, P4-T062]
 requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, prefect, mt-api]
 branch: p6/P6-T019-label-store-labelling-queue-api
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ui/dashboards/D10-models-memory.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T019 · Label store with provenance and the labelling-queue API
@@ -39,23 +44,24 @@ Training labels come **only from outcomes or from you**: a `models.label` store 
 - Roadmap: [R6.13](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.26
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (labels from outcomes or you, never shadow outputs) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (`train_ok`)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Additions (labelling queue, `models.label.add` C0)
-- Gap: P6-B004 (`models.label.add` / labels endpoint missing from 02 §7)
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B004: labels endpoint/command and the D10 queue tab; now in 02 §7.1–7.2 and D10)
+- Cross-phase: P4-T062 (`models.label` table, `models.label.add` C0, D08 Label mode)
 - Depends on (this phase): P6-T018
 
 ## Requirements
 
-- `models.label` (WORM): label_id, question_id + version, subject/decision ref, option, `label_source ∈ {outcome, user}` (DB CHECK), labeller, created_at, note; corrections are new rows superseding old.
+- `models.label` already exists from P4 (P4-T062: insert-only, source `user` | `outcome`). Extend it additively (decision ref, labeller, note, queue item ref, a DB CHECK on the source column if P4 didn't add one); never re-create it. Corrections are new rows superseding old.
 - `models.shadow_check` lives in a separate table; there is no code path or FK that writes a shadow output into `models.label` (enforced by role grants: shadow writer has no INSERT on `models.label`).
 - Queue sampler (Prefect hourly): abstentions, shadow disagreements, high-value calls (by notional/EV), stratified per question; target ~15 min/day of items (default 40/day); excludes rows with `train_ok=false`.
-- API: `GET /models/labels/queue`, `GET /models/labels?question=`; command `models.label.add` (C0, audited) with idempotency.
+- API: add `GET /models/labels/queue` and extend `GET /models/labels` (`?question=`); reuse the P4 `models.label.add` command (C0, audited, idempotent), adding the queue item reference.
 - Outcome labels written by the settlement-driven job (P6-T020) with `label_source=outcome`.
 
 ## ToDo
 
-- [ ] Migration (`models.label`, `models.label_queue`, role grants).
+- [ ] Additive migration (`models.label` columns, `models.label_queue`, role grants).
 - [ ] Sampler flow and queue API.
 - [ ] `models.label.add` handler; Telegram inline quick-label optional (C0).
-- [ ] Tests; docs (add the command/endpoint to 02 §7).
+- [ ] Tests; docs (02 §7 already lists the command and endpoints; document the queue payload).
 
 ## Verification
 
@@ -76,7 +82,7 @@ Training labels come **only from outcomes or from you**: a `models.label` store 
 
 - [ ] No path writes shadow outputs as labels (DB + code tests).
 - [ ] Queue API serves D10.
-- [ ] Command catalogued in docs.
+- [ ] Queue endpoint payload documented in 02 §7.1.
 
 ## Exceptions & edge cases
 
@@ -106,3 +112,4 @@ Training labels come **only from outcomes or from you**: a `models.label` store 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (extends P4 models.label/models.label.add (P4-T062) instead of re-creating; labels endpoint + D10 queue tab per 17 §D P6-B004; run fields)

@@ -4,7 +4,7 @@ kind: gap
 title: LLM calls from P2–P5 (leakage review, SemIf-adjacent jobs, morning brief) run before the `audit.llm_call` writer lands in P6
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.03]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B010-llm-calls-unaudited-before-p6
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md, docs/roadmap/phase-6-ai-models-treasury.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-0-foundations.md R0.07/R0.09 vs docs/roadmap/phase-6-ai-models-treasury.md R6.03
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B010 · LLM calls from P2–P5 (leakage review, SemIf-adjacent jobs, morning brief) run before the `audit.llm_call` writer lands in P6
@@ -51,9 +56,10 @@ The docs agree and are specific enough to build from: LLM calls are audited from
 
 ## ToDo
 
-- [ ] Raise with P0/P2 planners.
-- [ ] If moved, re-scope P6-T005 to the extension only.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B010): `audit.llm_call` is written from P0 via the LiteLLM callback; P6 only extends it (prompt registry, training cutoff)
+- [x] Owning docs carry it: 10 §5 (Audit from P0); 03 M8 and §7; 15 §2 audit list; roadmap R6.03 (R0.13) and T6.31; 04 Phase 6 'Evaluation and cost'
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P0-T042 (writer), P0-T031 (table), P6-T005 (extension, T6.31), P6-T052 (audit check)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -68,8 +74,9 @@ The docs agree and are specific enough to build from: LLM calls are audited from
 
 ## Acceptance criteria
 
-- [ ] Owning phase decided and documented.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (10 §5 (Audit from P0); 03 M8 and §7; 15 §2 audit list; roadmap R6.03 (R0.13) and T6.31; 04 Phase 6 'Evaluation and cost')
+- [x] Affected tasks consistent with it (P0-T042 (writer), P0-T031 (table), P6-T005 (extension, T6.31), P6-T052 (audit check))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +101,7 @@ The docs agree and are specific enough to build from: LLM calls are audited from
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P6-B010: `audit.llm_call` is written from P0 via the LiteLLM callback; P6 only extends it (prompt registry, training cutoff). Docs now carry it: 10 §5 (Audit from P0); 03 M8 and §7; 15 §2 audit list; roadmap R6.03 (R0.13) and T6.31; 04 Phase 6 'Evaluation and cost'. Implementation owned by P0-T042 (writer), P0-T031 (table), P6-T005 (extension, T6.31), P6-T052 (audit check). Root cause: the audit writer was scheduled with the agents instead of with the gateway.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B010); docs updated: 10 §5 audit from P0, 03 M8/§7, 15 §2 audit list, roadmap R6.03/T6.31 (R0.13), 04 Phase 6; implementation owned by P0-T042, P0-T031, P6-T005, P6-T052
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

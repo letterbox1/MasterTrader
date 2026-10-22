@@ -4,7 +4,7 @@ kind: gap
 title: HLP cap stated three ways: '≤ 5–10% of portfolio / ≤ 10% of stables' vs '≤ 10% of stables' vs allocation table
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.20]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B013-hlp-cap-inconsistent
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/14-strategy-evidence-and-validation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/13-wallets-treasury-and-onchain.md §4 vs docs/14-strategy-evidence-and-validation.md §3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B013 · HLP cap stated three ways: '≤ 5–10% of portfolio / ≤ 10% of stables' vs '≤ 10% of stables' vs allocation table
@@ -50,8 +55,10 @@ The docs agree and are specific enough to build from: one HLP cap definition (bo
 
 ## ToDo
 
-- [ ] Propose the unified wording.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §B P6-B013): HLP cap ≤ 10% of stablecoins and ≤ 5% of total portfolio, whichever is smaller (raising is C3)
+- [x] Owning docs carry it: 16 §2.7 HLP row; 13 §4 HLP row; 14 §3 HLP row and allocation table; roadmap R6.20 and T6.03
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T033 (policy), P6-T034 (your approval), P6-T036 (allocator), P6-T060 (verification)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -66,8 +73,9 @@ The docs agree and are specific enough to build from: one HLP cap definition (bo
 
 ## Acceptance criteria
 
-- [ ] 13 §4 and 14 §3 agree.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (16 §2.7 HLP row; 13 §4 HLP row; 14 §3 HLP row and allocation table; roadmap R6.20 and T6.03)
+- [x] Affected tasks consistent with it (P6-T033 (policy), P6-T034 (your approval), P6-T036 (allocator), P6-T060 (verification))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +100,7 @@ The docs agree and are specific enough to build from: one HLP cap definition (bo
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §B P6-B013: HLP cap ≤ 10% of stablecoins and ≤ 5% of total portfolio, whichever is smaller (raising is C3). Docs now carry it: 16 §2.7 HLP row; 13 §4 HLP row; 14 §3 HLP row and allocation table; roadmap R6.20 and T6.03. Implementation owned by P6-T033 (policy), P6-T034 (your approval), P6-T036 (allocator), P6-T060 (verification). Root cause: 13 and 14 stated the cap differently.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P6-B013); docs updated: 16 §2.7 HLP row, 13 §4 HLP row, 14 §3 HLP row and allocation table, roadmap R6.20/T6.03; implementation owned by P6-T033, P6-T034, P6-T036, P6-T060
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

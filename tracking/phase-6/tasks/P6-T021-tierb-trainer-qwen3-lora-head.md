@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T020]
+depends_on: [P6-T020, P2-T046]
 requirements: [R6.10]
 roadmap_todos: [T6.24]
 modules: [M21, M7]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker, nvidia-smi]
+mcp: []
+env: []
+services: [mlflow, gpu]
 branch: p6/P6-T021-tierb-trainer-qwen3-lora-head
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T021 · Tier B trainer: Qwen3 + LoRA + classification head (CE + λ·Brier)
@@ -38,7 +43,7 @@ checkpoint: ""
 
 - Roadmap: [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.24
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) stage 2 · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [research: decision models](../../../docs/research/decision-models-system-one.md) (HF + PEFT recipe; `MersivMedia/clef-finetune` CE + λ·Brier reference; TEI can't serve Qwen3 classification, issue #643)
-- Cross-phase: P2 R2.44 MLflow, T2.41 registry stages
+- Cross-phase: P2-T046 (MLflow artefact storage + registry stages); the GPU comes from P0-T005 (without one, training is smoke-only)
 - Depends on (this phase): P6-T020
 
 ## Requirements
@@ -107,3 +112,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T046; run fields)

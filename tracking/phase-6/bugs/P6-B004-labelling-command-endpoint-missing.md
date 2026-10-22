@@ -4,7 +4,7 @@ kind: gap
 title: Labelling queue: `models.label.add` and a labels endpoint are missing from the API contract; D10 tab list omits the queue
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.13, R6.40]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B004-labelling-command-endpoint-missing
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D10-models-memory.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7.1–§7.2; docs/ui/dashboards/D10-models-memory.md
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B004 · Labelling queue: `models.label.add` and a labels endpoint are missing from the API contract; D10 tab list omits the queue
@@ -50,8 +55,10 @@ The docs agree and are specific enough to build from: 02 §7 lists `models.label
 
 ## ToDo
 
-- [ ] Propose the 02 §7 rows and D10 edits.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B004/P6-B014): add the labels endpoint/command and the D10 queue tab
+- [x] Owning docs carry it: 02 §7.1 (`/models/labels`, `/models/labels/queue`); 02 §7.2 (`models.label.add` C0); D10 route tab list (Labelling queue) and Bake-off row (Kev, only if a public licence-compatible release exists); roadmap R6.40
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P4-T062 (table + command), P6-T019 (queue API), P6-T043 (D10 tab)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -66,8 +73,9 @@ The docs agree and are specific enough to build from: 02 §7 lists `models.label
 
 ## Acceptance criteria
 
-- [ ] 02 §7 and D10 consistent with P6-T019.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (02 §7.1 (`/models/labels`, `/models/labels/queue`); 02 §7.2 (`models.label.add` C0); D10 route tab list (Labelling queue) and Bake-off row (Kev, only if a public licence-compatible release exists); roadmap R6.40)
+- [x] Affected tasks consistent with it (P4-T062 (table + command), P6-T019 (queue API), P6-T043 (D10 tab))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +100,7 @@ The docs agree and are specific enough to build from: 02 §7 lists `models.label
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P6-B004/P6-B014: add the labels endpoint/command and the D10 queue tab. Docs now carry it: 02 §7.1 (`/models/labels`, `/models/labels/queue`); 02 §7.2 (`models.label.add` C0); D10 route tab list (Labelling queue) and Bake-off row (Kev, only if a public licence-compatible release exists); roadmap R6.40. Implementation owned by P4-T062 (table + command), P6-T019 (queue API), P6-T043 (D10 tab). Root cause: D10 defined the command and tab before the API catalogue was updated.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B004); docs updated: 02 §7.1 /models/labels + /models/labels/queue, 02 §7.2 models.label.add (C0), D10 route tabs + Bake-off row, roadmap R6.40; implementation owned by P4-T062, P6-T019, P6-T043
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

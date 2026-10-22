@@ -4,7 +4,7 @@ kind: gap
 title: Tier-B promotion/abstention/veto thresholds have no numbers (target precision, ECE max, flip-rate max, veto precision)
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.10, R6.14]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B015-model-gate-thresholds-undefined
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/10-memory-rag-and-models.md §4.3; docs/03-build-spec.md M21
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B015 · Tier-B promotion/abstention/veto thresholds have no numbers (target precision, ECE max, flip-rate max, veto precision)
@@ -50,9 +55,10 @@ The docs agree and are specific enough to build from: documented defaults (user-
 
 ## ToDo
 
-- [ ] Confirm defaults with the user.
-- [ ] Document them in 10 §4.3.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §C P6-B015): tier-B threshold defaults
+- [x] Owning docs carry it: 16 §2.10 (auto-decide coverage at ≥ 0.75 precision, veto ≥ 0.90, ECE ≤ 0.05, flip rate ≤ 0.1%, ≥ 14 days in shadow); 10 §4.3 (abstention, promotion, veto, determinism); roadmap R6.13/R6.14; 02 §7.2 (`models.question.update` below the default bar is C3)
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T018 (registry), P6-T022 (calibration), P6-T026 (tuner), P6-T030 (promotion gates), P6-T057/P6-T059 (verification)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -67,8 +73,9 @@ The docs agree and are specific enough to build from: documented defaults (user-
 
 ## Acceptance criteria
 
-- [ ] Defaults documented.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (16 §2.10 (auto-decide coverage at ≥ 0.75 precision, veto ≥ 0.90, ECE ≤ 0.05, flip rate ≤ 0.1%, ≥ 14 days in shadow); 10 §4.3 (abstention, promotion, veto, determinism); roadmap R6.13/R6.14; 02 §7.2 (`models.question.update` below the default bar is C3))
+- [x] Affected tasks consistent with it (P6-T018 (registry), P6-T022 (calibration), P6-T026 (tuner), P6-T030 (promotion gates), P6-T057/P6-T059 (verification))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +99,7 @@ The docs agree and are specific enough to build from: documented defaults (user-
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §C P6-B015: tier-B threshold defaults. Docs now carry it: 16 §2.10 (auto-decide coverage at ≥ 0.75 precision, veto ≥ 0.90, ECE ≤ 0.05, flip rate ≤ 0.1%, ≥ 14 days in shadow); 10 §4.3 (abstention, promotion, veto, determinism); roadmap R6.13/R6.14; 02 §7.2 (`models.question.update` below the default bar is C3). Implementation owned by P6-T018 (registry), P6-T022 (calibration), P6-T026 (tuner), P6-T030 (promotion gates), P6-T057/P6-T059 (verification). Root cause: the docs required thresholds without numbers.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P6-B015); docs updated: 16 §2.10 tier-B thresholds, 10 §4.3, roadmap R6.13/R6.14, 02 §7.2 models.question.update; implementation owned by P6-T018, P6-T022, P6-T026, P6-T030, P6-T057, P6-T059
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

@@ -4,7 +4,7 @@ kind: gap
 title: Roadmap P6: R6.03 has no ToDo; R6.07 enforcement and several 'Verified by' checks have no BUILD/VERIFY ToDo
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.03, R6.07, R6.01, R6.02, R6.05, R6.06]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B001-roadmap-r603-r607-missing-todos
 pr: ""
 doc_sync: [docs/roadmap/phase-6-ai-models-treasury.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-6-ai-models-treasury.md §3–§4
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B001 · Roadmap P6: R6.03 has no ToDo; R6.07 enforcement and several 'Verified by' checks have no BUILD/VERIFY ToDo
@@ -50,9 +55,10 @@ The docs agree and are specific enough to build from: every requirement is reach
 
 ## ToDo
 
-- [ ] Draft the roadmap additions (IDs and wording) in this file.
-- [ ] Agree them with the roadmap owner.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §D P6-B001/P6-B011): add the missing roadmap ToDos and non-functional rows
+- [x] Owning docs carry it: roadmap phase-6 §3 (R6.N1 prompt injection, R6.N2 127.0.0.1 + API key, R6.N3 tier-B latency) and §4 (T6.31 R6.03 versioning/audit, T6.32 budget enforcement, VERIFY T6.66–T6.73)
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P6-T005 (T6.31), P6-T009 (T6.32), P6-T067 (T6.66), P6-T052 (T6.67), P6-T061 (T6.68), P6-T063 (T6.69), P6-T053 (T6.70), P6-T058 (T6.71), P6-T068 (T6.72), P6-T069 (T6.73), P6-T054 (R6.N1)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -67,8 +73,9 @@ The docs agree and are specific enough to build from: every requirement is reach
 
 ## Acceptance criteria
 
-- [ ] Roadmap §3/§4 updated; kanban validate shows the new IDs mapped to P6 tasks.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (roadmap phase-6 §3 (R6.N1 prompt injection, R6.N2 127.0.0.1 + API key, R6.N3 tier-B latency) and §4 (T6.31 R6.03 versioning/audit, T6.32 budget enforcement, VERIFY T6.66–T6.73))
+- [x] Affected tasks consistent with it (P6-T005 (T6.31), P6-T009 (T6.32), P6-T067 (T6.66), P6-T052 (T6.67), P6-T061 (T6.68), P6-T063 (T6.69), P6-T053 (T6.70), P6-T058 (T6.71), P6-T068 (T6.72), P6-T069 (T6.73), P6-T054 (R6.N1))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +99,7 @@ The docs agree and are specific enough to build from: every requirement is reach
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P6-B001/P6-B011: add the missing roadmap ToDos and non-functional rows. Docs now carry it: roadmap phase-6 §3 (R6.N1 prompt injection, R6.N2 127.0.0.1 + API key, R6.N3 tier-B latency) and §4 (T6.31 R6.03 versioning/audit, T6.32 budget enforcement, VERIFY T6.66–T6.73). Implementation owned by P6-T005 (T6.31), P6-T009 (T6.32), P6-T067 (T6.66), P6-T052 (T6.67), P6-T061 (T6.68), P6-T063 (T6.69), P6-T053 (T6.70), P6-T058 (T6.71), P6-T068 (T6.72), P6-T069 (T6.73), P6-T054 (R6.N1). Root cause: the roadmap listed 'Verified by' checks and security requirements without ToDos or R6.N IDs.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B001/P6-B011); docs updated: roadmap phase-6 §3 R6.N1–R6.N3 and §4 T6.31, T6.32, T6.66–T6.73; implementation owned by P6-T005, P6-T009, P6-T052, P6-T053, P6-T054, P6-T058, P6-T061, P6-T063, P6-T067, P6-T068, P6-T069
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

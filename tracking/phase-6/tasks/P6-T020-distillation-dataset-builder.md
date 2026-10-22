@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T013, P6-T018, P6-T019]
+depends_on: [P6-T013, P6-T018, P6-T019, P2-T107]
 requirements: [R6.10, R6.14, R6.13]
 roadmap_todos: [T6.24]
 modules: [M21, M7, M6]
 dashboards: [D10]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, mlflow]
 branch: p6/P6-T020-distillation-dataset-builder
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T020 · Outcome-corrected distillation dataset builder
@@ -40,6 +45,7 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (distilled from M8, corrected against outcomes, purged/embargoed walk-forward, option shuffle/rename augmentation) · [10 §6](../../../docs/10-memory-rag-and-models.md#6-where-this-lands-in-the-build) (M6 feature snapshots per decision) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
 - Flow: [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 5
 - Depends on (this phase): P6-T013, P6-T018, P6-T019
+- Cross-phase: P2-T107 (MLflow tracking); reuse the P2-T109 purged walk-forward helpers where they fit
 
 ## Requirements
 
@@ -104,3 +110,4 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T107; run fields)

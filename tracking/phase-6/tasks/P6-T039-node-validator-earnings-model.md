@@ -15,17 +15,22 @@ requirements: [R6.23]
 roadmap_todos: [T6.28]
 modules: [M22]
 dashboards: [D18]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, prefect]
 branch: p6/P6-T039-node-validator-earnings-model
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T039 · Node/validator net-earnings model
@@ -93,3 +98,4 @@ A monthly model computes `net = rewards + MEV fees + commission − infra − op
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; model only, no automation)

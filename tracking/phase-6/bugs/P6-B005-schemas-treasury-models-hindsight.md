@@ -4,7 +4,7 @@ kind: gap
 title: Schema lists disagree: `treasury`, `models`, `rag`, `hindsight` missing from P0/03 §4; wallet registry named both `treasury.wallet` and `ops.wallets`
 phase: 6
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R6.04, R6.20]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p6/P6-B005-schemas-treasury-models-hindsight
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §4 vs §5.1; docs/03-build-spec.md §4; docs/roadmap/phase-0-foundations.md R0.03; docs/roadmap/phase-5-airdrops-wallets-curation.md R5.05
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-B005 · Schema lists disagree: `treasury`, `models`, `rag`, `hindsight` missing from P0/03 §4; wallet registry named both `treasury.wallet` and `ops.wallets`
@@ -50,9 +55,10 @@ The docs agree and are specific enough to build from: one schema list (02 §5.1 
 
 ## ToDo
 
-- [ ] Inventory schemas across docs.
-- [ ] Propose one list with creating phase.
-- [ ] Update the docs listed under Doc sync and link the resolving commit here.
+- [x] Decision recorded in docs/17 (17 §B P0-B005/P6-B005 and P3-B003/P5-B015/P6-B005): one canonical list of 13 schemas incl. `models`, `rag`, `treasury`, `hindsight`, all created in P0; one wallet registry `ops.wallets`
+- [x] Owning docs carry it: 02 §5.1 stores row; 03 §4 data model; roadmap R0.03; 02 §4 component table
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P0-T024 (schemas), P6-T011 (Hindsight role/tables), P6-T033 (treasury tables)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -67,8 +73,9 @@ The docs agree and are specific enough to build from: one schema list (02 §5.1 
 
 ## Acceptance criteria
 
-- [ ] 02 §4, §5.1, 03 §4 and P0/P5 roadmaps agree.
-- [ ] Root cause noted in the progress log.
+- [x] Decision recorded in the owning docs (02 §5.1 stores row; 03 §4 data model; roadmap R0.03; 02 §4 component table)
+- [x] Affected tasks consistent with it (P0-T024 (schemas), P6-T011 (Hindsight role/tables), P6-T033 (treasury tables))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +100,7 @@ The docs agree and are specific enough to build from: one schema list (02 §5.1 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §B P0-B005/P6-B005 and P3-B003/P5-B015/P6-B005: one canonical list of 13 schemas incl. `models`, `rag`, `treasury`, `hindsight`, all created in P0; one wallet registry `ops.wallets`. Docs now carry it: 02 §5.1 stores row; 03 §4 data model; roadmap R0.03; 02 §4 component table. Implementation owned by P0-T024 (schemas), P6-T011 (Hindsight role/tables), P6-T033 (treasury tables). Root cause: schema lists were written per module and never reconciled.
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P0-B005/P6-B005, P3-B003/P5-B015/P6-B005); docs updated: 02 §5.1, 03 §4, roadmap R0.03, 02 §4; implementation owned by P0-T024, P6-T011, P6-T033
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave

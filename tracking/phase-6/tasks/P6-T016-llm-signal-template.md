@@ -53,7 +53,7 @@ An `llm_signal` template in `mt_strategy` turns `sig.agent.*` Signals into sized
 - Manifest fields: `signal_source` (agent run schedule id or subject list), `min_confidence` (calibrated), `min_edge` (bps), `horizon_match`, `model_versions` and `prompt_versions` allowed, `training_cutoff` (auto-filled from the model registry), counterparty sentence, sleeve, kill criteria, benchmark.
 - Signals are features visible from the Signal's `ts` (when it was produced, 03 M8), never from its `as_of`, so backtests can't see a Signal before it existed.
 - Exit plan fixed at entry (14 §4); sizing via M11 sizing models; bots on this template run in `paper` (or `hitl`) only in P6; `autonomous` needs the gates + C3 and comes in P7.
-- Optional tier-A stacker input: Signal probability as a feature for tier A (cached).
+- Optional tier-A stacker input: the Signal's calibrated confidence as a feature for tier A (cached).
 
 ## ToDo
 

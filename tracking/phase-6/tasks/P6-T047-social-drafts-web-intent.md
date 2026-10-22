@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T003]
+depends_on: [P6-T003, P5-T029, P0-T044]
 requirements: [R6.31]
 roadmap_todos: [T6.30]
 modules: [M23, M19]
 dashboards: [D13]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [llm-local, postgres]
 branch: p6/P6-T047-social-drafts-web-intent
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/ui/dashboards/D13-tasks-curation.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T047 · Optional: M23 social drafts → your approval → web intent
@@ -42,6 +47,7 @@ checkpoint: ""
 - UI: [D13](../../../docs/ui/dashboards/D13-tasks-curation.md) Social drafts tab
 - Container: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`social`)
 - Depends on (this phase): P6-T003
+- Cross-phase: P5-T029 (task queue with social quest tasks), P0-T044 (`local-advisor`)
 
 ## Requirements
 
@@ -101,3 +107,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P5-T029/P0-T044; run fields)
