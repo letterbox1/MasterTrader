@@ -191,7 +191,7 @@ Configurable per bot and per event type.
 | Token expiry | You choose per token: **1 day · 7 days · 30 days · 1 year · custom · indefinite**. Indefinite shows a red exposure/security warning, needs C3, and reminds you monthly |
 | Scopes | `read`, `analyse`, `trade` (creates approval cards only), `strategy`, `risk_tighten`, `curation`. Loosening risk is never a scope; it's C3 |
 | Never exposed | Withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key/token management, `approval.*`, `mcp.*`, restore/delete, audit writes |
-| Token creation | C2 for `read`, `analyse` and `curation` scopes; **C3** for `trade`, `strategy` and `risk_tighten` scopes and for any indefinite expiry |
+| Token creation | C1 for `read`, `analyse` and `curation` scopes; **C3** for `trade`, `strategy` and `risk_tighten` scopes and for any indefinite expiry |
 | Rate limits | 60 reads/min, 10 writes/min per token |
 | Response cap | 256 KB per tool result |
 
