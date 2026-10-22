@@ -10,43 +10,48 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P1-T041, P1-T042, P3-T034]
 requirements: [R7.09]
 roadmap_todos: [T7.23]
 modules: [M16, M12, M18]
 dashboards: [D07, D05, D14]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats, prefect-server]
 branch: p7/P7-T025-three-way-reconciliation
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D07-data-quality.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T025 · Three-way reconciliation: venue vs engine vs journal
 
 ## Goal / expected outcome
 
-Every N minutes (default 5) and at end of day, positions, open orders, balances and fills are compared across the venue (read-only key), the engine's in-memory/portfolio state and the journal; each difference is classified explained/unexplained and written to `audit.recon` with its age.
+Positions and open orders (every 60 s), balances (every 5 min) and a full reconciliation incl. fills (end of day, Sydney) are compared across the venue (read-only key), the engine's portfolio state and the journal (16 §2.9 defaults); each difference is classified explained (matched to a known journal event within 24 h) or unexplained and written to `audit.recon` with its age.
 
 ## Context & references
 
 - Roadmap: [R7.09 · ToDo T7.23](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (reconciliation every N minutes and EOD; mismatch = incident) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) (venue disconnect → unconfirmed) · [12 §3](../../../docs/12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) (STP cancels recorded as non-fills) · [D07](../../../docs/ui/dashboards/D07-data-quality.md) Reconciliation tab · [D05](../../../docs/ui/dashboards/D05-execution.md) (reconciliation status per position)
-- Cross-phase: P1 T1.29 (venue recon jobs, practice accounts), P3 T3.28 (journal ↔ venue recon). This task joins them into one three-way job for live sub-accounts.
-- Related: P7-T026 (unconfirmed state), P7-T027 (24 h ageing → halt), P7-T050 (fault injection), gap P7-B007 (N and tolerances unspecified)
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (reconciliation cadence, tolerance and the 24 h 'explained' rule) · [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation) · [17 §C P7-B007](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) (venue disconnect → unconfirmed) · [12 §3](../../../docs/12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) (STP cancels recorded as non-fills) · [D07](../../../docs/ui/dashboards/D07-data-quality.md) Reconciliation tab · [D05](../../../docs/ui/dashboards/D05-execution.md) (reconciliation status per position)
+- Cross-phase (`depends_on`): P1-T041/P1-T042 (venue recon on testnets and practice accounts), P3-T034 (journal ↔ venue recon). This task joins them into one three-way job for live sub-accounts; it is built and tested keyless (recorded fixtures, venue mock, sandbox paper venue); live read-only keys arrive with P7-T007 and are exercised in P7-T047.
+- Related: P7-T026 (unconfirmed state), P7-T027 (24 h ageing → halt), P7-T050 (fault injection), gap P7-B007 (resolved: 16 §2.9)
 
 ## Requirements
 
 - Sides: venue (REST via read-only key, rate-limit aware from live headers), engine (Nautilus portfolio/cache snapshot via `pos.{account}`), journal (`journal.*` positions/balances).
-- Interval: every 5 min per live sub-account (configurable 1–15), plus EOD at 00:05 UTC; on-demand `data.recon.run` (C1).
-- Tolerances: quantity exact to venue lot size; balances within max(1 minor unit, 0.01% ); fees within 1 minor unit.
-- Auto-explanations (each with rule id): fill in flight (< 30 s old), STP cancel (non-fill), fee rounding, funding settlement timing (± 5 min of funding time), pending deposit/withdrawal (manual, recorded). Everything else is `unexplained` with `first_seen_at`.
+- Cadence (16 §2.9 defaults, settings): positions and open orders every 60 s; balances every 5 min; full reconciliation at end of day (Sydney); on-demand `data.recon.run` (C1).
+- Tolerances (16 §2.9): position quantities match exactly; balances within 0.01% or dust (dust threshold per asset, a setting).
+- Explained = matched to a known journal event within 24 h (16 §2.9). Matching rules (each with a rule id): fill in flight (< 30 s old), STP cancel (non-fill), funding settlement, recorded deposit/withdrawal (manual), fee event. Anything not matched within 24 h is `unexplained` (kill criterion, P7-T027); `first_seen_at` is stored.
 - Outputs: `audit.recon` rows (WORM), NATS `recon.{account}`, D07/D05/D14 status; an unexplained break raises `alert.warning.recon` immediately and stays visible until resolved by a correction row.
 - Resolution is a new row (`resolution_of`) with reason; never an edit.
 
@@ -54,7 +59,7 @@ Every N minutes (default 5) and at end of day, positions, open orders, balances 
 
 - [ ] `packages/mt_monitor/recon/three_way.py` with side adapters (venue via ccxt/native read-only; engine snapshot RPC; journal SQL).
 - [ ] Explanation rules module with unit-tested rule ids.
-- [ ] Scheduler (monitor service loop) + EOD Prefect flow.
+- [ ] Scheduler (monitor service loop: 60 s positions/orders, 5 min balances) + EOD (Sydney) Prefect flow.
 - [ ] `data.recon.resolve` command (C1, reason required) writing resolution rows.
 - [ ] D07 Reconciliation tab: three columns (venue/engine/journal), age, rule, resolve action.
 - [ ] Tests; docs.
@@ -63,7 +68,7 @@ Every N minutes (default 5) and at end of day, positions, open orders, balances 
 
 ### Tests
 - Unit: each explanation rule with positive/negative fixtures.
-- Integration (testnet/paper venues): clean run → zero breaks; injected phantom position on engine side → unexplained break within one interval.
+- Integration (venue mock + sandbox paper venue, no keys): clean run → zero breaks; injected phantom position on the engine side → break within one 60 s interval, `unexplained` after 24 h without a matching journal event.
 - WORM: recon rows immutable; resolution creates a new row.
 
 ### Scenarios
@@ -72,7 +77,7 @@ Every N minutes (default 5) and at end of day, positions, open orders, balances 
 - Given venue REST rate-limited, then the run is `incomplete` (not clean) and retries with backoff.
 
 ### Stress / failure injection
-- 10 sub-accounts × 5-min interval for 24 h on testnets: no missed runs; venue 418/429 responses respected (no retry storms); run duration p95 < 30 s.
+- 10 sub-accounts at the 60 s / 5 min cadence for 24 h against the venue mock with real rate-limit headers: no missed runs; 418/429 respected (no retry storms); positions run p95 < 10 s.
 
 ## Acceptance criteria
 
@@ -110,3 +115,4 @@ Every N minutes (default 5) and at end of day, positions, open orders, balances 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (16 §2.9 defaults: 60 s positions/orders, 5 min balances, EOD Sydney, exact qty, 0.01%/dust, 24 h explained rule (P7-B007); keyless build; deps P1-T041/T042, P3-T034)

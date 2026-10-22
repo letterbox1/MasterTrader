@@ -10,41 +10,46 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P2-T132, P2-T133]
 requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M0, M7, M11, M18]
 dashboards: [D03]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, mlflow, backtest-worker]
 branch: p7/P7-T038-mastertradingbot-strategy-port
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T038 · Port MasterTradingBot strategies as M0 deterministic rule-based strategies
 
 ## Goal / expected outcome
 
-Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'deterministic rule-based') with a full manifest, built on the P2 shared indicator/sizing libraries, backtested with measured costs, and running on paper through the MT5/cTrader adapter.
+Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'deterministic rule-based') with a full manifest, built on the P2 shared indicator/sizing libraries, backtested with measured costs, and ready to run on paper through the MT5/cTrader adapter (started in P7-T051).
 
 ## Context & references
 
 - Roadmap: [R7.10 · ToDo T7.24](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (shared libraries, merging as M0 strategies sharing risk, journal, tax and UI) · [14 §4](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (porting pitfalls: fixed UTC daily cut, ATR/vol sizing instead of fixed pips, scalpers only on deep books, explicit STP) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) (counterparty rule)
-- Cross-phase: P2 T2.31 (shared libraries + template), P2 T2.67 (golden files), P2 T2.04 (your rule descriptions and outputs).
+- Cross-phase (`depends_on`): P2-T132 (deterministic rule-based template on the shared libraries P2-T130/T131), P2-T133 (golden files match).
 - Related: P7-T004 (strategies excluded by FP terms), P7-T036/T037, P7-T051
 
 ## Requirements
 
 - One manifest per strategy: counterparty sentence, sleeve, benchmark (FX/indices buy-and-hold or carry; gold buy-and-hold), kill criteria, venue `fp_markets_mt5|ctrader`, timeframe, sessions.
-- Sizing via the shared sizing library (vol-targeting / stop-distance), not fixed lots; per-trade risk ≤ 1% of sleeve.
+- Sizing via the shared sizing library (vol-targeting / stop-distance), not fixed lots; per-trade risk ≤ the bot's setting (default 1% of sleeve equity, [16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
 - Indicator/signal code only from `mt_core`/`mt_strategy` shared libraries (golden-tested); no copied MasterTradingBot source.
 - Each strategy passes through `lab.validate.run` and gets a gate report (P7-T014) before paper on the new adapter.
 
@@ -52,7 +57,7 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 
 - [ ] `strategies/mastertradingbot/<name>/` manifests + strategy classes.
 - [ ] Backtests with measured FP costs (spreads/swaps from M16).
-- [ ] Start paper bots on the demo account via the chosen adapter.
+- [ ] Prepare a paper bot definition per strategy (started on the demo account in P7-T051 once the chosen adapter is ready).
 - [ ] Tests; docs.
 
 ## Verification
@@ -69,7 +74,7 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 
 ## Acceptance criteria
 
-- [ ] Every permitted strategy has a manifest, backtest, gate report and a paper bot.
+- [ ] Every permitted strategy has a manifest, backtest, gate report and a paper bot definition.
 - [ ] CI green.
 
 ## Exceptions & edge cases
@@ -97,3 +102,4 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (per-trade risk default per 16 §2.1; paper start moved to P7-T051; deps P2-T132/T133)

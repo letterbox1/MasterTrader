@@ -10,41 +10,46 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P2-T021]
 requirements: [R7.11]
 roadmap_todos: [T7.41]
 modules: [M12, M11]
 dashboards: [D05]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p7/P7-T030-resting-broker-side-stops
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T030 · Resting broker-side stops on every live position
 
 ## Goal / expected outcome
 
-Every live position has a resting stop order held **at the venue/broker** (native stop or OCO), so a host, power or link failure never leaves a position unprotected; positions on venues without native stops are refused for live trading.
+Every live position has a resting stop order held **at the venue/broker** (native stop or OCO) from entry, so a host, power, tunnel or link failure never leaves a position unprotected (dead-man layer 3, 16 §3.1); this extends the P2 resting venue stops (R2.56) to every live venue and adapter, and venues without native stops are refused for live trading.
 
 ## Context & references
 
 - Roadmap: [R7.11 · ToDo T7.41](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [07 §5](../../../docs/07-security-notes.md#5-network--host) (resting broker-side stops cover the gap) · [14 §4](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (ATR-scaled stops, exit plan fixed at entry) · [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) (broker-side limits as a second line) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
-- Related: P7-T033 (fail-flat), P7-T052, P7-T053
+- Spec: [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) (layer 3: resting venue stops placed at entry + venue cancel-after timers) · [07 §5](../../../docs/07-security-notes.md#5-network--host) (resting broker-side stops cover the gap) · [14 §4](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (ATR-scaled stops, exit plan fixed at entry) · [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) (broker-side limits as a second line) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
+- Related: P7-T033 (fail-flat), P7-T052, P7-T053 · cross-phase: P2-T021 (`depends_on`: engine node + order audit); P2 R2.56/T2.36 builds resting stops on paper/testnet (its tasks are being split in the P2 alignment); this item extends them to live venues, OANDA/IG and MT5/cTrader.
 
 ## Requirements
 
 - On every live entry fill: place a venue-native stop (stop-market or stop-limit with a protective limit offset) at the exit-plan stop; re-place on partial fills; trail by amending the resting order (rate-limit aware).
 - If the stop cannot be placed within 5 s: flatten the position (protective, no approval) and alert.
-- Venue capability flag in `ops.venue_registry` (`native_stops: yes/no`); M11 rejects live entries where `no`.
+- Venue capability flags in `ops.venue_registry` (`native_stops: yes/no`, `cancel_after: yes/no`, recorded by P7-T003); M11 rejects live entries where `native_stops: no`.
 - Recon (P7-T025) checks that each live position has a matching resting stop; missing stop = unexplained break.
 - STP mode sent explicitly on stop orders too.
 
@@ -103,3 +108,4 @@ Every live position has a resting stop order held **at the venue/broker** (nativ
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (layer-3 resting stops per 16 §3.1, extending P2 R2.56 to live adapters; dep P2-T021)

@@ -10,41 +10,46 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T014, P7-T018]
+depends_on: [P7-T014, P7-T018, P2-T037]
 requirements: [R7.08]
 roadmap_todos: [T7.06]
 modules: [M11, M0, M15]
 dashboards: [D03, D01]
+tools: [git, uv, pnpm, node>=20]
+mcp: []
+env: []
+services: [postgres, nats, mt-api, telegram bot api]
 branch: p7/P7-T028-bot-live-autonomous-promotion
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T028 · Per-bot live promotion HITL → autonomous (C3) with eligibility checks
 
 ## Goal / expected outcome
 
-A live bot can move from `hitl` to `autonomous` only through C3 and only when its strategy version has a passing gate report, its sleeve is at least `micro_live` with ≥ 4 clean weeks in HITL, preflight passes, and no downgrade trigger is active; the D03 Bots tab shows exactly which condition fails.
+Every bot starts live in `hitl` (R7.08); it can move to `autonomous` only through C3 and only when its strategy version has a passing gate report (incl. the paper/HITL period of its gate profile, 16 §2.4), it is funded (≥ `micro_live`), preflight passes and no downgrade trigger is active; the D03 Bots tab shows exactly which condition fails.
 
 ## Context & references
 
 - Roadmap: [R7.08 · ToDo T7.06](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) (modes; autonomous = C3 and only while gates pass; escalation rules) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows) F7 (approve mode first, auto is C3) · [D03](../../../docs/ui/dashboards/D03-strategies.md) Bots tab · [mob §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot)
-- Cross-phase: P2 T2.34 (bots, `bot.set_mode`, approval policy) and T2.69 (bot scenarios on paper).
-- Related: P7-T014, P7-T018, P7-T011, P7-T029, P7-T058, gap P7-B009 (per-strategy vs per-bot mode)
+- Spec: [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) (modes; autonomous = C3 and only while gates pass; escalation rules) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows) F7 (every bot starts live in `hitl`; HITL → autonomous is C3) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (mode changes; the strategy mode caps bot modes) · [17 §B P7-B009](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (modes per bot) · [D03](../../../docs/ui/dashboards/D03-strategies.md) Bots tab · [mob §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot)
+- Cross-phase: P2-T037 (`depends_on`: bot modes, approval policy, escalation, auto-downgrade); P2-T061 (bot scenarios on paper).
+- Related: P7-T014, P7-T018, P7-T011, P7-T029, P7-T058, gap P7-B009 (resolved: modes per bot; the stricter of strategy and bot mode applies)
 
 ## Requirements
 
-- Eligibility (server-side, re-evaluated at apply time after the cool-down): latest gate report `pass` ≤ 7 days; sleeve state ≥ `micro_live`; ≥ 4 consecutive clean weeks with this bot in `hitl` on live; preflight pass; no active downgrade trigger; bot scope ⊆ allowed venues/products.
-- `bot.set_mode autonomous` = C3 (approve + TOTP + 15-min cool-down); widening an autonomous bot's scope = C3; escalation rules (notional, hours, new instruments) default ON for the first 4 autonomous weeks.
+- Eligibility (server-side, re-evaluated at apply time after the 15-min cool-down): latest gate report `pass` ≤ 7 days (the gate profile includes the paper/HITL period: default ≥ 8 weeks and ≥ 50 trades, 16 §2.4); capital state ≥ `micro_live`; preflight pass; no active downgrade trigger; bot scope ⊆ allowed venues/products; the strategy mode ceiling allows `autonomous`. Requiring a number of clean live HITL weeks first is an optional tightening (C1), off by default.
+- `bot.set_mode autonomous` = C3 (approve + TOTP + 15-min cool-down); widening an autonomous bot's scope = C3; escalation rules (notional, hours, new instruments, 15 §1) are prefilled in the bot's approval policy; tightening C1, loosening C3.
 - Every mode change is a new `strategy.bot_version` row (WORM) referencing the gate report and preflight snapshot.
 - D03 Bots tab: eligibility checklist per bot; the autonomous option is disabled with reasons while any check fails.
 
@@ -64,7 +69,7 @@ A live bot can move from `hitl` to `autonomous` only through C3 and only when it
 - Playwright: Bots tab eligibility list at §6.8 viewports.
 
 ### Scenarios
-- Given 3 clean HITL weeks, then autonomous is disabled with 'clean weeks 3/4'.
+- Given the gate report's paper/HITL section shows 7 of 8 weeks, then autonomous is disabled with 'paper/HITL period 7/8 weeks'.
 - Given eligibility passes, when you approve via Telegram + TOTP, then 15 min later the bot is autonomous and the first large order escalates to an approval card.
 
 ### Stress / failure injection
@@ -78,7 +83,7 @@ A live bot can move from `hitl` to `autonomous` only through C3 and only when it
 
 ## Exceptions & edge cases
 
-- Strategy-level mode (`strategy.set_mode`) and bot-level mode disagree: the stricter wins (see P7-B009).
+- Strategy-level mode (`strategy.set_mode`) and bot-level mode disagree: the stricter wins (16 §2.3, 17 §B).
 - Bot on MT5/cTrader route: same rules; adapter health is a downgrade trigger.
 
 ## Cardinal rules (do NOT)
@@ -106,3 +111,4 @@ A live bot can move from `hitl` to `autonomous` only through C3 and only when it
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (modes paper/hitl/autonomous per bot (17 §B); eligibility = gate profile incl. paper/HITL period (16 §2.4); the 4-clean-weeks rule is now an optional tightening; dep P2-T037)

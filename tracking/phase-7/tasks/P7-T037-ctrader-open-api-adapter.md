@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T004]
+depends_on: [P7-T004, P2-T021, P2-T027]
 requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M12, M16]
 dashboards: [D05]
+tools: [git, uv, protoc]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p7/P7-T037-ctrader-open-api-adapter
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T037 · cTrader Open API adapter (Linux route)
@@ -42,7 +47,7 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 
 ## Requirements
 
-- OAuth app registered by you (credentials in sops); token refresh handled; scopes trading + accounts only.
+- OAuth app registered by you in P7-T004 (credentials in sops: `CTRADER_CLIENT_ID`, `CTRADER_CLIENT_SECRET`); token refresh handled; scopes trading + accounts only.
 - Respect documented rate limits (record them from P7-T004); backoff on throttling.
 - Same capabilities as P7-T036: orders with broker-side SL/TP, symbol mapping, fills, swaps/commissions, recon side.
 - Licence-clean implementation (own protobuf client generated from the published proto files).
@@ -52,14 +57,14 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 - [ ] Generate protobuf client from published `.proto` (pinned version).
 - [ ] Exec/data clients in `packages/mt_engine/adapters/ctrader/`.
 - [ ] Recon side adapter.
-- [ ] Tests (fake server + demo).
+- [ ] Tests (fake server; demo run in P7-T051).
 - [ ] Docs.
 
 ## Verification
 
 ### Tests
 - Unit: message encode/decode, symbol mapping, token refresh.
-- Integration (cTrader demo): order lifecycle through M11 → journal → TCA → recon.
+- Integration against a fake Open API server (keyless): order lifecycle through M11 → journal → TCA → recon. The demo-account run happens in P7-T051 with your cTrader app credentials (P7-T004).
 
 ### Scenarios
 - Given an access token expires mid-session, then it refreshes without dropping orders.
@@ -70,7 +75,7 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 
 ## Acceptance criteria
 
-- [ ] Adapter passes demo integration; or task cancelled with reason if route is MT5-only.
+- [ ] Adapter passes fake-server integration; or task cancelled with reason if route is MT5-only.
 - [ ] CI green.
 
 ## Exceptions & edge cases
@@ -99,3 +104,4 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first: fake-server tests, demo run moved to P7-T051; deps P2-T021/T027)

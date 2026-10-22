@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T025]
+depends_on: [P7-T025, P2-T027]
 requirements: [R7.09]
 roadmap_todos: [T7.23]
 modules: [M12, M11, M16]
 dashboards: [D05, D01]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p7/P7-T026-unconfirmed-positions-after-disconnect
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D05-execution.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T026 · Unconfirmed position state after disconnects and recon-gated resume
@@ -38,14 +43,14 @@ After any venue disconnect, engine restart or order in unknown state, affected p
 
 - Roadmap: [R7.09 · ToDo T7.23](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) (venue disconnect: reconnect with backoff, orders flagged unknown → reconcile; positions 'unconfirmed') · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (open orders reconciled before trading resumes) · [D05](../../../docs/ui/dashboards/D05-execution.md) (unconfirmed hatched; close needs recon unless emergency flatten)
-- Cross-phase: P2 T2.25/T2.62 (restart epoch and reconciliation on restart).
+- Cross-phase: P2-T027 (`depends_on`: epoch client order IDs `{bot}-{engine_epoch}-{seq}` and restart reconciliation, [17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions)) · restart flat with bots paused [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch).
 - Related: P7-T025, P7-T029 (auto-downgrade on unconfirmed), P7-T050
 
 ## Requirements
 
-- Triggers: WS/REST disconnect > 5 s, engine start, order ack timeout (> 10 s), venue error 5xx on submit.
+- Triggers: WS/REST disconnect > 5 s, engine start, order ack timeout (> 10 s), venue error 5xx on submit, exit-node tunnel down (P7-T066). Timings are settings.
 - State: `confirmation = unconfirmed` on positions/orders of the account; M11 rejects new entries for that account (reason `account_unconfirmed`); protective exits and resting broker-side stops remain.
-- Exit: a recon run with zero unexplained breaks on that account flips state to `confirmed` and publishes `recon.{account}`; resume is automatic for hitl bots and requires the auto-downgrade rules for autonomous bots (P7-T029).
+- Exit: a recon run with zero unexplained breaks on that account flips state to `confirmed` and publishes `recon.{account}`; after a disconnect `hitl` bots resume automatically and autonomous bots stay downgraded (P7-T029); after an engine restart every bot stays **paused** until you resume it (C1) or it has `auto_resume_after_crash: true` (16 §3.1).
 - UI: hatched rows + 'unconfirmed' chip (ui README states table); D01 safety tile shows count.
 - Emergency flatten via kill switch bypasses the confirmation gate (but still passes M11 protective path).
 
@@ -105,3 +110,4 @@ After any venue disconnect, engine restart or order in unknown state, affected p
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (restart flat/paused per 16 §3.1; tunnel-down trigger; dep P2-T027)

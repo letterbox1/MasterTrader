@@ -15,17 +15,22 @@ requirements: [R7.12]
 roadmap_todos: [T7.25]
 modules: [M15]
 dashboards: [D01, D13]
+tools: [git, pnpm, node>=20, uv]
+mcp: []
+env: []
+services: [mt-api, telegram bot api]
 branch: p7/P7-T041-telegram-mini-app
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T041 · Telegram Mini App for Cockpit, Approvals and Tasks (optional)
@@ -96,3 +101,4 @@ An optional Telegram Mini App reuses the web routes for Cockpit, Approvals and T
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (tools/mcp/env/services only; no decision changes it)

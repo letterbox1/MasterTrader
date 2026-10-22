@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P7-T004]
 requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M12]
 dashboards: [D05, D16]
+tools: [git, uv]
+mcp: []
+env: []
+services: []
 branch: p7/P7-T034-mt5-bridge-service
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T034 · MT5 bridge service for the Windows VPS
@@ -38,7 +43,7 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 
 - Roadmap: [R7.10 · ToDo T7.24](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MT5 Python API on a Windows VPS; no community adapter touches live money until tested in paper) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (custom adapters; idempotent client IDs) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
-- Related: P7-T035 (deployment), P7-T036 (engine adapter), P7-T051 (parity), gap P7-B010
+- Related: P7-T004 (route choice; cancel if `ctrader` only), P7-T035 (deployment and hardening, T7.43), P7-T036 (engine adapter), P7-T051 (parity) · [07 §5.1](../../../docs/07-security-notes.md#51-optional-windows-vps-mt5-bridge) (VPS baseline, [17 §D P7-B010](../../../docs/17-decisions-register.md#d-other-decisions))
 
 ## Requirements
 
@@ -55,14 +60,14 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 - [ ] Idempotency store (SQLite on the VPS) keyed by client order id.
 - [ ] Heartbeat publisher + terminal state watcher.
 - [ ] Windows service packaging + `uv lock` with hashes.
-- [ ] Unit tests with an MT5 API fake; integration test script against the FP Markets demo account.
+- [ ] Unit tests with an MT5 API fake; an integration script for the FP Markets demo account (run in P7-T035 after deployment).
 - [ ] Docs.
 
 ## Verification
 
 ### Tests
 - Unit: request validation, idempotent submit, auth rejection (fake MT5).
-- Integration (demo account): place/modify/cancel round-trip; deals history matches terminal.
+- Integration against the MT5 API fake (keyless): place/modify/cancel round-trip; deals history matches. The demo-account run happens in P7-T035.
 - Contract: OpenAPI/proto schema checked into `services/mt5-bridge/schema/`.
 
 ### Scenarios
@@ -70,11 +75,11 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 - Given the terminal loses its broker connection, then heartbeat reports `broker_disconnected` within 2 s and the engine marks the account unconfirmed.
 
 ### Stress / failure injection
-- 1,000 order round-trips on demo in 1 h: no leaks, p95 bridge latency < 50 ms (excluding broker); kill the service mid-order → restart, idempotency prevents duplicates.
+- 1,000 order round-trips against the fake in 1 h: no leaks, p95 bridge latency < 50 ms (excluding broker); kill the service mid-order → restart, idempotency prevents duplicates (repeated on demo in P7-T035).
 
 ## Acceptance criteria
 
-- [ ] Bridge passes unit + demo integration tests.
+- [ ] Bridge passes unit + fake-backed integration tests.
 - [ ] Only tailnet-authenticated requests accepted.
 - [ ] CI green (Windows job or cross-platform tests with the fake).
 
@@ -106,3 +111,4 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first: fake-backed tests, demo run moved to P7-T035; 07 §5.1 baseline; dep P7-T004)

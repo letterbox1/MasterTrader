@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T050]
 requirements: [R7.12]
 roadmap_todos: [T7.25]
 modules: [M15]
 dashboards: [D01]
+tools: [git, pnpm, node>=20]
+mcp: []
+env: []
+services: [mt-api]
 branch: p7/P7-T040-pwa-install-and-offline
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T040 · PWA install prompts, offline banner and multi-channel Kill
@@ -38,7 +43,7 @@ The PWA prompts installation on phones, loads offline with the last known state 
 
 - Roadmap: [R7.12 · ToDo T7.25](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [mob §1](../../../docs/ui/mobile-and-telegram.md#1-pwa) (install, offline, no queued actions except Kill) · [mob §4](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria) (kill within 1 s of confirm) · [DESIGN.md §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
-- Cross-phase: P0 T0.26 (PWA shell).
+- Cross-phase: P0-T050 (`depends_on`: app shell, T0.26).
 - Related: P7-T054
 
 ## Requirements
@@ -96,3 +101,4 @@ The PWA prompts installation on phones, loads offline with the last known state 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (dep P0-T050; fields)

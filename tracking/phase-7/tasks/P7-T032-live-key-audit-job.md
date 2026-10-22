@@ -10,40 +10,45 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
-requirements: [R7.04]
+depends_on: [P0-T052]
+requirements: [R7.04, R7.14]
 roadmap_todos: [T7.40]
 modules: [M17, M12]
 dashboards: [D16, D05]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, prefect-server, mt-api]
 branch: p7/P7-T032-live-key-audit-job
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/ui/dashboards/D16-system.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T032 · Live key audit job: scopes, IP lock, withdrawals, age
 
 ## Goal / expected outcome
 
-A key audit (`system.key.audit`, daily and at engine start) verifies for every live key: trade-only scopes, withdrawals disabled, IP restriction present, and age < 90 days, using each venue's permission endpoint where one exists and a documented manual attestation where not.
+A key audit (`system.key.audit`, daily and at engine start) verifies for every live key: trade-only scopes, withdrawals disabled, IP allow-list equal to exactly the exit node's static IP (16 §3.2), and age < 90 days (rotation, 16 §2.3), using each venue's permission endpoint where one exists and a documented manual attestation where not.
 
 ## Context & references
 
 - Roadmap: [R7.04 · ToDo T7.40](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (90-day rotation, key-age alert) · [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (key model per venue) · [D16](../../../docs/ui/dashboards/D16-system.md) (keys metadata only)
-- Related: P7-T007, P7-T031, P7-T047
+- Spec: [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) · [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (90-day rotation, key-age alert) · [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (key model per venue) · [D16](../../../docs/ui/dashboards/D16-system.md) (keys metadata only)
+- Related: P7-T007, P7-T031, P7-T047 (live run, T7.65) · cross-phase P0-T052 (`depends_on`: D16 Security/keys page)
 
 ## Requirements
 
 - Per venue: use permission introspection where available (e.g. Binance `apiRestrictions`, Kraken key info, OKX `account/config`/API key perms); otherwise require a signed manual attestation row (date, screenshot reference) renewed every 90 days.
-- Fail if: any withdrawal/transfer scope; no IP restriction; age ≥ 90 days (warn at 80); attestation missing/expired.
+- Fail if: any withdrawal/transfer scope; no IP restriction, or an allow-list containing anything other than the configured exit-node IP (and the VPS IP for FP Markets); age ≥ 90 days (warn at 80; both settings); attestation missing/expired.
 - Results in `audit.key_audit` (WORM); D16 keys view shows status (masked metadata only).
 - Engine start-up guard consumes the latest result.
 
@@ -58,7 +63,7 @@ A key audit (`system.key.audit`, daily and at engine start) verifies for every l
 
 ### Tests
 - Unit: introspector parsers for each supported venue (fixtures).
-- Integration: key with withdrawal scope (fixture) fails audit and blocks start.
+- Integration (fixtures, no keys): key with withdrawal scope fails audit and blocks start; key allow-listed to an extra IP fails with `ip_allowlist_mismatch`.
 
 ### Scenarios
 - Given a key is 85 days old, then D16 shows amber and Telegram warns; at 90 days the sub-account stops.
@@ -99,3 +104,4 @@ A key audit (`system.key.audit`, daily and at engine start) verifies for every l
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (allow-list must equal the exit-node IP (16 §3.2); 90-day rotation (16 §2.3); keyless fixtures, live run in P7-T047)

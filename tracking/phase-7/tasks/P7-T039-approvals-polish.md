@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P2-T149, P2-T039]
 requirements: [R7.12, R7.08]
 roadmap_todos: [T7.25]
 modules: [M15]
 dashboards: [D01, D05]
+tools: [git, pnpm, node>=20, uv]
+mcp: []
+env: []
+services: [mt-api, telegram bot api]
 branch: p7/P7-T039-approvals-polish
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/ui/components.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T039 · Approvals polish: ≤ 3-tap approve, hold-to-confirm, batching, Telegram cards
@@ -37,15 +42,16 @@ Approving a live HITL order or a C3 change from a cold phone open takes ≤ 3 ta
 ## Context & references
 
 - Roadmap: [R7.12, R7.08 · ToDo T7.25](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [mob §2](../../../docs/ui/mobile-and-telegram.md#2-phone-flows-must-be--3-taps-from-a-cold-open) (approve an order: notification/Telegram → ApprovalCard → hold-to-confirm) · [15 §1.3](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) (card content, buttons, TTL defaults, large orders TOTP, batching) · [mob §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) · [mob §4](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria) (C3 completion on phone)
-- Cross-phase: P2 T2.32/T2.33/T2.34 (approvals queue, Telegram buttons, bot cards).
+- Spec: [mob §2](../../../docs/ui/mobile-and-telegram.md#2-phone-flows-must-be--3-taps-from-a-cold-open) (approve an order: notification/Telegram → ApprovalCard → hold-to-confirm) · [15 §1.3](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) (card content, buttons, TTL defaults, large orders TOTP, batching) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (TTLs, large-order threshold, C3 cool-down and approval TTL) · [mob §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) · [mob §4](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria) (C3 completion on phone)
+- Cross-phase (`depends_on`): P2-T149 (web approvals queue), P2-T039 (HITL approval cards on Telegram).
 - Related: P7-T054 (phone test), P7-T019 (capital-step C3 card), P7-T028 (autonomous C3 card)
 
 ## Requirements
 
 - `ApprovalCard` shows bot, instrument, side, size, type/price, stop/target, risk in R and % sleeve, exposure after fill, blackout/DQ warnings, signal reasons, chart deep link, TTL countdown; buttons Approve · Approve ½ · Reject · Pause bot.
 - Tap budget from cold open: notification tap (1) → card (already open) → hold-to-confirm (2); C3 flows: Telegram Approve (1) → TOTP entry (2) → done.
-- TTL defaults 60 s intraday / 15 min swing / 4 h position; expiry = reject, logged 'expired'.
+- TTL defaults (16 §2.3, settings) 60 s intraday / 15 min swing / 4 h position; expiry = reject, logged 'expired'.
+- Large orders (> 2% of sleeve or > A$5,000 notional by default, 16 §2.3) need TOTP on Telegram / hold-to-confirm on web.
 - Batching: dynamic-selection bots group signals into one card with per-line toggles.
 - Approval latency recorded per card (`risk.approval.latency_ms`) and shown in the weekly pack.
 - Never queue approvals offline (mob §1).
@@ -67,7 +73,7 @@ Approving a live HITL order or a C3 change from a cold phone open takes ≤ 3 ta
 
 ### Scenarios
 - Given a swing signal at 02:00 during quiet hours, then no entry card is sent unless 'wake me' is on.
-- Given a large order above the bot's notional, then Telegram asks for TOTP before approving.
+- Given an order above 2% of sleeve or A$5,000 notional (defaults), then Telegram asks for TOTP before approving.
 
 ### Stress / failure injection
 - 20 cards arriving in 1 min: UI remains responsive; Telegram 30 msg/s limit respected; no duplicate approvals on double-tap (idempotency key).
@@ -107,3 +113,4 @@ Approving a live HITL order or a C3 change from a cold phone open takes ≤ 3 ta
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (TTLs and large-order TOTP threshold per 16 §2.3; deps P2-T149/P2-T039)

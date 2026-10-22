@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T034]
+depends_on: [P7-T034, P7-T035, P2-T021, P2-T027]
 requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M12, M16]
 dashboards: [D05]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats, mt5-bridge (P7-T035), FP Markets MT5 demo]
 branch: p7/P7-T036-mt5-engine-adapter
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T036 · mt_engine MT5 execution and data adapter via the bridge
@@ -38,7 +43,7 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` tal
 
 - Roadmap: [R7.10 · ToDo T7.24](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (MT5 Windows bridge for FP Markets) · [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (TCA, recon)
-- Cross-phase: P2 T2.25 (adapter patterns, epoch ids), P1 T1.29 (recon adapters).
+- Cross-phase (`depends_on`): P2-T021 (engine node), P2-T027 (epoch client order IDs and restart reconciliation); recon adapter patterns from P1-T042.
 - Related: P7-T034, P7-T030 (resting stops via MT5 SL), P7-T025 (recon side), P7-T051 (parity)
 
 ## Requirements
@@ -102,3 +107,4 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` tal
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (deps on the deployed bridge (P7-T035) and P2-T021/T027; fields)
