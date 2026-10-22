@@ -11,8 +11,8 @@ This folder breaks the [plan of action](../04-plan-of-action.md) into **one scop
 | 4 | [News, social, events & calendars](phase-4-intel.md) | 16–19 | 8 Feb – 7 Mar 2027 |
 | 5 | [Airdrops, launches, wallets & curation](phase-5-airdrops-wallets-curation.md) | 20–23 | 8 Mar – 4 Apr 2027 |
 | 6 | [AI decision layer, memory, models, anomalies & treasury](phase-6-ai-models-treasury.md) | 24–28 | 5 Apr – 9 May 2027 |
-| 7 | [Prove it, then go small-live](phase-7-prove-and-go-live.md) | Month 7–10+ | From May 2027 (paper clock started ~10 Jan 2027) |
-| 8 | [MCP control plane (last, optional)](phase-8-mcp.md) | 1–2 weeks | Only once the platform is in daily use |
+| 7 | [Prove it, then go small-live](phase-7-prove-and-go-live.md) | Month 7–10+ | Hard-gated: opens after P3; first funding once the paper clock (started ~10 Jan 2027) has run ≥ 8 weeks, so ~Mar 2027 at the earliest |
+| 8 | [MCP control plane (last, optional)](phase-8-mcp.md) | 1–2 weeks | Hard-gated: after P6, and only once the platform is in daily use |
 
 Calendar dates are indicative; halve the durations if you work full-time.
 
@@ -64,9 +64,9 @@ Calendar dates are indicative; halve the durations if you work full-time.
 | [P4 News, Social, Events & Calendars](phase-4-intel.md) | 18 | 6 | 13 | 3 | 8 | 1 | 31 |
 | [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 24 | 9 | 14 | 3 | 8 | 1 | 35 |
 | [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 24 | 5 | 13 | 2 | 14 | 1 | 35 |
-| [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 14 | 11 | 6 | 3 | 5 | 3 | 28 |
-| [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 8 | 3 | 3 | 1 | 3 | 1 | 11 |
-| **Total** | | **68** | **109** | **31** | **77** | **12** | **297** |
+| [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 16 | 11 | 8 | 4 | 7 | 3 | 33 |
+| [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 10 | 3 | 5 | 1 | 6 | 1 | 16 |
+| **Total** | | **68** | **113** | **32** | **82** | **12** | **307** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
@@ -88,9 +88,9 @@ gantt
     Paper clock (P1 sleeves ≥ 8 wks) :crit, pc, after p2, 56d
     Tax agent engaged → answer        :ta, after p2, 120d
     section Money
-    P7 Prove → micro-live     :p7, after p6, 120d
+    P7 Prove → micro-live     :p7, after p3 pc, 120d
     section Optional
-    P8 MCP                    :p8, after p7, 14d
+    P8 MCP                    :p8, after p6, 14d
 ```
 
 ```mermaid
@@ -114,7 +114,11 @@ flowchart LR
 
 **Critical path to live money:** P0 → P1 → P2 → (paper clock ≥ 8 weeks) + (tax agent's answer) → P7. Phases 3–6 add capability while the paper clock runs; **they don't block a P1 sleeve (e.g. trend on majors) from going micro-live** once P3 is done and the gates pass.
 
-**What can run in parallel:** P3 and P4 share no code (start P4 early if you have time). The `RUN` items (soaks, paper clock, digests) overlap the next phase's `BUILD` work.
+**How work runs** ([17 §E](../17-decisions-register.md#e-ratification-2026-10-22)):
+- **Parallel by dependency:** a task starts as soon as its own `depends_on` are done, in any phase (`phase_gating: "dependencies"`). P3 and P4 share no code; the `RUN` items (soaks, paper clock, digests) overlap other `BUILD` work. The Gantt chart above is one indicative sequence, not a gate.
+- **Hard gates:** Phase 7 (go small-live) opens only after P3 exits (P2 transitively); its items that need P5/P6 deliverables carry their own task dependencies. Phase 8 (MCP) opens only after P6 and the T8.01 decision.
+- **Build first, keys last:** integrations are built and tested against mocks, recorded fixtures, emulators, testnets and paper accounts without secrets. Live checks that need your keys, accounts or money are separate, late `VERIFY` ToDos that depend on the `USER` ToDo providing them.
+- **Configurable values are settings, not decisions:** every number in the phase docs that comes from [16](../16-configuration-and-safety-model.md) is a default you change in settings.
 
 ## 4. Fixed external dates
 
@@ -203,13 +207,13 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T7.01 | P7 | **Tax agent decision recorded** (investor vs trader) and set in D15 for the FY. | entry criterion · R7.13 |
 | T7.02 | P7 | Open/verify **live accounts** (KYC) at the venues the registry allows; create live **sub-accounts per mandate**. | R7.04 |
 | T7.03 | P7 | Create live keys: trade-only, IP-locked, no withdrawals; pre-register withdrawal addresses (Travel Rule). | R7.04 |
-| T7.04 | P7 | Fund micro-live (A$2–5k) only after the gate report passes. | R7.05 |
+| T7.04 | P7 | Set each bot's starting live allocation in its strategy settings (default A$2,000) and fund the sub-account only after the gate report passes. | R7.05 |
 | T7.05 | P7 | Run the **weekly review** (30–45 min) and sign it off in the journal. | R7.03 |
-| T7.06 | P7 | Approve each promotion (bot HITL → autonomous is C3); approve each capital step after 4 clean weeks. | R7.05, R7.08 |
+| T7.06 | P7 | Approve each promotion (bot HITL → autonomous is C3); approve each capital step (+25% of the current allocation) after 4 consecutive clean weeks. | R7.05, R7.08 |
 | T7.07 | P7 | Optional professional advice: Hyperliquid exposure, OKX AU derivatives status, a written "private, non-commercial" boundary. | R7.13 |
 | T7.08 | P7 | FP Markets: read client-agreement clauses on algo trading/scalping/hedging; set up the Windows VPS near the MT5 server (if MT5 route). | R7.10 |
 | T7.09 | P7 | Install the UPS and 4G failover; do the pull-the-plug drill with paper positions. | R7.11 |
-| T7.10 | P7 | 12-month review: keep only sleeves with positive live net P&L, live Sharpe > 0.5 and beating the benchmark. | R7.05 |
+| T7.10 | P7 | Put the 12-month review in your calendar as a recurring review (not a phase item; [README §10](README.md#10-standing-operations-recurring-outside-the-phases)): keep only sleeves with positive live net P&L, live Sharpe > 0.5 and beating the benchmark. | R7.05 |
 | T7.11 | P7 | Provision the egress VM (free tier where available, else a small paid VM in Sydney) and allow-list its IP on every live key. | R7.14 |
 | T8.01 | P8 | **Decide whether to build MCP** (decision gate above). | — |
 | T8.02 | P8 | Configure your MCP client (Claude Desktop/Code) with the server and a scoped token. | R8.02 |
@@ -316,7 +320,23 @@ Everything only you can do, in order. The phase documents hold the detail.
 4. Every new user action is an `mt_api` command with the right confirmation level, audited.
 5. Runbooks updated for any new failure mode; docs updated where behaviour changed.
 6. The phase's `USER` items are done or explicitly deferred with a reason.
+7. Every task passed an independent review (`require_review`) before it was marked done.
 
 ## 9. Tracking progress
 
 Tick the checkboxes in each phase document as work lands (one commit per ToDo or small group, with the `T` IDs in the commit message). Add `(deferred: reason)` to anything pushed to a later phase rather than deleting it.
+
+## 10. Standing operations (recurring, outside the phases)
+
+These recur for as long as the platform runs. They are calendar tasks, not phase items, so no phase waits for them to "finish".
+
+| Operation | Cadence | Owner | Source |
+|---|---|---|---|
+| Weekly review (tracking error, costs, DQ incidents, recon, five worst trades) | Weekly, from the first live week | You (T7.05) | [P7](phase-7-prove-and-go-live.md) |
+| Capital steps after P7 closes (+25% of current allocation after 4 consecutive clean weeks; C3) | When earned | You + system | [16 §2.5](../16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot) |
+| **12-month review** (keep only sleeves with positive live net P&L, live Sharpe > 0.5, beating the benchmark) | Yearly from the first live funding | You (T7.10, T7.82) | [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) |
+| AUSTRAC register re-check per venue | Quarterly (and < 90 days before each funding) | You (T1.06, T7.63) | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |
+| Restore test; immutable WORM export | Monthly | System, alerts you | [P0 R0.N4](phase-0-foundations.md) |
+| ToS check of free data sources | Monthly | Agent, reported to you | [04 standing rules](../04-plan-of-action.md#standing-rules) |
+| Key rotation | Every 90 days | You | [04 standing rules](../04-plan-of-action.md#standing-rules) |
+| Reminder for indefinite MCP tokens (if P8 is built) | Monthly | System | [16 §2.12](../16-configuration-and-safety-model.md#212-mcp-phase-8) |
