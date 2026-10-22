@@ -4,7 +4,7 @@ kind: task
 title: Get the Tally key and FinMMEval data access
 phase: 6
 type: USER
-status: backlog
+status: ready
 priority: medium
 size: XS
 severity: ""

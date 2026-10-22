@@ -4,7 +4,7 @@ kind: gap
 title: Daily trend sleeves may not reach 60 trades for months, starving decay and kill checks
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B016-low-frequency-sleeves-60-trade-windows
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/14-strategy-evidence-and-validation.md §6 (rolling 60-trade decay) and §7 (live Sharpe after 60 trades)
 created: 2026-10-21
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -94,3 +94,6 @@ The docs agree and are specific enough to implement: add a horizon-based criteri
 
 - 2026-10-21 00:00 · planner · opened
 - 2026-10-22 00:00 · aligner · resolved by docs/17 17 §C P7-B016: low-frequency bots that can't reach the trade counts use time windows: ≥ 26 weeks for the paper/HITL period and a 26-week rolling window for decay. Docs now carry it: 16 §2.4 and §2.6; 14 §6 item 7 and the decay table; roadmap R7.02/R7.07. Implementation owned by P7-T017, P7-T013, P7-T023. Root cause: only trade-count windows were specified, which starve daily trend sleeves.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P7-B016); docs updated: 16 §2.4 and §2.6; 14 §6 item 7 and the decay table; roadmap R7.02/R7.07; implementation owned by P7-T017, P7-T013, P7-T023
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: task
 title: Register free event-source keys and read news API terms
 phase: 4
 type: USER
-status: backlog
+status: ready
 priority: high
 size: S
 severity: ""

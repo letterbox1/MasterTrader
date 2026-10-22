@@ -4,7 +4,7 @@ kind: task
 title: Provide watch keywords, cashtags and trusted feeds/sites
 phase: 4
 type: USER
-status: backlog
+status: ready
 priority: high
 size: S
 severity: ""

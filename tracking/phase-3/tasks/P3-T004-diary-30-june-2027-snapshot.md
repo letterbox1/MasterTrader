@@ -4,7 +4,7 @@ kind: task
 title: Diary the 30 June 2027 snapshot hard date
 phase: 3
 type: USER
-status: backlog
+status: ready
 priority: high
 size: XS
 severity: ""

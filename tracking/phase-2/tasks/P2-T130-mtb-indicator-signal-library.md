@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T014]
 requirements: [R2.48]
 roadmap_todos: [T2.31]
 modules: [M0]
@@ -110,3 +110,4 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; golden inputs from P2-T002 are checked in P2-T133)
+- 2026-10-22 00:00 · coordinator · depends on P0-T014 (code lives in the uv monorepo; dependency gating)

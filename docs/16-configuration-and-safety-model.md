@@ -130,7 +130,7 @@ Configurable per asset class.
 | CUSUM break on P&L residuals | Alert + downgrade to HITL |
 | 5 consecutive losing trades (per bot) | Alert + downgrade to HITL |
 | Daily health check fails (30-day Sharpe < ½ validated, or drawdown > 1.5× backtest max) | **Halt the bot** pending your review |
-| Kill criteria ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)), e.g. implementation shortfall > 2× modelled, or the **sleeve's** live Sharpe, once it has 60 live trades, below the backtest's 5th percentile | **Halt the sleeve**; capital step-down |
+| Kill criteria ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)), e.g. implementation shortfall > 2× modelled, or the **sleeve's** live Sharpe, once it has 60 live trades (low-frequency sleeves: over a 26-week window), below the backtest's 5th percentile | **Halt the sleeve**; capital step-down |
 | System drawdown stages | §2.1 |
 
 ### 2.7 Wallets, signer and gas ([13](13-wallets-treasury-and-onchain.md))
@@ -170,6 +170,7 @@ Configurable per bot and per event type.
 | Balances | Every 5 min |
 | Full reconciliation | End of day (Sydney) |
 | Tolerance | Position quantities must match exactly; balances within 0.01% or dust |
+| Mismatch warning | A mismatch still unexplained after 12 h → warning alert |
 | "Explained" mismatch | Matched to a known journal event within 24 h; otherwise it's unexplained, which halts everything (kill criterion) |
 
 ### 2.10 Models (tier B) and LLM budgets

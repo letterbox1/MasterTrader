@@ -4,7 +4,7 @@ kind: task
 title: Decide on Hummingbot, social drafts, crowd-sim and LightRAG
 phase: 6
 type: USER
-status: backlog
+status: ready
 priority: low
 size: XS
 severity: ""

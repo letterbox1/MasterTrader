@@ -4,7 +4,7 @@ kind: task
 title: Provide MasterTradingBot rules and historical outputs for golden files
 phase: 2
 type: USER
-status: backlog
+status: ready
 priority: high
 size: M
 severity: ""

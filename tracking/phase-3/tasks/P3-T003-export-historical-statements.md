@@ -4,7 +4,7 @@ kind: task
 title: Export historical broker and exchange statements for opening balances
 phase: 3
 type: USER
-status: backlog
+status: ready
 priority: high
 size: S
 severity: ""

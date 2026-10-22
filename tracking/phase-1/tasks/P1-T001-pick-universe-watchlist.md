@@ -4,7 +4,7 @@ kind: task
 title: Pick the starting universe and watchlist
 phase: 1
 type: USER
-status: backlog
+status: ready
 priority: high
 size: S
 severity: ""

@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T009, P7-T030, P2-T032]
+depends_on: [P7-T009, P7-T030, P2-T032, P2-T072, P2-T073]
 requirements: [R7.11]
 roadmap_todos: [T7.41]
 modules: [M11]
@@ -43,7 +43,7 @@ The three-layer dead-man's switch (16 §3.1) is configured for live sub-accounts
 
 - Roadmap: [R7.11 · ToDo T7.41](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) (three layers, timings, `on_system_failure`, restart flat) · [07 §5](../../../docs/07-security-notes.md#5-network--host) (fail flat on link/power loss) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (dead-man's switch) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (heartbeat rules) · [D06](../../../docs/ui/dashboards/D06-risk.md) (dead-man tile)
-- Cross-phase: P2-T032 (`depends_on`: heartbeats + in-engine watchdog, layer 1); P2 R2.56/T2.36 (sidecar and venue timers, being split into new P2 tasks), P2-T054 (drills).
+- Cross-phase: P2-T032 (`depends_on`: heartbeats + in-engine watchdog, layer 1); P2-T072 (`depends_on`: `deadman` sidecar, layer 2), P2-T073 (`depends_on`: venue timers + resting stops, layer 3), P2-T075 / P2-T054 (drills).
 - Related: P7-T009 (hardware), P7-T030 (resting stops), P7-T052, P7-T053, gap P7-B015 (resolved: 16 §3.1 defaults)
 
 ## Requirements

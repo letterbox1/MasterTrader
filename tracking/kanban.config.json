@@ -2,5 +2,6 @@
   "project": "MasterTrader",
   "project_type": "software",
   "require_review": true,
-  "branch_per_task": false
+  "branch_per_task": false,
+  "phase_gating": "dependencies"
 }

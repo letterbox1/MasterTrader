@@ -4,7 +4,7 @@ kind: gap
 title: Dead-man heartbeat threshold 'N seconds' is never specified
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B015-dead-man-threshold-unspecified
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/ui/dashboards/D06-risk.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/07-security-notes.md §6; docs/02-v1-architecture.md §6 rules; docs/03-build-spec.md M11
 created: 2026-10-21
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -95,3 +95,6 @@ The docs agree and are specific enough to implement: document defaults (e.g. int
 
 - 2026-10-21 00:00 · planner · opened
 - 2026-10-22 00:00 · aligner · resolved by docs/17 17 §C P7-B015: three-layer dead-man: in-engine watchdog and deadman sidecar cancel at 5 s and apply each bot's on_system_failure at 10 s; venue cancel-after timers (15 s refresh, 60 s timeout) + resting stops. Docs now carry it: 16 §3.1; 07 §5 and §6; D06 Dead-man tile. Implementation owned by P7-T033, P7-T052. Root cause: fail-flat timing was written as 'N seconds' everywhere.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P7-B015); docs updated: 16 §3.1; 07 §5 and §6; D06 Dead-man tile; implementation owned by P7-T033, P7-T052
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

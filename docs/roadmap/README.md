@@ -21,15 +21,15 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:phase-status:start -->
 | Phase | Status | Progress | Tasks done/total | Board |
 |---|---|---|---|---|
-| P0 Foundations & security baseline | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/64 | [BOARD](../../tracking/phase-0/BOARD.md) |
-| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/67 | [BOARD](../../tracking/phase-1/BOARD.md) |
-| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/120 | [BOARD](../../tracking/phase-2/BOARD.md) |
-| P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/54 | [BOARD](../../tracking/phase-3/BOARD.md) |
-| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-4/BOARD.md) |
-| P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/64 | [BOARD](../../tracking/phase-5/BOARD.md) |
-| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/66 | [BOARD](../../tracking/phase-6/BOARD.md) |
-| P7 Prove it, then go small-live | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/64 | [BOARD](../../tracking/phase-7/BOARD.md) |
-| P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/29 | [BOARD](../../tracking/phase-8/BOARD.md) |
+| P0 Foundations & security baseline | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-0/BOARD.md) |
+| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/74 | [BOARD](../../tracking/phase-1/BOARD.md) |
+| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/128 | [BOARD](../../tracking/phase-2/BOARD.md) |
+| P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-3/BOARD.md) |
+| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-4/BOARD.md) |
+| P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-5/BOARD.md) |
+| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/70 | [BOARD](../../tracking/phase-6/BOARD.md) |
+| P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/68 | [BOARD](../../tracking/phase-7/BOARD.md) |
+| P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/35 | [BOARD](../../tracking/phase-8/BOARD.md) |
 <!-- kanban:phase-status:end -->
 
 ---
@@ -159,7 +159,7 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T0.07 | P0 | **Discord:** private "MasterTrader Feeds" server with `#mt-inbox` + category channels; bot app with Message Content intent; start following announcement channels you already know. | gates P4 · [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) |
 | T0.08 | P0 | ⚠️ **Reddit (optional): apply before 2026-10-31.** X stays deferred. | [06 §0](../06-aggregators-and-market-providers.md#0-️-time-sensitive-actions) |
 | T0.09 | P0 | Free demo/practice accounts: OANDA practice, IG demo, Alpaca paper, IBKR paper, Binance + Bybit testnets. | gates P1/P2 |
-| T0.10 | P0 | Free API keys: FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. | gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md) |
+| T0.10 | P0 | Free API keys: FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. | gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md) |
 | T0.11 | P0 | **Venue checks:** look up each AU venue you may use on the AUSTRAC register by ABN; note products available to you as a retail client; send the results for the registry seed. | R0.06 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |
 | T0.12 | P0 | Set your login password and enrol TOTP on first boot. | R0.08 |
 | T0.13 | P0 | Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). | R0.09, R0.13 |

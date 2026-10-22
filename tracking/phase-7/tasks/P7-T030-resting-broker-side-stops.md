@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T021]
+depends_on: [P2-T021, P2-T073]
 requirements: [R7.11]
 roadmap_todos: [T7.41]
 modules: [M12, M11]
@@ -43,7 +43,7 @@ Every live position has a resting stop order held **at the venue/broker** (nativ
 
 - Roadmap: [R7.11 · ToDo T7.41](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) (layer 3: resting venue stops placed at entry + venue cancel-after timers) · [07 §5](../../../docs/07-security-notes.md#5-network--host) (resting broker-side stops cover the gap) · [14 §4](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (ATR-scaled stops, exit plan fixed at entry) · [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) (broker-side limits as a second line) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
-- Related: P7-T033 (fail-flat), P7-T052, P7-T053 · cross-phase: P2-T021 (`depends_on`: engine node + order audit); P2 R2.56/T2.36 builds resting stops on paper/testnet (its tasks are being split in the P2 alignment); this item extends them to live venues, OANDA/IG and MT5/cTrader.
+- Related: P7-T033 (fail-flat), P7-T052, P7-T053 · cross-phase: P2-T021 (`depends_on`: engine node + order audit); P2-T073 (`depends_on`: dead-man layer 3, venue cancel-after timers and resting venue stops at entry on paper/testnet); this item extends them to live venues, OANDA/IG and MT5/cTrader.
 
 ## Requirements
 

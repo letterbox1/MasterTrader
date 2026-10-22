@@ -83,7 +83,7 @@
 - [ ] **T7.62** `VERIFY` MT5/cTrader adapter paper parity vs MasterTradingBot outputs. → R7.10
 - [ ] **T7.63** `VERIFY` Venue registry re-check (< 90 days) before each funding. → [12 §2](../12-policy-and-compliance.md#2-venue-access-registry)
 - [ ] **T7.64** `VERIFY` Failover drill: cut broadband → traffic continues via 4G through the tunnel with the same egress IP; then cut the tunnel → venue timers cancel orders, resting stops remain. → R7.14, R7.11
-- [ ] **T7.65** `VERIFY` Live key audit (after T7.03, T7.11): every live key is trade-only, withdrawals disabled, IP-locked to the egress IP, one per sub-account. → R7.04
+- [ ] **T7.65** `VERIFY` Live key audit (after T7.03, T7.11): every live key is trade-only, withdrawals disabled, IP-locked to the egress IP; one trading key per sub-account, plus the dead-man sidecar's own trade-only key and a read-only reconciliation key ([16 §3.1](../16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)). → R7.04
 - [ ] **T7.66** `VERIFY` Stress replay of the four historical shocks against current positions and policy before the first funding; results attached to the gate report. → R7.16
 
 ### E. Run / soak (`RUN`)

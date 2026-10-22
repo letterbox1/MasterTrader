@@ -4,7 +4,7 @@ kind: task
 title: Kev-4B/9B and contender licence check before the bake-off
 phase: 6
 type: VERIFY
-status: backlog
+status: ready
 priority: high
 size: XS
 severity: ""

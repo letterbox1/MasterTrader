@@ -4,7 +4,7 @@ kind: task
 title: Engage a registered tax agent and send the question list
 phase: 3
 type: USER
-status: backlog
+status: ready
 priority: critical
 size: S
 severity: ""

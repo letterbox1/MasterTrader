@@ -83,7 +83,7 @@ Every number on this page is a **configurable default** from [16](../../16-confi
 
 ## Stress tab
 
-- **Phase:** Phase 2 ships the tab as a **placeholder** (empty state: "Stress tests aren't available yet", no sample numbers) until the stress engine lands. The historical shock replay (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) is planned as [R7.16](../../roadmap/phase-7-prove-and-go-live.md) (Phase 7); R2.57 is the Phase 2 placeholder. Custom/preset hypothetical shocks are optional and must exist before live capital (Phase 7).
+- **Phase:** Phase 2 ships the tab as a **placeholder** (empty state: "Stress tests aren't available yet", no sample numbers) until the stress engine lands. The historical shock replay (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) is planned as [R7.16](../../roadmap/phase-7-prove-and-go-live.md) (Phase 7); R2.57 is the Phase 2 placeholder. Custom/preset hypothetical shocks are optional and come later; the historical replay is what must pass before live capital.
 - **Scenarios:** historical replays; later, presets (e.g. −15% crypto in 60 s, USD +3%, gap-down at open, venue outage, stablecoin de-peg) or custom shocks per asset class/instrument.
 - **Run:** `risk.stress.run` (C1), enabled once available.
 - **Results:** P&L impact by position/bot/sleeve/venue, limits breached, liquidation distances, hedge coverage.

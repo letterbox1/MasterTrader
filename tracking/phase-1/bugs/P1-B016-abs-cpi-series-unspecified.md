@@ -4,7 +4,7 @@ kind: gap
 title: Which ABS CPI series drives tax indexation is not specified
 phase: 1
 type: DOC
-status: backlog
+status: ready
 priority: medium
 size: S
 severity: S3

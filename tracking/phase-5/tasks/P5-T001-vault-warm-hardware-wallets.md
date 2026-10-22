@@ -4,7 +4,7 @@ kind: task
 title: Set up the vault and warm hardware wallets (public addresses only)
 phase: 5
 type: USER
-status: backlog
+status: ready
 priority: critical
 size: S
 severity: ""

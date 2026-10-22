@@ -4,7 +4,7 @@ kind: task
 title: Create an SMTP app password for email alerts, or turn email off
 phase: 1
 type: USER
-status: backlog
+status: ready
 priority: medium
 size: XS
 severity: ""

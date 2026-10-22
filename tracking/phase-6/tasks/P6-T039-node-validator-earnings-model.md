@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T014]
 requirements: [R6.23]
 roadmap_todos: [T6.28]
 modules: [M22]
@@ -99,3 +99,4 @@ A monthly model computes `net = rewards + MEV fees + commission − infra − op
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; model only, no automation)
+- 2026-10-22 00:00 · coordinator · depends on P0-T014 (code lives in the uv monorepo; dependency gating)
