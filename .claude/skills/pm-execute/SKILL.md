@@ -5,7 +5,7 @@ compatibility: Any Agent Skills-compatible agent (Claude Code, Codex, Gemini CLI
 metadata:
   author: CeraNova
   product: CeraNova PM
-  version: "1.3"
+  version: "1.4.1"
 ---
 
 # pm-execute
@@ -17,9 +17,9 @@ Follow `tracking/briefs/EXECUTION_BRIEF.md`. The loop:
    - `git switch` to its branch;
    - check what's already committed.
 
-2. **Pick:** `./kanban next [--phase N] --owner agent`. Never take `owner: user` items; for those, prepare instructions or supporting work and tell the human.
+2. **Pick:** `./kanban next [--phase N] --owner agent`. Prefer tasks whose preflight passes; everything that can be built before the human supplies keys or accounts should be done before those arrive. Independent ready tasks can go to parallel agents (**pm-delegate**). Never take `owner: user` items; for those, prepare instructions or supporting work and tell the human.
 
-3. **Claim:** `./kanban start <ID> --git` (or stay on the session's designated branch and record it).
+3. **Claim:** `./kanban start <ID> --git` (or stay on the session's designated branch; `start` logs the branch either way). Every commit message carries the item ID, so `./kanban trail <ID>` can reconcile the item with its branch, PR and commits.
    - `start` runs the **preflight**: the tools, MCP servers, env var names and services listed in the item (plus `requires_defaults`). It refuses while a tool or env var is missing on this machine.
    - Missing something? Install it if that's routine and allowed (a dev dependency, a CLI). If it needs the human (an account, a key, money, an approval): `./kanban block <ID> --reason "needs …"`, raise a USER task with exact instructions, and pick another item.
    - An MCP server marked `check` may be a user-level or hosted connector: confirm by using it, not by guessing.
@@ -41,7 +41,7 @@ Follow `tracking/briefs/EXECUTION_BRIEF.md`. The loop:
 
 7. **Finish.**
    - With a PR: `./kanban review <ID> --pr <url>`. Then get an independent check with **pm-review** (ideally a separate agent); `require_review: true` in the config makes it mandatory.
-   - When merged or verified: `./kanban done <ID> --evidence "<commands + results>"`. `done` refuses on unticked boxes or missing evidence; fix the cause, don't force it.
+   - When merged or verified: `./kanban done <ID> --evidence "<commands + results>"`. `done` records the item's commits (and warns about unpushed ones): push before you finish. `done` refuses on unticked boxes or missing evidence; fix the cause, don't force it.
 
 8. **Doc sync:** the Stop hook will ask. Update the docs in the item's `doc_sync` list and **tick the roadmap ToDo** it satisfies, then `./kanban docsync <ID> --done`. See **pm-doc-sync**.
 

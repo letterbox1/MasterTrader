@@ -111,7 +111,7 @@ backlog ──(deps done & phase open)──▶ ready ──start──▶ in_pr
 - `done` with a non-empty `doc_sync` and `doc_sync_status: n/a` → `pending` (listed in `tracking/DOC_SYNC.md`).
 - **Stale:** `in_progress` items not updated for 7 days are flagged on the boards.
 - **Phase status:** `not_started` / `in_progress` / `done`. **Done** = every task `done`/`cancelled`, no open S1/S2 bug, and every exit-criteria box in `PHASE.md` ticked. When a phase completes, `PHASE.md` gets `status: done`, `completed:` and `doc_sync_status: pending`.
-- **Phase opening:** a phase is open when every phase in its `opens_after` list is done, or when `PHASE.md` says `force_open: true`.
+- **Phase opening:** a phase is open when every phase in its `opens_after` list is done, or when `PHASE.md` says `force_open: true`. With `phase_gating: "dependencies"` in the config, every phase is open and each task waits only for its own `depends_on` (cross-phase allowed), except phases marked `hard_gate: true` (for example a go-live phase), which still wait for `opens_after`.
 
 **Done gate:** `./kanban done` refuses unless every `## ToDo` and `## Acceptance criteria` box is ticked and the progress log has a verification note.
 

@@ -19,7 +19,9 @@ Everything is optional. The defaults suit a software project.
   "brand": {"logo": "brand/logo.svg", "attribution": true, "fonts": true},
   "requires_defaults": {"*": {"tools": ["git"]}, "BUILD": {"tools": ["node", "pnpm"]}, "OPS": {"env": ["CLOUD_API_TOKEN"]}},
   "env_files": [".env", ".env.local"],
-  "require_review": false
+  "require_review": false,
+  "phase_gating": "dependencies",
+  "branch_per_task": true
 }
 ```
 
@@ -39,6 +41,8 @@ Everything is optional. The defaults suit a software project.
 | `requires_defaults` | Tools, MCP servers, env var names and services every task of a type needs (`"*"` = all types), merged with each item's own `tools`/`mcp`/`env`/`services`. Checked by `./kanban preflight` and `./kanban start` |
 | `env_files` | Files whose variable **names** count as available to the preflight (values are never read out) |
 | `require_review` | `true`: `./kanban done` refuses a task without a passing `./kanban reviewed` (the **pm-review** skill) |
+| `phase_gating` | `"phases"` (default): a phase's tasks wait for its `opens_after` phases. `"dependencies"`: tasks become ready when their own `depends_on` are done, so independent work in later phases runs in parallel; phases with `hard_gate: true` in `PHASE.md` (e.g. go-live) still wait |
+| `branch_per_task` | `true`: `./kanban start` switches to (or creates) the item's branch without `--git`. Leave `false` where a session must stay on one designated branch |
 
 ## Project-type presets
 

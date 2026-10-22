@@ -47,6 +47,8 @@ Use this brief to (re)plan a phase into kanban items. It keeps every phase board
   - `type` is one of USER / BUILD / OPS / VERIFY / RUN / DOC; `owner: user` for USER items, otherwise `agent`.
   - `requirements` and `roadmap_todos` use the roadmap IDs; `modules` and `dashboards` as relevant.
   - `doc_sync` lists repo-relative paths.
+  - **Maximise parallel work:** `depends_on` lists only true preconditions (the task can't start or can't be verified without the other's output). If the project uses `phase_gating: "dependencies"`, cross-phase prerequisites become explicit `depends_on` entries instead of text.
+  - **Build first, keys last:** build integrations (exchanges, data providers, LLMs, Telegram/Discord, wallets) against mocks, recorded fixtures, local emulators or testnets/sandboxes with no secrets in `env`. The live check with real keys, accounts or money is a **separate, late VERIFY task** that carries the `env` names and depends on the USER task providing them.
   - **What the task needs to run:** `tools` (CLIs on PATH, e.g. `[docker, uv, pnpm]`), `mcp` (MCP servers the agent will call), `env` (variable **names** only, e.g. `[BINANCE_TRADE_KEY]`; values stay in the sops file), `services` (e.g. `[timescaledb, redis]`). Anything only the user can provide is a USER task this one depends on. Don't assign skills.
   - **`depends_on` only references items in your own phase.** Cross-phase prerequisites are handled by the phase's `opens_after` and are named in text under *Context & references*.
 - **USER items** (only the human can do them): exact step-by-step instructions, where outputs go (secrets → the sops secrets file, **never** chat or git), how to confirm, and what it unblocks.

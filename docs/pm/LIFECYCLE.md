@@ -112,7 +112,11 @@ Per task:
 
 **Triage** (skill: `pm-triage`) runs whenever something comes in: a bug report, a request, a CI or review failure. It searches for duplicates (`./kanban list --grep`), classifies kind, severity, phase and priority, files the item, and grooms stale or blocked ones.
 
-Several phases can run in parallel once their prerequisites are done (one agent per phase).
+**Parallel work:** several phases can run in parallel once their prerequisites are done (one agent per phase). With `phase_gating: "dependencies"`, any ready tasks with no dependency between them can go to parallel agents, across phases; only `hard_gate` phases wait.
+
+**Build first, keys last:** plans put live checks that need keys, accounts or money into separate late VERIFY tasks, so agents build and test everything else (against mocks, fixtures, emulators or sandboxes) before the human has to supply them.
+
+**Reconciliation:** each task has its own branch (`p<N>/<ID>-<slug>`; `branch_per_task` or `start --git`) and PR (`<ID>: <title>`), every commit message carries the ID, `start` logs the branch, `review` records the PR and `done` records the commits and whether they're pushed. `./kanban trail <ID>` shows the whole chain; `./kanban trail` lists done items without a pushed commit trail.
 
 ## 7. Doc sync (skill: `pm-doc-sync`)
 

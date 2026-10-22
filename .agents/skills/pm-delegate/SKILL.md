@@ -5,7 +5,7 @@ compatibility: Any Agent Skills-compatible agent (Claude Code, Codex, Gemini CLI
 metadata:
   author: CeraNova
   product: CeraNova PM
-  version: "1.3"
+  version: "1.4.1"
 ---
 
 # pm-delegate
@@ -19,7 +19,7 @@ metadata:
 | Align docs after decisions | Disjoint **sets of doc files** (e.g. architecture; spec + top docs; security/policy; UI + design) | `tracking/briefs/DOC_ALIGNMENT_BRIEF.md` |
 | Align tasks after doc alignment | One phase each | `tracking/briefs/TASK_ALIGNMENT_BRIEF.md` |
 | Ingest large external docs | Disjoint target doc sets | `tracking/briefs/DOC_INGEST_BRIEF.md` |
-| Execute | One phase each (only phases whose prerequisites are done) | `tracking/briefs/EXECUTION_BRIEF.md` |
+| Execute | One phase each (only phases whose prerequisites are done), or with `phase_gating: "dependencies"` any set of ready tasks with no dependency between them | `tracking/briefs/EXECUTION_BRIEF.md` |
 | Review | One item (or one phase's review queue) per reviewer, never the agent that built it; reviewers only write verdicts, logs and new bug items | **pm-review** |
 
 ## Steps

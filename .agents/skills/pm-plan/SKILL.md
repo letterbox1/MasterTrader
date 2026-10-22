@@ -5,7 +5,7 @@ compatibility: Any Agent Skills-compatible agent (Claude Code, Codex, Gemini CLI
 metadata:
   author: CeraNova
   product: CeraNova PM
-  version: "1.3"
+  version: "1.4.1"
 ---
 
 # pm-plan
@@ -34,6 +34,8 @@ Follow `tracking/briefs/PLANNING_BRIEF.md` exactly. This skill is the single-pha
    - **Dependencies:** `depends_on` within the phase only.
    - **USER tasks:** human-only steps with exact instructions.
    - **VERIFY tasks:** dedicated items for the roadmap checks, end-to-end scenarios, stress/failure injection, and **one final phase exit-demo** item.
+   - **Parallel by default:** `depends_on` holds only real preconditions, so independent tasks run side by side (and across phases when `phase_gating` is `"dependencies"`).
+   - **Build first, keys last:** integrations are built and tested against mocks, fixtures, emulators or sandboxes without secrets; the live check that needs real keys, accounts or money is a separate late VERIFY task depending on the USER task that provides them.
    - **Scope what each task needs to run**, in its front matter:
      - `tools`: CLIs that must be on PATH (`[git, node>=20, docker]`);
      - `mcp`: MCP servers the agent will call (`[github, postgres]`);

@@ -10,6 +10,8 @@ The kanban hooks and CLI triage are **paused** during this wave (`tracking/.stat
 
 2. **Update existing tasks** in `tracking/phase-N/tasks/` wherever a decision changes them:
    - **Numbers become configurable defaults** with a link to the 16 section (no hard-coded limits). Modes are `paper`/`hitl`/`autonomous`. Use the canonical audit/table names, `ops.wallets`, venue cap 25%, DSR ≥ 0.95, two-stage drawdowns, the three-layer dead-man, the MCP rules, etc.
+   - **Split for "build first, keys last"** (planning brief): where a task needs real keys, accounts or money to finish, keep the build part keyless (mocks, fixtures, testnets) and move the live check into a separate late VERIFY task that depends on the USER key task.
+   - **Trim `depends_on` to true preconditions** so independent tasks can run in parallel.
    - **Scope what each task needs to run** (new front-matter fields): `tools`, `mcp`, `env` (names only), `services`, per the planning brief. Add them to every task you touch; for tasks you don't otherwise change, add them when they're clear from the task text.
    - Fix any task that contradicts a decision. Keep each task's ID, file name and structure; edit content and front matter (`requirements`, `roadmap_todos`, `depends_on`, `doc_sync`). Add a progress-log line: `- 2026-10-21 00:00 · aligner · updated for docs/16–17 (<what changed>)`.
 

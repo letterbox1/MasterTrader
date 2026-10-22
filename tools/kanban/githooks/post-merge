@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# pm-kit git hook shim: runs the project's own .git/hooks/post-merge first, then the kanban checks.
+# CeraNova PM git hook shim: runs the project's own .git/hooks/post-merge first, then the kanban checks.
 root="$(git rev-parse --show-toplevel)"
 exec python3 "$root/tools/kanban/kanban.py" git-hook post-merge "$@"

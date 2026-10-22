@@ -42,7 +42,12 @@ DEFAULT_CONFIG = {
     # e.g. {"*": {"tools": ["git"]}, "BUILD": {"tools": ["node", "pnpm"]}, "OPS": {"env": ["CLOUD_TOKEN"]}}
     "requires_defaults": {},
     "env_files": [".env", ".env.local"],
-    "require_review": False,                         # true: `done` needs a passing `./kanban reviewed` (pm-review) first             # preflight also accepts env var NAMES defined here (values never read out)
+    "require_review": False,                         # true: `done` needs a passing `./kanban reviewed` (pm-review) first
+    # "phases": a phase's tasks wait until its `opens_after` phases are done (default).
+    # "dependencies": tasks become ready as soon as their own depends_on (any phase) are done, so independent work
+    # runs in parallel across phases; a phase with `hard_gate: true` in PHASE.md still waits for `opens_after`.
+    "phase_gating": "phases",
+    "branch_per_task": False,                        # true: `./kanban start` switches to the item's branch (as --git)             # preflight also accepts env var NAMES defined here (values never read out)
 }
 
 
@@ -58,6 +63,10 @@ def load_config() -> dict:
 
 CFG = load_config()
 KIT_NAME = "CeraNova PM"
+try:
+    KIT_VERSION = (Path(__file__).resolve().parent / "VERSION").read_text().strip()
+except OSError:
+    KIT_VERSION = "0.0.0"
 KIT_URL = "https://ceranovaai.com"
 PROJECT = CFG.get("project") or ROOT.name
 ROADMAP = ROOT / CFG["roadmap_dir"]
@@ -349,6 +358,8 @@ def phase_done(ph: Phase, phases) -> bool:
 def phase_open(ph: Phase, phases) -> bool:
     if ph.meta.get("force_open") is True:
         return True
+    if CFG.get("phase_gating") == "dependencies" and ph.meta.get("hard_gate") is not True:
+        return True  # task-level dependencies decide; see DEFAULT_CONFIG
     after = ph.meta.get("opens_after") or []
     return all(int(a) in phases and phases[int(a)].meta.get("status") == "done" for a in after if str(a).isdigit())
 
@@ -954,7 +965,7 @@ def render_html(phases, items) -> str:
     kitmark_html = f'<img class="mark" src="{mark}" alt="CeraNova">' if mark else '<span class="markdot"></span>'
     favicon = f'<link rel="icon" href="{mark}">' if mark else ""
     mark_html = f'<img class="kitmark" src="{mark}" alt="">' if mark else '<span class="kitdot"></span>'
-    credit = (f'<a class="credit" href="{KIT_URL}" target="_blank" rel="noopener">{mark_html}<span>Powered by <b>{KIT_NAME}</b></span></a>'
+    credit = (f'<a class="credit" href="{KIT_URL}" target="_blank" rel="noopener">{mark_html}<span>Powered by <b>{KIT_NAME}</b> v{KIT_VERSION}</span></a>'
               if brand.get("attribution", True) else "")
     fonts = kit_fonts_css() if brand.get("fonts", True) else ""
     return (tpl.replace("/*__DATA__*/null", data).replace("__PROJECT__", name).replace("__LOGO__", logo_html)
@@ -1110,7 +1121,10 @@ def cmd_start(a):
     print(f"{a.id} → in_progress. Branch: {it['branch']}")
     if rows:
         print(format_preflight(it, rows))
-    if a.git and it["branch"]:
+    br = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    if br:
+        append_log(it.path, f"working on branch `{br}`")
+    if (a.git or CFG.get("branch_per_task")) and it["branch"]:
         r = subprocess.run(["git", "switch", it["branch"]], cwd=ROOT, capture_output=True, text=True)
         if r.returncode:
             subprocess.run(["git", "switch", "-c", it["branch"]], cwd=ROOT, check=False)
@@ -1156,6 +1170,44 @@ def cmd_review(a):
     build()
 
 
+def commit_trail(iid: str) -> list:
+    """[(sha, subject, pushed)] for every commit whose message mentions the item ID, oldest first."""
+    r = subprocess.run(["git", "log", "--all", "--reverse", "--format=%h%x09%s", f"--grep={iid}([^0-9]|$)", "-E"],
+                       cwd=ROOT, capture_output=True, text=True)
+    rows = []
+    for line in r.stdout.splitlines():
+        sha, _, subj = line.partition("\t")
+        remote = subprocess.run(["git", "branch", "-r", "--contains", sha], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        rows.append((sha, subj, bool(remote)))
+    return rows
+
+
+def cmd_trail(a):
+    """Reconciliation: what was asked (item), where it was worked (branch, PR), what landed (commits, pushed?)."""
+    _, items, _ = load()
+    sel = [get(items, x) for x in a.id] if a.id else sorted((i for i in items.values() if i["status"] in ("done", "review")),
+                                                            key=lambda i: i.id)
+    gaps = 0
+    for it in sel:
+        rows = commit_trail(it.id)
+        unpushed = [s for s, _, p in rows if not p]
+        if a.id:
+            print(f"{it.id} [{it['status']}] {it['title']}\n  branch: {it['branch'] or '—'} · PR: {it['pr'] or '—'} · "
+                  f"review: {it['review_result'] or '—'} · completed: {it['completed'] or '—'}")
+            for sha, subj, pushed in rows:
+                print(f"  {sha} {'pushed ' if pushed else 'LOCAL  '} {subj}")
+            if not rows:
+                print("  no commits mention this ID")
+            for l in it.last_log(6):
+                print("  log: " + l[2:])
+        elif not rows or unpushed:
+            gaps += 1
+            print(f"{it.id:9} {it['status']:7} " + ("no commits mention it" if not rows else f"{len(unpushed)} unpushed commit(s)"))
+    if not a.id:
+        print(f"{len(sel)} done/review item(s) checked, {gaps} without a pushed commit trail.")
+        sys.exit(1 if gaps else 0)
+
+
 def cmd_reviewed(a):
     """Record an independent review verdict (pm-review). A fail sends the item back to in_progress with the findings."""
     _, items, _ = load()
@@ -1195,6 +1247,11 @@ def cmd_done(a):
         sys.exit(f"{a.id} can't be done: " + "; ".join(problems))
     if a.evidence:
         append_log(it.path, "verified: " + a.evidence)
+    trail = commit_trail(it.id) if (ROOT / ".git").exists() else []
+    if trail:
+        append_log(it.path, "commits: " + ", ".join(f"{s}{'' if p else ' (not pushed)'}" for s, _, p in trail))
+        if any(not p for _, _, p in trail):
+            print(f"note: {sum(1 for *_, p in trail if not p)} commit(s) for {a.id} aren't pushed yet; push them so the trail is shared.")
     extra = {"completed": today(), "checkpoint": ""}
     if it["doc_sync"]:
         extra["doc_sync_status"] = "pending"
@@ -1774,7 +1831,7 @@ def cmd_doctor(a):
         print("  FIX   " + bad)
         return False
 
-    print(f"CeraNova PM doctor: {PROJECT} ({ROOT})" + ("  [--fix]" if a.fix else ""))
+    print(f"CeraNova PM v{KIT_VERSION} doctor: {PROJECT} ({ROOT})" + ("  [--fix]" if a.fix else ""))
     print("Setup:")
     check(sys.version_info >= (3, 9), f"python {sys.version.split()[0]}", "python >= 3.9 required")
     is_git = check((ROOT / ".git").exists(), "git repository", "not a git repository (run `git init`)")
@@ -1982,7 +2039,8 @@ def cmd_hook(a):
 # ---------------------------------------------------------------- main
 
 def main():
-    p = argparse.ArgumentParser(prog="kanban", description=f"{PROJECT} kanban CLI (CeraNova PM; see tracking/README.md)")
+    p = argparse.ArgumentParser(prog="kanban", description=f"{PROJECT} kanban CLI (CeraNova PM v{KIT_VERSION}; see tracking/README.md)")
+    p.add_argument("--version", action="version", version=f"CeraNova PM {KIT_VERSION}")
     sp = p.add_subparsers(dest="cmd", required=True)
 
     s = sp.add_parser("validate", help="check every item against tracking/SCHEMA.md")
@@ -2088,6 +2146,11 @@ def main():
     s.add_argument("event", choices=["session-start", "post-tool", "stop"])
     s.add_argument("--agent", default="", choices=["", *AGENT_NAMES], help="output format for this agent (default: Claude Code)")
     s.set_defaults(f=cmd_hook)
+    s = sp.add_parser("version", help="print the CeraNova PM version (semver)")
+    s.set_defaults(f=lambda a: print(KIT_VERSION))
+    s = sp.add_parser("trail", help="reconcile items with their branch, PR and commits (pushed or not)")
+    s.add_argument("id", nargs="*", help="item IDs (default: every done/review item, gaps only)")
+    s.set_defaults(f=cmd_trail)
     s = sp.add_parser("agents", help="show or add session hooks for coding agents")
     s.add_argument("--add", help=f"comma-separated: {', '.join(AGENT_NAMES)}, or all")
     s.set_defaults(f=cmd_agents)

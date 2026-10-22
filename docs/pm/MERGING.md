@@ -3,7 +3,7 @@
 ## Option A: installer (recommended)
 
 ```bash
-git clone https://github.com/letterbox1/project-manager.git /tmp/ceranova-pm
+git clone https://github.com/CeraNovaAI/project-manager.git /tmp/ceranova-pm
 /tmp/ceranova-pm/install.sh /path/to/your/project            # add --init "Name" --phases "A,B,C" to initialise too
 ```
 
@@ -11,8 +11,8 @@ git clone https://github.com/letterbox1/project-manager.git /tmp/ceranova-pm
 
 | Path | Behaviour |
 |---|---|
-| `tools/kanban/`, `kanban`, `skills/pm-*` → `.claude/skills/` and `.agents/skills/` (choose with `--agents`), `tracking/{README,SCHEMA}.md`, `tracking/briefs/`, `docs/pm/*.md` | Copied (updated on re-run) |
-| `tracking/templates/`, `docs/pm/templates/` | Copied only if missing (`--force-templates` to refresh) |
+| `tools/kanban/`, `kanban`, `skills/pm-*` → `.claude/skills/` and `.agents/skills/` (choose with `--agents`), `tracking/{README,SCHEMA}.md`, `docs/pm/*.md` | Copied (updated on re-run) |
+| `tracking/templates/`, `tracking/briefs/`, `docs/pm/templates/` | Copied only if missing (`--force-templates` to refresh) |
 | `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` | A `<!-- pm-kit:start --> … <!-- pm-kit:end -->` block is **appended** (or replaced on update). Your text is untouched |
 | Agent session hooks | **Added next to** your existing hooks: `.claude/settings.json` always; `.codex/hooks.json`, `.gemini/settings.json`, `.cursor/hooks.json`, `.opencode/plugins/ceranova-pm.js` when that agent's folder exists (choose with `--hooks auto\|all\|claude,codex,gemini,cursor,opencode`; later: `./kanban agents --add <agent>`) |
 | `.gitignore` | Adds `tracking/.state/` |
