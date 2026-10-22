@@ -4,7 +4,7 @@ kind: gap
 title: D18 WebSocket topics `wallet`, `treasury`, `alert` are not in the 02 §7.3 topic list
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.23]
 roadmap_todos: []
 modules: [M15, M22]
 dashboards: [D18]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B005-ws-topics-wallet-treasury-missing
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/ui/dashboards/D18-wallets-treasury.md §Backend contract vs docs/02-v1-architecture.md §7.3"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B005 · D18 WebSocket topics `wallet`, `treasury`, `alert` are not in the 02 §7.3 topic list
@@ -50,9 +55,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §D P5-B005): WS topics `wallet`, `treasury` and `alert` are in the API contract
+- [x] Docs carry it: 02 §7.3 topic list (`alert`; `wallet` (P5), `treasury` (P6))
+- [x] P5 tasks aligned: P5-T011 (topics), P5-T050 (D18 subscriptions)
 
 ## Verification
 
@@ -67,9 +72,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +97,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §D P5-B005): WS topics `wallet`, `treasury` and `alert` are in the API contract. Docs checked: 02 §7.3 topic list (`alert`; `wallet` (P5), `treasury` (P6)). Implementation owned by P5-T011 (topics), P5-T050 (D18 subscriptions)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P5-B005); docs updated: 02 §7.3 topic list (`alert`; `wallet` (P5), `treasury` (P6)); implementation owned by P5-T011 (topics), P5-T050 (D18 subscriptions)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: D02 macro strip, positioning and nowcasts have no P1 data source
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.15]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B012-d02-widgets-without-p1-source
 pr: ""
 doc_sync: [docs/ui/dashboards/D02-markets.md, docs/roadmap/phase-4-intel.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D02-markets.md /markets widgets vs docs/roadmap/phase-1-data-and-monitoring.md R1.04–R1.06
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B012 · D02 macro strip, positioning and nowcasts have no P1 data source
@@ -49,8 +54,9 @@ D02 marks which widgets are P1 (rates, yields, VIX via yfinance, gold, oil, COT)
 
 ## ToDo
 
-- [ ] Edit D02 and note in the P4 roadmap
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B003/P1-B004/P1-B012): D02 shows "Arrives in Phase 4" states for P4-fed widgets; P1 widgets named per phase
+- [x] Aligned docs carry it: D02 (Macro strip and Positioning rows, "Arrives in P4" section); roadmap R1.15; P4 roadmap R4.11, T4.32
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T049, P1-T050
 
 ## Verification
 
@@ -68,8 +74,8 @@ D02 marks which widgets are P1 (rates, yields, VIX via yfinance, gold, oil, COT)
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (D02 (Macro strip and Positioning rows, "Arrives in P4" section); roadmap R1.15; P4 roadmap R4.11, T4.32)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ D02 marks which widgets are P1 (rates, yields, VIX via yfinance, gold, oil, COT)
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B003/P1-B004/P1-B012; docs carry it (D02 (Macro strip and Positioning rows, "Arrives in P4" section); roadmap R1.15; P4 roadmap R4.11, T4.32); implementation owned by P1-T049, P1-T050
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B003/P1-B004/P1-B012); docs updated: D02 (Macro strip and Positioning rows, "Arrives in P4" section); roadmap R1.15; P4 roadmap R4.11, T4.32; implementation owned by P1-T049, P1-T050
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

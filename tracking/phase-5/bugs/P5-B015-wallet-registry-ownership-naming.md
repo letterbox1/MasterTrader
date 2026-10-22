@@ -4,7 +4,7 @@ kind: gap
 title: Wallet registry ownership: P3 "account/wallet registry" vs 13 §3 `ops.wallets`; mandate/exec_log schema prefixes
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.05]
 roadmap_todos: []
 modules: [M22, M18]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B015-wallet-registry-ownership-naming
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/09-journal-and-tax.md, docs/08-airdrops-and-token-launches.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/13-wallets-treasury-and-onchain.md §3; docs/roadmap/phase-3-journal-and-tax.md R3.04; docs/08 §Data model"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B015 · Wallet registry ownership: P3 "account/wallet registry" vs 13 §3 `ops.wallets`; mandate/exec_log schema prefixes
@@ -50,9 +55,9 @@ Exactly one registry table (`ops.wallets`) owned by M22 and read by M18; table n
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P3-B003/P5-B015/P6-B005): one registry, `ops.wallets` (accounts and on-chain addresses), created in P3 and extended additively by the P5 wallet-indexer; no `treasury.wallet`; 08 data model uses schema prefixes
+- [x] Docs carry it: 13 §3 step 1, 09 goal 6, 02 §5 (one wallet registry `ops.wallets`), phase-3 roadmap R3.04/T3.22, 08 data model (`curation.*` prefixes; wallets in `ops.wallets`), roadmap R5.05
+- [x] P5 tasks aligned: P3-T012 (creates the table), P5-T009 (additive columns), P5-T021 (register/tag)
 
 ## Verification
 
@@ -67,9 +72,9 @@ Exactly one registry table (`ops.wallets`) owned by M22 and read by M18; table n
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +99,7 @@ Exactly one registry table (`ops.wallets`) owned by M22 and read by M18; table n
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P3-B003/P5-B015/P6-B005): one registry, `ops.wallets` (accounts and on-chain addresses), created in P3 and extended additively by the P5 wallet-indexer; no `treasury.wallet`; 08 data model uses schema prefixes. Docs checked: 13 §3 step 1, 09 goal 6, 02 §5 (one wallet registry `ops.wallets`), phase-3 roadmap R3.04/T3.22, 08 data model (`curation.*` prefixes; wallets in `ops.wallets`), roadmap R5.05. Implementation owned by P3-T012 (creates the table), P5-T009 (additive columns), P5-T021 (register/tag)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P3-B003/P5-B015/P6-B005); docs updated: 13 §3 step 1, 09 goal 6, 02 §5 (one wallet registry `ops.wallets`), phase-3 roadmap R3.04/T3.22, 08 data model (`curation.*` prefixes; wallets in `ops.wallets`), roadmap R5.05; implementation owned by P3-T012 (creates the table), P5-T009 (additive columns), P5-T021 (register/tag)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: Custody-tier floats, per-tx/24h caps and daily gas budgets have no specified values
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -15,17 +15,22 @@ requirements: [R5.01, R5.04, R5.07]
 roadmap_todos: []
 modules: [M22]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B001-custody-numeric-defaults-unspecified
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/08-airdrops-and-token-launches.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/13-wallets-treasury-and-onchain.md §1, §7; docs/08 §What may run autonomously"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B001 · Custody-tier floats, per-tx/24h caps and daily gas budgets have no specified values
@@ -49,9 +54,9 @@ The docs state default (user-overridable) values for each tier's float, per-tran
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §A P5-B001): wallet floats, signer caps and gas budgets are configuration with defaults in 16 §2.7 (hot ≤ A$500 per chain, identity ≤ A$300 per chain, burner ≤ A$50, A$250 per transaction, A$1,000 per rolling 24 h per wallet, gas airdrops A$20/day and DEX trading A$50/day, alert 80% / stop 100%); signing stays disabled until you confirm them (Phase 5 USER task)
+- [x] Docs carry it: 16 §2.7 (defaults table + signing-disabled rule), 13 §1 (default limits table), 08 principle 5 and autonomous-claim conditions, D12 wallet widget, D18 rules, roadmap R5.24/T5.08
+- [x] P5 tasks aligned: P5-T012 (limits store, signing disabled), P5-T065 (USER confirmation), P5-T020 (gas budgets), P5-T028 (floats/sweeps), P5-T013 (signer enforces caps)
 
 ## Verification
 
@@ -66,9 +71,9 @@ The docs state default (user-overridable) values for each tier's float, per-tran
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +97,7 @@ The docs state default (user-overridable) values for each tier's float, per-tran
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §A P5-B001): wallet floats, signer caps and gas budgets are configuration with defaults in 16 §2.7 (hot ≤ A$500 per chain, identity ≤ A$300 per chain, burner ≤ A$50, A$250 per transaction, A$1,000 per rolling 24 h per wallet, gas airdrops A$20/day and DEX trading A$50/day, alert 80% / stop 100%); signing stays disabled until you confirm them (Phase 5 USER task). Docs checked: 16 §2.7 (defaults table + signing-disabled rule), 13 §1 (default limits table), 08 principle 5 and autonomous-claim conditions, D12 wallet widget, D18 rules, roadmap R5.24/T5.08. Implementation owned by P5-T012 (limits store, signing disabled), P5-T065 (USER confirmation), P5-T020 (gas budgets), P5-T028 (floats/sweeps), P5-T013 (signer enforces caps)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A P5-B001); docs updated: 16 §2.7 (defaults table + signing-disabled rule), 13 §1 (default limits table), 08 principle 5 and autonomous-claim conditions, D12 wallet widget, D18 rules, roadmap R5.24/T5.08; implementation owned by P5-T012 (limits store, signing disabled), P5-T065 (USER confirmation), P5-T020 (gas budgets), P5-T028 (floats/sweeps), P5-T013 (signer enforces caps)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

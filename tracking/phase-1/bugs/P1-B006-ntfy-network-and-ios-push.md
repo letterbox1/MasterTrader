@@ -4,7 +4,7 @@ kind: gap
 title: ntfy has no network placement and iOS push needs an upstream relay
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.14]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B006-ntfy-network-and-ios-push
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §3.1 and §3.2; docs/roadmap/phase-1-data-and-monitoring.md T1.43
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B006 · ntfy has no network placement and iOS push needs an upstream relay
@@ -49,9 +54,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Decide with the user (phone platform)
-- [ ] Edit 02 §3.1 and 07 §9
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B006): ntfy self-hosted, reachable via Tailscale only; iOS push via ntfy's upstream relay carrying only a message ID
+- [x] Aligned docs carry it: 02 §3.1 (`edge` row: ntfy, relay-only egress), 02 §3.2 (`ntfy` row), 07 §9 (ntfy); roadmap R1.14, T1.43
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T044, P1-T003, P1-T060 (the notifier-to-ntfy network path is split off as gap P1-B020)
 
 ## Verification
 
@@ -69,8 +74,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (02 §3.1 (`edge` row: ntfy, relay-only egress), 02 §3.2 (`ntfy` row), 07 §9 (ntfy); roadmap R1.14, T1.43)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +100,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B006; docs carry it (02 §3.1 (`edge` row: ntfy, relay-only egress), 02 §3.2 (`ntfy` row), 07 §9 (ntfy); roadmap R1.14, T1.43); implementation owned by P1-T044, P1-T003, P1-T060 (the notifier-to-ntfy network path is split off as gap P1-B020)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B006); docs updated: 02 §3.1 (`edge` row: ntfy, relay-only egress), 02 §3.2 (`ntfy` row), 07 §9 (ntfy); roadmap R1.14, T1.43; implementation owned by P1-T044, P1-T003, P1-T060 (the notifier-to-ntfy network path is split off as gap P1-B020)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T025, P5-T028]
+depends_on: [P5-T025, P5-T028, P2-T068]
 requirements: [R5.03, R5.07]
 roadmap_todos: [T5.90]
 modules: [M22, M4]
 dashboards: [D18, D12]
+tools: [uv]
+mcp: []
+env: []
+services: [telegram]
 branch: p5/P5-T051-runbook-wallet-drained
 pr: ""
 doc_sync: [docs/runbooks/wallet-drained.md, docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T051 · Runbook: wallet drained (revoke, isolate, sweep)
@@ -42,7 +47,7 @@ checkpoint: ""
 ## Requirements
 
 - Triggers: unexpected outflow alert, new approval alert, nonce-authority change, signer refusal spike, recon break on a hot wallet.
-- Steps with exact commands/UI paths: `/kill` (Telegram) → `wallet.freeze` (signer flag) → revoke via `wallet.revoke_approval` (or revoke.cash manually from a clean device for user wallets) → `wallet.sweep` to vault → rotate keys (`mt-signer keys rotate`, C3) and retire the old address (`legacy`) → check durable nonce accounts → collect tx hashes and ledger rows → journal loss event (correction rows) → TAX_QUESTION task → post-mortem.
+- Steps with exact commands/UI paths: `/kill` (Telegram; from P5 kill also sweeps hot trading balances to the vault by default, P5-B007) → `wallet.freeze` (signer flag) → revoke via `wallet.revoke_approval` (or revoke.cash manually from a clean device for user wallets) → `wallet.sweep` to vault → rotate keys (`mt-signer keys rotate`, C3) and retire the old address (`legacy`) → check durable nonce accounts → collect tx hashes and ledger rows → journal loss event (correction rows) → TAX_QUESTION task → post-mortem.
 - Time targets: kill + freeze < 2 min from alert; sweep attempt < 10 min.
 - No secrets in the runbook.
 
@@ -94,3 +99,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill sweep default on per P5-B007; P2 runbook format dep)

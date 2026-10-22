@@ -15,17 +15,22 @@ requirements: [R5.13]
 roadmap_todos: [T5.62]
 modules: [M4]
 dashboards: []
+tools: [uv, jupyter]
+mcp: []
+env: []
+services: [mlflow]
 branch: p5/P5-T055-verify-sok-evaluation-report
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T055 · SoK evaluation report: precision/recall vs the rule-based baseline
@@ -50,7 +55,7 @@ A written evaluation report (`docs/reports/p5-sok-risk-evaluation.md`, numbers o
 
 - [ ] Run the notebook from a clean environment; export metrics.
 - [ ] Write the report with tables and recommendations.
-- [ ] Apply recommended thresholds via a config PR (tighten freely; loosening requires your sign-off).
+- [ ] Apply recommended thresholds via a config PR (tighten freely; loosening needs your C3 approval, 16 §1).
 
 ## Verification
 
@@ -91,3 +96,4 @@ A written evaluation report (`docs/reports/p5-sok-risk-evaluation.md`, numbers o
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (threshold loosening is C3)

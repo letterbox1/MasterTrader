@@ -4,7 +4,7 @@ kind: gap
 title: EV hurdle default refers to a treasury yield that 13 §5 does not define
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R5.14]
 roadmap_todos: []
 modules: [M4]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B012-ev-hurdle-default-undefined
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/13-wallets-treasury-and-onchain.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/08-airdrops-and-token-launches.md §Expected value gate"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B012 · EV hurdle default refers to a treasury yield that 13 §5 does not define
@@ -50,9 +55,9 @@ A concrete default hurdle rate exists until P6's treasury yield is live.
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §C P5-B012): EV hurdle default 5% p.a. on capital locked (AUD cash-rate proxy), configurable; stays a fixed default until the P6 treasury has a live stablecoin yield you choose to use
+- [x] Docs carry it: 16 §2.7 (EV hurdle row), 08 EV gate (`capital_lockup_cost` at 5% p.a.), 13 §5 (EV hurdle), 03 M4, roadmap R5.14/T5.06
+- [x] P5 tasks aligned: P5-T040 (EV gate reads the setting), P5-T007 (USER review)
 
 ## Verification
 
@@ -67,9 +72,9 @@ A concrete default hurdle rate exists until P6's treasury yield is live.
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +98,7 @@ A concrete default hurdle rate exists until P6's treasury yield is live.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §C P5-B012): EV hurdle default 5% p.a. on capital locked (AUD cash-rate proxy), configurable; stays a fixed default until the P6 treasury has a live stablecoin yield you choose to use. Docs checked: 16 §2.7 (EV hurdle row), 08 EV gate (`capital_lockup_cost` at 5% p.a.), 13 §5 (EV hurdle), 03 M4, roadmap R5.14/T5.06. Implementation owned by P5-T040 (EV gate reads the setting), P5-T007 (USER review)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P5-B012); docs updated: 16 §2.7 (EV hurdle row), 08 EV gate (`capital_lockup_cost` at 5% p.a.), 13 §5 (EV hurdle), 03 M4, roadmap R5.14/T5.06; implementation owned by P5-T040 (EV gate reads the setting), P5-T007 (USER review)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

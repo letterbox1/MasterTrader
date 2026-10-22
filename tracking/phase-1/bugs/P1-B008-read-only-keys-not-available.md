@@ -4,7 +4,7 @@ kind: gap
 title: Read-only keys are not available at OANDA, IG, Alpaca or IBKR paper
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.12]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B008-read-only-keys-not-available
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/07-security-notes.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-1-data-and-monitoring.md T1.02; docs/07-security-notes.md §3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B008 · Read-only keys are not available at OANDA, IG, Alpaca or IBKR paper
@@ -49,8 +54,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Edit T1.02 and 07 §3
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B008): practice/paper accounts use their normal credentials (no money at risk); read-only keys where the testnet offers them; live accounts use read-only keys where offered, otherwise trade-only
+- [x] Aligned docs carry it: 07 §3 (Practice and paper accounts); 03 M12 key safety; roadmap T1.02
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T002, P1-T041, P1-T042, P1-T073, P1-T074
 
 ## Verification
 
@@ -68,8 +74,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (07 §3 (Practice and paper accounts); 03 M12 key safety; roadmap T1.02)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B008; docs carry it (07 §3 (Practice and paper accounts); 03 M12 key safety; roadmap T1.02); implementation owned by P1-T002, P1-T041, P1-T042, P1-T073, P1-T074
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B008); docs updated: 07 §3 (Practice and paper accounts); 03 M12 key safety; roadmap T1.02; implementation owned by P1-T002, P1-T041, P1-T042, P1-T073, P1-T074
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

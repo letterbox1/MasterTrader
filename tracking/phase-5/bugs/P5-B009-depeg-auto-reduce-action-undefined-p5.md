@@ -4,7 +4,7 @@ kind: gap
 title: Depeg "auto-reduce" has no defined action path before P6 treasury / P7 DEX
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.06]
 roadmap_todos: []
 modules: [M22, M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B009-depeg-auto-reduce-action-undefined-p5
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/13-wallets-treasury-and-onchain.md §6; docs/roadmap/phase-5-airdrops-wallets-curation.md R5.06"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B009 · Depeg "auto-reduce" has no defined action path before P6 treasury / P7 DEX
@@ -50,9 +55,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B009): before the P6 treasury exists a depeg (> 50 bps default) raises an alert and a task only; no automated reduce. From P6 the treasury reduces exposure via the policy service and cost gate
+- [x] Docs carry it: 13 §6 (depeg row: before P6 alert + task only), 16 §2.7 (stablecoin depeg row), 03 M22 monitors (depeg > 50 bps; before P6 alert + task), roadmap R5.06/T5.23/T5.63
+- [x] P5 tasks aligned: P5-T026 (monitor, M11 reduce/block removed), P5-T057 (simulation asserts no automated action)
 
 ## Verification
 
@@ -67,9 +72,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +97,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B009): before the P6 treasury exists a depeg (> 50 bps default) raises an alert and a task only; no automated reduce. From P6 the treasury reduces exposure via the policy service and cost gate. Docs checked: 13 §6 (depeg row: before P6 alert + task only), 16 §2.7 (stablecoin depeg row), 03 M22 monitors (depeg > 50 bps; before P6 alert + task), roadmap R5.06/T5.23/T5.63. Implementation owned by P5-T026 (monitor, M11 reduce/block removed), P5-T057 (simulation asserts no automated action)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B009); docs updated: 13 §6 (depeg row: before P6 alert + task only), 16 §2.7 (stablecoin depeg row), 03 M22 monitors (depeg > 50 bps; before P6 alert + task), roadmap R5.06/T5.23/T5.63; implementation owned by P5-T026 (monitor, M11 reduce/block removed), P5-T057 (simulation asserts no automated action)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

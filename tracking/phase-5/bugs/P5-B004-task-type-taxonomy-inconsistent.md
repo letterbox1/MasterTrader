@@ -4,7 +4,7 @@ kind: gap
 title: Task-type names differ between 08, 03 M19, D13 and the roadmap
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.20]
 roadmap_todos: []
 modules: [M19]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B004-task-type-taxonomy-inconsistent
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/03-build-spec.md, docs/ui/dashboards/D13-tasks-curation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/08-airdrops-and-token-launches.md §User task queue; docs/ui/dashboards/D13-tasks-curation.md"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B004 · Task-type names differ between 08, 03 M19, D13 and the roadmap
@@ -50,9 +55,9 @@ One canonical task-type enum used by all docs and `mt_curation`.
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B004): one canonical task-type list in 03 M19 (JOIN_DISCORD, FOLLOW_ANNOUNCEMENTS, JOIN_TELEGRAM, FOLLOW_X, QUEST, ONCHAIN_ACTION_MANUAL, CLAIM_MANUAL, ICO_REVIEW, REVOKE_APPROVAL, TAX_QUESTION, GENUINE_USE, PRO_ADVICE, VENUE_CHECK, APPROVE_ORDER, REG_CHANGE); `TAX_RECORD` retired; table `curation.task`
+- [x] Docs carry it: 03 M19 (canonical list + storage), 08 user task queue (same list, `curation.task`), D13 Inbox, roadmap R5.20/T5.30
+- [x] P5 tasks aligned: P5-T009 (type constraint on `curation.task`), P5-T011 (enum), P5-T029 (queue), P5-T049 (D13)
 
 ## Verification
 
@@ -67,9 +72,9 @@ One canonical task-type enum used by all docs and `mt_curation`.
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +99,7 @@ One canonical task-type enum used by all docs and `mt_curation`.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B004): one canonical task-type list in 03 M19 (JOIN_DISCORD, FOLLOW_ANNOUNCEMENTS, JOIN_TELEGRAM, FOLLOW_X, QUEST, ONCHAIN_ACTION_MANUAL, CLAIM_MANUAL, ICO_REVIEW, REVOKE_APPROVAL, TAX_QUESTION, GENUINE_USE, PRO_ADVICE, VENUE_CHECK, APPROVE_ORDER, REG_CHANGE); `TAX_RECORD` retired; table `curation.task`. Docs checked: 03 M19 (canonical list + storage), 08 user task queue (same list, `curation.task`), D13 Inbox, roadmap R5.20/T5.30. Implementation owned by P5-T009 (type constraint on `curation.task`), P5-T011 (enum), P5-T029 (queue), P5-T049 (D13)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B004); docs updated: 03 M19 (canonical list + storage), 08 user task queue (same list, `curation.task`), D13 Inbox, roadmap R5.20/T5.30; implementation owned by P5-T009 (type constraint on `curation.task`), P5-T011 (enum), P5-T029 (queue), P5-T049 (D13)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

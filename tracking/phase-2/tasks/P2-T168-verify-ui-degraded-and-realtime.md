@@ -15,17 +15,22 @@ requirements: [R2.50, R2.51]
 roadmap_todos: [T2.32]
 modules: [M15]
 dashboards: [D01, D03, D04, D05]
+tools: [pnpm, playwright]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T168-verify-ui-degraded-and-realtime
 pr: ""
 doc_sync: [docs/ui/README.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T168 · Verify UI real-time and degraded modes on D01/D03/D04/D05
@@ -94,3 +99,4 @@ Evidence that the part-B dashboards behave correctly under WS gaps, mt-api resta
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

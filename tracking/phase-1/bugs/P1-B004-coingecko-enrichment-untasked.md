@@ -4,7 +4,7 @@ kind: gap
 title: CoinGecko/DefiLlama enrichment has no ToDo, yet the retention test needs CoinGecko rows
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.09]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B004-coingecko-enrichment-untasked
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compliance.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M1 (Enrichment) vs docs/roadmap/phase-1-data-and-monitoring.md T1.63
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B004 · CoinGecko/DefiLlama enrichment has no ToDo, yet the retention test needs CoinGecko rows
@@ -49,8 +54,9 @@ A ToDo owns the enrichment connector and the encrypted, purge-on-exit cache
 
 ## ToDo
 
-- [ ] Edit roadmap §4 and 12 §4/§5
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B003/P1-B004/P1-B012): T1.34 owns the CoinGecko/DefiLlama enrichment with a ≤ 24 h encrypted cache; 12 §4 records pgcrypto with a key from the sops file and purge on shutdown
+- [x] Aligned docs carry it: roadmap phase 1 §4 T1.34 (→ R1.05, R1.09); 12 §4 (CoinGecko row)
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T029 (now traced to T1.34), P1-T059
 
 ## Verification
 
@@ -68,8 +74,8 @@ A ToDo owns the enrichment connector and the encrypted, purge-on-exit cache
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (roadmap phase 1 §4 T1.34 (→ R1.05, R1.09); 12 §4 (CoinGecko row))
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ A ToDo owns the enrichment connector and the encrypted, purge-on-exit cache
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B003/P1-B004/P1-B012; docs carry it (roadmap phase 1 §4 T1.34 (→ R1.05, R1.09); 12 §4 (CoinGecko row)); implementation owned by P1-T029 (now traced to T1.34), P1-T059
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B003/P1-B004/P1-B012); docs updated: roadmap phase 1 §4 T1.34 (→ R1.05, R1.09); 12 §4 (CoinGecko row); implementation owned by P1-T029 (now traced to T1.34), P1-T059
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T024, P5-T005, P5-T050]
+depends_on: [P5-T024, P5-T005, P5-T050, P5-T068]
 requirements: [R5.05]
 roadmap_todos: [T5.65]
 modules: [M22, M18]
 dashboards: [D18]
+tools: [uv]
+mcp: []
+env: [HELIUS_API_KEY, ALCHEMY_API_KEY]
+services: [postgres, helius, alchemy]
 branch: p5/P5-T059-verify-wallet-view-journal-recon-week
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T059 · Wallet view reconciles with the journal for a test week
@@ -37,7 +42,7 @@ For seven consecutive days after you register every wallet, the daily recon show
 ## Context & references
 
 - Roadmap: ToDo T5.65 → [R5.05](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) ("Recon report") · exit criterion 3
-- Recon P5-T024 · registration P5-T005
+- Recon P5-T024 · registration P5-T005 · live reads proven in P5-T068 · tolerance and the 24 h "explained" rule per [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)
 
 ## Requirements
 
@@ -91,3 +96,4 @@ For seven consecutive days after you register every wallet, the daily recon show
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (live window after the keys-last check P5-T068; recon tolerance per 16 §2.9)

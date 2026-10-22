@@ -15,17 +15,22 @@ requirements: [R2.43]
 roadmap_todos: [T2.64]
 modules: [M7]
 dashboards: [D04]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T160-verify-seeded-lookahead-bug
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T160 · Verify a seeded look-ahead bug is caught by analysers and leakage review
@@ -95,3 +100,4 @@ Evidence that a strategy with a deliberately planted look-ahead bug is blocked t
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

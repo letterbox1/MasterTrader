@@ -6,7 +6,7 @@ phase: 5
 type: BUILD
 status: backlog
 priority: critical
-size: S
+size: M
 severity: ""
 owner: agent
 claimed_by: ""

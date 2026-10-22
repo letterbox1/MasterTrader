@@ -4,7 +4,7 @@ kind: gap
 title: Exchange concentration cap: ≤ 25% (13 §6) vs 25–30% (14 §5, D18)
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.06]
 roadmap_todos: []
 modules: [M22, M11]
 dashboards: [D18]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B006-exchange-concentration-cap-conflict
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/14-strategy-evidence-and-validation.md, docs/ui/dashboards/D18-wallets-treasury.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/13-wallets-treasury-and-onchain.md §6; docs/14-strategy-evidence-and-validation.md §5"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B006 · Exchange concentration cap: ≤ 25% (13 §6) vs 25–30% (14 §5, D18)
@@ -50,9 +55,9 @@ One default concentration cap per exchange across docs.
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B006): one venue concentration default, ≤ 25% of total equity per venue (range 10–30%), L1 policy, loosening C3
+- [x] Docs carry it: 16 §2.1 (venue concentration row), 13 §6 (concentration monitor), 14 §5 (risk table), D18 allocation widget
+- [x] P5 tasks aligned: P5-T027
 
 ## Verification
 
@@ -67,9 +72,9 @@ One default concentration cap per exchange across docs.
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +99,7 @@ One default concentration cap per exchange across docs.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B006): one venue concentration default, ≤ 25% of total equity per venue (range 10–30%), L1 policy, loosening C3. Docs checked: 16 §2.1 (venue concentration row), 13 §6 (concentration monitor), 14 §5 (risk table), D18 allocation widget. Implementation owned by P5-T027
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B006); docs updated: 16 §2.1 (venue concentration row), 13 §6 (concentration monitor), 14 §5 (risk table), D18 allocation widget; implementation owned by P5-T027
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -10,29 +10,34 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T030, P5-T041, P5-T047]
+depends_on: [P5-T030, P5-T041, P5-T047, P5-T068]
 requirements: [R5.22, R5.13]
 roadmap_todos: [T5.80]
 modules: [M4, M19]
 dashboards: [D12, D13]
+tools: [uv]
+mcp: []
+env: [TELEGRAM_BOT_TOKEN, COINGECKO_DEMO_API_KEY, CRYPTORANK_API_KEY, GOPLUS_API_KEY]
+services: [telegram, coingecko, cryptorank, goplus]
 branch: p5/P5-T063-run-two-weekly-digests-fp-review
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T063 · Run two weekly digests and review rejected-with-reasons for false positives
 
 ## Goal / expected outcome
 
-Two consecutive weekly digests (with the daily digests between them) go out on schedule; at each, the rejected-with-reasons list is reviewed with you for false positives, and thresholds/weights are tuned (tightening freely; loosening only with your sign-off). The second digest is the artefact for exit criterion 1.
+Two consecutive weekly digests (with the daily digests between them) go out on schedule; at each, the rejected-with-reasons list is reviewed with you for false positives, and thresholds/weights are tuned (tightening freely; loosening only with your C3 approval, 16 §1). The second digest is the artefact for exit criterion 1.
 
 ## Context & references
 
@@ -92,3 +97,4 @@ Two consecutive weekly digests (with the daily digests between them) go out on s
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (live digests after the keys-last check P5-T068; loosening is C3)

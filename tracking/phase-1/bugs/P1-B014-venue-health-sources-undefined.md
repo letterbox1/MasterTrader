@@ -4,7 +4,7 @@ kind: gap
 title: Venue-health inputs (withdrawal delays, PoR, AUSTRAC) have no defined free sources
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.13]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B014-venue-health-sources-undefined
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/13-wallets-treasury-and-onchain.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/12-policy-and-compliance.md §2; docs/13-wallets-treasury-and-onchain.md §6; docs/roadmap/phase-1-data-and-monitoring.md R1.13
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B014 · Venue-health inputs (withdrawal delays, PoR, AUSTRAC) have no defined free sources
@@ -49,8 +54,9 @@ Docs list the signals per venue (status endpoints, deposit/withdraw flags, offic
 
 ## ToDo
 
-- [ ] Edit 12 §2 and 13 §6
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B014): venue health = our own measured withdrawal times + venue status pages/feeds via the regulatory & venue watch + a quarterly AUSTRAC register check (USER task)
+- [x] Aligned docs carry it: 12 §2 (Health row, AUSTRAC row, VENUE_CHECK); 13 §6 (Venue health row); roadmap R1.13, T1.06, T1.30; P4 roadmap R4.15
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T043, P1-T069 (new USER task, T1.06)
 
 ## Verification
 
@@ -68,8 +74,8 @@ Docs list the signals per venue (status endpoints, deposit/withdraw flags, offic
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (12 §2 (Health row, AUSTRAC row, VENUE_CHECK); 13 §6 (Venue health row); roadmap R1.13, T1.06, T1.30; P4 roadmap R4.15)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ Docs list the signals per venue (status endpoints, deposit/withdraw flags, offic
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B014; docs carry it (12 §2 (Health row, AUSTRAC row, VENUE_CHECK); 13 §6 (Venue health row); roadmap R1.13, T1.06, T1.30; P4 roadmap R4.15); implementation owned by P1-T043, P1-T069 (new USER task, T1.06)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B014); docs updated: 12 §2 (Health row, AUSTRAC row, VENUE_CHECK); 13 §6 (Venue health row); roadmap R1.13, T1.06, T1.30; P4 roadmap R4.15; implementation owned by P1-T043, P1-T069 (new USER task, T1.06)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: Signer callers: "airdrop-exec only" (02 §3.1) vs "policy service" (13 §2), and P6/P7 needs
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.02, R5.N1]
 roadmap_todos: []
 modules: [M22]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B003-signer-allowed-callers-conflict
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/13-wallets-treasury-and-onchain.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/02-v1-architecture.md §3.1; docs/13-wallets-treasury-and-onchain.md §2"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B003 · Signer callers: "airdrop-exec only" (02 §3.1) vs "policy service" (13 §2), and P6/P7 needs
@@ -50,9 +55,9 @@ One definition of who may call the signer: in P5 `airdrop-exec` (the policy serv
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B003): the signer accepts intents only from the policy service; `airdrop-exec` is the policy service in P5 (claims, revokes, sweeps); treasury (P6) and DEX execution (P7) go through it
+- [x] Docs carry it: 02 §3.1 (`signer` network row), 02 §3.2 (`airdrop-exec` + `signer` rows), 13 §2 (interface), roadmap R5.02
+- [x] P5 tasks aligned: P5-T013 (caller auth), P5-T017 (network), P5-T054 (isolation test), P5-T044 (policy service)
 
 ## Verification
 
@@ -67,9 +72,9 @@ One definition of who may call the signer: in P5 `airdrop-exec` (the policy serv
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +98,7 @@ One definition of who may call the signer: in P5 `airdrop-exec` (the policy serv
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B003): the signer accepts intents only from the policy service; `airdrop-exec` is the policy service in P5 (claims, revokes, sweeps); treasury (P6) and DEX execution (P7) go through it. Docs checked: 02 §3.1 (`signer` network row), 02 §3.2 (`airdrop-exec` + `signer` rows), 13 §2 (interface), roadmap R5.02. Implementation owned by P5-T013 (caller auth), P5-T017 (network), P5-T054 (isolation test), P5-T044 (policy service)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B003); docs updated: 02 §3.1 (`signer` network row), 02 §3.2 (`airdrop-exec` + `signer` rows), 13 §2 (interface), roadmap R5.02; implementation owned by P5-T013 (caller auth), P5-T017 (network), P5-T054 (isolation test), P5-T044 (policy service)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

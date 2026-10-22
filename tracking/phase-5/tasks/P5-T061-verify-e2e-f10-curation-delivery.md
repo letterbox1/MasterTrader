@@ -10,29 +10,34 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T030, P5-T047, P5-T049]
+depends_on: [P5-T030, P5-T047, P5-T049, P0-T002, P0-T008]
 requirements: [R5.20, R5.21, R5.22]
 roadmap_todos: []
 modules: [M19, M2]
 dashboards: [D13]
+tools: [uv, pnpm]
+mcp: []
+env: [TELEGRAM_BOT_TOKEN, DISCORD_BOT_TOKEN]
+services: [discord, telegram, postgres, nats]
 branch: p5/P5-T061-verify-e2e-f10-curation-delivery
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T061 · End-to-end F10 curation loop and Discord delivery test
 
 ## Goal / expected outcome
 
-The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (Telegram + UI) → Done/Skip/Snooze/Never → ranking changes → for a Discord follow task, the bot verifies posts arrive ("verified") or re-prompts after N days.
+The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (Telegram + UI) → Done/Skip/Snooze/Details/Never → ranking changes → for a Discord follow task, the bot verifies posts arrive ("verified") or re-prompts after 7 days (default, 16 §2.13).
 
 ## Context & references
 
@@ -42,7 +47,7 @@ The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (
 ## Requirements
 
 - Automated part: mocked Telegram + Discord webhook events; assert task states, ranking deltas, digest composition and timing in Australia/Sydney.
-- Live part: one real follow into `#mt-inbox` from a test/announcement channel you control (your own second server) → verified within minutes; one follow never completed → re-prompt after the configured N days (time-travel in test).
+- Live part: one real follow into `#mt-inbox` from a test/announcement channel you control (your own second server) → verified within minutes; one follow never completed → re-prompt after the configured 7 days (default; time-travel in test).
 - Digest preview matches the sent digest.
 
 ## ToDo
@@ -94,3 +99,4 @@ The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day re-prompt default per 16 §2.13; Details button; live part needs the P0 Telegram/Discord bots)

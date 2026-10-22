@@ -15,17 +15,22 @@ requirements: [R2.40, R2.44, R2.45]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T167-verify-lab-failure-injection
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T167 · Lab failure injection and load test
@@ -93,3 +98,4 @@ Evidence that the lab degrades safely: worker crashes, MLflow/Postgres/NATS/gate
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

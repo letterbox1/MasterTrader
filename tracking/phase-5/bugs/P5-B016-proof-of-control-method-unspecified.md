@@ -4,7 +4,7 @@ kind: gap
 title: Proof of control for registering addresses is required but no method is specified
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.05]
 roadmap_todos: []
 modules: [M22]
 dashboards: [D18]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B016-proof-of-control-method-unspecified
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/ui/dashboards/D18-wallets-treasury.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/ui/dashboards/D18-wallets-treasury.md §Actions ("Register wallet/address (proof of control)")"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B016 · Proof of control for registering addresses is required but no method is specified
@@ -50,9 +55,9 @@ Docs define acceptable proof methods that fit the security model (no site-reques
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B016): proof of control = you sign a one-time challenge in your own wallet app (EIP-4361-style text / Solana `signMessage`) or make a tiny self-transfer; the system never signs it; signer-created wallets register themselves
+- [x] Docs carry it: 13 §3 step 1 (proof of control), D18 actions (register), roadmap R5.25/T5.04/T5.32/T5.67
+- [x] P5 tasks aligned: P5-T067 (challenge + verifiers), P5-T021 (`wallet.register`), P5-T069 (test), P5-T005 (USER registration), P5-T050 (wizard)
 
 ## Verification
 
@@ -67,9 +72,9 @@ Docs define acceptable proof methods that fit the security model (no site-reques
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +98,7 @@ Docs define acceptable proof methods that fit the security model (no site-reques
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B016): proof of control = you sign a one-time challenge in your own wallet app (EIP-4361-style text / Solana `signMessage`) or make a tiny self-transfer; the system never signs it; signer-created wallets register themselves. Docs checked: 13 §3 step 1 (proof of control), D18 actions (register), roadmap R5.25/T5.04/T5.32/T5.67. Implementation owned by P5-T067 (challenge + verifiers), P5-T021 (`wallet.register`), P5-T069 (test), P5-T005 (USER registration), P5-T050 (wizard)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B016); docs updated: 13 §3 step 1 (proof of control), D18 actions (register), roadmap R5.25/T5.04/T5.32/T5.67; implementation owned by P5-T067 (challenge + verifiers), P5-T021 (`wallet.register`), P5-T069 (test), P5-T005 (USER registration), P5-T050 (wizard)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

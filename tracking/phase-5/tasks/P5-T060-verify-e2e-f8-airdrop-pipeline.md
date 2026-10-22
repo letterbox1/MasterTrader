@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T033, P5-T041, P5-T044, P5-T045, P5-T046, P5-T048]
+depends_on: [P5-T033, P5-T041, P5-T044, P5-T045, P5-T046, P5-T048, P5-T068]
 requirements: [R5.10, R5.11, R5.12, R5.13, R5.14, R5.17]
 roadmap_todos: []
 modules: [M4, M19]
 dashboards: [D12, D13]
+tools: [uv, pnpm, anvil]
+mcp: []
+env: [GOPLUS_API_KEY, CRYPTORANK_API_KEY, COINGECKO_DEMO_API_KEY, HELIUS_API_KEY, ALCHEMY_API_KEY]
+services: [postgres, nats, goplus, cryptorank, coingecko, helius, alchemy]
 branch: p5/P5-T060-verify-e2e-f8-airdrop-pipeline
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T060 · End-to-end F8 scenarios: scam rejected with reasons, task, watch and auto-claim
@@ -42,9 +47,9 @@ A scenario suite drives the whole F8 flow from discovery to journal with recorde
 ## Requirements
 
 - Fixtures: recorded API responses for 8 projects (scam EVM, scam Solana Pump.fun-style, legit points, rumour, eligible claim, fresh launch, AU-excluded ICO, burner-first protocol).
-- Each scenario asserts the stage reached, the decision, reasons, tasks created (type, links verified), and records.
+- Each scenario asserts the stage reached, the decision, reasons, tasks created (type, links verified), and records. The eligible-claim scenario also asserts the identity wallet was used and a manual-sale disposal task was created (no automated sale; P5-B010, P5-B017).
 - Unhappy paths: provider outage mid-run (risk `incomplete` → no autonomy), blocklist update mid-run (task link becomes plain text).
-- Runs in CI nightly (fixtures) and once on live free APIs (manual) for the demo.
+- Runs in CI nightly (fixtures, no keys) and once on live free APIs (manual) for the demo, after the keys-last check P5-T068.
 
 ## ToDo
 
@@ -95,3 +100,4 @@ A scenario suite drives the whole F8 flow from discovery to journal with recorde
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (live run after P5-T068 with env names only; identity wallet + manual disposal asserted)

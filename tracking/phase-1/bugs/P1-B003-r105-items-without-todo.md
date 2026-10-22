@@ -4,7 +4,7 @@ kind: gap
 title: Alpaca real-time, FinanceDatabase and exchange_calendars have no roadmap ToDo
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.05]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B003-r105-items-without-todo
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-1-data-and-monitoring.md §4 (T1.20–T1.24) vs R1.05
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B003 · Alpaca real-time, FinanceDatabase and exchange_calendars have no roadmap ToDo
@@ -49,8 +54,9 @@ Every requirement maps to at least one ToDo
 
 ## ToDo
 
-- [ ] Edit the roadmap §4 ToDo list
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B003/P1-B004/P1-B012): add the missing roadmap ToDo: T1.34 names the Alpaca real-time stream, FinanceDatabase and `exchange_calendars`
+- [x] Aligned docs carry it: roadmap phase 1 §4 T1.34 (→ R1.05)
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T009, P1-T021 (now traced to T1.34)
 
 ## Verification
 
@@ -68,8 +74,8 @@ Every requirement maps to at least one ToDo
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (roadmap phase 1 §4 T1.34 (→ R1.05))
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +99,7 @@ Every requirement maps to at least one ToDo
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B003/P1-B004/P1-B012; docs carry it (roadmap phase 1 §4 T1.34 (→ R1.05)); implementation owned by P1-T009, P1-T021 (now traced to T1.34)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B003/P1-B004/P1-B012); docs updated: roadmap phase 1 §4 T1.34 (→ R1.05); implementation owned by P1-T009, P1-T021 (now traced to T1.34)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

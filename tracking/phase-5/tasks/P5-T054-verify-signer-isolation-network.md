@@ -10,29 +10,34 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T017, P5-T013]
+depends_on: [P5-T017, P5-T013, P0-T021]
 requirements: [R5.N1]
 roadmap_todos: [T5.40]
 modules: [M22, M17]
 dashboards: []
+tools: [docker, uv]
+mcp: []
+env: []
+services: []
 branch: p5/P5-T054-verify-signer-isolation-network
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T054 · Network test: signer and Anvil isolated; no LLM can reach keys
 
 ## Goal / expected outcome
 
-An automated network test proves the signer and Anvil sit on the isolated `signer` network, reachable only from `airdrop-exec`, with egress limited to RPC hosts, and that no LLM/agent/MCP/scraper container or the LiteLLM gateway can reach the signer socket, OpenBao or key files.
+An automated network test proves the signer and Anvil sit on the isolated `signer` network, reachable only from the policy service (`airdrop-exec` in P5; P5-B003), with egress limited to RPC hosts, and that no LLM/agent/MCP/scraper container or the LiteLLM gateway can reach the signer socket, OpenBao or key files.
 
 ## Context & references
 
@@ -93,3 +98,4 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (policy service as the signer's only caller per P5-B003; P0 networks dep)

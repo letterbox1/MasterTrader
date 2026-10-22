@@ -4,7 +4,7 @@ kind: gap
 title: Disposal rule (sell 50% via M11) has no execution path for tokens not on an allowed CEX before P7
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.17]
 roadmap_todos: []
 modules: [M4, M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B010-disposal-rule-no-execution-path
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/08-airdrops-and-token-launches.md §Wallet discipline"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B010 · Disposal rule (sell 50% via M11) has no execution path for tokens not on an allowed CEX before P7
@@ -50,9 +55,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B010): before P7 the airdrop disposal (default sell 50% on claim) is a USER task (`ONCHAIN_ACTION_MANUAL` manual sale with cost-gate numbers); automated via M11 only once live execution passes the P7 gates
+- [x] Docs carry it: 08 wallet discipline (disposal rule: before/from Phase 7), 03 M4 (disposal is a USER task until P7), D12 rules (Disposal), roadmap R5.17/T5.09/T5.28
+- [x] P5 tasks aligned: P5-T045 (creates the manual-sale task, no automated sale), P5-T066 (USER manual sales), P5-T053 (policy test)
 
 ## Verification
 
@@ -67,9 +72,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +97,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B010): before P7 the airdrop disposal (default sell 50% on claim) is a USER task (`ONCHAIN_ACTION_MANUAL` manual sale with cost-gate numbers); automated via M11 only once live execution passes the P7 gates. Docs checked: 08 wallet discipline (disposal rule: before/from Phase 7), 03 M4 (disposal is a USER task until P7), D12 rules (Disposal), roadmap R5.17/T5.09/T5.28. Implementation owned by P5-T045 (creates the manual-sale task, no automated sale), P5-T066 (USER manual sales), P5-T053 (policy test)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B010); docs updated: 08 wallet discipline (disposal rule: before/from Phase 7), 03 M4 (disposal is a USER task until P7), D12 rules (Disposal), roadmap R5.17/T5.09/T5.28; implementation owned by P5-T045 (creates the manual-sale task, no automated sale), P5-T066 (USER manual sales), P5-T053 (policy test)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

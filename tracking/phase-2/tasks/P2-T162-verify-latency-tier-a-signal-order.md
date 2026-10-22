@@ -10,35 +10,40 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T128]
+depends_on: [P2-T128, P2-T021, P2-T047]
 requirements: [R2.N1, R2.47]
 roadmap_todos: [T2.66]
 modules: [M21, M12, M0]
 dashboards: [D01]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T162-verify-latency-tier-a-signal-order
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/10-memory-rag-and-models.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T162 · Verify latency: tier A p99 < 50 µs and signal → order p99 < 5 ms
 
 ## Goal / expected outcome
 
-Measured evidence on the production host that a tier-A model trained → calibrated → compiled through the P2 pipeline predicts in-process with p99 < 50 µs, and that strategy signal → order submitted (`auto`/paper path, excluding venue) is p99 < 5 ms. The pre-trade risk p99 < 1 ms and kill → cancels < 1 s benchmarks are part A's (T2.60/T2.61).
+Measured evidence on the production host that a tier-A model trained → calibrated → compiled through the P2 pipeline predicts in-process with p99 < 50 µs, and that strategy signal → order submitted (`autonomous`/paper path, excluding venue) is p99 < 5 ms. The pre-trade risk p99 < 1 ms and kill → cancels < 1 s benchmarks are P2-T058's.
 
 ## Context & references
 
 - Roadmap: [R2.N1, R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.66 (shared with part A for the risk-check benchmark)
 - [02 §9.2 SLOs](../../../docs/02-v1-architecture.md#92-observability--slos) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design)
-- Part-A prerequisites: engine trace spans signal → `ord.intent` → M11 → submit (T2.25), Grafana SLO panels (T2.42) in part A (P2-T001–T099)
+- Prerequisites (`depends_on`): engine trace spans signal → `ord.intent` → M11 (incl. the inline safety-state checks) → submit (P2-T021, T2.25), Grafana SLO panels (P2-T047, T2.42)
 
 ## Requirements
 
@@ -98,3 +103,4 @@ Measured evidence on the production host that a tier-A model trained → calibra
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (mode name autonomous; engine/Grafana deps explicit)

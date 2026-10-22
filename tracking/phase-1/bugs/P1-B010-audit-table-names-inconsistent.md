@@ -4,7 +4,7 @@ kind: gap
 title: DQ, cost and recon audit table names differ across docs
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R1.10, R1.11, R1.12]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B010-audit-table-names-inconsistent
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M16; docs/02-v1-architecture.md §4 and §5.3; docs/roadmap/phase-1-data-and-monitoring.md R1.10
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B010 · DQ, cost and recon audit table names differ across docs
@@ -49,8 +54,9 @@ One name per table (singular, matching 02 §4: `audit.dq_event`, `audit.cost_eve
 
 ## ToDo
 
-- [ ] Edit 03 M16 and 02 §5.3
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §B P0-B017/P1-B010/P8-B007): canonical singular names `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`
+- [x] Aligned docs carry it: 03 M16 (Outputs, Reconciliation), 03 M17; 02 §5.3 (`audit` row)
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T030, P1-T038, P1-T040 (TCA rows in `audit.cost_event`, no `audit.tca`), P1-T041
 
 ## Verification
 
@@ -68,8 +74,8 @@ One name per table (singular, matching 02 §4: `audit.dq_event`, `audit.cost_eve
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (03 M16 (Outputs, Reconciliation), 03 M17; 02 §5.3 (`audit` row))
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ One name per table (singular, matching 02 §4: `audit.dq_event`, `audit.cost_eve
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §B P0-B017/P1-B010/P8-B007; docs carry it (03 M16 (Outputs, Reconciliation), 03 M17; 02 §5.3 (`audit` row)); implementation owned by P1-T030, P1-T038, P1-T040 (TCA rows in `audit.cost_event`, no `audit.tca`), P1-T041
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P0-B017/P1-B010/P8-B007); docs updated: 03 M16 (Outputs, Reconciliation), 03 M17; 02 §5.3 (`audit` row); implementation owned by P1-T030, P1-T038, P1-T040 (TCA rows in `audit.cost_event`, no `audit.tca`), P1-T041
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

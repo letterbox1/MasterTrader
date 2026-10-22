@@ -15,17 +15,22 @@ requirements: [R2.41, R2.42, R2.44]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T164-verify-harness-known-answers
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T164 · Verify validation harness with known-answer and null-strategy tests
@@ -92,3 +97,4 @@ An independent test pack proving the harness rejects what it should: random stra
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

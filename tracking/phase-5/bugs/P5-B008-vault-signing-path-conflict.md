@@ -4,7 +4,7 @@ kind: gap
 title: Vault signing from the UI (13 §3 step 5) vs vault/warm watch-only (D18, R5.01)
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.01]
 roadmap_todos: []
 modules: [M22]
 dashboards: [D18]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B008-vault-signing-path-conflict
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/ui/dashboards/D18-wallets-treasury.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/13-wallets-treasury-and-onchain.md §3 step 5"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B008 · Vault signing from the UI (13 §3 step 5) vs vault/warm watch-only (D18, R5.01)
@@ -49,9 +54,9 @@ One rule for manual signing from the UI and its phase.
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B008): vault and warm are watch-only; the system never holds their keys and may only prepare unsigned transactions (QR/WalletConnect) for you to sign in your own wallet; P5 has no UI signing path
+- [x] Docs carry it: 13 §1 (watch-only statement), 13 §3 step 5 (manual signing in your own wallet; P5 has no UI signing path), 07 §4 item 1, D18 rules, roadmap R5.01
+- [x] P5 tasks aligned: P5-T012 (watch-only tiers can't sign), P5-T050 (no signing controls), P5-T001 (USER)
 
 ## Verification
 
@@ -66,9 +71,9 @@ One rule for manual signing from the UI and its phase.
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +97,7 @@ One rule for manual signing from the UI and its phase.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B008): vault and warm are watch-only; the system never holds their keys and may only prepare unsigned transactions (QR/WalletConnect) for you to sign in your own wallet; P5 has no UI signing path. Docs checked: 13 §1 (watch-only statement), 13 §3 step 5 (manual signing in your own wallet; P5 has no UI signing path), 07 §4 item 1, D18 rules, roadmap R5.01. Implementation owned by P5-T012 (watch-only tiers can't sign), P5-T050 (no signing controls), P5-T001 (USER)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B008); docs updated: 13 §1 (watch-only statement), 13 §3 step 5 (manual signing in your own wallet; P5 has no UI signing path), 07 §4 item 1, D18 rules, roadmap R5.01; implementation owned by P5-T012 (watch-only tiers can't sign), P5-T050 (no signing controls), P5-T001 (USER)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

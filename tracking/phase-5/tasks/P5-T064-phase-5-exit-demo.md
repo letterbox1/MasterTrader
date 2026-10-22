@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T001, P5-T002, P5-T004, P5-T005, P5-T006, P5-T007, P5-T008, P5-T051, P5-T052, P5-T053, P5-T054, P5-T055, P5-T056, P5-T057, P5-T058, P5-T059, P5-T060, P5-T061, P5-T062, P5-T063]
-requirements: [R5.01, R5.02, R5.03, R5.04, R5.05, R5.06, R5.07, R5.10, R5.11, R5.12, R5.13, R5.14, R5.15, R5.16, R5.17, R5.18, R5.20, R5.21, R5.22, R5.23, R5.N1, R5.N2]
+depends_on: [P5-T001, P5-T002, P5-T003, P5-T004, P5-T005, P5-T006, P5-T007, P5-T008, P5-T051, P5-T052, P5-T053, P5-T054, P5-T055, P5-T056, P5-T057, P5-T058, P5-T059, P5-T060, P5-T061, P5-T062, P5-T063, P5-T065, P5-T066, P5-T068, P5-T069]
+requirements: [R5.01, R5.02, R5.03, R5.04, R5.05, R5.06, R5.07, R5.10, R5.11, R5.12, R5.13, R5.14, R5.15, R5.16, R5.17, R5.18, R5.20, R5.21, R5.22, R5.23, R5.24, R5.25, R5.N1, R5.N2]
 roadmap_todos: []
 modules: [M4, M19, M22, M18]
 dashboards: [D12, D13, D18]
+tools: [uv, pnpm]
+mcp: []
+env: []
+services: [telegram]
 branch: p5/P5-T064-phase-5-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T064 · Phase 5 exit demo
@@ -45,7 +50,7 @@ A recorded demo walks every exit criterion: (1) a weekly digest of vetted airdro
 - Criterion 1: show the latest weekly digest in Telegram and the D13 preview; every link verified.
 - Criterion 2: D12 history for the testnet claim (mandate, simulation diff, tx, journal) and a rejected scam with reasons.
 - Criterion 3: CI run of the drainer suite (green) and D18 with recon status green for every registered wallet.
-- Plus: kill drill evidence, network isolation result, policy matrix, chaos outcome table, SoK report.
+- Plus: kill drill evidence (hot balances swept to the vault), network isolation result, policy matrix, chaos outcome table, SoK report, live key check (P5-T068), proof-of-control test (P5-T069), limits confirmation (P5-T065), first manual disposal task (P5-T066) and the depeg/exploit simulation showing alert + task only (P5-T057).
 
 ## ToDo
 
@@ -98,3 +103,4 @@ A recorded demo walks every exit criterion: (1) a weekly digest of vetted airdro
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (new deps P5-T003/T065/T066/T068/T069; R5.24/R5.25 covered)

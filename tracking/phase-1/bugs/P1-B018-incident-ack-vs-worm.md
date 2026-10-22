@@ -4,7 +4,7 @@ kind: gap
 title: D07 incident acknowledge maps to system.settings.update and conflicts with WORM
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.10, R1.15]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B018-incident-ack-vs-worm
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D07-data-quality.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D07-data-quality.md Actions; docs/02-v1-architecture.md §7.2; docs/15-bots-hitl-and-worm-audit.md §2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B018 · D07 incident acknowledge maps to system.settings.update and conflicts with WORM
@@ -49,8 +54,9 @@ A dedicated command (e.g. `data.incident.ack`, C0) that appends an ack row refer
 
 ## ToDo
 
-- [ ] Edit 02 §7.2 and D07
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B018): incident acknowledgement is a new WORM row (`audit.dq_ack`) via `data.incident.ack` (C0), never an update
+- [x] Aligned docs carry it: 02 §7.2 (Data commands); 03 M16 (Outputs), 03 M17; D07 (Quality tab, Acknowledge incident action)
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T030, P1-T046, P1-T048
 
 ## Verification
 
@@ -68,8 +74,8 @@ A dedicated command (e.g. `data.incident.ack`, C0) that appends an ack row refer
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (02 §7.2 (Data commands); 03 M16 (Outputs), 03 M17; D07 (Quality tab, Acknowledge incident action))
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +100,7 @@ A dedicated command (e.g. `data.incident.ack`, C0) that appends an ack row refer
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B018; docs carry it (02 §7.2 (Data commands); 03 M16 (Outputs), 03 M17; D07 (Quality tab, Acknowledge incident action)); implementation owned by P1-T030, P1-T046, P1-T048
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B018); docs updated: 02 §7.2 (Data commands); 03 M16 (Outputs), 03 M17; D07 (Quality tab, Acknowledge incident action); implementation owned by P1-T030, P1-T046, P1-T048
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

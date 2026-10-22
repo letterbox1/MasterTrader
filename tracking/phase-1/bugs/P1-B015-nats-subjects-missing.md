@@ -4,7 +4,7 @@ kind: gap
 title: recon.* and dq.raw.* subjects are missing from the NATS subject table
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R1.10, R1.12]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B015-nats-subjects-missing
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §4 vs §6
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B015 · recon.* and dq.raw.* subjects are missing from the NATS subject table
@@ -49,8 +54,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Edit 02 §6
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B011/P1-B015): add `recon.*` and `dq.raw.*` to the 02 §6 subject table
+- [x] Aligned docs carry it: 02 §6 (`dq.raw.{venue}.{symbol}` and `recon.{venue}` rows)
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T004, P1-T010, P1-T041
 
 ## Verification
 
@@ -68,8 +74,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (02 §6 (`dq.raw.{venue}.{symbol}` and `recon.{venue}` rows))
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +99,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B011/P1-B015; docs carry it (02 §6 (`dq.raw.{venue}.{symbol}` and `recon.{venue}` rows)); implementation owned by P1-T004, P1-T010, P1-T041
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B011/P1-B015); docs updated: 02 §6 (`dq.raw.{venue}.{symbol}` and `recon.{venue}` rows); implementation owned by P1-T004, P1-T010, P1-T041
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

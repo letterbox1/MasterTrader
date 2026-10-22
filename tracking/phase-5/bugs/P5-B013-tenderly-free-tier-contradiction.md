@@ -15,17 +15,22 @@ requirements: [R5.02]
 roadmap_todos: []
 modules: [M22]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B013-tenderly-free-tier-contradiction
 pr: ""
 doc_sync: [docs/research/airdrops-rugpull-discord.md]
 doc_sync_status: n/a
 found_in: "docs/research/airdrops-rugpull-discord.md §Safety sources"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B013 · Tenderly free tier: "120K simulations/month" (research) vs "no simulation API" (06, 13)
@@ -91,3 +96,4 @@ The research note agrees with the decision (Anvil fork; Tenderly free plan has n
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · left open: 17 §D records the decision (Tenderly not used; Anvil + `simulateTransaction` only) and 13 §2, 06 (Anvil row + skip list), 11 and roadmap R5.02 carry it, but docs/research/airdrops-rugpull-discord.md line 60 still reads "Simulation: Tenderly free tier (120K simulations/month) for EVM" with no superseded note (the suggested fix). Needs a one-line "superseded: Anvil/simulateTransaction only (17 §D)" annotation by the doc owner. Implementation already owned by P5-T016 (Anvil/simulateTransaction only)

@@ -4,7 +4,7 @@ kind: gap
 title: Email alert channel has no defined sender or SMTP provider
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.14]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B005-email-alert-sender-unspecified
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-1-data-and-monitoring.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/07-security-notes.md §9; docs/roadmap/phase-1-data-and-monitoring.md R1.14 / T1.03
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B005 · Email alert channel has no defined sender or SMTP provider
@@ -49,9 +54,9 @@ The docs name how email is sent (e.g. an SMTP account on a free plan or your mai
 
 ## ToDo
 
-- [ ] Decide the provider with the user
-- [ ] Edit 07 §9 and T1.03 wording
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B005): email via your own mail provider's SMTP with an app password kept in the secrets file, or email off (Telegram + ntfy remain)
+- [x] Aligned docs carry it: 07 §9 (Email), 07 §2 (what goes in the secrets file); roadmap R1.14, T1.05
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T068 (new USER task, T1.05), P1-T045, P1-T060, P1-T003
 
 ## Verification
 
@@ -69,8 +74,8 @@ The docs name how email is sent (e.g. an SMTP account on a free plan or your mai
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (07 §9 (Email), 07 §2 (what goes in the secrets file); roadmap R1.14, T1.05)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +100,7 @@ The docs name how email is sent (e.g. an SMTP account on a free plan or your mai
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B005; docs carry it (07 §9 (Email), 07 §2 (what goes in the secrets file); roadmap R1.14, T1.05); implementation owned by P1-T068 (new USER task, T1.05), P1-T045, P1-T060, P1-T003
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B005); docs updated: 07 §9 (Email), 07 §2 (what goes in the secrets file); roadmap R1.14, T1.05; implementation owned by P1-T068 (new USER task, T1.05), P1-T045, P1-T060, P1-T003
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

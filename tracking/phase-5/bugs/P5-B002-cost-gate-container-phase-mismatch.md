@@ -4,7 +4,7 @@ kind: gap
 title: On-chain cost gate is required in P5 but placed in the P6 treasury container
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.04]
 roadmap_todos: []
 modules: [M22]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B002-cost-gate-container-phase-mismatch
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/02-v1-architecture.md §3.2 (containers table)"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B002 · On-chain cost gate is required in P5 but placed in the P6 treasury container
@@ -49,9 +54,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B002): the cost gate is one library, `mt_onchain.costgate`, used by the signer path from P5 and by the P6 treasury
+- [x] Docs carry it: 02 §3.2 (library row `mt_onchain.costgate`, phase 5; `treasury` uses it in P6), 03 §3 layout (`mt_onchain/`) and M22, 13 §7, roadmap R5.04/T5.21
+- [x] P5 tasks aligned: P5-T019, P5-T020
 
 ## Verification
 
@@ -66,9 +71,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B002): the cost gate is one library, `mt_onchain.costgate`, used by the signer path from P5 and by the P6 treasury. Docs checked: 02 §3.2 (library row `mt_onchain.costgate`, phase 5; `treasury` uses it in P6), 03 §3 layout (`mt_onchain/`) and M22, 13 §7, roadmap R5.04/T5.21. Implementation owned by P5-T019, P5-T020
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B002); docs updated: 02 §3.2 (library row `mt_onchain.costgate`, phase 5; `treasury` uses it in P6), 03 §3 layout (`mt_onchain/`) and M22, 13 §7, roadmap R5.04/T5.21; implementation owned by P5-T019, P5-T020
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T044, P5-T046, P5-T006, P5-T048]
+depends_on: [P5-T044, P5-T046, P5-T048, P5-T065, P5-T017]
 requirements: [R5.15, R5.18, R5.02]
 roadmap_todos: [T5.61]
 modules: [M4, M22, M18]
 dashboards: [D12]
+tools: [uv, forge, anvil, solana, solana-test-validator]
+mcp: []
+env: []
+services: [sepolia-rpc, solana-devnet, telegram]
 branch: p5/P5-T056-verify-testnet-claim-scenario
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T056 · Testnet claim scenario: simulation +tokens −gas, mandate respected, journal entry
@@ -37,18 +42,19 @@ On a public testnet (Sepolia for EVM, Solana devnet), a test Merkle distributor 
 ## Context & references
 
 - Roadmap: ToDo T5.61 → R5.15, R5.18 · exit criterion 2 ([§6](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md))
-- [02 F8](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · [D12 acceptance 1](../../../docs/ui/dashboards/D12-airdrops.md) · USER mandate P5-T006
+- [02 F8](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · [D12 acceptance 1](../../../docs/ui/dashboards/D12-airdrops.md) · testnet keys and the testnet mandate are created in this task's setup (faucet funds only, no real money) with you approving the C3 steps; the mainnet mandates of P5-T006 are not needed (build first, keys last, [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22))
 
 ## Requirements
 
+- Setup: the signer's testnet profile creates the testnet identity wallets (Sepolia, Solana devnet) via `key_create` (C3, you approve in Telegram), funded from public faucets only; signing uses the limits you confirmed in P5-T065; you approve the testnet mandate (`airdrop.mandate.create`, C3) for the test distributor. Claims run from the identity wallet, never the hot trading wallet (P5-B017).
 - Deploy test fixtures: an OpenZeppelin MerkleDistributor (EVM) and an SPL Merkle distributor (Solana) with your identity wallets in the tree; host the proof JSON on a test domain registered as "official" in the fixture project.
-- Run the full pipeline; assert the decision is auto-claim, simulation digest shows only token inflow + gas, mandate id recorded, journal event with classification and AUD value (testnet tokens priced at a fixture price, flagged test).
+- Run the full pipeline; assert the decision is auto-claim, simulation digest shows only token inflow + gas, mandate id recorded, journal event with classification and AUD value (testnet tokens priced at a fixture price, flagged test), and a manual-sale disposal task (never an automated sale; P5-B010).
 - Negative variant: a second distributor that also pulls a test token → refused, CLAIM_MANUAL task.
 - Evidence pack: exec_log rows, ledger rows, tx hashes, D12 screenshots in the progress log.
 
 ## ToDo
 
-- [ ] Write deploy scripts under `tests/scenarios/testnet_claim/`.
+- [ ] Write deploy scripts under `tests/scenarios/testnet_claim/` and the testnet key/mandate setup (C3 steps approved by you).
 - [ ] Run the scenario; capture evidence.
 - [ ] Automate a repeatable version on Anvil/local validator for CI (same assertions).
 
@@ -95,3 +101,4 @@ On a public testnet (Sepolia for EVM, Solana devnet), a test Merkle distributor 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys last: testnet keys and mandate created here instead of depending on P5-T006/real funds; signing needs P5-T065; manual disposal task asserted)

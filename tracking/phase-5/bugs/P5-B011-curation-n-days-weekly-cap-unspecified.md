@@ -4,7 +4,7 @@ kind: gap
 title: Discord delivery "N days" and "a few new servers a week" are unspecified
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R5.21]
 roadmap_todos: []
 modules: [M19]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B011-curation-n-days-weekly-cap-unspecified
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/08-airdrops-and-token-launches.md §Discord curation queue"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B011 · Discord delivery "N days" and "a few new servers a week" are unspecified
@@ -49,9 +54,9 @@ Defaults exist for the re-prompt window and the weekly community cap.
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §C P5-B011): defaults: re-prompt if a followed channel delivers nothing in 7 days; ≤ 3 new servers suggested per week (configurable)
+- [x] Docs carry it: 16 §2.13 (Curation), 08 Discord curation queue, 03 M19 Discord curation, D13 Communities, roadmap R5.21
+- [x] P5 tasks aligned: P5-T047 (delivery verification and weekly cap), P5-T061 (test)
 
 ## Verification
 
@@ -66,9 +71,9 @@ Defaults exist for the re-prompt window and the weekly community cap.
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ Defaults exist for the re-prompt window and the weekly community cap.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §C P5-B011): defaults: re-prompt if a followed channel delivers nothing in 7 days; ≤ 3 new servers suggested per week (configurable). Docs checked: 16 §2.13 (Curation), 08 Discord curation queue, 03 M19 Discord curation, D13 Communities, roadmap R5.21. Implementation owned by P5-T047 (delivery verification and weekly cap), P5-T061 (test)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P5-B011); docs updated: 16 §2.13 (Curation), 08 Discord curation queue, 03 M19 Discord curation, D13 Communities, roadmap R5.21; implementation owned by P5-T047 (delivery verification and weekly cap), P5-T061 (test)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

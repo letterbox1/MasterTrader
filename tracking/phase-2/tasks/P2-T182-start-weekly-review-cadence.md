@@ -15,17 +15,22 @@ requirements: []
 roadmap_todos: [T2.81]
 modules: [M7, M16]
 dashboards: [D05]
+tools: []
+mcp: []
+env: []
+services: [telegram]
 branch: p2/P2-T182-start-weekly-review-cadence
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T182 · Start the weekly worst-five-trades and cost review
@@ -88,3 +93,4 @@ The weekly review becomes a habit: the first two weekly packs after the paper cl
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

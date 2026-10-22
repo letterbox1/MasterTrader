@@ -15,17 +15,22 @@ requirements: [R5.03, R5.16, R5.02]
 roadmap_todos: [T5.60]
 modules: [M22, M4]
 dashboards: []
+tools: [uv, forge, anvil, solana-test-validator]
+mcp: []
+env: []
+services: [anvil]
 branch: p5/P5-T052-verify-drainer-test-suite
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T052 · Drainer test suite: every drainer pattern refused
@@ -96,3 +101,4 @@ A dedicated CI suite (`tests/drainer/`) proves end to end — through `mt_api`/e
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; Anvil/local validator only, keyless)

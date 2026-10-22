@@ -15,17 +15,22 @@ requirements: [R5.15, R5.17]
 roadmap_todos: []
 modules: [M4, M22]
 dashboards: [D12]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B017-claim-wallet-hot-vs-identity
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/ui/dashboards/D12-airdrops.md]
 doc_sync_status: n/a
 found_in: "docs/08-airdrops-and-token-launches.md §What may run autonomously; docs/ui/dashboards/D12-airdrops.md /airdrops/wallet"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B017 · Autonomous claims: "hot wallet" (08, D12) vs "airdrop identity wallet" (03 M4, R5.15)
@@ -93,3 +98,4 @@ All docs say auto-claims run from the chain's airdrop identity wallet (signer-he
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · left open: 17 §B records the decision (autonomous claims use the chain's airdrop identity wallet, never the hot trading wallet) and 08, D12, 03 M4, 13 §1, 07 §4 and 02 F8 carry it, but the 02 §2 system-context diagram still labels chain access "hot-wallet claims only" (docs/02-v1-architecture.md line 55). Needs that label changed to identity-wallet claims. Implementation owned by P5-T041/P5-T044 (identity wallet only) and tested in P5-T053

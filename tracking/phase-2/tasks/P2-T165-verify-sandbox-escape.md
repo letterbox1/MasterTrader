@@ -15,17 +15,22 @@ requirements: [R2.45]
 roadmap_todos: [T2.28]
 modules: [M7]
 dashboards: [D04]
+tools: [docker, runsc, uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T165-verify-sandbox-escape
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T165 · Verify sandbox containment (escape, egress, secrets, resource abuse)
@@ -37,7 +42,7 @@ Evidence that hostile generated code cannot reach the network, secrets, the host
 ## Context & references
 
 - Roadmap: [R2.45](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.28 · [SPEC NN4](../../../SPEC.md#non-negotiable-requirements) · [07](../../../docs/07-security-notes.md)
-- Sandbox container + gVisor from T2.40 in part A (P2-T001–T099); runner from P2-T116
+- Sandbox container + gVisor from P2-T044 (T2.40); runner from P2-T116
 
 ## Requirements
 
@@ -93,3 +98,4 @@ Evidence that hostile generated code cannot reach the network, secrets, the host
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; sandbox container link)

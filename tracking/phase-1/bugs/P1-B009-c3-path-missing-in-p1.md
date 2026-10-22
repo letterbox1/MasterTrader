@@ -4,7 +4,7 @@ kind: gap
 title: Loosening DQ thresholds is C3, but the Telegram approval path arrives in P2
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.10]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B009-c3-path-missing-in-p1
 pr: ""
 doc_sync: [docs/ui/dashboards/D07-data-quality.md, docs/roadmap/phase-1-data-and-monitoring.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D07-data-quality.md Actions; docs/roadmap/phase-2-strategies-risk-lab.md T2.33; docs/roadmap/phase-1-data-and-monitoring.md T1.04
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B009 · Loosening DQ thresholds is C3, but the Telegram approval path arrives in P2
@@ -49,9 +54,9 @@ A documented interim path for P1 threshold loosening that keeps the C3 intent
 
 ## ToDo
 
-- [ ] Decide (a) or (b) with the user
-- [ ] Edit D07 actions and the P1/P2 roadmap notes
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P0-B002/P1-B009): until Telegram C3 exists (P2), C3 commands complete through the host-only break-glass CLI `mtctl approve <id>` + TOTP, audited
+- [x] Aligned docs carry it: 02 §7.2 ("Before Telegram C3 exists"); D07 actions (Adjust DQ thresholds); roadmap R1.10
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T030, P1-T046, P1-T066 (CLI built in P0-T035)
 
 ## Verification
 
@@ -69,8 +74,8 @@ A documented interim path for P1 threshold loosening that keeps the C3 intent
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (02 §7.2 ("Before Telegram C3 exists"); D07 actions (Adjust DQ thresholds); roadmap R1.10)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +100,7 @@ A documented interim path for P1 threshold loosening that keeps the C3 intent
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B002/P1-B009; docs carry it (02 §7.2 ("Before Telegram C3 exists"); D07 actions (Adjust DQ thresholds); roadmap R1.10); implementation owned by P1-T030, P1-T046, P1-T066 (CLI built in P0-T035)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B002/P1-B009); docs updated: 02 §7.2 ("Before Telegram C3 exists"); D07 actions (Adjust DQ thresholds); roadmap R1.10; implementation owned by P1-T030, P1-T046, P1-T066 (CLI built in P0-T035)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

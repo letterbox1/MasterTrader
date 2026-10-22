@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T105, P2-T106]
+depends_on: [P2-T105, P2-T106, P2-T021, P2-T023, P2-T008]
 requirements: [R2.01, R2.40]
 roadmap_todos: [T2.65]
 modules: [M7, M0, M12]
 dashboards: [D04, D03]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, mlflow]
 branch: p2/P2-T161-verify-backtest-paper-parity
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T161 · Verify backtest ↔ paper parity on a simple template over the same week
@@ -38,11 +43,11 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 
 - Roadmap: [R2.01, R2.40](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.65
 - [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 M7 truth](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Prerequisite from part A (P2-T001–T099): paper engine via `mt_engine` on testnet/practice (T2.25) running the EMA template (T2.21) for one week, recorded by the P1 Parquet recorder
+- Prerequisites (`depends_on`): paper engine (P2-T021) on the sandbox venue (P2-T023; simulated fills on live P1 data, no venue keys needed) running the EMA template (P2-T008) for one week, recorded by the P1 Parquet recorder
 
 ## Requirements
 
-- Strategy: EMA-cross template on BTC-USDT (Binance testnet data) 1m bars, plus one FX pair on OANDA practice if available.
+- Strategy: EMA-cross template on BTC-USDT (Binance public market data recorded in P1) 1m bars, paper bot on the sandbox venue, plus one FX pair from the P1 OANDA price stream if available.
 - Signals: identical timestamps and directions (100%).
 - Orders: identical intents and M11 decisions.
 - Fills: per-fill price diff within the modelled slippage band; total P&L difference ≤ 10% of gross P&L or ≤ 5 bps of notional, whichever is larger; cost totals within 20% (feeds realised-vs-modelled ratio).
@@ -99,3 +104,4 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper parity on the sandbox venue (no keys), engine/template deps explicit)

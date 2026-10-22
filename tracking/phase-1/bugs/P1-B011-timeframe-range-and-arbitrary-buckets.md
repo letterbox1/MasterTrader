@@ -4,7 +4,7 @@ kind: gap
 title: Timeframe range and "arbitrary time_bucket" aggregates are inconsistent
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R1.02, R1.15]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B011-timeframe-range-and-arbitrary-buckets
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/ui/dashboards/D02-markets.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M1; docs/02-v1-architecture.md §5.1; docs/ui/dashboards/D02-markets.md PriceChart
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B011 · Timeframe range and "arbitrary time_bucket" aggregates are inconsistent
@@ -49,8 +54,9 @@ Docs say: CAGGs at 5m/15m/1h/4h/1D; any other size (incl. 1W) is `time_bucket` o
 
 ## ToDo
 
-- [ ] Edit 03 M1, 02 §5.1, D02
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B011/P1-B015): timeframes run tick → 1W with continuous aggregates at 1m, 5m, 15m, 1h, 4h, 1D, 1W; other sizes via `time_bucket` at read time
+- [x] Aligned docs carry it: 03 M1 (recording pipeline); 02 §5.1 (Postgres row); D02 (overview, `PriceChart`, acceptance 1); roadmap R1.02, T1.21
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T013, P1-T050, P1-T058
 
 ## Verification
 
@@ -68,8 +74,8 @@ Docs say: CAGGs at 5m/15m/1h/4h/1D; any other size (incl. 1W) is `time_bucket` o
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (03 M1 (recording pipeline); 02 §5.1 (Postgres row); D02 (overview, `PriceChart`, acceptance 1); roadmap R1.02, T1.21)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +101,7 @@ Docs say: CAGGs at 5m/15m/1h/4h/1D; any other size (incl. 1W) is `time_bucket` o
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B011/P1-B015; docs carry it (03 M1 (recording pipeline); 02 §5.1 (Postgres row); D02 (overview, `PriceChart`, acceptance 1); roadmap R1.02, T1.21); implementation owned by P1-T013, P1-T050, P1-T058
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B011/P1-B015); docs updated: 03 M1 (recording pipeline); 02 §5.1 (Postgres row); D02 (overview, `PriceChart`, acceptance 1); roadmap R1.02, T1.21; implementation owned by P1-T013, P1-T050, P1-T058
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

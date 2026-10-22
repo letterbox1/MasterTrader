@@ -4,7 +4,7 @@ kind: gap
 title: L2 recording granularity conflicts with the storage budget
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.01, R1.N3]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B002-l2-granularity-vs-storage-budget
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-1-data-and-monitoring.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-1-data-and-monitoring.md R1.01 vs R1.N3; docs/03-build-spec.md M1 and §6
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B002 · L2 recording granularity conflicts with the storage budget
@@ -49,9 +54,9 @@ The docs say whether raw 100 ms diffs are recorded (and for how many symbols) or
 
 ## ToDo
 
-- [ ] Decide the recording policy with the user
-- [ ] Update 03 M1 storage budget text and R1.N3
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B002): native-speed L2 diffs only for symbols whose bots need order-book data (default ≤ 3, configurable); 1 s book snapshots for the rest; budget recalculated from the soak
+- [x] Aligned docs carry it: 03 M1 (L2 recording, storage budget); 02 §5.1 (Parquet row); roadmap R1.01, R1.N3
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T001, P1-T010, P1-T012, P1-T052, P1-T065
 
 ## Verification
 
@@ -69,8 +74,8 @@ The docs say whether raw 100 ms diffs are recorded (and for how many symbols) or
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (03 M1 (L2 recording, storage budget); 02 §5.1 (Parquet row); roadmap R1.01, R1.N3)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +100,7 @@ The docs say whether raw 100 ms diffs are recorded (and for how many symbols) or
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P1-B002; docs carry it (03 M1 (L2 recording, storage budget); 02 §5.1 (Parquet row); roadmap R1.01, R1.N3); implementation owned by P1-T001, P1-T010, P1-T012, P1-T052, P1-T065
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P1-B002); docs updated: 03 M1 (L2 recording, storage budget); 02 §5.1 (Parquet row); roadmap R1.01, R1.N3; implementation owned by P1-T001, P1-T010, P1-T012, P1-T052, P1-T065
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

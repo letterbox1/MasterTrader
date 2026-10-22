@@ -4,7 +4,7 @@ kind: gap
 title: Kill switch: "sweep hot balances" (14 §5) vs "treasury moves frozen" (D18, F6)
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R5.N2, R5.07]
 roadmap_todos: []
 modules: [M22, M11]
 dashboards: [D18, D12]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-B007-kill-switch-sweep-vs-freeze
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D18-wallets-treasury.md, docs/13-wallets-treasury-and-onchain.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/14-strategy-evidence-and-validation.md §5 rung 6; docs/ui/dashboards/D18-wallets-treasury.md §Rules; docs/02-v1-architecture.md F6"
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-B007 · Kill switch: "sweep hot balances" (14 §5) vs "treasury moves frozen" (D18, F6)
@@ -50,9 +55,9 @@ The docs say explicitly that kill ON freezes auto-claims, treasury moves and new
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution recorded: Decided (17 §B P5-B007): kill stops new trading, cancels orders, applies each bot's failure policy, freezes new treasury/earn moves and, from P5 (default on), sweeps hot trading balances to the vault address; sweeps to the vault and approval revokes are protective and exempt from the freeze
+- [x] Docs carry it: 13 §1 rules (kill switch), 02 F6 (from P5 hot balances sweep; protective sweeps/revokes exempt), 14 §5 rung 6, D18 rules (kill ON), roadmap R5.07/R5.N2
+- [x] P5 tasks aligned: P5-T028 (kill sweep, `kill_sweep_enabled` default true), P5-T058 (drill), P5-T012 (setting)
 
 ## Verification
 
@@ -67,9 +72,9 @@ The docs say explicitly that kill ON freezes auto-claims, treasury moves and new
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync (and the other docs named in the ToDo) state the decided value/name
+- [x] Affected P5 tasks reference the decided value/name and an owning task exists
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +99,7 @@ The docs say explicitly that kill ON freezes auto-claims, treasury moves and new
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · aligned for docs/16–17: Decided (17 §B P5-B007): kill stops new trading, cancels orders, applies each bot's failure policy, freezes new treasury/earn moves and, from P5 (default on), sweeps hot trading balances to the vault address; sweeps to the vault and approval revokes are protective and exempt from the freeze. Docs checked: 13 §1 rules (kill switch), 02 F6 (from P5 hot balances sweep; protective sweeps/revokes exempt), 14 §5 rung 6, D18 rules (kill ON), roadmap R5.07/R5.N2. Implementation owned by P5-T028 (kill sweep, `kill_sweep_enabled` default true), P5-T058 (drill), P5-T012 (setting)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P5-B007); docs updated: 13 §1 rules (kill switch), 02 F6 (from P5 hot balances sweep; protective sweeps/revokes exempt), 14 §5 rung 6, D18 rules (kill ON), roadmap R5.07/R5.N2; implementation owned by P5-T028 (kill sweep, `kill_sweep_enabled` default true), P5-T058 (drill), P5-T012 (setting)
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:10 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

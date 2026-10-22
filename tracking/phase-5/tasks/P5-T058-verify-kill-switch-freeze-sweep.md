@@ -10,29 +10,34 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T028, P5-T044, P5-T004]
+depends_on: [P5-T028, P5-T044, P5-T065]
 requirements: [R5.N2, R5.07]
 roadmap_todos: [T5.64]
 modules: [M22, M4, M11]
 dashboards: [D12, D18]
+tools: [uv, anvil, solana-test-validator]
+mcp: []
+env: []
+services: [telegram, anvil, sepolia-rpc]
 branch: p5/P5-T058-verify-kill-switch-freeze-sweep
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T058 · Kill switch drill: auto-claims frozen and hot balances swept
 
 ## Goal / expected outcome
 
-A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes `airdrop-exec` within 1 s (queued claims cancelled, none signed after the kill timestamp), treasury moves are frozen, protective revokes still work, and hot/identity/burner balances above zero gas-reserve sweep to the vault; turning kill OFF needs C3 and does not auto-resume claims.
+A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes `airdrop-exec` within 1 s (queued claims cancelled, none signed after the kill timestamp), treasury moves are frozen, protective revokes still work, and hot trading balances above the gas reserve sweep to the vault address (default on, P5-B007); turning kill OFF needs C3 and does not auto-resume claims.
 
 ## Context & references
 
@@ -41,8 +46,8 @@ A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes
 
 ## Requirements
 
-- Setup: 5 queued claims, 1 in simulation, balances on 3 system wallets (testnet).
-- Assertions: freeze latency < 1 s (ledger/exec_log timestamps); 0 signatures for claims after kill; sweep txs confirmed to the vault; D12/D18 red banners; Telegram summary.
+- Setup: testnet keys created in the drill's own setup (faucet funds, C3 approved by you; no real money), signing enabled with the limits confirmed in P5-T065; 5 queued claims, 1 in simulation, balances on the hot, identity and burner test wallets.
+- Assertions: freeze latency < 1 s (ledger/exec_log timestamps); 0 signatures for claims after kill; hot-wallet sweep txs confirmed to the vault (identity/burner frozen, not kill-swept); D12/D18 red banners; Telegram summary.
 - Kill OFF via C3; claims remain paused until re-armed explicitly.
 
 ## ToDo
@@ -58,6 +63,7 @@ A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes
 
 ### Scenarios
 - Given kill ON during a gas spike, then sweeps still go out (defensive bypass) and are budget-logged.
+- Given `kill_sweep_enabled = false` (your setting), when kill turns ON, then claims freeze, no sweep runs, and the Telegram summary says so.
 
 ### Stress / failure injection
 - Trigger kill while RPC latency is 2 s and one provider is down: freeze still < 1 s; sweeps retry via fallback.
@@ -93,3 +99,4 @@ A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill sweeps hot trading balances to the vault per P5-B007, configurable; testnet keys in setup instead of P5-T004 real funds; needs P5-T065)

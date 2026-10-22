@@ -15,17 +15,22 @@ requirements: [R5.02, R5.04, R5.05, R5.N2]
 roadmap_todos: []
 modules: [M22, M4, M19]
 dashboards: [D07, D18]
+tools: [uv, docker, toxiproxy]
+mcp: []
+env: []
+services: [postgres, nats, anvil]
 branch: p5/P5-T062-verify-stress-failure-injection
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T062 · Stress and failure injection: RPC quotas, signer/Anvil/Postgres down, restarts mid-claim
@@ -42,7 +47,7 @@ A chaos suite proves P5 degrades safely: every on-chain path fails **closed** (n
 ## Requirements
 
 - Faults: RPC provider 429/5xx/timeouts (each provider, then all); Anvil down; Helius down; OpenBao sealed; Postgres down 2 min; NATS restart; signer crash after sign/before broadcast; airdrop-exec restart mid-queue; clock skew 2 s; Telegram API down; GoPlus/RugCheck down.
-- Expectations: no signature without ledger row; claims → CLAIM_MANUAL or retry within deadline; indexer marks stale (D18 amber); quotas never exceeded; tasks still visible in UI when Telegram is down; risk `incomplete` blocks autonomy.
+- Expectations: no signature without a ledger row or while the limits are unconfirmed (`limits_unconfirmed`); claims → CLAIM_MANUAL or retry within deadline; indexer marks stale (D18 amber); quotas never exceeded; tasks still visible in UI when Telegram is down; risk `incomplete` blocks autonomy.
 - Load: 3× normal discovery volume for 1 h with quotas enforced; 50 concurrent claims across 3 wallets.
 - Report with per-fault outcome table.
 
@@ -94,3 +99,4 @@ A chaos suite proves P5 degrades safely: every on-chain path fails **closed** (n
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (signing-disabled state added to the fail-closed expectations)

@@ -15,17 +15,22 @@ requirements: [R1.06]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B016-abs-cpi-series-unspecified
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: docs/09-journal-and-tax.md (AU_2027_REFORM); docs/03-build-spec.md M1
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B016 · Which ABS CPI series drives tax indexation is not specified
@@ -49,9 +54,11 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Raise with the tax agent via the user
-- [ ] Edit 09
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §D P1-B016): All groups CPI, weighted average of eight capital cities, quarterly, series A2325846C (U)
+- [x] Aligned docs carry it: 03 M1 (ABS CPI), 06 §3 (ABS CPI tax input; open checks), 09 (key findings; AU_2027_REFORM; tax-agent question 9); roadmap R1.06, T1.60
+- [x] P1-T027 loads the configured series ID (`macro.abs_cpi_series`); P1-T056 owns the ID check
+- [ ] Verify the series ID A2325846C and its release calendar via the ABS Data API (P1-T056, T1.60) and record the result in 06 §3
+- [ ] The as-of rule for indexation is confirmed by your tax agent (09 question 9; a P3 tax-agent USER item)
 
 ## Verification
 
@@ -69,7 +76,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
+- [x] Docs name the series and mark the ID (U)
+- [ ] Series ID verified (or corrected in `config/universe.yaml` and the docs) with evidence from P1-T056
 - [ ] Root cause and decision noted in the progress log
 
 ## Exceptions & edge cases
@@ -94,3 +102,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · decision in 17 §D P1-B016 and carried by 03 M1, 06 §3, 09; left open because the series ID is (U) until verified: owned by P1-T056 (T1.60), loaded by P1-T027 from config; severity stays S3; the indexation as-of rule goes to the tax agent in P3

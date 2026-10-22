@@ -4,7 +4,7 @@ kind: gap
 title: Key operating numbers are left as N or undefined
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R1.10, R1.11, R1.12]
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-B017-unspecified-operating-parameters
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/ui/dashboards/D07-data-quality.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M16; docs/roadmap/phase-1-data-and-monitoring.md R1.12; docs/02-v1-architecture.md §9.2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-B017 · Key operating numbers are left as N or undefined
@@ -49,9 +54,9 @@ Defaults documented: recon 15 min + EOD 00:05 UTC; spread 3×; stale timeouts le
 
 ## ToDo
 
-- [ ] Confirm defaults with the user
-- [ ] Edit 03 M16, 02 §9.2 and D07
-- [ ] Update the affected P1 task files if the decision changes their requirements
+- [x] Decision recorded in docs/17 (17 §C P1-B017): operating numbers are configurable defaults in 16: stale 2 s/60 s and ≤ 250 ms reaction, wide spread 3×, divergence 25/5 bps, bad tick z ≥ 8, reconciliation 60 s/5 min/EOD, cost blow-out 1.5×
+- [x] Aligned docs carry it: 16 §2.1, §2.2, §2.9; 03 M16; 02 §9.2; D07
+- [x] Affected P1 tasks updated in the 2026-10-22 task alignment: P1-T031, P1-T033, P1-T034, P1-T040, P1-T041, P1-T045 (alert dedupe/escalation stay task-level configurable defaults)
 
 ## Verification
 
@@ -69,8 +74,8 @@ Defaults documented: recon 15 min + EOD 00:05 UTC; spread 3×; stale timeouts le
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause and decision noted in the progress log
+- [x] Docs updated and consistent (16 §2.1, §2.2, §2.9; 03 M16; 02 §9.2; D07)
+- [x] Decision and owning tasks noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -96,3 +101,7 @@ Defaults documented: recon 15 min + EOD 00:05 UTC; spread 3×; stale timeouts le
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §C P1-B017; docs carry it (16 §2.1, §2.2, §2.9; 03 M16; 02 §9.2; D07); implementation owned by P1-T031, P1-T033, P1-T034, P1-T040, P1-T041, P1-T045 (alert dedupe/escalation stay task-level configurable defaults)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P1-B017); docs updated: 16 §2.1, §2.2, §2.9; 03 M16; 02 §9.2; D07; implementation owned by P1-T031, P1-T033, P1-T034, P1-T040, P1-T041, P1-T045 (alert dedupe/escalation stay task-level configurable defaults)
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:08 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave
