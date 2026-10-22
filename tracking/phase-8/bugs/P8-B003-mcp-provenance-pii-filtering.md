@@ -4,7 +4,7 @@ kind: gap
 title: MCP responses are a model input, but provenance and PII filtering for MCP isn't specified
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: high
 size: S
 severity: S2
@@ -18,12 +18,12 @@ dashboards: []
 branch: p8/P8-B003-mcp-provenance-pii-filtering
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/03-build-spec.md, docs/07-security-notes.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/12-policy-and-compliance.md §5; docs/03-build-spec.md M20; docs/07-security-notes.md §8
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §A (P8-B003): MCP responses pass the provenance filter like any model input: no Telegram text, no `model_input_ok = false` rows, PII redacted, untrusted text wrapped
+- [x] Docs carry it: 12 §5 inference paths incl. MCP responses; 03 M20 response guard; 02 §7.4 Responses; 07 §6 and §8; roadmap R8.09/T8.23/T8.63
+- [x] Implementation owned by P8-T006 (guard, T8.23), P8-T033 (guard tests, T8.63)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 12 §5 inference paths incl. MCP responses; 03 M20 response guard; 02 §7.4 Responses; 07 §6 and §8; roadmap R8.09/T8.23/T8.63)
+- [x] Implementing work owned and its test named: P8-T006 (guard, T8.23), P8-T033 (guard tests, T8.63)
+- [x] Root cause noted: 12 §5 listed inference paths before MCP was scoped
 
 ## Exceptions & edge cases
 
@@ -97,3 +97,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §A (P8-B003); docs checked: 12 §5 inference paths incl. MCP responses; 03 M20 response guard; 02 §7.4 Responses; 07 §6 and §8; roadmap R8.09/T8.23/T8.63; implementation owned by P8-T006 (guard, T8.23), P8-T033 (guard tests, T8.63); root cause: 12 §5 listed inference paths before MCP was scoped
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §A (P8-B003); docs updated: 12 §5 inference paths incl. MCP responses; 03 M20 response guard; 02 §7.4 Responses; 07 §6 and §8; roadmap R8.09/T8.23/T8.63; implementation owned by P8-T006 (guard, T8.23), P8-T033 (guard tests, T8.63)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

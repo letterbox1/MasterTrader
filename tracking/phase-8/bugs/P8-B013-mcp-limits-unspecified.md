@@ -4,7 +4,7 @@ kind: gap
 title: No numbers for MCP rate limits, response size caps or token expiry
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D17]
 branch: p8/P8-B013-mcp-limits-unspecified
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D17-mcp-console.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D17-mcp-console.md Tool registry ("rate limit" column); docs/03-build-spec.md M20
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §C (P8-B013): MCP limits are 16 defaults
+- [x] Docs carry it: 16 §2.12 (60 reads/min and 10 writes/min per token; 256 KB per result; token expiry options); 16 §2.3 (MCP approval TTL 5 min); 02 §7.4 Audit; 03 M20 Limits; D17 Tool registry; roadmap R8.10
+- [x] Implementation owned by P8-T030 (limits + cap), P8-T034 (limit tests), P8-T002 (expiry), P8-T005 (TTL)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 16 §2.12 (60 reads/min and 10 writes/min per token; 256 KB per result; token expiry options); 16 §2.3 (MCP approval TTL 5 min); 02 §7.4 Audit; 03 M20 Limits; D17 Tool registry; roadmap R8.10)
+- [x] Implementing work owned and its test named: P8-T030 (limits + cap), P8-T034 (limit tests), P8-T002 (expiry), P8-T005 (TTL)
+- [x] Root cause noted: D17 showed limit columns before any values were set
 
 ## Exceptions & edge cases
 
@@ -96,3 +96,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §C (P8-B013); docs checked: 16 §2.12 (60 reads/min and 10 writes/min per token; 256 KB per result; token expiry options); 16 §2.3 (MCP approval TTL 5 min); 02 §7.4 Audit; 03 M20 Limits; D17 Tool registry; roadmap R8.10; implementation owned by P8-T030 (limits + cap), P8-T034 (limit tests), P8-T002 (expiry), P8-T005 (TTL); root cause: D17 showed limit columns before any values were set
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §C (P8-B013); docs updated: 16 §2.12 (60 reads/min and 10 writes/min per token; 256 KB per result; token expiry options); 16 §2.3 (MCP approval TTL 5 min); 02 §7.4 Audit; 03 M20 Limits; D17 Tool registry; roadmap R8.10; implementation owned by P8-T030 (limits + cap), P8-T034 (limit tests), P8-T002 (expiry), P8-T005 (TTL)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

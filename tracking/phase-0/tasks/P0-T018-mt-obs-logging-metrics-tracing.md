@@ -54,7 +54,7 @@ Every Python service calls `mt_obs.setup(service_name)` once and gets structlog 
 - Redaction processor masks keys matching `(?i)(secret|token|password|api_key|authorization|cookie|totp)` and any `SecretStr` value.
 - OpenTelemetry SDK with W3C traceparent propagation (HTTP + NATS headers); OTLP exporter **off** by default (no telemetry leaves the box).
 - Prometheus helpers: counter/histogram/gauge factories with a `service` label; buckets for µs–s; `/metrics` ASGI app.
-- Heartbeat: publish `{service, ts, version, status}` to `sys.heartbeat.{service}` at the configured interval (default **1 s**, the cadence the three-layer dead-man watches, [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) and update NATS KV `heartbeat`.
+- Heartbeat: publish `{service, ts, version, status}` to `sys.heartbeat.{service}` at the configured interval (default **1 s**, the cadence the three-layer dead-man watches, [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch), [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)) and update NATS KV `heartbeat`.
 - Audit writers (later) take the current `trace_id` so a row links to its logs (03 M17).
 
 ## ToDo

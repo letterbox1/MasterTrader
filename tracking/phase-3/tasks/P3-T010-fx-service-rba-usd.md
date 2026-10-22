@@ -69,7 +69,7 @@ review_result: ""
 
 - Golden: fixture of RBA F11 for Dec 2026–Jan 2027; events on 25 Dec and 26 Dec use the 24 Dec rate with `fx_prior_day`.
 - Unit: EUR event → AUD via cross equals F11 EUR/AUD where F11 has EUR (consistency check within 0.5%).
-- Unit: FxUnavailable when last rate is > 5 business days old.
+- Unit: FxUnavailable when last rate is > 5 business days old (default limit, [16 §4.5](../../../docs/16-configuration-and-safety-model.md#45-journal-and-tax-defaults)).
 - Property: rate × inverse rate = 1 within Decimal precision.
 
 ### Scenarios

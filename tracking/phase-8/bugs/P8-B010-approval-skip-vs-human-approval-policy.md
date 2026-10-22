@@ -4,7 +4,7 @@ kind: gap
 title: Skipping approve mode for MCP orders vs "human approval on trade decisions"
 phase: 8
 type: USER
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p8/P8-B010-approval-skip-vs-human-approval-policy
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/07-security-notes.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/12-policy-and-compliance.md §4 (Anthropic / OpenAI row); docs/roadmap/phase-8-mcp.md T8.03
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Read the two passages and the proposal
-- [ ] Decide: auto rules allowed (C3, small size) or forbidden
-- [ ] Agent edits 12 §4 / 07 §6 to record the decision
-- [ ] Note the decision in the Progress log
+- [x] Decision recorded: 17 §D (P8-B010, see P8-B002): MCP orders always need your approval card; there is no skip-approval or auto-rule option
+- [x] Docs carry it: 16 §2.3 MCP-originated orders row; 12 §4 Anthropic/OpenAI row; 07 §6 ('no skip approval option'); 02 §7.4; D17 Actions (`mcp.policy.set` has no skip option); roadmap T8.03 reworded
+- [x] Implementation owned by P8-T005 (no skip field in schema), P8-T019 (your scope/expiry choices), P8-T021 (no skip path test)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 16 §2.3 MCP-originated orders row; 12 §4 Anthropic/OpenAI row; 07 §6 ('no skip approval option'); 02 §7.4; D17 Actions (`mcp.policy.set` has no skip option); roadmap T8.03 reworded)
+- [x] Implementing work owned and its test named: P8-T005 (no skip field in schema), P8-T019 (your scope/expiry choices), P8-T021 (no skip path test)
+- [x] Root cause noted: the original T8.03 let venues/sizes skip approve mode
 
 ## Exceptions & edge cases
 
@@ -96,3 +96,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P8-B010, see P8-B002); docs checked: 16 §2.3 MCP-originated orders row; 12 §4 Anthropic/OpenAI row; 07 §6 ('no skip approval option'); 02 §7.4; D17 Actions (`mcp.policy.set` has no skip option); roadmap T8.03 reworded; implementation owned by P8-T005 (no skip field in schema), P8-T019 (your scope/expiry choices), P8-T021 (no skip path test); root cause: the original T8.03 let venues/sizes skip approve mode
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P8-B010, see P8-B002); docs updated: 16 §2.3 MCP-originated orders row; 12 §4 Anthropic/OpenAI row; 07 §6 ('no skip approval option'); 02 §7.4; D17 Actions (`mcp.policy.set` has no skip option); roadmap T8.03 reworded; implementation owned by P8-T005 (no skip field in schema), P8-T019 (your scope/expiry choices), P8-T021 (no skip path test)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

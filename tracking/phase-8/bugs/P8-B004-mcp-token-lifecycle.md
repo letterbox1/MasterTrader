@@ -4,7 +4,7 @@ kind: gap
 title: "MCP token lifecycle is undefined: no create command, scopes, expiry or storage rule"
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: high
 size: S
 severity: S2
@@ -18,12 +18,12 @@ dashboards: [D17, D16]
 branch: p8/P8-B004-mcp-token-lifecycle
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D17-mcp-console.md, docs/ui/dashboards/D16-system.md, docs/07-security-notes.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7/§7.2; docs/ui/dashboards/D17-mcp-console.md; docs/ui/dashboards/D16-system.md
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §A (P8-B004): opaque 256-bit tokens, shown once, HMAC-SHA-256 with a server pepper, scoped, instantly revocable, last use + client identity, expiry 1d/7d/30d/1y/custom/indefinite (indefinite = warning + C3 + monthly reminder), OAuth 2.1 (PKCE, resource indicators), Streamable HTTP + stdio + optional legacy HTTP+SSE, resource subscriptions
+- [x] Docs carry it: 16 §2.12 (expiry, scopes, token creation C1/C3); 02 §7.1 `/mcp/tokens`, §7.2 MCP row (`mcp.token.create`/`revoke`), §7.4 Tokens/Transport; 03 M20; 07 §2 (pepper in sops) and §6; D17 Tokens widget + actions; D16 Sessions
+- [x] Implementation owned by P8-T002 (tokens), P8-T003 (transports), P8-T031 (OAuth), P8-T032 (subscriptions, legacy SSE), P8-T020 + P8-T035 (tests)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 16 §2.12 (expiry, scopes, token creation C1/C3); 02 §7.1 `/mcp/tokens`, §7.2 MCP row (`mcp.token.create`/`revoke`), §7.4 Tokens/Transport; 03 M20; 07 §2 (pepper in sops) and §6; D17 Tokens widget + actions; D16 Sessions)
+- [x] Implementing work owned and its test named: P8-T002 (tokens), P8-T003 (transports), P8-T031 (OAuth), P8-T032 (subscriptions, legacy SSE), P8-T020 + P8-T035 (tests)
+- [x] Root cause noted: only `mcp.token.revoke` existed; the lifecycle was never specified
 
 ## Exceptions & edge cases
 
@@ -98,3 +98,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §A (P8-B004); docs checked: 16 §2.12 (expiry, scopes, token creation C1/C3); 02 §7.1 `/mcp/tokens`, §7.2 MCP row (`mcp.token.create`/`revoke`), §7.4 Tokens/Transport; 03 M20; 07 §2 (pepper in sops) and §6; D17 Tokens widget + actions; D16 Sessions; implementation owned by P8-T002 (tokens), P8-T003 (transports), P8-T031 (OAuth), P8-T032 (subscriptions, legacy SSE), P8-T020 + P8-T035 (tests); root cause: only `mcp.token.revoke` existed; the lifecycle was never specified
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §A (P8-B004); docs updated: 16 §2.12 (expiry, scopes, token creation C1/C3); 02 §7.1 `/mcp/tokens`, §7.2 MCP row (`mcp.token.create`/`revoke`), §7.4 Tokens/Transport; 03 M20; 07 §2 (pepper in sops) and §6; D17 Tokens widget + actions; D16 Sessions; implementation owned by P8-T002 (tokens), P8-T003 (transports), P8-T031 (OAuth), P8-T032 (subscriptions, legacy SSE), P8-T020 + P8-T035 (tests)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

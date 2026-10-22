@@ -52,7 +52,7 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 
 - Images digest-pinned in `images.lock`: prometheus, loki (single binary, filesystem store), vector, alertmanager, grafana (OSS), node-exporter, postgres-exporter, prometheus-nats-exporter, cadvisor.
 - Prometheus: `--storage.tsdb.retention.time=90d`, scrape 15 s; file-based targets; `/-/ready` health.
-- Loki: `retention_period=${LOKI_RETENTION:-720h}` with compactor retention on; a config test enforces 720h–2160h (30–90 d).
+- Loki: `retention_period=${LOKI_RETENTION:-720h}` with compactor retention on; a config test enforces 720h–2160h (30–90 d; default 30 d, [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
 - Vector: `docker_logs` + `journald` sources; JSON parse; labels only `service`, `level`, `host`; secret-regex masking (defence in depth with P0-T018); 1 GiB disk buffer so Loki outages don't drop logs.
 - Grafana: anonymous off, admin password from tmpfs, analytics and update checks off, reachable only via Caddy route `/grafana/` (Tailscale).
 - cAdvisor and node-exporter with the minimum host mounts documented; postgres-exporter uses the read-only `mt_monitor_ro` role (P0-T024).

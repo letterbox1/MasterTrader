@@ -81,6 +81,7 @@ MasterTrader/
 │   ├── mt_airdrop/     # airdrop/launch discovery, risk & viability scoring, mandates, claim executor (M4)
 │   ├── mt_curation/    # user task queue + community curation (Discord/Telegram/Galxe) + digests (M19)
 │   ├── mt_onchain/     # on-chain helpers: the cost gate library (`mt_onchain.costgate`), simulation, live fee inputs
+│   ├── mt_signer/      # intents-only signer for hot/burner/identity keys; accepts intents only from the policy service; writes `audit.signer_ledger` (13 §2)
 │   ├── mt_treasury/    # wallets registry + unified view, custody tiers, signer client, hold-and-earn, yield allocator, DAO/depeg/exploit monitors (M22)
 │   ├── mt_social/      # social participation: drafts → your approval → web-intent post; credibility + shill-burst posture (M23)
 │   ├── mt_api/         # internal command API used by UI, Telegram and (later) MCP; all actions go through it
@@ -110,7 +111,7 @@ Postgres schemas (one canonical list; **all 13 are created in Phase 0**, later p
 - **`features`**
 - **`strategy`**: registry, runs, results, bots.
 - **`risk`**: policies, limits, changes.
-- **`audit`**: canonical (singular) tables `audit.order`, `audit.fill`, `audit.command`, `audit.llm_call`, `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call`.
+- **`audit`**: canonical (singular) tables `audit.order`, `audit.fill`, `audit.command`, `audit.llm_call`, `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call`, `audit.auth_event`, `audit.verify_run`, `audit.signer_ledger`, `audit.signal`, `audit.tierb_decision`, `audit.anomaly`.
 - **`journal`**: events, lots, matches, FX rates, residency, reports.
 - **`curation`**: tasks (`curation.task`, from P3), community, airdrops.
 - **`ops`**: venue registry, `ops.wallets` (the one registry for accounts and on-chain addresses, created in P3, extended by the P5 wallet-indexer), drill log.

@@ -244,7 +244,7 @@ router_settings:
 
 - **Budgets** (defaults, configurable, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)):
   - **Global monthly cap:** US$40 per UTC month, checked month-to-date before each call (a pre-call hook reading spend from `audit.llm_call`).
-  - **Per-role daily budgets:** a virtual key per role with `max_budget` + `budget_duration: 1d`: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40. A `shadow` role covers the §4.3 shadow checks (its default isn't set in 16 yet).
+  - **Per-role daily budgets:** a virtual key per role with `max_budget` + `budget_duration: 1d`: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30 (the `shadow` role covers the §4.3 shadow checks).
   - **Precedence:** whichever runs out first (the role's daily budget or the monthly cap) routes the call to `local-advisor`, marked `fallback_used`. It fails only if the local model is down.
   - **Changes:** lowering a budget is C1; raising it is C3.
   - Spend goes to Grafana.

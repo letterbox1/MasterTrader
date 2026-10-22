@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: []
+depends_on: [P2-T042]
 requirements: [R7.13, R7.04]
 roadmap_todos: [T7.07, T7.63]
 modules: [M11]
 dashboards: [D06]
+tools: []
+mcp: []
+env: []
+services: [AUSTRAC VASP register, venue client terms]
 branch: p7/P7-T003-venue-checks-before-live
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T003 · Venue checks: AUSTRAC re-check, OKX AU derivatives and venue terms
@@ -38,13 +43,14 @@ Every venue/product you intend to trade live has a fresh (< 90 days) AUSTRAC reg
 
 - Roadmap: [R7.13, R7.04 · ToDo T7.07, T7.63](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (registry fields, starting classification) · [12 §3](../../../docs/12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) (STP) · [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) (venue checks)
-- Cross-phase: P0 T0.11/T0.22 (registry seed and table), P1 T1.30 (venue-health collector + quarterly re-check task).
+- Cross-phase: P2-T042 (D06 venue registry view, `depends_on`) on top of P0-T026 (registry seed) and P1-T043/P1-T069 (venue-health collector; quarterly AUSTRAC re-check USER task, [17 §D P1-B014](../../../docs/17-decisions-register.md#d-other-decisions)).
 - Related: P7-T046 (VERIFY re-check < 90 days before each funding), P7-T006 (accounts only at `allowed` venues)
 
 ## Requirements
 
 - For each target venue: AUSTRAC VASP register status and `checked_at` date (must be < 90 days old at funding time), entity/ABN, products allowed for a retail client, max leverage (crypto derivatives ≤ 2× regardless, 12 §1).
 - Read and summarise each venue's conduct, STP and rate-limit terms; record the STP parameter/mode to send on every order (12 §3 table).
+- Also record per venue: native resting stop orders (yes/no, needed for live, P7-T030), venue cancel-after/dead-man timer support (layer 3, [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)), and whether API keys can be allow-listed to a single IP (the exit node, [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
 - **OKX AU derivatives:** status stays `unresolved → paper only` unless reconciled in writing; do **not** attempt the derivatives test (five failed attempts lock derivatives permanently).
 - Offshore derivatives (Bybit, Bitget, MEXC, Gate, KuCoin) stay data-only; Polymarket trading stays blocked; Binance AU and Kraken AU derivatives stay blocked for retail.
 
@@ -102,3 +108,4 @@ Every venue/product you intend to trade live has a fresh (< 90 days) AUSTRAC reg
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (record native stops, cancel-after timers and single-IP allow-list support per 16 §3.1–3.2; dep P2-T042)

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: []
+depends_on: [P3-T001]
 requirements: [R7.13]
 roadmap_todos: [T7.01]
 modules: [M18]
 dashboards: [D15, D13]
+tools: []
+mcp: []
+env: []
+services: [registered tax agent]
 branch: p7/P7-T001-tax-agent-regime-decision
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T001 · Record the tax agent's investor-vs-trader decision in D15
@@ -38,7 +43,7 @@ Your tax agent's written answer on **investor vs trader-in-business** is stored,
 
 - Roadmap: [R7.13 · ToDo T7.01](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) (tax agent: investor vs trader, before any live trade) · [09 tax-agent questions](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) · [D15](../../../docs/ui/dashboards/D15-tax.md) Questions tab (`tax.regime.set`)
-- Cross-phase: P3 T3.01 (agent engaged, question list sent) and T3.02 (2027 CGT reform status) must be done; this item only records the answer.
+- Cross-phase: P3-T001 (T3.01, agent engaged, question list sent) is a `depends_on`; P3-T002 (T3.02, 2027 CGT reform status) is recorded here if answered. Phase 7 opens after P3 ([17 §D P7-B011](../../../docs/17-decisions-register.md#d-other-decisions)).
 - Related: P7-T011 (preflight reads `journal.residency`/regime per FY), P7-T010 (advice register)
 
 ## Requirements
@@ -100,3 +105,4 @@ Your tax agent's written answer on **investor vs trader-in-business** is stored,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P3-T001; tools/mcp/env/services)

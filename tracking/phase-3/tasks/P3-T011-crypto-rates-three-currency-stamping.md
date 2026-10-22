@@ -96,7 +96,7 @@ Every journal event is stored with native, USD and AUD amounts plus rate source 
 ## Exceptions & edge cases
 
 - Stablecoin depeg: USDT/USD taken from recorded trades, not assumed 1, when a USD pair exists.
-- Illiquid token: a VWAP built from very few trades is flagged `thin_market` (threshold is a setting) and shown in D15 notes.
+- Illiquid token: a VWAP built from very few trades is flagged `thin_market` (threshold a setting, default fewer than 3 trades in the window, [16 §4.5](../../../docs/16-configuration-and-safety-model.md#45-journal-and-tax-defaults)) and shown in D15 notes.
 
 ## Cardinal rules (do NOT)
 

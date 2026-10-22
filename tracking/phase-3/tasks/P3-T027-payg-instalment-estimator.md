@@ -50,7 +50,7 @@ D15 PAYG shows, for each quarter of the FY, the estimated instalment income (exc
 - Inputs (from your ATO notice, both optional, entered in `config/journal/payg.yaml`, no TFN): instalment amount per quarter, instalment rate %, and which method the notice uses (`applies: amount | rate | unknown`); FY quarters Q1 Jul–Sep, Q2 Oct–Dec, Q3 Jan–Mar, Q4 Apr–Jun; default due dates 28 Oct, 28 Feb, 28 Apr, 28 Jul (configurable; (U) until confirmed on your notice).
 - Instalment income = gross ordinary income in the quarter (revenue trading gains, interest, dividends incl. franking gross-up, staking/airdrop income, net Div 775 gains) **excluding capital gains**; under the trader regime, trading gains are included.
 - Both methods are always computed when their input exists: **amount method** = the notice amount; **rate method** = instalment income × rate. The method marked `applies` is shown as primary, the other as a comparison; with `unknown` both show side by side. Both regimes shown; negative instalment income → 0 with a note (variation is your call with the agent).
-- Quarterly Prefect flow `journal-payg-quarterly` runs on the 1st day after each quarter end and stores the estimate as a `journal.tax_report` (type `payg`), plus an `alert.info.payg_due` reminder through the alert path a configurable number of days (default 14) before each due date.
+- Quarterly Prefect flow `journal-payg-quarterly` runs on the 1st day after each quarter end and stores the estimate as a `journal.tax_report` (type `payg`), plus an `alert.info.payg_due` reminder through the alert path a configurable number of days (default 14, [16 §4.5](../../../docs/16-configuration-and-safety-model.md#45-journal-and-tax-defaults)) before each due date.
 
 ## ToDo
 

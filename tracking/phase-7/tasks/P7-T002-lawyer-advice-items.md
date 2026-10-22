@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: []
+depends_on: [P7-T010]
 requirements: [R7.13]
 roadmap_todos: [T7.07]
 modules: [M19]
 dashboards: [D13]
+tools: []
+mcp: []
+env: []
+services: [lawyer (optional, your choice)]
 branch: p7/P7-T002-lawyer-advice-items
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T002 · Close or explicitly defer the lawyer advice items
@@ -49,7 +54,7 @@ Each lawyer item from 12 §6 is either answered in writing or explicitly deferre
 
 ## ToDo
 
-- [ ] Open D13 → filter `PRO_ADVICE`; confirm the three lawyer tasks exist (P7-T010 seeds them if not).
+- [ ] Open D13 → filter `PRO_ADVICE`; confirm the three lawyer tasks exist (seeded by P7-T010, a `depends_on`).
 - [ ] Decide per item: engage a lawyer, or defer. Record the decision in the task (summary, no client privilege text pasted).
 - [ ] For answered items: attach the advice document via the upload control (encrypted store), set state `answered`.
 - [ ] For deferred items: write the reason and a revisit date (default: next quarterly registry re-check).
@@ -100,3 +105,4 @@ Each lawyer item from 12 §6 is either answered in writing or explicitly deferre
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on P7-T010, which seeds the PRO_ADVICE items; fields)

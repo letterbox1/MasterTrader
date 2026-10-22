@@ -4,7 +4,7 @@ kind: gap
 title: 02 §7.1 lacks `/bots`, `/approvals`, `/mcp/tokens`, `/mcp/sessions` and the `source=` filters D17 uses
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D17]
 branch: p8/P8-B009-api-query-table-gaps
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7.1
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §D (P8-B009): add `/bots`, `/approvals`, `/mcp/tokens`, `/mcp/sessions`, `source=` filters
+- [x] Docs carry it: 02 §7.1 rows `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=`; `/mcp/tools`, `/mcp/tokens`, `/mcp/sessions`; filters `/orders?…&source=`, `/approvals?status=&source=`, `/audit/log?source=`, `/system/services?kind=…|mcp`
+- [x] Implementation owned by P8-T008 (read tools), P8-T007 (`/mcp/sessions`, `source=` filters), P8-T016 (D17)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 02 §7.1 rows `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=`; `/mcp/tools`, `/mcp/tokens`, `/mcp/sessions`; filters `/orders?…&source=`, `/approvals?status=&source=`, `/audit/log?source=`, `/system/services?kind=…|mcp`)
+- [x] Implementing work owned and its test named: P8-T008 (read tools), P8-T007 (`/mcp/sessions`, `source=` filters), P8-T016 (D17)
+- [x] Root cause noted: 02 §7.1 was written before the bots (15) and D17 contracts
 
 ## Exceptions & edge cases
 
@@ -95,3 +95,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P8-B009); docs checked: 02 §7.1 rows `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=`; `/mcp/tools`, `/mcp/tokens`, `/mcp/sessions`; filters `/orders?…&source=`, `/approvals?status=&source=`, `/audit/log?source=`, `/system/services?kind=…|mcp`; implementation owned by P8-T008 (read tools), P8-T007 (`/mcp/sessions`, `source=` filters), P8-T016 (D17); root cause: 02 §7.1 was written before the bots (15) and D17 contracts
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P8-B009); docs updated: 02 §7.1 rows `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=`; `/mcp/tools`, `/mcp/tokens`, `/mcp/sessions`; filters `/orders?…&source=`, `/approvals?status=&source=`, `/audit/log?source=`, `/system/services?kind=…|mcp`; implementation owned by P8-T008 (read tools), P8-T007 (`/mcp/sessions`, `source=` filters), P8-T016 (D17)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

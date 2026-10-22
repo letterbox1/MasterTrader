@@ -15,17 +15,22 @@ requirements: [R7.10, R7.13]
 roadmap_todos: [T7.08]
 modules: [M12]
 dashboards: [D06]
+tools: []
+mcp: []
+env: []
+services: [FP Markets client area]
 branch: p7/P7-T004-fp-markets-terms-and-route
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T004 · FP Markets: read algo/scalping/hedging clauses and choose MT5 or cTrader
@@ -51,8 +56,9 @@ You know whether FP Markets' AU client agreement permits algorithmic trading, sc
 - [ ] Download the current FP Markets AU client agreement and PDS from the client area.
 - [ ] Read the clauses on algorithmic trading, scalping, hedging, EAs/APIs; note the clause numbers.
 - [ ] Note your MT5 server name (client area) and whether a cTrader account is available on your login.
+- [ ] If the route includes cTrader: register a cTrader Open API application on your FP Markets cTrader login and put its client id/secret in the sops file (names `CTRADER_CLIENT_ID`, `CTRADER_CLIENT_SECRET`), never in chat or git; P7-T051 uses them for the demo run.
 - [ ] Record the findings and the route choice on the FP Markets task in D13; update the FP Markets venue row in D06 (tightening immediate).
-- [ ] Tell the planner which adapter task (P7-T036 or P7-T037) to cancel, if any.
+- [ ] Tell the agent which route you chose so it cancels the unchosen tasks: cTrader only → cancel P7-T005, P7-T034, P7-T035, P7-T036; MT5 only → cancel P7-T037.
 
 ## Verification
 
@@ -97,3 +103,4 @@ You know whether FP Markets' AU client agreement permits algorithmic trading, sc
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (route choice names every task to cancel; cTrader app credentials as a user step; fields)

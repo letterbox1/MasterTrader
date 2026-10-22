@@ -113,7 +113,7 @@ The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `ed
 ## Branch & PR
 
 - Branch: `p8/P8-T015-mcp-container`
-- PR title: `P8-T015: `mcp` container bound to localhost/Tailscale, token handling in secrets`
+- PR title: `P8-T015: mcp container on the internal edge network behind Caddy (/mcp), Tailscale only; token pepper in secrets`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P8-T015` run
 
 ## Progress log

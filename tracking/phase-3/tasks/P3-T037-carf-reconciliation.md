@@ -51,7 +51,7 @@ The journal can import **venue-provided** annual crypto statements (CARF/CRS 2.0
 - Table `journal.venue_reported_total` (WORM): venue, account, period, metric (gross proceeds, gross acquisitions, transfers out, count), value, currency, source file hash.
 - Table `journal.venue_residency_declaration` (WORM): venue, declared country, date, evidence ref.
 - Generic CSV importer with a column map per venue in `config/journal/carf_maps/<venue>.yaml`.
-- Report `carf_recon` (type in `journal.tax_report`): per venue/year status `reconciled | differences | not_applicable` (no venue statement); per metric diff; the flag threshold is a setting (default 1% or AUD 100) in `config/journal/carf.yaml`.
+- Report `carf_recon` (type in `journal.tax_report`): per venue/year status `reconciled | differences | not_applicable` (no venue statement); per metric diff; the flag threshold is a setting (default: a difference above 1% or above A$100, [16 §4.5](../../../docs/16-configuration-and-safety-model.md#45-journal-and-tax-defaults)) in `config/journal/carf.yaml`.
 - Australia's CARF start is (U) (2027/28 reported); the scaffold is ready, no data expected yet.
 
 ## ToDo

@@ -15,17 +15,22 @@ requirements: [R7.10]
 roadmap_todos: [T7.08]
 modules: [M12]
 dashboards: [D16]
+tools: []
+mcp: []
+env: []
+services: [Windows VPS provider, tailscale]
 branch: p7/P7-T005-windows-vps-for-mt5
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T005 · Provision the Windows VPS near the FP Markets MT5 server
@@ -38,14 +43,14 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 
 - Roadmap: [R7.10 · ToDo T7.08](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MT5 Python API on a Windows VPS near FP's MT5 servers) · [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) (IP allow-list, static egress) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
-- Related: P7-T004 (route choice; skip this item and cancel it if route = `ctrader`), P7-T034, P7-T035, gap P7-B010 (VPS not in the security model)
+- Related: P7-T004 (route choice; cancel this item if route = `ctrader`), P7-T034, P7-T035 (hardening, T7.43) · decision [17 §D P7-B010](../../../docs/17-decisions-register.md#d-other-decisions) and [07 §5.1](../../../docs/07-security-notes.md#51-optional-windows-vps-mt5-bridge) (hardened, Tailscale-only, only the MT5 trade-only login, no other secrets)
 
 ## Requirements
 
 - Region matches the MT5 server named in your client area; Windows Server 2022 (or the MT5-supported version), 2 vCPU / 4 GB RAM is enough.
 - Lowest-cost tier you are comfortable paying for (this is infrastructure, not data; note the monthly cost on the task).
 - Static public IP; RDP **not** exposed publicly — Tailscale only, with MFA on the identity provider.
-- Credentials (VPS admin password, Tailscale auth key) go into the sops secrets file, never chat or git.
+- Credentials (VPS admin password, Tailscale auth key) go into the sops secrets file, never chat or git. The VPS itself will hold **only** the MT5 trade-only login and no other secrets (07 §5.1).
 
 ## ToDo
 
@@ -53,7 +58,7 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 - [ ] Install Tailscale, join your tailnet, disable public RDP in the provider firewall (inbound deny-all).
 - [ ] Record the static egress IP on the task (it is not secret) and store the admin credential in sops (`secrets/live.enc.yaml` → `mt5_vps.*`).
 - [ ] Install the MT5 terminal from FP Markets only (no third-party builds); log in with your **demo** account first.
-- [ ] Tell the planner the VPS is ready so P7-T035 can deploy the bridge.
+- [ ] Tell the agent the VPS is ready so P7-T035 can harden it and deploy the bridge.
 
 ## Verification
 
@@ -87,7 +92,7 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 
 ## Doc sync on completion
 
-- `docs/07-security-notes.md` §5: add the VPS as a second host (Tailscale-only, static egress) — see P7-B010.
+- `docs/07-security-notes.md` §5.1: confirm the VPS baseline as provisioned (07 §5.1 already carries the P7-B010 decision).
 - `docs/roadmap/phase-7-prove-and-go-live.md`: tick T7.08 when this item is done.
 
 ## Branch & PR
@@ -99,3 +104,4 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (07 §5.1 / 17 §D P7-B010: only the MT5 trade-only login on the VPS; fields)

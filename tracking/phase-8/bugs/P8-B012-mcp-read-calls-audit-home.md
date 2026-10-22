@@ -4,7 +4,7 @@ kind: gap
 title: R8.07 says every call is audited in `audit.command`, but reads aren't commands
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D17]
 branch: p8/P8-B012-mcp-read-calls-audit-home
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-8-mcp.md R8.07; docs/03-build-spec.md M17; docs/15-bots-hitl-and-worm-audit.md §2.1
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §D (P8-B012): reads are logged to `audit.mcp_call` (WORM)
+- [x] Docs carry it: roadmap R8.07; 03 M17 ('every MCP call, reads included'); 02 §4 M20 row and §5 audit schema; 15 §2.1 WORM scope; 07 §6; D16 Audit; D17 Session activity
+- [x] Implementation owned by P8-T007 (table + WORM suite), P8-T025 (audit check)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: roadmap R8.07; 03 M17 ('every MCP call, reads included'); 02 §4 M20 row and §5 audit schema; 15 §2.1 WORM scope; 07 §6; D16 Audit; D17 Session activity)
+- [x] Implementing work owned and its test named: P8-T007 (table + WORM suite), P8-T025 (audit check)
+- [x] Root cause noted: R8.07 assumed `audit.command` covered every call
 
 ## Exceptions & edge cases
 
@@ -97,3 +97,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P8-B012); docs checked: roadmap R8.07; 03 M17 ('every MCP call, reads included'); 02 §4 M20 row and §5 audit schema; 15 §2.1 WORM scope; 07 §6; D16 Audit; D17 Session activity; implementation owned by P8-T007 (table + WORM suite), P8-T025 (audit check); root cause: R8.07 assumed `audit.command` covered every call
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P8-B012); docs updated: roadmap R8.07; 03 M17 ('every MCP call, reads included'); 02 §4 M20 row and §5 audit schema; 15 §2.1 WORM scope; 07 §6; D16 Audit; D17 Session activity; implementation owned by P8-T007 (table + WORM suite), P8-T025 (audit check)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

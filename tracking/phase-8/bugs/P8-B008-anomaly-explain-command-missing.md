@@ -4,7 +4,7 @@ kind: gap
 title: No mt_api command to request an M10 anomaly explanation
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D09]
 branch: p8/P8-B008-anomaly-explain-command-missing
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D09-agents.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7.1/§7.2; docs/ui/dashboards/D09-agents.md
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,10 +50,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §D (P8-B008): add `anomaly.explain`
+- [x] Docs carry it: 02 §7.2 Agents & models row (`anomaly.explain` C1, result as a notification); 02 §4 M10 row; D09 widget, actions and backend contract
+- [x] Implementation owned by P8-T009 (MCP tool + mt_api command if P6 didn't add it)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -68,9 +68,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 02 §7.2 Agents & models row (`anomaly.explain` C1, result as a notification); 02 §4 M10 row; D09 widget, actions and backend contract)
+- [x] Implementing work owned and its test named: P8-T009 (MCP tool + mt_api command if P6 didn't add it)
+- [x] Root cause noted: the explain agent only had its own trigger
 
 ## Exceptions & edge cases
 
@@ -97,3 +97,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P8-B008); docs checked: 02 §7.2 Agents & models row (`anomaly.explain` C1, result as a notification); 02 §4 M10 row; D09 widget, actions and backend contract; implementation owned by P8-T009 (MCP tool + mt_api command if P6 didn't add it); root cause: the explain agent only had its own trigger
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P8-B008); docs updated: 02 §7.2 Agents & models row (`anomaly.explain` C1, result as a notification); 02 §4 M10 row; D09 widget, actions and backend contract; implementation owned by P8-T009 (MCP tool + mt_api command if P6 didn't add it)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

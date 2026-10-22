@@ -47,7 +47,7 @@ Every withdrawal from one registered account that lands as a deposit in another 
 
 ## Requirements
 
-- Match keys in order: (1) same tx hash / venue transfer id on both legs; (2) same asset, amount_out − fee = amount_in within 0.1% or the venue's fee, time window ≤ 6 h (setting, default; ≤ 72 h for fiat bank rails) in `config/journal/transfers.yaml`, destination address = registered address.
+- Match keys in order: (1) same tx hash / venue transfer id on both legs; (2) same asset, amount_out − fee = amount_in within 0.1% or the venue's fee, time window ≤ 6 h (setting, default; ≤ 72 h for fiat bank rails) in `config/journal/transfers.yaml` ([16 §4.5](../../../docs/16-configuration-and-safety-model.md#45-journal-and-tax-defaults)), destination address = registered address.
 - Writes `journal.transfer_link` (WORM) with both event ids, method, confidence; legs re-labelled via superseding events `internal_transfer` (never edits).
 - Lot relocation: lots move `account_id` with unchanged `acquired_at`/cost base; the fee is a separate `fee_only` (gas/withdrawal) event — whether the fee is a disposal of a small amount of the asset is an AU_2026 classification (default: CGT disposal of the fee quantity, flagged (U)).
 - Unmatched after the window → `transfer_unmatched` review item in D14 and a reconciliation note; never auto-classified as a disposal.

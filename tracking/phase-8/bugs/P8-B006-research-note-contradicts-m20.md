@@ -4,7 +4,7 @@ kind: bug
 title: Research note says order placement is never exposed via MCP and audits to `audit.risk_config_changes`
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p8/P8-B006-research-note-contradicts-m20
 pr: ""
 doc_sync: [docs/research/observability-storage-dataquality.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/research/observability-storage-dataquality.md §MCP security items 5 and 7
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -48,10 +48,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §D (P8-B006): the old research note is superseded
+- [x] Docs carry it: docs/research/observability-storage-dataquality.md §MCP security now opens with a 'Superseded by 03 M20, 02 §7.4, 16 §2.12 (P8-B006)' note; items 4, 5 and 7 marked historical
+- [x] Implementation owned by n/a (documentation only)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -66,9 +66,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: docs/research/observability-storage-dataquality.md §MCP security now opens with a 'Superseded by 03 M20, 02 §7.4, 16 §2.12 (P8-B006)' note; items 4, 5 and 7 marked historical)
+- [x] Implementing work owned and its test named: n/a (documentation only)
+- [x] Root cause noted: the research note was written before M20 allowed orders via approval cards
 
 ## Exceptions & edge cases
 
@@ -94,3 +94,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P8-B006); docs checked: docs/research/observability-storage-dataquality.md §MCP security now opens with a 'Superseded by 03 M20, 02 §7.4, 16 §2.12 (P8-B006)' note; items 4, 5 and 7 marked historical; implementation owned by n/a (documentation only); root cause: the research note was written before M20 allowed orders via approval cards
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P8-B006); docs updated: docs/research/observability-storage-dataquality.md §MCP security now opens with a 'Superseded by 03 M20, 02 §7.4, 16 §2.12 (P8-B006)' note; items 4, 5 and 7 marked historical; implementation owned by n/a (documentation only)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

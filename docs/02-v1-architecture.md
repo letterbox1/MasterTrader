@@ -52,7 +52,7 @@ This is the blueprint that backend and frontend work build against.
                       └───────┬───────────────┬──────────────────┬───────────────────┬──────────────────┘
                               ▼               ▼                  ▼                   ▼
           Brokers/exchanges (trade)   Free data sources   LLM APIs via gateway   Chains (RPC: Helius/Blockscout,
-          IBKR, Binance, Bybit, OKX,  (M1–M5, quota-       (Claude, your custom   hot-wallet claims only)
+          IBKR, Binance, Bybit, OKX,  (M1–M5, quota-       (Claude, your custom   airdrop identity-wallet claims)
           Coinbase, Kraken, Hyperliquid, tracked)          endpoint)
           Alpaca, OANDA, IG
 ```
@@ -71,11 +71,17 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | Network | Members | Internet egress | Purpose |
 |---|---|---|---|
 | `edge` | caddy, mt-api, ntfy, mcp (P8) | ntfy: upstream relay only (iOS push, message ID only) | TLS termination on the Tailscale interface; serves the web app, ntfy and the MCP endpoint (`/mcp`). Nothing is published except via Tailscale |
-| `core` | mt-api, all app services, nats, postgres, mlflow, tei-embed, tei-rerank, litellm, llm-local, hindsight, deadman, ib-gateway | Venues and LLM APIs via allow-list; venue traffic via the egress exit node from P7 | Business logic. `mcp` is **not** on `core`: it reaches only `mt_api` |
+| `core` | mt-api, all app services (incl. `intel-writer` and the alert consumer `telegram-bot`), nats, postgres, mlflow, tei-embed, tei-rerank, litellm, llm-local, hindsight, deadman, ib-gateway | Venues and LLM APIs via allow-list; venue traffic via the egress exit node from P7 | Business logic. `mcp` is **not** on `core`: it reaches only `mt_api` |
 | `scrape` | ingest-text, rss-bridge, crawl4ai | Yes (wide) | Untrusted fetching; **no route to postgres or signer** (publishes to NATS via a narrow NATS account) |
 | `signer` | signer | Chain RPC only | Hot-wallet signing; accepts intents only from the policy service (airdrop-exec in P5; treasury and DEX execution go through it, [13 §2](13-wallets-treasury-and-onchain.md)) |
 | `ctl` | mt-api, docker-proxy | — | Restricted Docker-socket proxy: `system.service.restart` may restart only allow-listed containers; no other Docker API |
-| `obs` | grafana, loki, prometheus, vector, alertmanager | Telegram API (alerts) | Observability. Alerts leave only through the single `alert.*` fan-out (§6) |
+| `obs` | grafana, loki, prometheus, vector, alertmanager; `telegram-bot` (alert consumer, from P1) | P0 only: Telegram API for the interim direct Alertmanager route. None once the P1 fan-out exists | Observability. From P1, alerts leave only through the single `alert.*` fan-out (§6) |
+
+**Alerts (P0 → P1):**
+- **P0** has no fan-out yet, so Alertmanager sends straight to Telegram (the `obs` Telegram egress above). This route is temporary.
+- **From P1** (P1-T045), Alertmanager and Grafana send only to the alert consumer's webhook, and the direct route and the `obs` Telegram egress are removed.
+- The alert consumer (`telegram-bot`) joins `core` (NATS `alert.*`), `obs` (the Grafana/Alertmanager webhook) and `edge` (publishing to ntfy through Caddy).
+- Its own egress allow-list adds only the Telegram Bot API and your configured SMTP host. No other container or network gains egress.
 
 **Egress exit node (external, P7):** a small WireGuard/Tailscale exit node on a Sydney cloud VM with a static IP, outside the host. All venue traffic (engine, deadman, monitor recon, ib-gateway) is routed through it, so a broadband → 4G failover doesn't change the IP the exchanges see. If the tunnel is down, nothing on our side can reach the venues and protection falls to venue timers and resting stops ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
 
@@ -104,7 +110,9 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `backtest-worker` | `mt_lab` | Backtests, validation, optimisation, distillation, sandbox orchestration | 2 |
 | `sandbox` | gVisor/`--network none` runner | LLM-generated strategy code | 2 |
 | `journal` | `mt_journal` | Journal ingestion, lot engine, tax rules, reports | 3 |
-| `ingest-text` | `mt_data.text` | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT. **Telegram: postures only** (regex extractor → `text.telegram_posture`; never to nlp, RAG or models, F3b) | 4 |
+| `ingest-text` | `mt_data.text` | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT, on `scrape` with no DB route: publishes `raw.*` and `posture.telegram.*` only. **Telegram: postures only** (regex extractor → `posture.telegram.*`; never to nlp, RAG or models, F3b) | 4 |
+| `crawl4ai` | crawl4ai | Fallback extractor for JS-rendered pages (trafilatura first); on `scrape`, publishes `raw.text.*` only | 4 |
+| `intel-writer` | `mt_data` (writer worker) | Core-side writer for scrape outputs: `posture.telegram.*` → `text.telegram_mention` / `text.telegram_posture`, `raw.evt.*` → `text.geo_event`, `raw.reg.*` → regulatory-watch snapshots. No model clients; INSERT-only on its tables | 4 |
 | `rss-bridge` | rss-bridge | Feeds for sites without RSS | 4 |
 | `nlp` | `mt_features.text` | Relevance gate, entity linking, FinBERT, embeddings → `text.document` | 4 |
 | `ingest-events` | `mt_data.events` | USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP/Kalshi/Polymarket | 4 |
@@ -135,7 +143,7 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 |---|---|---|---|---|---|
 | M0 Strategy framework | `mt_strategy` | engine, backtest-worker | `strategy.registry`, `strategy.versions`, `strategy.runs`, `strategy.bot`, `strategy.bot_version` (WORM) | `sig.*`, `strat.status.*`, `bot.{id}.status` | `md.*`, `feat.*`, `dec.tierb.*`, `engine.cmd.*` |
 | M1 Market data | `mt_data.market` | ingest-market, ingest-batch | `market.instrument`, `market.bar_*`, `market.macro_series`, `market.filing` | `md.*`, `dq.raw.*` | venue WS/REST |
-| M2 News & social | `mt_data.text` | ingest-text, nlp | `text.document`, `text.source`, `text.telegram_posture` (`model_input_ok = false`, `train_ok = false`) | `text.doc.*` (never Telegram), `posture.telegram.*` | feeds |
+| M2 News & social | `mt_data.text` | ingest-text, nlp | `text.document`, `text.source`, `text.telegram_mention`, `text.telegram_posture` (both `model_input_ok = false`, `train_ok = false`; written by `intel-writer`) | `raw.*`, `text.doc.*` (never Telegram), `posture.telegram.*` | feeds |
 | M3 Events | `mt_data.events` | ingest-events | `text.geo_event`, `text.exposure_map` | `evt.*` | feeds |
 | M4 Airdrops | `mt_airdrop` | airdrop, airdrop-exec | `curation.airdrop_*`, `curation.mandate`, `curation.exec_log` | `airdrop.*`, `task.new` | risk APIs, chain RPC, `posture.telegram.*` (rules only) |
 | M5 Calendars | `mt_data.calendar` | ingest-batch | `text.calendar_event` | `cal.*` | FRED, ForexFactory, CB |
@@ -171,7 +179,7 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 |---|---|---|---|
 | **Postgres** (`market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight`; **all 13 schemas created in P0**, tables added by later phases) | System of record: bars (hypertables + continuous aggregates at 1m, 5m, 15m, 1h, 4h, 1D, 1W; any other size via `time_bucket` at read time), business data, audit, journal, documents + embeddings | Audit/journal ≥ 7 years; bars forever (compressed); documents forever | pgBackRest: continuous WAL archive, nightly incremental, weekly full; restic off-site; monthly automated restore test; monthly immutable WORM export ([15 §2.2](15-bots-hitl-and-worm-audit.md#22-layers)) |
 | **Parquet catalog** (Nautilus `ParquetDataCatalog`) | Raw trades, quotes, L2 deltas/snapshots, backfills. L2 deltas are recorded at native speed only for symbols a bot needs order-book data for (default ≤ 3); others get 1 s snapshots | Forever (hot NVMe 90 days → cold HDD) | restic (cold) |
-| **NATS JetStream** | Streams (§6) + KV (`risk_state`, `kill`, `feed_status`, `tierb_scores`, `heartbeat`, `audit.integrity`) | Streams 24h–7d; KV latest. When Postgres is unreachable, WORM writes buffer here: default bound 1 GB or 24 h; above 80% new entries stop, exits continue ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)) | Not backed up (rebuildable) |
+| **NATS JetStream** | Streams (§6) + KV (`risk_state`, `kill`, `feed_status`, `tierb_scores`, `heartbeat`, `audit.integrity` (bucket `audit`, key `integrity`), `worm_buffer`) | Streams 24h–7d; KV latest. When Postgres is unreachable, WORM writes buffer here: default bound 1 GB or 24 h; above 80% new entries stop, exits continue ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)) | Not backed up (rebuildable) |
 | **MLflow** | Experiments, model artifacts (ONNX, LoRA), metrics | Forever | restic |
 | **Loki / Prometheus** | Logs 30–90d / metrics 90d | Rolling | Not backed up |
 | **Secrets** | sops+age file **outside the repo** (e.g. `~/.config/mastertrader/`) → tmpfs | — | Encrypted copy off-site (restic) |
@@ -185,14 +193,14 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 - **IDs:** UUIDv7 (time-ordered). Instruments use the Nautilus `InstrumentId` (`BTCUSDT.BINANCE`).
 - **Money:** `numeric` / `Decimal`, never floats, for prices, sizes, fees and tax. Each instrument's precision comes from instrument metadata.
 - **Point-in-time:** `mt_store.pit(as_of)` is the only read path for research/backtests (CI-enforced).
-- **WORM:** `audit.*`, `journal.*`, `risk.change`, `strategy.bot_version`, mandates and the signer ledger are write-once (offline owner role, INSERT/SELECT-only app roles, blocking triggers, per-row hash chain, daily externally anchored seal); corrections reference the row they supersede. See [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many).
+- **WORM:** `audit.*`, `journal.*`, `risk.change`, `strategy.bot_version`, mandates and the signer ledger (`audit.signer_ledger`) are write-once (offline owner role, INSERT/SELECT-only app roles, blocking triggers, per-row hash chain, daily externally anchored seal); corrections reference the row they supersede. See [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many).
 
 ### 5.3 Core entities (abbreviated; full DDL in migrations)
 
 | Schema | Core tables |
 |---|---|
 | `market` | `market.instrument`, `market.bar_*`, `market.macro_series`, `market.filing` |
-| `text` | `text.document`, `text.source`, `text.telegram_posture`, `text.geo_event`, `text.calendar_event` |
+| `text` | `text.document`, `text.source`, `text.telegram_mention`, `text.telegram_posture`, `text.geo_event`, `text.calendar_event` |
 | `features` | `features.value`, `features.def` |
 | `strategy` | `strategy.registry`, `strategy.versions`, `strategy.runs`, `strategy.bot`, `strategy.bot_version`, `strategy.backtest`, `strategy.experiment` |
 | `risk` | `risk.policy`, `risk.limit_state`, `risk.change`, `risk.event`, `risk.approval` |
@@ -217,8 +225,9 @@ Table names follow the §4 naming rules (singular, schema-qualified).
 | `egress.status` | Egress IP and country check ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)) | monitor → risk, UI |
 | `cost.{venue}.{symbol}` | spread/fee/funding/swap snapshot | monitor → risk, lab, UI |
 | `feat.{name}.{symbol}` | Feature values | features → engine |
+| `raw.text.{source}` / `raw.evt.{kind}` / `raw.reg.{source}` | Raw fetched items from the `scrape` side (narrow NATS account, publish-only) | ingest-text, crawl4ai → nlp (`raw.text.*`, never Telegram); ingest-events → `intel-writer` (`raw.evt.*`); regulatory watch → `intel-writer` (`raw.reg.*`) |
 | `text.doc.new` | Document id + tickers + scores (never Telegram) | nlp → decision-svc, agents, UI |
-| `posture.telegram.{subject}` | Structured Telegram posture (no text) | ingest-text → M4 airdrop rules, M11 rules, UI (D08). Never M6 features, tier A/B, agents, RAG or MCP |
+| `posture.telegram.{subject}` | Structured Telegram postures and mentions (no text) | ingest-text → `intel-writer` (stores `text.telegram_mention` / `text.telegram_posture`), M4 airdrop rules, M11 rules, UI (D08). Never M6 features, tier A/B, agents, RAG or MCP |
 | `evt.{kind}` / `cal.{kind}` | Global events / calendar items | ingest → risk (blackouts), agents, UI |
 | `dec.tierb.{question}.{subject}` | Option probabilities | decision-svc → engine (KV), UI |
 | `sig.{source}.{strategy}` | Signal | strategies/agents → engine |
@@ -228,7 +237,8 @@ Table names follow the §4 naming rules (singular, schema-qualified).
 | `fill.{venue}` / `pos.{account}` | Fills / positions | engine → journal, monitor, UI |
 | `risk.event` / `risk.approval.request` / `risk.approval.result` | Risk events and approvals (carry `bot_id`) | risk ↔ mt-api, telegram |
 | `kill.set` / KV `kill` | Kill switch | mt-api/telegram/monitor → engine, deadman, hummingbot, airdrop-exec, treasury |
-| KV `audit.integrity` | WORM integrity status from `audit.verify` (`ok` or the configured mismatch action) | mt_obs → M11 (read pre-trade), UI |
+| KV `audit.integrity` | WORM integrity status from `audit.verify` (`ok` or the configured mismatch action). KV bucket names can't contain dots, so it's stored as bucket `audit`, key `integrity` | mt_obs → M11 (read pre-trade), UI |
+| `worm.buffer.{table}` / KV `worm_buffer` | WORM writes buffered while Postgres is unreachable; KV holds the fill level (≥ 80% → new entries stop, [16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)) | writers → drainer on recovery; KV → M11 (read pre-trade), UI |
 | `sys.heartbeat.{service}` | Liveness (every 1 s) | all → in-engine watchdog (dead-man layer 1); the engine's heartbeat also → `deadman` sidecar (layer 2) |
 | `alert.{severity}.{kind}` | Alerts | all services, plus Grafana/Alertmanager via webhook → the single alert consumer → Telegram, ntfy, email, UI notifications |
 | `task.new` / `task.updated` | User tasks | airdrop, curation, risk → telegram, UI |
@@ -333,7 +343,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 | Lab | `lab.backtest.run` (C1), `lab.sweep.run` (C1), `lab.validate.run` (C1; incl. distillation runs), `lab.generate_strategy` (C1; uses LLM budget), `lab.job.cancel` (C1), `lab.leakage.waive` (C2, reason required, audited), `lab.gate_report.generate` (C1) |
 | Agents & models | `agents.run_analysis` (C1; uses LLM budget), `models.tierb.ask` (C0), `models.tiera.train` (C1: train → calibrate → compile), `models.label.add` (C0), `models.promote` (C2; to production for a model used by autonomous bots C3), `models.rollback` (C1), `models.bakeoff.run` (C1), `models.question.update` (C1, new version; loosening a threshold below its default bar C3), `memory.delete` (C1), `anomaly.explain` (C1; result arrives as a notification) |
 | Market making | `mm.bot.create` (C1, paper), `mm.bot.start` (C1 paper, **C3 live**: a live market-making bot quotes on its own, like `autonomous` mode), `mm.bot.stop` (C1), `mm.bot.update` (C1 paper, C2 live, C3 if it increases risk), `mm.bot.cancel_all` (C1) |
-| Risk | `risk.policy.update` (diff on any layer L0–L4, including the hard-ceilings section of the bot strategy settings; tighten C1 and immediate, loosen C3; cancelling a pending change C1), `risk.kill.on` (Kill), `risk.kill.off` (C3), `risk.deadman.ack` (C1), `risk.stress.run` (C1), `risk.sleeve.restart` (C3; after a sleeve drawdown or health halt), `risk.capital.fund` (C3), `risk.capital_step.approve` (C3), `risk.review.close` (C3) |
+| Risk | `risk.policy.update` (diff on any layer L0–L4, including the hard-ceilings section of the bot strategy settings and confirming the wallet floats, signer caps and gas budgets that enable signing ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)); tighten C1 and immediate, loosen C3; cancelling a pending change C1), `risk.kill.on` (Kill), `risk.kill.off` (C3), `risk.deadman.ack` (C1), `risk.stress.run` (C1), `risk.sleeve.restart` (C3; after a sleeve drawdown or health halt), `risk.capital.fund` (C3), `risk.capital_step.approve` (C3), `risk.review.close` (C3) |
 | Data | `data.feed.pause` / `data.feed.resume` (C1), `data.backfill.run` (C1), `data.recon.run` (C1), `data.incident.ack` (C0; appends an `audit.dq_ack` row, never updates the incident) |
 | Intel | `intel.source.add` (C1; paid/ToS-banned sources rejected), `intel.source.mute` (C0), `intel.watchlist.update` (C0) |
 | Airdrops | `airdrop.add_url` (C0), `airdrop.rescore` (C0), `airdrop.reject` (C1), `airdrop.mandate.create` (C3), `airdrop.mandate.revoke` (C1), `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval` (C2), `wallet.sweep` (C2; to the allow-listed vault address) |
@@ -378,7 +388,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 1. Venue WebSocket → Nautilus data client (ingest-market).
 2. Publish `md.*`.
 3. Parquet recorder (1–5 min files, daily compaction).
-4. Bar builder writes 1s/1m bars into Timescale; continuous aggregates build 5m, 15m, 1h, 4h, 1D and 1W; other sizes are `time_bucket` queries at read time.
+4. Bar builder writes 1s bars into Timescale; continuous aggregates build 1m, 5m, 15m, 1h, 4h, 1D and 1W; other sizes are `time_bucket` queries at read time.
 5. The monitor checks staleness, gaps, outliers, cross-source divergence and clock skew → `dq.status.*`.
    - **Data age** = now − the time *we received* the last update for that stream; thresholds per bot (default 2 s fast, 60 s slow), session-aware (closed sessions are `closed`, not stale) ([16 §2.2](16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)).
    - The monitor flips `dq.status` to `stale` within ≤ 250 ms (p99) of the threshold being crossed.
@@ -389,7 +399,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 1. A strategy (M0) receives `md`/`feat`/`tierb` inputs.
 2. Decision One tier A (µs) produces a calibrated edge.
 3. Deterministic sizing → `OrderIntent`.
-4. **M11 pre-trade checks:** effective limits (strictest layer), collar, liquidity/spread, DQ status and inline data age, blackout, decision deadline, WORM integrity status (KV `audit.integrity`), egress status (from P7), duplicate check. The client order ID is `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency.
+4. **M11 pre-trade checks:** effective limits (strictest layer), collar, liquidity/spread, DQ status and inline data age, blackout, decision deadline, WORM integrity status (KV `audit.integrity`), egress status (`egress.status`, checked from Phase 1, P1-T071; the fixed exit-node IP arrives in P7), duplicate check. The client order ID is `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency.
 5. Mode routing (per bot):
    - `autonomous`: submit;
    - `hitl`: `risk.approval.request` → Telegram/web approval card → approve within the TTL (default 60 s intraday · 15 min swing · 4 h position, [16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) or expire = reject;
@@ -416,7 +426,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 **F3b: Telegram → postures (code and policy only)**
 1. Telegram messages arrive (Telethon / Bot API) in ingest-text.
 2. A deterministic regex extractor pulls contract addresses, tickers and counts and turns them into postures (mention velocity, channel count, new-channel share, time since first call).
-3. Postures go to `text.telegram_posture` (`model_input_ok = false`, `train_ok = false`) and `posture.telegram.{subject}`.
+3. ingest-text publishes postures and mentions on `posture.telegram.{subject}`; it has no DB route. The core-side `intel-writer` stores them in `text.telegram_mention` (structured fields only) and `text.telegram_posture` (both `model_input_ok = false`, `train_ok = false`).
 4. Only code/policy rules consume them (M4 airdrop rules, M11 rules); D08 displays them as postures. Never nlp, RAG, M6 features, tier A/B, agents or MCP ([12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 
 **F4: Research debate → signal → teacher log → distillation**
@@ -439,7 +449,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 **F6: Kill switch & dead-man**
 1. **Triggers:**
    - `risk.kill.on` from any client;
-   - an automatic breach (daily loss, system drawdown stage 2, DQ, error rate, cost blow-out);
+   - automatic: system drawdown stage 2 or an unexplained reconciliation mismatch. Smaller breaches act narrowly ([03 M11](03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp), [16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)): daily loss halts the sleeve, sleeve drawdowns halve sizes then halt the sleeve, API errors pause the venue, a cost blow-out pauses the bot;
    - a missing heartbeat (the dead-man layers in §6 act on their own as well).
 2. KV `kill = ON`, then:
    - new trading stops and the engine cancels all orders;
@@ -474,7 +484,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
    - **quarterly:** PAYG instalment estimate;
    - **at EOFY:** myTax worksheet + CGT schedule + accountant pack + Beancount export.
 6. **Snapshot jobs:** 30 Jun 2027, and on any residency change (CGT event I1), priced per asset class ([16 §4.2](16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change)).
-7. **Residency change:** `tax.residency.add` emits `tax.residency.changed`; the venue registry recomputes, and any loosening that results is C3.
+7. **Residency change:** `tax.residency.add` emits `tax.residency.changed`; the venue registry recomputes, and any loosening that results is C3. The registry carries the `residency_version` it last applied; until it catches up, M11 fails closed (rejects new entries on residency-dependent products; exits still pass).
 
 **F10: Curation loop**
 1. Sources (airdrops, Discord/Telegram discovery, risk approvals, tax questions) create user tasks in `curation.task`.
@@ -524,7 +534,7 @@ Targets are defaults. Operating values (stale thresholds, reconciliation interva
 |---|---|---|
 | A feed is stale/bad | Strategies using it pause; no new orders on that instrument (closed sessions are `closed`, not stale) | Amber/red feed chip; banner on affected screens |
 | Venue disconnect | Reconnect with backoff; affected orders flagged unknown → reconcile | Venue chip red; positions marked "unconfirmed" |
-| Postgres down | Engine continues in memory with risk limits; WORM writes buffer in NATS JetStream (default bound 1 GB or 24 h); above 80% of the buffer new entries stop, exits continue; nothing executes without a record | Red system banner, read-only UI |
+| Postgres down | The engine doesn't keep opening positions: the in-engine watchdog treats the missing DB heartbeat like any critical component ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)): 5 s → cancel open orders, 10 s → each bot's `on_system_failure`. Records of those exits buffer in NATS JetStream (default bound 1 GB or 24 h; above 80% new entries stop, exits continue); nothing executes without a record | Red system banner, read-only UI |
 | WORM verify mismatch | Default `block_new_entries`: no new entries, exits and protective orders continue, no loosening until `audit.integrity.ack` (C3); options `alert_only` / `halt_all` ([16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)) | Critical banner; alert on every channel |
 | Engine down | `deadman` sidecar cancels at 5 s and flattens per `on_system_failure` at 10 s; restart is flat with bots paused | Red system banner; Telegram alert |
 | Host or internet down / egress tunnel down | Nothing on our side can reach venues; venue cancel-after timers cancel open orders and resting venue stops protect positions (fail flat) | Telegram/ntfy alert (if reachable) |

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T025, P2-T016, P3-T038]
 requirements: [R7.13]
 roadmap_todos: [T7.07]
 modules: [M19, M11]
 dashboards: [D13, D06, D15]
+tools: [git, uv, pnpm]
+mcp: []
+env: []
+services: [postgres, prefect-server, mt-api]
 branch: p7/P7-T010-pro-advice-register
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/ui/dashboards/D13-tasks-curation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T010 · Professional-advice register linked to venue-registry blocks
@@ -38,7 +43,7 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 
 - Roadmap: [R7.13 · ToDo T7.07](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) · [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (status + reason) · [D13](../../../docs/ui/dashboards/D13-tasks-curation.md) (`PRO_ADVICE` task type) · [D15](../../../docs/ui/dashboards/D15-tax.md) (Questions tab)
-- Cross-phase: P5 curation task queue (`curation.task`), P0 T0.22 `ops.venue_registry`, P2 T2.22 registry check in M11.
+- Cross-phase (`depends_on`): P3-T038 (minimal `curation.task` store, [17 §D P3-B011/B012](../../../docs/17-decisions-register.md#d-other-decisions)), P0-T025 (`ops.venue_registry`), P2-T016 (registry check in M11). The P5 task queue (P5-T029) later extends `curation.task`; this item doesn't wait for it ([17 §D P7-B011](../../../docs/17-decisions-register.md#d-other-decisions)).
 - Related: P7-T002, P7-T003, P7-T011 (preflight reads this register)
 
 ## Requirements
@@ -107,3 +112,4 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (curation.task from P3 not P5 per P7-B011; cross-phase deps; fields)

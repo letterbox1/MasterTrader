@@ -119,13 +119,13 @@ Approvals come **only from you, on Telegram or the web**, and are bound to your 
 ### 2.1 Scope
 
 **WORM tables:**
-- all of `audit.*`, with the canonical (singular) names from [17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer): `audit.order`, `audit.fill`, `audit.command` (source `web` / `telegram` / `mcp` / `system`), `audit.llm_call` (from P0, via the LiteLLM callback), `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call` (every MCP call, reads included; commands also land in `audit.command`);
+- all of `audit.*`, with the canonical (singular) names from [17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer): `audit.order`, `audit.fill`, `audit.command` (source `web` / `telegram` / `mcp` / `system`), `audit.llm_call` (from P0, via the LiteLLM callback), `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call` (every MCP call, reads included; commands also land in `audit.command`), `audit.auth_event`, `audit.verify_run`, `audit.signer_ledger`, `audit.signal`, `audit.tierb_decision`, `audit.anomaly`;
 - `risk.approval` (requests, decisions, expiries);
 - `journal.*`;
 - `risk.change` (every configuration version, [16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance));
 - `strategy.bot_version`;
 - `curation.mandate` and `curation.exec_log`;
-- the signer's signature ledger;
+- the signer's signature ledger (`audit.signer_ledger`);
 - `audit.seal`.
 
 Market data hypertables and caches are **not** WORM, because they can be rebuilt from sources and Parquet.

@@ -51,7 +51,7 @@ Decided 2026-10-21 with the user's input on the S2 items. A gap is closed throug
 | P7-B001, P7-B002, P2-B060 | Gate profile in 16 §2.4 (DSR ≥ 0.95; paper ≥ 8 weeks and ≥ 50 trades; class overrides) |
 | P7-B005 | System drawdown stages in 16 §2.1 (10% no new entries; 25% flatten + lock) |
 | P7-B006, P2-B011 | Decay/kill signal meanings in 16 §2.6. Built in P2 for paper; P7 extends to live with kill criteria |
-| P0-B017, P1-B010, P8-B007 | Canonical audit names (singular): `audit.order`, `audit.fill`, `audit.command`, `audit.llm_call`, `audit.dq_event`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call`. Command `source` = `web` / `telegram` / `mcp` / `system` |
+| P0-B017, P1-B010, P8-B007 | Canonical audit names (singular): `audit.order`, `audit.fill`, `audit.command`, `audit.llm_call`, `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call`, `audit.auth_event`, `audit.verify_run`, `audit.signer_ledger`, `audit.signal`, `audit.tierb_decision`, `audit.anomaly`. Command `source` = `web` / `telegram` / `mcp` / `system` |
 | P0-B005, P4-B006 | Canonical schemas: `market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight`, all created in P0 |
 | P0-B006 | 03 §3 is the canonical repo layout; 02 §11 points to it |
 | P0-B010 | Provenance columns: `source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok` |

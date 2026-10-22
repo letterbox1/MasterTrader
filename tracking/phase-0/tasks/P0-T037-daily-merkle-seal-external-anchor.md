@@ -54,9 +54,9 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 - Anchor object `seals/<table>/<YYYY>/<MM>/<DD>.json` with the seal JSON (canonical) uploaded with Object Lock retention ≥ 2557 days; upload verified by re-download + hash compare; version id recorded.
 - OpenTimestamps (free, optional, `ots_enabled` setting): `ots stamp` the seal file hash; upgrade proofs after ~24 h in the next run.
 - Telegram witness: one message per day listing `table: root[:16]… rows` + link-free text; sent with the bot token from tmpfs to `owner_chat_id`; message id stored.
-- The seal for day D runs only after D closes (UTC) and waits for late inserts with a 10 min grace; rows inserted for D after sealing are counted into D+1's chain summary and flagged (`late_rows`).
+- The seal for day D runs only after D closes (UTC) and waits for late inserts with a 10 min grace (default, [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)); rows inserted for D after sealing are counted into D+1's chain summary and flagged (`late_rows`).
 - Never on the order path: sealing reads replicas of data via `mt_flows_rw` with `statement_timeout` 5 min; inserts never wait on seals (15 §2.4).
-- Failure handling: any anchor step failing → seal row still written with `anchor_status=partial`, alert `alert.critical.seal_anchor_failed`, retry hourly for 24 h.
+- Failure handling: any anchor step failing → seal row still written with `anchor_status=partial`, alert `alert.critical.seal_anchor_failed`, retry hourly for 24 h (default, [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
 
 ## ToDo
 

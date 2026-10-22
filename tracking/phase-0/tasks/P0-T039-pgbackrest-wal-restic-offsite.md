@@ -53,7 +53,7 @@ Postgres is continuously protected: pgBackRest with WAL archiving to the Object-
 ## Requirements
 
 - pgBackRest stanza `mt`: `repo1-type=s3` (B2 endpoint) or `repo1-type=posix` on a mounted rest-server alternative; `repo1-cipher-type=aes-256-cbc` with pass from tmpfs; `compress-type=zst`; `archive-async=y`; `process-max=4`.
-- Schedule (Prefect or systemd timers): **full weekly** (Sun 02:00 Australia/Sydney), **incremental nightly** (02:00 other days), WAL continuous (`archive_timeout=60`); times are settings, not literals.
+- Schedule (Prefect or systemd timers): **full weekly** (Sun 02:00 Australia/Sydney), **incremental nightly** (02:00 other days), WAL continuous (`archive_timeout=60`); times are settings, not literals ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
 - Retention: `repo1-retention-full=4` (≈ 4 weeks); bucket Object Lock 35 days ≥ effective retention so expire never hits a locked object prematurely — document the arithmetic in the PR.
 - restic: repo `s3:…/mt-restic` (or `rest:` append-only), password from tmpfs; nightly 03:00; paths `/srv/mastertrader/mlflow`, `/srv/mastertrader/prefect`, `~/.config/mastertrader/secrets.sops.yaml` (already encrypted), `infra/` config; `restic forget` policy `--keep-daily 7 --keep-weekly 8 --keep-monthly 24` run **only** from your laptop (the host key has no delete rights in append-only mode).
 - Metrics: pgBackRest `info --output=json` and restic `snapshots --json` scraped into Prometheus via a small exporter job (`mt_backup_last_success_timestamp{kind}`, `mt_backup_size_bytes`, `mt_wal_archive_lag_seconds`).

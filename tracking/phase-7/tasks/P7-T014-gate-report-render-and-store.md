@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T012, P7-T013]
-requirements: [R7.01, R7.02]
-roadmap_todos: [T7.20]
+depends_on: [P7-T012, P7-T013, P2-T143]
+requirements: [R7.01, R7.02, R7.15]
+roadmap_todos: [T7.20, T7.26]
 modules: [M0, M15, M17]
 dashboards: [D03]
+tools: [git, uv, pnpm, node>=20]
+mcp: []
+env: []
+services: [postgres, mlflow, prefect-server, mt-api]
 branch: p7/P7-T014-gate-report-render-and-store
 pr: ""
 doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/02-v1-architecture.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T014 · Gate report: rendering, WORM storage, API and D03 Gates tab
@@ -37,14 +42,14 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 ## Context & references
 
 - Roadmap: [R7.01, R7.02 · ToDo T7.20](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [D03](../../../docs/ui/dashboards/D03-strategies.md) (Gates tab, 'auto mode disabled until all gates pass') · [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) (WORM) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (commands)
-- Related: P7-T012, P7-T013, P7-T028 (bot promotion checks the latest passing report), P7-T057 (funding needs a passing report)
+- Spec: [D03](../../../docs/ui/dashboards/D03-strategies.md) (Gates tab; autonomous mode disabled until all gates pass) · [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) (WORM) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (commands)
+- Related: P7-T012, P7-T013, P7-T028 (bot promotion checks the latest passing report), P7-T057 (funding needs a passing report), P7-T069 (stress-replay run ids attached as a new report row), P7-T067 (D06 Live gate-report list) · cross-phase P2-T143 (D03 detail and Gates tab, `depends_on`)
 
 ## Requirements
 
 - Command `lab.gate_report.generate {strategy_version}` (C1); scheduled nightly for every strategy in paper/hitl/autonomous.
 - Row: version, verdict, gate results JSON, inputs hash, report artefact hash; artefact stored in MLflow artefacts + immutable export.
-- Report sections: summary verdict; each gate with value/threshold/evidence link; per-year/per-regime table; 2×/3× cost table; trial counter; worst fold; benchmark comparison; paper section; waivers; kill criteria from the manifest.
+- Report sections: summary verdict; each gate with value/threshold/evidence link; per-year/per-regime table; 2×/3× cost table; trial counter; worst fold; benchmark comparison; paper section; stress-replay results (R7.16, when attached); waivers; kill criteria from the manifest.
 - `strategy.promote`, `strategy.set_mode`, `bot.set_mode` (live) store `gate_report_id` in their audit context and refuse if the latest report is not `pass` or is older than 7 days.
 - D03 Gates tab lists the latest report, history, and a 'Download PDF' action; phones get the summary card.
 
@@ -107,3 +112,4 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (R7.15/T7.26 share (gate-report API); stress-replay section (R7.16); deps)

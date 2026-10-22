@@ -79,6 +79,8 @@ This replaces the earlier "detection → paused < 2 s" SLO.
 | Mode change paper → HITL | C2 · HITL → autonomous: C3 · autonomous → HITL/paper: C1 (tightening) |
 | MCP-originated orders | **Always need your approval card** (Telegram/web), TTL 5 min. MCP can never approve anything itself (§2.12) |
 | C3 cool-down | 15 min between your C3 approval and the change taking effect |
+| Confirm-token TTL (C1/C2) | 120 s from the preview call; single use. Expired → preview again |
+| C3 approval TTL | 10 min for the approval and its TOTP; expiry = cancelled, nothing applies |
 | Strategy mode ceiling | A strategy's mode (`strategy.set_mode`) caps the modes of its bots: the stricter of strategy and bot mode applies |
 | Sleeve restart after a halt | `risk.sleeve.restart`, C3 |
 | Exchange/broker key rotation | Every 90 days (alert when older), and immediately after any suspected leak ([07 §2](07-security-notes.md#2-secrets)) |
@@ -96,6 +98,8 @@ This replaces the earlier "detection → paused < 2 s" SLO.
 | Leakage review + look-ahead analysers | Clean, or each finding waived by you (C2, audited) |
 | Safety drills | Kill switch, dead-man and restart drills passed on the bot's venue |
 | **Paper / HITL period before autonomous or a capital step** | ≥ 8 weeks **and** ≥ 50 trades (P1 sleeves: ≥ 8 weeks; memecoin: ≥ 300 trades). Low-frequency bots that can't reach the trade count use a time window (≥ 26 weeks) |
+| Post-cutoff embargo (strategies with LLM or tier-B inputs) | Evaluation starts ≥ **30 days** after the latest training cutoff of every model in the chain; unknown cutoff → gate fails |
+| Minimum out-of-sample window after the embargo | ≥ **90 days**; shorter → gate fails |
 
 **Loosening any gate is C3.** Tightening is free.
 
@@ -145,6 +149,8 @@ Configurable per asset class.
 | Stablecoin depeg | > 50 bps → reduce exposure; until the P6 treasury exists, alert + task | — |
 | HLP (if Hyperliquid is approved) | ≤ 10% of stablecoins **and** ≤ 5% of total portfolio, whichever is smaller | — |
 | Per-protocol cap (yield) | ≤ 20% of treasury | — |
+| Treasury rebalance hurdle | Move yield only if the net improvement is ≥ 1.0% APY **and** the cost gate passes | P6 yield allocator |
+| Stablecoin-issuer cap | ≤ 50% of stablecoins with any one issuer | Breach → rebalance proposal + alert (P6) |
 
 **Signing stays disabled until you confirm these numbers on first setup** (a USER task in Phase 5). The defaults only prefill the form.
 
@@ -202,6 +208,20 @@ Configurable per bot and per event type.
 | Discord delivery check | Re-prompt if a followed channel delivers nothing in 7 days |
 | New servers suggested | ≤ 3 per week |
 
+### 2.14 Platform & operations
+
+| Setting | Default | Notes |
+|---|---|---|
+| Login lockout | 5 failed logins in 15 min → locked 15 min, doubling on each repeat up to 24 h | Per-IP and global counters; alert on lockout |
+| Session lifetime | Idle 12 h ([ui §3.6](ui/README.md#36-permissions--sessions)); absolute 7 d | Re-login needs TOTP |
+| Service heartbeat | Every service publishes `sys.heartbeat.{service}` every 1 s | The cadence the dead-man watches (§3.1) |
+| Log retention (Loki) | 30 d [30–90 d] | — |
+| WORM seal grace | The seal for day D runs after D closes (UTC) plus 10 min for late inserts | Rows arriving later count into D+1 and are flagged |
+| Seal anchor retry | Hourly for 24 h after a failed anchor | Seal row marked `partial`; critical alert |
+| Backups | Continuous WAL archive; nightly incremental 02:00 and weekly full Sun 02:00 (Australia/Sydney); pgBackRest keeps 4 full backups | Monthly restore test and WORM export ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) P0-B011) |
+| Service-restart allow-list (`docker-proxy`) | `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | `postgres`, `nats`, `mt-api` and `docker-proxy` are never on it by default. Adding a container is C3; removing one is C1 |
+| Intel pipeline | Poll intervals, per-source caps, Telegram join pacing and posture windows live in `config/intel/*.yaml`. Defaults: RSS poll 5 min (min 2 min, [P4-T011](../tracking/phase-4/tasks/P4-T011-rss-trafilatura-crawl4ai.md)); 200 docs/hour per source ([P4-T030](../tracking/phase-4/tasks/P4-T030-nlp-relevance-gate.md)); Telegram ≤ 500 channels ([P4-T001](../tracking/phase-4/tasks/P4-T001-telegram-channel-list.md)), ≤ 1 join per 10–20 min and ≤ 20 per day ([P4-T018](../tracking/phase-4/tasks/P4-T018-telethon-join-queue.md)); posture windows 15 min / 1 h / 24 h ([P4-T019](../tracking/phase-4/tasks/P4-T019-telegram-postures.md)) | Tightening is free; the Telegram caps never exceed the platform rules ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
+
 ---
 
 ## 3. Failure safety
@@ -251,11 +271,14 @@ Configurable per bot and per event type.
 **At trade time (write path):**
 - Every order, fill and command is written to the WORM tables **as it happens**.
 - If Postgres is unreachable, writes buffer in NATS JetStream: bounded at 1 GB or 24 h.
+- The engine doesn't keep opening positions meanwhile: the DB heartbeat is one of the components the dead-man watches (§3.1), so the buffer mainly carries exits and records already in flight ([02 §9.3](02-v1-architecture.md#93-degraded-modes)).
 - Above 80% of the buffer, new entries stop; exits continue.
+- The buffer is the JetStream subject `worm.buffer.>`. Its fill level is in NATS KV `worm_buffer`, which M11 reads pre-trade (80% → new entries stop).
 - Nothing is ever executed without a record.
 
 **Afterwards (integrity check):**
 - `audit.verify` recomputes the hash chains and compares them with the externally anchored seals.
+- The result is the integrity status `audit.integrity`, which M11 reads pre-trade. NATS KV bucket names can't contain dots, so it's stored as KV bucket `audit`, key `integrity`.
 - A mismatch means stored history changed after it was written: disk or DB corruption, a bad restore, or tampering.
 - Trades themselves don't "fail" verification. The reason to block new entries (§2.11) is that positions, P&L, journal and tax records can no longer be trusted until you've checked.
 - You can set it to `alert_only` if you prefer.
@@ -304,3 +327,15 @@ Web crawling isn't used for prices or gas: direct APIs and our own recorded data
 | Setting | Default |
 |---|---|
 | Wash-sale flag window | Re-acquisition of the same asset within **30 days** either side of a loss disposal is flagged for your tax agent (flag only; nothing is blocked or adjusted automatically) |
+
+### 4.5 Journal and tax defaults
+
+Defaults, all configurable (`config/journal/*.yaml`); tightening is free.
+
+| Setting | Default | Notes |
+|---|---|---|
+| FX prior-day limit | A missing RBA rate uses the last published business day's rate, flagged prior-day; older than **5 business days** → the event waits as `pending_fx` and an alert fires | §4.3 |
+| Internal-transfer match window | Legs within **6 h** (**72 h** for fiat bank rails); amount out − fee = amount in within 0.1% or the venue's fee | Unmatched → review item, never a disposal |
+| CARF difference threshold | Flag a difference above **1% or A$100** per venue, year and metric | Only where the venue provides a statement |
+| PAYG reminder lead time | **14 days** before each instalment due date | Due dates default 28 Oct, 28 Feb, 28 Apr, 28 Jul (U), confirmed from your notice |
+| Thin-market VWAP | A VWAP built from **fewer than 3** recorded trades in its window is flagged `thin_market` | Shown in the journal notes; the value is still ours (§4.1) |

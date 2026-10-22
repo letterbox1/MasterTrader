@@ -4,7 +4,7 @@ kind: gap
 title: Never-exposed list doesn't cover other funds-moving or irreversible commands
 phase: 8
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p8/P8-B005-never-exposed-funds-commands
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-8-mcp.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M20 safeguards; docs/02-v1-architecture.md §7.2 command catalogue
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## ToDo
 
-- [ ] Confirm the proposed resolution (with the user if it changes behaviour)
-- [ ] Edit the listed docs so they agree with each other
-- [ ] Write or point to the test in the implementing P8 task that pins the behaviour
-- [ ] Note the resolution in the Progress log
+- [x] Decision recorded: 17 §D (P8-B005): never-exposed list in 16 §2.12
+- [x] Docs carry it: 16 §2.12 Never exposed row; 02 §7.4 (incl. `system.restore.test`, `memory.delete`, `system.service.restart`, `risk.deadman.ack`, `/system/keys`, `/system/logs`); 03 M20 safeguards; 07 §6; D17 Tool registry
+- [x] Implementation owned by P8-T004 (never constant), P8-T023 (audit against the full list)
+- [x] Resolution noted in the Progress log
 
 ## Verification
 
@@ -67,9 +67,9 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Acceptance criteria
 
-- [ ] Docs updated and mutually consistent
-- [ ] Implementing task test exists and passes
-- [ ] Resolution noted in the Progress log
+- [x] Docs updated and mutually consistent (checked 2026-10-22: 16 §2.12 Never exposed row; 02 §7.4 (incl. `system.restore.test`, `memory.delete`, `system.service.restart`, `risk.deadman.ack`, `/system/keys`, `/system/logs`); 03 M20 safeguards; 07 §6; D17 Tool registry)
+- [x] Implementing work owned and its test named: P8-T004 (never constant), P8-T023 (audit against the full list)
+- [x] Root cause noted: the original list predated wallets, treasury and airdrop execution commands
 
 ## Exceptions & edge cases
 
@@ -96,3 +96,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P8-B005); docs checked: 16 §2.12 Never exposed row; 02 §7.4 (incl. `system.restore.test`, `memory.delete`, `system.service.restart`, `risk.deadman.ack`, `/system/keys`, `/system/logs`); 03 M20 safeguards; 07 §6; D17 Tool registry; implementation owned by P8-T004 (never constant), P8-T023 (audit against the full list); root cause: the original list predated wallets, treasury and airdrop execution commands
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P8-B005); docs updated: 16 §2.12 Never exposed row; 02 §7.4 (incl. `system.restore.test`, `memory.delete`, `system.service.restart`, `risk.deadman.ack`, `/system/keys`, `/system/logs`); 03 M20 safeguards; 07 §6; D17 Tool registry; implementation owned by P8-T004 (never constant), P8-T023 (audit against the full list)
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:26 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave
