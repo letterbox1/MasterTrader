@@ -14,7 +14,7 @@ This doc also covers the **failure-safety design** (what happens when the engine
 
 | Layer | Holds | Who edits | Changing it |
 |---|---|---|---|
-| **L0 Hard ceilings** | Absolute maxima: e.g. crypto-derivatives leverage ≤ 2×, max daily loss, max per-transaction signer value | You only, in a file on the host that no API can write ([07 §6](07-security-notes.md#6-application-controls)) | Edit the file on the host; restart |
+| **L0 Hard ceilings** | Absolute maxima: e.g. crypto-derivatives leverage ≤ 2×, max daily loss, max per-transaction signer value | You, in the agent/bot strategy settings (the ceilings section applies to every bot) | Tighten: immediate. Loosen: C3 (Telegram + TOTP + cool-down) |
 | **L1 System policy** | Global limits, system drawdown stages, failure behaviour, WORM response, venue concentration | You (D06, Telegram) | Tighten: immediate. Loosen: C3 |
 | **L2 Venue / account** | Per-venue notional, leverage, allowed products (venue registry), rate limits | You (D06 venue registry) | Tighten: immediate. Loosen: C3 |
 | **L3 Sleeve** | Capital, risk budget, sleeve drawdown stages, capital-step plan, kill criteria | You (D06) | Tighten: immediate. Loosen: C3 |
@@ -104,7 +104,7 @@ Configurable per asset class.
 
 | Setting | Default |
 |---|---|
-| Starting live allocation | You set it (suggested A$2–5k micro-live) |
+| Starting live allocation | Set in each bot's strategy settings when it goes live (default A$2,000; suggested range A$2–5k micro-live) |
 | **Clean week** | A calendar week (Mon–Sun, Sydney) with: no kill-criterion breach; no unexplained reconciliation mismatch; no S1/S2 incident on that bot; live implementation shortfall ≤ 1.5× modelled; weekly P&L inside the backtest's 5th–95th percentile band |
 | Step up | After **4 consecutive clean weeks**: +25% of the **current** allocation (A → 1.25A), up to the sleeve's target cap. Each step needs your approval (C3) |
 | Step down | A kill-criterion warning → back one step. A halt → back to the starting allocation after your review |

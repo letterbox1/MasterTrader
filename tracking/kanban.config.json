@@ -1,4 +1,6 @@
 {
   "project": "MasterTrader",
-  "project_type": "software"
+  "project_type": "software",
+  "require_review": true,
+  "branch_per_task": false
 }

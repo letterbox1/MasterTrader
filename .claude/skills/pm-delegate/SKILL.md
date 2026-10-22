@@ -5,7 +5,7 @@ compatibility: Any Agent Skills-compatible agent (Claude Code, Codex, Gemini CLI
 metadata:
   author: CeraNova
   product: CeraNova PM
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # pm-delegate

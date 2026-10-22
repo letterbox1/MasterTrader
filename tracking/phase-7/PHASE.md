@@ -5,6 +5,7 @@ roadmap: docs/roadmap/phase-7-prove-and-go-live.md
 status: not_started
 opens_after: [3]
 force_open: false
+hard_gate: true
 started: ""
 completed: ""
 doc_sync_status: n/a

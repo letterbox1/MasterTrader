@@ -149,6 +149,7 @@ When a phase's tasks are all done, no S1/S2 is open and its exit criteria are ti
   - after the roadmap (confirm phases, the `USER` register, fixed dates);
   - whenever S1/S2 gaps exist (`pm-reconcile`);
   - before anything needing the human's money, accounts, credentials or approval.
+- **What never goes to the human:** configurable values (they get defaults in the configuration doc and are changed in settings later) and unverified facts (agents verify them in research tasks).
 
 ## What fires when
 

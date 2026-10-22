@@ -5,6 +5,7 @@ roadmap: docs/roadmap/phase-8-mcp.md
 status: not_started
 opens_after: [6]
 force_open: false
+hard_gate: true
 started: ""
 completed: ""
 doc_sync_status: n/a

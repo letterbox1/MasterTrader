@@ -5,7 +5,7 @@ compatibility: Any Agent Skills-compatible agent (Claude Code, Codex, Gemini CLI
 metadata:
   author: CeraNova
   product: CeraNova PM
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # pm-reconcile
@@ -25,7 +25,8 @@ The board shows open bugs by severity (`KANBAN.md` "Open S1/S2"). Read each gap'
 
 - **S1/S2 first**, grouped by theme (e.g. "undefined numbers", "conflicts between docs", "design holes").
 - For each: one or two plain sentences on what's wrong and why it matters, then **your recommendation**.
-- **Distinguish** what's a configurable default (propose a value and say it's changeable), what's a genuine design choice, and what needs an external check (U).
+- **Configurable values are not questions.** Anything the human can change later in settings (limits, sizes, thresholds, allocations, timeouts) gets a sensible default recorded in the configuration doc, and you tell them where to change it. Never ask them to ratify or supply those values, one by one or in bulk.
+- **Ask only about genuine design choices** (what the system does, what it must never do, who approves what) and facts only they have. Things that need an external check (U) are research tasks for agents, not questions.
 - If the human pushes back or asks "why", explain, correct any misunderstanding kindly and precisely, and keep it short.
 - **Ask only for what you can't decide.** Never re-ask what they already answered.
 
@@ -80,4 +81,5 @@ Report to the human:
 
 - Don't close a gap without the decision being in the docs.
 - Don't hard-code a value the human said should be configurable.
+- Don't put configurable defaults, settings or unverified facts in front of the human for review; record them and move on.
 - Don't make product decisions silently: recommend, then record what the human chose.

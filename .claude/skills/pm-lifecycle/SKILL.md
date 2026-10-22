@@ -5,7 +5,7 @@ compatibility: Any Agent Skills-compatible agent (Claude Code, Codex, Gemini CLI
 metadata:
   author: CeraNova
   product: CeraNova PM
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # CeraNova PM lifecycle (router)
@@ -40,7 +40,7 @@ The lifecycle, with the skill for each stage:
 - **Before a session ends:** checkpoint in-progress items, commit, push. Progress must survive crashes and cloud↔local moves.
 - If `tracking/kanban.config.json` doesn't exist, start with **pm-bootstrap**.
 - **`./kanban doctor` always tells you the next step** (it's also in every session-start brief as "Lifecycle next").
-- **Question checkpoints with the human:** after intake (one batch of questions with proposed answers), after the roadmap (confirm phases, `USER` register and fixed dates), whenever S1/S2 gaps exist (**pm-reconcile**), and before anything needing their money, accounts or approval.
+- **Question checkpoints with the human:** after intake (one batch of questions with proposed answers), after the roadmap (confirm phases, `USER` register and fixed dates), whenever S1/S2 gaps exist (**pm-reconcile**), and before anything needing their money, accounts or approval. Ask only about real design choices and facts only they have: configurable values get defaults (they change them in settings later) and unverified facts become research tasks; neither goes to the human for review.
 
 ## Where things are
 

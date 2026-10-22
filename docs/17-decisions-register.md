@@ -128,3 +128,21 @@ All in 16:
 | P7-B013, P7-B014 | Fix the roadmap text; add "safety drills" to 03 §8 gates |
 | P8-B005, P8-B006, P8-B008, P8-B009, P8-B011, P8-B012 | Never-exposed list in 16 §2.12. The old research note is superseded. Add `anomaly.explain`, `/bots`, `/approvals`, `/mcp/tokens`, `/mcp/sessions`, `source=` filters. `mcp` lives on the internal network behind Caddy on Tailscale only. Reads are logged to `audit.mcp_call` (WORM) |
 | P8-B010 | MCP orders always need approval (see P8-B002) |
+
+## E. Ratification (2026-10-22)
+
+You reviewed and ratified this register: every decision in sections A–D stands as written.
+
+**Changes from the review:**
+- **L0 hard ceilings** are edited in the agent/bot strategy settings (the ceilings section applies to every bot), not in a host-only file. Tightening is immediate; loosening is C3 like every other loosening ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)).
+- **Configurable values are settings, not decisions.** Every value in [16](16-configuration-and-safety-model.md) (sizes, limits, thresholds, allocations, timers) is a default you change in settings. The starting live allocation defaults to A$2,000 and is set per bot when it goes live.
+
+**How work runs (adopted):**
+- **Parallel by dependency:** a task starts as soon as its own `depends_on` are done, in any phase (`phase_gating: "dependencies"`, switched on after task alignment adds every real cross-phase dependency). Phase 7 (go small-live) and Phase 8 (MCP) are hard-gated: they still wait for their prerequisite phases.
+- **Build first, keys last:** integrations are built and tested against mocks, recorded fixtures, emulators, testnets and paper accounts without secrets; live checks needing your keys, accounts or money are separate final VERIFY tasks depending on the USER task that provides them.
+- **Up to 6 agents at once**, one per independent workstream, each claiming its task with `./kanban start`.
+- **Independent review is mandatory** (`require_review: true`): a separate reviewer agent passes every task before it's done.
+- **Trail:** one branch and PR per task where the environment allows it (`p<N>/<ID>-<slug>`, PR `<ID>: <title>`, labelled `phase-N` + type); everywhere, commits carry the task ID and `./kanban trail` reconciles task → branch → PR → commits.
+- **Unverified (U) facts** are verified by agents in research tasks before the build that relies on them; tax-law questions go to your tax agent as a USER task.
+- **Alignment before build:** doc alignment, then task alignment per phase, then a short change summary for your approval, then kickoff.
+
