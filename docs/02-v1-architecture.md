@@ -269,17 +269,17 @@ Table names follow the §4 naming rules (singular, schema-qualified).
 | `POST /risk/preview` | Dry-run pre-trade checks for an intent (no side effects) |
 | `/positions`, `/orders`, `/fills` | Positions, orders, fills (`/orders?source=web\|telegram\|mcp\|system`) |
 | `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=pending` | Bots and HITL approvals ([15 §1.5](15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)) |
-| `/markets/instruments`, `/markets/{id}/bars?spec=&from=&to=` | Instruments, bars |
+| `/markets/instruments` (+ `/{id}`: metadata, min resolution, licence flags), `/markets/{id}/bars?spec=&from=&to=` | Instruments, bars |
 | `/markets/{id}/book`, `/markets/matrix` | Order book, cross-asset matrix |
 | `/strategies`, `/strategies/{id}`, `/strategies/{id}/runs`, `/strategies/templates`, `/strategies/{id}/gate-report` | Strategies; gate report against the strategy's gate profile ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)) |
-| `/lab/backtests`, `/lab/backtests/{id}`, `/lab/experiments`, `/lab/jobs` | Research lab |
+| `/lab/backtests`, `/lab/backtests/{id}`, `/lab/experiments`, `/lab/experiments/{id}`, `/lab/jobs` | Research lab |
 | `/agents/runs`, `/agents/runs/{id}`, `/signals` | Agent runs, signals |
 | `/models/registry`, `/models/questions`, `/models/tierb/decisions`, `/models/benchmarks`, `/models/gateway/spend`, `/models/labels`, `/models/labels/queue` | Models; labels and the labelling queue |
 | `/memory/search`, `/memory/banks`, `/rag/search` | Memory and document search |
 | `/risk/policy`, `/risk/state`, `/risk/events`, `/risk/changes`, `/risk/stress` | Risk. `/risk/policy` returns the effective value of each setting and the layer (L0–L4) that set it ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)); `/risk/changes?source=` filters by source |
 | `/risk/capital-steps`, `/risk/kill-criteria` | Capital-step plan and state per sleeve/bot, kill-criteria state (Phase 7, [16 §2.5–2.6](16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)) |
 | `/data/feeds`, `/data/quotas`, `/data/dq-events`, `/data/costs`, `/data/recon` | Data quality, costs, reconciliation |
-| `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment` | Intel |
+| `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment`, `/intel/postures` | Intel; `/intel/postures` = Telegram postures, numbers only, never text (F3b) |
 | `/mm/bots` (+ `/{id}`, `/{id}/pnl`) | Market-making bots |
 | `/airdrops`, `/airdrops/{id}`, `/airdrops/mandates`, `/airdrops/wallet` | Airdrops |
 | `/tasks` (+ `/{id}`), `/community`, `/social/drafts` | Tasks, curation and social drafts |
@@ -291,6 +291,15 @@ Table names follow the §4 naming rules (singular, schema-qualified).
 | `/mcp/tools`, `/mcp/tokens`, `/mcp/sessions` | MCP tool registry, tokens (metadata only, never the secret), sessions (Phase 8) |
 | `/audit/log` (`?source=`), `/audit/integrity` | Audit log; WORM integrity status and incidents |
 | `/notifications` | Notifications |
+
+**Filters the dashboards use** (query parameters on the routes above, not separate routes):
+- Portfolio and execution: `/positions?instrument=&strategy=`, `/orders?instrument=&strategy=&source=`, `/signals?strategy=&limit=`, `/bots?active=1`, `/approvals?status=&source=`.
+- Markets: `/markets/instruments?watchlist=`, `/markets/matrix?group=correlation|macro|positioning`, `/models/tierb/decisions?subject=`.
+- Strategies and lab: `/strategies/{id}?gates=1&versions=1`, `/strategies/{id}/runs?metrics=1`, `/agents/runs?settled=1&metrics=1`, `/lab/jobs?kind=backfill`.
+- Risk: `/risk/state?breakdown=1|ladder=1`, `/risk/changes?status=pending&source=`.
+- Data: `/data/feeds?kind=text|storage=1`, `/data/costs?tca=1|snapshot=|compare=1|instrument=`, `/data/recon?scope=journal`.
+- Intel: `/intel/documents?ticker=|sources=1`, `/intel/events?instrument=`, `/intel/calendar?instrument=`, `/rag/search?similar=`.
+- Other: `/airdrops/{id}?risk=1|eligibility=1|history=1`, `/tasks?urgent=1|type=|opportunity=|status=`, `/journal/trades?analytics=1`, `/tax/summary?fy=&section=cgt|income|payg`, `/notifications?kind=|severity=`, `/wallets?kind=|group=`, `/system/health?slo=1`, `/system/services?kind=venue|hummingbot|mcp`, `/system/settings?section=`, `/system/logs?strategy=`, `/audit/log?source=`.
 
 ### 7.2 Commands (REST, write)
 
@@ -313,27 +322,27 @@ Table names follow the §4 naming rules (singular, schema-qualified).
 
 Every C3 approval and every settings change is a WORM row (`audit.command`, `risk.change`).
 
-**Command catalogue (v1):**
+**Command catalogue (v1)** with each command's confirmation level. Where a command can tighten or loosen, the direction of the change decides the level (tighten C1, loosen C3, [16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)); the server computes it in the preview call.
 
 | Group | Commands |
 |---|---|
-| Orders | `order.place`, `order.modify`, `order.cancel`, `order.cancel_all`, `position.close` (`{halt: true, reason}` = flatten-and-halt the bot), `position.reduce`, `position.set_brackets` |
-| Approvals | `approval.approve`, `approval.approve_partial`, `approval.reject` ([15 §1.5](15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)); never callable from MCP (§7.4) |
-| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.run_shadow` (C1), `strategy.set_mode` (the highest mode its bots may use: allow `hitl` C2, allow `autonomous` C3, restrict C1). A strategy is **promoted through gates**; each bot's mode is set per bot, and the stricter of the two applies |
-| Bots ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `bot.create`, `bot.update_scope`, `bot.update_params` (incl. `on_system_failure`), `bot.set_mode` (`paper` C1, `paper` → `hitl` C2, `autonomous` → `hitl` C1, → `autonomous` **C3**), `bot.start`, `bot.pause`, `bot.resume`, `bot.stop`, `bot.approval_policy.set` |
-| Lab | `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `lab.leakage.waive` (C2, reason required, audited), `lab.gate_report.generate` |
-| Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.tiera.train` (C1: train → calibrate → compile), `models.label.add` (C0), `models.promote`, `models.rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete`, `anomaly.explain` (C1; result arrives as a notification) |
-| Market making | `mm.bot.create`, `mm.bot.start`, `mm.bot.stop`, `mm.bot.update`, `mm.bot.cancel_all` |
-| Risk | `risk.policy.update` (diff on any layer L0–L4, including the hard-ceilings section of the bot strategy settings; tighten = C1 and immediate, loosen = C3), `risk.kill.on`, `risk.kill.off`, `risk.deadman.ack`, `risk.stress.run`, `risk.sleeve.restart` (C3; after a sleeve drawdown or health halt), `risk.capital.fund` (C3), `risk.capital_step.approve` (C3), `risk.review.close` (C3) |
-| Data | `data.feed.pause`, `data.feed.resume`, `data.backfill.run`, `data.recon.run`, `data.incident.ack` (C0; appends an `audit.dq_ack` row, never updates the incident) |
-| Intel | `intel.source.add`, `intel.source.mute`, `intel.watchlist.update` |
-| Airdrops | `airdrop.add_url`, `airdrop.rescore`, `airdrop.reject`, `airdrop.mandate.create` (C3), `airdrop.mandate.revoke`, `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval`, `wallet.sweep` |
-| Tasks | `task.done`, `task.skip`, `task.snooze`, `task.never`, `task.answer` (C1; e.g. a tax-agent answer), `social.draft.approve` (C1, opens a web intent), `social.draft.reject` |
+| Orders | `order.place` (C2), `order.modify` (C2), `order.cancel` (C1), `order.cancel_all` (C2; scope all / venue / strategy / instrument), `position.close` (C2; `{halt: true, reason}` = flatten-and-halt the bot), `position.reduce` (C2), `position.set_brackets` (C2) |
+| Approvals | `approval.approve` (C2; large orders add hold-to-confirm / TOTP, [16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)), `approval.approve_partial` (C2), `approval.reject` (C1) ([15 §1.5](15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)); `web` and `telegram` sources only, never callable from MCP (§7.4) |
+| Strategies | `strategy.create` (C1), `strategy.update_params` (C1 paper; C2 live; C3 if it increases risk), `strategy.clone` (C1), `strategy.archive` (C1), `strategy.start` (C1), `strategy.pause` / `strategy.resume` / `strategy.stop` (C1), `strategy.promote` (C1; autonomous stage C3), `strategy.demote` (C1), `strategy.run_shadow` (C1), `strategy.set_mode` (the highest mode its bots may use: allow `hitl` C2, allow `autonomous` C3, restrict C1). A strategy is **promoted through gates**; each bot's mode is set per bot, and the stricter of the two applies |
+| Bots ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `bot.create` (C1), `bot.update_scope` / `bot.update_params` (incl. `on_system_failure`; tighten C1, loosen C3, incl. widening an autonomous bot's scope), `bot.set_mode` (`paper` C1, `paper` → `hitl` C2, `autonomous` → `hitl` C1, → `autonomous` **C3**), `bot.start` / `bot.pause` / `bot.resume` / `bot.stop` (C1), `bot.approval_policy.set` (tighten C1, loosen C3) |
+| Lab | `lab.backtest.run` (C1), `lab.sweep.run` (C1), `lab.validate.run` (C1; incl. distillation runs), `lab.generate_strategy` (C1; uses LLM budget), `lab.job.cancel` (C1), `lab.leakage.waive` (C2, reason required, audited), `lab.gate_report.generate` (C1) |
+| Agents & models | `agents.run_analysis` (C1; uses LLM budget), `models.tierb.ask` (C0), `models.tiera.train` (C1: train → calibrate → compile), `models.label.add` (C0), `models.promote` (C2; to production for a model used by autonomous bots C3), `models.rollback` (C1), `models.bakeoff.run` (C1), `models.question.update` (C1, new version; loosening a threshold below its default bar C3), `memory.delete` (C1), `anomaly.explain` (C1; result arrives as a notification) |
+| Market making | `mm.bot.create` (C1, paper), `mm.bot.start` (C1 paper, **C3 live**: a live market-making bot quotes on its own, like `autonomous` mode), `mm.bot.stop` (C1), `mm.bot.update` (C1 paper, C2 live, C3 if it increases risk), `mm.bot.cancel_all` (C1) |
+| Risk | `risk.policy.update` (diff on any layer L0–L4, including the hard-ceilings section of the bot strategy settings; tighten C1 and immediate, loosen C3; cancelling a pending change C1), `risk.kill.on` (Kill), `risk.kill.off` (C3), `risk.deadman.ack` (C1), `risk.stress.run` (C1), `risk.sleeve.restart` (C3; after a sleeve drawdown or health halt), `risk.capital.fund` (C3), `risk.capital_step.approve` (C3), `risk.review.close` (C3) |
+| Data | `data.feed.pause` / `data.feed.resume` (C1), `data.backfill.run` (C1), `data.recon.run` (C1), `data.incident.ack` (C0; appends an `audit.dq_ack` row, never updates the incident) |
+| Intel | `intel.source.add` (C1; paid/ToS-banned sources rejected), `intel.source.mute` (C0), `intel.watchlist.update` (C0) |
+| Airdrops | `airdrop.add_url` (C0), `airdrop.rescore` (C0), `airdrop.reject` (C1), `airdrop.mandate.create` (C3), `airdrop.mandate.revoke` (C1), `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval` (C2), `wallet.sweep` (C2; to the allow-listed vault address) |
+| Tasks | `task.done` / `task.skip` / `task.snooze` (C0), `task.never` (C1), `task.answer` (C1; e.g. a tax-agent answer), `social.draft.approve` (C1, opens a web intent), `social.draft.reject` (C1) |
 | Wallets & treasury | `wallet.register` (C1), `wallet.tag` (C1), `treasury.allocate` (C2; loosening policy C3), `treasury.earn.enter` / `treasury.earn.exit` (C2) |
-| Venues & ladder | `venue.registry.update` (tighten C1, allow C3), `risk.ladder.set` (down C1, up C3) |
-| Journal & tax | `journal.note.add` (optional attachment, stored content-addressed under `data/attachments/` and referenced by hash), `journal.tag`, `journal.manual_event.add` (C2), `journal.review.signoff`, `tax.report.generate`, `tax.export`, `tax.residency.add` (emits `tax.residency.changed`; any loosening it causes in the venue registry is C3), `tax.regime.set`, `tax.lot.select`, `tax.fy.lock` / `tax.fy.unlock` (C3) |
-| System | `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.settings.update`, `system.service.restart` (allow-listed containers only, via `docker-proxy`), `audit.verify`, `audit.integrity.ack` (C3; clears a WORM verify mismatch after investigation, [16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)), `ops.drill.record` |
-| MCP (Phase 8) | `mcp.token.create` (C1; C3 for indefinite expiry or the `trade`, `strategy`, `risk_tighten` scopes), `mcp.token.revoke`, `mcp.tool.set`, `mcp.policy.set` |
+| Venues & ladder | `venue.registry.update` (tighten C1, allow a venue/product C3), `risk.ladder.set` (down C1, up C3) |
+| Journal & tax | `journal.note.add` (C0; optional attachment, stored content-addressed under `data/attachments/` and referenced by hash), `journal.tag` (C0), `journal.manual_event.add` (C2, reason required), `journal.review.signoff` (C1), `tax.report.generate` (C1), `tax.export` (C0), `tax.residency.add` (C1; emits `tax.residency.changed`; any loosening it causes in the venue registry is C3), `tax.regime.set` (C1), `tax.lot.select` (C1), `tax.fy.lock` / `tax.fy.unlock` (C3; unlock needs a reason) |
+| System | `system.backup.run` (C1), `system.restore.test` (C1), `system.key.rotate_reminder` (C0), `system.settings.update` (C0 for preferences, layout and digests; C1 to tighten or for schedules; C3 to loosen, e.g. raise an LLM budget or a DQ threshold), `system.service.restart` (C2; allow-listed containers only, via `docker-proxy`), `audit.verify` (C1), `audit.integrity.ack` (C3; clears a WORM verify mismatch after investigation, [16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)), `ops.drill.record` (C1) |
+| MCP (Phase 8) | `mcp.token.create` (C1; C3 for indefinite expiry or the `trade`, `strategy`, `risk_tighten` scopes), `mcp.token.revoke` (C1, immediate), `mcp.tool.set` (disable C1; enable a read/analyse/curation tool C1, a trade/strategy/risk tool C3), `mcp.policy.set` (tighten C1, loosen C3). All web/Telegram only |
 
 ### 7.3 Real-time (WebSocket `/api/v1/ws`)
 
@@ -357,7 +366,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 - **MCP** (Phase 8) exposes the queries plus a subset of commands ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)):
   - **Levels for `source = mcp`:** C0 reads run directly; C1 runs if the token has the scope; C2 orders **always** create an approval card on Telegram/web (TTL default 5 min, expiry = reject), with no "skip approval" option; C3 goes through Telegram + TOTP as usual.
   - **MCP can never approve** anything, its own orders included. Approvals come only from you on Telegram or the web.
-  - **Never exposed:** withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key and token management, `approval.*`, `mcp.*`, restore/delete, audit writes. Loosening risk is never a scope.
+  - **Never exposed:** withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key and token management, `approval.*`, `mcp.*`, restore/delete (incl. `system.restore.test`, `memory.delete`), `system.service.restart`, `risk.deadman.ack`, `/system/keys`, `/system/logs`, audit writes ([03 M20](03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted)). Loosening risk is never a scope.
   - **Tokens:** opaque 256-bit, shown once, stored hashed (HMAC-SHA-256 with a server pepper), scoped (`read`, `analyse`, `trade`, `strategy`, `risk_tighten`, `curation`), revocable instantly, last use and client identity recorded. Expiry is chosen per token (1 day · 7 days · 30 days · 1 year · custom · indefinite; indefinite shows a warning, needs C3 and a monthly reminder). OAuth 2.1 (PKCE, resource indicators) for clients that support MCP authorization.
   - **Transport:** Streamable HTTP (JSON-RPC 2.0, SSE streaming, resumable) at `/mcp` on Caddy, Tailscale/TLS only; stdio locally; an optional legacy HTTP+SSE endpoint for older clients. Server notifications (fills, approvals, alerts) via resource subscriptions.
   - **Responses** pass the same provenance filter as any model input: no Telegram text, no `model_input_ok = false` rows, tax PII redacted, untrusted text wrapped and marked.

@@ -112,6 +112,8 @@ Other tools:
 | Futures/commodities | IBKR real-time needs paid data; delayed is free (U) | Free daily only | Use crypto perps / FX / CFDs for exposure instead |
 
 ## MCP security
+> **Superseded** by [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted), [02 §7.4](../02-v1-architecture.md#74-telegram--mcp) and [16 §2.12](../16-configuration-and-safety-model.md#212-mcp-phase-8) (P8-B006): MCP may place/modify/cancel orders via M11, each one only raising your approval card; audit goes to `audit.mcp_call` / `audit.command`; L0 hard ceilings are edited in the strategy settings (loosening C3), not a file. Items 4, 5 and 7 below are historical.
+
 1. **Transport:** stdio preferred; otherwise Streamable HTTP on localhost/Tailscale with OAuth 2.1/bearer auth. No token passthrough.
 2. **Tools:**
    - Read tools are separate from a small, typed (Pydantic) set of write tools.

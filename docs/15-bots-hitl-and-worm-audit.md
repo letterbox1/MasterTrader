@@ -96,7 +96,7 @@ Approvals come **only from you, on Telegram or the web**, and are bound to your 
 
 - **Commands (`mt_api`):**
   - `bot.create` (C1);
-  - `bot.update_scope`, `bot.update_params` (C1; widening the scope of an autonomous bot is C3);
+  - `bot.update_scope`, `bot.update_params` (tighten C1; loosen C3, including widening the scope of an autonomous bot);
   - `bot.set_mode`: → paper C1; autonomous → hitl C1; paper → hitl **C2**; → autonomous **C3**;
   - `bot.start`, `bot.pause`, `bot.resume`, `bot.stop` (C1);
   - `bot.approval_policy.set` (tighten C1, loosen C3);

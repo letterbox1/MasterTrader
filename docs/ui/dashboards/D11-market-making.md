@@ -35,7 +35,7 @@ Run and supervise crypto market-making / arbitrage bots (pure MM, Avellaneda, cr
 | Control | Command | Level |
 |---|---|---|
 | Create bot from template | `mm.bot.create` | C1 (paper) |
-| Start / stop bot | `mm.bot.start` / `mm.bot.stop` | C2 live / C1 paper |
+| Start / stop bot | `mm.bot.start` / `mm.bot.stop` | Start: C1 paper, C3 live (quotes on its own, like `autonomous`). Stop: C1 |
 | Edit params | `mm.bot.update` | C1 paper; C2 live; C3 if risk increases (size, levels, inventory limits) |
 | Cancel all MM orders | `mm.bot.cancel_all` | C1 |
 
