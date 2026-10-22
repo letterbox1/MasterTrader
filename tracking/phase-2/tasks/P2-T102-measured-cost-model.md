@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101]
+depends_on: [P2-T101, P1-T038, P1-T039, P1-T040]
 requirements: [R2.40, R2.41, R2.42]
 roadmap_todos: [T2.27]
 modules: [M7, M16]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p2/P2-T102-measured-cost-model
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T102 · Measured cost model loader from M16 snapshots
@@ -38,7 +43,7 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 
 - Roadmap: [R2.40–R2.42](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
 - Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (`market.spread_*`, `audit.cost_event`, `cost.{venue}.{symbol}`) · [14 §4 costs](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (re-measured monthly) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (no fixed-bps slippage for illiquid assets)
-- Cross-phase: P1 T1.28 cost service ([phase 1](../../../docs/roadmap/phase-1-data-and-monitoring.md)) provides the series; realised TCA comes from T2.26 in part A (P2-T001–T099)
+- Cross-phase (`depends_on`): P1 cost service (T1.28): fees/tiers (P1-T038), funding/swap (P1-T039), spreads by hour-of-week (P1-T040). Realised TCA comes from P2-T029 (T2.26) for the monthly refresh (not a precondition for the first snapshot).
 - D04 'Cost model' field and Costs tab: [D04](../../../docs/ui/dashboards/D04-research-lab.md)
 
 ## Requirements
@@ -109,3 +114,4 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase cost-service deps)

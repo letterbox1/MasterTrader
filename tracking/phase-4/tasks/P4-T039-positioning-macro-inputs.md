@@ -94,7 +94,7 @@ Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Co
 ## Doc sync on completion
 
 - `docs/06-aggregators-and-market-providers.md`: §3: confirm endpoints used and their status
-- `docs/roadmap/phase-4-intel.md`: tick T4.27 when all items mapped to it are done
+- `docs/roadmap/phase-4-intel.md`: tick T4.32 when all items mapped to it are done (with P4-T036, P4-T065)
 
 ## Branch & PR
 

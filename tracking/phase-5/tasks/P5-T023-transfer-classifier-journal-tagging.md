@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T022]
+depends_on: [P5-T022, P3-T017, P3-T018]
 requirements: [R5.05, R5.18]
 roadmap_todos: [T5.22]
 modules: [M22, M18]
 dashboards: [D18, D14]
+tools: [uv, anvil, solana-test-validator]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p5/P5-T023-transfer-classifier-journal-tagging
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T023 · Transfer classifier: internal tagging, airdrop receipts and approval events into M18
@@ -37,7 +42,7 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 ## Context & references
 
 - Roadmap: R5.05 (transfer classifier → M18), R5.18 · ToDo T5.22
-- [09 goals](../../../docs/09-journal-and-tax.md) (internal transfers never disposals) · P3 ingestion (R3.01, on-chain stub)
+- [09 goals](../../../docs/09-journal-and-tax.md) (internal transfers never disposals) · P3 on-chain adapter contract `wallet.{chain}.{address}.transfer` (P3-T017) and internal-transfer matcher (P3-T018)
 - D18 internal transfers widget ([D18](../../../docs/ui/dashboards/D18-wallets-treasury.md) acceptance 2)
 
 ## Requirements
@@ -45,7 +50,7 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 - Sources: EVM Transfer/Approval logs (Blockscout/RPC `eth_getLogs` per address), native transfers via traces where available; Solana parsed transactions (Helius).
 - Rules: both sides registered → `internal`; inbound from a known claim contract/Merkle distributor → `airdrop_receipt` (linked to opportunity/campaign); Approval logs → `ops.wallet_approval` + `wallet.*.approval`; nonce changes → `ops.nonce_account` + `wallet.*.nonce_authority`.
 - Unknown inbound tokens from unknown senders → `unsolicited` (possible address-poisoning/dust); never auto-interacted with.
-- Journal events carry native/USD/AUD with FX source (P3 FX service), tx hash, block time as `event_time`.
+- Journal events carry native/USD/AUD valued per the [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) hierarchy (our recorded VWAP → on-chain pool price at the event block; aggregators only as a cross-check) with method and source, FX from the P3 service, tx hash, and block time as `event_time`.
 - Idempotent on (chain, tx hash, log index).
 
 ## ToDo
@@ -84,7 +89,7 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 
 - Do NOT rewrite journal events on reclassification; append corrections.
 - Do NOT UPDATE or DELETE WORM rows (`curation.mandate`, `curation.exec_log`, the signer ledger, `journal.*`, `audit.*`); corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -102,3 +107,4 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (valuation per 16 §4.1; P3 on-chain adapter and internal-transfer matcher as explicit deps)

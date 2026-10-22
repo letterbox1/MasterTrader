@@ -4,7 +4,7 @@ kind: gap
 title: Perpetual swaps treatment missing from AU_2026 rules and agent questions
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B016-perps-treatment-missing-from-09
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Jurisdiction plugin interface (AU_2026 row)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,10 @@ AU_2026 states a default treatment for crypto perpetuals and funding, and the ag
 
 ## ToDo
 
-- [ ] Update 09 AU_2026 row and questions list
-- [ ] Update the affected task files (P3-T024, P3-T038) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B013/B014/B016): perpetual futures and funding are revenue by default (U); added to the tax-agent questions (Q8)
+- [x] Owning docs carry it: 09 AU_2026 row + question 8; D15 Questions tab; roadmap R3.06
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T024 (revenue rules), P3-T020 (derivative P&L), P3-T038 (question seed), P3-T001 (agent)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -70,9 +71,9 @@ AU_2026 states a default treatment for crypto perpetuals and funding, and the ag
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (09 AU_2026 row + question 8; D15 Questions tab; roadmap R3.06)
+- [x] Affected tasks consistent with it (P3-T024 (revenue rules), P3-T020 (derivative P&L), P3-T038 (question seed), P3-T001 (agent))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -99,3 +100,7 @@ AU_2026 states a default treatment for crypto perpetuals and funding, and the ag
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B013/B014/B016: perpetual futures and funding are revenue by default (U); added to the tax-agent questions (Q8). Docs now carry it: 09 AU_2026 row + question 8; D15 Questions tab; roadmap R3.06. Implementation owned by P3-T024 (revenue rules), P3-T020 (derivative P&L), P3-T038 (question seed), P3-T001 (agent). Root cause: 09 omitted perps treatment.
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B013/B014/B016); docs updated: 09 AU_2026 row + question 8; D15 Questions tab; roadmap R3.06; implementation owned by P3-T024 (revenue rules), P3-T020 (derivative P&L), P3-T038 (question seed), P3-T001 (agent)
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

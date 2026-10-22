@@ -4,7 +4,7 @@ kind: gap
 title: T4.04 labelling has no tool in P4; `models.label.add` missing from the command catalogue
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D10, D08]
 branch: p4/P4-B007-no-p4-labelling-tool
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D10-models-memory.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-4-intel.md T4.04 vs docs/ui/dashboards/D10-models-memory.md (labelling queue, Phase 6) and docs/02-v1-architecture.md §7.2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,9 @@ The docs acknowledge an interim P4 labelling mode (D08 Label mode, P4-T048) and 
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: add `models.label.add` and a minimal labelling tool in P4 (17 §D)
+- [x] Docs carry it: 02 §7.2 'Agents & models' lists `models.label.add` (C0); D08 'Label mode (Phase 4)'; D10 notes labels from D08 Label mode; 10 §4.3; roadmap R4.16 + T4.31
+- [x] Implementation owned by P4-T062 (labelling tool + command, new), P4-T049 (your labels), P4-T048 (calibration)
 
 ## Verification
 
@@ -66,8 +66,8 @@ The docs acknowledge an interim P4 labelling mode (D08 Label mode, P4-T048) and 
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] Labelling path and command documented (checked in 02 §7.2, D08, D10, roadmap R4.16/T4.31, 2026-10-22)
+- [x] Root cause noted: T4.04 asked for labels before any labelling UI existed (D10 is P6)
 
 ## Exceptions & edge cases
 
@@ -92,3 +92,7 @@ The docs acknowledge an interim P4 labelling mode (D08 Label mode, P4-T048) and 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P4-B007); docs checked: 02 §7.2, docs/ui/dashboards/D08-intel.md (Label mode), D10, 10 §4.3, roadmap R4.16/T4.31; implementation owned by P4-T062, P4-T049, P4-T048; root cause: labels were needed in P4 but the queue was planned for P6
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P4-B007); docs updated: 02 §7.2 models.label.add (C0), D08 Label mode, D10, 10 §4.3, roadmap R4.16/T4.31; implementation owned by P4-T062, P4-T049, P4-T048
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

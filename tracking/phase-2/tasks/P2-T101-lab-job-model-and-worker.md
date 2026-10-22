@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T024, P0-T027, P0-T020]
 requirements: [R2.40, R2.44]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T101-lab-job-model-and-worker
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T101 · mt_lab job model, tables and backtest-worker queue
@@ -40,7 +45,8 @@ checkpoint: ""
 - Spec: [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · ownership [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M7 owns `strategy.backtest`, `strategy.experiment`, publishes `lab.job.*`)
 - Containers: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) `backtest-worker` (`mt_lab`); the container itself, gVisor and resource limits come from T2.40 in part A (P2-T001–T099)
 - Dashboard consumer: [D04 job queue](../../../docs/ui/dashboards/D04-research-lab.md)
-- Cross-phase: P0 T0.22 (`mt_store` migrations, `pit`), T0.24 (`mt_api` command bus), T0.41 (NATS JetStream, MLflow)
+- Cross-phase (`depends_on`): Alembic baseline (P0-T024) and `pit(as_of)` (P0-T027), both T0.22; compose stack with NATS JetStream + MLflow (P0-T020, T0.41). The `mt_api` command bus (P0-T034) is used by P2-T117.
+- Defaults: job caps (2 workers, 2 h) are D04 settings with documented defaults, not constants.
 
 ## Requirements
 
@@ -113,3 +119,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps (migrations, pit, NATS); caps as settings)

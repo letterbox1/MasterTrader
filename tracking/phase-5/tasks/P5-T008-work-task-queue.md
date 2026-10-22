@@ -15,17 +15,22 @@ requirements: [R5.20, R5.21]
 roadmap_todos: [T5.07]
 modules: [M19]
 dashboards: [D13]
+tools: []
+mcp: []
+env: []
+services: [discord, telegram]
 branch: p5/P5-T008-work-task-queue
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T008 · Work the task queue: follow communities, do social tasks yourself, review ICOs
@@ -45,7 +50,8 @@ For at least two weeks you work the D13/Telegram queue: join and **Follow** the 
 
 - Follow tasks: join the server from the **verified invite only**, click Follow on the named announcement channel, target `#mt-inbox` (≈10–15 follows per receiving channel, P4 T4.02).
 - Social tasks (follow on X, quests on Galxe/Zealy/Layer3): you do them by hand; nothing is automated.
-- Tap Done only after doing the task; use Never for projects you never want to see again.
+- Tap Done only after doing the task; use Never for projects you never want to see again; Details opens the task in D13.
+- At most 3 new servers are suggested per week, and a followed channel that delivers nothing in 7 days is re-prompted (defaults, [16 §2.13](../../../docs/16-configuration-and-safety-model.md#213-curation)).
 
 ## ToDo
 
@@ -61,7 +67,7 @@ For at least two weeks you work the D13/Telegram queue: join and **Follow** the 
 - Manual: ≥ 3 Discord follows reached "verified".
 
 ### Scenarios
-- Given a follow task, when you tap Done but forgot to click Follow, then the bot re-prompts you after N days (P5-T047).
+- Given a follow task, when you tap Done but forgot to click Follow, then the bot re-prompts you after 7 days (default, 16 §2.13; P5-T047).
 
 ### Stress / failure injection
 - n/a: human activity
@@ -96,3 +102,4 @@ For at least two weeks you work the D13/Telegram queue: join and **Follow** the 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Discord 7-day re-prompt and ≤ 3 servers/week defaults per P5-B011; Details button per P5-B014)

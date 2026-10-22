@@ -114,7 +114,7 @@ review_result: ""
 ## Doc sync on completion
 
 - `docs/10-memory-rag-and-models.md`: §4.3 stage 1: measured latency, CPU mode behaviour
-- `docs/02-v1-architecture.md`: §9.2: add SemIf stage-1 latency target
+- `docs/02-v1-architecture.md`: §9.2 already has the stage-1 target (p95 ≤ 300 ms GPU / ≤ 3 s CPU); record the measured value (P4-T069)
 - `docs/roadmap/phase-4-intel.md`: tick T4.28 when all items mapped to it are done
 
 ## Branch & PR

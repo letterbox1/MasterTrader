@@ -49,7 +49,7 @@ review_result: ""
 
 ## Requirements
 
-- Join queue persisted in `ops.tg_join_queue` (handle, priority, state, attempts, next_attempt_at, last_error).
+- Join queue persisted in a local SQLite state file on the `ingest-text` volume (`/data/ingest-text/telegram_join_queue.db`: handle, priority, state, attempts, next_attempt_at, last_error), because the scrape network has no route to Postgres ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); queue state (joined count, paused-until) is published in the Telegram `feed_status` entry for D08 Sources.
 - Join pacing (configurable defaults in `config/intel/telegram.yaml`): at most 1 join per 10–20 min (jittered) and ≤ 20 per day; on `FloodWaitError(seconds)` sleep **exactly** `seconds` + jitter and pause the whole queue.
 - Hard cap: refuse to join when joined count ≥ 500; leaving a channel is manual (or on ban/private).
 - Read-only: no sending, forwarding, reacting, read-receipt manipulation or member-list calls; client wrapper exposes only the allowed methods.
@@ -60,7 +60,7 @@ review_result: ""
 
 - [ ] Pin Telethon version (Codeberg) in `uv.lock`; vendor notes in `third_party/LICENSES.md` if vendored.
 - [ ] `TelegramClientWrapper` exposing only `join_channel`, `iter_new_messages`, `get_entity` (allow-list); everything else raises.
-- [ ] Join queue worker + `ops.tg_join_queue` migration + state metrics.
+- [ ] Join queue worker + local SQLite state file + state metrics.
 - [ ] Validator for `telegram_channels.yaml` (cap, public handles).
 - [ ] Health/heartbeat + `feed_status` for Telegram.
 - [ ] Tests below.
@@ -76,7 +76,7 @@ review_result: ""
 ### Scenarios
 - Given the account gets a 24-h FLOOD_WAIT, then joins pause 24 h, ingestion of already-joined channels continues, D08 Sources shows 'join paused until …'.
 - Given a channel goes private, then it is marked `lost` and not retried.
-- Given the process restarts mid-queue, then it resumes from `ops.tg_join_queue` without double-joining.
+- Given the process restarts mid-queue, then it resumes from the local queue state file without double-joining.
 
 ### Stress / failure injection
 - Inject random FLOOD_WAITs (1 s–24 h) over 500 queued joins in simulation: cap never exceeded, total joins/day ≤ limit, no tight retry loops.
@@ -119,3 +119,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3b postures-only per 17 §A P4-B001; built on a fake client, live joins moved to P4-T068; dropped P4-T006/P4-T001 dependencies)
+- 2026-10-22 00:00 · aligner · join-queue state moved from `ops.tg_join_queue` to a local state file (scrape side has no DB route, 02 §3.1)

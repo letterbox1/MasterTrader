@@ -100,7 +100,7 @@ One shared guard, `mt_store.provenance.require_model_input(rows)` (and `require_
 ## Doc sync on completion
 
 - `docs/12-policy-and-compliance.md`: §5: name the guard and its boundaries
-- `docs/02-v1-architecture.md`: §8 F3: provenance gate as step 0
+- `docs/02-v1-architecture.md`: §8 F3 already starts with the provenance gate (17 §A); confirm the guard name and the `audit.dq_event` refusal kind
 - `docs/roadmap/phase-4-intel.md`: tick T4.23 when all items mapped to it are done
 
 ## Branch & PR

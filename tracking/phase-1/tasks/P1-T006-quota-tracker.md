@@ -15,17 +15,22 @@ requirements: [R1.08]
 roadmap_todos: [T1.25]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p1/P1-T006-quota-tracker
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/ui/dashboards/D07-data-quality.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T006 · Build the shared per-connector quota tracker
@@ -46,7 +51,8 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 - `mt_data.quota.QuotaTracker`: token buckets per (source, scope) with rolling windows (per second, minute, day, month); `acquire(cost)` blocks or raises `QuotaExhausted`
 - Budgets from `config/quotas.yaml` with a documented source for each number; live overrides from headers (e.g. Binance `X-MBX-USED-WEIGHT-1M`, Alpaca/Finnhub `X-RateLimit-Remaining`, `Retry-After`)
-- Throttle threshold default 80% of the free limit (warn) and hard stop at 95%; never exceed 100%
+- Throttle thresholds are configurable defaults: warn at 80% of the free limit (D07), hard stop at 95%; never exceed 100%
+- Header parsers are tested on recorded/documented headers in CI (keyless); reading them from real keyed endpoints is checked in P1-T073
 - State shared across processes via NATS KV `quota` (so `ingest-batch` workers share one budget) and snapshotted to `ops.quota_usage` every minute for history
 - Prometheus: `mt_quota_used_ratio{source,window}`, `mt_quota_throttled_total`; alert at 80% (`alert.warning.quota`)
 - Daily/monthly reset times in the provider's timezone (stored per source)
@@ -94,7 +100,7 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
 ## Doc sync on completion
 
@@ -111,3 +117,4 @@ Every connector asks one quota tracker before each call; it throttles before any
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (thresholds as configurable defaults; live headers verified in P1-T073; run fields)

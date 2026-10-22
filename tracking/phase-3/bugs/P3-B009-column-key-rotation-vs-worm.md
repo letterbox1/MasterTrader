@@ -4,7 +4,7 @@ kind: gap
 title: Column-encryption key rotation conflicts with WORM (re-encrypt needs UPDATE)
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B009-column-key-rotation-vs-worm
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/07-security-notes.md §8 and §2 (rotation)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,10 @@ A documented rotation model for pgcrypto column keys that never updates WORM row
 
 ## ToDo
 
-- [ ] Update 07 §8
-- [ ] Update the affected task files (P3-T006, P3-T007) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B009): envelope encryption: yearly data keys wrapped by a master key; rotation re-wraps keys in a non-WORM key table, never rows
+- [x] Owning docs carry it: 07 §8; 15 §2 Encryption row; roadmap R3.N1
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T006 (keys, `ops.journal_data_key`), P3-T007 (helpers), P3-T059 (rotation drill), P3-T047 (WORM suite)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -69,9 +70,9 @@ A documented rotation model for pgcrypto column keys that never updates WORM row
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (07 §8; 15 §2 Encryption row; roadmap R3.N1)
+- [x] Affected tasks consistent with it (P3-T006 (keys, `ops.journal_data_key`), P3-T007 (helpers), P3-T059 (rotation drill), P3-T047 (WORM suite))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -98,3 +99,7 @@ A documented rotation model for pgcrypto column keys that never updates WORM row
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B009: envelope encryption: yearly data keys wrapped by a master key; rotation re-wraps keys in a non-WORM key table, never rows. Docs now carry it: 07 §8; 15 §2 Encryption row; roadmap R3.N1. Implementation owned by P3-T006 (keys, `ops.journal_data_key`), P3-T007 (helpers), P3-T059 (rotation drill), P3-T047 (WORM suite). Root cause: column-key rotation would have required UPDATEs of WORM rows.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B009); docs updated: 07 §8; 15 §2 Encryption row; roadmap R3.N1; implementation owned by P3-T006 (keys, `ops.journal_data_key`), P3-T007 (helpers), P3-T059 (rotation drill), P3-T047 (WORM suite)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

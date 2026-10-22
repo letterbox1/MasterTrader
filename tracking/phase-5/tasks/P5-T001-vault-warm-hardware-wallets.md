@@ -15,17 +15,22 @@ requirements: [R5.01]
 roadmap_todos: [T5.01]
 modules: [M22]
 dashboards: [D18]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-T001-vault-warm-hardware-wallets
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T001 · Set up the vault and warm hardware wallets (public addresses only)
@@ -39,7 +44,8 @@ You own an air-gapped **vault** (cold) wallet and a **warm** hardware wallet, in
 - Roadmap: [R5.01](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.01 · entry criterion "Wallets created by you"
 - Custody tiers: [13 §1](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers) (vault = air-gapped, e.g. Ellipal Titan, MetaMask-QR signing only; warm = hardware wallet you approve on-device)
 - Seed rules: [07 §4](../../../docs/07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims)
-- Unblocks: P5-T002 (seed backup), P5-T005 (register addresses), P5-T012 (vault sweep destination allow-list), P5-T028 (sweeps)
+- Watch-only rule (decision P5-B008, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)): the system never holds vault or warm keys; it may only *prepare* unsigned transactions (QR / WalletConnect) for you to sign in your own wallet ([13 §1](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers))
+- Unblocks: P5-T002 (seed backup), P5-T005 (register addresses), P5-T028 (sweeps to the vault address)
 
 ## Requirements
 
@@ -89,7 +95,7 @@ You own an air-gapped **vault** (cold) wallet and a **warm** hardware wallet, in
 
 - Do NOT type, photograph, paste or upload a seed phrase, Shamir share or private key anywhere (chat, issue, git, cloud notes, the MasterTrader UI). The system only ever receives **public** addresses.
 - Do NOT connect the vault to any computer, phone app or WalletConnect session.
-- Do NOT let any MasterTrader process generate or hold vault/warm keys; vault and warm are watch-only in the system (R5.01).
+- Do NOT let any MasterTrader process generate or hold vault/warm keys; vault and warm are watch-only in the system (R5.01). The system may only prepare unsigned transactions that you review and sign in your own wallet.
 - Do NOT commit secrets or paste them into chats, issues or logs; secrets live only in the sops/age file or OpenBao (07 §2).
 
 ## Doc sync on completion
@@ -106,3 +112,4 @@ You own an air-gapped **vault** (cold) wallet and a **warm** hardware wallet, in
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (watch-only wording per P5-B008: system may prepare unsigned transactions only; run fields)

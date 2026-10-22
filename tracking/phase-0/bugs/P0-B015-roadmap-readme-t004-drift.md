@@ -4,7 +4,7 @@ kind: gap
 title: Roadmap README USER register drops 'Object Lock' from T0.04
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R0.N4, R0.07]
 roadmap_todos: [T0.04]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B015-roadmap-readme-t004-drift
 pr: ""
 doc_sync: [docs/roadmap/README.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/README.md §6 (T0.04 row)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B015 · Roadmap README USER register drops 'Object Lock' from T0.04
@@ -49,10 +54,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B015 (ratified in 17 §E)
+- [x] Docs updated so they agree: roadmap README §6 user-action register T0.04 row (Object Lock / append-only, R0.N4, R0.07) matches the phase doc
+- [x] Affected P0 task files reference the resolution: P0-T006
+- [x] Regression check owned: doc check: the register row equals the phase-doc ToDo
 
 ## Verification
 
@@ -67,9 +72,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B015 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: n/a (doc only; P0-T006 is the USER action)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +98,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B015; docs checked: roadmap README §6 user-action register T0.04 row (Object Lock / append-only, R0.N4, R0.07) matches the phase doc. Root cause: the register row was copied before the phase doc gained the Object Lock wording. Implementation owned by n/a (doc only; P0-T006 is the USER action).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B015); docs updated: roadmap README §6 user-action register T0.04 row (Object Lock / append-only, R0.N4, R0.07) matches the phase doc; implementation owned by n/a (doc only; P0-T006 is the USER action)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

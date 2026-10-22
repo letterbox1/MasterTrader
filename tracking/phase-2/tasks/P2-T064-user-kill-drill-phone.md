@@ -10,22 +10,27 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P2-T054]
+depends_on: [P2-T054, P2-T035, P0-T002, P0-T062]
 requirements: [R2.18]
 roadmap_todos: [T2.06]
 modules: [M11]
 dashboards: [D06]
+tools: []
+mcp: []
+env: []
+services: [telegram, mt-web]
 branch: p2/P2-T064-user-kill-drill-phone
 pr: ""
 doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T064 · Take part in the kill-switch drill from your phone
@@ -39,6 +44,8 @@ You personally halt paper trading from your phone with Telegram `/kill`, see it 
 - Roadmap: [R2.18](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.06 · exit criterion 3
 - [mob §4 acceptance 1](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria)
 - Runbook: `docs/runbooks/kill-switch-drill.md` (P2-T068).
+- Decisions: kill stops new trading, cancels orders, applies each bot's `on_system_failure`, freezes treasury/earn moves, no vault sweep in P2 ([17 §B P2-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)); Telegram `/kill` works with mt-api down via NATS `kill.set` ([17 §D P2-B012](../../../docs/17-decisions-register.md#d-other-decisions)); turning kill off is C3 (Telegram approve + TOTP + 15 min cool-down).
+- Cross-phase (`depends_on`): your Telegram bot and user id (P0-T002) and your TOTP (P0-T062).
 
 ## Requirements
 
@@ -94,3 +101,4 @@ You personally halt paper trading from your phone with Telegram `/kill`, see it 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill actions and C3 off per decisions; Telegram bot + TOTP prerequisites)

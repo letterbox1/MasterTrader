@@ -15,17 +15,22 @@ requirements: [R5.02, R5.03]
 roadmap_todos: [T5.20]
 modules: [M22]
 dashboards: []
+tools: [uv, solana-test-validator]
+mcp: []
+env: []
+services: []
 branch: p5/P5-T015-signer-solana-builders-durable-nonce
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T015 · Signer Solana plug-in: builders, decoders, hard blocks and durable-nonce rules
@@ -104,3 +109,4 @@ The Solana plug-in builds claim, revoke, sweep and nonce-housekeeping transactio
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; content already matches 13 §2 durable-nonce rules)

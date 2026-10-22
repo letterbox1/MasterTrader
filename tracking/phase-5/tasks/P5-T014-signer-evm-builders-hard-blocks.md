@@ -15,17 +15,22 @@ requirements: [R5.02, R5.03, R5.16]
 roadmap_todos: [T5.20]
 modules: [M22]
 dashboards: []
+tools: [uv, anvil]
+mcp: []
+env: []
+services: [anvil]
 branch: p5/P5-T014-signer-evm-builders-hard-blocks
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T014 · Signer EVM plug-in: builders, decoders and hard blocks
@@ -51,7 +56,7 @@ The EVM chain plug-in builds every allowed transaction itself from the intent (M
 ## ToDo
 
 - [ ] Implement `packages/mt_signer/chains/evm/` builder, decoder, hard-block rules (one rule per module with an ID used in refusal codes).
-- [ ] ABI resolver from Blockscout verified source (cached; unverified → refuse for autonomous paths).
+- [ ] ABI resolver from Blockscout verified source (cached; unverified → refuse for autonomous paths); tests use recorded Blockscout responses, no API key.
 - [ ] Approval lifecycle: sized approve → action → revoke intent scheduled; unrevoked after 10 min → alert + `REVOKE_APPROVAL` task.
 - [ ] Table-driven tests with real calldata fixtures for each blocked pattern.
 - [ ] Property tests: random calldata never yields a signature unless it decodes to an allow-listed selector.
@@ -104,3 +109,4 @@ The EVM chain plug-in builds every allowed transaction itself from the intent (M
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless fixtures for the ABI resolver)

@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T006, P1-T007]
+depends_on: [P1-T005, P1-T006, P1-T007, P0-T027]
 requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T024-macro-fred-alfred-treasury
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T024 · Ingest FRED/ALFRED vintages and US Treasury rates
@@ -38,8 +43,9 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (US Treasury, FRED/ALFRED vintages) · point-in-time rule [03 §4](../../../docs/03-build-spec.md#4-data-model-overview) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) NN1
-- FRED key from sops (P0 T0.10)
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): FRED/ALFRED is built keyless against recorded fixtures; the live load with your FRED key (P0-T010) runs in P1-T073. The Treasury feed is keyless and runs live here
 - Depends on (this phase): P1-T005, P1-T006, P1-T007
+- Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
 
 ## Requirements
 
@@ -75,7 +81,7 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 
 ## Acceptance criteria
 
-- [ ] Universe macro series and the Treasury curve loaded with vintages; pit look-ahead test passes in CI
+- [ ] Treasury curve loaded live; FRED/ALFRED vintage loading proven on fixtures (live load in P1-T073); pit look-ahead test passes in CI
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -85,7 +91,7 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
@@ -104,3 +110,4 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, FRED live load in P1-T073; P0 dep on pit)

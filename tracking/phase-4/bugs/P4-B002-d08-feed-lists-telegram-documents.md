@@ -4,7 +4,7 @@ kind: gap
 title: D08 Feed tab lists Telegram as a DocumentCard source
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D08]
 branch: p4/P4-B002-d08-feed-lists-telegram-documents
 pr: ""
 doc_sync: [docs/ui/dashboards/D08-intel.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D08-intel.md (Tabs & widgets → Feed)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,9 @@ D08's Feed tab source list excludes Telegram; Telegram appears only as a posture
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: D08 shows Telegram only as postures (17 §D)
+- [x] Docs carry it: D08 Feed row lists sources with 'never Telegram'; D08 has a 'Telegram postures' panel (numbers only) and Sources shows Telegram channels as status/counts only
+- [x] Implementation owned by P4-T044 (Feed, postures panel, Sources) and P4-T043 (`/intel/postures`)
 
 ## Verification
 
@@ -67,8 +67,8 @@ D08's Feed tab source list excludes Telegram; Telegram appears only as a posture
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] D08 Feed no longer lists Telegram; postures panel specified (checked in docs/ui/dashboards/D08-intel.md, 2026-10-22)
+- [x] Root cause noted: the Feed row was copied from the source list before the postures-only rule
 
 ## Exceptions & edge cases
 
@@ -92,3 +92,7 @@ D08's Feed tab source list excludes Telegram; Telegram appears only as a posture
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P4-B002/B003); docs checked: docs/ui/dashboards/D08-intel.md (Feed row, Telegram postures panel, Sources); implementation owned by P4-T044, P4-T043; root cause: Feed source list copied from the ingestion list
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P4-B002/B003); docs updated: docs/ui/dashboards/D08-intel.md Feed row (never Telegram), Telegram postures panel, Sources; implementation owned by P4-T044, P4-T043
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

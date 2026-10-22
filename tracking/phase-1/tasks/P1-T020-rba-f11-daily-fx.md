@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T007]
+depends_on: [P1-T005, P1-T007, P0-T027]
 requirements: [R1.04]
 roadmap_todos: [T1.23]
 modules: [M1]
 dashboards: [D02]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T020-rba-f11-daily-fx
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/09-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T020 · Ingest RBA F11 daily exchange rates
@@ -40,13 +45,14 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (RBA F11 daily FX, needed for tax) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) (three currencies on every event; RBA daily rate with source and timestamp)
 - Consumer: [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md) T3.21 FX service (R3.03)
 - Depends on (this phase): P1-T005, P1-T007
+- Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
 
 ## Requirements
 
 - Download the RBA F11.1 CSV (current) and historical F11 files; parse all published currencies vs AUD
 - Store (date, base AUD, quote, rate) with `source=rba_f11`, `licence=public`, `event_time` = publication date at the RBA's stated reference time (4.00 pm Sydney, verify on the table notes), `ingest_time` = now
-- Keep every published revision (new row on change); never forward-fill in storage (P3 decides the fallback rule for non-business days)
-- Data checks: rates > 0, no duplicate dates per currency, day-over-day move > 5% flagged to DQ as `bad_reference` (not dropped)
+- Keep every published revision (new row on change); never forward-fill in storage (the P3 FX service applies the decided fallback: last published business day; non-F11 currencies via USD with RBA AUD/USD × ECB/Frankfurter, [16 §4.3](../../../docs/16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants), [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P3-B008)
+- Data checks: rates > 0, no duplicate dates per currency, day-over-day move > 5% (default, configurable) flagged to DQ as `bad_reference` (not dropped)
 
 ## ToDo
 
@@ -83,7 +89,7 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
@@ -102,3 +108,4 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (RBA gap rule from 17 §D P3-B008 cited; 5% as default; P0 dep on pit)

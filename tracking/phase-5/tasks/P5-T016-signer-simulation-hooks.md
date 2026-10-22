@@ -15,17 +15,22 @@ requirements: [R5.02, R5.15, R5.16]
 roadmap_todos: [T5.20]
 modules: [M22, M4]
 dashboards: [D12]
+tools: [uv, docker, anvil, solana-test-validator]
+mcp: []
+env: []
+services: [anvil]
 branch: p5/P5-T016-signer-simulation-hooks
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T016 · Simulation hooks: Anvil fork and simulateTransaction with balance-diff analysis
@@ -37,12 +42,12 @@ Before every signature the signer simulates the exact transaction (EVM: local **
 ## Context & references
 
 - Roadmap: R5.02 (mandatory simulation) · ToDo T5.20 · testnet proof P5-T056
-- [13 §2](../../../docs/13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys) (Tenderly free has no API → Anvil; simulation is a sanity check only)
-- [08 autonomous claim conditions](../../../docs/08-airdrops-and-token-launches.md#what-may-run-autonomously) · Tenderly contradiction → P5-B013
+- [13 §2](../../../docs/13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys) (Anvil fork and `simulateTransaction` are the only simulators; simulation is a sanity check only)
+- [08 autonomous claim conditions](../../../docs/08-airdrops-and-token-launches.md#what-may-run-autonomously) · Tenderly is not used (decision P5-B013, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions))
 
 ## Requirements
 
-- EVM: `anvil --fork-url <pool RPC> --fork-block-number <latest>`; run tx via `eth_call` + `debug_traceCall`/state diff; collect ERC-20/721/1155 Transfer and Approval logs, native balance deltas, storage writes to token contracts.
+- EVM: `anvil --fork-url <pool RPC> --fork-block-number <latest>` (CI: a keyless public endpoint or a pinned `anvil --load-state` dump; no API key); run tx via `eth_call` + `debug_traceCall`/state diff; collect ERC-20/721/1155 Transfer and Approval logs, native balance deltas, storage writes to token contracts.
 - Solana: `simulateTransaction` with `accounts` config for all writable accounts; diff pre/post token balances and owners/authorities/delegates.
 - Pass rule per intent: `claim` → only inflows of the expected token(s) to the wallet and a gas/fee outflow; **any** other outflow, new approval/delegate, authority change or call to an unexpected contract fails.
 - `gas_used` from the simulation is returned to the cost gate (not the wallet estimate).
@@ -104,3 +109,4 @@ Before every signature the signer simulates the exact transaction (EVM: local **
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Anvil/simulateTransaction only, Tenderly not used per P5-B013; keyless CI fork)

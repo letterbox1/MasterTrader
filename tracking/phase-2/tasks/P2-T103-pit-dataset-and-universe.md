@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101]
+depends_on: [P2-T101, P0-T027, P1-T009, P1-T012, P1-T013]
 requirements: [R2.41]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p2/P2-T103-pit-dataset-and-universe
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T103 · Point-in-time dataset builder and survivorship-free universes
@@ -39,7 +44,7 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 - Roadmap: [R2.41](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
 - Rules: [14 §6 backtest engine requirements](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [SPEC NN1](../../../SPEC.md#non-negotiable-requirements) · [03 §4 point-in-time rule](../../../docs/03-build-spec.md#4-data-model-overview)
 - [14 §4 porting pitfalls](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06): fixed UTC daily cut for 24/7 crypto
-- Cross-phase: P0 T0.22 `pit(as_of)` + Parquet catalog helpers; P1 T1.21/T1.22 bars and backfills; `market.instrument` listing/delisting dates
+- Cross-phase (`depends_on`): `pit(as_of)` + Parquet catalog helpers (P0-T027, T0.22); Parquet recorder (P1-T012, T1.21); bars + continuous aggregates (P1-T013, T1.21); instrument master with listing/delisting dates and finest resolution (P1-T009, T1.22/T1.32). Backfills (P1-T015 etc.) are data, not code preconditions.
 
 ## Requirements
 
@@ -110,3 +115,4 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase data deps)

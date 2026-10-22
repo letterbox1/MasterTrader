@@ -4,7 +4,7 @@ kind: gap
 title: R4.05 gates YouTube on a P1 check that P1 doesn't run
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p4/P4-B005-youtube-check-missing-in-p1
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-4-intel.md R4.05 vs docs/roadmap/phase-1-data-and-monitoring.md T1.60 and docs/06 §3 open checks
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,9 @@ The YouTube reachability/terms check has an owner; P4-T024 runs it in Phase 4 an
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: the YouTube check moves to Phase 4 (17 §D)
+- [x] Docs carry it: roadmap R4.05 ('YouTube only if its P4 check (T4.65) passes') and ToDo T4.65; 06 §2 Conditional row and the 'Phase 4 check' note
+- [x] Implementation owned by P4-T066 (the check, new) and P4-T024 (flagged connector)
 
 ## Verification
 
@@ -66,8 +66,8 @@ The YouTube reachability/terms check has an owner; P4-T024 runs it in Phase 4 an
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] YouTube check has an owner in Phase 4 (checked in docs/roadmap/phase-4-intel.md R4.05/T4.65 and 06 §2, 2026-10-22)
+- [x] Root cause noted: R4.05 referred to a P1 check that P1 never planned
 
 ## Exceptions & edge cases
 
@@ -92,3 +92,7 @@ The YouTube reachability/terms check has an owner; P4-T024 runs it in Phase 4 an
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P4-B005); docs checked: docs/roadmap/phase-4-intel.md R4.05 + T4.65, 06 §2 (Conditional YouTube row, Phase 4 check); implementation owned by P4-T066, P4-T024; root cause: R4.05 pointed at a P1 check that didn't exist
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P4-B005); docs updated: docs/roadmap/phase-4-intel.md R4.05 + T4.65, 06 §2 conditional YouTube row + Phase 4 check; implementation owned by P4-T066, P4-T024
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -10,43 +10,49 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T013, P5-T020, P5-T022, P5-T012]
+depends_on: [P5-T013, P5-T020, P5-T022, P5-T012, P2-T031]
 requirements: [R5.07, R5.N2]
 roadmap_todos: [T5.24]
 modules: [M22, M11, M4]
 dashboards: [D18, D12]
+tools: [uv, anvil, solana-test-validator]
+mcp: []
+env: []
+services: [nats, postgres, anvil]
 branch: p5/P5-T028-sweeps-kill-switch-freeze
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T028 · Sweep scheduler, burner refills and kill-switch sweep/freeze
 
 ## Goal / expected outcome
 
-A scheduler sweeps hot/burner/identity balances above their float to the **vault address** (allow-listed destination), refills burners to their fixed float, and on kill switch ON immediately freezes auto-claims and treasury moves while sweeping hot balances to the vault (14 §5 rung 6).
+A scheduler sweeps hot/burner/identity balances above their float to the **vault address** (allow-listed destination), refills burners to their fixed float, and on kill switch ON immediately freezes auto-claims and treasury moves while sweeping hot trading balances to the vault (14 §5 rung 6; default on, configurable via `kill_sweep_enabled`).
 
 ## Context & references
 
 - Roadmap: [R5.07](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md), [R5.N2](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.24 · drill P5-T058
 - [13 §1 rules](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers) · [14 §5 ladder rung 6](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [02 F6](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Kill vs freeze semantics conflict → P5-B007
+- Kill semantics (decision P5-B007, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer); [02 F6](../../../docs/02-v1-architecture.md#8-end-to-end-flows), [13 §1](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers)): kill stops new trading, cancels orders, applies each bot's failure policy, freezes new treasury/earn moves and, from P5 (default on, configurable), sweeps hot trading balances to the vault address; sweeps to the vault and approval revokes are protective and exempt from the freeze
+- Kill switch state: P2-T031 (KV `kill`)
 
 ## Requirements
 
-- Schedule: daily at 02:00 AEST plus event-driven after each claim; sweep amount = balance − float − gas reserve, only if ≥ min sweep value and the cost gate allows (defensive bypass only for kill sweeps).
+- Schedule: daily at 02:00 AEST plus event-driven after each claim; sweep amount = balance − float (limits store; defaults hot ≤ A$500 per chain, identity ≤ A$300 per chain, burner ≤ A$50, 16 §2.7) − gas reserve, only if ≥ min sweep value and the cost gate allows (defensive bypass only for kill sweeps).
 - Destination: only the vault address registered with role `vault` and in the custody config allow-list; any other destination refused by the signer.
 - Tokens: native + allow-listed tokens; claimed tokens subject to the disposal rule are swept after the disposal leg settles or after 24 h.
 - Burner refill: from hot float to burner float only; never more.
-- Kill ON (KV `kill`): airdrop-exec stops accepting new work within 1 s; queued claims cancelled with reason; kill sweep runs for hot/identity/burner; results in `ops.sweep_run` and a Telegram summary. Kill OFF is C3 and does not auto-resume claims until re-armed.
+- Kill ON (KV `kill`): airdrop-exec stops accepting new work within 1 s; queued claims cancelled with reason; the kill sweep runs for hot trading wallets (default on, `kill_sweep_enabled`); identity and burner wallets are frozen for claims while their scheduled sweeps to the vault stay allowed as protective moves; results in `ops.sweep_run` and a Telegram summary. Kill OFF is C3 and does not auto-resume claims until re-armed.
 - `wallet.sweep` (C2) manual command from D12/D18.
 
 ## ToDo
@@ -80,6 +86,7 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 ## Exceptions & edge cases
 
 - Vault address not registered/verified → sweeps refuse and alert (never fall back to another address).
+- Signing not yet enabled (limits unconfirmed, P5-T065): no sweep can sign; the kill sweep raises an urgent task with manual sweep steps and alerts.
 - Token with transfer tax/frozen account: sweep fails → task, no retry storm.
 
 ## Cardinal rules (do NOT)
@@ -87,7 +94,7 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 - Do NOT allow any outflow from the vault (manual, offline-signed, outside the system).
 - Do NOT make kill OFF resume claims automatically.
 - Do NOT apply loosening (new mandate, higher caps, autonomous claims) without C3 (Telegram approve + TOTP + cool-down); protective actions (revoke, sweep, kill) never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT move value outside the configured caps/floats; exchange keys stay read-only or trade-only, IP-locked, withdrawals disabled; no live trading before the P7 gates.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -106,3 +113,4 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill sweeps hot trading balances to the vault from P5, default on, protective moves exempt from the freeze per P5-B007; floats from 16 §2.7)

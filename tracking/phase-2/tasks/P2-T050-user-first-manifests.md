@@ -15,17 +15,22 @@ requirements: [R2.04]
 roadmap_todos: [T2.05]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T050-user-first-manifests
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T050 · Write your first strategy manifests for the P1 candidates
@@ -38,13 +43,15 @@ Manifests exist under `strategies/` for the P1 candidates — trend on majors an
 
 - Roadmap: [R2.04](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.05
 - Spec: [14 §3 counterparty rule + P1 rows](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §7 kill criteria](../../../docs/14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) · [14 §1 benchmark rule](../../../docs/14-strategy-evidence-and-validation.md#1-viability-verdict-set-expectations-before-building)
-- Templates from P2-T008/T009; builder in D03 (Part B) or edit YAML.
-- Unblocks: Part B backtests/validation and P2-T067 (paper clock).
+- Templates from P2-T008/T009; builder in D03 (P2-T144) or edit YAML.
+- Decisions: manifest risk values are **proposals** only; the bot wizard shows them next to your sleeve/system limits and you accept or tighten ([16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)); kill criteria and decay signals have one meaning each ([16 §2.6](../../../docs/16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)).
+- Unblocks: backtests/validation (P2-T114, P2-T166) and P2-T067 (paper clock).
 
 ## Requirements
 
 - `strategies/trend_majors/manifest.yaml`: universe BTC/ETH/SOL (+ FX majors/gold/indices if wanted), daily/4h, vol target, sleeve, counterparty (e.g. 'under-/over-reacting speculators and hedgers who pay for trend'), kill criteria (e.g. live Sharpe after 60 trades < backtest 5th percentile; DD > 1.5× backtest max), benchmark (buy-and-hold BTC + stablecoin yield).
-- `strategies/funding_carry/manifest.yaml` only if a venue allows the products (else marked paper-only research).
+- `strategies/funding_carry/manifest.yaml` only if a venue allows the products (else paper-only research on products marked `paper_ok`, 12 §2).
+- `proposed_mode: paper` for both; proposed risk values at or below the defaults you set in P2-T048.
 - Kill criteria measurable and written **before** any paper run.
 
 ## ToDo
@@ -95,3 +102,4 @@ Manifests exist under `strategies/` for the P1 candidates — trend on majors an
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (manifest risk values are proposals (16 §1), paper_ok carry, links to lab tasks)

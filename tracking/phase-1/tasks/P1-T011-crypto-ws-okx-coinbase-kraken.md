@@ -15,17 +15,22 @@ requirements: [R1.01]
 roadmap_todos: [T1.20]
 modules: [M1]
 dashboards: [D02, D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p1/P1-T011-crypto-ws-okx-coinbase-kraken
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T011 · Stream OKX, Coinbase and Kraken public trades, L1 and L2
@@ -103,3 +108,4 @@ The remaining three crypto venues publish the same normalised `md.*` streams as 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless public streams)

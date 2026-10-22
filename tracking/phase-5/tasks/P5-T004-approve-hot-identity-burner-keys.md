@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P5-T012, P5-T013, P5-T014, P5-T015, P5-T017, P5-T021]
-requirements: [R5.01, R5.07]
+depends_on: [P5-T065, P5-T013, P5-T014, P5-T015, P5-T017, P5-T021]
+requirements: [R5.01, R5.07, R5.24]
 roadmap_todos: [T5.03]
 modules: [M22]
 dashboards: [D18, D12]
+tools: []
+mcp: []
+env: []
+services: [telegram]
 branch: p5/P5-T004-approve-hot-identity-burner-keys
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T004 · Approve creation of hot, identity and burner keys in the signer and fund minimal floats
@@ -38,20 +43,20 @@ The signer holds exactly the keys you approved: one **hot** key per chain in use
 
 - Roadmap: ToDo T5.03 → R5.01, R5.07
 - Custody tiers and limits: [13 §1](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers); signer: [13 §2](../../../docs/13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys)
-- Numeric defaults gap: P5-B001 (floats/caps not specified in the docs; you decide here)
-- Depends on: P5-T012 custody config, P5-T013/T014/T015 signer, P5-T017 signer container, P5-T021 registry
+- Limits: defaults in [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) (hot ≤ A$500 per chain, identity ≤ A$300 per chain, burner ≤ A$50; signer A$250 per transaction and A$1,000 per rolling 24 h per wallet), confirmed by you in P5-T065; signing is disabled until then (decision P5-B001, [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved))
+- Depends on: P5-T065 (limits confirmed, signing enabled), P5-T013/T014/T015 signer, P5-T017 signer container, P5-T021 registry (signer wallets register themselves)
+- Keys last: the testnet scenario (P5-T056) and kill drill (P5-T058) create their own testnet keys funded from faucets, so this real-funds step doesn't block them
 
 ## Requirements
 
 - Key creation runs inside the signer (`mt-signer keys create --tier hot|identity|burner --chain evm|solana`), triggered by a C3 command from you; private keys never leave the signer and are written only to OpenBao/sops.
-- You confirm per tier: float (e.g. burner = gas for a few txs), per-tx cap, rolling-24h cap, daily gas budget; values stored in the custody config (P5-T012) via a C3 change.
-- Identity wallets: exactly one per chain; if you already have a wallet with organic history you want as identity, it stays **warm** (hardware) and is registered as `identity` with signing manual — record the choice.
+- Each key's tier uses the limits you confirmed in P5-T065 (floats, per-transaction and rolling 24 h caps, gas budgets; 16 §2.7); nothing is re-entered here.
+- Identity wallets: exactly one per chain, signer-held; all autonomous claims use it, never the hot trading wallet (decision P5-B017, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)). A hardware wallet with organic history stays **warm** (watch-only) and is not used for autonomous claims; record the choice.
 - Fund each wallet from an exchange you own with **only** the float; the vault address is set as the sweep destination.
 
 ## ToDo
 
-- [ ] Review the proposed defaults in D18/`custody.yaml` (from P5-T012 and P5-B001) and set your numbers.
-- [ ] Approve the C3 change for the custody config in Telegram (approve + TOTP), wait for the cool-down.
+- [ ] Check D18 shows "Signing enabled" with the limits you confirmed in P5-T065.
 - [ ] Approve the key-creation command(s) for hot, identity (EVM, Solana) and burner (EVM, Solana) in Telegram (C3).
 - [ ] Copy each new public address from D18 and fund it with exactly the float from an exchange you own (whitelisted withdrawal).
 - [ ] Confirm D18 shows each wallet with tier, caps and a balance at or under the float.
@@ -73,7 +78,7 @@ The signer holds exactly the keys you approved: one **hot** key per chain in use
 ## Acceptance criteria
 
 - [ ] Hot, identity (per chain) and burner keys exist in the signer; public addresses registered
-- [ ] Caps/floats/gas budgets set by you via C3 and visible in D18
+- [ ] Each wallet shows the limits confirmed in P5-T065 (float, caps, gas budget) in D18
 - [ ] Each wallet funded with at most its float
 
 ## Exceptions & edge cases
@@ -103,3 +108,4 @@ The signer holds exactly the keys you approved: one **hot** key per chain in use
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (limits are 16 §2.7 defaults confirmed in P5-T065, not set here; identity wallet signer-held per P5-B017; testnet work no longer waits on this real-funds step)

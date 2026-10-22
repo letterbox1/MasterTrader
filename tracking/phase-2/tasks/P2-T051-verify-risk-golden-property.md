@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T017, P2-T018]
+depends_on: [P2-T017, P2-T018, P2-T069]
 requirements: [R2.N2, R2.10, R2.12, R2.13, R2.14]
 roadmap_todos: [T2.60]
 modules: [M11]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T051-verify-risk-golden-property
 pr: ""
 doc_sync: [docs/04-plan-of-action.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T051 · Risk golden and property test suite as a mandatory merge gate
@@ -38,12 +43,14 @@ A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladd
 
 - Roadmap: [R2.N2, R2.10](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.60
 - Standing rule: [04 risk golden tests mandatory](../../../docs/04-plan-of-action.md#standing-rules)
-- Inputs: goldens from P2-T012–T018.
+- Inputs: goldens from P2-T011–T018 and P2-T069 (layer merge); the safety-state goldens (data age, `audit.integrity`, egress) are P2-T076 (T2.71) and join the same required CI job.
+- Defaults under test come from [16 §2](../../../docs/16-configuration-and-safety-model.md#2-default-values-all-configurable) (e.g. two-stage drawdowns 10/15 sleeve, 10/25 system; venue cap 25%).
 
 ## Requirements
 
 - Golden files are YAML cases `{state, intent, expected: {decision, reasons, size}}`; ≥ 300 cases spanning every rule at below/at/above threshold.
-- Properties: (1) any exception → reject; (2) post-trade exposure never exceeds caps; (3) Kelly used ≤ ¼ f; (4) protective exits never increase exposure; (5) kill ON → no approve decisions; (6) stale/bad DQ → no new entries.
+- Golden coverage includes: sleeve drawdown stage 1 (sizes halved) vs stage 2 (halt), system stage 1 (no new entries, exits pass) vs stage 2 (flatten + lock), daily loss on the Sydney day boundary, venue concentration 25%, price collar per asset class, cost blow-out pausing only the bot, L0 clamp.
+- Properties: (1) any exception → reject; (2) post-trade exposure never exceeds caps; (3) Kelly used ≤ ¼ f; (4) protective exits never increase exposure; (5) kill ON → no approve decisions; (6) stale/bad DQ → no new entries; (7) the effective limit is always the strictest across L0–L4 (16 §1); (8) drawdown stage 1 < stage 2 for every saved policy.
 - CI job `risk-golden` required in branch protection; golden updates need a reviewer note in the PR (changed expected values listed).
 
 ## ToDo
@@ -67,7 +74,7 @@ A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladd
 
 ## Acceptance criteria
 
-- [ ] ≥ 300 golden cases, 6 properties green
+- [ ] ≥ 300 golden cases, 8 properties green
 - [ ] Required status check enabled
 - [ ] Mutation score recorded ≥ 80%
 
@@ -96,3 +103,4 @@ A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladd
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (goldens for two-stage drawdowns, layering strictest-wins and 16 defaults; safety-state goldens joined from P2-T076)

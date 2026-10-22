@@ -15,41 +15,47 @@ requirements: [R5.14, R5.17]
 roadmap_todos: [T5.06]
 modules: [M4]
 dashboards: [D12]
+tools: []
+mcp: []
+env: []
+services: [telegram]
 branch: p5/P5-T007-set-disposal-rule-ev-hurdle
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T007 · Set the disposal rule and EV hurdle
 
 ## Goal / expected outcome
 
-Your airdrop **disposal rule** (default: sell 50% on claim, via M11) and the **EV hurdle** (hurdle rate for `capital_lockup_cost` and your time value per minute) are set, so the EV gate and post-claim orders use your numbers.
+You have reviewed the airdrop **disposal rule** (default: sell 50% on claim; until the P7 gates each disposal is a manual-sale USER task, P5-T066) and the **EV hurdle** (default 5% p.a. on capital locked, plus your time value per minute) and kept or changed them as settings, so the EV gate and disposal tasks use your numbers.
 
 ## Context & references
 
 - Roadmap: ToDo T5.06 → R5.14, R5.17
 - [08 EV gate](../../../docs/08-airdrops-and-token-launches.md#expected-value-gate-airdrops-icosidos-points-programmes) · [08 wallet discipline](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline)
-- Gap P5-B012: the default hurdle references a treasury yield that 13 §5 does not define
+- Defaults: [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) (EV hurdle 5% p.a. on capital locked, an AUD cash-rate proxy; decision P5-B012) and [08 wallet discipline](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline) (disposal 50%); both are settings ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)); loosening is C3
+- Disposal before P7: manual-sale task (decision P5-B010, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer))
 - Depends on: P5-T040 (EV gate settings), P5-T045 (disposal rule)
 
 ## Requirements
 
-- Disposal rule: percent to sell on claim (default 50%), what happens to the rest (hold under M22 rules), minimum order value below which it becomes a manual task.
-- EV inputs: hurdle rate (% p.a.), your time value (AUD/min), default haircut.
-- Changes that loosen (e.g. lower hurdle → more tasks) are recorded; settings via `system.settings.update` with section `airdrop`.
+- Disposal rule: percent to sell on claim (default 50%) and what happens to the rest (hold under M22 rules). Before the P7 gates every disposal is a manual-sale `ONCHAIN_ACTION_MANUAL` task; from P7 it becomes an M11 order.
+- EV inputs: hurdle rate (default 5% p.a.), your time value (AUD/min), default haircut.
+- Changes via `system.settings.update` section `airdrop`: tightening applies at once; loosening (e.g. a lower hurdle → more tasks) is C3 ([02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write); 08 principle 5).
 
 ## ToDo
 
-- [ ] Open D12 settings (or `/system/settings?section=airdrop`) and set disposal %, min order value, hurdle rate, time value, haircut.
+- [ ] Open D12 settings (or `/system/settings?section=airdrop`); keep or change disposal %, hurdle rate (default 5% p.a.), time value and haircut (a loosening asks for C3 in Telegram).
 - [ ] Check the next daily digest: EV values recalculate with your numbers.
 - [ ] Report "done" so T5.06 can be ticked.
 
@@ -66,17 +72,17 @@ Your airdrop **disposal rule** (default: sell 50% on claim, via M11) and the **E
 
 ## Acceptance criteria
 
-- [ ] Disposal rule and EV inputs set and visible in D12
+- [ ] Disposal rule and EV inputs reviewed (kept or changed) and visible in D12
 - [ ] Digest reflects the new EV values
 
 ## Exceptions & edge cases
 
-- Disposal sells for tokens with no allowed venue become manual tasks until the P7 DEX path (P5-B010).
+- Every disposal is a manual-sale task until the P7 gates pass (P5-B010), whatever the venue; the rule here only sets the quantity.
 
 ## Cardinal rules (do NOT)
 
-- Do NOT set a disposal rule that bypasses M11 (all sells are orders through the risk manager).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT set up any automated sale path before the P7 gates; after them, every sale is an order through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 
 ## Doc sync on completion
 
@@ -92,3 +98,4 @@ Your airdrop **disposal rule** (default: sell 50% on claim, via M11) and the **E
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (EV hurdle default 5% p.a. per 16 §2.7/P5-B012; disposal = manual-sale task until P7 per P5-B010; loosening C3)

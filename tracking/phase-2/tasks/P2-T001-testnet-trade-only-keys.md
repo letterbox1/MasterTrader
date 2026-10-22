@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/practice venue Phase 2 trades on, one sub-account (or account) per mode (`paper`, `hitl`, `autonomous`), stored only in the sops/age secrets file. Build first, keys last: the engine and adapters are built and tested keyless against recorded fixtures, emulators and the sandbox venue; these keys are needed only for the late live checks: the testnet/practice end-to-end run (P2-T071, T2.72), the key-audit run (P2-T045 tool) and the paper clock (P2-T067).
+Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/practice venue Phase 2 trades on, one sub-account (or account) per mode (`paper`, `hitl`, `autonomous`), stored only in the sops/age secrets file. Build first, keys last: the engine and adapters are built and tested keyless against recorded fixtures, emulators and the sandbox venue; these keys are needed only for the late live checks: the testnet/practice end-to-end run (P2-T071, T2.72), the key-audit run (P2-T045 tool).
 
 ## Context & references
 
@@ -46,7 +46,7 @@ Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/pract
 - Spec: [03 M12 key safety](../../../docs/03-build-spec.md#m12-execution--mt_engine)
 - Cross-phase (`depends_on`): practice/demo accounts from P0 (P0-T009, T0.09); sops/age secrets wiring from P0 (P0-T022, T0.43). Read-only recon keys from P1 (P1-T002, T1.02) stay separate.
 - Decisions: [16 §3.1 dead-man layer 2 has its own keys](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) · [16 §3.2 one fixed egress IP](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) · [16 §2.3 key rotation 90 days](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) · [17 §D P1-B008 practice accounts use normal credentials](../../../docs/17-decisions-register.md#d-other-decisions)
-- Unblocks: P2-T071 (testnet end-to-end with your keys), P2-T067 (paper clock); P2-T045's key audit runs on these keys in P2-T071.
+- Unblocks: P2-T071 (testnet/practice end-to-end with your keys, incl. the P2-T045 key audit on these keys), and through it the HITL bots on testnet/practice accounts (P2-T066). Paper bots run on the sandbox venue and need no keys.
 
 ## Requirements
 

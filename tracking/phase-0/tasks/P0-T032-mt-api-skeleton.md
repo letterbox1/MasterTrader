@@ -89,7 +89,7 @@ review_result: ""
 
 ## Exceptions & edge cases
 
-- NATS down: commands that need NATS fail closed with 503 problem+json, except Kill ON, which has its own spool/retry path (P0-T035).
+- NATS down: commands that need NATS fail closed with 503 problem+json, except Kill ON (P0-T035): it is accepted, written straight to `audit.command` (Postgres up) and its KV write/publish retries until NATS returns. With Postgres down instead, Kill records go through the JetStream WORM buffer (16 §3.3).
 
 ## Cardinal rules (do NOT)
 
@@ -114,4 +114,4 @@ review_result: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
-- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Kill ON record path per 16 §3.3 instead of a local spool; run fields added)

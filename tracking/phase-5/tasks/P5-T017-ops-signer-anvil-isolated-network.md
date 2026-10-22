@@ -10,35 +10,40 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T013]
+depends_on: [P5-T013, P0-T020, P0-T021, P0-T022]
 requirements: [R5.N1, R5.02]
 roadmap_todos: [T5.40]
 modules: [M22]
 dashboards: [D16]
+tools: [docker, sops]
+mcp: []
+env: []
+services: []
 branch: p5/P5-T017-ops-signer-anvil-isolated-network
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T017 · Signer and Anvil containers on the isolated signer network; keys in OpenBao or sops
 
 ## Goal / expected outcome
 
-`signer` and `anvil` run in Compose on the `signer` network (egress: chain RPC allow-list only), reachable only from `airdrop-exec` (and later `treasury`), with keys supplied from OpenBao or the sops tmpfs; no LLM/agent/MCP/scraper container can route to them.
+`signer` and `anvil` run in Compose on the `signer` network (egress: chain RPC allow-list only), reachable only from the policy service (`airdrop-exec` in P5; treasury and DEX execution go through it later, decision P5-B003), with keys supplied from OpenBao or the sops tmpfs; no LLM/agent/MCP/scraper container can route to them.
 
 ## Context & references
 
 - Roadmap: [R5.N1](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.40 · [07 §2](../../../docs/07-security-notes.md#2-secrets) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
 - Networks: [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) · containers [02 §3.2](../../../docs/02-v1-architecture.md#32-containers)
-- P0 networks (T0.42 / R0.N3) and sops (T0.43 / R0.N1) are prerequisites
+- P0 prerequisites: Compose stack (P0-T020), networks incl. `signer` (P0-T021), sops/age secrets into tmpfs (P0-T022)
 - Verified by P5-T054
 
 ## Requirements
@@ -80,7 +85,7 @@ checkpoint: ""
 
 ## Exceptions & edge cases
 
-- 4G failover changes the egress IP: provider IP restrictions (P5-T003) must include both, or calls fail closed.
+- 4G failover: route RPC egress through the same fixed-IP exit node as exchange traffic ([16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)) so IP-restricted keys (P5-T003) keep working; otherwise calls fail closed.
 - Host reboot: signer requires OpenBao unseal or sops decrypt; until then claims queue as tasks.
 
 ## Cardinal rules (do NOT)
@@ -106,3 +111,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (signer reachable only from the policy service per P5-B003; fixed-IP egress per 16 §3.2; P0 deps added)

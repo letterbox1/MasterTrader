@@ -4,7 +4,7 @@ kind: gap
 title: One `tei` container can't serve both the embedder and the reranker
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R0.09]
 roadmap_todos: [T0.41, T0.45]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B007-tei-one-container-two-models
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §3.2 (`tei` row)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B007 · One `tei` container can't serve both the embedder and the reranker
@@ -51,10 +56,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B007 (ratified in 17 §E)
+- [x] Docs updated so they agree: 02 §3.1 + §3.2 (`tei-embed`, `tei-rerank` rows); 03 §2 Models row + M21; 10 §2 table and §5 roles; 04 Phase 0; roadmap P0 R0.09/R0.13/T0.28
+- [x] Affected P0 task files reference the resolution: P0-T043, P0-T021, P0-T042
+- [x] Regression check owned: P0-T043 smoke tests on both containers
 
 ## Verification
 
@@ -69,9 +74,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B007 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T043
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -96,3 +101,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B007; docs checked: 02 §3.1 + §3.2 (`tei-embed`, `tei-rerank` rows); 03 §2 Models row + M21; 10 §2 table and §5 roles; 04 Phase 0; roadmap P0 R0.09/R0.13/T0.28. Root cause: the container table predated the decision to run a reranker. Implementation owned by P0-T043.
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B007); docs updated: 02 §3.1 + §3.2 (`tei-embed`, `tei-rerank` rows); 03 §2 Models row + M21; 10 §2 table and §5 roles; 04 Phase 0; roadmap P0 R0.09/R0.13/T0.28; implementation owned by P0-T043
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

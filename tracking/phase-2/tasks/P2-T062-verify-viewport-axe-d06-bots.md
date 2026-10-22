@@ -10,35 +10,40 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T041, P2-T042, P2-T043]
+depends_on: [P2-T041, P2-T042, P2-T043, P0-T053]
 requirements: [R2.50]
 roadmap_todos: [T2.68]
 modules: [M15]
 dashboards: [D06, D03]
+tools: [pnpm, playwright]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T062-verify-viewport-axe-d06-bots
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T062 · Viewport matrix and axe on D06 and the D03 Bots tab
 
 ## Goal / expected outcome
 
-D06 (all tabs) and the D03 Bots tab pass the DESIGN §6.8 Playwright viewport matrix (240 → 2560 px, portrait + landscape, 200% zoom) and axe checks; D01/D03 (non-bot)/D04/D05 are Part B's share of T2.68.
+D06 (all tabs incl. the Stress placeholder), the D03 Bots tab and the D03 `/strategies/settings` page pass the DESIGN §6.8 Playwright viewport matrix (240 → 2560 px, portrait + landscape, 200% zoom) and axe checks; D01/D03 (non-bot)/D04/D05 are P2-T163's share of T2.68.
 
 ## Context & references
 
 - Roadmap: [R2.50](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.68 (D06 + Bots tab part)
 - Test matrix: [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass) · [mob §2 phone flows](../../../docs/ui/mobile-and-telegram.md#2-phone-flows-must-be--3-taps-from-a-cold-open)
-- Cross-phase: matrix harness (P0 T0.64).
+- Cross-phase (`depends_on`): Playwright matrix harness + axe (P0-T053, T0.64).
 
 ## Requirements
 
@@ -91,3 +96,4 @@ D06 (all tabs) and the D03 Bots tab pass the DESIGN §6.8 Playwright viewport ma
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Stress placeholder and D03 settings page in the matrix; cross-phase harness dep)

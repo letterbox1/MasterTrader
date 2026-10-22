@@ -4,7 +4,7 @@ kind: gap
 title: CommSec statements listed in 09 architecture but not in R3.01
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B014-commsec-in-09-not-in-r301
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Architecture
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,10 @@ R3.01 and 09 list the same broker statement formats.
 
 ## ToDo
 
-- [ ] Confirm with the user whether CommSec is used; update 09 or add a task
-- [ ] Update the affected task files (P3-T003, P3-T015) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B013/B014/B016): CommSec is optional in R3.01 (optional/later in 09)
+- [x] Owning docs carry it: 09 architecture (CommSec optional/later); roadmap R3.01
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by n/a (no CommSec adapter in P3; P3-T003/P3-T015 note it as optional)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -70,9 +71,9 @@ R3.01 and 09 list the same broker statement formats.
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (09 architecture (CommSec optional/later); roadmap R3.01)
+- [x] Affected tasks consistent with it (n/a (no CommSec adapter in P3; P3-T003/P3-T015 note it as optional))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -99,3 +100,7 @@ R3.01 and 09 list the same broker statement formats.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B013/B014/B016: CommSec is optional in R3.01 (optional/later in 09). Docs now carry it: 09 architecture (CommSec optional/later); roadmap R3.01. Implementation owned by n/a (no CommSec adapter in P3; P3-T003/P3-T015 note it as optional). Root cause: 09 listed CommSec while R3.01 did not.
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B013/B014/B016); docs updated: 09 architecture (CommSec optional/later); roadmap R3.01; implementation owned by n/a (no CommSec adapter in P3; P3-T003/P3-T015 note it as optional)
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

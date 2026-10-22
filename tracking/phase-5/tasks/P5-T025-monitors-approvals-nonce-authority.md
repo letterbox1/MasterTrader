@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T023]
+depends_on: [P5-T023, P5-T013, P1-T045]
 requirements: [R5.06, R5.03]
 roadmap_todos: [T5.23]
 modules: [M22, M16, M11, M19]
 dashboards: [D18, D12]
+tools: [uv, anvil, solana-test-validator]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p5/P5-T025-monitors-approvals-nonce-authority
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T025 · Monitors: token approvals and nonce authority
@@ -42,7 +47,7 @@ Every new token approval on any registered wallet raises an alert within one pol
 
 ## Requirements
 
-- Approval sources: `ops.wallet_approval` from P5-T023, GoPlus approval-security API (within 150/min, 30K/day).
+- Approval sources: `ops.wallet_approval` from P5-T023, GoPlus approval-security API (within 150/min, 30K/day), built and tested on recorded fixtures without a key; the live keyed call is checked in P5-T068.
 - Risk flags: unlimited allowance, spender unverified/blocklisted/not on allow-list, allowance older than 7 days on hot/burner, approval not created by our signer.
 - Hot/burner/identity: flagged approvals → `revoke_approval` intent (cost-gate defensive bypass) automatically; vault/warm/user wallets → `REVOKE_APPROVAL` task with steps (watch-only).
 - Nonce authority: on change (or nonce account not created by us appearing for a hot wallet) → `alert.critical.nonce_authority`, signer wallet freeze flag, wallet-drained runbook link (P5-T051).
@@ -103,3 +108,4 @@ Every new token approval on any registered wallet raises an alert within one pol
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless GoPlus fixtures, live in P5-T068; signer freeze API and P1 alert fan-out as deps)

@@ -4,7 +4,7 @@ kind: gap
 title: 04 plan of action Phase 0 is stale (Ollama, daily hash chain, missing Caddy/LiteLLM/TEI)
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R0.02, R0.07]
 roadmap_todos: [T0.41, T0.23]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B016-plan-of-action-phase0-stale
 pr: ""
 doc_sync: [docs/04-plan-of-action.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/04-plan-of-action.md Phase 0
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B016 · 04 plan of action Phase 0 is stale (Ollama, daily hash chain, missing Caddy/LiteLLM/TEI)
@@ -50,10 +55,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B016 (ratified in 17 §E)
+- [x] Docs updated so they agree: 04 Phase 0 (no Ollama; WORM layer with offline `worm_owner`, per-row chain, external seal; Caddy; `mt_api` + web shell; `llm-local`; two TEI containers; docker-proxy)
+- [x] Affected P0 task files reference the resolution: P0-T020, P0-T029
+- [x] Regression check owned: doc check: 04 Phase 0 matches the roadmap phase doc
 
 ## Verification
 
@@ -68,9 +73,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B016 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: n/a (doc only)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +99,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B016; docs checked: 04 Phase 0 (no Ollama; WORM layer with offline `worm_owner`, per-row chain, external seal; Caddy; `mt_api` + web shell; `llm-local`; two TEI containers; docker-proxy). Root cause: 04 summarised an earlier design and wasn't refreshed after 15 §2. Implementation owned by n/a (doc only).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B016); docs updated: 04 Phase 0 (no Ollama; WORM layer with offline `worm_owner`, per-row chain, external seal; Caddy; `mt_api` + web shell; `llm-local`; two TEI containers; docker-proxy); implementation owned by n/a (doc only)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

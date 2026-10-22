@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T013, P3-T014, P3-T034, P3-T009, P3-T042]
+depends_on: [P3-T013, P3-T014, P3-T034, P3-T009, P3-T042, P2-T180, P1-T002]
 requirements: [R3.01, R3.11]
 roadmap_todos: [T3.80]
 modules: [M18]
 dashboards: [D14, D07]
+tools: [git, uv]
+mcp: []
+env: [BINANCE_TESTNET_READONLY_KEY, BINANCE_TESTNET_READONLY_SECRET, BYBIT_TESTNET_READONLY_KEY, BYBIT_TESTNET_READONLY_SECRET, OANDA_PRACTICE_TOKEN, IG_DEMO_API_KEY]
+services: [journal, engine, Binance testnet, Bybit testnet, OANDA practice, IG demo]
 branch: p3/P3-T053-run-start-month-journalled-paper
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T053 · Start the one-month fully journalled and reconciled paper run
@@ -37,13 +42,14 @@ One calendar month of the P2 paper clock's trades is journalled automatically an
 ## Context & references
 
 - Roadmap: [T3.80](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1
-- Cross-phase: P2 T2.80 (paper clock running), P7 R7.03 (weekly review includes journal reconciliation) where completion is checked if the month outlasts P3
+- Cross-phase prerequisites (depends_on): P2-T180 (P1-sleeve paper clock started), P1-T002 (read-only practice/testnet keys for the ledger pulls and recon); P7 R7.03 (weekly review includes journal reconciliation) is where completion is checked if the month outlasts P3
+- Recon tolerances and the 24 h explain window: [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)
 - Runbook: P3-T044
 
 ## Requirements
 
 - Start date = the first day all of P3-T013/T014/T034 are live in production compose; end = start + 1 calendar month.
-- Daily: recon status `ok` or `explained` for every account; an unexplained break fails the run and the month restarts after the fix.
+- Daily: recon status `ok` or `explained` (matched to a known journal event within 24 h, 16 §2.9) for every account; an unexplained break fails the run and the month restarts after the fix.
 - Weekly summary (progress log): events by type, fills vs `audit.fill` count, breaks + explanations, ingest p95.
 - In-phase close condition: run started and first 7 consecutive days with zero unexplained breaks; the remaining days are checked by the P7 weekly review (T7.05) — the roadmap box T3.80 is ticked only when the full month is clean.
 
@@ -101,3 +107,4 @@ One calendar month of the P2 paper clock's trades is journalled automatically an
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explained = matched within 24 h (16 §2.9); explicit P2-T180/P1-T002 depends_on and read-only key env names (keys last); tools/services filled)

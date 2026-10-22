@@ -10,47 +10,53 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P2-T050, P2-T066, P2-T063, P2-T048, P2-T049, P2-T045]
+depends_on: [P2-T050, P2-T066, P2-T063, P2-T048, P2-T049, P2-T114]
 requirements: [R2.20]
 roadmap_todos: [T2.08]
 modules: [M0, M11]
 dashboards: [D03]
+tools: []
+mcp: []
+env: []
+services: [mt-web]
 branch: p2/P2-T067-user-start-paper-clock
 pr: ""
 doc_sync: [docs/roadmap/phase-7-prove-and-go-live.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T067 · Start the paper clock for the validated P1 candidates
 
 ## Goal / expected outcome
 
-At the end of the phase you switch the validated P1 candidates (trend on majors; carry if permitted) to paper through the real policy/risk/execution path, which starts the ≥ 8-week paper clock that gates P7 — exit criterion 4. (The RUN item that tracks the clock, T2.80, is Part B's.)
+At the end of the phase you switch the validated P1 candidates (trend on majors; carry if permitted) to paper through the real policy/risk/execution path, which starts the paper clock (P1 sleeves ≥ 8 weeks; default gate ≥ 8 weeks **and** ≥ 50 trades, [16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)) that gates P7 — exit criterion 4. (The RUN item that tracks the clock, T2.80, is P2-T180.)
 
 ## Context & references
 
 - Roadmap: ToDo T2.08 · exit criterion 4 · [14 §6 gate 7 paper ≥ 8 weeks](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [14 §7](../../../docs/14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)
 - P7: [R7.02 paper period](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Requires Part B's validation report for each candidate (strategy at `validated`).
+- Requires the validation report for each candidate (strategy at `validated`, P2-T114) and your policy values (P2-T048, P2-T049).
+- Paper bots run on the sandbox venue with live P1 data (simulated fills through the real risk and execution path), so no venue keys are needed.
 
 ## Requirements
 
 - Each candidate strategy version is `validated` (Part B harness) and its manifest has kill criteria.
-- Promote to `paper` (`strategy.promote`, C1) and start paper bots per sleeve; record the start date.
-- Nothing in the paper path is simulated around M11: real policy, risk, execution (sandbox/testnet).
+- Set each strategy's mode ceiling to `paper` (`strategy.set_mode`, C1 from validated) and start one `paper`-mode bot per candidate and sleeve; record the start date.
+- Nothing in the paper path is simulated around M11: real policy, risk, execution (sandbox venue).
 
 ## ToDo
 
 - [ ] Check D03 Gates for each candidate (validated)
-- [ ] Promote to paper and start the bots
-- [ ] Write the start date and strategy versions in this task's progress log and in the Part B RUN item
+- [ ] Set the mode ceiling to paper and start the paper bots
+- [ ] Write the start date and strategy versions in this task's progress log and in the RUN item P2-T180
 - [ ] Confirm the first paper fills appear
 - [ ] Record completion in the progress log (no secrets) and run `./kanban done P2-T067`
 
@@ -60,7 +66,7 @@ At the end of the phase you switch the validated P1 candidates (trend on majors;
 - Agent verifies paper runs exist (`strategy.runs kind=paper`) with start timestamps.
 
 ### Scenarios
-- Given trend v1 validated, when promoted to paper, then its bots trade on sandbox/testnet through M11 and the clock starts.
+- Given trend v1 validated, when its paper bot starts, then it trades on the sandbox venue through M11 and the clock starts.
 
 ### Stress / failure injection
 - n/a.
@@ -95,3 +101,4 @@ At the end of the phase you switch the validated P1 candidates (trend on majors;
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper clock via mode ceiling + paper bots on sandbox (no keys), gate profile ≥ 8 weeks and ≥ 50 trades)

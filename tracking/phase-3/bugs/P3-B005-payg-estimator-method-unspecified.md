@@ -4,7 +4,7 @@ kind: gap
 title: PAYG instalment estimator method is unspecified
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B005-payg-estimator-method-unspecified
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Key findings (BAS row)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,10 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Add the method to 09
-- [ ] Update the affected task files (P3-T027) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B005): PAYG estimator computes both ATO methods (instalment amount from the notice; instalment rate × instalment income excluding capital gains); your notice decides; quarters/due dates defaults (U, tax agent Q11)
+- [x] Owning docs carry it: 09 BAS finding + question 11; 03 M18; roadmap R3.06
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T027 (estimator), P3-T041 (D15 PAYG), P3-T045 (golden case)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -69,9 +70,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (09 BAS finding + question 11; 03 M18; roadmap R3.06)
+- [x] Affected tasks consistent with it (P3-T027 (estimator), P3-T041 (D15 PAYG), P3-T045 (golden case))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -98,3 +99,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B005: PAYG estimator computes both ATO methods (instalment amount from the notice; instalment rate × instalment income excluding capital gains); your notice decides; quarters/due dates defaults (U, tax agent Q11). Docs now carry it: 09 BAS finding + question 11; 03 M18; roadmap R3.06. Implementation owned by P3-T027 (estimator), P3-T041 (D15 PAYG), P3-T045 (golden case). Root cause: 09 named a PAYG estimator without its method.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B005); docs updated: 09 BAS finding + question 11; 03 M18; roadmap R3.06; implementation owned by P3-T027 (estimator), P3-T041 (D15 PAYG), P3-T045 (golden case)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -15,24 +15,29 @@ requirements: [R2.10, R2.20, R2.18, R2.19, R2.34]
 roadmap_todos: [T2.60, T2.61]
 modules: [M0, M11, M12, M15, M16]
 dashboards: [D06, D03]
+tools: [uv, docker, pnpm]
+mcp: []
+env: []
+services: [nats, postgres, grafana]
 branch: p2/P2-T063-verify-part-a-e2e-flows
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T063 · Part A end-to-end flows on paper: F2 with HITL, F5 and F6
 
 ## Goal / expected outcome
 
-One scripted run proves the Part A side of exit criteria 2 and 3: a template strategy on paper behind M11 produces a hitl approval approved from Telegram and filled, with TCA recorded; a C3 loosening needs TOTP + cool-down; the kill drill passes. Part B's phase-exit demo depends on this.
+One scripted run proves the Part A side of exit criteria 2 and 3 on the real paper path (sandbox venue, fake Telegram Bot API and a test TOTP seed in the test stack, no real secrets): a template strategy on paper behind M11 produces a hitl approval approved via Telegram and filled, with TCA recorded; a C3 loosening needs TOTP + cool-down; the kill drill passes. The phase-exit demo (P2-T199) depends on this; the real-phone evidence comes from P2-T064/T065/T066.
 
 ## Context & references
 
@@ -42,9 +47,9 @@ One scripted run proves the Part A side of exit criteria 2 and 3: a template str
 
 ## Requirements
 
-- F2: trend template (P2-T008) on BTCUSDT sandbox/testnet, hitl mode → card on Telegram → Approve → M11 re-check → fill → `fill.*` → TCA cost event → visible in D06 events/limits and Grafana.
-- F5: raise a limit from D06 → C3 Telegram approve + TOTP → cool-down → applied; a tighten applies immediately.
-- F6: kill from phone → cancels < 1 s → OFF via C3 after cause cleared.
+- F2: trend template (P2-T008) on BTCUSDT sandbox, a bot in hitl mode → card on Telegram (fake API) → Approve → M11 re-check incl. the inline safety-state checks → fill → `fill.*` → TCA cost event → visible in D06 events/limits and Grafana.
+- F5: raise a limit from D06 → C3 Telegram approve + TOTP → cool-down (test-shortened only in the test stack) → applied; a tighten applies immediately; an L0 ceiling loosen from D03 settings also needs C3.
+- F6: kill via Telegram → cancels < 1 s → each bot's `on_system_failure` applied → OFF via C3 after cause cleared.
 - Every step leaves audit rows with a common `trace_id` (fill → logs jump works in Grafana).
 
 ## ToDo
@@ -95,3 +100,4 @@ One scripted run proves the Part A side of exit criteria 2 and 3: a template str
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless scripted run (fake Telegram, test TOTP), safety-state checks in F2, L0 loosen in F5, on_system_failure in F6)

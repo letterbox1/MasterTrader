@@ -15,17 +15,22 @@ requirements: [R1.04]
 roadmap_todos: [T1.23]
 modules: [M1]
 dashboards: [D02, D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p1/P1-T016-oanda-practice-stream
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T016 · Stream OANDA v20 practice prices for FX and metals
@@ -38,7 +43,7 @@ checkpoint: ""
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (OANDA v20 practice stream, max 4 quotes/s per instrument; spot XAU/XAG from brokers, **no LBMA**) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (no L2 in FX) · [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list) (oandapyV20 is stale → thin httpx client)
-- Practice token from P0 T0.09 / P1-T002 in sops
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built and tested keyless against fixtures in OANDA's documented stream format; the live practice stream is checked with your token in P1-T073 (token from P0-T009 / P1-T002 in the sops file)
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T009
 
 ## Requirements
@@ -54,7 +59,7 @@ checkpoint: ""
 
 - [ ] Implement the pricing stream connector and normaliser
 - [ ] Map OANDA instruments (EUR_USD) to Nautilus IDs via the instrument master
-- [ ] Golden fixtures from a recorded stream (tokens scrubbed)
+- [ ] Golden fixtures in OANDA's documented stream format (PRICE + HEARTBEAT lines); P1-T073 replaces them with scrubbed real recordings
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -64,11 +69,11 @@ checkpoint: ""
 
 - Unit: parse PRICE and HEARTBEAT lines; tradeable flag false → quote marked `indicative`
 - Integration: golden replay of a recorded stream; reconnect after chunked-stream stall
-- Integration (nightly, network): 60 s live practice stream for 2 pairs
+- Live practice stream: checked in P1-T073 (needs your token); CI runs keyless
 
 ### Scenarios
 
-- Given the stream stalls without closing, when no HEARTBEAT arrives for 2× the heartbeat interval, then the connector reconnects and the stale check marks the feed (see P1-B001 for the SLO start point)
+- Given the stream stalls without closing, when no HEARTBEAT arrives for 2× the heartbeat interval, then the connector reconnects, and the DQ monitor marks the instruments `stale` once their data age crosses the threshold (P1-T031)
 - Given the FX market is closed for the weekend, when no prices arrive, then the session calendar suppresses stale alerts
 
 ### Stress / failure injection
@@ -77,7 +82,7 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Live `md.oanda.*.quote` for every universe FX/metal pair during market hours
+- [ ] Golden replay and reconnect tests pass keyless; the live `md.oanda.*.quote` check for every universe FX/metal pair runs in P1-T073
 - [ ] No LBMA source anywhere in config
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
@@ -88,8 +93,8 @@ checkpoint: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT use keys with withdrawal rights or without an IP allow-list; practice/testnet/paper only, no live money before the P7 gates.
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT use keys with withdrawal rights, or without an IP allow-list where the venue supports one; practice/testnet/paper only, no live money before the P7 gates.
 - Do NOT place, modify or cancel orders from this code; P1 is read-only toward venues (orders arrive in P2 through M11).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
@@ -108,3 +113,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build on fixtures, live stream moved to P1-T073; data-age stale wording)

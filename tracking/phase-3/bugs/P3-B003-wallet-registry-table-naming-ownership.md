@@ -4,7 +4,7 @@ kind: gap
 title: Wallet registry table named differently across docs and owned by two phases
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B003-wallet-registry-table-naming-ownership
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §4 (M22 row)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -51,10 +51,10 @@ One registry table name and one owning phase/module, referenced consistently by 
 
 ## ToDo
 
-- [ ] Update 02 §4
-- [ ] Add a boundary note to the P5 roadmap (main agent)
-- [ ] Update the affected task files (P3-T012, P3-T018) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §B (P3-B003, P5-B015, P6-B005)): one registry `ops.wallets` (accounts and on-chain addresses), created in P3, extended additively by the P5 wallet-indexer; no `treasury.wallet`
+- [x] Owning docs carry it: 02 §4 (one wallet registry note, M18/M22 rows); 02 §5 `ops` schema; 03 §4 `ops`; 09 goals §6; 13 §3
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T012 (registry), P3-T056 (Accounts page)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -72,9 +72,9 @@ One registry table name and one owning phase/module, referenced consistently by 
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (02 §4 (one wallet registry note, M18/M22 rows); 02 §5 `ops` schema; 03 §4 `ops`; 09 goals §6; 13 §3)
+- [x] Affected tasks consistent with it (P3-T012 (registry), P3-T056 (Accounts page))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,7 @@ One registry table name and one owning phase/module, referenced consistently by 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §B (P3-B003, P5-B015, P6-B005): one registry `ops.wallets` (accounts and on-chain addresses), created in P3, extended additively by the P5 wallet-indexer; no `treasury.wallet`. Docs now carry it: 02 §4 (one wallet registry note, M18/M22 rows); 02 §5 `ops` schema; 03 §4 `ops`; 09 goals §6; 13 §3. Implementation owned by P3-T012 (registry), P3-T056 (Accounts page). Root cause: 13 and 02 named different tables and owners for the registry.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B (P3-B003, P5-B015, P6-B005)); docs updated: 02 §4 (one wallet registry note, M18/M22 rows); 02 §5 `ops` schema; 03 §4 `ops`; 09 goals §6; 13 §3; implementation owned by P3-T012 (registry), P3-T056 (Accounts page)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

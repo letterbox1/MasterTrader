@@ -4,7 +4,7 @@ kind: gap
 title: FIRMS and ACLED keys (and OpenSanctions licence) not in any USER ToDo
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p4/P4-B008-event-source-keys-not-in-user-todos
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-0-foundations.md T0.10 vs docs/03-build-spec.md M3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,9 @@ Every keyed or licence-bound event source has a USER step: NASA FIRMS `MAP_KEY`,
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: FIRMS/ACLED keys + OpenSanctions licence are a USER task (17 §D)
+- [x] Docs carry it: roadmap T4.06 (USER) and T4.66 (live check after T0.10, T4.06); 03 M3 'FIRMS/ACLED keys and the OpenSanctions licence are a USER task'
+- [x] Implementation owned by P4-T005 (your keys/licence, mapped to T4.06) and P4-T067 (live check, new)
 
 ## Verification
 
@@ -67,8 +67,8 @@ Every keyed or licence-bound event source has a USER step: NASA FIRMS `MAP_KEY`,
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] Keyed event sources have a USER step (checked in docs/roadmap/phase-4-intel.md T4.06/T4.66 and 03 M3, 2026-10-22)
+- [x] Root cause noted: T0.10's key list missed the M3 event sources
 
 ## Exceptions & edge cases
 
@@ -92,3 +92,7 @@ Every keyed or licence-bound event source has a USER step: NASA FIRMS `MAP_KEY`,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P4-B008); docs checked: docs/roadmap/phase-4-intel.md T4.06 + T4.66, 03 M3; implementation owned by P4-T005, P4-T067; root cause: T0.10 key list didn't cover M3 sources
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P4-B008); docs updated: docs/roadmap/phase-4-intel.md T4.06 + T4.66, 03 M3; implementation owned by P4-T005, P4-T067
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

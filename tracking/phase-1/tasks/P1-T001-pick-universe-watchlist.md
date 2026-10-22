@@ -15,17 +15,22 @@ requirements: [R1.01, R1.04, R1.05, R1.06]
 roadmap_todos: [T1.01]
 modules: [M1]
 dashboards: [D02]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p1/P1-T001-pick-universe-watchlist
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T001 · Pick the starting universe and watchlist
@@ -43,7 +48,7 @@ You choose the instruments P1 records and monitors, written to `config/universe.
 
 ## Requirements
 
-- ~10 crypto pairs (e.g. BTC/ETH/SOL vs USDT on Binance), and for each one say whether it needs L2 recorded (L2 drives disk use, see phase 1 §7 risks)
+- ~10 crypto pairs (e.g. BTC/ETH/SOL vs USDT on Binance); mark `l2: true` only on the symbols whose bots will need order-book data. Native-speed L2 diffs are recorded only for those, **at most 3 by default** (`market.l2.max_native_symbols`, configurable); every other symbol gets 1 s book snapshots ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002, [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket))
 - FX and metal pairs available on OANDA practice and IG demo (e.g. EURUSD, AUDUSD, USDJPY, XAUUSD, XAGUSD); no LBMA
 - Up to 30 US ETFs/stocks (hard Alpaca IEX free limit); include the ETFs you would use as passive benchmarks
 - Daily futures you want visible (e.g. `GC=F`, `CL=F`) and the macro/rates series you care about (FRED IDs, RBA/ABS series, central banks)
@@ -52,7 +57,7 @@ You choose the instruments P1 records and monitors, written to `config/universe.
 ## ToDo
 
 - [ ] Read the default fixture universe in `config/universe.yaml` (created by P1-T005) and the per-class notes in 03 §6
-- [ ] Pick ~10 crypto pairs and mark which need L2 (`l2: true`)
+- [ ] Pick ~10 crypto pairs and mark at most 3 (default cap) as `l2: true` for native L2 diffs
 - [ ] Pick FX/metal pairs (OANDA + IG symbols) and up to 30 US ETFs/stocks
 - [ ] List daily futures and macro/rates series (FRED IDs, ECB/BoE/RBA series, ABS CPI is always included)
 - [ ] Commit the list (or hand it to the agent) and confirm the agent merged it
@@ -67,6 +72,7 @@ You choose the instruments P1 records and monitors, written to `config/universe.
 
 - Given the universe lists 31 US symbols, when validated, then it fails with "Alpaca IEX free limit is 30"
 - Given a crypto pair with `l2: true`, when the storage estimator runs (P1-T052), then its projected yearly bytes appear in D07 Storage
+- Given 4 symbols marked `l2: true` with the default cap of 3, when validated, then it fails and names the setting that raises the cap (a setting, not code)
 
 ### Stress / failure injection
 
@@ -75,7 +81,7 @@ You choose the instruments P1 records and monitors, written to `config/universe.
 ## Acceptance criteria
 
 - [ ] `config/universe.yaml` holds your list and validates
-- [ ] L2 symbols are marked explicitly, and the projected disk use stays inside ~0.3–1 TB/year (R1.N3)
+- [ ] Native-L2 symbols are marked explicitly (≤ 3 unless you raise the cap), and the projected disk use stays inside ~0.3–1 TB/year (R1.N3; re-measured in the soak, P1-T065)
 
 ## Exceptions & edge cases
 
@@ -86,7 +92,7 @@ You choose the instruments P1 records and monitors, written to `config/universe.
 
 - Do NOT include instruments that need paid data (e.g. CME real-time, LBMA fixes)
 - Do NOT exceed 30 Alpaca IEX symbols
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
 ## Doc sync on completion
@@ -103,3 +109,4 @@ You choose the instruments P1 records and monitors, written to `config/universe.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 native diffs only for ≤ 3 symbols by default, others 1 s snapshots (P1-B002); run fields)

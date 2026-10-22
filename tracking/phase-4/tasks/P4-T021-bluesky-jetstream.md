@@ -47,7 +47,7 @@ review_result: ""
 
 ## Requirements
 
-- Jetstream with `wantedCollections=app.bsky.feed.post`, zstd compression on, cursor persisted for resume (`ops.cursor`).
+- Jetstream with `wantedCollections=app.bsky.feed.post`, zstd compression on, cursor persisted for resume in a local state file on the `ingest-text` volume (scrape side has no DB route, 02 §3.1).
 - Local filter: case-insensitive keyword/cashtag match + language filter; drop replies/reposts by default (config).
 - Store post URI as canonical id; author DID; text; `untrusted=true`.
 - Throughput: handle full-firehose rate on one core (filter before decode where possible).
@@ -106,3 +106,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no longer waits for your keyword list (P4-T003): example watchlist, your list runs in P4-T060)
+- 2026-10-22 00:00 · aligner · cursor moved from `ops.cursor` to a local state file (scrape side has no DB route, 02 §3.1)

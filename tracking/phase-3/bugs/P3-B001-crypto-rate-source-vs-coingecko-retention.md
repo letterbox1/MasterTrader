@@ -4,7 +4,7 @@ kind: gap
 title: Crypto rate source undefined and CoinGecko retention conflicts with 7-year journal
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B001-crypto-rate-source-vs-coingecko-retention
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Architecture (FX & price service)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -51,10 +51,10 @@ The journal's crypto price source is a named, licence-compatible source whose va
 
 ## ToDo
 
-- [ ] Agree the venue preference list (AU venues first) and add it to 09 §Architecture
-- [ ] Add a sentence to 13 §3 that wallet-view prices are display-only
-- [ ] Update the affected task files (P3-T011, P3-T030, P3-T010) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §A P3-B001): crypto valuation hierarchy: fill price → VWAP of our recorded trades (AUD venue, else USD × RBA) → on-chain pool price → aggregators cross-check only; stored values are ours with method + source
+- [x] Owning docs carry it: 16 §4.1; 09 FX and valuation rules; 12 §4 CoinGecko row (display/cross-check only); 13 §3 (wallet view prices); 03 M18; roadmap R3.15
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T011 (valuation service), P3-T010
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -72,9 +72,9 @@ The journal's crypto price source is a named, licence-compatible source whose va
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (16 §4.1; 09 FX and valuation rules; 12 §4 CoinGecko row (display/cross-check only); 13 §3 (wallet view prices); 03 M18; roadmap R3.15)
+- [x] Affected tasks consistent with it (P3-T011 (valuation service), P3-T010)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,7 @@ The journal's crypto price source is a named, licence-compatible source whose va
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §A P3-B001: crypto valuation hierarchy: fill price → VWAP of our recorded trades (AUD venue, else USD × RBA) → on-chain pool price → aggregators cross-check only; stored values are ours with method + source. Docs now carry it: 16 §4.1; 09 FX and valuation rules; 12 §4 CoinGecko row (display/cross-check only); 13 §3 (wallet view prices); 03 M18; roadmap R3.15. Implementation owned by P3-T011 (valuation service), P3-T010. Root cause: 09 named no price source while CoinGecko terms forbid long-lived storage.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A P3-B001); docs updated: 16 §4.1; 09 FX and valuation rules; 12 §4 CoinGecko row (display/cross-check only); 13 §3 (wallet view prices); 03 M18; roadmap R3.15; implementation owned by P3-T011 (valuation service), P3-T010
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

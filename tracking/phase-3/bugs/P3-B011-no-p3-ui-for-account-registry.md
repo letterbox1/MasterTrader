@@ -4,7 +4,7 @@ kind: gap
 title: No P3 UI surface for registering and tagging accounts
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -17,13 +17,13 @@ modules: [M18]
 dashboards: []
 branch: p3/P3-B011-no-p3-ui-for-account-registry
 pr: ""
-doc_sync: [docs/roadmap/phase-3-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-3-journal-and-tax.md]
+doc_sync_status: done
 found_in: docs/roadmap/phase-3-journal-and-tax.md §4 (T3.04)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,10 @@ T3.04 can be done from a supported surface in P3.
 
 ## ToDo
 
-- [ ] Add a note to the P3 roadmap T3.04 line (main agent) or D15 spec
-- [ ] Update the affected task files (P3-T012, P3-T042) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B011/P3-B012): P3 adds a minimal Accounts page in D16 settings (`wallet.register`/`wallet.tag` C1, or a seed file through `mt_api`)
+- [x] Owning docs carry it: D16 Settings → Accounts (Phase 3) + backend contract; 09 goals §6; 04 Phase 3 checklist; roadmap R3.17/T3.33
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T056 (Accounts page), P3-T042 (your registration), P3-T012
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -70,9 +71,9 @@ T3.04 can be done from a supported surface in P3.
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (D16 Settings → Accounts (Phase 3) + backend contract; 09 goals §6; 04 Phase 3 checklist; roadmap R3.17/T3.33)
+- [x] Affected tasks consistent with it (P3-T056 (Accounts page), P3-T042 (your registration), P3-T012)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -99,3 +100,7 @@ T3.04 can be done from a supported surface in P3.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B011/P3-B012: P3 adds a minimal Accounts page in D16 settings (`wallet.register`/`wallet.tag` C1, or a seed file through `mt_api`). Docs now carry it: D16 Settings → Accounts (Phase 3) + backend contract; 09 goals §6; 04 Phase 3 checklist; roadmap R3.17/T3.33. Implementation owned by P3-T056 (Accounts page), P3-T042 (your registration), P3-T012. Root cause: the USER registration task had no UI in P3.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B011/P3-B012); docs updated: D16 Settings → Accounts (Phase 3) + backend contract; 09 goals §6; 04 Phase 3 checklist; roadmap R3.17/T3.33; implementation owned by P3-T056 (Accounts page), P3-T042 (your registration), P3-T012
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

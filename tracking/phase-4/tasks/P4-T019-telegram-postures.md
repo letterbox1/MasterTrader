@@ -104,7 +104,7 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 
 ## Doc sync on completion
 
-- `docs/02-v1-architecture.md`: §6: add `posture.tg.{subject}` and KV `tg_posture`; §4 M2 row
+- `docs/02-v1-architecture.md`: §6 already lists `posture.telegram.{subject}`; add `text.telegram_mention` to §4/§5.2 and the `intel-writer` consumer
 - `docs/12-policy-and-compliance.md`: §4: name the posture fields and the consumer allow-list
 - `docs/roadmap/phase-4-intel.md`: tick T4.21 when all items mapped to it are done
 

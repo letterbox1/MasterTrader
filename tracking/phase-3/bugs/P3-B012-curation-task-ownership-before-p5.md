@@ -4,7 +4,7 @@ kind: gap
 title: TAX_QUESTION storage needs curation.task before M19 lands in P5
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B012-curation-task-ownership-before-p5
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-3-journal-and-tax.md §4 (T3.30)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,10 @@ Clear ownership of the `curation.task` DDL: P3 creates a minimal additive table,
 
 ## ToDo
 
-- [ ] Add boundary note to 03 M19 (and P5 roadmap via main agent)
-- [ ] Update the affected task files (P3-T038) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B011/P3-B012): P3 adds a minimal `curation.task` table for `TAX_QUESTION` tasks; P5 (M19) extends it additively
+- [x] Owning docs carry it: 03 M19 Storage; 03 §4 `curation`; 02 §4 M19 row; 04 Phase 3 checklist; roadmap R3.18
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T038 (minimal table + seed)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -69,9 +70,9 @@ Clear ownership of the `curation.task` DDL: P3 creates a minimal additive table,
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (03 M19 Storage; 03 §4 `curation`; 02 §4 M19 row; 04 Phase 3 checklist; roadmap R3.18)
+- [x] Affected tasks consistent with it (P3-T038 (minimal table + seed))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -98,3 +99,7 @@ Clear ownership of the `curation.task` DDL: P3 creates a minimal additive table,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B011/P3-B012: P3 adds a minimal `curation.task` table for `TAX_QUESTION` tasks; P5 (M19) extends it additively. Docs now carry it: 03 M19 Storage; 03 §4 `curation`; 02 §4 M19 row; 04 Phase 3 checklist; roadmap R3.18. Implementation owned by P3-T038 (minimal table + seed). Root cause: no owner for `curation.task` DDL before P5.
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B011/P3-B012); docs updated: 03 M19 Storage; 03 §4 `curation`; 02 §4 M19 row; 04 Phase 3 checklist; roadmap R3.18; implementation owned by P3-T038 (minimal table + seed)
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

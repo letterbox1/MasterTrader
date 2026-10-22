@@ -10,48 +10,54 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T019]
+depends_on: [P5-T019, P5-T012]
 requirements: [R5.04]
 roadmap_todos: [T5.21]
 modules: [M22, M16, M11]
 dashboards: [D18, D12]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p5/P5-T020-costgate-policies-budgets
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T020 · On-chain cost gate: gas windows, budgets and allow/wait/reject verdicts
 
 ## Goal / expected outcome
 
-`gate(action) → allow | wait | reject` applies the policies (benefit must exceed all-in cost by a margin; gas window below the 7-day 30th-percentile base fee unless the deadline is < 48 h; per-module daily gas budgets with weekly-breach alerts) and logs every verdict with its numbers; the signer refuses any intent without an `allow` verdict.
+`gate(action) → allow | wait | reject` applies the policies (benefit must exceed all-in cost by a margin; gas window below the 7-day 30th-percentile base fee unless the deadline is < 48 h; per-module daily gas budgets (alert at 80%, stop at 100%)) and logs every verdict with its numbers; the signer refuses any intent without an `allow` verdict.
 
 ## Context & references
 
 - Roadmap: [R5.04](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.21 · D18 cost-gate widget ([D18](../../../docs/ui/dashboards/D18-wallets-treasury.md))
 - [13 §7 policies](../../../docs/13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16)
-- Budget numbers gap → P5-B001
+- Defaults ([16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13); decision P5-B001): margin 2× all-in cost; gas window = base fee below its 7-day 30th percentile unless the deadline is < 48 h; daily gas budgets airdrops A$20/day and DEX trading A$50/day, alert at 80%, stop at 100%. All read from the limits store (P5-T012), none hard-coded
+- Library: `mt_onchain.costgate` (decision P5-B002)
 
 ## Requirements
 
 - Inputs: action type, expected benefit (claim value at current price × (1 − haircut), or EV from P5-T040), deadline, module (`airdrop`, `sweep`, `revoke`, later `treasury`).
-- Rule: allow iff benefit − cost ≥ margin (config, default 2× cost for claims) and budget available and (base fee ≤ 7-day p30 or deadline < 48 h); wait if only the window fails; reject otherwise.
-- Defensive actions (revoke flagged approval, kill-switch sweep) bypass the benefit test and the window, but are still logged and budget-counted.
-- Daily gas budget per module; alert on weekly breach; budget usage in `ops.gas_budget_usage`.
+- Rule: allow iff benefit ≥ margin × all-in cost (margin default 2×, configurable) and budget available and (base fee ≤ 7-day p30 or deadline < 48 h); wait if only the window fails; reject otherwise.
+- Defensive actions (revoke flagged approval, kill-switch sweep to the vault) bypass the benefit test, the window and the 100% budget stop (protective actions never wait), but are still logged and budget-counted.
+- Daily gas budget per module (defaults airdrops A$20/day, DEX trading A$50/day): alert at 80%, `reject` (`budget_exhausted`) at 100%; usage in `ops.gas_budget_usage`.
 - `wait` verdicts re-evaluated every 15 min until deadline − 48 h, then window ignored.
 - API: `POST /treasury/costgate/preview` (C0) and `/wallets/costgate/quotes` for D18.
 
 ## ToDo
 
-- [ ] Implement `costgate/policy.py`, `budget.py` and the re-evaluation scheduler (Prefect or service loop).
+- [ ] Implement `packages/mt_onchain/costgate/policy.py`, `budget.py` and the re-evaluation scheduler (Prefect or service loop).
 - [ ] Persist verdicts with inputs; publish `costgate.quote`.
 - [ ] Signer integration: intent carries quote id; signer verifies verdict = allow and freshness ≤ 60 s.
 - [ ] Endpoints + tests; doc sync.
@@ -84,7 +90,7 @@ checkpoint: ""
 ## Cardinal rules (do NOT)
 
 - Do NOT let defensive bypasses apply to anything except revoke and sweep-to-vault intents.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -101,3 +107,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (margin, gas window and gas budgets as 16 §2.7 defaults from the limits store; 80% alert / 100% stop; `mt_onchain.costgate`)

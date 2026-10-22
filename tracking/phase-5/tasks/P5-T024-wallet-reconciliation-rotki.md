@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T023]
+depends_on: [P5-T023, P3-T034]
 requirements: [R5.05]
 roadmap_todos: [T5.22]
 modules: [M22, M18, M16]
 dashboards: [D18, D07]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [postgres, rotki]
 branch: p5/P5-T024-wallet-reconciliation-rotki
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/09-journal-and-tax.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T024 · Wallet reconciliation: daily vs journal, monthly vs rotki
@@ -42,9 +47,9 @@ A daily Prefect flow reconciles every registered wallet's indexed balance with t
 
 ## Requirements
 
-- Daily (after 00:30 AEST): per wallet per asset, `indexed − journal` within tolerance (dust ≤ 1e-9 native or ≤ A$0.01) else a break with candidate explanations (missing classification, pending reorg, unpriced token).
+- Daily (after 00:30 AEST): per wallet per asset, `indexed − journal` within the [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation) tolerance (default: balances within 0.01% or dust; configurable) else a break with candidate explanations (missing classification, pending reorg, unpriced token).
 - Monthly: rotki sidecar (pinned digest, internal network, no telemetry) fed with registered addresses; diff its balances/events against ours; report.
-- Breaks published as `alert.warning.recon_wallet`; unexplained > 24 h escalates to critical (aligns with P7 R7.06 "unexplained recon mismatch > 24 h halts everything").
+- Breaks published as `alert.warning.recon_wallet`; unexplained > 24 h escalates to critical (16 §2.9: not matched to a known journal event within 24 h = unexplained; the halt-everything kill criterion applies from P7 live).
 - Recon report downloadable (CSV) and linked from D18.
 
 ## ToDo
@@ -99,3 +104,4 @@ A daily Prefect flow reconciles every registered wallet's indexed balance with t
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (recon tolerance and 24 h explained rule per 16 §2.9; P3 recon dep)

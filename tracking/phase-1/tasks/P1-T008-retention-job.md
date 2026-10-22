@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T007]
+depends_on: [P1-T007, P0-T027]
 requirements: [R1.09]
 roadmap_todos: [T1.26]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T008-retention-job
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compliance.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T008 · Enforce retention_days with a scheduled retention job
@@ -40,10 +45,11 @@ A Prefect flow deletes rows and Parquet files whose age exceeds their `retention
 - Policy: [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (retention jobs enforce `retention_days`, e.g. CoinGecko ≤ 1 day) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (CoinGecko: cache ≤ 24 h, encrypted, deleted on exit)
 - WORM scope (never deleted): [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - Depends on (this phase): P1-T007
+- Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
 
 ## Requirements
 
-- Flow `mt_data.flows.retention` runs hourly; for each ingest table with provenance it deletes rows where `ingest_time < now() - retention_days`
+- Flow `mt_data.flows.retention` runs hourly (default, configurable); for each ingest table with provenance it deletes rows where `ingest_time < now() - retention_days`
 - Parquet: files whose metadata `retention_days` has expired are deleted from hot and cold tiers
 - Writes a summary row per run to `ops.retention_run` (table, rows deleted, oldest kept) and a metric `mt_retention_deleted_total`
 - Hard allow-list of tables it may touch; any `audit.*`, `journal.*`, `risk.change` table in scope → refuse to run and alert
@@ -106,3 +112,4 @@ A Prefect flow deletes rows and Parquet files whose age exceeds their `retention
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (hourly as configurable default; P0 dep on catalog helpers)

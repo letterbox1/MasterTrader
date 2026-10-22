@@ -15,17 +15,22 @@ requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T026-commodities-eia-usda-cot-baker-hughes
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T026 · Ingest EIA, USDA, CFTC COT and Baker Hughes data
@@ -38,13 +43,13 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Futures/commodities: EIA, USDA, CFTC COT, Baker Hughes) · [06 §3 Reports, nowcasts & forecasts](../../../docs/06-aggregators-and-market-providers.md#reports-nowcasts--forecasts-m6-features-m5-release-events)
-- EIA key from sops (P0 T0.10)
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): EIA is built keyless against fixtures (live with your EIA key from P0-T010 in P1-T073); CFTC COT, Baker Hughes and USDA WASDE files are keyless and run live here. USDA QuickStats needs a free key that no USER task provides yet (gap P1-B019): it ships disabled with the reason until decided
 - Depends on (this phase): P1-T024
 
 ## Requirements
 
 - EIA API v2 series (crude stocks, production) with release timestamps as `event_time`
-- USDA QuickStats API and WASDE report tables (monthly)
+- USDA WASDE report tables (monthly, keyless); QuickStats API behind `USDA_QUICKSTATS_API_KEY`, disabled until P1-B019 is decided
 - CFTC COT (legacy + disaggregated futures-only) weekly files; `event_time` = Friday 15:30 ET release, not the Tuesday as-of date (store both)
 - Baker Hughes weekly rig count file (official download)
 - Same macro table schema; provenance from 06
@@ -72,7 +77,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 ## Acceptance criteria
 
-- [ ] All four sources loaded with history and running on schedule; COT pit test passes
+- [ ] COT, Baker Hughes and WASDE loaded live with history and on schedule; EIA proven on fixtures (live in P1-T073); QuickStats enabled or disabled-with-reason per P1-B019; COT pit test passes
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -81,7 +86,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
@@ -100,3 +105,4 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, EIA live in P1-T073; USDA QuickStats key gap P1-B019)

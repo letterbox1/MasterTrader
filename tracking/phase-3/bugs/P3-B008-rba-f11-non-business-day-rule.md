@@ -4,7 +4,7 @@ kind: gap
 title: No rule for RBA F11 rates on weekends, holidays or currencies not in F11
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B008-rba-f11-non-business-day-rule
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Goals (item 5)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,10 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Add the rule to 09
-- [ ] Update the affected task files (P3-T010) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B008): RBA F11 gaps use the last published business day (flagged); currencies not in F11 go via USD (RBA AUD/USD × ECB/Frankfurter)
+- [x] Owning docs carry it: 09 FX and valuation rules; 16 §4.3 FX for tax; roadmap R3.03
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T010 (FX service)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -69,9 +70,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (09 FX and valuation rules; 16 §4.3 FX for tax; roadmap R3.03)
+- [x] Affected tasks consistent with it (P3-T010 (FX service))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -98,3 +99,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B008: RBA F11 gaps use the last published business day (flagged); currencies not in F11 go via USD (RBA AUD/USD × ECB/Frankfurter). Docs now carry it: 09 FX and valuation rules; 16 §4.3 FX for tax; roadmap R3.03. Implementation owned by P3-T010 (FX service). Root cause: 09 had no rule for non-publication days or non-F11 currencies.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B008); docs updated: 09 FX and valuation rules; 16 §4.3 FX for tax; roadmap R3.03; implementation owned by P3-T010 (FX service)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

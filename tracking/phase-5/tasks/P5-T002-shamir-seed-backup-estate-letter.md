@@ -15,17 +15,22 @@ requirements: [R5.01]
 roadmap_todos: [T5.02]
 modules: [M22]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p5/P5-T002-shamir-seed-backup-estate-letter
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T002 · Back up the vault seed with Shamir (SLIP-39) and write the sealed estate letter
@@ -101,3 +106,4 @@ The vault seed is recoverable but never stored whole: split into **Shamir (SLIP-
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields added; content already matches 07 §4)

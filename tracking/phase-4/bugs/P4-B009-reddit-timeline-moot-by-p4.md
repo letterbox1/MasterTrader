@@ -4,7 +4,7 @@ kind: gap
 title: Reddit timeline makes T4.05 likely moot by Phase 4; no connector ToDo if 'yes'
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -18,12 +18,12 @@ dashboards: [D08]
 branch: p4/P4-B009-reddit-timeline-moot-by-p4
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-4-intel.md T4.05 vs docs/06-aggregators-and-market-providers.md §0
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,9 @@ T4.05 states the sunset context and what happens on 'yes' (an optional connector
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: Reddit stays optional (17 §D)
+- [x] Docs carry it: roadmap T4.05 ('if it wasn't granted by the 2026-10-31 deadline, Reddit stays out and needs no build ToDo') and scope 'Out'; 06 §0 sunset timeline and 06 §2 Deferred row ('a connector is an optional item, and not worth building once the public Data API closes')
+- [x] Implementation owned by P4-T004 (your yes/no record); no build task unless access was granted
 
 ## Verification
 
@@ -66,8 +66,8 @@ T4.05 states the sunset context and what happens on 'yes' (an optional connector
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] T4.05 states the deadline and what 'yes' means (checked in docs/roadmap/phase-4-intel.md T4.05 and 06 §0/§2, 2026-10-22)
+- [x] Root cause noted: T4.05 was written before the Reddit sunset timeline was known
 
 ## Exceptions & edge cases
 
@@ -91,3 +91,7 @@ T4.05 states the sunset context and what happens on 'yes' (an optional connector
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P4-B009); docs checked: docs/roadmap/phase-4-intel.md T4.05 + §1 Out, 06 §0 and §2 Deferred row; implementation owned by P4-T004; root cause: T4.05 predated the sunset timeline
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P4-B009); docs updated: docs/roadmap/phase-4-intel.md T4.05 + §1 Out, 06 §0 and §2 Deferred row; implementation owned by P4-T004
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

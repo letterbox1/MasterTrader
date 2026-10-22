@@ -15,17 +15,22 @@ requirements: [R1.03]
 roadmap_todos: [T1.22]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T015-backfill-binance-vision
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T015 · Backfill crypto history from data.binance.vision
@@ -44,7 +49,7 @@ A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe 
 ## Requirements
 
 - Download monthly then daily ZIPs per (symbol, type), verify the `.CHECKSUM` (SHA-256) before use
-- Write trades/aggTrades to the catalog (`source=binance_vision`) and 1s klines to `market.bar_1s` with `bar_source=vendor_kline`; never overwrite live-recorded bars, store side by side and flag overlaps for P1-T058
+- Write trades/aggTrades to the catalog (`source=binance_vision`) and 1s klines to `market.bar_1s_vendor` (`bar_source=vendor_kline`), never into the live `market.bar_1s` that feeds the aggregates; overlaps are compared in P1-T058
 - Resumable: a manifest table `ops.backfill_job` (job, symbol, type, date, status, sha256) so restarts skip done files
 - Polite download rate through the quota tracker; run as `data.backfill.run` job kind `backfill`
 - Report: per symbol/type, date range covered, missing days, row counts, checksum failures → stored and shown in D07 Storage
@@ -104,3 +109,4 @@ A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (vendor klines in market.bar_1s_vendor so aggregates stay pure; keyless public source)

@@ -10,35 +10,41 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T017, P2-T031, P2-T047]
+depends_on: [P2-T017, P2-T031, P2-T047, P2-T070]
 requirements: [R2.N1]
 roadmap_todos: [T2.66]
 modules: [M11]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T058-verify-latency-risk-kill
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T058 · Latency benchmarks: pre-trade risk check and kill-to-cancels
 
 ## Goal / expected outcome
 
-Reproducible benchmarks on the host show pre-trade risk check p99 < 1 ms and kill → all cancels sent < 1 s, with CI regression guards; tier-A and signal→order benchmarks are Part B's share of T2.66.
+Reproducible benchmarks on the host show pre-trade risk check p99 < 1 ms and kill → all cancels sent < 1 s, with CI regression guards; tier-A and signal→order benchmarks are P2-T162's share of T2.66.
 
 ## Context & references
 
 - Roadmap: [R2.N1](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.66 (risk + kill part)
 - SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos)
-- Part B: tier A p99 < 50 µs, signal → order p99 < 5 ms.
+- P2-T162: tier A p99 < 50 µs, signal → order p99 < 5 ms.
+- The pre-trade check includes the inline safety-state checks (P2-T070) and the layer merge (P2-T069) in the measured path.
 
 ## Requirements
 
@@ -93,3 +99,4 @@ Reproducible benchmarks on the host show pre-trade risk check p99 < 1 ms and kil
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (benchmark includes safety-state checks and layer merge; Part B links)

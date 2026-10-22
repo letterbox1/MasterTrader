@@ -15,37 +15,42 @@ requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T027-abs-cpi-flow
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/09-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T027 · Ingest ABS CPI for tax indexation
 
 ## Goal / expected outcome
 
-ABS CPI series (quarterly All Groups, weighted average of eight capital cities, and the monthly CPI) load point-in-time with every release, ready for the AU_2027_REFORM indexation in P3.
+The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of eight capital cities, quarterly, series A2325846C (U); the ID is verified in P1-T056) loads point-in-time with every release, ready for the AU_2027_REFORM indexation in P3; the monthly CPI indicator is loaded for display only.
 
 ## Context & references
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (ABS CPI, needed for the 2027 tax indexation) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) · consumer [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Gap: which CPI series the indexation uses is not specified (P1-B016)
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B016 (All groups CPI, eight-capital weighted average, A2325846C (U)); [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (other ABS CPI series are display-only); the series ID check is P1-T056 (T1.60); the as-of rule is a tax-agent question ([09](../../../docs/09-journal-and-tax.md), question 9)
 - Depends on (this phase): P1-T024
 
 ## Requirements
 
 - ABS Data API (SDMX) via `sdmx1` (ABS provider) or the ABS SDMX REST endpoint; dataflow for CPI
 - Store each release as a vintage (`event_time` = ABS release timestamp, 11:30 am Canberra time); revisions add rows
-- Load both quarterly and monthly CPI index series until P3 confirms which one indexation uses
+- Primary series `A2325846C`, set in `config/universe.yaml` `macro.abs_cpi_series` (a corrected ID is a config change, not code) and flagged `tax_input=true`; the monthly CPI indicator is loaded with `tax_input=false` (display only)
 - Provenance `source=abs`, `licence=CC BY 4.0`, `commercial_ok=true`
 
 ## ToDo
@@ -72,7 +77,7 @@ ABS CPI series (quarterly All Groups, weighted average of eight capital cities, 
 
 ## Acceptance criteria
 
-- [ ] Quarterly and monthly CPI history loaded with vintages; release check running
+- [ ] A2325846C history (or the corrected ID from P1-T056) loaded with vintages; monthly indicator loaded as display-only; release check running
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -81,7 +86,7 @@ ABS CPI series (quarterly All Groups, weighted average of eight capital cities, 
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
@@ -100,3 +105,4 @@ ABS CPI series (quarterly All Groups, weighted average of eight capital cities, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (ABS CPI series A2325846C (U) per P1-B016 decision; monthly display-only)

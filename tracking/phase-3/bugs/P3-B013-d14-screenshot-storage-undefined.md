@@ -4,7 +4,7 @@ kind: gap
 title: D14 screenshot attachments have no storage or command defined
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B013-d14-screenshot-storage-undefined
 pr: ""
 doc_sync: [docs/ui/dashboards/D14-journal.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D14-journal.md §Actions
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,10 @@ Screenshots attached to trades have a defined storage location, size limit and c
 
 ## ToDo
 
-- [ ] Update D14 Actions
-- [ ] Update the affected task files (P3-T039, P3-T040) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B013/B014/B016): attachments are stored content-addressed under `data/attachments/` and referenced by hash in the WORM note row
+- [x] Owning docs carry it: D14 actions; 02 §7.2 `journal.note.add`; 09 Commands; roadmap R3.13
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T039 (API), P3-T040 (D14), P3-T005 (`journal.note` hash column), P3-T009 (mount)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -69,9 +70,9 @@ Screenshots attached to trades have a defined storage location, size limit and c
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (D14 actions; 02 §7.2 `journal.note.add`; 09 Commands; roadmap R3.13)
+- [x] Affected tasks consistent with it (P3-T039 (API), P3-T040 (D14), P3-T005 (`journal.note` hash column), P3-T009 (mount))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -98,3 +99,7 @@ Screenshots attached to trades have a defined storage location, size limit and c
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B013/B014/B016: attachments are stored content-addressed under `data/attachments/` and referenced by hash in the WORM note row. Docs now carry it: D14 actions; 02 §7.2 `journal.note.add`; 09 Commands; roadmap R3.13. Implementation owned by P3-T039 (API), P3-T040 (D14), P3-T005 (`journal.note` hash column), P3-T009 (mount). Root cause: D14 screenshots had no storage rule.
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B013/B014/B016); docs updated: D14 actions; 02 §7.2 `journal.note.add`; 09 Commands; roadmap R3.13; implementation owned by P3-T039 (API), P3-T040 (D14), P3-T005 (`journal.note` hash column), P3-T009 (mount)
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

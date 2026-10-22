@@ -96,7 +96,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 ## Doc sync on completion
 
-- `docs/06-aggregators-and-market-providers.md`: §3 open checks: add the YouTube check and its result
+- `docs/06-aggregators-and-market-providers.md`: §2: StockTwits flag state (the YouTube result is recorded by P4-T066)
 - `docs/roadmap/phase-4-intel.md`: tick T4.22 when all items mapped to it are done
 
 ## Branch & PR

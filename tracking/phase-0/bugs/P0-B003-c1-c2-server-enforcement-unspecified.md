@@ -4,7 +4,7 @@ kind: gap
 title: Server-side enforcement of C1/C2 confirmations is unspecified
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R0.08]
 roadmap_todos: [T0.24]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B003-c1-c2-server-enforcement-unspecified
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/README.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7.2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B003 · Server-side enforcement of C1/C2 confirmations is unspecified
@@ -51,10 +56,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B003 (ratified in 17 §E)
+- [x] Docs updated so they agree: 02 §7.2 (preview call, `confirm_token`, 428, C1/C2 server checks); ui README §3.3 (server enforcement) and §3.6 (12 h re-auth); roadmap P0 R0.08/T0.24/T0.62
+- [x] Affected P0 task files reference the resolution: P0-T033, P0-T035, P0-T048, P0-T054, P0-T058
+- [x] Regression check owned: P0-T054 C1/C2 negative cases
 
 ## Verification
 
@@ -69,9 +74,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B003 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T035 (token + preview hash + re-auth checks), P0-T033 (`/auth/reauth`), P0-T054 (tests)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -96,3 +101,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B003; docs checked: 02 §7.2 (preview call, `confirm_token`, 428, C1/C2 server checks); ui README §3.3 (server enforcement) and §3.6 (12 h re-auth); roadmap P0 R0.08/T0.24/T0.62. Root cause: 02 §7.2 stated server-side enforcement without a request field or endpoint to carry it. Implementation owned by P0-T035 (token + preview hash + re-auth checks), P0-T033 (`/auth/reauth`), P0-T054 (tests).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B003); docs updated: 02 §7.2 (preview call, `confirm_token`, 428, C1/C2 server checks); ui README §3.3 (server enforcement) and §3.6 (12 h re-auth); roadmap P0 R0.08/T0.24/T0.62; implementation owned by P0-T035 (token + preview hash + re-auth checks), P0-T033 (`/auth/reauth`), P0-T054 (tests)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: Roadmap USER list lacks obtaining LLM API credentials
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R0.09]
 roadmap_todos: [T0.45]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B009-llm-credentials-user-action-missing
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-0-foundations.md §4 A
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B009 · Roadmap USER list lacks obtaining LLM API credentials
@@ -49,10 +54,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B009 (ratified in 17 §E)
+- [x] Docs updated so they agree: roadmap P0 §4 A: USER ToDo T0.13 (Anthropic + custom-endpoint keys into the secrets file); roadmap README user-action register; 07 §2 'What goes in it'
+- [x] Affected P0 task files reference the resolution: P0-T007, P0-T042, P0-T068
+- [x] Regression check owned: P0-T068 depends on P0-T007
 
 ## Verification
 
@@ -67,9 +72,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B009 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T007 (USER), P0-T068 (live smoke)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +98,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B009; docs checked: roadmap P0 §4 A: USER ToDo T0.13 (Anthropic + custom-endpoint keys into the secrets file); roadmap README user-action register; 07 §2 'What goes in it'. Root cause: the USER list covered data keys but not LLM keys. Implementation owned by P0-T007 (USER), P0-T068 (live smoke).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B009); docs updated: roadmap P0 §4 A: USER ToDo T0.13 (Anthropic + custom-endpoint keys into the secrets file); roadmap README user-action register; 07 §2 'What goes in it'; implementation owned by P0-T007 (USER), P0-T068 (live smoke)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

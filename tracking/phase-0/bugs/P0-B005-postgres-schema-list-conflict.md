@@ -4,7 +4,7 @@ kind: gap
 title: Postgres schema lists disagree across docs
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R0.03]
 roadmap_todos: [T0.22]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B005-postgres-schema-list-conflict
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-0-foundations.md R0.03 vs docs/02-v1-architecture.md §5.1
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B005 · Postgres schema lists disagree across docs
@@ -51,10 +56,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §B P0-B005 (ratified in 17 §E)
+- [x] Docs updated so they agree: 03 §4 (13 schemas, all in P0) and §3 (`mt_store` comment); 02 §5.1 Stores row; 04 Phase 0; roadmap P0 R0.03
+- [x] Affected P0 task files reference the resolution: P0-T024
+- [x] Regression check owned: P0-T024 migration test (all 13 schemas exist)
 
 ## Verification
 
@@ -69,9 +74,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §B P0-B005 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T024
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -96,3 +101,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §B P0-B005; docs checked: 03 §4 (13 schemas, all in P0) and §3 (`mt_store` comment); 02 §5.1 Stores row; 04 Phase 0; roadmap P0 R0.03. Root cause: schemas were added per module in different docs without one canonical list. Implementation owned by P0-T024.
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P0-B005); docs updated: 03 §4 (13 schemas, all in P0) and §3 (`mt_store` comment); 02 §5.1 Stores row; 04 Phase 0; roadmap P0 R0.03; implementation owned by P0-T024
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

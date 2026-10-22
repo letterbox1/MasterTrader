@@ -4,7 +4,7 @@ kind: gap
 title: 02 F3 lists Telegram as an input to the text → decision-model chain
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -18,12 +18,12 @@ dashboards: []
 branch: p4/P4-B001-f3-lists-telegram-as-model-input
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §8 F3 (also §3.2 ingest-text row)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,9 @@ Flow F3 makes clear that Telegram never enters the nlp/decision-model chain: Tel
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: 02 F3 split; Telegram → regex extractor → postures → code/policy only; every other source → model chain (17 §A P4-B001)
+- [x] Docs carry it: 02 §8 F3 ('every source except Telegram', provenance gate first) and new F3b 'Telegram → postures'; 02 §3.2 ingest-text row 'Telegram: postures only'; 12 §4–5
+- [x] Implementation owned by tasks P4-T025 (gate, nlp never subscribes to Telegram), P4-T019 (F3b postures), P4-T050 (gate test)
 
 ## Verification
 
@@ -67,8 +67,8 @@ Flow F3 makes clear that Telegram never enters the nlp/decision-model chain: Tel
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] 02 F3 no longer lists Telegram as a model-chain input; F3b exists (checked in 02 §8, 2026-10-22)
+- [x] Root cause noted: F3 was written before the postures-only rule was applied to the flow list
 
 ## Exceptions & edge cases
 
@@ -92,3 +92,7 @@ Flow F3 makes clear that Telegram never enters the nlp/decision-model chain: Tel
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §A (P4-B001); docs checked: 02 §8 F3 + F3b, 02 §3.2 ingest-text row, 12 §4–5; implementation owned by P4-T025, P4-T019, P4-T050, P4-T057; root cause: F3 predated the postures-only rule in 12 §4
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §A (P4-B001); docs updated: 02 §8 F3 + new F3b, 02 §3.2 ingest-text row, 12 §4-5; implementation owned by P4-T025, P4-T019, P4-T050, P4-T057
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

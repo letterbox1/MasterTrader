@@ -12,20 +12,25 @@ owner: agent
 claimed_by: ""
 depends_on: [P1-T005, P1-T007]
 requirements: [R1.05, R1.15]
-roadmap_todos: [T1.22, T1.32]
+roadmap_todos: [T1.34, T1.32]
 modules: [M1]
 dashboards: [D02]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p1/P1-T009-instrument-master-and-calendars
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T009 · Build the instrument master with sessions and finest resolution
@@ -36,17 +41,17 @@ checkpoint: ""
 
 ## Context & references
 
-- Roadmap: requirements [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.22](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.32](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
+- Roadmap: requirements [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.34](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.32](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (FinanceDatabase as symbol master) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (finest free timeframe per class; "the UI shows each instrument's finest available resolution")
 - UI: [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) header "min resolution" and timeframe picker disabling unsupported resolutions with a reason
-- Gap: R1.05's FinanceDatabase/`exchange_calendars` have no roadmap ToDo (P1-B003)
+- Roadmap ToDo T1.34 now names FinanceDatabase and `exchange_calendars` (gap P1-B003 closed)
 - Depends on (this phase): P1-T005, P1-T007
 
 ## Requirements
 
 - Instrument IDs use Nautilus `InstrumentId` (`BTCUSDT.BINANCE`); precision, tick size, lot size from venue metadata (Nautilus instrument providers / ccxt `load_markets`)
 - FinanceDatabase (MIT) for equities/ETFs classification (sector, asset class, exchange) refreshed weekly
-- Sessions: `exchange_calendars` for equities (XNYS/XNAS), FX weekly session (Sun 22:00 → Fri 22:00 UTC, broker-specific), crypto 24/7; stored as `session_calendar` reference used by the stale check (P1-T031)
+- Sessions: `exchange_calendars` for equities (XNYS/XNAS), FX weekly session (Sun 22:00 → Fri 22:00 UTC, broker-specific), crypto 24/7; stored as `session_calendar` reference used by the stale check (P1-T031): closed sessions are `closed`, never `stale` ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means))
 - Resolution metadata per instrument: `rt_finest` (tick|l2_100ms|quote_4hz|iex_trade|daily|none) and `hist_finest` (trade|1s|tick|1m|daily) with a reason string (e.g. "US stocks: IEX only; no tick L2")
 - Exposed via `/markets/instruments` and `/markets/instruments/{id}` (P1-T046)
 
@@ -94,7 +99,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/roadmap/phase-1-data-and-monitoring.md`: tick T1.22, T1.32 once every task traced to it in PHASE.md is done; note P1-T009 next to it.
+- `docs/roadmap/phase-1-data-and-monitoring.md`: tick T1.34, T1.32 once every task traced to it in PHASE.md is done; note P1-T009 next to it.
 - `docs/03-build-spec.md` §6: link the resolution metadata fields that implement this table
 
 ## Branch & PR
@@ -106,3 +111,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (traced to new T1.34 (P1-B003 closed); closed sessions are `closed`)

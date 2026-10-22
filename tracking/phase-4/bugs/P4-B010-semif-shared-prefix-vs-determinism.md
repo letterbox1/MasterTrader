@@ -4,7 +4,7 @@ kind: gap
 title: SemIf 'shared-prefix mode' conflicts with 'prefix caching off'; no stage-1 latency target
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -18,12 +18,12 @@ dashboards: [D10]
 branch: p4/P4-B010-semif-shared-prefix-vs-determinism
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/10-memory-rag-and-models.md §4.3 (Stage 1 vs Determinism controls); docs/02-v1-architecture.md §9.2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: decision path = prefix caching off + fixed batch; shared-prefix mode only for offline/backfill scoring, marked non-deterministic, never used for decisions or backtests; stage-1 gate p95 ≤ 300 ms GPU / ≤ 3 s CPU, queued, never on the order path (17 §A)
+- [x] Docs carry it: 10 §4.3 stage 1 (prefix caching, shared-prefix, latency target) and determinism controls; 02 §3.2 decision-svc row; 02 §9.2 'Stage-1 relevance gate (nlp)' SLO row; roadmap R4.12, R4.N2, T4.67
+- [x] Implementation owned by P4-T009 (serving profiles), P4-T029 (readout, offline mode tagging), P4-T030 (queued gate), P4-T053 (flip rate), P4-T069 (latency benchmark, new)
 
 ## Verification
 
@@ -67,8 +67,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] Determinism vs throughput and the stage-1 latency target are documented (checked in 10 §4.3 and 02 §9.2, 2026-10-22)
+- [x] Root cause noted: 10 §4.3 copied SemIf's shared-prefix trick without reconciling it with the determinism rule
 
 ## Exceptions & edge cases
 
@@ -93,3 +93,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §A (P4-B010); docs checked: 10 §4.3 (stage 1 + determinism controls), 02 §3.2 decision-svc row, 02 §9.2 stage-1 SLO row, roadmap R4.12/R4.N2/T4.67; implementation owned by P4-T009, P4-T029, P4-T030, P4-T053, P4-T069; root cause: research note's shared-prefix mode conflicted with the determinism rule
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §A (P4-B010); docs updated: 10 §4.3 stage 1 + determinism controls, 02 §3.2 decision-svc row, 02 §9.2 stage-1 SLO row, roadmap R4.12/R4.N2/T4.67; implementation owned by P4-T009, P4-T029, P4-T030, P4-T053, P4-T069
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

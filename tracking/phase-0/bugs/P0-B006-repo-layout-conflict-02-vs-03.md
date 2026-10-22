@@ -4,7 +4,7 @@ kind: gap
 title: Repository layout conflicts between 02 §11 and 03 §3
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R0.01]
 roadmap_todos: [T0.20]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B006-repo-layout-conflict-02-vs-03
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md §3 vs docs/02-v1-architecture.md §11
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B006 · Repository layout conflicts between 02 §11 and 03 §3
@@ -52,10 +57,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §B P0-B006 (ratified in 17 §E)
+- [x] Docs updated so they agree: 03 §3 (canonical layout with `apps/web/`, `infra/`, `migrations/`, `mt_ui` = Telegram bot); 02 §11 now points to 03 §3
+- [x] Affected P0 task files reference the resolution: P0-T014, P0-T047
+- [x] Regression check owned: P0-T014 skeleton follows 03 §3
 
 ## Verification
 
@@ -70,9 +75,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §B P0-B006 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T014
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -97,3 +102,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §B P0-B006; docs checked: 03 §3 (canonical layout with `apps/web/`, `infra/`, `migrations/`, `mt_ui` = Telegram bot); 02 §11 now points to 03 §3. Root cause: 02 §11 was written after 03 §3 and never back-ported. Implementation owned by P0-T014.
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P0-B006); docs updated: 03 §3 (canonical layout with `apps/web/`, `infra/`, `migrations/`, `mt_ui` = Telegram bot); 02 §11 now points to 03 §3; implementation owned by P0-T014
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: Backup schedule and method differ across 07 §8, 02 §5.1 and F11
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R0.N4]
 roadmap_todos: [T0.44]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B011-backup-schedule-inconsistent
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/07-security-notes.md §8
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B011 · Backup schedule and method differ across 07 §8, 02 §5.1 and F11
@@ -51,10 +56,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §B P0-B011 (ratified in 17 §E)
+- [x] Docs updated so they agree: 07 §8 (no separate `pg_dump`); 02 §5.1 Postgres row and §8 F11; 15 §2.2 Backups row; D16 Backups schedule; 04 Phase 0; roadmap P0 R0.N4
+- [x] Affected P0 task files reference the resolution: P0-T039, P0-T051, P0-T060
+- [x] Regression check owned: P0-T039 schedule config and P0-T057 first real run
 
 ## Verification
 
@@ -69,9 +74,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §B P0-B011 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T039
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -96,3 +101,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §B P0-B011; docs checked: 07 §8 (no separate `pg_dump`); 02 §5.1 Postgres row and §8 F11; 15 §2.2 Backups row; D16 Backups schedule; 04 Phase 0; roadmap P0 R0.N4. Root cause: three docs described the schedule independently. Implementation owned by P0-T039.
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P0-B011); docs updated: 07 §8 (no separate `pg_dump`); 02 §5.1 Postgres row and §8 F11; 15 §2.2 Backups row; D16 Backups schedule; 04 Phase 0; roadmap P0 R0.N4; implementation owned by P0-T039
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

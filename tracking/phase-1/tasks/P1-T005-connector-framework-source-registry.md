@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T004]
+depends_on: [P1-T004, P0-T014, P0-T017]
 requirements: [R1.01, R1.08, R1.09]
 roadmap_todos: [T1.20]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p1/P1-T005-connector-framework-source-registry
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T005 · Build the connector framework and source registry
@@ -41,15 +46,18 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 - Source list and licences: [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1), [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list)
 - UI: [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Feeds tab shows licence/cost tags; acceptance 2 ("a paid feed can't be enabled")
 - Depends on (this phase): P1-T004
+- Cross-phase prerequisites (depends_on): P0-T014 (uv workspace skeleton), P0-T017 (`mt_core` settings and clock)
 
 ## Requirements
 
 - Package layout: `packages/mt_data/src/mt_data/core/` (`Connector`, `StreamConnector`, `BatchConnector`, `SourceRegistry`), `mt_data/market/` for M1 connectors
 - `config/sources.yaml` entry per source: `id`, `kind` (stream|batch), `licence` (personal|commercial_ok|unknown), `cost` (free|paid), `use_flags` defaults (`train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`), `quota` reference, `docs` link to 06
 - Registry refuses to start a source with `cost: paid` (server-side) and `data.feed.resume` on it returns problem+json 409
-- Reconnect: exponential backoff with jitter (1 s → 60 s cap), reset after 5 min healthy; never hammer a venue (Binance 418 escalates to multi-day bans, [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry))
+- Reconnect: exponential backoff with jitter (defaults 1 s → 60 s cap, reset after 5 min healthy; configurable per source in `config/sources.yaml`, not constants); never hammer a venue (Binance 418 escalates to multi-day bans, [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry))
 - Every message carries `event_time` (venue) and `ingest_time` (our clock, UTC, ns) per [02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)
 - Metrics per feed: msgs/s, last-message age, reconnects, latency p50/p99, errors (Prometheus labels: `source`, `venue`; symbol only on low-cardinality series)
+- Keyless by default ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22): build first, keys last): a source whose credentials are absent starts in `credentials_missing` (shown in D07) instead of failing; CI and builds never need real keys; live keyed checks are P1-T073
+- Every message carries our receive time (`ingest_time`), the basis of data age ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means))
 - Default fixture `config/universe.yaml` (3 crypto, 2 FX, 2 ETFs) until P1-T001 lands
 
 ## ToDo
@@ -92,7 +100,7 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 ## Cardinal rules (do NOT)
 
 - Do NOT hard-code symbols or keys in connector code; use the universe and sops
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
@@ -112,3 +120,4 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (configurable backoff defaults, keyless credentials_missing state, receive time as data-age basis; P0 deps explicit)

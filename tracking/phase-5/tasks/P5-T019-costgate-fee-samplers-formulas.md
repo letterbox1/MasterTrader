@@ -10,35 +10,41 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T016, P5-T018]
+depends_on: [P5-T018, P3-T010]
 requirements: [R5.04]
 roadmap_todos: [T5.21]
 modules: [M22, M16, M12]
 dashboards: [D18]
+tools: [uv, anvil]
+mcp: []
+env: []
+services: [anvil]
 branch: p5/P5-T019-costgate-fee-samplers-formulas
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T019 · On-chain cost gate: fee samplers and cost formulas
 
 ## Goal / expected outcome
 
-`mt_treasury.costgate` computes the all-in cost of any on-chain action from live samples: Solana `C = 5000·n_sig + μ·CU_limit + tip_jito`, EVM `C = gas_used·(baseFee + priorityFee) + L1_data`, constant-product AMM impact, pump.fun bonding-curve impact and the all-in round trip, in native, USD and AUD.
+`mt_onchain.costgate` (the one cost-gate library, [13 §7](../../../docs/13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16)) computes the all-in cost of any on-chain action from live samples: Solana `C = 5000·n_sig + μ·CU_limit + tip_jito`, EVM `C = gas_used·(baseFee + priorityFee) + L1_data`, constant-product AMM impact, pump.fun bonding-curve impact and the all-in round trip, in native, USD and AUD.
 
 ## Context & references
 
 - Roadmap: [R5.04](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.21
 - Formulas: [13 §7](../../../docs/13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16)
-- Placement gap (cost gate listed under the P6 `treasury` container in 02 §3.2) → P5-B002: built here as a library used by airdrop-exec, signer and mt-api
+- Placement (decision P5-B002, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)): one library, `mt_onchain.costgate` ([02 §3.2](../../../docs/02-v1-architecture.md#32-containers) library row; [03 §3](../../../docs/03-build-spec.md#3-repository-layout) layout), used by the signer path from P5 and by the P6 treasury
+- Live inputs, never constants ([16 §4.3](../../../docs/16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants)): `eth_feeHistory`, `getRecentPrioritizationFees`, Helius fee estimate, Jito tip floor
 - Simulation `gas_used` from P5-T016; RPC pools P5-T018; FX from P3 (R3.03)
 
 ## Requirements
@@ -51,7 +57,7 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Implement samplers in `packages/mt_treasury/costgate/samplers/` (solana.py, evm.py, jito.py) using the RPC pool.
+- [ ] Implement samplers in `packages/mt_onchain/costgate/samplers/` (solana.py, evm.py, jito.py) using the RPC pool.
 - [ ] Implement formula module with unit-tested pure functions.
 - [ ] Implement quote object + persistence; FX conversion via the P3 FX service.
 - [ ] Golden tests from worked examples; property tests (monotonic in size, non-negative).
@@ -102,3 +108,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (library renamed `mt_onchain.costgate` per P5-B002; live inputs per 16 §4.3; deps trimmed to RPC pool + P3 FX)

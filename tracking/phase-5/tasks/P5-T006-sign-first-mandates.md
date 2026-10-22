@@ -15,17 +15,22 @@ requirements: [R5.15]
 roadmap_todos: [T5.05]
 modules: [M4, M22]
 dashboards: [D12]
+tools: []
+mcp: []
+env: []
+services: [telegram]
 branch: p5/P5-T006-sign-first-mandates
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T006 · Sign the first claim mandates (C3)
@@ -43,15 +48,15 @@ At least one active, expiring **mandate** per identity wallet you want automated
 
 ## Requirements
 
-- Start with a **testnet** mandate for the P5-T056 scenario (e.g. Sepolia identity wallet, test Merkle distributor), then mainnet mandates only for specific vetted claim contracts.
-- Each mandate: one wallet, one chain, explicit contract address(es) + function selector(s), `msg.value = 0`, max gas per tx, max claims/day, expiry (suggest ≤ 30 days).
+- Mainnet mandates only, and only for specific vetted claim contracts on the chain's **airdrop identity wallet** (never the hot trading wallet; decision P5-B017, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)). The testnet mandate for the exit scenario is approved inside P5-T056, so this real-funds step doesn't block it.
+- Each mandate: one wallet, one chain, explicit contract address(es) + function selector(s), `msg.value = 0`, max gas per tx, max claims/day, expiry (suggest ≤ 30 days); caps never above the limits you confirmed in P5-T065 ([16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)).
 - Approve in Telegram with TOTP; it takes effect after the cool-down (default 15 min).
 
 ## ToDo
 
-- [ ] In D12 `/airdrops/wallet` → Create mandate, fill the fields for the testnet scenario.
-- [ ] Approve in Telegram (approve + TOTP); wait for the cool-down; confirm status "active".
-- [ ] Create mainnet mandates only for opportunities D12 shows as "auto-claim eligible" (risk passed, ≥ 2 official sources).
+- [ ] In D12 `/airdrops/wallet` → Create mandate, only for opportunities D12 shows as "auto-claim eligible" (risk passed, ≥ 2 official sources), on the identity wallet.
+- [ ] Approve in Telegram (approve + TOTP); wait for the cool-down (default 15 min); confirm status "active".
+- [ ] If nothing is eligible yet, record "no mainnet mandate needed yet" in the progress log and revisit when D12 shows one.
 - [ ] Report "done" so T5.05 can be ticked.
 
 ## Verification
@@ -68,8 +73,8 @@ At least one active, expiring **mandate** per identity wallet you want automated
 
 ## Acceptance criteria
 
-- [ ] Testnet mandate active (used by P5-T056)
-- [ ] Any mainnet mandates limited to specific contracts/functions with caps and expiry
+- [ ] Mainnet mandates (if any) limited to specific contracts/functions on identity wallets, with caps within the confirmed limits and an expiry
+- [ ] Outcome (mandates created, or none needed yet) recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -96,3 +101,4 @@ At least one active, expiring **mandate** per identity wallet you want automated
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (mainnet mandates only, identity wallet per P5-B017; testnet mandate moved into P5-T056 so keys-last holds; caps within 16 §2.7 confirmed limits)

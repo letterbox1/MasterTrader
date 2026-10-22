@@ -15,36 +15,42 @@ requirements: [R2.18, R2.N1]
 roadmap_todos: [T2.61]
 modules: [M11, M12]
 dashboards: [D06]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T054-verify-kill-deadman-drills
 pr: ""
 doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T054 · Kill-switch and dead-man drills with timing
 
 ## Goal / expected outcome
 
-Scripted drills on testnet/practice prove kill → all cancels sent < 1 s from web HALT and from Telegram `/kill` (including with mt-api down), and the dead-man fires when the engine, monitor or a DB heartbeat stops.
+Scripted drills on the sandbox venue and mock venues (no keys) prove kill → all cancels sent < 1 s from web HALT and from Telegram `/kill` (fake Bot API, including with mt-api down), and the in-engine dead-man (layer 1) fires when the monitor or a DB heartbeat stops. Engine death (layer 2 sidecar) is the kill-the-engine drill P2-T075; the drill on testnet/practice with your keys is part of P2-T071; your phone drill is P2-T064.
 
 ## Context & references
 
 - Roadmap: [R2.18, R2.N1](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.61
 - Flow: [02 F6](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [mob §4 /kill < 1 s](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria)
-- Related: P2-T064 (your phone drill), P2-T068 runbook.
+- Defaults: dead-man layer 1 cancels at 5 s and applies `on_system_failure` at 10 s ([16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)).
+- Related: P2-T064 (your phone drill), P2-T068 runbook, P2-T075 (kill-the-engine drill), P2-T071 (testnet drill with your keys).
 
 ## Requirements
 
-- Setup: ≥ 50 resting orders across Binance testnet + OANDA practice + sandbox; 2 open positions with `flatten_on_kill` on one sleeve.
-- Kill drill A (web HALT), B (Telegram `/kill` via mt_api), C (Telegram with mt-api stopped → NATS): measure KV ON → last cancel sent (< 1 s) and → last venue ack; verify no new order after ON; flatten done for the configured sleeve only.
-- Dead-man drills: stop `engine` (sidecar cancels within N+2 s), stop `monitor` (engine cancels within N+1 s), stop `postgres` (engine continues in memory, dead-man fires after N s).
+- Setup: ≥ 50 resting orders across the sandbox venue and mock Binance/OANDA venues; open positions on bots with `on_system_failure` = `flatten`, `cancel_orders_only` and `hold`.
+- Kill drill A (web HALT), B (Telegram `/kill` via mt_api), C (Telegram with mt-api stopped → NATS `kill.set`): measure KV ON → last cancel sent (< 1 s) and → last venue ack; verify no new order after ON; each bot's `on_system_failure` applied; the WORM kill event has the right source (`web`/`telegram`).
+- Layer-1 dead-man drills: stop `monitor` (affected bots' orders cancelled within 5 s + 1 s, `on_system_failure` at 10 s + 1 s), stop `postgres` (engine continues in memory, layer 1 fires after 5 s / 10 s).
 - Turn-off check: kill OFF requires C3 and cause cleared.
 
 ## ToDo
@@ -62,7 +68,7 @@ Scripted drills on testnet/practice prove kill → all cancels sent < 1 s from w
 
 ### Scenarios
 - Given mt-api is stopped, when `/kill` is confirmed on Telegram, then the engine halts and all cancels are sent < 1 s.
-- Given the engine container is killed, when N seconds pass, then the sidecar cancels all testnet orders.
+- Given the monitor container is stopped, when 5 s pass, then the affected bots' orders are cancelled; at 10 s `flatten` bots are flat and `cancel_orders_only` bots keep their position with a resting stop.
 
 ### Stress / failure injection
 - Run kill drill A during a 1k intents/s burst: still < 1 s; zero post-ON submissions.
@@ -70,7 +76,7 @@ Scripted drills on testnet/practice prove kill → all cancels sent < 1 s from w
 ## Acceptance criteria
 
 - [ ] All drill runs < 1 s (max) for cancels sent
-- [ ] Dead-man acts within N(+2) s in every drill
+- [ ] Layer-1 dead-man acts within 5 s (+1 s) for cancels and 10 s (+1 s) for `on_system_failure` in every drill
 - [ ] Report committed
 
 ## Exceptions & edge cases
@@ -99,3 +105,4 @@ Scripted drills on testnet/practice prove kill → all cancels sent < 1 s from w
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless drills (sandbox/mock venues, fake Bot API), layer-1 timers 5 s/10 s with per-bot on_system_failure; engine-death drill moved to P2-T075)

@@ -15,35 +15,41 @@ requirements: [R2.30]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T057-verify-adapter-conformance
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T057 · Adapter conformance on practice/testnet accounts
 
 ## Goal / expected outcome
 
-One shared conformance suite runs against Binance testnet, Alpaca paper, OANDA practice and IG demo (and sandbox), proving submit/modify/cancel/fill/brackets/reports/reconnect behave identically through the engine.
+One shared conformance suite runs keyless against the sandbox venue, mock servers and recorded cassettes for Binance testnet, Alpaca paper, OANDA practice and IG demo, proving submit/modify/cancel/fill/brackets/resting stops/reports/reconnect behave identically through the engine. The same suite runs against the real practice/testnet endpoints with your keys in P2-T071.
 
 ## Context & references
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
-- Related: P2-T023–T027.
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): no keys here; live run in P2-T071.
+- Related: P2-T023–T027, P2-T073 (resting venue stops, cancel-after timers).
 
 ## Requirements
 
 - Cases: market, limit (rest + cancel), modify price/qty, stop, bracket, partial fill, reject (insufficient margin, bad tick size), reconnect mid-order, status/fill/position reports for reconciliation.
-- Runs nightly against live practice endpoints (keys from sops on the host runner only) and per-PR with cassettes.
+- Runs per PR with cassettes and nightly against mock servers/emulators; the suite takes a `--live` flag used only by P2-T071 on the host runner.
 - Output matrix venue × case pass/fail stored as artefact.
 
 ## ToDo
@@ -62,7 +68,7 @@ One shared conformance suite runs against Binance testnet, Alpaca paper, OANDA p
 - Given the OANDA stream drops during a pending limit, when it reconnects, then the fill that happened meanwhile is recovered via reports.
 
 ### Stress / failure injection
-- Nightly reconnect storm: 10 forced disconnects in 5 min per venue; no lost fills.
+- Nightly reconnect storm against mock servers: 10 forced disconnects in 5 min per venue; no lost fills.
 
 ## Acceptance criteria
 
@@ -95,3 +101,4 @@ One shared conformance suite runs against Binance testnet, Alpaca paper, OANDA p
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless conformance (cassettes, mock servers); live run moved to P2-T071; resting stops case)

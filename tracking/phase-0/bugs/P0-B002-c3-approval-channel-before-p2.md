@@ -4,7 +4,7 @@ kind: gap
 title: C3 approval channel doesn't exist until P2, so P0 C3 commands (kill OFF) can't complete
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: medium
 size: S
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R0.08]
 roadmap_todos: [T0.24, T0.62]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B002-c3-approval-channel-before-p2
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-0-foundations.md R0.08 / T0.24
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B002 · C3 approval channel doesn't exist until P2, so P0 C3 commands (kill OFF) can't complete
@@ -52,10 +57,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B002 (ratified in 17 §E)
+- [x] Docs updated so they agree: 02 §7.2 (break-glass paragraph) and §7.4 Telegram row; 07 §6; 03 M11 (C3 note); ui README §3.3; ui mobile-and-telegram C3 row; 04 Phase 0; roadmap P0 R0.08/R0.12/T0.27/T0.62 and P2 R2.19/T2.24
+- [x] Affected P0 task files reference the resolution: P0-T033, P0-T035, P0-T049, P0-T054
+- [x] Regression check owned: P0-T054 C3 suite through `mtctl approve`
 
 ## Verification
 
@@ -70,9 +75,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B002 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T035 (`mtctl approve` channel), P0-T054 (tests)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -98,3 +103,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B002; docs checked: 02 §7.2 (break-glass paragraph) and §7.4 Telegram row; 07 §6; 03 M11 (C3 note); ui README §3.3; ui mobile-and-telegram C3 row; 04 Phase 0; roadmap P0 R0.08/R0.12/T0.27/T0.62 and P2 R2.19/T2.24. Root cause: C3 was defined only via Telegram, which the plan builds in P2. Implementation owned by P0-T035 (`mtctl approve` channel), P0-T054 (tests).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B002); docs updated: 02 §7.2 (break-glass paragraph) and §7.4 Telegram row; 07 §6; 03 M11 (C3 note); ui README §3.3; ui mobile-and-telegram C3 row; 04 Phase 0; roadmap P0 R0.08/R0.12/T0.27/T0.62 and P2 R2.19/T2.24; implementation owned by P0-T035 (`mtctl approve` channel), P0-T054 (tests)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

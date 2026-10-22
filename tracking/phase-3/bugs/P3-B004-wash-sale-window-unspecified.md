@@ -4,7 +4,7 @@ kind: gap
 title: Wash-sale reacquisition window N days is unspecified
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B004-wash-sale-window-unspecified
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Key findings (wash sales)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ A documented default window (and the agent's view) for wash-sale flags.
 
 ## ToDo
 
-- [ ] Add default to 09
-- [ ] Add the question to the TAX_QUESTION seed (P3-T038)
-- [ ] Update the affected task files (P3-T026, P3-T038) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §C P3-B004): wash-sale flag: re-acquisition of the same asset within 30 days either side of a loss disposal, flag only (default, configurable); near-identical assets are tax-agent Q12
+- [x] Owning docs carry it: 16 §4.4; 09 wash-sale finding + question 12; 03 M18; roadmap R3.06
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T026 (flags), P3-T038 (question seed), P3-T045 (golden case)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -70,9 +70,9 @@ A documented default window (and the agent's view) for wash-sale flags.
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (16 §4.4; 09 wash-sale finding + question 12; 03 M18; roadmap R3.06)
+- [x] Affected tasks consistent with it (P3-T026 (flags), P3-T038 (question seed), P3-T045 (golden case))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -99,3 +99,7 @@ A documented default window (and the agent's view) for wash-sale flags.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §C P3-B004: wash-sale flag: re-acquisition of the same asset within 30 days either side of a loss disposal, flag only (default, configurable); near-identical assets are tax-agent Q12. Docs now carry it: 16 §4.4; 09 wash-sale finding + question 12; 03 M18; roadmap R3.06. Implementation owned by P3-T026 (flags), P3-T038 (question seed), P3-T045 (golden case). Root cause: 09 flagged wash sales without a window.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P3-B004); docs updated: 16 §4.4; 09 wash-sale finding + question 12; 03 M18; roadmap R3.06; implementation owned by P3-T026 (flags), P3-T038 (question seed), P3-T045 (golden case)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

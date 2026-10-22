@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T001, P3-T038, P3-T013, P3-T014, P3-T027, P3-T028, P3-T040, P3-T041, P3-T045, P3-T046, P3-T047, P3-T048, P3-T049, P3-T050, P3-T051, P3-T052, P3-T053]
-requirements: [R3.01, R3.03, R3.06, R3.07, R3.12, R3.14]
+depends_on: [P3-T001, P3-T038, P3-T013, P3-T014, P3-T027, P3-T028, P3-T040, P3-T041, P3-T045, P3-T046, P3-T047, P3-T048, P3-T049, P3-T050, P3-T051, P3-T052, P3-T053, P3-T055, P3-T056, P3-T057, P3-T058, P3-T059, P3-T060]
+requirements: [R3.01, R3.03, R3.06, R3.07, R3.12, R3.14, R3.15, R3.16, R3.N3]
 roadmap_todos: []
 modules: [M18]
 dashboards: [D14, D15]
+tools: [git, uv, node>=20, pnpm]
+mcp: []
+env: []
+services: [postgres, journal, mt-api, engine]
 branch: p3/P3-T054-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md, docs/04-plan-of-action.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T054 · Phase 3 exit demo
@@ -45,8 +50,8 @@ A recorded demo proves all three roadmap exit criteria on the production stack a
 - EC1: every paper trade, fee and funding payment of the demo day appears automatically in the journal in native/USD/AUD (query: `audit.fill` count = journal fill events; ledger funding = journal funding; all three currency fields non-null).
 - EC2: D15 shows FY2026-27 to date both ways (investor vs trader) and the PAYG estimate, each with rule version + FX source (screenshots at 1920×1080 and 390×844).
 - EC3: `/tasks?type=TAX_QUESTION` lists the questions; P3-T001 progress log shows the agent engaged.
-- Also shown: golden suite + WORM suite + prompt audit green; snapshot dry-run report; Beancount/Fava; first 7 days of the 1-month run clean.
-- Phase checks: `./kanban validate --phase 3` 0 errors; all tasks done/cancelled; no open S1/S2 gaps (P3-B001/P3-B002 resolved or downgraded with a decision).
+- Also shown: golden suite + WORM suite + prompt audit green; command tests (P3-T058), key-rotation drill (P3-T059) and Postgres-down drill (P3-T060) passed; snapshot dry-run report; Beancount/Fava; first 7 days of the 1-month run clean.
+- Phase checks: `./kanban validate --phase 3` 0 errors; all tasks done/cancelled; no open S1/S2 gaps (P3-B001/P3-B002 were closed in the 2026-10-22 alignment wave by 17 §A).
 
 ## ToDo
 
@@ -103,3 +108,4 @@ A recorded demo proves all three roadmap exit criteria on the production stack a
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on the new R3.16/R3.17/R3.N3 tasks and verifies (P3-T055–T060); gaps P3-B001/B002 closed; tools/services filled)

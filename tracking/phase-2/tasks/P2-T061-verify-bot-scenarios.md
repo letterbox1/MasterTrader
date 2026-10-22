@@ -15,17 +15,22 @@ requirements: [R2.53, R2.54]
 roadmap_todos: [T2.69]
 modules: [M11, M15]
 dashboards: [D03]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T061-verify-bot-scenarios
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T061 · Bot scenarios: HITL approvals, protective exits, autonomous C3 and isolation
@@ -38,6 +43,8 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 
 - Roadmap: [R2.53, R2.54](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.69
 - Design: [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [15 §1.3](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram)
+- Defaults: TTLs 60 s / 15 min / 4 h, large orders > 2% of sleeve or > A$5,000 → TOTP / hold-to-confirm, paper → HITL C2, HITL → autonomous C3 ([16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)).
+- Build first, keys last: runs on paper with a fake Telegram Bot API (no secrets); the real-Telegram run is your P2-T066.
 - Related: P2-T066 (your manual run).
 
 ## Requirements
@@ -50,12 +57,13 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 - S6 autonomous request without C3 refused; with C3 applied after cool-down.
 - S7 injected DQ degraded on the autonomous bot's instrument → hitl within 1 s, alert.
 - S8 two bots (same strategy version; BTC autonomous, gold hitl) → BTC submits directly, gold produces cards; positions/P&L attributed per bot; pausing one doesn't affect the other.
-- Run via Telegram fake (CI) and once via the real Telegram bot on paper (recorded).
+- S9 paper → HITL asks for C2; a large order (> 2% of sleeve) asks for TOTP on Telegram and hold-to-confirm on web.
+- S10 restricting the strategy's mode ceiling to `hitl` drops its autonomous bot to HITL at once (C1).
+- Run via the Telegram fake in CI; the real-Telegram run is P2-T066.
 
 ## ToDo
 
 - [ ] Scenario tests in `tests/e2e/bots/`
-- [ ] Real-Telegram run with screenshots (no secrets) in progress log
 - [ ] Record results (numbers, run IDs, screenshots) in the progress log and tick the roadmap ToDo box
 
 ## Verification
@@ -71,8 +79,7 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 
 ## Acceptance criteria
 
-- [ ] S1–S8 green in CI
-- [ ] Real Telegram run recorded
+- [ ] S1–S10 green in CI
 
 ## Exceptions & edge cases
 
@@ -100,3 +107,4 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless (fake Telegram), C2 paper→HITL, large-order TOTP, strategy ceiling scenario; real run is P2-T066)

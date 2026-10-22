@@ -15,17 +15,22 @@ requirements: [R3.01, R3.02, R3.11]
 roadmap_todos: [T3.20, T3.28]
 modules: [M18]
 dashboards: []
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, nats, journal, prefect-server, grafana]
 branch: p3/P3-T052-verify-stress-failure-injection
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P3-T052 · Stress and failure injection for ingestion and reconciliation
@@ -37,12 +42,12 @@ The journal survives load and the 02 §9.3 degraded modes without data loss, dup
 ## Context & references
 
 - Roadmap: [R3.01, R3.02, R3.11](../../../docs/roadmap/phase-3-journal-and-tax.md) · degraded modes [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · SLO-style target D14 ≤ 5 s
-- Gap: P3-B015 (NATS buffer bound vs stream retention)
+- Buffer bound: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (default 1 GB or 24 h; new entries stop above 80%), built in P3-T057; the bound-specific drill is P3-T060
 
 ## Requirements
 
 - Load: 2,000 fills in 10 s + 50k ledger backfill concurrently → no loss/dupes; fill p95 ≤ 5 s once the burst drains (≤ 2 min drain).
-- Postgres down 15 min → consumer stops acking, NATS holds messages within stream limits, alert fires, full catch-up afterwards with zero loss; journal never writes partial batches.
+- Postgres down 15 min (well inside the bound) → consumer stops acking, writes buffer in `WORM_BUFFER`, alert fires, full catch-up afterwards with zero loss; journal never writes partial batches. (The 80% stop and exits-continue behaviour is drilled in P3-T060.)
 - NATS restart / journal kill -9 mid-batch × 10 → no duplicates (idempotency), no gaps (cursor).
 - Venue API down during ledger/recon → `skipped_venue_unavailable`, retries, no false `ok`.
 - RBA F11 missing 6 business days → `pending_fx` + alert; crypto bars missing → next venue then `pending_price`.
@@ -78,7 +83,7 @@ The journal survives load and the 02 §9.3 degraded modes without data loss, dup
 
 ## Exceptions & edge cases
 
-- If the NATS stream limit is exceeded in the outage test, the test must fail loudly (and P3-B015 sizing is revisited) — never silently drop.
+- If the buffer bound is reached in the outage test, new entries stop and the test must report it loudly — records are never silently dropped (16 §3.3).
 
 ## Cardinal rules (do NOT)
 
@@ -100,3 +105,4 @@ The journal survives load and the 02 §9.3 degraded modes without data loss, dup
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Postgres-down case uses the 16 §3.3 bound (P3-T057/P3-T060; P3-B015 closed); tools/services filled)

@@ -4,7 +4,7 @@ kind: gap
 title: Audit table names drift across docs (07 §8, 03 M16, 02 §4)
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R0.03, R0.07]
 roadmap_todos: [T0.22]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B017-audit-table-naming-drift
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/07-security-notes.md §8
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B017 · Audit table names drift across docs (07 §8, 03 M16, 02 §4)
@@ -50,10 +55,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §B P0-B017 (ratified in 17 §E)
+- [x] Docs updated so they agree: 15 §2.1, 02 §4/§5.3 and design rule, 03 §4 `audit` list, D16 Audit list all use the canonical singular names; no `order_audit`/`risk_change_audit`/`dq_events`/`cost_events` remain in docs
+- [x] Affected P0 task files reference the resolution: P0-T031, P0-T038, P0-T055
+- [x] Regression check owned: grep of docs for the old names returns nothing
 
 ## Verification
 
@@ -68,9 +73,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §B P0-B017 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T031 (canonical tables; `mt_store.lint` singular-name rule)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +100,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §B P0-B017; docs checked: 15 §2.1, 02 §4/§5.3 and design rule, 03 §4 `audit` list, D16 Audit list all use the canonical singular names; no `order_audit`/`risk_change_audit`/`dq_events`/`cost_events` remain in docs. Root cause: three docs named the audit tables independently. Implementation owned by P0-T031 (canonical tables; `mt_store.lint` singular-name rule).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P0-B017); docs updated: 15 §2.1, 02 §4/§5.3 and design rule, 03 §4 `audit` list, D16 Audit list all use the canonical singular names; no `order_audit`/`risk_change_audit`/`dq_events`/`cost_events` remain in docs; implementation owned by P0-T031 (canonical tables; `mt_store.lint` singular-name rule)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

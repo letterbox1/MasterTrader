@@ -15,17 +15,22 @@ requirements: [R1.01]
 roadmap_todos: [T1.20]
 modules: [M1]
 dashboards: [D02, D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p1/P1-T010-crypto-ws-binance-bybit
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T010 · Stream Binance and Bybit public trades, L1 and L2 to NATS
@@ -44,11 +49,11 @@ checkpoint: ""
 ## Requirements
 
 - Use NautilusTrader data clients (Binance, Bybit) where the pinned version supports the stream; ccxt (pro WS methods) only as fallback, behind the same `StreamConnector`
-- Streams: trades, best bid/ask, L2 diffs with sequence numbers (Binance `U/u`, Bybit `seq`/`u`) and a REST snapshot on (re)subscribe; local book rebuilt and published as `md.*.book` snapshots at ≤ 1 s plus raw diffs to the recorder
-- L2 only for symbols marked `l2: true` in the universe (disk budget R1.N3, see P1-B002)
+- Streams: trades, best bid/ask, L2 diffs with sequence numbers (Binance `U/u`, Bybit `seq`/`u`) and a REST snapshot on (re)subscribe; local book rebuilt and published as `md.*.book` snapshots every 1 s for every symbol, plus raw diffs to the recorder for native-L2 symbols only
+- Native-speed L2 diffs are recorded only for symbols marked `l2: true` (default cap 3, `market.l2.max_native_symbols`, configurable); all other symbols get 1 s book snapshots ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002, [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket), R1.N3)
 - Messages carry venue sequence IDs so the gap check (P1-T032) works; `event_time` from the venue, `ingest_time` from our clock
 - Public endpoints only; no API keys needed; connection counts and subscribe rates within venue limits via the quota tracker
-- Publishes connection status to KV `feed_status` on connect/disconnect immediately (input to the stale check)
+- Stamps every message with our receive time (`ingest_time`, host clock), the basis of data age ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)), and publishes connection status to KV `feed_status` and receive times/sequence breaks on `dq.raw.{venue}.{symbol}` immediately (inputs to the DQ monitor)
 
 ## ToDo
 
@@ -70,7 +75,8 @@ checkpoint: ""
 ### Scenarios
 
 - Given the socket drops, when it reconnects, then the book is resynced from a fresh snapshot before diffs are published again and a `dq.raw.resync` event is emitted
-- Given a symbol without `l2: true`, when subscribed, then no L2 diff stream is opened
+- Given a symbol without `l2: true`, when subscribed, then no raw diffs are recorded and only 1 s book snapshots are published
+- Given 4 symbols marked `l2: true` with the default cap of 3, when the connector starts, then it refuses the config and names the setting that raises the cap
 
 ### Stress / failure injection
 
@@ -111,3 +117,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 native diffs ≤ 3 symbols, 1 s snapshots for others (P1-B002); receive time + dq.raw for data age)

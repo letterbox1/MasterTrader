@@ -4,7 +4,7 @@ kind: gap
 title: Commands for FY lock/unlock, task answers and manual journal events missing from the API catalogue
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B006-missing-commands-fy-lock-answer-manual-event
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D15-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7.2 (Journal & tax commands)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -51,9 +51,10 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Update 02 §7.2 and D15 Actions table
-- [ ] Update the affected task files (P3-T039, P3-T021, P3-T038, P3-T041) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B006/P3-B007): commands `tax.fy.lock`/`tax.fy.unlock` (C3), `task.answer` (C1), `journal.manual_event.add` (C2)
+- [x] Owning docs carry it: 02 §7.2 (Tasks and Journal & tax rows); 09 Commands; D15 actions; D14 actions; roadmap R3.16
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T055 (FY lock/unlock, manual events), P3-T038 (`task.answer`), P3-T039 (API), P3-T058 (tests)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -71,9 +72,9 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (02 §7.2 (Tasks and Journal & tax rows); 09 Commands; D15 actions; D14 actions; roadmap R3.16)
+- [x] Affected tasks consistent with it (P3-T055 (FY lock/unlock, manual events), P3-T038 (`task.answer`), P3-T039 (API), P3-T058 (tests))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -101,3 +102,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B006/P3-B007: commands `tax.fy.lock`/`tax.fy.unlock` (C3), `task.answer` (C1), `journal.manual_event.add` (C2). Docs now carry it: 02 §7.2 (Tasks and Journal & tax rows); 09 Commands; D15 actions; D14 actions; roadmap R3.16. Implementation owned by P3-T055 (FY lock/unlock, manual events), P3-T038 (`task.answer`), P3-T039 (API), P3-T058 (tests). Root cause: D15/D14 needed commands that 02 §7.2 did not list.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B006/P3-B007); docs updated: 02 §7.2 (Tasks and Journal & tax rows); 09 Commands; D15 actions; D14 actions; roadmap R3.16; implementation owned by P3-T055 (FY lock/unlock, manual events), P3-T038 (`task.answer`), P3-T039 (API), P3-T058 (tests)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

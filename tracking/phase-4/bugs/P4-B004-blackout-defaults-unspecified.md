@@ -4,7 +4,7 @@ kind: gap
 title: Calendar blackout defaults (window, scope, action) are unspecified
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: [D06]
 branch: p4/P4-B004-blackout-defaults-unspecified
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/ui/dashboards/D06-risk.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M5 and M11; docs/ui/dashboards/D06-risk.md (Blackouts node); docs/14 §5 defaults
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,9 +49,9 @@ The risk-policy defaults include a concrete blackout rule set so P4-T038/T052 te
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: blackout defaults in 16 §2.8 (17 §C)
+- [x] Docs carry it: 16 §2.8 (15 min before to 15 min after high-importance events; bots marked `event_sensitive`, scalping/intraday by default; block new entries; exits and protective orders continue; configurable per bot and event type), 03 M5 'Default blackout', 14 §5 defaults row (D06 keeps a Blackouts policy node; its first-install defaults list doesn't repeat the values, a minor doc follow-up)
+- [x] Implementation owned by P4-T038 (rule evaluator + M11 hook + seeded default) and P4-T052 (NFP blackout test)
 
 ## Verification
 
@@ -66,8 +66,8 @@ The risk-policy defaults include a concrete blackout rule set so P4-T038/T052 te
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] Blackout defaults documented (checked in 16 §2.8, 03 M5, 14 §5, 2026-10-22)
+- [x] Root cause noted: 03 M5 said 'event within N minutes' without defaults
 
 ## Exceptions & edge cases
 
@@ -93,3 +93,7 @@ The risk-policy defaults include a concrete blackout rule set so P4-T038/T052 te
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §C (P4-B004 → 16 §2.8); docs checked: 16 §2.8, 03 M5 default blackout, 14 §5 calendar blackout row; implementation owned by P4-T038, P4-T052, P4-T045; root cause: M5 left N and scope unspecified
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §C (P4-B004 -> 16 §2.8); docs updated: 16 §2.8, 03 M5 default blackout, 14 §5 calendar blackout row; implementation owned by P4-T038, P4-T052, P4-T045
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

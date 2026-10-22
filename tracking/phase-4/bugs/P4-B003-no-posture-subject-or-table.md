@@ -4,7 +4,7 @@ kind: gap
 title: No NATS subject, table or consumer rule for Telegram postures
 phase: 4
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p4/P4-B003-no-posture-subject-or-table
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/12-policy-and-compliance.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §4 (M2 row) and §6 (subject taxonomy); docs/12-policy-and-compliance.md §4
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Agree the fix with the doc owner (main agent / user)
-- [ ] Edit the listed docs (outside this phase folder; done by whoever owns those docs)
-- [ ] Re-run `./kanban validate` and link the commit here
+- [x] Decision recorded: table `text.telegram_posture`, subject `posture.telegram.*`, consumers M4/M11 rules only (17 §D)
+- [x] Docs carry it: 02 §4 M2/M4/M11 rows, §4 rule 'consumed only by code/policy rules', §5.2 `text` tables, §6 subject row; 03 M2 (postures only) and 03 M6 ('Telegram is never a feature'); 12 §4 bans Telegram-derived features in models
+- [x] Implementation owned by P4-T010 (tables), P4-T019 (publisher, consumer allow-list), P4-T040 (features exclude postures), P4-T043 (`/intel/postures`)
 
 ## Verification
 
@@ -67,8 +67,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs updated as described under Requirements
-- [ ] Root cause noted in the progress log
+- [x] Posture table, subject and consumer rule documented (checked in 02 §4/§5.2/§6 and 03 M2/M6, 2026-10-22)
+- [x] Root cause noted: postures were allowed in 12 §4 but never given a home in 02
 
 ## Exceptions & edge cases
 
@@ -94,3 +94,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D (P4-B002/B003); docs checked: 02 §4/§5.2/§6, 03 M2 + M6, 12 §4; implementation owned by P4-T010, P4-T019, P4-T040, P4-T043, P4-T050; root cause: 12 §4 allowed postures without a named table/subject in 02
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 §D (P4-B002/B003); docs updated: 02 §4/§5.2/§6 (text.telegram_posture, posture.telegram.*, consumers M4/M11 rules), 03 M2 + M6, 12 §4; implementation owned by P4-T010, P4-T019, P4-T040, P4-T043, P4-T050
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:04 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

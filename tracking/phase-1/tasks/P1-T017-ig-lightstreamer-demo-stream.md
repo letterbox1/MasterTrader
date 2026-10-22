@@ -15,17 +15,22 @@ requirements: [R1.04]
 roadmap_todos: [T1.23]
 modules: [M1]
 dashboards: [D02, D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p1/P1-T017-ig-lightstreamer-demo-stream
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T017 · Stream IG demo prices via Lightstreamer
@@ -38,7 +43,7 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (IG Lightstreamer demo) · [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (IG REST + Lightstreamer, `trading-ig` BSD-3)
-- Demo credentials from sops (P0 T0.09); IG historical price allowance is limited, so history comes from Dukascopy (P1-T018)
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built and tested keyless against fixtures in IG's documented REST/Lightstreamer formats; the live demo stream is checked with your credentials in P1-T073 (from P0-T009 / P1-T002). IG's historical price allowance is limited, so history comes from Dukascopy (P1-T018)
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T009
 
 ## Requirements
@@ -52,7 +57,7 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 
 - [ ] Implement IG stream connector with session refresh
 - [ ] Epic mapping for universe instruments
-- [ ] Golden fixtures; tests; docs
+- [ ] Golden fixtures in IG's documented formats (P1-T073 replaces them with scrubbed real recordings); tests; docs
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
 ## Verification
@@ -73,7 +78,7 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 
 ## Acceptance criteria
 
-- [ ] Live `md.ig.*.quote` for every universe FX/metal pair during market hours
+- [ ] Golden replay and session-expiry tests pass keyless; the live `md.ig.*.quote` check runs in P1-T073
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -82,8 +87,8 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT use keys with withdrawal rights or without an IP allow-list; practice/testnet/paper only, no live money before the P7 gates.
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT use keys with withdrawal rights, or without an IP allow-list where the venue supports one; practice/testnet/paper only, no live money before the P7 gates.
 - Do NOT place, modify or cancel orders from this code; P1 is read-only toward venues (orders arrive in P2 through M11).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
@@ -103,3 +108,4 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build on fixtures, live stream moved to P1-T073)

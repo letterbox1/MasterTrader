@@ -4,7 +4,7 @@ kind: gap
 title: Journal buffer bound during a Postgres outage is unspecified
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B015-nats-buffer-bound-postgres-down
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §9.3 (Postgres down)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,9 +50,10 @@ A stated bound (time and bytes) for buffering journal input in NATS, consistent 
 
 ## ToDo
 
-- [ ] Update 02 §9.3 and §5.1
-- [ ] Update the affected task files (P3-T009, P3-T052) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §C P3-B015): Postgres-down write path buffers in NATS JetStream bounded at 1 GB or 24 h (defaults); above 80% new entries stop, exits continue; nothing executes without a record
+- [x] Owning docs carry it: 16 §3.3; 02 §5.1 stores; 02 §9.3 degraded modes; 15 §2 write path; D16 Settings failure behaviour; roadmap R3.N3/T3.42/T3.67
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T057 (stream, buffer, M11 hook), P3-T060 (drill), P3-T009, P3-T052
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -70,9 +71,9 @@ A stated bound (time and bytes) for buffering journal input in NATS, consistent 
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (16 §3.3; 02 §5.1 stores; 02 §9.3 degraded modes; 15 §2 write path; D16 Settings failure behaviour; roadmap R3.N3/T3.42/T3.67)
+- [x] Affected tasks consistent with it (P3-T057 (stream, buffer, M11 hook), P3-T060 (drill), P3-T009, P3-T052)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -99,3 +100,7 @@ A stated bound (time and bytes) for buffering journal input in NATS, consistent 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §C P3-B015: Postgres-down write path buffers in NATS JetStream bounded at 1 GB or 24 h (defaults); above 80% new entries stop, exits continue; nothing executes without a record. Docs now carry it: 16 §3.3; 02 §5.1 stores; 02 §9.3 degraded modes; 15 §2 write path; D16 Settings failure behaviour; roadmap R3.N3/T3.42/T3.67. Implementation owned by P3-T057 (stream, buffer, M11 hook), P3-T060 (drill), P3-T009, P3-T052. Root cause: no bound existed for the Postgres-down buffer.
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C P3-B015); docs updated: 16 §3.3; 02 §5.1 stores; 02 §9.3 degraded modes; 15 §2 write path; D16 Settings failure behaviour; roadmap R3.N3/T3.42/T3.67; implementation owned by P3-T057 (stream, buffer, M11 hook), P3-T060 (drill), P3-T009, P3-T052
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:03 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

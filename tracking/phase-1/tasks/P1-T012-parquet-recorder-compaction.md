@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T010]
+depends_on: [P1-T010, P0-T027]
 requirements: [R1.02, R1.N3]
 roadmap_todos: [T1.21]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats]
 branch: p1/P1-T012-parquet-recorder-compaction
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T012 · Build the Parquet recorder with daily compaction
@@ -38,14 +43,15 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 
 - Roadmap: requirements [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.21](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (recording pipeline) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 3 · stores [02 §5.1](../../../docs/02-v1-architecture.md#51-stores) (Parquet forever; hot NVMe 90 days → cold HDD)
-- Storage budget R1.N3: ~0.3–1 TB/year for ~10 symbols at trades + L1 + L2@1s
+- Storage budget R1.N3: ~0.3–1 TB/year for ~10 symbols at trades + L1 + 1 s book snapshots, native L2 diffs only for the default ≤ 3 order-book symbols ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002); recalculated from the soak (P1-T065)
 - Depends on (this phase): P1-T010
+- Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
 
 ## Requirements
 
 - Durable pull consumer on stream `MD` with explicit ack after the file containing the message is fsynced (at-least-once; dedupe on (venue, symbol, seq) at compaction)
 - Roll interval configurable 1–5 min (default 1 min for trades/L2, 5 min for quotes); files written to `/data/hot/catalog/<type>/<venue>/<symbol>/<date>/` as Nautilus-compatible Parquet (zstd)
-- Daily compaction at 00:30 UTC: merge, sort by `event_time`, dedupe, verify row counts, write provenance metadata, then delete fragments
+- Daily compaction at 00:30 UTC (default, configurable): merge, sort by `event_time`, dedupe, verify row counts, write provenance metadata, then delete fragments
 - Nanosecond timestamps kept; `ingest_time` stored next to `event_time`
 - Metrics: rows/s written, consumer lag, bytes/day per venue/type (feeds the storage tab and P1-T052)
 
@@ -107,3 +113,4 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 recording policy and budget wording (P1-B002); P0 dep on catalog helpers)

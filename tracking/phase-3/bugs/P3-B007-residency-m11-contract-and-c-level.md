@@ -4,7 +4,7 @@ kind: gap
 title: Residency-to-risk contract undefined and residency changes can loosen risk at C1
 phase: 3
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p3/P3-B007-residency-m11-contract-and-c-level
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D15-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/09-journal-and-tax.md §Key findings (Egypt)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -50,10 +50,10 @@ A defined interface by which M11 learns the current residency flags, and a C3 re
 
 ## ToDo
 
-- [ ] Update 02 §6 (KV) and §7.2 (C-level note)
-- [ ] Update D15 Actions
-- [ ] Update the affected task files (P3-T033, P3-T031, P3-T039) if the decision differs from their default
-- [ ] Note the decision and source in the progress log
+- [x] Decision recorded in docs/17 (17 §D P3-B006/P3-B007): a residency change emits `tax.residency.changed`, the venue registry recomputes, any resulting loosening is C3; M11 fails closed until recomputed
+- [x] Owning docs carry it: 02 §6 subject table; 02 §7.2 `tax.residency.add`; 02 §8 flow step 7; 12 §1 moving countries; 09 Egypt finding; D15 actions
+- [x] Affected tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P3-T055 (contract + recompute), P3-T031 (timeline), P3-T033 (Egypt block), P3-T058 (tests)
+- [x] Decision and source noted in the progress log
 
 ## Verification
 
@@ -71,9 +71,9 @@ A defined interface by which M11 learns the current residency flags, and a C3 re
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in the owning doc
-- [ ] Affected tasks consistent with it
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning doc (02 §6 subject table; 02 §7.2 `tax.residency.add`; 02 §8 flow step 7; 12 §1 moving countries; 09 Egypt finding; D15 actions)
+- [x] Affected tasks consistent with it (P3-T055 (contract + recompute), P3-T031 (timeline), P3-T033 (Egypt block), P3-T058 (tests))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -101,3 +101,7 @@ A defined interface by which M11 learns the current residency flags, and a C3 re
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 §D P3-B006/P3-B007: a residency change emits `tax.residency.changed`, the venue registry recomputes, any resulting loosening is C3; M11 fails closed until recomputed. Docs now carry it: 02 §6 subject table; 02 §7.2 `tax.residency.add`; 02 §8 flow step 7; 12 §1 moving countries; 09 Egypt finding; D15 actions. Implementation owned by P3-T055 (contract + recompute), P3-T031 (timeline), P3-T033 (Egypt block), P3-T058 (tests). Root cause: no contract linked residency to M11 and no C-level for loosening.
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P3-B006/P3-B007); docs updated: 02 §6 subject table; 02 §7.2 `tax.residency.add`; 02 §8 flow step 7; 12 §1 moving countries; 09 Egypt finding; D15 actions; implementation owned by P3-T055 (contract + recompute), P3-T031 (timeline), P3-T033 (Egypt block), P3-T058 (tests)
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:02 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

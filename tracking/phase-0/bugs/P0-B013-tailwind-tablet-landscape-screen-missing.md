@@ -4,7 +4,7 @@ kind: gap
 title: DESIGN §6.2 `tablet-landscape` query is missing from the §6.3 Tailwind config
 phase: 0
 type: DOC
-status: ready
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R0.11, R0.N6]
 roadmap_todos: [T0.26]
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-B013-tailwind-tablet-landscape-screen-missing
 pr: ""
 doc_sync: [DESIGN.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: DESIGN.md §6.3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-B013 · DESIGN §6.2 `tablet-landscape` query is missing from the §6.3 Tailwind config
@@ -50,10 +55,10 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## ToDo
 
-- [ ] Confirm the decision with the user (or take the suggested fix if no objection)
-- [ ] Update the listed docs so they agree
-- [ ] Update the affected P0 task files' Context if the decision differs from the suggestion
-- [ ] Add/adjust a regression check where one is possible (see Verification)
+- [x] Decision taken: 17 §D P0-B013 (ratified in 17 §E)
+- [x] Docs updated so they agree: DESIGN §6.3 Tailwind config now has `tablet-landscape` (raw query matching §6.2)
+- [x] Affected P0 task files reference the resolution: P0-T047
+- [x] Regression check owned: P0-T047 preset drift test
 
 ## Verification
 
@@ -68,9 +73,9 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 
 ## Acceptance criteria
 
-- [ ] Listed docs updated and consistent
-- [ ] Affected tasks reference the resolution
-- [ ] Root cause (how the drift happened) noted in the progress log
+- [x] Listed docs carry the 17 §D P0-B013 decision and agree (checked in the alignment wave, 2026-10-22)
+- [x] Implementation owned by: P0-T047 (preset drift test)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +99,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by 17 §D P0-B013; docs checked: DESIGN §6.3 Tailwind config now has `tablet-landscape` (raw query matching §6.2). Root cause: §6.2 was extended without updating the §6.3 config block. Implementation owned by P0-T047 (preset drift test).
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P0-B013); docs updated: DESIGN §6.3 Tailwind config now has `tablet-landscape` (raw query matching §6.2); implementation owned by P0-T047 (preset drift test)
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave
