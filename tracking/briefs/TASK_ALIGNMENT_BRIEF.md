@@ -6,10 +6,11 @@ The kanban hooks and CLI triage are **paused** during this wave (`tracking/.stat
 
 ## Steps
 
-1. **Read** `docs/16`, `docs/17`, `tracking/SCHEMA.md`, `tracking/PLANNING_BRIEF.md` and your roadmap phase doc (`docs/roadmap/phase-N-*.md`). The roadmap doc has new requirement and ToDo IDs (listed in your prompt).
+1. **Read** `docs/16`, `docs/17`, `tracking/SCHEMA.md`, `tracking/briefs/PLANNING_BRIEF.md` and your roadmap phase doc (`docs/roadmap/phase-N-*.md`). The roadmap doc has new requirement and ToDo IDs (listed in your prompt).
 
 2. **Update existing tasks** in `tracking/phase-N/tasks/` wherever a decision changes them:
    - **Numbers become configurable defaults** with a link to the 16 section (no hard-coded limits). Modes are `paper`/`hitl`/`autonomous`. Use the canonical audit/table names, `ops.wallets`, venue cap 25%, DSR ≥ 0.95, two-stage drawdowns, the three-layer dead-man, the MCP rules, etc.
+   - **Scope what each task needs to run** (new front-matter fields): `tools`, `mcp`, `env` (names only), `services`, per the planning brief. Add them to every task you touch; for tasks you don't otherwise change, add them when they're clear from the task text.
    - Fix any task that contradicts a decision. Keep each task's ID, file name and structure; edit content and front matter (`requirements`, `roadmap_todos`, `depends_on`, `doc_sync`). Add a progress-log line: `- 2026-10-21 00:00 · aligner · updated for docs/16–17 (<what changed>)`.
 
 3. **Create new tasks** for the new roadmap ToDos/requirements in your phase. Use the next free IDs in your phase (`./kanban new --phase N --title "…" --type …` creates the file from the template, then fill it in fully per the planning brief). Include tests, scenarios, stress/failure injection, exceptions and cardinal rules. Wire `depends_on` within the phase, and add the new tasks as dependencies of the phase exit-demo task where they're part of the exit.

@@ -6,11 +6,11 @@ Give this to an agent (Claude Code cloud or local, or any CLI agent) that should
 
 > You are the execution agent for **Phase N** of MasterTrader. Read `AGENTS.md`, `tracking/README.md`, `tracking/phase-N/PHASE.md` and `docs/roadmap/phase-N-*.md`. Then loop:
 > 1. `./kanban resume`. If a Phase-N item is `in_progress`, finish it first (read its checkpoint and progress log; check out its branch).
-> 2. Otherwise `./kanban next --phase N --owner agent`, then `./kanban start <ID> --git`.
-> 3. Implement exactly what the item file specifies. Tick ToDo boxes as you go and `./kanban checkpoint <ID> "…"` after each step. Commit and push with the item ID in the message.
+> 2. Otherwise `./kanban next --phase N --owner agent`, then `./kanban start <ID> --git`. `start` runs the **preflight** (the `tools`, `mcp`, `env` names and `services` the item lists). If something only the user can provide is missing (keys, accounts, money), block the item (`./kanban block <ID> --reason "needs …"`), make sure a USER task covers it, and pick another.
+> 3. Implement exactly what the item file specifies. Use the skills you have; write a project skill (`.agents/skills/mastertrader-<name>/`, then `./kanban doctor --fix`) only for a procedure you'll repeat. Tick ToDo boxes as you go and `./kanban checkpoint <ID> "…"` after each step. Commit and push with the item ID in the message.
 > 4. Run every test, scenario and stress check listed under *Verification*. Paste the commands and results into the progress log.
-> 5. File any defect you find with `./kanban new --phase N --kind bug …`. Fix it only if it's in scope.
-> 6. Open a PR (title `<ID>: <title>`), then `./kanban review <ID> --pr <url>`. After merge, `./kanban done <ID> --evidence "…"`.
+> 5. File any defect you find (search first: `./kanban list --grep "…"`; **pm-triage**) with `./kanban new --phase N --kind bug …`. Fix it only if it's in scope.
+> 6. Open a PR (title `<ID>: <title>`), then `./kanban review <ID> --pr <url>`. Get an independent review (**pm-review**, a separate agent: `./kanban reviewed <ID> --pass|--fail --note "…"`); risk, `pit`, WORM, tax and money-path items always get one. After merge, `./kanban done <ID> --evidence "…"`.
 > 7. Do the doc sync the Stop hook asks for (spec, roadmap, architecture, UI docs; **tick the roadmap ToDo**), then `./kanban docsync <ID> --done`.
 > 8. Repeat until nothing is ready for agents in Phase N. Then list what's waiting on the user (`./kanban next --phase N --owner user`) and stop with a handoff (`./kanban session handoff --note "…"`, commit, push).
 >

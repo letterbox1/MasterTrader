@@ -1,15 +1,4 @@
 #!/usr/bin/env bash
-# Local gate before anything leaves the machine (replaces CI minutes for the kanban).
-# Blocks the push if items are invalid or the generated boards are stale; warns about pending doc sync.
+# pm-kit git hook shim: runs the project's own .git/hooks/pre-push first, then the kanban checks.
 root="$(git rev-parse --show-toplevel)"
-k="python3 $root/tools/kanban/kanban.py"
-$k validate --quiet >/dev/null || { echo "kanban: validation failed. Run ./kanban validate"; exit 1; }
-$k build >/dev/null
-if [ -n "$(git status --porcelain -- KANBAN.md kanban.html tracking docs/roadmap/README.md | grep -v 'SESSIONS.md')" ]; then
-  echo "kanban: boards were out of date and have been rebuilt. Commit them, then push again:"
-  echo "  git add -A KANBAN.md kanban.html tracking docs/roadmap/README.md && git commit -m 'kanban: rebuild boards'"
-  exit 1
-fi
-pending=$(grep -c '^- \[ \]' "$root/tracking/DOC_SYNC.md" 2>/dev/null || true)
-[ "${pending:-0}" -gt 0 ] && echo "kanban: note: $pending item(s) still need doc sync (tracking/DOC_SYNC.md)."
-exit 0
+exec python3 "$root/tools/kanban/kanban.py" git-hook pre-push "$@"

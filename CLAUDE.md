@@ -1,13 +1,29 @@
-# CLAUDE.md
-
+<!-- pm-kit:start (managed by CeraNova PM install.sh; edit outside this block for project-specific rules) -->
 @AGENTS.md
 
-## Claude Code specifics
+## CeraNova PM: Claude Code specifics
 
-- **Hooks** (`.claude/settings.json`) run the kanban tool automatically in cloud and local sessions:
-  - **SessionStart:** logs the session to `tracking/SESSIONS.md` and prints the resume brief (what's in progress, checkpoints, doc sync pending, next ready). Act on it before anything else.
-  - **PostToolUse:** when item files change, re-triages and rebuilds every board, `KANBAN.md`, `kanban.html` and the roadmap status blocks.
-  - **Stop:** if an item was completed and its docs haven't been synced, it asks you **once per item** to update the docs listed in its `doc_sync` field, then run `./kanban docsync <ID> --done`. Do it before ending the turn unless the user says otherwise.
-- **Bulk edits** to many item files (re-planning): run `./kanban pause` first and `./kanban pause --off` + `./kanban build` after, so triage doesn't rewrite files mid-edit.
-- **Sub-agents** working on a phase must stay inside `tracking/phase-N/` and the code for their item, and follow `tracking/PLANNING_BRIEF.md` when (re)planning.
-- **Before the session ends or context runs low:** checkpoint every in-progress item, then commit and push, so nothing is lost if the session dies.
+- **First run:** if `tracking/kanban.config.json` doesn't exist and `tracking/` has no `phase-*` folders, invoke the **pm-bootstrap** skill before any other project work. Then follow the lifecycle:
+  - **pm-intake** → (**pm-doc-ingest**, **pm-research**, **pm-scope**) → **pm-roadmap**;
+  - **pm-plan** / **pm-delegate** → **pm-reconcile**;
+  - **pm-execute** → **pm-review** → **pm-doc-sync** / **pm-status**; **pm-triage** whenever bugs, requests or failures come in.
+- **What's next:** the session-start brief's **"Lifecycle next"** line (and `./kanban doctor`) names the next skill; act on it. If anything about the setup misbehaves, use **pm-doctor** (`./kanban doctor --fix`). Use **pm-lifecycle** if unsure.
+- **Hooks** (`.claude/settings.json`) run whatever model this harness uses:
+  - **SessionStart:** enables the git hooks, logs the session to `tracking/SESSIONS.md` and prints the resume brief. Act on it first.
+  - **PostToolUse:** rebuilds every board when item files change.
+  - **Stop:** asks **once per completed item** for doc sync. Do it before ending the turn unless the human says otherwise.
+  - The same hooks exist for Codex, Gemini CLI, Cursor and OpenCode (`./kanban agents`).
+- **Bulk edits** to item files: `./kanban pause` first; `./kanban pause --off && ./kanban build` after.
+- **Sub-agents** stay inside their assigned phase folder or doc set and follow the matching brief in `tracking/briefs/`.
+- **Reconciling with the human:**
+  - explain gaps plainly with a recommendation;
+  - record decisions in the decisions register and configuration doc;
+  - align the docs, then the tasks;
+  - close gaps with evidence (**pm-reconcile**).
+- **Before the session ends or context runs low:** checkpoint in-progress items, commit, push.
+<!-- pm-kit:end -->
+
+# MasterTrader: Claude Code notes
+
+- Project rules, cardinal rules and doc-sync targets: the **MasterTrader specifics** section of `AGENTS.md`.
+- Planning or aligning a phase: follow `tracking/briefs/PLANNING_BRIEF.md` / `TASK_ALIGNMENT_BRIEF.md`; stay inside `tracking/phase-N/` and the code for your item.

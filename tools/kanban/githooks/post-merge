@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# After pulling another machine's work (cloud ↔ local), re-triage and print the resume brief.
+# pm-kit git hook shim: runs the project's own .git/hooks/post-merge first, then the kanban checks.
 root="$(git rev-parse --show-toplevel)"
-python3 "$root/tools/kanban/kanban.py" resume || true
+exec python3 "$root/tools/kanban/kanban.py" git-hook post-merge "$@"

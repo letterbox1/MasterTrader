@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "name": "ceranova-pm-resume",
+            "command": "python3 \"$GEMINI_PROJECT_DIR/tools/kanban/kanban.py\" hook session-start --agent gemini",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "write_file|replace|edit|run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "ceranova-pm-build",
+            "command": "python3 \"$GEMINI_PROJECT_DIR/tools/kanban/kanban.py\" hook post-tool --agent gemini",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "name": "ceranova-pm-docsync",
+            "command": "python3 \"$GEMINI_PROJECT_DIR/tools/kanban/kanban.py\" hook stop --agent gemini",
+            "timeout": 30000
+          }
+        ]
+      }
+    ]
+  }
+}

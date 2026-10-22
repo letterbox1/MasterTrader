@@ -47,6 +47,7 @@ Use this brief to (re)plan a phase into kanban items. It keeps every phase board
   - `type` is one of USER / BUILD / OPS / VERIFY / RUN / DOC; `owner: user` for USER items, otherwise `agent`.
   - `requirements` and `roadmap_todos` use the roadmap IDs; `modules` and `dashboards` as relevant.
   - `doc_sync` lists repo-relative paths.
+  - **What the task needs to run:** `tools` (CLIs on PATH, e.g. `[docker, uv, pnpm]`), `mcp` (MCP servers the agent will call), `env` (variable **names** only, e.g. `[BINANCE_TRADE_KEY]`; values stay in the sops file), `services` (e.g. `[timescaledb, redis]`). Anything only the user can provide is a USER task this one depends on. Don't assign skills.
   - **`depends_on` only references items in your own phase.** Cross-phase prerequisites are handled by the phase's `opens_after` and are named in text under *Context & references*.
 - **USER items** (only the human can do them): exact step-by-step instructions, where outputs go (secrets → the sops secrets file, **never** chat or git), how to confirm, and what it unblocks.
 - **Verification coverage:**

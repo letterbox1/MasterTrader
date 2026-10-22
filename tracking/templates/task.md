@@ -15,6 +15,10 @@ requirements: []
 roadmap_todos: []
 modules: []
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p0/P0-T000-short-slug
 pr: ""
 doc_sync: []
@@ -26,6 +30,7 @@ started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P0-T000 · Short imperative title
@@ -44,6 +49,7 @@ One or two sentences: what exists or is true when this is done, and why it matte
 
 - Functional: …
 - Non-functional (latency, security, storage, licence): …
+- Tools & access: listed in the front matter (`tools`, `mcp`, `env` names, `services`); `./kanban preflight <ID>` checks them before start.
 
 ## ToDo
 

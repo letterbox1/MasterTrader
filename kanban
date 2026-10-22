@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-# MasterTrader kanban CLI wrapper. See tracking/README.md.
+# pm-kit kanban CLI wrapper. See tracking/README.md and docs/pm/LIFECYCLE.md.
 exec python3 "$(dirname "$0")/tools/kanban/kanban.py" "$@"

@@ -1,6 +1,6 @@
 # Tracking Schema
 
-Every kanban in this repo (the nine phase boards and the root board) is **generated** from the same kind of file: one Markdown file per work item with a small front-matter header. `./kanban validate` enforces this schema. `./kanban build` turns the files into the boards.
+Every kanban in this repo (one board per phase, plus the root board) is **generated** from the same kind of file: one Markdown file per work item with a small front-matter header. `./kanban validate` enforces this schema. `./kanban build` turns the files into the boards.
 
 **Single source of truth:** the item files under `tracking/phase-N/tasks/` and `tracking/phase-N/bugs/`, plus `tracking/phase-N/PHASE.md`.
 
@@ -16,6 +16,8 @@ Every kanban in this repo (the nine phase boards and the root board) is **genera
 tracking/
 ├── README.md              how to use it (humans and agents)
 ├── SCHEMA.md              this file
+├── kanban.config.json     project name, task types, sizes, required headings, roadmap paths, brand colours (all optional)
+├── briefs/                planning · execution · doc ingest · doc alignment · task alignment briefs for agents
 ├── SESSIONS.md            append-only session log (written by the SessionStart hook / `./kanban session`)
 ├── DOC_SYNC.md            generated: completed items whose docs still need updating
 ├── templates/             task.md · bug.md · phase.md
@@ -32,25 +34,29 @@ The front matter is a restricted YAML subset: one `key: value` per line. Values 
 
 ```yaml
 ---
-id: P2-T014                     # P<phase>-T<nnn> for tasks, P<phase>-B<nnn> for bugs/gaps
+id: P2-T014                     # P<phase>-T<nnn> for tasks, P<phase>-B<nnn> for bugs/gaps (any number of phases)
 kind: task                      # task | bug | gap | chore
 title: Risk policy model and versioned store
 phase: 2
-type: BUILD                     # USER | BUILD | OPS | VERIFY | RUN | DOC
+type: BUILD                     # from kanban.config.json `types` (default USER | BUILD | OPS | VERIFY | RUN | DOC | RESEARCH)
 status: backlog                 # backlog | ready | in_progress | review | blocked | done | cancelled
 priority: high                  # critical | high | medium | low
-size: M                         # XS=1 S=2 M=3 L=5 XL=8 (weights for progress)
+size: M                         # from `sizes` (default XS=1 S=2 M=3 L=5 XL=8; weights for progress)
 severity: ""                    # bugs only: S1 (critical) | S2 (major) | S3 (minor) | S4 (trivial)
 owner: agent                    # user | agent | unassigned
 claimed_by: ""                  # set by `./kanban start` (env:host:session)
 depends_on: [P2-T010, P0-T022]  # item IDs (any phase)
 requirements: [R2.11]           # roadmap requirement IDs
 roadmap_todos: [T2.22]          # roadmap ToDo IDs
-modules: [M11]
+modules: [api]                  # components / packages / asset groups (free text)
 dashboards: [D06]
+tools: [git, node>=20, docker]  # CLIs that must be on PATH (version text is informational)
+mcp: [github]                   # MCP servers the task uses (checked against agent MCP configs; hosted connectors may not show)
+env: [STRIPE_API_KEY]           # environment variable NAMES only, never values (from the shell or `env_files`)
+services: [postgres]            # external services/accounts to confirm by hand
 branch: p2/P2-T014-risk-policy-store
 pr: ""
-doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
+doc_sync: [docs/SPEC.md, docs/roadmap/phase-2-core-features.md]
 doc_sync_status: n/a            # n/a | pending | done (set automatically on completion)
 found_in: ""                    # bugs: item ID or area where it was found
 created: 2026-10-21
@@ -59,6 +65,7 @@ started: ""
 completed: ""
 blocked_reason: ""              # "auto:deps …" is managed by triage
 checkpoint: ""                  # one-line "where I am" for resume
+review_result: ""               # "" | pass | fail, set by `./kanban reviewed` (pm-review); `require_review` makes pass a condition of done
 ---
 ```
 
@@ -67,6 +74,7 @@ checkpoint: ""                  # one-line "where I am" for resume
 - Every `depends_on` ID must exist, and dependencies can't form a cycle.
 - `requirements` and `roadmap_todos` must exist in the phase's roadmap document (warning if not).
 - `owner: user` for `type: USER` items (things only the human can do).
+- `tools`, `mcp`, `env`, `services` are lists. `env` holds names only: a value (anything with `=`) fails validation. `./kanban start` refuses while a listed tool or env var is missing on this machine (`--force` overrides); `requires_defaults` in the config adds per-type defaults.
 - `branch` follows `p<N>/<ID>-<slug>`; one branch and one PR per task, unless a task says otherwise.
 
 ## 3. Item body (required headings, in this order)

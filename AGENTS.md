@@ -1,78 +1,86 @@
-# AGENTS.md: how any coding agent works in this repo
+<!-- pm-kit:start (managed by CeraNova PM install.sh; edit outside this block for project-specific rules) -->
+# Agent protocol (CeraNova PM)
 
-This applies to every CLI agent: Claude Code (cloud or local), Codex, Gemini CLI, Cursor and similar. `CLAUDE.md` imports this file.
+This applies to every coding agent and any model: Claude Code (cloud or local), Codex, Gemini CLI, Cursor, OpenCode and similar.
 
-**MasterTrader** is a private, single-user, self-hosted AI trading platform.
-- Start with [README.md](README.md) and [SPEC.md](SPEC.md); the phased plan is in [docs/roadmap/](docs/roadmap/README.md).
-- **All work is tracked on the kanban** in [`tracking/`](tracking/README.md) and rolled up into [`KANBAN.md`](KANBAN.md) / `kanban.html`.
+**All work is tracked on per-phase kanbans** in [`tracking/`](tracking/README.md), rolled up into [`KANBAN.md`](KANBAN.md) / `kanban.html`. The phased plan is in `docs/roadmap/`. Lifecycle guide: [`docs/pm/LIFECYCLE.md`](docs/pm/LIFECYCLE.md).
 
-## 1. Session protocol (do this every time)
+## 1. Session protocol
 
-**1. Sync and resume:**
-- `git pull` (or fetch your branch), then run `./kanban resume`.
-- The SessionStart hook does this automatically in Claude Code.
-- If anything is `in_progress`, **resume it first**: read its `checkpoint` and the last lines of its `## Progress log`, then check out its branch.
-
-**2. Pick work:**
-- `./kanban next [--phase N]` lists ready items, most important first.
-- Items with `owner: user` are the human's. **Never do them for the user**: no creating accounts, no handling keys or money, no approvals. You may prepare instructions or code that supports them.
-
-**3. Claim:**
-- `./kanban start <ID> [--git]` sets `in_progress` and `claimed_by`, logs it, and optionally switches to the item's branch.
-- If your session requires a fixed branch (e.g. a cloud session's designated branch), work there and record that branch in the item.
-
-**4. Work the item file as the spec.**
-- Follow its *Requirements*, *ToDo*, *Verification*, *Exceptions* and *Cardinal rules*.
-- Tick ToDo boxes as you go (`./kanban tick <ID> <n|text>`, or edit the file).
-
-**5. Checkpoint often:** `./kanban checkpoint <ID> "where I am, what's next"`.
-- Do this after each meaningful step and **always before you stop**.
-- Commit + push the item file with your code, so another machine (or you after a crash) can continue.
-
-**6. Verify:** run the item's tests, scenarios and stress checks. Record what you ran and the result in the progress log.
-
-**7. Bugs found along the way:**
-- `./kanban new --phase N --kind bug --severity S1|S2|S3|S4 --found-in <ID> --title "…"`, then fill in reproduce / expected / actual.
-- Don't silently fix unrelated things.
-
-**8. Finish:**
-- `./kanban review <ID> --pr <url>` when a PR is open.
-- After merge (or when verified on the designated branch): `./kanban done <ID> --evidence "commands run + results"`.
-- `done` refuses if any ToDo or acceptance box is unticked or there's no evidence.
-
-**9. Doc sync.** Completing an item marks its `doc_sync` docs as pending (`tracking/DOC_SYNC.md`).
-- Update those docs so they match what was built: spec (`docs/03`), architecture (`docs/02`), roadmap phase doc (**tick the matching roadmap ToDo**), UI docs, `SPEC.md`.
-- Then run `./kanban docsync <ID> --done`.
-- In Claude Code the Stop hook reminds you once per completed item.
-
-**10. End of session:**
-- `./kanban session handoff --note "…"`, then commit and push, so the next session (cloud or local) picks up cleanly.
+1. **Sync and resume.** `git pull`, then `./kanban resume` (its **"Lifecycle next"** line names the next step; `./kanban doctor` shows the full list). If anything is `in_progress`, finish it first: read its `checkpoint` and progress log, check out its branch.
+2. **Pick.** `./kanban next [--phase N]`. Items with `owner: user` are the human's (accounts, credentials, money, approvals, decisions). **Never do them for the user.** Prepare instructions or supporting work instead.
+3. **Claim.** `./kanban start <ID> [--git]`. A session-designated branch overrides the item's branch name; record it in the item. `start` runs a **preflight** of the tools, MCP servers, env var names and services the item lists; if something only the human can provide is missing, block the item and raise a USER task.
+4. **Work the item file as the spec:** Requirements, ToDo, Verification, Exceptions, Cardinal rules. Tick boxes as you go (`./kanban tick <ID> <n|text>`).
+5. **Checkpoint often.** `./kanban checkpoint <ID> "where I am, what's next"` after each step and **always before stopping**. Commit and push the item file with the work.
+6. **Verify.** Run the item's tests, scenarios and stress checks; record commands and results in the progress log.
+7. **Bugs found along the way.** Search first (`./kanban list --grep "…"`), then `./kanban new --phase N --kind bug --severity S1|S2|S3|S4 --found-in <ID> --title "…"` (**pm-triage**). Don't silently fix unrelated things.
+8. **Finish.** `./kanban review <ID> --pr <url>`, then an independent check (**pm-review**, ideally another agent: `./kanban reviewed <ID> --pass|--fail --note "…"`). After merge or verification, `./kanban done <ID> --evidence "commands + results"`. `done` refuses on unticked boxes or missing evidence (and on a missing passing review when `require_review` is on).
+9. **Doc sync.** Completing an item queues its `doc_sync` docs (`tracking/DOC_SYNC.md`). Update them to match what was built, **tick the roadmap ToDo**, then `./kanban docsync <ID> --done`.
+10. **End of session.** `./kanban session handoff --note "…"`, then commit and push.
 
 ## 2. Phase completion
 
-**A phase completes automatically** when:
-- all its tasks are `done`/`cancelled`;
-- no S1/S2 bug is open;
-- every `## Exit criteria` box in `tracking/phase-N/PHASE.md` is ticked.
-
-Tick exit criteria only with evidence: link the run, log or commit in the progress log of the phase's exit-demo item.
-
-On completion `PHASE.md` becomes `status: done` with `doc_sync_status: pending`. Then:
-1. Update `docs/roadmap/README.md` and `docs/04-plan-of-action.md` to mark the phase done.
+A phase completes automatically when all its tasks are done or cancelled, no S1/S2 bug is open, and every `## Exit criteria` box in `tracking/phase-N/PHASE.md` is ticked (with evidence). Then:
+1. Mark the phase done in the roadmap and plan docs.
 2. Run `./kanban docsync P<N> --done`.
 
-The next phase opens by itself (its `opens_after`).
+The next phase opens by itself.
 
-## 3. Never edit generated files
+## 3. Generated files: never edit
 
-These are rebuilt by `./kanban build`, the hooks and CI:
-- `KANBAN.md`, `kanban.html`;
-- `tracking/phase-N/BOARD.md`, `tracking/DOC_SYNC.md`;
-- blocks between `<!-- kanban:… -->` markers in `docs/roadmap/README.md`.
+- `KANBAN.md`, `kanban.html`
+- `tracking/phase-N/BOARD.md`, `tracking/DOC_SYNC.md`
+- the blocks between `<!-- kanban:… -->` markers
 
-Edit the item files, `PHASE.md` or the roadmap phase docs instead. **Never delete an item:** cancel it with `./kanban cancel <ID> --reason …`.
+Never delete items; cancel them instead (`./kanban cancel <ID> --reason …`).
 
-## 4. Cardinal rules (apply to all work)
+## 4. Universal cardinal rules
+
+- Never commit secrets or paste them into chats, issues or logs.
+- Never skip, weaken or delete a test to get green.
+- Nothing a user may want to change is hard-coded; it goes in the configuration doc as a default.
+- Respect the project-specific rules below this block.
+
+## 5. Git
+
+- **Branches:** `p<N>/<ID>-<slug>`, one item per branch/PR. PR title `<ID>: <title>`. Commits mention the item ID.
+- **Git hooks** run locally for every tool and model. Claude Code sessions enable them automatically; otherwise run `./kanban install-hooks` once per clone.
+  - **pre-commit:** validate + rebuild boards.
+  - **pre-push:** block if invalid or stale.
+  - **post-merge / post-checkout:** resume brief.
+- CI is a manual backstop only.
+
+## 6. Skills (open Agent Skills format) and commands
+
+Skills (`SKILL.md`, open Agent Skills format) are installed in `.claude/skills/` (Claude Code; OpenCode reads it too) and `.agents/skills/` (Codex, Gemini CLI and other open-standard agents):
+- **pm-lifecycle** (router), **pm-doctor** (setup check, repair, next step)
+- **pm-bootstrap**, **pm-intake**, **pm-doc-ingest**, **pm-research**, **pm-scope**, **pm-roadmap**, **pm-plan**
+- **pm-delegate**, **pm-reconcile**, **pm-execute**, **pm-review**, **pm-triage**, **pm-doc-sync**, **pm-status**
+
+Agents that don't load skills automatically can read the same `SKILL.md` files as step-by-step playbooks. Write a project skill only for a procedure you'll repeat (`.agents/skills/<project>-<name>/`; `./kanban doctor --fix` mirrors it).
+
+**Session hooks** (resume brief, board rebuild, doc-sync prompt) exist for Claude Code, Codex, Gemini CLI, Cursor and OpenCode: `./kanban agents` shows them, `./kanban agents --add <agent>` installs one. Without them, run `./kanban resume` first; the git hooks still guard every commit and push.
+
+```
+./kanban resume | next [--phase N] | list [--phase N --status S --type T --kind gap --include-bugs] | show <ID>
+./kanban start <ID> [--git] | preflight [<ID>… | --ready] | tick <ID> <n|text> | checkpoint <ID> "note"
+./kanban review <ID> --pr URL | reviewed <ID> --pass|--fail --note "…" | done <ID> --evidence "…"
+./kanban block <ID> --reason … | unblock <ID> | list --grep "words" | agents [--add codex,gemini,cursor,opencode|all]
+./kanban new --phase N --title "…" [--kind task|bug|gap|chore] [--type BUILD] [--severity S2]
+./kanban init --project "…" [--phases "A,B,C" --roadmap] | phase-add --title "…" [--roadmap]
+./kanban docsync <ID|P<N>> --done | validate [--phase N] | build | open | serve | doctor [--fix]
+./kanban session handoff --note "…" | pause [--off] | install-hooks
+```
+<!-- pm-kit:end -->
+
+# MasterTrader specifics
+
+**MasterTrader** is a private, single-user, self-hosted AI trading platform.
+- Start with [README.md](README.md) and [SPEC.md](SPEC.md); the phased plan is in [docs/roadmap/](docs/roadmap/README.md).
+- Decisions and configurable defaults: [16 configuration and safety model](docs/16-configuration-and-safety-model.md) and [17 decisions register](docs/17-decisions-register.md). Numbers are configurable defaults from 16, never hard-coded.
+- Agent briefs: [`tracking/briefs/`](tracking/briefs/) (planning, execution, doc alignment, task alignment, doc ingest).
+
+## Cardinal rules (apply to all work)
 
 - **Secrets:** never commit secrets or paste them into chats, issues or logs. Secrets live in the sops/age file ([07 §2](docs/07-security-notes.md#2-secrets)).
 - **No bypasses:** every order goes through the risk manager (M11) via `mt_api`; research reads data only through `pit(as_of)`.
@@ -89,24 +97,20 @@ Edit the item files, `PHASE.md` or the roadmap phase docs instead. **Never delet
 - **Tests:** never skip, weaken or delete a test to get green; risk, `pit`, WORM and tax golden tests are mandatory.
 - **Supply chain:** pin images by digest; no telemetry or referral IDs in vendored code; review every third-party bump.
 
-## 5. Git conventions
+## Doc sync targets
 
-- **Branches:** `p<N>/<ID>-<slug>`, one item per branch and PR. PR title `<ID>: <title>`.
-- **Commits:** mention the item ID; include the updated item file with the code.
+- Spec (`docs/03`), architecture (`docs/02`), the roadmap phase doc (**tick the matching roadmap ToDo**), UI docs (`docs/ui/`), `SPEC.md`.
+- On phase completion: update `docs/roadmap/README.md` and `docs/04-plan-of-action.md` to mark the phase done, then `./kanban docsync P<N> --done`.
+- Tick `PHASE.md` exit criteria only with evidence: link the run, log or commit in the progress log of the phase's exit-demo item.
+
+## What tasks need to run
+
+Each task lists `tools`, `mcp`, `env` and `services` in its front matter (checked by `./kanban preflight` and `./kanban start`):
+- `env` holds variable **names** only; values live in the sops/age secrets file ([07 §2](docs/07-security-notes.md#2-secrets)) and never in item files.
+- Exchange keys, accounts, paid plans and anything with money are USER tasks the item depends on.
+
+## Git
+
 - **Don't push to `main` directly.** Session-specific branch instructions override this.
-- **Git hooks** run locally for every tool and model. Claude Code sessions enable them automatically; otherwise run `./kanban install-hooks` once per clone.
-  - **pre-commit:** validate + rebuild boards into the same commit.
-  - **pre-push:** block the push if items are invalid or boards are stale.
-  - **post-merge / post-checkout:** print the resume brief.
-- **CI** (`.github/workflows/kanban.yml`) is **manual only**: a backstop for edits made outside a hooked clone. Day-to-day checking happens locally, so it costs no CI minutes.
-
-## 6. Commands
-
-```
-./kanban resume | next [--phase N] | list [--phase N --status S --type T] | show <ID>
-./kanban start <ID> [--git] | tick <ID> <n|text> | checkpoint <ID> "note"
-./kanban review <ID> --pr URL | done <ID> --evidence "…" | block <ID> --reason … | unblock <ID>
-./kanban new --phase N --title "…" [--kind task|bug|gap|chore] [--type BUILD] [--severity S2]
-./kanban docsync <ID|P<N>> --done | validate [--phase N] | build | open | serve
-./kanban session handoff --note "…" | pause [--off] | install-hooks
-```
+- Commits mention the item ID and include the updated item file with the code.
+- **CI** (`.github/workflows/kanban.yml`) is **manual only**; day-to-day checking happens in the local git hooks.

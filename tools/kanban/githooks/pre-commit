@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-# Kanban gate for every git client (Claude Code, Codex, Gemini CLI, humans).
-# Validates tracking items, re-triages, regenerates boards and stages the generated files.
-set -e
+# pm-kit git hook shim: runs the project's own .git/hooks/pre-commit first, then the kanban checks.
 root="$(git rev-parse --show-toplevel)"
-if git diff --cached --name-only | grep -qE '^(tracking/|tools/kanban/|docs/roadmap/)'; then
-  python3 "$root/tools/kanban/kanban.py" validate --quiet
-  python3 "$root/tools/kanban/kanban.py" build >/dev/null
-  git add "$root/KANBAN.md" "$root/kanban.html" "$root/tracking" "$root/docs/roadmap/README.md" 2>/dev/null || true
-fi
+exec python3 "$root/tools/kanban/kanban.py" git-hook pre-commit "$@"

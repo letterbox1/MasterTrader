@@ -1,6 +1,6 @@
 # Tracking: per-phase kanbans and the project board
 
-Every phase of the [roadmap](../docs/roadmap/README.md) has its own kanban. All of them are built the same way and roll up into one project board.
+Every phase of the roadmap (`docs/roadmap/`) has its own kanban. All of them are built the same way and roll up into one project board.
 
 ## 1. Where to look
 
@@ -50,7 +50,7 @@ The format is in [SCHEMA.md](SCHEMA.md) and the templates are in [templates/](te
 **Which hooks run where:**
 - **Git hooks** run on whatever machine makes the commit or push, for every tool (Claude Code with any model, Codex, Gemini CLI, Cursor, a human in a terminal). They're the universal layer.
 - Git doesn't copy hooks when cloning. The Claude Code SessionStart hook switches them on automatically (`core.hooksPath`); elsewhere, run `./kanban install-hooks` once per clone.
-- **Claude Code hooks** (`.claude/settings.json`) belong to the Claude Code harness. They fire whatever model Claude Code is running, in cloud or local sessions, and add the resume brief, live rebuilds and doc-sync prompts.
+- **Agent session hooks** add the resume brief, live rebuilds and doc-sync prompts: `.claude/settings.json` (Claude Code, whatever model it runs), `.codex/hooks.json` (Codex), `.gemini/settings.json` (Gemini CLI), `.cursor/hooks.json` (Cursor), `.opencode/plugins/ceranova-pm.js` (OpenCode). `./kanban agents` shows and adds them.
 - Other CLIs have their own (or no) hook systems. They read `AGENTS.md` / `GEMINI.md` and rely on the git hooks.
 - **Hooks never push for you.** The pre-commit hook puts the rebuilt boards into your commit, and your normal `git push` carries them. `git commit --no-verify` or edits on github.com skip hooks; that's what the manual CI backstop is for.
 
@@ -67,4 +67,13 @@ Nothing lives only in a session. Every item's status, checkpoint and append-only
 
 ## 6. Planning a phase
 
-Planning agents follow [PLANNING_BRIEF.md](PLANNING_BRIEF.md): one phase each, every roadmap requirement and ToDo covered, every task with tests, scenarios, stress checks, exceptions and cardinal rules, and gaps filed as items.
+Planning agents follow [briefs/PLANNING_BRIEF.md](briefs/PLANNING_BRIEF.md): one phase each, every roadmap requirement and ToDo covered, every task with tests, scenarios, stress checks, exceptions and cardinal rules, and gaps filed as items.
+
+## 7. Skills and the full lifecycle
+
+The pm-* skills (open Agent Skills format, installed in `.claude/skills/` and `.agents/skills/`) package the whole lifecycle:
+- bootstrap, intake, doc ingest, research, scope, roadmap, plan;
+- delegate, reconcile, execute, review, triage;
+- doc sync, status, doctor.
+
+See [`docs/pm/LIFECYCLE.md`](../docs/pm/LIFECYCLE.md) and [`docs/pm/SKILLS.md`](../docs/pm/SKILLS.md). Agent briefs live in [`briefs/`](briefs/).
