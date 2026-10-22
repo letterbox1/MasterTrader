@@ -61,12 +61,12 @@ Calendar dates are indicative; halve the durations if you work full-time.
 | [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 6 | 15 | 5 | 8 | 1 | 35 |
 | [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 45 | 9 | 21 | 3 | 13 | 2 | 48 |
 | [P3 Journal & Tax](phase-3-journal-and-tax.md) | 21 | 6 | 14 | 3 | 8 | 1 | 32 |
-| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 16 | 6 | 11 | 3 | 5 | 1 | 26 |
+| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 18 | 6 | 13 | 3 | 8 | 1 | 31 |
 | [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 23 | 8 | 13 | 3 | 6 | 1 | 31 |
 | [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 21 | 5 | 12 | 2 | 6 | 1 | 26 |
 | [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 14 | 11 | 6 | 3 | 5 | 3 | 28 |
 | [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 8 | 3 | 3 | 1 | 3 | 1 | 11 |
-| **Total** | | **67** | **105** | **31** | **64** | **12** | **279** |
+| **Total** | | **67** | **107** | **31** | **67** | **12** | **284** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
@@ -183,8 +183,8 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T4.01 | P4 | List the Telegram channels you want monitored (joined from your dedicated account, slowly). | R4.02 · [07 §10](../07-security-notes.md#10-social--scraping-accounts) |
 | T4.02 | P4 | Follow the Discord announcement channels into `#mt-inbox`/category channels (≈10–15 follows per receiving channel). | R4.04 |
 | T4.03 | P4 | Give watch keywords/cashtags and the RSS feeds/sites you trust. | R4.01, R4.05 |
-| T4.04 | P4 | Label ~200 sampled documents relevant/irrelevant to calibrate the SemIf gate threshold. | R4.12 |
-| T4.05 | P4 | Confirm whether Reddit access was granted (if yes it joins as optional). | [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) |
+| T4.04 | P4 | Label ~200 sampled documents relevant/irrelevant to calibrate the SemIf gate threshold, using the labelling tool. | R4.12, R4.16 |
+| T4.05 | P4 | Confirm whether Reddit access was granted (if yes it joins as optional; if it wasn't granted by the 2026-10-31 deadline, Reddit stays out and needs no build ToDo). | [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) |
 | T4.06 | P4 | Get the free NASA FIRMS / ACLED keys and confirm the OpenSanctions licence terms for personal use. | R4.08 |
 | T5.01 | P5 | Set up the **vault** (air-gapped hardware) and **warm** hardware wallet yourself; the system only gets public addresses. | R5.01 |
 | T5.02 | P5 | **Seed backup:** Shamir (SLIP-39) shares or multisig, stored in separate locations; write the sealed **estate letter** (where shares are, how to unwind, no secrets). | [07 §4](../07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims) |

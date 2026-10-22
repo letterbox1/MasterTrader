@@ -609,7 +609,7 @@ Full design: [09](09-journal-and-tax.md).
 - **Journal:** an automatic, append-only journal of every economic event, with home-currency values and FX source (RBA for AUD). Crypto values follow the valuation hierarchy in [16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) (fill price → VWAP of our recorded trades → on-chain pool price; aggregators cross-check only).
 - **Lot engine:** rp2-style; specific-ID first, FIFO fallback; FX-cash lots.
 - **Jurisdiction plugins:**
-  - **AU_2026** (50% discount, CFDs on revenue account, Div 775, crypto income, wash-sale flags (re-acquisition within 30 days either side of a loss disposal, flag only, default), myTax mapping, **PAYG-instalment estimator** computing both ATO instalment-amount and instalment-rate methods; GST/BAS mode dormant);
+  - **AU_2026** (50% discount, CFDs on revenue account, Div 775, crypto income, wash-sale flags (re-acquisition within 30 days either side of a loss disposal, flag only, default, [16 §4.4](16-configuration-and-safety-model.md#44-tax-flags)), myTax mapping, **PAYG-instalment estimator** computing both ATO instalment-amount and instalment-rate methods; GST/BAS mode dormant);
   - **AU_2027_REFORM** (30 June 2027 snapshot, CPI indexation, 30% minimum tax, (U));
   - **AE**, **EG** (crypto hard-flag), **CY** (8% crypto), **GENERIC**.
 - **Residency timeline:** CGT event I1 modelling.
@@ -650,7 +650,7 @@ Full design: [09](09-journal-and-tax.md).
 
 ### M21 Decision One & model serving — `mt_models`
 
-Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-fast-accurate-concurrent-decisions).
+Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-decision-models--microsecond-engine).
 
 **Tier A: microsecond engine, in the order path.**
 - **Model and runtime:** a GBDT/linear/small-MLP model, compiled to **ONNX Runtime / Treelite / lleaves**, loaded **in-process** in the strategy.
@@ -669,7 +669,7 @@ Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-fast-accura
   - **~2–12 ms per decision on a consumer GPU** (0.6B, est.), p95 SLO < 50 ms; CPU 100–400 ms.
 - **Bake-off:** against Laya (fine-tuned), self-hosted Clef-flash, SemIf and JSON generation, plus Kev-4B/9B only if a public, licence-compatible release exists (U), on our data + FinMMEval Buy/Hold/Sell.
 - **Excluded:** Jev and Microsoft-Decision-1 (closed, paid).
-- **Outputs:** cached on NATS KV as tier-A features. Auto-decide only at ≥ 0.75 precision; direct veto only at ≥ 0.90 precision; calibration ECE ≤ 0.05; flip rate ≤ 0.1% (defaults, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)).
+- **Outputs:** cached on NATS KV as tier-A features. Auto-decide only at ≥ 0.75 precision; direct veto only at ≥ 0.90 precision; calibration ECE ≤ 0.05; flip rate ≤ 0.1%; ≥ 14 days in shadow before promotion (defaults, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)).
 - **Determinism controls:** FP32 head, fixed batch, **prefix caching off** on the decision path, pinned revisions, logged prompt hash; CPU ONNX FP32 for backtests. A shared-prefix mode is allowed only for offline/backfill scoring, marked non-deterministic and never used for decisions or backtests.
 
 **Labels and distillation:** until the P6 teacher exists, tier A trains on forward-return / triple-barrier labels from market data (`models.tiera.train`, C1). From P6, M8's debate decisions (the teacher) plus realised outcomes train tier A and the tier B decision-model heads; teacher labels are an extra source and don't change existing model versions.
@@ -780,7 +780,7 @@ The UI shows each instrument's finest available resolution, so you know which st
   - **event-triggered** (anomaly, calendar, big news);
   - never per tick.
 - **Caching:** tool outputs are cached per (instrument, as_of).
-- **Spending limit:** a monthly cap (default US$40, checked month-to-date) plus per-role daily budgets (defaults: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40; a `shadow` role covers tier-B shadow checks). Whichever is exhausted first routes that call to the local model ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)). Spend panel in Grafana.
+- **Spending limit:** a monthly cap (default US$40, checked month-to-date) plus per-role daily budgets (defaults: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30 for tier-B shadow checks). Whichever is exhausted first routes that call to the local model ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)). Spend panel in Grafana.
 
 ---
 
@@ -806,7 +806,7 @@ Every threshold below is a default in the per-strategy gate profile ([16 §2.4](
    - beats the **asset-class passive benchmark** after costs.
 8. **Decay monitoring** (built in P2 for paper, extended to live in P7), one action per signal ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)):
    - rolling 60-trade Sharpe or hit rate below the backtest 5th percentile → alert + downgrade the bot autonomous → HITL;
-   - CUSUM break on P&L residuals → alert + downgrade to HITL;
+   - CUSUM break on P&L residuals, or 5 consecutive losing trades on the bot → alert + downgrade to HITL;
    - daily health check fails (30-day Sharpe < ½ validated, or DD > 1.5× backtest max) → halt the bot pending your review;
    - a kill criterion ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)) → halt the sleeve and step capital down.
 9. **Safety drills:** kill switch, dead-man and restart drills passed on the bot's venue (evaluated from `ops.drill_log`).

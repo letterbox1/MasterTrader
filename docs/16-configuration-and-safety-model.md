@@ -75,6 +75,10 @@ This replaces the earlier "detection → paused < 2 s" SLO.
 | Large-order extra confirmation | > 2% of sleeve or > A$5,000 notional → TOTP (Telegram) / hold-to-confirm (web) |
 | Mode change paper → HITL | C2 · HITL → autonomous: C3 · autonomous → HITL/paper: C1 (tightening) |
 | MCP-originated orders | **Always need your approval card** (Telegram/web), TTL 5 min. MCP can never approve anything itself (§2.12) |
+| C3 cool-down | 15 min between your C3 approval and the change taking effect |
+| Strategy mode ceiling | A strategy's mode (`strategy.set_mode`) caps the modes of its bots: the stricter of strategy and bot mode applies |
+| Sleeve restart after a halt | `risk.sleeve.restart`, C3 |
+| Exchange/broker key rotation | Every 90 days (alert when older), and immediately after any suspected leak ([07 §2](07-security-notes.md#2-secrets)) |
 
 ### 2.4 Validation gates (per-strategy gate profile)
 
@@ -184,6 +188,7 @@ Configurable per bot and per event type.
 | Token expiry | You choose per token: **1 day · 7 days · 30 days · 1 year · custom · indefinite**. Indefinite shows a red exposure/security warning, needs C3, and reminds you monthly |
 | Scopes | `read`, `analyse`, `trade` (creates approval cards only), `strategy`, `risk_tighten`, `curation`. Loosening risk is never a scope; it's C3 |
 | Never exposed | Withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key/token management, `approval.*`, `mcp.*`, restore/delete, audit writes |
+| Token creation | C2 for `read`, `analyse` and `curation` scopes; **C3** for `trade`, `strategy` and `risk_tighten` scopes and for any indefinite expiry |
 | Rate limits | 60 reads/min, 10 writes/min per token |
 | Response cap | 256 KB per tool result |
 

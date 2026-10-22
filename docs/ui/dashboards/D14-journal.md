@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Routes** | `/journal` (trades & events), `/journal/trades/:id` (trade review) |
+| **Routes** | `/journal` (trades & events), `/journal/trades/:id` (trade review), `/journal/reviews` (weekly reviews, Phase 7) |
 | **Modules** | M18 journal, M17 audit, M8/M21 decision provenance |
 | **Phase** | 3 |
 | **Mock-up reference** | None (new) |
@@ -31,12 +31,15 @@ A **fully automatic trading journal**:
 | Trade review (`/journal/trades/:id`) | Chart snapshot with entry/exit and signals; the decision provenance (signal → agent run / tier-B scores → risk checks → order → fills); costs vs modelled; notes, tags, screenshots; review prompts ("Followed plan?", "Mistake type") | `/journal/trades/{id}` |
 | Analytics | P&L by strategy / instrument / weekday / hour / tag; mistake tags frequency; expectancy | `/journal/trades?analytics=1` |
 | Reconciliation status | Journal vs venues daily; mismatches link to D07 | `/data/recon?scope=journal` |
+| **Weekly reviews** (Phase 7) | Each weekly review: tracking error vs backtest, realised vs modelled costs, DQ incidents, journal reconciliation, five worst trades; your sign-off (a WORM row) | `/journal/reviews` |
 
 ## Actions
 
 | Control | Command | Level |
 |---|---|---|
-| Add note / tag / screenshot | `journal.note.add`, `journal.tag` | C0 |
+| Add note / tag / screenshot | `journal.note.add` (optional attachment: PNG/JPEG, default ≤ 5 MB; stored content-addressed under `data/attachments/`, referenced by hash in the WORM note row), `journal.tag` | C0 |
+| Add a manual journal event (e.g. opening lot, off-system transfer) | `journal.manual_event.add` | C2 (reason required) |
+| Sign off a weekly review | `journal.review.signoff` | C1 |
 | Export (CSV / Beancount) | `tax.export` (journal scope) | C0 |
 | Open in tax view (lots) | navigate D15 | C0 |
 
@@ -52,4 +55,5 @@ Records themselves are **never editable**. Corrections are journal events that s
 
 - **Queries:** `/journal/trades` (+ `/{id}`, `analytics`), `/journal/events`, `/data/recon?scope=journal`.
 - **WebSocket topics:** `journal`, `fills`.
-- **Commands:** `journal.note.add`, `journal.tag`, `tax.export`.
+- **Queries (Phase 7):** `/journal/reviews`.
+- **Commands:** `journal.note.add`, `journal.tag`, `journal.manual_event.add`, `journal.review.signoff`, `tax.export`.
