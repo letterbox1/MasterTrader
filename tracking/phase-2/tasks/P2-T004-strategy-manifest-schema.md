@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T014]
 requirements: [R2.04]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T004-strategy-manifest-schema
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T004 · Strategy manifest schema and validator CLI
@@ -43,7 +48,7 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 
 ## Requirements
 
-- Fields: `name`, `version`, `template`, `description`, `universe` (instruments/venues or dynamic rule), `subscriptions` (data kinds + BarSpecs), `params` (type, range, default, step, `risk_increasing: bool`), `features`, `risk_policy_ref`, `mode` (`backtest|paper|hitl|autonomous`), **`counterparty`** (required, one sentence, ≥ 20 chars), **`sleeve`** (required, must exist in policy), **`kill_criteria`** (required list of measurable rules), **`benchmark`** (required, asset-class passive alternative), `priority` (P1/P2/P3 from template), `evidence` (link/text), `regime_filter`, `exit_plan` defaults.
+- Fields: `name`, `version`, `template`, `description`, `universe` (instruments/venues or dynamic rule), `subscriptions` (data kinds + BarSpecs), `params` (type, range, default, step, `risk_increasing: bool`), `features`, `risk_policy_ref`, `proposed_mode` (`paper|hitl|autonomous`; the mode itself is set per bot, 15 §1.2), **`proposed_risk`** (per-trade risk, max position, sizing model, decision deadline, stale-data class `fast|slow`, `on_system_failure` `flatten|cancel_orders_only|hold`, `event_sensitive`): **proposals only**, never imposed ([16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)); the bot wizard shows them next to the sleeve/system limits and rejects anything looser than a parent layer, **`counterparty`** (required, one sentence, ≥ 20 chars), **`sleeve`** (required, must exist in policy), **`kill_criteria`** (required list of measurable rules), **`benchmark`** (required, asset-class passive alternative), `priority` (P1/P2/P3 from template), `evidence` (link/text), `regime_filter`, `exit_plan` defaults.
 - Validation errors are structured (`field`, `code`, `message`) for the D03 Review step.
 - Schema version field `schema: mt.manifest/v1`; unknown keys rejected.
 - JSON Schema export at `/strategies/templates` consumers (`packages/mt_strategy/schema/manifest.v1.json`).
@@ -67,7 +72,8 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 
 ### Scenarios
 - Given a manifest without `counterparty`, when validated, then it fails with `counterparty.required` and the D03 Review step shows that message.
-- Given `mode: autonomous` in a new manifest, when validated, then it passes schema but the registry stores it as `draft` (mode changes go through lifecycle P2-T007).
+- Given `proposed_mode: autonomous` in a new manifest, when validated, then it passes schema but the registry stores the strategy as `draft`; no bot gets that mode without gates and C3 (P2-T007, P2-T037).
+- Given `proposed_risk.risk_per_trade: 3%` while the sleeve allows 1%, when a bot is created from it (P2-T036), then the wizard shows the proposal next to the 1% limit and rejects the looser value (16 §1).
 
 ### Stress / failure injection
 - n/a: pure validation; performance irrelevant (< 10 ms per manifest asserted in a unit test).
@@ -81,12 +87,12 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 
 ## Exceptions & edge cases
 
-- Legacy `approve`/`auto` mode values are accepted as aliases of `hitl`/`autonomous` with a deprecation warning (see P2-B053).
+- Legacy `approve`/`auto` mode values are retired aliases (17 §B): accepted and normalised to `hitl`/`autonomous` with a deprecation warning.
 - Sleeve unknown because policy not yet written (P2-T048): validation error, not silent default.
 
 ## Cardinal rules (do NOT)
 
-- Do NOT allow a manifest to set looser risk than its policy (risk overrides are tighter-only).
+- Do NOT let a manifest impose any value: manifest risk values are proposals only; anything looser than a parent layer (L0–L3) is rejected (16 §1).
 - Do NOT accept manifests missing counterparty, kill criteria, sleeve or benchmark.
 - Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
@@ -107,3 +113,4 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (manifest mode and risk values become proposals (16 §1), modes paper/hitl/autonomous, failure policy and event_sensitive proposals)

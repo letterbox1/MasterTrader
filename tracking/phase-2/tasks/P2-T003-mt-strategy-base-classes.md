@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T016, P1-T009]
 requirements: [R2.01, R2.03]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T003-mt-strategy-base-classes
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T003 · mt_strategy base classes and multi-timeframe helpers
@@ -39,7 +44,7 @@ checkpoint: ""
 - Roadmap: [R2.01, R2.03](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
 - Spec: [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 §6 smallest free timeframe](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) · [02 §4 components](../../../docs/02-v1-architecture.md#4-logical-components)
 - Flow: [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Cross-phase: `mt_core` types `BarSpec`, `Signal`, `OrderIntent` (P0 T0.21); bars + Parquet catalog (P1 R1.02).
+- Cross-phase (`depends_on`): `mt_core` types `BarSpec`, `Signal`, `OrderIntent` (P0-T016, T0.21); instrument master with finest resolution (P1-T009, T1.22/T1.32). Bars + Parquet catalog (P1 R1.02) are only needed for replay data; tests use recorded fixtures.
 - Related: P2-T004 (manifest), P2-T017 (RiskGate), P2-T021 (engine). Backtest↔paper parity is verified by Part B (T2.65).
 
 ## Requirements
@@ -53,7 +58,7 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Create `packages/mt_strategy/base.py` (`MTStrategy`, `MTActor`, `StrategyContext` with mode, sleeve, bot_id, version)
+- [ ] Create `packages/mt_strategy/base.py` (`MTStrategy`, `MTActor`, `StrategyContext` with bot mode `paper|hitl|autonomous`, sleeve, bot_id, version, signal timestamp for the decision deadline)
 - [ ] Create `packages/mt_strategy/mtf.py` (BarSpec parser → Nautilus `BarType`, aggregation from finest data, alignment helpers)
 - [ ] Create `packages/mt_strategy/gate.py` protocol `RiskGateProtocol` (implemented by P2-T017) and a `NullGate` that rejects everything (default-deny) for tests
 - [ ] Wrap `submit_order`/`submit_order_list` so calling them outside `submit_intent` raises `BypassError`
@@ -112,3 +117,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (bot modes paper/hitl/autonomous in context, signal time for decision deadline; cross-phase deps)

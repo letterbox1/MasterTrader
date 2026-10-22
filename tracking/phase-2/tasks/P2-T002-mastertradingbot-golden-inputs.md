@@ -15,17 +15,22 @@ requirements: [R2.48]
 roadmap_todos: [T2.04]
 modules: [M0]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: [mt5-terminal]
 branch: p2/P2-T002-mastertradingbot-golden-inputs
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T002 · Provide MasterTradingBot rules and historical outputs for golden files
@@ -38,7 +43,7 @@ The rule descriptions and historical signal/trade outputs of your MasterTradingB
 
 - Roadmap: [R2.48](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.04
 - Spec: [14 §8 MasterTradingBot integration](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration)
-- Consumer: Part B (shared libraries + golden tests, see PHASE.part-b.md).
+- Consumers: P2-T130/P2-T131 (shared libraries), P2-T133 (golden-file check, T2.67).
 
 ## Requirements
 
@@ -95,3 +100,4 @@ The rule descriptions and historical signal/trade outputs of your MasterTradingB
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields; consumer links fixed)
