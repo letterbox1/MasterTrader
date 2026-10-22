@@ -59,7 +59,7 @@ Your tax agent's written answer on **investor vs trader-in-business** is stored,
 - [ ] Open D15 → Questions → the `TAX_QUESTION` 'investor vs trader-in-business' task; paste a one-paragraph summary (no TFN) and attach the PDF via the upload control.
 - [ ] In D15 → FY selector, choose the current FY and run `tax.regime.set` per activity as advised; confirm the regime badge changes.
 - [ ] If the agent also answered the 2027 CGT reform question (T3.02), record it on that task too.
-- [ ] Mark the task Done in D13/Telegram; tell the agent (planner) the task is complete so P7-T011 can re-run.
+- [ ] Mark the task Done in D13/Telegram; tell the agent the task is complete so P7-T011 can re-run.
 
 ## Verification
 

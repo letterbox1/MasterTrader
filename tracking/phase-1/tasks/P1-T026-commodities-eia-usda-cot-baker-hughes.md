@@ -43,13 +43,13 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Futures/commodities: EIA, USDA, CFTC COT, Baker Hughes) · [06 §3 Reports, nowcasts & forecasts](../../../docs/06-aggregators-and-market-providers.md#reports-nowcasts--forecasts-m6-features-m5-release-events)
-- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): EIA is built keyless against fixtures (live with your EIA key from P0-T010 in P1-T073); CFTC COT, Baker Hughes and USDA WASDE files are keyless and run live here. USDA QuickStats needs a free key that no USER task provides yet (gap P1-B019): it ships disabled with the reason until decided
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): EIA is built keyless against fixtures (live with your EIA key from P0-T010 in P1-T073); CFTC COT, Baker Hughes and USDA WASDE files are keyless and run live here. USDA QuickStats uses a free key from P0-T010 (T0.10, P1-B019): built and tested against fixtures here, live in P1-T073
 - Depends on (this phase): P1-T024
 
 ## Requirements
 
 - EIA API v2 series (crude stocks, production) with release timestamps as `event_time`
-- USDA WASDE report tables (monthly, keyless); QuickStats API behind `USDA_QUICKSTATS_API_KEY`, disabled until P1-B019 is decided
+- USDA WASDE report tables (monthly, keyless); QuickStats API with the free `USDA_QUICKSTATS_API_KEY` (P0-T010; P1-B019); proven on fixtures here, live in P1-T073
 - CFTC COT (legacy + disaggregated futures-only) weekly files; `event_time` = Friday 15:30 ET release, not the Tuesday as-of date (store both)
 - Baker Hughes weekly rig count file (official download)
 - Same macro table schema; provenance from 06
@@ -77,7 +77,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 ## Acceptance criteria
 
-- [ ] COT, Baker Hughes and WASDE loaded live with history and on schedule; EIA proven on fixtures (live in P1-T073); QuickStats enabled or disabled-with-reason per P1-B019; COT pit test passes
+- [ ] COT, Baker Hughes and WASDE loaded live with history and on schedule; EIA proven on fixtures (live in P1-T073); QuickStats proven on fixtures (live in P1-T073); COT pit test passes
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases

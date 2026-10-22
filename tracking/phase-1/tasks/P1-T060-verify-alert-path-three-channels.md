@@ -44,7 +44,7 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 - Roadmap: requirements [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.64](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Roadmap T1.64 · [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) · exit criterion 3 ([phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo))
 - Depends on (this phase): P1-T003, P1-T045, P1-T054, P1-T068
-- This is the live, keyed half of the alert path: it needs your Telegram bot (P0-T002), the ntfy app (P1-T003) and the SMTP app password or email off (P1-T068); network paths per gap P1-B020
+- This is the live, keyed half of the alert path: it needs your Telegram bot (P0-T002), the ntfy app (P1-T003) and the SMTP app password or email off (P1-T068); network paths per [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) (P1-B020)
 - Run with `sops exec-env ~/.config/mastertrader/secrets.sops.yaml 'make verify-alerts'`; if email is on, the `SMTP_*`/`ALERT_EMAIL_*` names from P1-T068 must also be present
 - Cross-phase prerequisites (depends_on): P0-T002 (Telegram bot, your T0.06)
 

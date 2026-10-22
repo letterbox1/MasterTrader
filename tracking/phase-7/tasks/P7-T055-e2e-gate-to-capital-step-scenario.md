@@ -15,17 +15,22 @@ requirements: [R7.05, R7.01, R7.08, R7.03]
 roadmap_todos: [T7.21]
 modules: [M11, M7, M18, M15]
 dashboards: [D03, D06, D14, D01]
+tools: [git, uv, docker, toxiproxy]
+mcp: []
+env: []
+services: [postgres, nats, mt-api, prefect-server]
 branch: p7/P7-T055-e2e-gate-to-capital-step-scenario
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T055 · End-to-end scenario: gate pass → fund → micro-live → clean weeks → capital step
@@ -42,7 +47,7 @@ A staging run with a simulated clock exercises the whole Phase 7 flow on paper v
 
 ## Requirements
 
-- Simulated 10 weeks: weeks 1–4 clean (reviews signed) → step proposal → C3 approve → capital +25%; week 6 unsigned review → dirty, streak reset; weeks 7–10 clean → second proposal; bot promoted to autonomous at week 5 via C3; a decay injection at week 9 downgrades it.
+- Simulated 12 weeks from an A$2,000 starting allocation (default, [16 §2.5](../../../docs/16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)): weeks 1–4 clean → step proposal → C3 approve → A$2,500 (+25% of current); bot promoted to autonomous at week 5 via C3 (gate profile passed); week 6 shortfall 1.6× modelled → kill-criterion warning → week dirty, streak reset, allocation back one step to A$2,000; week 7 decay injection → bot downgraded to HITL, week dirty; weeks 8–11 clean → second proposal in week 12. Reviews signed every week except week 10 (shown as a warning on the proposal, not a dirty week, 16 §2.5).
 - Audit trail check: for each event, the WORM rows exist and chain-verify (`audit.verify`).
 - Runs nightly in CI against the staging compose with paper venues and the test clock provider.
 
@@ -59,7 +64,7 @@ A staging run with a simulated clock exercises the whole Phase 7 flow on paper v
 - E2E scenario above; audit chain verification.
 
 ### Scenarios
-- Given week 6's review is unsigned, then no proposal appears in week 8 and the D06 streak shows 2/4.
+- Given week 6 had a 1.6× shortfall warning, then no proposal appears in week 8, the D06 streak shows 1/4 and the allocation is back at A$2,000.
 
 ### Stress / failure injection
 - Run the scenario with random venue disconnects (toxiproxy) — outcome unchanged except recorded unconfirmed periods.
@@ -94,3 +99,4 @@ A staging run with a simulated clock exercises the whole Phase 7 flow on paper v
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (scenario per 16 §2.5: A$2,000 start, +25% of current, a warning steps back one step, an unsigned review is a warning)

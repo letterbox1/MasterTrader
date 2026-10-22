@@ -53,7 +53,7 @@ _(U) = unverified._
 | Core: news | **CryptoPanic** (free tier) | REST | Low | Crypto headline aggregation with votes; attribution required |
 | **Deferred** | Reddit | (PRAW, official OAuth) | — | Closing to new apps 2026-10-31, sunset 2027 (U). Stays optional: if access is ever granted, a connector is an optional item, and not worth building once the public Data API closes |
 | Conditional | StockTwits | v2 REST `streams/symbol/{SYM}` (U) | Low–moderate | Most finance-relevant social source if still reachable; checked in Phase 1 (open checks, §3) |
-| Conditional | YouTube | Channel RSS + Data API v3; yt-dlp for subtitles and transcripts | Low | Finance channels, earnings calls. Checked in **Phase 4** (P4-T024), not Phase 1 (open checks, §3) |
+| Conditional | YouTube | Channel RSS + Data API v3; yt-dlp for subtitles and transcripts | Low | Finance channels, earnings calls. Checked in **Phase 4** (P4-T066; connector P4-T024), not Phase 1 (open checks, §3) |
 | **Deferred** | X / Twitter | (Official API v2 is pay-per-use, ~$0.005 per post read (U)) | — | Revisit if budget allows; scraping (twscrape) not in v1 |
 | Optional | Extra routes (Asian finance/crypto) | **RSSHub** (AGPL, fine for personal use) | Varies | Only for routes RSS-Bridge lacks |
 | **Excluded** | Instagram, TikTok, LinkedIn, Facebook, Threads scrapers, Discord self-bots / user-token scraping, Nitter, snscrape, twscrape, threads-scraper, log, Spacebar | — | — | — |
@@ -112,7 +112,7 @@ _(U) = unverified._
 _Ingested from Phase 4. Until then D02 shows these widgets as "arrives in P4" rather than placeholder data._
 - **Nowcasts:** GDPNow, NY Fed Staff Nowcast, Cleveland Fed inflation nowcast.
 - **Official projections:** Fed SEP / dot plot, ECB SPF, IMF WEO, OECD Economic Outlook.
-- **Commodity reports:** EIA STEO, USDA WASDE, Baker Hughes rig count.
+- **Commodity reports:** EIA STEO, USDA WASDE (keyless report files) and USDA NASS QuickStats (free API key, P0 T0.10), Baker Hughes rig count.
 - **Positioning and risk:** CFTC COT, Cboe VIX history.
 - **Fed-path probabilities:** compute implied probabilities yourself from ZQ (Fed funds) futures; that's free and avoids FedWatch's ToS.
 
@@ -213,7 +213,7 @@ Official pages and feeds that can change the rules or a venue's standing ([16 §
 - BoC Valet / BoJ work without a key.
 - The ABS CPI series ID (A2325846C) and its release calendar.
 
-**Phase 4 check (P4-T024):** YouTube: channel RSS still reachable, Data API v3 quota, and yt-dlp subtitle use for the chosen channels.
+**Phase 4 check (P4-T066):** YouTube: channel RSS still reachable, Data API v3 quota, and yt-dlp subtitle use for the chosen channels.
 
 ---
 

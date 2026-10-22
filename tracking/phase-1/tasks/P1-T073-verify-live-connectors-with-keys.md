@@ -17,7 +17,7 @@ modules: [M1, M16]
 dashboards: [D07, D02]
 tools: [git, uv, docker, sops]
 mcp: []
-env: [OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY, FRED_API_KEY, EIA_API_KEY, COINGECKO_DEMO_API_KEY, FINNHUB_API_KEY, BINANCE_TESTNET_READ_KEY, BINANCE_TESTNET_READ_SECRET, BYBIT_TESTNET_READ_KEY, BYBIT_TESTNET_READ_SECRET]
+env: [OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY, FRED_API_KEY, EIA_API_KEY, COINGECKO_DEMO_API_KEY, FINNHUB_API_KEY, BINANCE_TESTNET_READ_KEY, BINANCE_TESTNET_READ_SECRET, BYBIT_TESTNET_READ_KEY, BYBIT_TESTNET_READ_SECRET, USDA_QUICKSTATS_API_KEY]
 services: [nats, postgres, prefect-server, oanda-practice, ig-demo, alpaca-paper, binance-testnet, bybit-testnet]
 branch: p1/P1-T073-verify-live-connectors-with-keys
 pr: ""
@@ -47,7 +47,7 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 - Sources and quotas: [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · [03 §1](../../../docs/03-build-spec.md#1-ground-rules)
 - Cross-phase prerequisites: P0-T009 (practice/testnet accounts: OANDA practice, IG demo, Alpaca paper, Binance + Bybit testnets), P0-T010 (free API keys: FRED, EIA, CoinGecko Demo, Finnhub)
 - Depends on (this phase): P1-T002 (your T1.02 credentials in the secrets file), the keyless builds P1-T006, P1-T016, P1-T017, P1-T021, P1-T022, P1-T024, P1-T026, P1-T029, P1-T034, P1-T038, P1-T039
-- The `env` names are the sops keys; run the checks with `sops exec-env ~/.config/mastertrader/secrets.sops.yaml 'make verify-live-connectors'` so values never touch disk or logs. USDA QuickStats is optional until P1-B019 is settled
+- The `env` names are the sops keys; run the checks with `sops exec-env ~/.config/mastertrader/secrets.sops.yaml 'make verify-live-connectors'` so values never touch disk or logs. USDA QuickStats is checked live with the free key from P0-T010 (P1-B019)
 
 ## Requirements
 

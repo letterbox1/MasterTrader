@@ -158,6 +158,8 @@ Only if the MT5 route is used (Phase 7). It's a second host, so it gets its own 
 ## 9. Monitoring & incident response
 
 - **One alert path:** Grafana/Alertmanager alerts go by webhook to the single `alert.*` consumer, which fans out to Telegram, ntfy, email and the UI ([02 §6](02-v1-architecture.md#6-messaging-nats)).
+  - P0 has no fan-out yet, so Alertmanager sends straight to Telegram until P1-T045 replaces that route.
+  - The consumer's own egress allow-list adds only the Telegram Bot API and your SMTP host; the `obs` network has no Telegram egress once the fan-out exists ([02 §3.1](02-v1-architecture.md#31-networks)).
 - **Email:** sent through your own mail provider's SMTP (TLS) with an app password kept in the secrets file; or turn email off (Telegram + ntfy remain).
 - **ntfy:** self-hosted, Tailscale-only; iOS push goes via ntfy's upstream relay, which carries only a message ID.
 - **Alerts (Telegram + email + self-hosted ntfy push as the second, independent channel; Twilio SMS is an optional paid upgrade):**

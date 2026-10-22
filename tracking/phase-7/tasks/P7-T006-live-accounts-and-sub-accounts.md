@@ -55,7 +55,7 @@ At each `allowed` target venue you hold one KYC'd live account and a separate **
 ## ToDo
 
 - [ ] For each target venue, complete or verify KYC as a retail client in your own name and country.
-- [ ] Create the sub-accounts listed by the planner for the first sleeves (start with one sleeve; every bot starts live in `hitl`, R7.08).
+- [ ] Create the sub-accounts listed by the agent for the first sleeves (start with one sleeve; every bot starts live in `hitl`, R7.08).
 - [ ] Enable venue-side 2FA and withdrawal whitelist-only roles where offered (Independent Reserve-style).
 - [ ] Record sub-account ids against the mandate in D05 → Venues (ids are not secrets; keys are).
 - [ ] Confirm with the agent so P7-T007 can start.

@@ -15,17 +15,22 @@ requirements: [R7.09]
 roadmap_todos: [T7.23]
 modules: [M16, M12, M18]
 dashboards: [D07, D05]
+tools: [git, uv, docker, toxiproxy]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p7/P7-T050-verify-recon-fault-injection
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T050 · Reconciliation fault injection: disconnects, partial fills, phantom positions
@@ -42,8 +47,8 @@ A fault-injection suite proves the three-way reconciliation and unconfirmed-stat
 
 ## Requirements
 
-- Faults: WS drop during a partial fill; REST 5xx on submit with a later fill; engine crash between submit and ack; journal consumer lag 10 min; STP cancel; fee rounding; phantom engine position; missing resting stop; venue maintenance window.
-- Expected: each fault ends in a confirmed account with zero unexplained breaks, or an unexplained break that alerts immediately and halts at 24 h (clock-injected).
+- Faults: WS drop during a partial fill; REST 5xx on submit with a later fill; engine crash between submit and ack; journal consumer lag 10 min; STP cancel; fee rounding; phantom engine position; missing resting stop; venue maintenance window; exit-node tunnel down.
+- Expected: each fault ends in a confirmed account with zero unexplained breaks, or a break that alerts immediately, becomes unexplained if no journal event matches within 24 h, and then halts everything (16 §2.9, clock-injected).
 - Output: a recon report (HTML) summarising each fault, detection time and resolution — attached to the progress log.
 
 ## ToDo
@@ -55,7 +60,7 @@ A fault-injection suite proves the three-way reconciliation and unconfirmed-stat
 ## Verification
 
 ### Tests
-- Sim suite with one test per fault; detection time asserted ≤ one recon interval + 30 s.
+- Sim suite with one test per fault; detection time asserted ≤ one recon interval (60 s positions/orders, 5 min balances, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)) + 30 s.
 
 ### Scenarios
 - Given an engine crash between submit and ack, when the engine restarts, then the venue order is adopted (no duplicate) and the account is confirmed after recon.
@@ -92,3 +97,4 @@ A fault-injection suite proves the three-way reconciliation and unconfirmed-stat
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cadence and 24 h rule per 16 §2.9; tunnel-down fault)

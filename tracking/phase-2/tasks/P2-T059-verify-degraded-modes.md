@@ -45,7 +45,7 @@ Fault-injection tests prove the 02 §9.3 / 16 §2–§3 behaviours relevant to P
 - Degraded modes: [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · [SPEC NN3](../../../SPEC.md#non-negotiable-requirements)
 - Cross-phase (`depends_on`): DQ fault-injection tooling (P1-T057, T1.61).
 - Defaults: [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) (inline data age; monitor flips `dq.status` ≤ 250 ms p99 after the threshold) · [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (buffer 1 GB / 24 h; above 80% new entries stop) · [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity) · [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys).
-- Related: P2-T070/P2-T076 (safety-state checks and goldens), P2-T075 (engine down), gap P2-B015 (Postgres-down wording differs between 02 §9.3 and 16 §3.1).
+- Related: P2-T070/P2-T076 (safety-state checks and goldens), P2-T075 (engine down), P2-B015 (closed: Postgres down → the dead-man acts on the DB heartbeat per 16 §3.1 and 02 §9.3).
 
 ## Requirements
 

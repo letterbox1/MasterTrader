@@ -4,7 +4,7 @@ kind: gap
 title: D06 Stress tab says the shock replay is planned as R2.57; R2.57 is now the placeholder and the replay is R7.16
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -22,12 +22,12 @@ services: []
 branch: p2/P2-B018-d06-stress-tab-r257-wording
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D06-risk.md Stress tab (Phase line)
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -54,9 +54,9 @@ D06 points the historical shock replay to P7 R7.16 and the P2 placeholder to R2.
 
 ## ToDo
 
-- [ ] Decide the wording with the user (or apply the suggested fix if it follows 16/17)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Suggested fix applied
+- [x] D06 Stress tab and header now say the replay is R7.16 (P7) and R2.57 is the P2 placeholder
+- [x] P2-T043 builds the placeholder; no task change needed
 
 ## Verification
 
@@ -71,8 +71,8 @@ D06 points the historical shock replay to P7 R7.16 and the P2 placeholder to R2.
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree: D06 links R7.16
+- [x] Affected tasks reference the decision
 
 ## Exceptions & edge cases
 
@@ -95,3 +95,7 @@ D06 points the historical shock replay to P7 R7.16 and the P2 placeholder to R2.
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during task alignment (docs/16–17 wave): doc contradiction found while aligning tasks
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: D06 points the shock replay at R7.16
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/ui/dashboards/D06-risk.md Stress tab + header (replay planned as R7.16 / P7; R2.57 placeholder)
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

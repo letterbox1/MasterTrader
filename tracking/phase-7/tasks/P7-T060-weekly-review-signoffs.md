@@ -15,17 +15,22 @@ requirements: [R7.03]
 roadmap_todos: [T7.05]
 modules: [M18]
 dashboards: [D14]
+tools: []
+mcp: []
+env: []
+services: [telegram, mt-api]
 branch: p7/P7-T060-weekly-review-signoffs
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T060 · Run and sign off the weekly review every live week
@@ -59,7 +64,7 @@ Every week from the first paper review in this phase through phase exit, you spe
 - Evidence: `/journal/reviews` shows every live week signed.
 
 ### Scenarios
-- Given you miss a week, then that week is dirty for capital steps and the review is still required before exit.
+- Given you miss a week, then the review shows overdue, the next capital-step proposal flags it as a warning (not a dirty week under the 16 §2.5 default), and the review is still required before exit.
 
 ### Stress / failure injection
 - n/a: recurring user task.
@@ -71,12 +76,12 @@ Every week from the first paper review in this phase through phase exit, you spe
 
 ## Exceptions & edge cases
 
-- Travel/illness: reviews can be done on the phone; if missed, sign late (the week stays dirty).
+- Travel/illness: reviews can be done on the phone; if missed, sign late (it stays marked overdue).
 
 ## Cardinal rules (do NOT)
 
 - Do NOT approve risk loosening inside the review form; use the C3 path.
-- Do NOT add discretionary overrides; the only manual action outside approve mode is flatten-and-halt with a required reason (14 §4).
+- Do NOT add discretionary overrides; the only manual trading action outside HITL approvals is flatten-and-halt with a required reason (14 §4).
 - Do NOT put Telegram text into any model, RAG index or training set (12 §4–5).
 
 ## Doc sync on completion
@@ -93,3 +98,4 @@ Every week from the first paper review in this phase through phase exit, you spe
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (an unsigned review is a warning, not a dirty week, per 16 §2.5)

@@ -4,7 +4,7 @@ kind: gap
 title: "Automatic kill triggers differ: 02 F6 lists daily loss, DQ, error rate and cost blow-out; 03 M11 and 16 §2.1 act more narrowly"
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -22,12 +22,12 @@ services: []
 branch: p2/P2-B016-kill-auto-triggers-02-f6
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md F6 step 1 vs docs/03-build-spec.md M11 kill switch and docs/16-configuration-and-safety-model.md §2.1
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -55,9 +55,9 @@ The automatic kill triggers are listed the same way everywhere.
 
 ## ToDo
 
-- [ ] Decide the wording with the user (or apply the suggested fix if it follows 16/17)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Suggested fix applied (follows 03 M11 / 16 §2.1)
+- [x] 02 F6 step 1 now lists only system drawdown stage 2 and unexplained reconciliation mismatch as automatic kill triggers; smaller breaches act narrowly
+- [x] P2-T031 already follows 03 M11; no task change needed
 
 ## Verification
 
@@ -72,8 +72,8 @@ The automatic kill triggers are listed the same way everywhere.
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree: 02 F6 links 03 M11 and 16 §2.1
+- [x] Affected tasks reference the decision (P2-T031 follows 03 M11)
 
 ## Exceptions & edge cases
 
@@ -96,3 +96,7 @@ The automatic kill triggers are listed the same way everywhere.
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during task alignment (docs/16–17 wave): doc contradiction found while aligning tasks
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: 02 F6 automatic triggers aligned with 03 M11 / 16 §2.1
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/02-v1-architecture.md F6 step 1 (automatic kill triggers match 03 M11 and 16 §2.1)
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

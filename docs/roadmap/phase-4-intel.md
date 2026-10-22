@@ -81,7 +81,7 @@
 - [ ] **T4.63** `VERIFY` SemIf gate precision/recall on your labels; flip rate (determinism). → R4.12
 - [ ] **T4.64** `VERIFY` Feature IC report for the new features. → R4.11
 - [ ] **T4.65** `VERIFY` YouTube check: channel RSS reachable, Data API v3 quota, yt-dlp subtitle use for the chosen channels; record pass/fail in 06. → R4.05
-- [ ] **T4.66** `VERIFY` Live check of keyed sources with your keys (after T0.10, T4.06): FIRMS, ACLED, Finnhub and CryptoPanic deliver and carry provenance tags. → R4.01, R4.08
+- [ ] **T4.66** `VERIFY` Live check of keyed sources with your keys (after T0.10, T4.06): FIRMS, ACLED, Finnhub, CryptoPanic and the positioning inputs Myfxbook, IG sentiment and OANDA books (practice credentials) deliver and carry provenance tags. The YouTube Data API key is optional (T4.65). → R4.01, R4.08, R4.11
 - [ ] **T4.67** `VERIFY` Stage-1 latency benchmark: p95 ≤ 300 ms GPU / ≤ 3 s CPU, queued, with no call on the order path. → R4.N2
 
 ### E. Run / soak (`RUN`)

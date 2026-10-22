@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T048, P7-T049, P7-T050, P7-T051, P7-T054, P7-T055, P7-T057, P7-T058, P7-T059, P7-T060, P7-T061, P7-T062, P7-T063]
-requirements: [R7.01, R7.02, R7.03, R7.04, R7.05, R7.06, R7.07, R7.08, R7.09, R7.10, R7.11, R7.12, R7.13]
+depends_on: [P7-T048, P7-T049, P7-T050, P7-T051, P7-T052, P7-T054, P7-T055, P7-T057, P7-T058, P7-T059, P7-T060, P7-T061, P7-T063, P7-T067, P7-T069]
+requirements: [R7.01, R7.02, R7.03, R7.04, R7.05, R7.06, R7.07, R7.08, R7.09, R7.10, R7.11, R7.12, R7.13, R7.14, R7.15, R7.16]
 roadmap_todos: []
 modules: [M11, M12, M16, M18]
 dashboards: [D01, D03, D06, D14]
+tools: [git, uv, pnpm]
+mcp: []
+env: []
+services: [postgres, nats, mt-api]
 branch: p7/P7-T064-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/README.md, docs/04-plan-of-action.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T064 · Phase 7 exit demo
@@ -36,22 +41,24 @@ A recorded walkthrough proves every exit criterion: at least one strategy is liv
 
 ## Context & references
 
-- Roadmap: [R7.01, R7.02, R7.03, R7.04, R7.05, R7.06, R7.07, R7.08, R7.09, R7.10, R7.11, R7.12, R7.13](../../../docs/roadmap/phase-7-prove-and-go-live.md)
+- Roadmap: [R7.01, R7.02, R7.03, R7.04, R7.05, R7.06, R7.07, R7.08, R7.09, R7.10, R7.11, R7.12, R7.13, R7.14, R7.15, R7.16](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Roadmap §6 exit criteria ([phase 7](../../../docs/roadmap/phase-7-prove-and-go-live.md)) · [14 §7](../../../docs/14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) · [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) (audit trail)
 - Related: every Phase 7 item; PHASE.md exit checklist
 
 ## Requirements
 
 - Exit 1: show the live sleeve in D06/D03 (state `micro_live` or later), its passing gate report, preflight snapshot, funding C3 record, and `audit.verify` clean over its chain.
-- Exit 2: show P7-T048 and P7-T049 suites green in CI and their observed-run evidence.
+- Exit 2: show the P7-T048, P7-T049 and P7-T021 (memecoin) suites green in CI and their observed-run evidence.
 - Exit 3: `/journal/reviews` lists a signed review for every live week.
-- Also: all Phase 7 tasks done/cancelled (cancelled with reasons, e.g. unchosen adapter, optional Mini App); no open S1/S2 bugs; R7.01–R7.13 each traced to evidence in PHASE.md.
+- Also: all Phase 7 tasks done/cancelled (cancelled with reasons, e.g. unchosen adapter, optional Mini App, P7-T062 moved to the recurring 12-month review); no open S1/S2 bugs; R7.01–R7.16 each traced to evidence in PHASE.md.
+- Also: R7.14 failover drill evidence (P7-T052), R7.15 Phase 7 API/UI (P7-T067 contract tests + Playwright), R7.16 stress replay attached to the live bot's gate report (P7-T069).
+- Exit 4: micro-live is stable (the first sleeve's 4-week window complete, P7-T059); the 12-month review is scheduled as a recurring review (P7-T042/P7-T063), not awaited ([17 §D P7-B012](../../../docs/17-decisions-register.md#d-other-decisions)).
 
 ## ToDo
 
 - [ ] Run `mt preflight` and `audit.verify`; capture output.
 - [ ] Walk through D03/D06/D14 on desktop and phone; capture redacted screenshots.
-- [ ] Link CI runs for P7-T048/T049/T050/T055.
+- [ ] Link CI runs for P7-T048/T049/T050/T055/T067 and the P7-T021 memecoin suite; attach P7-T052 and P7-T069 evidence.
 - [ ] Tick PHASE.md exit criteria with evidence links.
 - [ ] Run `./kanban validate --phase 7`.
 
@@ -97,3 +104,4 @@ A recorded walkthrough proves every exit criterion: at least one strategy is liv
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (R7.14–R7.16 added (P7-T052, P7-T067, P7-T069); P7-T062 cancelled → recurring review; exit 4 per roadmap §6)

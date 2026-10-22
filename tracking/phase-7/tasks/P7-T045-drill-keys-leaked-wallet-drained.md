@@ -15,43 +15,48 @@ requirements: [R7.04]
 roadmap_todos: [T7.60]
 modules: [M17, M22]
 dashboards: [D16, D18]
+tools: [git, uv, sops]
+mcp: []
+env: []
+services: [venue testnet/practice accounts]
 branch: p7/P7-T045-drill-keys-leaked-wallet-drained
 pr: ""
 doc_sync: [docs/runbooks/, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T045 · Drill runbooks: keys leaked and wallet drained
 
 ## Goal / expected outcome
 
-The keys-leaked and wallet-drained runbooks are drilled on testnet/practice keys and test wallets, and recorded in `ops.drill_log`, completing the 'all runbooks drilled' entry criterion.
+The keys-leaked runbook is drilled on testnet/practice keys, and the wallet-drained runbook **only if a hot/burner wallet exists by then** ([17 §D P7-B011](../../../docs/17-decisions-register.md#d-other-decisions)), each recorded in `ops.drill_log`, completing the 'all runbooks drilled' entry criterion.
 
 ## Context & references
 
 - Roadmap: [R7.04 · ToDo T7.60](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Roadmap §2 entry criteria ([phase 7](../../../docs/roadmap/phase-7-prove-and-go-live.md)) · [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) ('Keys leaked': revoke, rotate, check withdrawals; 'Wallet drained': revoke approvals, isolate) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (rotation)
-- Cross-phase: P2 T2.90 (keys-leaked runbook), P5 T5.90 (wallet-drained runbook), P5 signer/wallet-indexer.
-- Related: P7-T043, P7-T011, gap P7-B011 (wallet-drained runbook comes from P5)
+- Cross-phase: P2-T068 (keys-leaked runbook); P5-T051 (wallet-drained runbook) and the P5 signer only matter if a hot/burner wallet exists, so they aren't `depends_on` here.
+- Related: P7-T043, P7-T011, gap P7-B011 (resolved: wallet drained only if a hot/burner wallet exists)
 
 ## Requirements
 
 - Keys leaked: treat a testnet key as leaked → revoke at the venue, rotate in sops, engine picks up the new key, key audit passes, withdrawal history checked; time to revoke ≤ 15 min.
-- Wallet drained: on a testnet hot/burner wallet, simulate an unexpected outflow alert → signer freeze, approvals revoked, wallet isolated, sweep of remaining balance per runbook; time to freeze ≤ 5 min.
+- Wallet drained (only if `ops.wallets` lists a hot or burner wallet; otherwise recorded `n/a` with that reason): on a testnet hot/burner wallet, simulate an unexpected outflow alert → signer freeze, approvals revoked, wallet isolated, sweep of remaining balance per runbook; time to freeze ≤ 5 min.
 - Both recorded via `ops.drill.record` with evidence.
 
 ## ToDo
 
-- [ ] Prepare a testnet key and a testnet hot wallet with a test approval.
+- [ ] Prepare a testnet key (and, if a hot/burner wallet exists, a testnet hot wallet with a test approval).
 - [ ] Run keys-leaked drill; record.
-- [ ] Run wallet-drained drill; record.
+- [ ] Run the wallet-drained drill if a hot/burner wallet exists; otherwise record it `n/a` with the reason.
 - [ ] Fix runbook gaps; re-drill if needed.
 
 ## Verification
@@ -67,12 +72,12 @@ The keys-leaked and wallet-drained runbooks are drilled on testnet/practice keys
 
 ## Acceptance criteria
 
-- [ ] Two drills recorded as `pass`.
+- [ ] Keys-leaked drill recorded as `pass`; wallet-drained recorded as `pass` or `n/a` (no hot/burner wallet).
 - [ ] Timings within the limits above.
 
 ## Exceptions & edge cases
 
-- P5 wallet-drained runbook not yet available (P5 not done): this item stays blocked; P7-T057 funding is blocked with it.
+- A hot/burner wallet is added after this drill: preflight (P7-T011) then requires the wallet-drained drill before the next funding or capital step.
 
 ## Cardinal rules (do NOT)
 
@@ -95,3 +100,4 @@ The keys-leaked and wallet-drained runbooks are drilled on testnet/practice keys
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (wallet drained only if a hot/burner wallet exists (17 §D P7-B011); no P5 dependency)

@@ -4,7 +4,7 @@ kind: task
 title: Start the 12-month live clock
 phase: 7
 type: RUN
-status: backlog
+status: cancelled
 priority: medium
 size: XS
 severity: ""
@@ -15,17 +15,22 @@ requirements: [R7.05]
 roadmap_todos: [T7.82]
 modules: [M11]
 dashboards: [D03]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p7/P7-T062-run-start-12-month-live-clock
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T062 · Start the 12-month live clock
@@ -91,3 +96,5 @@ The 12-month live review clock is started per sleeve at its first live funding, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cancelled: T7.82 is deferred to the recurring 12-month review outside the phases (17 §D P7-B012, roadmap README §10); scheduling moved into P7-T042)
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · cancelled: T7.82 deferred: the 12-month review is a recurring calendar review outside the phases (docs/17 §D P7-B012, docs/roadmap/README.md §10); the yearly schedule is built in P7-T042 and diaried in P7-T063

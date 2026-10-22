@@ -4,7 +4,7 @@ kind: gap
 title: Autonomous claims: "hot wallet" (08, D12) vs "airdrop identity wallet" (03 M4, R5.15)
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -22,12 +22,12 @@ services: []
 branch: p5/P5-B017-claim-wallet-hot-vs-identity
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/ui/dashboards/D12-airdrops.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/08-airdrops-and-token-launches.md §What may run autonomously; docs/ui/dashboards/D12-airdrops.md /airdrops/wallet"
 created: 2026-10-21
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -55,9 +55,9 @@ All docs say auto-claims run from the chain's airdrop identity wallet (signer-he
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution per 17 §B (airdrop identity wallet, never the hot trading wallet)
+- [x] 02 §2 system-context diagram relabelled 'airdrop identity-wallet claims' (08, D12, 03 M4, 13 §1 already agree)
+- [x] P5-T004/T006/T041/T044/T053 already use identity wallets
 
 ## Verification
 
@@ -72,9 +72,9 @@ All docs say auto-claims run from the chain's airdrop identity wallet (signer-he
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync are consistent
+- [x] Affected P5 tasks reference the resolved value/name
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -99,3 +99,7 @@ All docs say auto-claims run from the chain's airdrop identity wallet (signer-he
 
 - 2026-10-21 00:00 · planner · opened
 - 2026-10-22 00:00 · aligner · left open: 17 §B records the decision (autonomous claims use the chain's airdrop identity wallet, never the hot trading wallet) and 08, D12, 03 M4, 13 §1, 07 §4 and 02 F8 carry it, but the 02 §2 system-context diagram still labels chain access "hot-wallet claims only" (docs/02-v1-architecture.md line 55). Needs that label changed to identity-wallet claims. Implementation owned by P5-T041/P5-T044 (identity wallet only) and tested in P5-T053
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: 02 §2 diagram label fixed; all docs name the airdrop identity wallet
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/02-v1-architecture.md §2 diagram (airdrop identity-wallet claims); 08, D12, 03 M4 already aligned
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

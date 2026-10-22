@@ -59,7 +59,7 @@
 - [ ] **T0.07** `USER` **Discord:** private "MasterTrader Feeds" server with `#mt-inbox` + category channels; bot app with Message Content intent; start following announcement channels you already know. → gates P4 · [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)
 - [ ] **T0.08** `USER` ⚠️ **Reddit (optional): apply before 2026-10-31.** X stays deferred. → [06 §0](../06-aggregators-and-market-providers.md#0-️-time-sensitive-actions)
 - [ ] **T0.09** `USER` Free demo/practice accounts: OANDA practice, IG demo, Alpaca paper, IBKR paper, Binance + Bybit testnets. → gates P1/P2
-- [ ] **T0.10** `USER` Free API keys: FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. → gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md)
+- [ ] **T0.10** `USER` Free API keys: FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. → gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md)
 - [ ] **T0.11** `USER` **Venue checks:** look up each AU venue you may use on the AUSTRAC register by ABN; note products available to you as a retail client; send the results for the registry seed. → R0.06 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry)
 - [ ] **T0.12** `USER` Set your login password and enrol TOTP on first boot. → R0.08
 - [ ] **T0.13** `USER` Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). → R0.09, R0.13

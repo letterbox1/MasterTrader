@@ -20,7 +20,7 @@
 ## 2. Entry criteria
 
 - P1 exit criteria met; DQ status and measured costs are flowing.
-- Testnet/practice **trade-only** keys exist (T2.03).
+- No keys are needed to start (build first, keys last, [17 §E](../17-decisions-register.md#e-ratification-2026-10-22)): testnet/practice **trade-only** keys (T2.03) are needed only before the late keyed check T2.72.
 
 ## 3. Requirements
 

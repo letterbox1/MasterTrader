@@ -4,7 +4,7 @@ kind: gap
 title: "Postgres-down behaviour differs: 02 §9.3 keeps the engine trading, 16 §3.1 fires the dead-man on a missing DB heartbeat"
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -22,12 +22,12 @@ services: []
 branch: p2/P2-B015-postgres-down-vs-db-heartbeat
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/16-configuration-and-safety-model.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §9.3 vs docs/16-configuration-and-safety-model.md §3.1
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -55,9 +55,9 @@ One documented behaviour when Postgres is unreachable: either the engine keeps t
 
 ## ToDo
 
-- [ ] Decide the wording with the user (or apply the suggested fix if it follows 16/17)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Wording follows 16 §3.1 (the reference doc): the DB heartbeat is a watched component
+- [x] 02 §9.3 Postgres-down row and 16 §3.3 now agree and cross-link (engine doesn't keep opening positions; dead-man acts on the DB heartbeat)
+- [x] P2-T032, P2-T054 and P2-T059 reference the decision
 
 ## Verification
 
@@ -72,8 +72,8 @@ One documented behaviour when Postgres is unreachable: either the engine keeps t
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place (16 §3.1), cross-linked from 02 §9.3 and 16 §3.3
+- [x] Affected tasks reference the decision
 
 ## Exceptions & edge cases
 
@@ -96,3 +96,7 @@ One documented behaviour when Postgres is unreachable: either the engine keeps t
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during task alignment (docs/16–17 wave): doc contradiction found while aligning tasks
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: 02 §9.3 now matches 16 §3.1 (DB heartbeat triggers the dead-man; no new positions while Postgres is down)
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/02-v1-architecture.md §9.3 Postgres down row + docs/16 §3.3 cross-link to §3.1; P2-T032/T054/T059 updated
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

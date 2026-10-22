@@ -4,7 +4,7 @@ kind: gap
 title: USDA QuickStats needs a free API key that T0.10 does not list
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -22,12 +22,12 @@ services: []
 branch: p1/P1-B019-usda-quickstats-key-missing
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md, docs/06-aggregators-and-market-providers.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-0-foundations.md T0.10; docs/03-build-spec.md M1
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -55,9 +55,9 @@ The docs say whether USDA data is loaded keyless (WASDE report files only) or vi
 
 ## ToDo
 
-- [ ] Decide (a) or (b) with the user and record it in docs/17
-- [ ] Edit 03 M1 and, for (b), the P0 roadmap T0.10 list and 06 §3
-- [ ] Update P1-T026 / P1-T073 (env and scope) to match
+- [x] Decided (b): free USDA NASS QuickStats key, recorded via 17 §E (configurable/free inputs follow the suggested fix)
+- [x] Edited 03 M1, P0 roadmap T0.10 and 06 §3 (WASDE keyless; QuickStats with a free key)
+- [x] P0-T010 (adds `usda_quickstats` / `USDA_QUICKSTATS_API_KEY`), P1-T026 (fixtures) and P1-T073 (live check) updated
 
 ## Verification
 
@@ -75,8 +75,8 @@ The docs say whether USDA data is loaded keyless (WASDE report files only) or vi
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in docs/17 and the docs updated
-- [ ] P1-T026 and P1-T073 match the decision
+- [x] Decision recorded (suggested fix (b), per 17 preamble) and the docs updated
+- [x] P1-T026 and P1-T073 match the decision
 
 ## Exceptions & edge cases
 
@@ -100,3 +100,7 @@ The docs say whether USDA data is loaded keyless (WASDE report files only) or vi
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during docs/16–17 task alignment; owned by P1-T026 (keyless WASDE meanwhile) and P1-T073 (live check once decided)
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: suggested fix (b) adopted; T0.10, 03 M1, 06 §3 and P0-T010/P1-T026/P1-T073 name the free QuickStats key
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/roadmap/phase-0-foundations.md T0.10, docs/03-build-spec.md M1, docs/06 §3 (USDA QuickStats free key); P0-T010, P1-T026, P1-T073 updated
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

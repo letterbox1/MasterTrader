@@ -15,17 +15,22 @@ requirements: [R7.07, R7.08]
 roadmap_todos: [T7.22, T7.61]
 modules: [M11, M16]
 dashboards: [D03, D06]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p7/P7-T049-verify-decay-and-downgrade-simulated
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T049 · Simulated decay, health-check and auto-downgrade breaches
@@ -37,12 +42,12 @@ Injected performance decay triggers the rolling-stat and CUSUM alerts, the daily
 ## Context & references
 
 - Roadmap: [R7.07, R7.08 · ToDo T7.22, T7.61](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (decay) · [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) (health check) · [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) (auto-downgrade) · Roadmap R7.07 'Verified by: alerts'
+- Spec: [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (decay) · [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) (health check) · [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) (auto-downgrade) · [16 §2.6](../../../docs/16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each) (one meaning per signal) · Roadmap R7.07 'Verified by: alerts'
 - Related: P7-T023, P7-T024, P7-T029, P7-T064
 
 ## Requirements
 
-- Cases: hit rate < p5; Sharpe < p5; CUSUM mean shift −1σ (detected within expected ARL); health check Sharpe < ½ validated; health check DD > 1.5× backtest max; each P7-T029 trigger (table-driven).
+- Cases: rolling 60-trade hit rate < p5; Sharpe < p5; the 26-week window for a low-frequency bot; CUSUM mean shift −1σ (detected within expected ARL); 5 consecutive losses: each → downgrade to HITL. Health check Sharpe < ½ validated and DD > 1.5× backtest max: each → **halt the bot** (16 §2.6). Each P7-T029 trigger (table-driven).
 - Assertions: alert kinds and channels, D03 charts show the breach, bot mode history rows (WORM), clean-week evaluator marks the week dirty, no auto-upgrade after recovery.
 
 ## ToDo
@@ -93,3 +98,4 @@ Injected performance decay triggers the rolling-stat and CUSUM alerts, the daily
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cases per 16 §2.6 incl. 5 losses and the 26-week window; the health check halts the bot)

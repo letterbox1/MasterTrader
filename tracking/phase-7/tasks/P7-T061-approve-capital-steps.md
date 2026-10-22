@@ -15,29 +15,34 @@ requirements: [R7.05]
 roadmap_todos: [T7.06]
 modules: [M11]
 dashboards: [D06, D01]
+tools: []
+mcp: []
+env: []
+services: [telegram, TOTP app, your bank]
 branch: p7/P7-T061-approve-capital-steps
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T061 · Approve each capital step after 4 clean weeks (C3)
 
 ## Goal / expected outcome
 
-When a sleeve shows 'step eligible' after 4 clean weeks, you approve (C3) or decline the 25% step, and top up the venue sub-account manually by the shown amount.
+When a sleeve shows 'step eligible' after 4 clean weeks, you approve (C3) or decline the step (+25% of the current allocation, up to the sleeve target cap), and top up the venue sub-account manually by the shown amount.
 
 ## Context & references
 
 - Roadmap: [R7.05 · ToDo T7.06](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [14 §7](../../../docs/14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) (25% steps after 4 clean weeks each; up to A$10–25k) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (raising a limit = C3)
+- Spec: [14 §7](../../../docs/14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) (+25% of the current allocation after 4 consecutive clean weeks, up to the sleeve target cap, e.g. A$10–25k) · [16 §2.5](../../../docs/16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (raising a limit = C3)
 - Related: P7-T019, P7-T059, P7-T046 (registry re-check before each funding)
 
 ## Requirements
@@ -71,12 +76,12 @@ When a sleeve shows 'step eligible' after 4 clean weeks, you approve (C3) or dec
 
 ## Exceptions & edge cases
 
-- Phase exits before any step becomes eligible: this item is done as 'no eligible step yet', and step approvals continue as standing operations.
+- Phase exits before any step becomes eligible: this item is done as 'no eligible step yet', and step approvals continue as standing operations ([roadmap README §10](../../../docs/roadmap/README.md#10-standing-operations-recurring-outside-the-phases)).
 
 ## Cardinal rules (do NOT)
 
 - Do NOT top up more than the approved step.
-- Do NOT approve a step while any kill/decay warning is active.
+- Do NOT approve a step while any kill/decay warning is active (a warning already steps the allocation back one step, 16 §2.5).
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT use keys that are not trade-only, IP-locked and withdrawal-disabled; no live money before the P7 gates pass.
 
@@ -94,3 +99,4 @@ When a sleeve shows 'step eligible' after 4 clean weeks, you approve (C3) or dec
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (+25% of current up to the sleeve cap per 16 §2.5)

@@ -215,7 +215,7 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
 
 **Futures/commodities:**
 - No free real-time feed, so daily data only (yfinance `GC=F`, `CL=F`; akshare for Asia).
-- EIA, USDA (WASDE/QuickStats), CFTC COT, Baker Hughes.
+- EIA, USDA (WASDE report files keyless; QuickStats API with a free key from T0.10), CFTC COT, Baker Hughes.
 - **Futures-like exposure is traded via crypto perps or FX/CFDs** (OANDA/IG).
 
 **Rates & macro:**
@@ -729,7 +729,7 @@ Full design: [13 §8](13-wallets-treasury-and-onchain.md#8-social-participation-
 **How it's built:**
 - A thin adapter over `mt_api`, using the official `mcp` Python SDK or FastMCP.
 - **Transport:** Streamable HTTP (JSON-RPC 2.0, SSE streaming, resumable) on Tailscale/TLS, or stdio (newline-delimited JSON) locally; an optional legacy HTTP+SSE endpoint for older clients. The `mcp` container sits on the internal network behind Caddy, on Tailscale only. Server notifications (fills, approvals, alerts) use resource subscriptions.
-- **Tokens:** opaque 256-bit, shown once, stored hashed (HMAC-SHA-256 with a server pepper), scoped, revocable instantly, with last-used time and client identity recorded. Expiry is your choice per token: 1 day · 7 days · 30 days · 1 year · custom · indefinite (indefinite = red warning + C3 + monthly reminder). Creating a token is C2 for `read` / `analyse` / `curation` scopes and C3 for `trade` / `strategy` / `risk_tighten` scopes or indefinite expiry ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)). OAuth 2.1 (PKCE, resource indicators) for clients that support MCP authorization.
+- **Tokens:** opaque 256-bit, shown once, stored hashed (HMAC-SHA-256 with a server pepper), scoped, revocable instantly, with last-used time and client identity recorded. Expiry is your choice per token: 1 day · 7 days · 30 days · 1 year · custom · indefinite (indefinite = red warning + C3 + monthly reminder). Creating a token is C1 for `read` / `analyse` / `curation` scopes and C3 for `trade` / `strategy` / `risk_tighten` scopes or indefinite expiry ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)). OAuth 2.1 (PKCE, resource indicators) for clients that support MCP authorization.
 - **Because the UI and Telegram already use `mt_api`, this is mostly wiring.**
 
 **Scope (all via `mt_api`; every order still passes through M11):**

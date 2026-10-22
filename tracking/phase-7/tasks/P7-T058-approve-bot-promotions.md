@@ -15,17 +15,22 @@ requirements: [R7.08]
 roadmap_todos: [T7.06]
 modules: [M11]
 dashboards: [D03]
+tools: []
+mcp: []
+env: []
+services: [telegram, TOTP app]
 branch: p7/P7-T058-approve-bot-promotions
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T058 · Approve each bot promotion HITL → autonomous (C3)
@@ -37,19 +42,19 @@ For each live bot you decide to automate, you approve the promotion to autonomou
 ## Context & references
 
 - Roadmap: [R7.08 · ToDo T7.06](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) (autonomous = C3, per bot) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows) F7 · [mob §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot)
+- Spec: [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) (autonomous = C3, per bot; modes `paper`/`hitl`/`autonomous`, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows) F7 · [mob §3](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot)
 - Related: P7-T028 (eligibility), P7-T029 (auto-downgrade), P7-T054
 
 ## Requirements
 
-- Only bots whose D03 eligibility checklist is all green (gate report, ≥ 4 clean HITL weeks live, preflight, no downgrade triggers).
+- Only bots whose D03 eligibility checklist is all green (passing gate report incl. the paper/HITL period of its gate profile, funded, preflight, no downgrade triggers, plus any clean-live-weeks tightening you set).
 - C3: Telegram approve → TOTP → 15-min cool-down; review the first escalated approval cards afterwards.
 - Record per bot: promoted (date) or kept HITL (reason).
 
 ## ToDo
 
 - [ ] Open D03 → Bots; review each live bot's checklist.
-- [ ] For each bot you choose: start `/bot <id> mode auto` (or the D03 control) and complete the C3 steps.
+- [ ] For each bot you choose: start `/bot <id> mode autonomous` (or the D03 control) and complete the C3 steps.
 - [ ] Record decisions in the progress log.
 
 ## Verification
@@ -91,3 +96,4 @@ For each live bot you decide to automate, you approve the promotion to autonomou
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (eligibility per the 16 §2.4 gate profile; mode names per 17 §B)

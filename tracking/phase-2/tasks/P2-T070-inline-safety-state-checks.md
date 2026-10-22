@@ -114,7 +114,7 @@ review_result: ""
 ## Doc sync on completion
 
 - `docs/03-build-spec.md` M11: reason codes for the safety-state checks.
-- `docs/02-v1-architecture.md` F2: check order as built (egress status now checked from P2; see gap P2-B019).
+- `docs/02-v1-architecture.md` F2: check order as built (egress status checked from Phase 1 (P1-T071) and inline in M11 from P2; 02 F2 updated, P2-B019).
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.39 when all tasks mapped to it are done.
 
 ## Branch & PR

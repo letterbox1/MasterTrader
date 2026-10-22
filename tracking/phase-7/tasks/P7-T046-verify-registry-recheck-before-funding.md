@@ -15,17 +15,22 @@ requirements: [R7.13, R7.05]
 roadmap_todos: [T7.63]
 modules: [M11]
 dashboards: [D06, D16]
+tools: [git, uv]
+mcp: []
+env: []
+services: [postgres, mt-api]
 branch: p7/P7-T046-verify-registry-recheck-before-funding
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T046 · Verify venue-registry re-check (< 90 days) gates every funding
@@ -93,3 +98,4 @@ Tests and a recorded check prove that funding confirmation, capital steps and li
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (tools/mcp/env/services; 90-day re-check per 12 §2 unchanged)

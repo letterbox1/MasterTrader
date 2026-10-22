@@ -4,7 +4,7 @@ kind: gap
 title: Tenderly free tier: "120K simulations/month" (research) vs "no simulation API" (06, 13)
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -22,12 +22,12 @@ services: []
 branch: p5/P5-B013-tenderly-free-tier-contradiction
 pr: ""
 doc_sync: [docs/research/airdrops-rugpull-discord.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: "docs/research/airdrops-rugpull-discord.md §Safety sources"
 created: 2026-10-21
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -54,9 +54,9 @@ The research note agrees with the decision (Anvil fork; Tenderly free plan has n
 
 ## ToDo
 
-- [ ] Agree the resolution with the user (or record the decision in the progress log)
-- [ ] Edit the source docs listed under Doc sync so they agree
-- [ ] Update the affected P5 task files if the numbers/names change
+- [x] Resolution per 17 §D (Tenderly not used; Anvil + simulateTransaction)
+- [x] docs/research/airdrops-rugpull-discord.md line 60 annotated as superseded
+- [x] P5-T016 already uses Anvil/simulateTransaction only
 
 ## Verification
 
@@ -71,9 +71,9 @@ The research note agrees with the decision (Anvil fork; Tenderly free plan has n
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync are consistent
-- [ ] Affected P5 tasks reference the resolved value/name
-- [ ] Resolution recorded in the progress log
+- [x] Docs listed under Doc sync are consistent
+- [x] Affected P5 tasks reference the resolved value/name
+- [x] Resolution recorded in the progress log
 
 ## Exceptions & edge cases
 
@@ -97,3 +97,7 @@ The research note agrees with the decision (Anvil fork; Tenderly free plan has n
 
 - 2026-10-21 00:00 · planner · opened
 - 2026-10-22 00:00 · aligner · left open: 17 §D records the decision (Tenderly not used; Anvil + `simulateTransaction` only) and 13 §2, 06 (Anvil row + skip list), 11 and roadmap R5.02 carry it, but docs/research/airdrops-rugpull-discord.md line 60 still reads "Simulation: Tenderly free tier (120K simulations/month) for EVM" with no superseded note (the suggested fix). Needs a one-line "superseded: Anvil/simulateTransaction only (17 §D)" annotation by the doc owner. Implementation already owned by P5-T016 (Anvil/simulateTransaction only)
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: research note marked superseded per 17 §D
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/research/airdrops-rugpull-discord.md Simulation line (superseded note: Anvil + simulateTransaction, 17 §D)
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

@@ -27,7 +27,7 @@
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
 | R1.01 | **Crypto real-time:** public WS trades, L1 and L2 (Binance, Bybit, OKX, Coinbase, Kraken) via Nautilus/ccxt → NATS `md.*`. L2 diffs are recorded at native speed only for symbols whose bots need order-book data (default ≤ 3 symbols, configurable); the rest get 1 s book snapshots | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [02 §6](../02-v1-architecture.md#6-messaging-nats), [17 §D](../17-decisions-register.md#d-other-decisions) | Live feed |
-| R1.02 | **Recording:** Parquet recorder (1–5 min files, daily compaction); bar builder writes 1s/1m bars to Timescale; timeframes run tick → 1W with continuous aggregates at 1m, 5m, 15m, 1h, 4h, 1D, 1W; other sizes via `time_bucket` queries at read time | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [02 F1](../02-v1-architecture.md#8-end-to-end-flows), [17 §D](../17-decisions-register.md#d-other-decisions) | Bar parity test |
+| R1.02 | **Recording:** Parquet recorder (1–5 min files, daily compaction); bar builder writes 1s bars to Timescale (1m bars are a continuous aggregate, [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), not written by the bar builder); timeframes run tick → 1W with continuous aggregates at 1m, 5m, 15m, 1h, 4h, 1D, 1W; other sizes via `time_bucket` queries at read time | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [02 F1](../02-v1-architecture.md#8-end-to-end-flows), [17 §D](../17-decisions-register.md#d-other-decisions) | Bar parity test |
 | R1.03 | **Crypto history:** data.binance.vision trades/aggTrades/1s klines backfill | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Backfill report |
 | R1.04 | **FX & metals:** OANDA practice stream, IG demo stream, Dukascopy ticks, ECB/Frankfurter, **RBA F11** daily FX; broker XAU/XAG (no LBMA) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [06 §3](../06-aggregators-and-market-providers.md#market-data-m1) | Live feed |
 | R1.05 | **Stocks/ETFs:** Alpaca IEX real-time (30 symbols), yfinance daily, FinanceDatabase symbol master, `exchange_calendars` | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Live feed |
@@ -59,7 +59,7 @@
 
 ### B. Build (`BUILD`, code)
 - [ ] **T1.20** `BUILD` `mt_data.market` crypto WS clients via Nautilus data clients/ccxt; publish `md.*`. → R1.01
-- [ ] **T1.21** `BUILD` Parquet recorder + daily compaction; bar builder (1s/1m) + Timescale continuous aggregates (1m, 5m, 15m, 1h, 4h, 1D, 1W); tick/volume/value bar support. → R1.02
+- [ ] **T1.21** `BUILD` Parquet recorder + daily compaction; bar builder (1s) + Timescale continuous aggregates (1m, 5m, 15m, 1h, 4h, 1D, 1W); tick/volume/value bar support. → R1.02
 - [ ] **T1.22** `BUILD` Backfill flows: data.binance.vision, Dukascopy (dukascopy-node or own bi5 parser), Alpaca history, yfinance. → R1.03–R1.05
 - [ ] **T1.23** `BUILD` FX/metals streaming: OANDA v20 practice, IG Lightstreamer demo; Frankfurter self-hosted; RBA F11 flow. → R1.04
 - [ ] **T1.24** `BUILD` Macro/rates/fundamentals Prefect flows: FRED/ALFRED (vintages), Treasury, `sdmx1`, central banks, EIA/USDA/COT/Baker Hughes, ABS CPI, EDGAR. → R1.06, R1.07

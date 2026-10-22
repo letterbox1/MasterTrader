@@ -77,7 +77,7 @@ This replaces the earlier "detection → paused < 2 s" SLO.
 | HITL approval TTL | 60 s intraday · 15 min swing · 4 h position; expiry = reject |
 | Large-order extra confirmation | > 2% of sleeve or > A$5,000 notional → TOTP (Telegram) / hold-to-confirm (web) |
 | Mode change paper → HITL | C2 · HITL → autonomous: C3 · autonomous → HITL/paper: C1 (tightening) |
-| MCP-originated orders | **Always need your approval card** (Telegram/web), TTL 5 min. MCP can never approve anything itself (§2.12) |
+| MCP-originated orders and any other C2 command (e.g. bot `paper` → `hitl`) | **Always create your approval card** (Telegram/web), TTL 5 min. MCP can never approve anything itself (§2.12) |
 | C3 cool-down | 15 min between your C3 approval and the change taking effect |
 | Confirm-token TTL (C1/C2) | 120 s from the preview call; single use. Expired → preview again |
 | C3 approval TTL | 10 min for the approval and its TOTP; expiry = cancelled, nothing applies |

@@ -43,7 +43,7 @@ An `ntfy` container runs digest-pinned with `auth-default-access: deny-all`, a p
 
 - Roadmap: requirements [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.43](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Containers: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`ntfy`, phase 1) · [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) (ntfy as second independent channel)
-- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B006 (self-hosted, Tailscale only; iOS push via the upstream relay carrying only a message ID); network `edge` with relay-only egress ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); how the notifier reaches it is gap P1-B020
+- Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B006 (self-hosted, Tailscale only; iOS push via the upstream relay carrying only a message ID); network `edge` with relay-only egress ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); the alert consumer publishes to it through Caddy on `edge` ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks), P1-B020)
 - Cross-phase prerequisites (depends_on): P0-T019 (Tailscale on the host), P0-T020 (Caddy), P0-T021 (networks: `edge`)
 - Depends on (this phase): P1-T004
 

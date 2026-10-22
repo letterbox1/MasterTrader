@@ -4,7 +4,7 @@ kind: gap
 title: Roadmap phase 2 entry criterion requires trade-only keys before the phase, contradicting build first, keys last
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -22,12 +22,12 @@ services: []
 branch: p2/P2-B020-entry-criterion-keys-vs-keys-last
 pr: ""
 doc_sync: [docs/roadmap/phase-2-strategies-risk-lab.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-2-strategies-risk-lab.md §2 Entry criteria
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -54,9 +54,9 @@ The phase-2 entry criteria no longer require keys up front: keys are needed only
 
 ## ToDo
 
-- [ ] Decide the wording with the user (or apply the suggested fix if it follows 16/17)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Suggested fix applied (17 §E build first, keys last)
+- [x] Roadmap phase 2 §2 entry criteria no longer require keys; T2.03 keys are needed only before T2.72
+- [x] PHASE.md and P2-T071 → P2-T001 dependency already carry it; no task change needed
 
 ## Verification
 
@@ -71,8 +71,8 @@ The phase-2 entry criteria no longer require keys up front: keys are needed only
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree: roadmap §2 links 17 §E
+- [x] Affected tasks reference the decision
 
 ## Exceptions & edge cases
 
@@ -95,3 +95,7 @@ The phase-2 entry criteria no longer require keys up front: keys are needed only
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during task alignment (docs/16–17 wave): doc contradiction found while aligning tasks
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: entry criterion reworded per 17 §E
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/roadmap/phase-2-strategies-risk-lab.md §2 Entry criteria (keys only before T2.72)
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

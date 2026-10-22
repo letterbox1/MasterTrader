@@ -4,7 +4,7 @@
 |---|---|
 | **Route** | `/risk` (tabs: Overview · Policy · Events · Stress · Changes · Live (Phase 7)) |
 | **Modules** | M11 risk manager, M16 monitor, M5 calendar (blackouts) |
-| **Phase** | 2 (Stress tab per R2.57; Live tab: capital steps, kill criteria, weekly reviews in 7) |
+| **Phase** | 2 (Stress tab placeholder per R2.57, replay R7.16 in 7; Live tab: capital steps, kill criteria, weekly reviews in 7) |
 | **Mock-up reference** | `autonomous-risk-governor-kill-switch-hub.png` (fix: status-bar overlap, full-height sidebar, native `confirm()` → `ConfirmSheet`) |
 
 ## Purpose
@@ -83,7 +83,7 @@ Every number on this page is a **configurable default** from [16](../../16-confi
 
 ## Stress tab
 
-- **Phase:** Phase 2 ships the tab as a **placeholder** (empty state: "Stress tests aren't available yet", no sample numbers) until the stress engine lands. The historical shock replay (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) is planned as R2.57; custom/preset hypothetical shocks are optional and must exist before live capital (Phase 7).
+- **Phase:** Phase 2 ships the tab as a **placeholder** (empty state: "Stress tests aren't available yet", no sample numbers) until the stress engine lands. The historical shock replay (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) is planned as [R7.16](../../roadmap/phase-7-prove-and-go-live.md) (Phase 7); R2.57 is the Phase 2 placeholder. Custom/preset hypothetical shocks are optional and must exist before live capital (Phase 7).
 - **Scenarios:** historical replays; later, presets (e.g. −15% crypto in 60 s, USD +3%, gap-down at open, venue outage, stablecoin de-peg) or custom shocks per asset class/instrument.
 - **Run:** `risk.stress.run` (C1), enabled once available.
 - **Results:** P&L impact by position/bot/sleeve/venue, limits breached, liquidation distances, hedge coverage.
@@ -154,4 +154,4 @@ Commands: `risk.ladder.set` (down = C1, up = C3), `venue.registry.update` (tight
 
 - **Queries:** `/risk/policy` (effective values with layer and default), `/risk/state` (+ `breakdown`, `ladder`), `/risk/events`, `/risk/changes`, `/risk/stress`, `/venues/registry`; Phase 7: `/risk/capital-steps`, `/risk/kill-criteria`, `/strategies/{id}/gate-report`, `/journal/reviews`.
 - **WebSocket topics:** `kill`, `heartbeat`, `risk.state`, `risk.event`, `dq.status`, `cal`.
-- **Commands:** `risk.kill.on|off`, `risk.deadman.ack`, `risk.policy.update` (all layers incl. L0), `risk.stress.run`, `risk.ladder.set`, `venue.registry.update`, `audit.integrity.ack`; Phase 7: `risk.capital.fund`, `risk.capital_step.approve`, `risk.sleeve.restart`, `risk.review.close`, `journal.review.signoff`.
+- **Commands:** `risk.kill.on|off`, `risk.deadman.ack`, `risk.policy.update` (all layers incl. L0), `risk.stress.run`, `risk.ladder.set`, `venue.registry.update`, `audit.integrity.ack`, `risk.sleeve.restart` (C3; from Phase 2, where sleeve halts first happen); Phase 7: `risk.capital.fund`, `risk.capital_step.approve`, `risk.review.close`, `journal.review.signoff`.

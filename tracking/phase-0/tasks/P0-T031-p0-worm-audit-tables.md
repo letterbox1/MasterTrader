@@ -56,14 +56,14 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 - `audit.auth_event`: login success/failure, TOTP enrol/verify, logout, session expiry, lockout — no passwords, no TOTP codes.
 - `audit.llm_call`: `model`, `route`, `role`, `prompt_hash`, `response_hash`, `prompt_text`, `response_text`, `tokens_in/out`, `cost`, `latency_ms`, `trace_id` (03 M17). Writer is LiteLLM's callback (P0-T042).
 - `audit.seal`, `audit.verify_run`, `audit.integrity_incident` schemas defined here; filled by P0-T037 / P0-T038. `audit.integrity_incident` holds incidents **and** acks as separate rows (`kind` `chain_mismatch|seal_mismatch|anchor_missing|ack`, `action`, `incident_id` reference on acks); nothing is ever marked acked in place (15 §2.2).
-- `mt_obs.audit.write(table, row)` async writer using the role `mt_obs_rw`/`mt_api_rw`; never waits on seals (insert p99 < 5 ms, R0.N7). If Postgres is unreachable it appends the row to the JetStream stream `AUDIT_BUFFER` (default bound 1 GB or 24 h, [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check), read from settings) and a drainer inserts buffered rows in order when the DB returns. Above 80 % of the bound it reports `buffer_high` and callers refuse new entries (Kill and exits are still recorded). If neither the DB nor the buffer accepts a row the write raises (no silent drop) and increments `mt_audit_write_failures_total`: nothing executes without a record.
+- `mt_obs.audit.write(table, row)` async writer using the role `mt_obs_rw`/`mt_api_rw`; never waits on seals (insert p99 < 5 ms, R0.N7). If Postgres is unreachable it appends the row to the JetStream stream `WORM_BUFFER` (default bound 1 GB or 24 h, [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check), read from settings) and a drainer inserts buffered rows in order when the DB returns. Above 80 % of the bound it reports `buffer_high` and callers refuse new entries (Kill and exits are still recorded). If neither the DB nor the buffer accepts a row the write raises (no silent drop) and increments `mt_audit_write_failures_total`: nothing executes without a record.
 - Views `audit.command_current` etc.: `DISTINCT ON (root_id) ... ORDER BY root_id, seq DESC`.
 
 ## ToDo
 
 - [ ] Migrations (WORM-tagged, run by ceremony) creating the six tables via `create_worm_table()`; register in `audit.worm_registry`.
 - [ ] Implement `mt_obs.audit` writers and redaction of args (reuse the secret regex).
-- [ ] Implement the `AUDIT_BUFFER` fallback + ordered drainer and the 80 % `buffer_high` signal, with bounds from settings.
+- [ ] Implement the `WORM_BUFFER` fallback + ordered drainer and the 80 % `buffer_high` signal, with bounds from settings.
 - [ ] Create `*_current` views and tests.
 - [ ] Document the correction pattern with an example in `mt_obs` README.
 
@@ -73,11 +73,11 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 - Integration: insert → chain valid; status transition creates a new row and the current view shows the latest.
 - Unit: args redaction removes secrets/TOTP codes before insert.
 - Privilege: app roles cannot UPDATE any of the six tables.
-- Integration: pause Postgres → rows go to `AUDIT_BUFFER` → resume → drained rows land chained in the original order, none lost; with a small test bound, crossing 80 % raises `buffer_high`.
+- Integration: pause Postgres → rows go to `WORM_BUFFER` → resume → drained rows land chained in the original order, none lost; with a small test bound, crossing 80 % raises `buffer_high`.
 
 ### Scenarios
 - Given a command fails after acceptance, then `audit.command` has two rows (accepted, failed) with the same root and the current view shows `failed`.
-- Given Postgres is down, when a non-Kill command arrives, then mt-api is read-only and rejects it with 503 problem+json (02 §9.3); a Kill ON is recorded through `AUDIT_BUFFER` and appears in `audit.command` once the DB returns.
+- Given Postgres is down, when a non-Kill command arrives, then mt-api is read-only and rejects it with 503 problem+json (02 §9.3); a Kill ON is recorded through `WORM_BUFFER` and appears in `audit.command` once the DB returns.
 
 ### Stress / failure injection
 - Burst: 500 commands/s for 60 s through `mt_obs.audit.write` → no lost rows, chain valid, insert p99 < 5 ms (feeds P0-T059; the gated benchmark is P0-T066).

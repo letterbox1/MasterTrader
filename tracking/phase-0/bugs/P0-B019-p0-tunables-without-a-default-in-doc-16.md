@@ -4,7 +4,7 @@ kind: gap
 title: P0 tunables without a default in doc 16
 phase: 0
 type: DOC
-status: backlog
+status: done
 priority: low
 size: S
 severity: S4
@@ -22,12 +22,12 @@ services: []
 branch: p0/P0-B019-p0-tunables-without-a-default-in-doc-16
 pr: ""
 doc_sync: [docs/16-configuration-and-safety-model.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/16-configuration-and-safety-model.md §2
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -62,10 +62,10 @@ Every number the P0 tasks treat as a user-changeable setting has its default rec
 
 ## ToDo
 
-- [ ] Confirm the values with the user (or take the task values as defaults)
-- [ ] Add them to doc 16 (doc-alignment pass; this agent doesn't edit docs)
-- [ ] Update the affected P0 tasks to link the new 16 section
-- [ ] Add/adjust a regression check where one is possible (P0-T017 defaults-file test)
+- [x] Values taken from the P0 task defaults (17 §E: configurable values are settings, not questions)
+- [x] Doc 16 updated: confirm-token TTL 120 s and C3 approval TTL 10 min in §2.3; lockout, session lifetime, heartbeat 1 s, Loki 30 d [30–90 d], seal grace 10 min, anchor retry hourly 24 h, backup schedule + pgBackRest retention 4, docker-proxy restart allow-list in new §2.14 Platform & operations
+- [x] P0-T018, P0-T023, P0-T033, P0-T035, P0-T037, P0-T039 and P0-T065 link 16 §2.3 / §2.14
+- [x] Regression check stays with P0-T017's defaults-file test (each default references its 16 section)
 
 ## Verification
 
@@ -80,9 +80,9 @@ Every number the P0 tasks treat as a user-changeable setting has its default rec
 
 ## Acceptance criteria
 
-- [ ] Every listed value has a default in 16
-- [ ] Affected tasks link to it
-- [ ] Root cause noted in the progress log
+- [x] Every listed value has a default in 16 (§2.3, §2.14)
+- [x] Affected tasks link to it
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -107,3 +107,7 @@ Every number the P0 tasks treat as a user-changeable setting has its default rec
 
 - 2026-10-22 02:05 · cloud:vm:be04b6ae61f8 · opened
 - 2026-10-22 00:00 · aligner · filed during the 16–17 alignment; left open (needs a doc-16 change, outside this agent's scope). Root cause: 16 covers trading/safety defaults but not platform/ops tunables introduced by the P0 task plan.
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: defaults from the P0 tasks added to 16 §2.3 and new §2.14; tasks linked. Root cause: 16 covered trading/safety defaults but not platform/ops tunables introduced by the P0 plan
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/16 §2.3 (confirm-token and C3 approval TTLs) + new §2.14 Platform & operations; P0-T018/T023/T033/T035/T037/T039/T065 link it
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

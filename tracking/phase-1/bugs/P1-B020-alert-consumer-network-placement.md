@@ -4,7 +4,7 @@ kind: gap
 title: Network placement and egress of the alert.* consumer are undefined
 phase: 1
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -22,12 +22,12 @@ services: []
 branch: p1/P1-B020-alert-consumer-network-placement
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §3.1
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -55,9 +55,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Agree the placement with the user (recommendation above)
-- [ ] Edit 02 §3.1 and 07 §9
-- [ ] Update P1-T044 / P1-T045 if the decision differs from their interim placement
+- [x] Placement adopted from the recommendation (17 preamble: suggested fix applies)
+- [x] Edited 02 §3.1 (alert consumer on `core` + `obs` + `edge`, own egress allow-list for Telegram Bot API + SMTP; `obs` Telegram egress only for the P0 interim route) and 07 §9
+- [x] P1-T044, P1-T045 and P1-T060 point at 02 §3.1
 
 ## Verification
 
@@ -75,8 +75,8 @@ review_result: ""
 
 ## Acceptance criteria
 
-- [ ] Decision recorded in docs/17 and 02 §3.1 / 07 §9 updated
-- [ ] P1-T044 / P1-T045 match the documented placement
+- [x] Decision recorded in 02 §3.1 / 07 §9 (suggested fix per 17 preamble)
+- [x] P1-T044 / P1-T045 match the documented placement
 
 ## Exceptions & edge cases
 
@@ -100,3 +100,7 @@ review_result: ""
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during docs/16–17 task alignment; owned by P1-T045 (interim placement) and P1-T060 (proves the paths)
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: 02 §3.1 and 07 §9 define the alert consumer placement and egress; P0 direct Alertmanager → Telegram route is temporary until P1-T045
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/02-v1-architecture.md §3.1 (alert consumer networks/egress, P0 direct route temporary until P1-T045), docs/07-security-notes.md §9; P1-T044/T045/T060 updated
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

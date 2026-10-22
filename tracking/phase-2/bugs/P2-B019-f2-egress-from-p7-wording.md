@@ -4,7 +4,7 @@ kind: gap
 title: 02 F2 says the egress check applies from P7, while R2.58 checks egress status inline from Phase 2
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -22,12 +22,12 @@ services: []
 branch: p2/P2-B019-f2-egress-from-p7-wording
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md F2 step 4
 created: 2026-10-22
 updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -54,9 +54,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Decide the wording with the user (or apply the suggested fix if it follows 16/17)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Suggested fix applied
+- [x] 02 F2 step 4: egress status checked from Phase 1 (P1-T071), fixed exit-node IP from P7
+- [x] P2-T070 doc-sync note updated
 
 ## Verification
 
@@ -71,8 +71,8 @@ review_result: ""
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree: 02 F2 matches R1.16/R2.58
+- [x] Affected tasks reference the decision
 
 ## Exceptions & edge cases
 
@@ -95,3 +95,7 @@ review_result: ""
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · opened during task alignment (docs/16–17 wave): doc contradiction found while aligning tasks
+- 2026-10-22 00:00 · wrap-up doc agent · closed in the wrap-up: 02 F2 no longer says 'from P7'
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · verified: docs/02-v1-architecture.md F2 step 4 (egress check from Phase 1, P1-T071; exit-node IP P7); P2-T070 note updated
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the wrap-up

@@ -15,17 +15,22 @@ requirements: [R7.10]
 roadmap_todos: [T7.62]
 modules: [M12, M0]
 dashboards: [D03, D05]
+tools: [git, uv]
+mcp: []
+env: []
+services: [FP Markets MT5 or cTrader demo, mt5-bridge (MT5 route), postgres, nats]
 branch: p7/P7-T051-verify-mt5-ctrader-paper-parity
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P7-T051 · MT5/cTrader adapter paper parity vs MasterTradingBot outputs
@@ -38,7 +43,7 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 
 - Roadmap: [R7.10 · ToDo T7.62](../../../docs/roadmap/phase-7-prove-and-go-live.md)
 - Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (none touches live money until tested in paper) · Roadmap R7.10 'Verified by: paper parity'
-- Cross-phase: P2 T2.67 (golden files match).
+- Cross-phase: P2-T133 (golden files match).
 - Related: P7-T036/T037 (whichever route is chosen; the other is cancelled), P7-T038
 
 ## Requirements
@@ -51,7 +56,7 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 
 ## ToDo
 
-- [ ] Run MasterTradingBot and the MasterTrader bot in parallel on demo accounts.
+- [ ] Start the ported paper bots (P7-T038) on the demo account via the chosen adapter and run MasterTradingBot in parallel (cTrader route: uses `CTRADER_CLIENT_ID`/`CTRADER_CLIENT_SECRET` from P7-T004, read from the sops file).
 - [ ] Collect signals/orders; write `tools/parity/mtb_parity.py` comparison.
 - [ ] Produce and attach the parity report.
 - [ ] File bugs for unexplained mismatches.
@@ -97,3 +102,4 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (demo runs for the adapters happen here (build first, keys last); fields)

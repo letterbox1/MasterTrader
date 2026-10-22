@@ -58,6 +58,7 @@ _Raw notes from the research agents (2026-10-21). They back up [../08-airdrops-a
   - polkadot-js/phishing.
   - Chainabuse API (5,000 calls/hour).
 - **Simulation:** Tenderly free tier (120K simulations/month) for EVM; Solana `simulateTransaction`.
+  - **Superseded:** Tenderly is not used; Anvil + `simulateTransaction` ([17 §D](../17-decisions-register.md#d-other-decisions), P5-B013).
 - **Approvals:** revoke.cash (core free); or DIY by indexing Approval logs + GoPlus approval security.
 - **Threat context:** 2025 drainer losses ≈ $84M; forged Permit signatures and fake eligibility checkers dominate.
 

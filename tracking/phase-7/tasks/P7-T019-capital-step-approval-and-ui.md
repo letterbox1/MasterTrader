@@ -49,7 +49,7 @@ When a sleeve is step-eligible, a proposal appears in D01 Needs-you and Telegram
 
 - Commands (02 §7.2 catalogue): `risk.capital.fund` (first funding at the bot's starting allocation, default A$2,000, **C3**, used by P7-T057) and `risk.capital_step.approve` (**C3**). Proposals are system events (`risk.event` type `capital_step_proposed`), not commands; declining = dismissing the card (recorded, no change); reducing an allocation is `risk.policy.update` (tightening, C1, immediate).
 - On approve after cool-down: re-check eligibility, preflight (incl. AUSTRAC < 90 days), latest gate report pass ≤ 7 days; then apply a `risk.policy.update` loosening of the bot's allocation via the existing change-control service.
-- Proposal expires after 7 days if not approved; a new dirty week cancels it.
+- Proposal expires after 7 days if not approved; a new dirty week cancels it. Once you start the C3 flow, the approval + TOTP must complete within the C3 approval TTL (default 10 min, 16 §2.3) or nothing applies.
 - UI: `CapitalStepCard` (used by the D06 Live tab and D03 Go-live, composed in P7-T067) shows starting allocation, current allocation and step, clean-week streak (0–4) with the current week's checklist, next step amount, unsigned-review warnings, step-down history; D01 Needs-you card; phone ≤ 3 taps to reach the C3 confirmation.
 - Funding the venue is a separate manual action; the system shows the required top-up amount but never moves money.
 
