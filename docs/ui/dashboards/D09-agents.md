@@ -28,12 +28,12 @@ Run and inspect the AI layer:
 
 | Widget | Shows | Source |
 |---|---|---|
-| New analysis | Instrument(s) or portfolio question; depth (quick / standard / deep); model route (default Claude via the gateway; local-only option); budget estimate (tokens/$); context toggles (news window, filings, memory) | `/models/gateway/spend` (budget) |
+| New analysis | Instrument(s) or portfolio question; depth (quick / standard / deep); model route (default Claude via the gateway; local-only option); budget estimate (tokens/$) against the role's daily budget (default debate US$1.00/day, monthly cap US$40; configurable, [16 §2.10](../../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); context toggles (news window, filings, memory) | `/models/gateway/spend` (budget) |
 | Runs list | Time, subject, trigger (scheduled / event / manual / anomaly), status, PM decision (direction, conviction, horizon), risk outcome, cost, duration | `/agents/runs`, WS `agents.run` |
-| Signals | Signals from agents + strategies + tier B: direction, probability/conviction, horizon, provenance count, risk outcome | `/signals`, WS `signals` |
+| Signals | Signals from agents + strategies + tier B, with the `Signal` fields from [03 M8](../../03-build-spec.md#m8-ai-decision-layer--mt_agents): id, time, `as_of`, instrument, horizon, direction, edge, calibrated confidence, rationale summary, sources (provenance count → list), model/prompt versions, run id; plus risk outcome | `/signals`, WS `signals` |
 | Decision stream (tier B) | Recent decision-model outputs per question (`TierBScore`), with abstentions shown | `/models/tierb/decisions`, WS `tierb` |
 | Outcome scorecard | Settled decisions: hit rate, calibration (reliability diagram), Brier, P&L if traded, by agent role / model / horizon; teacher vs student agreement | `/agents/runs?settled=1&metrics=1` |
-| Anomaly explanations | Latest anomalies with their explain-agent briefs | `/notifications?kind=anomaly` |
+| Anomaly explanations | Latest anomalies with their explain-agent briefs; "Explain" on an anomaly without one requests a brief (`anomaly.explain`) | `/notifications?kind=anomaly` |
 
 ## `/agents/runs/:id`: debate detail
 
@@ -70,6 +70,7 @@ Run and inspect the AI layer:
 | Start analysis | `agents.run_analysis` | C1 (shows budget) |
 | Ask decision model | `models.tierb.ask` | C0 |
 | Schedule recurring analysis | `system.settings.update` (schedules) | C1 |
+| Request an anomaly explanation | `anomaly.explain` (`anomaly_id`; result arrives as a notification) | C1 (uses LLM budget) |
 
 ## Acceptance criteria
 
@@ -81,4 +82,4 @@ Run and inspect the AI layer:
 
 - **Queries:** `/agents/runs` (+ `/{id}`), `/signals`, `/models/tierb/decisions`, `/models/gateway/spend`, `/memory/search`, `/notifications?kind=anomaly`.
 - **WebSocket topics:** `agents.run`, `signals`, `tierb`, `notifications`.
-- **Commands:** `agents.run_analysis`, `models.tierb.ask`, `journal.note.add`, `system.settings.update`.
+- **Commands:** `agents.run_analysis`, `anomaly.explain`, `models.tierb.ask`, `journal.note.add`, `system.settings.update`.

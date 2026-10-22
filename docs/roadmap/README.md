@@ -57,16 +57,16 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:roadmap-counts:start -->
 | Phase | Requirements | `USER` | `BUILD` | `OPS` | `VERIFY` | `RUN` | ToDos |
 |---|---|---|---|---|---|---|---|
-| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 19 | 13 | 10 | 7 | 7 | 1 | 38 |
-| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 4 | 15 | 4 | 6 | 1 | 30 |
-| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 44 | 9 | 20 | 3 | 11 | 2 | 45 |
-| [P3 Journal & Tax](phase-3-journal-and-tax.md) | 17 | 6 | 12 | 2 | 5 | 1 | 26 |
+| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 21 | 13 | 10 | 8 | 10 | 1 | 42 |
+| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 6 | 15 | 5 | 8 | 1 | 35 |
+| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 45 | 9 | 21 | 3 | 13 | 2 | 48 |
+| [P3 Journal & Tax](phase-3-journal-and-tax.md) | 21 | 6 | 14 | 3 | 8 | 1 | 32 |
 | [P4 News, Social, Events & Calendars](phase-4-intel.md) | 16 | 6 | 11 | 3 | 5 | 1 | 26 |
 | [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 23 | 8 | 13 | 3 | 6 | 1 | 31 |
 | [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 21 | 5 | 12 | 2 | 6 | 1 | 26 |
 | [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 14 | 11 | 6 | 3 | 5 | 3 | 28 |
 | [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 8 | 3 | 3 | 1 | 3 | 1 | 11 |
-| **Total** | | **65** | **102** | **28** | **54** | **12** | **261** |
+| **Total** | | **67** | **105** | **31** | **64** | **12** | **279** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
@@ -160,10 +160,12 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T0.12 | P0 | Set your login password and enrol TOTP on first boot. | R0.08 |
 | T0.13 | P0 | Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). | R0.09, R0.13 |
 | T1.01 | P1 | Pick the starting **universe/watchlist**: ~10 crypto pairs, FX/metal pairs, ~30 US ETFs/stocks (Alpaca IEX limit), macro series you care about. | R1.01–R1.06 |
-| T1.02 | P1 | Create **read-only** API keys on practice/testnet accounts (IP-allow-listed) for reconciliation and fee-tier reads. | R1.12 · [07 §3](../07-security-notes.md#3-broker--exchange-keys) |
-| T1.03 | P1 | Install the ntfy app on your phone and subscribe to the private topic; confirm the email alert address. | R1.14 |
+| T1.02 | P1 | Create **read-only** API keys where the testnet offers them (Binance/Bybit testnets, IP-allow-listed) for reconciliation and fee-tier reads; OANDA practice, IG demo, Alpaca paper and IBKR paper use their normal credentials (no money at risk). All go in the secrets file. | R1.12 · [07 §3](../07-security-notes.md#3-broker--exchange-keys) |
+| T1.03 | P1 | Install the ntfy app on your phone and subscribe to the private topic; confirm the email alert address (or turn email off). | R1.14 |
 | T1.04 | P1 | Review the first week's DQ alerts and tell us which thresholds are too noisy. | R1.10 |
-| T2.01 | P2 | Write the **initial risk policy values** and the **hard-ceilings file** (only you edit it, on the host). Start from the 14 §5 defaults. | R2.14, R2.19 |
+| T1.05 | P1 | Create an SMTP app password at your own mail provider and put it in the secrets file, or turn email alerts off (Telegram + ntfy remain). | R1.14 |
+| T1.06 | P1 | Each quarter, when the reminder arrives, check every venue you use on the AUSTRAC register and record the result (recurring). | R1.13 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |
+| T2.01 | P2 | Review the prefilled defaults ([16 §2](../16-configuration-and-safety-model.md#2-default-values-all-configurable)) and set the **initial risk policy values** and the **L0 hard ceilings** in the agent/bot strategy settings (the ceilings section applies to every bot). Every value stays a setting you can change; loosening is C3. | R2.14, R2.19 |
 | T2.02 | P2 | Decide **sleeves** and their risk budgets (14 §3 allocation table is the suggested start). | R2.13 |
 | T2.03 | P2 | Create **trade-only, IP-locked, no-withdrawal** keys on testnets/practice accounts, one sub-account per mode. | R2.N3 |
 | T2.04 | P2 | Provide **MasterTradingBot** rule descriptions + historical signal/trade outputs for golden files. | R2.48 |
@@ -172,10 +174,10 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T2.07 | P2 | Approve a test C3 loosening to prove the TOTP + cool-down path. | R2.19 |
 | T2.09 | P2 | Create your first bots (scope + mode) and do one HITL approval from Telegram end to end. | R2.53, R2.54 |
 | T2.08 | P2 | Start the **paper clock**: switch the validated P1 candidates to paper at the end of this phase. | unlocks P7 |
-| T3.01 | P3 | **Engage a tax agent.** Send the question list (09); the key one is **investor vs trader-in-business, answered before any live trade**. | R3.07 · [09 questions](../09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) |
+| T3.01 | P3 | **Engage a tax agent.** Send the question list (09); the key one is **investor vs trader-in-business, answered before any live trade**; include the PAYG method, wash-sale window and perps treatment. | R3.07 · [09 questions](../09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) |
 | T3.02 | P3 | Ask the agent to confirm the **2027 CGT reform status** and the 30 June 2027 transitional mechanism. | R3.08 |
 | T3.03 | P3 | Export historical statements you already have (IBKR Flex, OANDA, IG, exchanges) for opening balances/lots. | R3.01, R3.05 |
-| T3.04 | P3 | Register your accounts and tag each `investment` or `trading`. | R3.04 |
+| T3.04 | P3 | Register your accounts on the Accounts page and tag each `investment` or `trading`. | R3.04, R3.17 |
 | T3.05 | P3 | Enter the residency timeline (AU from …; any planned moves). | R3.09 |
 | T3.06 | P3 | Diary hard date: **30 June 2027** snapshot must run (end of day AEST). | R3.08 |
 | T4.01 | P4 | List the Telegram channels you want monitored (joined from your dedicated account, slowly). | R4.02 · [07 §10](../07-security-notes.md#10-social--scraping-accounts) |

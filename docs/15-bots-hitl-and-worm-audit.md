@@ -47,7 +47,7 @@ A **bot** is one deployment of one **strategy version** onto a **market scope**,
 - decay alert: rolling 60-trade Sharpe or hit rate below the backtest's 5th percentile, or a CUSUM break ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each));
 - fallback-ladder rung ≥ 3;
 - DQ degraded on its instruments;
-- consecutive losses (default 5, configurable; not yet in 16);
+- consecutive losses (default 5, configurable; [16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each));
 - model service down;
 - a venue registry status change.
 

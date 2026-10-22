@@ -28,12 +28,13 @@ Show what the world is saying and doing that could move the user's markets:
 
 | Tab | Shows | Source |
 |---|---|---|
-| **Feed** | `DocumentCard`s: source (RSS / RSS-Bridge / Telegram / Discord / Bluesky / Mastodon / GDELT / EDGAR), time (published + ingested), title/snippet, linked tickers, FinBERT sentiment, **tier-B scores** (direction, event type, relevance, veto), dedup count ("+4 similar"). **Filters:** watchlist only, asset class, source, min relevance, sentiment, event type, language. | `/intel/documents`, WS `text.doc` |
+| **Feed** | `DocumentCard`s: source (RSS / RSS-Bridge / Discord / Bluesky / Mastodon / Farcaster / GDELT / EDGAR / central banks / Finnhub / CryptoPanic; **never Telegram**), time (published + ingested), title/snippet, linked tickers, FinBERT sentiment, **tier-B scores** (direction, event type, relevance, veto), dedup count ("+4 similar"). **Filters:** watchlist only, asset class, source, min relevance, sentiment, event type, language. | `/intel/documents`, WS `text.doc` |
+| **Telegram postures** (panel) | `PostureCard`s, **numbers only**: per contract/ticker, mention velocity, channel count, new-channel share, time since first call. No Telegram text anywhere. Postures feed code/policy rules only (M4/M11), never models, RAG or agents | `/intel/postures` (table `text.telegram_posture`), NATS `posture.telegram.*` |
 | Document detail (sheet) | Full text (where licence allows; otherwise headline + link), entity links, tier-B probabilities with model version, related documents (RAG), "Ask agents" | `/intel/documents/{id}`, `/rag/search?similar=` |
 | **Events** | Geo events (quakes, storms, fires, disasters, conflict, sanctions, prediction-market moves): severity, location, exposure-map links to instruments (FX, commodities, indices), event score. Map ≥ md (MapLibre, optional); list < md. | `/intel/events`, WS `evt` |
-| **Calendar** | Macro releases (consensus/actual/previous, surprise), central-bank meetings, earnings, IPOs, COT/EIA/WASDE days, exchange holidays. **Blackout markers** where risk rules pause strategies. Filters: country, importance, instruments. | `/intel/calendar`, WS `cal` |
+| **Calendar** | Macro releases (consensus/actual/previous, surprise), central-bank meetings, earnings, IPOs, COT/EIA/WASDE days, exchange holidays. **Blackout markers** where risk rules block new entries (default 15 min before to 15 min after high-importance events for `event_sensitive` bots; exits continue; configurable, [16 §2.8](../../16-configuration-and-safety-model.md#28-calendar-blackouts)). Filters: country, importance, instruments. | `/intel/calendar`, WS `cal` |
 | **Sentiment** | Per instrument/sector: sentiment index over time, mention volume, sentiment vs price chart, retail positioning (Myfxbook/IG/OANDA), prediction-market probabilities | `/intel/sentiment` |
-| **Sources** | Configured sources: status, items/day, relevance hit-rate, licence/ToS tag, mute/unmute, add new (RSS URL, RSS-Bridge bridge, Telegram channel, Discord inbox channel, Bluesky keywords). Shows deferred sources (Reddit, X) as disabled with the reason. | `/intel/documents?sources=1`, `/data/feeds?kind=text` |
+| **Sources** | Configured sources: status, items/day, relevance hit-rate, licence/ToS tag, mute/unmute, add new (RSS URL, RSS-Bridge bridge, Telegram channel (postures only: status and counts, never text), Discord inbox channel, Bluesky keywords). Shows deferred sources (Reddit, X) as disabled with the reason. | `/intel/documents?sources=1`, `/data/feeds?kind=text` |
 
 ## Actions
 
@@ -46,6 +47,7 @@ Show what the world is saying and doing that could move the user's markets:
 | Ask agents for analysis | `agents.run_analysis` (with document context) | C1 |
 | Add calendar blackout rule | → D06 Policy (Blackouts) | C1 |
 | Open original | External link (new tab, `rel=noopener`) | C0 |
+| Label a document (Label mode, Phase 4) | `models.label.add` | C0 |
 
 ## States & rules
 
@@ -58,6 +60,8 @@ Show what the world is saying and doing that could move the user's markets:
 - **Telegram is shown as postures only:** per contract/ticker, mention velocity, channel count, new-channel share and time since first call. **No Telegram text** is shown with tier-B scores or offered to "Ask agents" (Telegram API ToS; see [12 §4](../../12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Sources tab shows each source's provenance flags (`train_ok`, `model_input_ok`, `retention_days`).
 - New sources: Farcaster, CryptoPanic. Polymarket and Kalshi are read-only probabilities.
+- **Label mode (Phase 4):** a minimal labelling tool on the Feed for the tier-B question set: pick a label per document (`models.label.add`, C0). Telegram content is never offered for labelling. The full Labelling queue arrives in D10 (Phase 6).
+- **Morning brief:** contents are canonical in [mobile-and-telegram §3](../mobile-and-telegram.md#3-telegram-bot); its deep links land here.
 
 ## Acceptance criteria
 
@@ -67,6 +71,6 @@ Show what the world is saying and doing that could move the user's markets:
 
 ## Backend contract
 
-- **Queries:** `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment`, `/rag/search`, `/data/feeds?kind=text`.
+- **Queries:** `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment`, `/intel/postures`, `/rag/search`, `/data/feeds?kind=text`.
 - **WebSocket topics:** `text.doc`, `evt`, `cal`, `tierb`.
-- **Commands:** `intel.source.add|mute`, `intel.watchlist.update`, `models.tierb.ask`, `agents.run_analysis`.
+- **Commands:** `intel.source.add|mute`, `intel.watchlist.update`, `models.tierb.ask`, `models.label.add`, `agents.run_analysis`.

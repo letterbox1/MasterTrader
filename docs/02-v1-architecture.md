@@ -189,9 +189,20 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 
 ### 5.3 Core entities (abbreviated; full DDL in migrations)
 
-`instrument`, `bar`, `feature_value`, `document`, `telegram_posture`, `geo_event`, `calendar_event`, `strategy`, `strategy_version`, `strategy_run`, `bot`, `bot_version`, `backtest`, `experiment`, `signal` (fields in [03 M8](03-build-spec.md)), `decision_run`, `tierb_decision`, `order`, `fill`, `position_snapshot`, `risk_policy`, `risk_limit_state`, `risk_change`, `risk_event`, `risk_approval`, `mandate`, `dq_event`, `dq_ack`, `cost_event`, `recon`, `journal_event`, `lot`, `lot_match`, `fx_rate`, `residency_period`, `tax_report`, `airdrop_opportunity`, `token_risk_report`, `user_task`, `community_item`, `wallets`, `notification`, `command`, `llm_call`, `mcp_call`, `seal`, `integrity_incident`, `model_registry`, `question`, `label`.
+| Schema | Core tables |
+|---|---|
+| `market` | `market.instrument`, `market.bar_*`, `market.macro_series`, `market.filing` |
+| `text` | `text.document`, `text.source`, `text.telegram_posture`, `text.geo_event`, `text.calendar_event` |
+| `features` | `features.value`, `features.def` |
+| `strategy` | `strategy.registry`, `strategy.versions`, `strategy.runs`, `strategy.bot`, `strategy.bot_version`, `strategy.backtest`, `strategy.experiment` |
+| `risk` | `risk.policy`, `risk.limit_state`, `risk.change`, `risk.event`, `risk.approval` |
+| `audit` | `audit.order`, `audit.fill`, `audit.position_snapshot`, `audit.signal` (fields in [03 M8](03-build-spec.md)), `audit.decision_run`, `audit.tierb_decision`, `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.command`, `audit.llm_call`, `audit.mcp_call`, `audit.seal`, `audit.integrity_incident` |
+| `journal` | journal events, lots, lot matches, FX rates, residency periods, tax reports (`journal.*`) |
+| `curation` | `curation.task` (user tasks), `curation.community`, `curation.airdrop_*` (opportunities, token risk reports), `curation.mandate`, `curation.exec_log`, `curation.social_draft` |
+| `ops` | `ops.wallets`, `ops.venue_registry`, `ops.user_pref`, `ops.notification` |
+| `models` / `rag` / `treasury` / `hindsight` | `models.registry`, `models.question`, `models.label`; `rag.doc_chunk`; `treasury.transfer`, `treasury.position`, `treasury.policy`; `hindsight.*` |
 
-Table names follow the §4 naming rules (singular, schema-qualified, e.g. `audit.recon`, `audit.mcp_call`).
+Table names follow the §4 naming rules (singular, schema-qualified).
 
 ## 6. Messaging (NATS)
 
@@ -207,7 +218,7 @@ Table names follow the §4 naming rules (singular, schema-qualified, e.g. `audit
 | `cost.{venue}.{symbol}` | spread/fee/funding/swap snapshot | monitor → risk, lab, UI |
 | `feat.{name}.{symbol}` | Feature values | features → engine |
 | `text.doc.new` | Document id + tickers + scores (never Telegram) | nlp → decision-svc, agents, UI |
-| `posture.telegram.{subject}` | Structured Telegram posture (no text) | ingest-text → M4 airdrop rules, M11 rules, UI (D08). Never M6 features, tier A/B, agents or RAG |
+| `posture.telegram.{subject}` | Structured Telegram posture (no text) | ingest-text → M4 airdrop rules, M11 rules, UI (D08). Never M6 features, tier A/B, agents, RAG or MCP |
 | `evt.{kind}` / `cal.{kind}` | Global events / calendar items | ingest → risk (blackouts), agents, UI |
 | `dec.tierb.{question}.{subject}` | Option probabilities | decision-svc → engine (KV), UI |
 | `sig.{source}.{strategy}` | Signal | strategies/agents → engine |
@@ -308,7 +319,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 |---|---|
 | Orders | `order.place`, `order.modify`, `order.cancel`, `order.cancel_all`, `position.close` (`{halt: true, reason}` = flatten-and-halt the bot), `position.reduce`, `position.set_brackets` |
 | Approvals | `approval.approve`, `approval.approve_partial`, `approval.reject` ([15 §1.5](15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)); never callable from MCP (§7.4) |
-| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.run_shadow` (C1). A strategy is **promoted through gates**; modes are set per bot |
+| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.run_shadow` (C1), `strategy.set_mode` (the highest mode its bots may use: allow `hitl` C2, allow `autonomous` C3, restrict C1). A strategy is **promoted through gates**; each bot's mode is set per bot, and the stricter of the two applies |
 | Bots ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `bot.create`, `bot.update_scope`, `bot.update_params` (incl. `on_system_failure`), `bot.set_mode` (`paper` C1, `paper` → `hitl` C2, `autonomous` → `hitl` C1, → `autonomous` **C3**), `bot.start`, `bot.pause`, `bot.resume`, `bot.stop`, `bot.approval_policy.set` |
 | Lab | `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `lab.leakage.waive` (C2, reason required, audited), `lab.gate_report.generate` |
 | Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.tiera.train` (C1: train → calibrate → compile), `models.label.add` (C0), `models.promote`, `models.rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete`, `anomaly.explain` (C1; result arrives as a notification) |
@@ -358,30 +369,33 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 1. Venue WebSocket → Nautilus data client (ingest-market).
 2. Publish `md.*`.
 3. Parquet recorder (1–5 min files, daily compaction).
-4. Bar builder writes 1s/1m bars into Timescale; continuous aggregates build to 1D.
+4. Bar builder writes 1s/1m bars into Timescale; continuous aggregates build 5m, 15m, 1h, 4h, 1D and 1W; other sizes are `time_bucket` queries at read time.
 5. The monitor checks staleness, gaps, outliers, cross-source divergence and clock skew → `dq.status.*`.
-6. The risk manager blocks orders on `stale`/`bad`.
+   - **Data age** = now − the time *we received* the last update for that stream; thresholds per bot (default 2 s fast, 60 s slow), session-aware (closed sessions are `closed`, not stale) ([16 §2.2](16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)).
+   - The monitor flips `dq.status` to `stale` within ≤ 250 ms (p99) of the threshold being crossed.
+6. The risk manager blocks orders on `stale`/`bad`, and also **checks data age inline on every order**, so no order acts on stale data whatever the monitor's timing.
 7. The UI shows feed health.
 
 **F2: Signal → decision → risk → order → fill → journal → TCA**
 1. A strategy (M0) receives `md`/`feat`/`tierb` inputs.
 2. Decision One tier A (µs) produces a calibrated edge.
 3. Deterministic sizing → `OrderIntent`.
-4. **M11 pre-trade checks:** policy limits, collar, liquidity/spread, DQ status, blackout, duplicate check.
-5. Mode routing:
-   - `auto`: submit;
-   - `approve`: `risk.approval.request` → UI/Telegram → approve within TTL or expire;
+4. **M11 pre-trade checks:** effective limits (strictest layer), collar, liquidity/spread, DQ status and inline data age, blackout, decision deadline, WORM integrity status (KV `audit.integrity`), egress status (from P7), duplicate check. The client order ID is `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency.
+5. Mode routing (per bot):
+   - `autonomous`: submit;
+   - `hitl`: `risk.approval.request` → Telegram/web approval card → approve within the TTL (default 60 s intraday · 15 min swing · 4 h position, [16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) or expire = reject;
    - `paper`: simulated fill.
+   - Protective exits never wait for approval in any mode.
 6. Venue fill → `fill.*`.
 7. **Journal (M18)** records the fill + fees; the lot engine updates.
 8. **Monitor (M16)** computes implementation shortfall vs the decision/arrival price and updates the realised-vs-modelled cost ratio.
 9. **Grafana and the UI** update; the audit row is chained.
 
-**F3: Text → decision models → features**
-1. A feed (RSS / Telegram / Discord / Bluesky / GDELT) arrives.
+**F3: Text → decision models → features** (every source except Telegram)
+1. A feed (RSS / Discord / Bluesky / Mastodon / GDELT) arrives. A provenance gate drops any row with `model_input_ok = false`; Telegram never enters this flow (F3b).
 2. ingest-text normalises it and dedupes.
 3. The nlp service runs:
-   - the relevance gate (tier B / SemIf);
+   - the relevance gate (tier B / SemIf; queued, never on the order path);
    - entity/ticker linking;
    - FinBERT sentiment;
    - TEI embeddings.
@@ -389,6 +403,12 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 5. `text.doc.new` triggers decision-svc questions (direction, event type, veto…).
 6. `dec.tierb.*` updates KV `tierb_scores`, which tier A reads as features.
 7. High-severity veto → `risk.event` (above the calibrated threshold only).
+
+**F3b: Telegram → postures (code and policy only)**
+1. Telegram messages arrive (Telethon / Bot API) in ingest-text.
+2. A deterministic regex extractor pulls contract addresses, tickers and counts and turns them into postures (mention velocity, channel count, new-channel share, time since first call).
+3. Postures go to `text.telegram_posture` (`model_input_ok = false`, `train_ok = false`) and `posture.telegram.{subject}`.
+4. Only code/policy rules consume them (M4 airdrop rules, M11 rules); D08 displays them as postures. Never nlp, RAG, M6 features, tier A/B, agents or MCP ([12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 
 **F4: Research debate → signal → teacher log → distillation**
 1. A scheduled or event-triggered `agents.run_analysis` (M8, via the LiteLLM gateway) runs with RAG + memory recall.
@@ -399,58 +419,63 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 6. Candidates are calibrated and benchmarked, then promoted only through the gates (models registry).
 
 **F5: Risk policy change**
-1. The UI/Telegram/MCP sends `risk.policy.update` with a diff.
-2. The server classifies each field:
+1. The UI/Telegram/MCP sends `risk.policy.update` with a diff for one layer (L0 hard ceilings … L4 bot, [16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)). MCP can only tighten.
+2. The server validates the diff (inconsistent settings are rejected with the reason) and classifies each field:
    - **tighten** → applied immediately, audited, notified;
    - **loosen** → C3: Telegram approve + TOTP → cool-down → applied.
-3. Changes above the **hard ceilings file** are always rejected.
+3. A value looser than a parent layer is rejected; the effective value is always the strictest across layers.
+4. **L0 hard ceilings** are edited in the ceilings section of the agent/bot strategy settings, which applies to every bot. Same rule: tightening is immediate, loosening is C3.
+5. Every change is a new WORM version row (`risk.change`); rollback re-applies an earlier version as a new row.
 
 **F6: Kill switch & dead-man**
 1. **Triggers:**
    - `risk.kill.on` from any client;
-   - an automatic breach (daily loss, drawdown, DQ, error rate, cost blow-out);
-   - a missing heartbeat.
+   - an automatic breach (daily loss, system drawdown stage 2, DQ, error rate, cost blow-out);
+   - a missing heartbeat (the dead-man layers in §6 act on their own as well).
 2. KV `kill = ON`, then:
-   - the engine cancels all orders and optionally flattens;
+   - new trading stops and the engine cancels all orders;
+   - each bot's `on_system_failure` policy is applied (default `flatten`);
    - Hummingbot stops;
-   - airdrop-exec freezes;
+   - new treasury/earn moves and airdrop-exec claims freeze;
+   - from P5 (default on), hot trading balances sweep to the vault address; protective sweeps and revokes are exempt from the freeze. P2 has no sweep yet;
    - the UI shows a global red banner.
 3. **Turning it off** is C3, and requires the trigger condition to be cleared.
+4. **Restart after an unplanned stop:** the engine starts with every bot paused, reconciles each venue, flattens or cancels any residue, and resumes only when you tap resume (C1) or a bot has `auto_resume_after_crash: true` ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)).
 
 **F7: Strategy lifecycle**
 1. `draft` (create/template/generate in the sandbox).
 2. `backtested`.
-3. `validated` (walk-forward, MC permutation, deflated Sharpe, look-ahead check).
-4. `paper`.
-5. `approve` mode.
-6. `auto`. Each promotion checks the gates and is audited, and `auto` is C3.
+3. `validated` (gate profile, [16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile): walk-forward, MC permutation, DSR ≥ 0.95, look-ahead check, cost stress…).
+4. **Bots** run the validated version in a mode, set per bot: `paper` → `hitl` (C2) → `autonomous` (C3, only after the paper/HITL period: default ≥ 8 weeks and ≥ 50 trades).
+5. Each promotion checks the gates and is audited. Decay signals downgrade an autonomous bot to `hitl` automatically ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)).
 
 **F8: Airdrop**
 1. Discover → normalise/dedupe → enrich → risk-score (GoPlus / RugCheck / Honeypot.is / heuristics / blocklists) → viability score.
 2. Decide:
    - **reject**, with reasons;
    - **user task** (steps, verified links);
-   - **auto-claim**, only if an active mandate covers it. Auto-claims go through simulation → signer → the journal (income classification).
+   - **auto-claim**, only if an active mandate covers it. Auto-claims use the chain's **airdrop identity wallet** (never the hot trading wallet) and go through the policy service → cost gate → simulation → signer → the journal (income classification).
 
 **F9: Tax**
 1. Fills, ledgers, funding, airdrops and staking events become journal events.
-2. FX conversion uses the RBA rate (AUD).
+2. Valuation follows [16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) (fill price → VWAP of our recorded trades → on-chain pool price; aggregators cross-check only). FX conversion uses the RBA rate (AUD; missing days use the last business day, non-F11 currencies go via USD).
 3. The lot engine applies specific-ID with FIFO fallback.
 4. The jurisdiction plugin by residency period runs: AU_2026, then AU_2027_REFORM.
 5. Outputs:
    - **quarterly:** PAYG instalment estimate;
    - **at EOFY:** myTax worksheet + CGT schedule + accountant pack + Beancount export.
-6. **Snapshot jobs:** 30 Jun 2027, and on any residency change (CGT event I1).
+6. **Snapshot jobs:** 30 Jun 2027, and on any residency change (CGT event I1), priced per asset class ([16 §4.2](16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change)).
+7. **Residency change:** `tax.residency.add` emits `tax.residency.changed`; the venue registry recomputes, and any loosening that results is C3.
 
 **F10: Curation loop**
-1. Sources (airdrops, Discord/Telegram discovery, risk approvals, tax questions) create `user_task`s.
+1. Sources (airdrops, Discord/Telegram discovery, risk approvals, tax questions) create user tasks in `curation.task`.
 2. Delivery: instant alerts or daily/weekly digests (Telegram + UI).
 3. You tap Done / Skip / Snooze / Never.
 4. Feedback updates the ranking.
 5. For Discord follow tasks, the bot verifies that posts arrive.
 
 **F11: Backup & incident**
-- **Backups:** nightly backup → weekly full → monthly restore test → alert on any failure.
+- **Backups:** continuous WAL archive → nightly incremental → weekly full → monthly restore test → monthly immutable WORM export → alert on any failure.
 - **Incident runbooks** in `docs/runbooks/`: keys leaked, server down with open positions, bad data, wallet drained.
 
 ## 9. Cross-cutting
@@ -459,10 +484,11 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 
 See [07-security-notes.md](07-security-notes.md):
 - **Network segmentation** (§3.1).
-- **Exchange/broker keys:** trade-only scope, withdrawals disabled, IP allow-listed, per-mode sub-accounts.
+- **Exchange/broker keys:** trade-only scope, withdrawals disabled, allow-listed only to the fixed egress IP (§3.1), separate sub-accounts for paper and live bots.
 - **Secrets and roles:** secrets via sops; least-privilege DB roles.
 - **Untrusted input:** LLMs never see secrets; scraped text is marked untrusted.
-- **Server-side confirmation levels** (§7.2).
+- **Server-side confirmation levels** (§7.2); loosening anything, including L0 hard ceilings, is C3.
+- **WORM records** with external seals ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 
 ### 9.2 Observability & SLOs
 
@@ -470,23 +496,33 @@ See [07-security-notes.md](07-security-notes.md):
 |---|---|---|
 | Decision One tier A latency | p99 < 50 µs per prediction | In-process histogram |
 | Pre-trade risk check | p99 < 1 ms | Engine metrics |
-| Strategy signal → order submitted (`auto`) | p99 < 5 ms (excl. venue) | Trace spans |
-| Tier B decision | p95 < 50 ms (GPU, 0.6B head) | decision-svc metrics |
-| Feed staleness detection → strategy paused | < 2 s | Monitor |
+| Strategy signal → order submitted (`autonomous`) | p99 < 5 ms (excl. venue) | Trace spans |
+| Tier B decision | p95 < 50 ms (GPU, 0.6B head; ~2–12 ms typical, CPU 100–400 ms) | decision-svc metrics |
+| Stage-1 relevance gate (nlp) | p95 ≤ 300 ms GPU, ≤ 3 s CPU; queued, never on the order path | nlp metrics |
+| Data age over the per-bot threshold (default 2 s fast, 60 s slow, configurable) → `dq.status` stale | ≤ 250 ms p99 after the threshold is crossed (M11 also checks age inline on every order; [16 §2.2](16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)). Replaces "detection → paused < 2 s" | Monitor |
+| WORM insert (`audit.*`, `journal.*`) | p99 < 5 ms; the order path never waits on seals | DB metrics |
+| Command bus (`mt_api`, excl. handler) | p99 < 50 ms | mt-api metrics |
 | UI live update lag (server → screen) | p95 < 500 ms | Client telemetry (local only) |
 | Kill switch → all cancels sent | < 1 s | Engine metrics |
+| Dead-man reaction | Cancel at 5 s, `on_system_failure` at 10 s of missing heartbeat (defaults, [16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) | Engine + deadman metrics |
 | Backup restore test | Monthly pass | Prefect flow |
+
+Targets are defaults. Operating values (stale thresholds, reconciliation intervals, collars, error pauses, dead-man timers) live in [16 §2–3](16-configuration-and-safety-model.md#2-default-values-all-configurable) and are changed in settings.
 
 ### 9.3 Degraded modes
 
 | Failure | System behaviour | UI behaviour |
 |---|---|---|
-| A feed is stale/bad | Strategies using it pause; no new orders on that instrument | Amber/red feed chip; banner on affected screens |
+| A feed is stale/bad | Strategies using it pause; no new orders on that instrument (closed sessions are `closed`, not stale) | Amber/red feed chip; banner on affected screens |
 | Venue disconnect | Reconnect with backoff; affected orders flagged unknown → reconcile | Venue chip red; positions marked "unconfirmed" |
-| Postgres down | Engine continues in memory with risk limits; journal buffered in NATS (bounded); dead-man after the threshold | Red system banner, read-only UI |
+| Postgres down | Engine continues in memory with risk limits; WORM writes buffer in NATS JetStream (default bound 1 GB or 24 h); above 80% of the buffer new entries stop, exits continue; nothing executes without a record | Red system banner, read-only UI |
+| WORM verify mismatch | Default `block_new_entries`: no new entries, exits and protective orders continue, no loosening until `audit.integrity.ack` (C3); options `alert_only` / `halt_all` ([16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)) | Critical banner; alert on every channel |
+| Engine down | `deadman` sidecar cancels at 5 s and flattens per `on_system_failure` at 10 s; restart is flat with bots paused | Red system banner; Telegram alert |
+| Host or internet down / egress tunnel down | Nothing on our side can reach venues; venue cancel-after timers cancel open orders and resting venue stops protect positions (fail flat) | Telegram/ntfy alert (if reachable) |
+| Egress IP or country mismatch | New orders blocked; alert | Red egress chip |
 | LLM gateway/budget exhausted | Falls back to local models; agents degrade | "Local models" badge |
 | GPU unavailable | Tier B on CPU (slower) or disabled; tier A unaffected | Tier B status degraded |
-| mt-api down | Engine unaffected; Telegram `/kill` still works via the bot → NATS | Web unreachable; Telegram alert |
+| mt-api down | Engine unaffected; Telegram `/kill` still works via the bot → NATS (credentials limited to `kill.set`; the engine writes the kill to WORM with source `telegram`) | Web unreachable; Telegram alert |
 
 ## 10. Frontend architecture
 
@@ -510,19 +546,7 @@ Layout model: app shell (DESIGN.md §6.4) + **workspaces**.
 
 ## 11. Repository layout
 
-```
-MasterTrader/
-├── packages/            # Python: mt_core, mt_store, mt_data, mt_features, mt_strategy, mt_lab, mt_agents, mt_memory,
-│                        #         mt_anomaly, mt_risk, mt_engine, mt_monitor, mt_obs, mt_journal, mt_airdrop,
-│                        #         mt_curation, mt_models, mt_api, mt_ui (telegram), mt_mcp
-├── apps/web/            # React app (src/routes, src/components, src/tiles, src/lib/api, src/lib/ws, tailwind preset)
-├── services/            # hummingbot, rss-bridge, crowdsim, compose overrides
-├── strategies/          # user strategies + manifests
-├── infra/               # docker-compose.yml, caddy, grafana dashboards, prometheus rules, alertmanager, sops config
-├── migrations/          # Alembic
-├── third_party/         # vendored code + LICENSES.md
-├── tests/  notebooks/  docs/ (+ docs/ui, docs/runbooks)  ui-examples/  brand/  DESIGN.md
-```
+The canonical repository layout is [03 §3](03-build-spec.md#3-repository-layout); this doc doesn't repeat it.
 
 ## 12. End-to-end build plan
 
@@ -530,14 +554,14 @@ Each phase ends with a usable demo; details are in [04-plan-of-action.md](04-pla
 
 | Phase | Backend deliverables | Frontend deliverables (see [ui/](ui/README.md)) | Exit criteria |
 |---|---|---|---|
-| 0 Foundations | Host hardening, compose, Postgres/NATS/Prefect/obs/MLflow/LiteLLM/TEI, schemas + `pit`, audit chain, `mt_api` skeleton (auth + TOTP, commands, WS), backups | Web shell (top bar, nav, status bar, kill-switch placeholder), design preset, component library v0, **System** dashboard (health), Playwright matrix in CI | Stack healthy; login + TOTP; responsive shell passes matrix |
+| 0 Foundations | Host hardening, compose, Postgres/NATS/Prefect/obs/MLflow/LiteLLM (+ `audit.llm_call`)/`tei-embed`/`tei-rerank`/`llm-local`, all schemas + `pit`, WORM layer + integrity response, `mt_api` skeleton (auth + TOTP, commands with preview tokens, WS), break-glass C3 CLI, backups | Web shell (top bar, nav, status bar, kill-switch placeholder), design preset, component library v0, **System** dashboard (health), Playwright matrix in CI | Stack healthy; login + TOTP; responsive shell passes matrix |
 | 1 Data & monitoring | ingest-market, Parquet recorder, bar builder, batch macro/fundamentals, quota tracker, **monitor** (DQ, costs, recon) | **Data & Quality**, **Markets** (charts, matrix, instrument detail), notifications | Live bars tick→1D for all asset classes; DQ alerts on Telegram |
-| 2 Strategies, risk, lab | Strategy framework + templates, **risk manager**, engine paper/testnet, custom adapters (Alpaca/OANDA/IG), lab (backtest/validate/optimise/MLflow), tier A runtime, sandbox generator, Telegram bot v1 | **Cockpit**, **Strategies**, **Research Lab**, **Execution**, **Risk** | Any strategy type created → backtested with measured costs → paper behind risk; kill switch drill passes |
+| 2 Strategies, risk, lab | Strategy framework + templates, bots, **risk manager** (layered config), three-layer dead-man (`deadman` sidecar), engine paper/testnet, custom adapters (Alpaca/OANDA/IG), lab (backtest/validate/optimise/MLflow), tier A runtime, sandbox generator, Telegram bot v1 | **Cockpit**, **Strategies**, **Research Lab**, **Execution**, **Risk** | Any strategy type created → backtested with measured costs → paper behind risk; kill switch drill passes |
 | 3 Journal & tax | Journal ingestion, FX service, lot engine, AU_2026 (+ 2027 scaffold), residency, exports | **Journal**, **Tax & Reports** | Every paper fill auto-journalled; FY-to-date AU summary + PAYG estimate |
 | 4 Intel | ingest-text/events, RSS-Bridge, nlp pipeline, RAG, calendars, SemIf tier B | **Intel** (news/social/events/calendar), tier B outputs on Markets/Cockpit | Morning brief; calendar blackouts enforce in risk |
 | 5 Airdrops & curation | airdrop pipeline, risk feeds, mandates + signer + Anvil simulation, task queue + digests, custody tiers, wallet-indexer (unified wallet view) | **Airdrops & Launches**, **Tasks & Curation**, **Wallets & Treasury** (view) | Weekly vetted digest; simulated auto-claim on testnet |
 | 6 AI & models | Agents (debate), Hindsight, decision-svc (own head), distillation, anomaly, optional Hummingbot, M22 hold-and-earn, optional M23 social drafts | **Agents & Decisions**, **Models & Memory**, **Market Making** | Sourced signals; bake-off report; anomaly explanations |
-| 7 Prove → small live | Live sub-accounts, reconciliation hardening | Approvals polish, mobile polish | Gates passed per strategy; ≥ 3 months paper/approve |
+| 7 Prove → small live | Live sub-accounts, fixed-IP egress exit node, reconciliation hardening, capital steps and kill criteria, gate reports, weekly reviews | Approvals polish, mobile polish; capital-step, kill-criteria and gate-report views (D03/D06/D14/D16) | Gates passed per bot's strategy ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile): paper/HITL default ≥ 8 weeks and ≥ 50 trades); micro-live stable. The 12-month review is a recurring calendar task, not a phase item |
 | 8 MCP | `mt_mcp` over `mt_api` | **MCP Console** (audit of MCP sessions) | Claude can analyse/adjust with approvals |
 
 ## 13. Asset coverage & promotion gates
@@ -553,10 +577,10 @@ Each phase ends with a usable demo; details are in [04-plan-of-action.md](04-pla
 | ICOs / airdrops | M4 tracker + risk feeds | Auto-claim (eligible, safe) or user task |
 | Prediction markets | Kalshi / Polymarket public reads | Signal source; Polymarket adapter optional |
 
-**Promotion gates (per strategy, configurable):**
-1. **Performance:** walk-forward out-of-sample results beat the benchmark after **measured** costs.
-2. **Robustness statistics:** Monte Carlo permutation p < 0.05; deflated Sharpe > 0.
-3. **Bias checks:** look-ahead and recursive analysers clean.
+**Promotion gates (per-strategy gate profile; defaults, configurable in [16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile); loosening a gate is C3):**
+1. **Performance:** walk-forward out-of-sample results beat the asset-class passive benchmark after **measured** costs; default ≥ 60% of folds positive and worst fold ≥ −(sleeve halt drawdown).
+2. **Robustness statistics:** Monte Carlo permutation p < 0.05; **deflated Sharpe ratio (DSR) ≥ 0.95** (DSR is a probability, so 0.95 = 95% confidence the true Sharpe is above zero); still profitable at 2× measured costs; positive in each year and regime.
+3. **Bias checks:** look-ahead and recursive analysers clean, leakage review clean (or each finding waived by you, C2).
 4. **LLM components:** tested only on data after the model's training cutoff.
-5. **Paper/approve period:** default ≥ 3 months, with P&L and costs tracking the backtest.
-6. **Safety drills:** kill switch, dead-man's switch and DQ pause exercised.
+5. **Paper/HITL period** before autonomous or a capital step: default ≥ 8 weeks **and** ≥ 50 trades (P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency bots ≥ 26 weeks), with P&L and costs tracking the backtest.
+6. **Safety drills:** kill switch, dead-man's switch (all three layers), restart and DQ pause exercised on the bot's venue.

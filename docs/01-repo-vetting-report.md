@@ -22,7 +22,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 ### Redundancy calls
 
 - **VibeTradingLabs/vibetrading is fully redundant** next to HKUDS/Vibe-Trading. The two are **unrelated projects that happen to share a name**: separate histories and authors, no shared code. It isn't a fork or a squat; VibeTradingLabs actually published the name on PyPI first, in May 2025. HKUDS does everything it does, with far better safety and backtest realism. Its only unique asset is a set of DEX-perp adapters (Paradex, Lighter, Aster, Extended), and ccxt / Nautilus / official SDKs cover those better.
-- **freqtrade is redundant *as an engine*** next to NautilusTrader. Nautilus does crypto directional trading with more realistic fills, and handles every other asset class too. freqtrade's unique value is its research tooling: look-ahead/recursive-bias analysers, hyperopt, FreqAI and FreqUI. Re-implement those ideas; GPL blocks importing the code.
+- **freqtrade is redundant *as an engine*** next to NautilusTrader. Nautilus does crypto directional trading with more realistic fills, and handles every other asset class too. freqtrade's unique value is its research tooling: look-ahead/recursive-bias analysers, hyperopt, FreqAI and FreqUI. Re-implement those ideas; GPL blocks importing the code. _(Superseded for the analysers: they are vendored for personal use; see the note in §2.)_
 - **nofx is redundant** next to Nautilus + Hummingbot (execution) and TradingAgents (LLM reasoning). It also carries serious trust problems. Keep only its "Frontier mode" idea.
 - **Hummingbot is NOT redundant.** It's the only repo with mature market-making, cross-exchange arbitrage and AMM liquidity-provision strategies, plus long-tail CEX/DEX venues that Nautilus lacks. Its *backtester* is redundant.
 - **TradingAgents and FinRobot are complementary, not redundant.** TradingAgents is the investment committee (debate → decision); FinRobot is the valuation desk (deterministic DCF/WACC/comps and SEC XBRL).
@@ -42,6 +42,8 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 | None (de facto) | VibeTradingLabs/vibetrading | ❌ no LICENSE file = no grant | — | Ask the maintainers for a LICENSE before reusing any code. |
 
 **Recommended platform license posture:** keep the MasterTrader core permissive or proprietary. Depend on Nautilus as an unmodified LGPL dependency, behind our own wrapper package. Copy/port only MIT/Apache code (Vibe-Trading, TradingAgents, FinRobot, Hummingbot connectors, osiris snippets). Treat GPL/AGPL projects as **external processes behind an API boundary**, or re-implement their ideas clean-room.
+
+> **Superseded (decision P2-B051, [17](17-decisions-register.md#a-s2-items-all-resolved)):** MasterTrader is personal and never distributed, so vendoring GPL code is allowed ([03 §1](03-build-spec.md#1-ground-rules)). freqtrade's look-ahead/recursive analysers are vendored under `third_party/` with their licence, isolated in `mt_lab`. A clean-room rewrite is needed only for a SaaS ([05](05-saas-legal-and-licensing.md)). The "GPL blocks importing" advice in this report applies to distribution only.
 
 ---
 
@@ -86,6 +88,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
   - FreqUI, Telegram control, REST API.
 - **Main community complaint:** hyperopt overfitting (issues #7190, #5612; one write-up reports −40% out-of-sample).
 - **No telemetry found.** One OKX broker ID is hardcoded.
+- _Update (P2-B051): the look-ahead/recursive analysers are vendored under `third_party/` in `mt_lab` for personal use (§2 note); check and strip the OKX broker ID if any vendored file carries it._
 
 ### 3.4 HKUDS/Vibe-Trading — research and strategy-generation layer
 - **Stack:** LangGraph agent, FastAPI, MCP server, CLI, React UI. About 508k lines of Python, roughly 231k of them tests across 908 test files.
@@ -179,6 +182,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
   - No eval of LLM output and no telemetry.
 - **Popularity:** the star spike is consistent with viral press in March 2026 (a student's 10-day build, reportedly ~30M RMB invested), not star-farming.
 - **Use:** an isolated private service fed by our event store, its output only a *candidate feature* tested over many runs on events after the model's training cutoff. **Long term:** rebuild on OASIS (Apache) with a local LLM and our own memory.
+- _Update (decision P6-B009): MiroFish/OASIS runs only with a local memory backend and a hardened config, never Zep Cloud; otherwise M14 is skipped._
 
 ### 3.10 osiris — reference only
 - **What it is:** a Next.js map dashboard, not a data pipeline, and it keeps no event history.
@@ -204,7 +208,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 | High-fidelity backtest (order book, latency) | **Nautilus** | — | Others are all candle-based |
 | Fast candle backtest across many markets | **Vibe-Trading** engines | freqtrade (crypto) | Vibe-Trading models FX swaps, metals and futures rules |
 | Market making / arbitrage / DEX LP | **Hummingbot** | Nautilus (DIY) | Disable telemetry |
-| Look-ahead / bias detection | **freqtrade** (idea) + **TradingAgents** tests | Vibe-Trading validation | Re-implement freqtrade's ideas (GPL) |
+| Look-ahead / bias detection | **freqtrade** (idea) + **TradingAgents** tests | Vibe-Trading validation | Re-implement freqtrade's ideas (GPL). _Superseded: analysers vendored for personal use (§2 note)_ |
 | Strategy robustness (Monte Carlo, walk-forward) | **Vibe-Trading** `validation.py` | freqtrade hyperopt | Watch for hyperopt overfit |
 | ML / feature models | freqtrade FreqAI (idea), **Qlib** | FinRL | |
 | LLM-generated strategies | **Vibe-Trading** | VibeTradingLabs (worse) | Sandbox the generated code |

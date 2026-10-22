@@ -8,8 +8,8 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 2. **Produce Australian EOFY output** (1 July–30 June), and the activity-statement output that actually applies to you (see the BAS section below).
 3. **Pluggable jurisdictions:** Australia now; UAE, Egypt and Cyprus (or anywhere else) later, driven by a **residency timeline**.
 4. **Independent audit trail:** an hledger/Beancount export an accountant can read and diff.
-5. **Three currencies on every event:** native amount, **USD** and **AUD** (RBA daily rate, with the rate source and timestamp stored), so a later change of base currency or residency doesn't need a re-price.
-6. **Wallet registry:** every exchange account and on-chain address you own is registered (M22 unified wallet view, [13 §3](13-wallets-treasury-and-onchain.md#3-unified-wallet-view)). Transfers between your own wallets are tagged **internal** and are never disposals.
+5. **Three currencies on every event:** native amount, **USD** and **AUD** (RBA F11 daily rate, with the rate source and timestamp stored; rules in [FX and valuation](#fx-and-valuation-rules)), so a later change of base currency or residency doesn't need a re-price.
+6. **Wallet registry:** every exchange account and on-chain address you own is registered in **`ops.wallets`**, the one registry table. It's created in Phase 3 (seed-file loader through `mt_api`, plus a minimal Accounts page) and extended additively by the Phase 5 wallet indexer (M22 unified wallet view, [13 §3](13-wallets-treasury-and-onchain.md#3-unified-wallet-view)). Transfers between your own wallets are tagged **internal** and are never disposals.
 7. **Investment vs trading segregation:** wallets/sub-accounts are tagged `investment` or `trading`, so long-term holdings can be argued as capital even if active trading is treated as revenue (ask your tax agent).
 8. **Optional export** to Syla / Koinly-style CSV so a tax agent can cross-check with their usual tool. Our engine stays primary.
 
@@ -17,14 +17,14 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 
 | Finding | Design impact |
 |---|---|
-| **Australian CGT reform from 1 July 2027** (Treasury Laws Amendment (Tax Reform No. 1) Act 2026, Royal Assent 26 June 2026, reported). For individuals, the 50% discount is replaced by **CPI indexation** plus a **30% minimum tax** on gains accruing after 1 July 2027. Pre-reform gains keep the 50% discount, reportedly via a deemed market-value disposal on **30 June 2027** (mechanism (U)). | Rules are **versioned by date** (`AU_2026`, `AU_2027_REFORM`). **Market-value snapshot of every open lot at 30 June 2027** (end of day AEST, price source recorded). ABS CPI series ingested. Per-lot split into pre- and post-reform portions. |
+| **Australian CGT reform from 1 July 2027** (Treasury Laws Amendment (Tax Reform No. 1) Act 2026, Royal Assent 26 June 2026, reported). For individuals, the 50% discount is replaced by **CPI indexation** plus a **30% minimum tax** on gains accruing after 1 July 2027. Pre-reform gains keep the 50% discount, reportedly via a deemed market-value disposal on **30 June 2027** (mechanism (U)). | Rules are **versioned by date** (`AU_2026`, `AU_2027_REFORM`). **Market-value snapshot of every open lot at 30 June 2027**, priced per asset class by the snapshot convention ([16 §4.2](16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change); source, method and timestamps recorded). ABS CPI ingested: **All groups CPI, weighted average of eight capital cities** (quarterly, series A2325846C (U); confirm the series and as-of rule with your tax agent). Per-lot split into pre- and post-reform portions. |
 | **No existing OSS tool fits.** None handles AU CGT + revenue-account CFD/FX/futures + Div 775 forex + crypto income + the 2027 regime + multiple jurisdictions. Every tool hard-codes "50% if held ≥ 12 months". | **Build the rules engine in-house.** Borrow algorithms from rp2 (Apache) and isaacrowntree/ledger (MIT). |
 | A **high-volume autonomous system may count as "carrying on a business"** (ATO tests). If so, gains are revenue (ordinary income), with no CGT discount. | The tax regime (investor vs trader-in-business vs revenue instrument) is a **per-FY, per-activity setting**, and the engine reports both ways until your tax agent decides. |
-| **BAS:** a private investor needs no ABN, GST or BAS. Share and crypto trades are input-taxed financial supplies, excluded from GST turnover. The statement you're most likely to get is a **PAYG instalment notice**. | "BAS module" = **PAYG-instalment estimator** (quarterly). A GST/BAS mode stays dormant behind a flag in case you later trade through a company or business structure. |
+| **BAS:** a private investor needs no ABN, GST or BAS. Share and crypto trades are input-taxed financial supplies, excluded from GST turnover. The statement you're most likely to get is a **PAYG instalment notice**. | "BAS module" = **PAYG-instalment estimator** (quarterly). It computes **both** ATO methods: the instalment amount from your notice, and instalment rate × instalment income (which excludes capital gains). Your notice decides which applies; quarters and due dates are defaults (U, confirm with your tax agent). A GST/BAS mode stays dormant behind a flag in case you later trade through a company or business structure. |
 | **Sources conflict on the 2027 reform's status** (the CryptoTrader research calls it a proposal, not law). | `AU_2027_REFORM` stays **behind a flag** until your tax agent confirms; reports show both regimes side by side. See [11 §3](11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved). |
 | **Airdrop classification turns on what you did to earn it.** Tasks, staking or genuine protocol use point to ordinary income on receipt; a pure initial allocation points to a $0 cost base with CGT on disposal (U). | The campaign record ([08](08-airdrops-and-token-launches.md)) is linked to each airdrop journal event, so the evidence of "activity done to earn it" is attached. |
-| **Egypt: crypto is effectively banned** (CBE Law 194/2020 Art. 206; no licences issued). | A **hard compliance flag**: block crypto mandates while the residency timeline says "Egypt". |
-| **Wash sales:** no mechanical rule, but TR 2008/1 lets the ATO apply Part IVA to sell-and-rebuy losses. | Flag any loss disposal re-entered within N days (especially May–July). The AI must not tax-loss-harvest with reacquisition. |
+| **Egypt: crypto is effectively banned** (CBE Law 194/2020 Art. 206; no licences issued). | A **hard compliance flag**: block crypto mandates while the residency timeline says "Egypt". A residency change emits `tax.residency.changed`; the venue registry recomputes ([12 §2](12-policy-and-compliance.md#2-venue-access-registry)), M11 fails closed until it has, and any loosening that results (e.g. removing the Egypt block) is **C3**. |
+| **Wash sales:** no mechanical rule, but TR 2008/1 lets the ATO apply Part IVA to sell-and-rebuy losses. | **Flag only:** any loss disposal re-acquired within **30 days either side** (default, configurable, [16 §4.4](16-configuration-and-safety-model.md#44-tax-flags)), with extra attention around EOFY (May–July). "Same asset" means the same instrument; whether near-identical assets count is a tax-agent question. The AI must not tax-loss-harvest with reacquisition. |
 
 ## Tools vetted
 
@@ -47,13 +47,13 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 
 ```
 NautilusTrader fills/positions ─┐
-Broker statements (IBKR Flex, CommSec, OANDA, IG…) ─┤→ Ingestion adapters (own code; importer formats from InvestIQ/LibreFolio/BittyTax)
+Broker statements (IBKR Flex, OANDA, IG…; CommSec optional/later) ─┤→ Ingestion adapters (own code; importer formats from InvestIQ/LibreFolio/BittyTax)
 Exchange REST (ccxt ledgers) / on-chain (own indexer or Rotki sidecar) ─┤
-Airdrop module (M4) / staking / funding / swaps ─┘
+Airdrop module (M4) / staking / funding / swaps / manual events ─┘
         ↓
-Append-only JOURNAL (Postgres `journal` schema; raw payload + normalised event; hash chain; corrections via supersedes_event_id)
+Append-only JOURNAL (Postgres `journal` schema, main table `journal.event`; WORM; raw payload + normalised event; hash chain; corrections via supersedes_event_id)
         ↓
-FX & price service (RBA F11 daily for AUD; reputable-exchange rate for crypto; ECB / CBE / CBUAE for other homes; source recorded per event)
+FX & price service (RBA F11 daily for AUD; crypto by the valuation hierarchy below; ECB / CBE / CBUAE for other homes; source and method recorded per event)
         ↓
 LOT ENGINE (rp2-style; SPECIFIC_ID primary, FIFO fallback; Decimal; lots for every asset AND every non-AUD cash balance (Div 775);
             snapshots: 30-Jun-2027 reform, residency change (CGT event I1))
@@ -65,10 +65,43 @@ REPORTS: myTax worksheet · CGT schedule · revenue/trading P&L · PAYG-I estima
 EXPORTS: Beancount/hledger ledger · CSV/PDF accountant pack · CARF reconciliation (venue-reported vs journal)
 ```
 
+**Journal storage:** journal events live in `journal.event`, part of the `journal` schema, which is **WORM** ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)). Other modules (airdrops [08](08-airdrops-and-token-launches.md), curation and treasury [13](13-wallets-treasury-and-onchain.md)) write their journal events to the same table. If Postgres is unreachable, writes buffer in NATS JetStream, so an outage delays rather than loses them ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)).
+
+**Commands** (via `mt_api`, audited):
+- `journal.manual_event.add` (C2) for anything not captured automatically (opening lots, off-platform events). Never direct SQL.
+- `tax.fy.lock` / `tax.fy.unlock` (C3) freeze or reopen a financial year's reports.
+- `task.answer` records a tax-agent answer against its question task.
+
+Attachments (e.g. a statement or screenshot on a note) are stored content-addressed under `data/attachments/` and referenced by hash.
+
+### FX and valuation rules
+
+**FX to AUD:**
+- RBA F11 daily rate for the event's date.
+- No rate published that day (weekends, holidays): the **last published business day's** rate, flagged.
+- Currencies not in F11: via USD, using RBA AUD/USD × the ECB/Frankfurter USD cross.
+
+**Valuing crypto** ([16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal)), in order:
+1. **Trades:** the actual fill price and fees.
+2. **Non-trade events** (airdrops, staking rewards, income, transfers needing a value): VWAP of **our own recorded trades** on the primary AUD venue for the event minute; otherwise the USD venue VWAP × RBA AUD/USD.
+3. **Long-tail tokens** with no recorded venue: the on-chain DEX pool price at the event block, read via our RPC.
+4. **CoinGecko and other aggregators:** cross-check only, never persisted to `journal.*`. The stored value is always our computed number with its method and source references, so 7-year retention is free of third-party data terms.
+
+**Market-value snapshots** (30 June 2027 and any residency change), defaults per asset class, your tax agent to confirm ([16 §4.2](16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change)):
+
+| Asset class | Snapshot price |
+|---|---|
+| Crypto | VWAP of recorded trades 23:55:00–23:59:59 AEST on the primary venue |
+| ASX | Official close on the day |
+| US/EU listed | Last trade at or before 23:59:59 AEST from recorded data; if none, the previous official close |
+| FX | RBA rate for the day (last business day if none published) |
+
+Each snapshot row records the price source, the method and its timestamps.
+
 ### Journal event (captured per transaction)
 
 - **Identity:**
-  - `event_id` (UUIDv7) and `source` (nautilus / broker_stmt / chain / manual / airdrop);
+  - `event_id` (UUIDv7) and `source` (nautilus / broker_stmt / chain / manual (via `journal.manual_event.add`) / airdrop);
   - `source_ref` (exec ID, order ID, tx hash + log index);
   - `ingested_at`, `supersedes_event_id`, `raw_payload_hash`.
 - **Time:**
@@ -83,7 +116,7 @@ EXPORTS: Beancount/hledger ledger · CSV/PDF accountant pack · CARF reconciliat
 - **Economics:**
   - side, quantity, price, gross amount;
   - fees split by type: commission, exchange, regulatory, gas, funding, borrow/overnight financing, spread markup;
-  - **home-currency equivalents** (AUD now; AED/EGP/EUR later) with `fx_rate`, `fx_rate_source`, `fx_rate_ts`.
+  - **home-currency equivalents** (AUD now; AED/EGP/EUR later) with `fx_rate`, `fx_rate_source`, `fx_rate_ts`, and for non-trade crypto values the valuation method and source references.
 - **Classification:** `event_type`, one of:
   - trade open/close, crypto↔crypto swap;
   - deposit, withdrawal, internal transfer;
@@ -112,7 +145,7 @@ class JurisdictionRules(Protocol):
     def is_resident(self, timeline, tax_year) -> ResidencyResult
     def classify(self, event, regime) -> Treatment            # CAPITAL | REVENUE | INCOME | EXEMPT | STAMP_DUTY | CRYPTO_FLAT
     def lot_policy(self, asset_class) -> LotPolicy            # AU: SPECIFIC_ID → FIFO
-    def fx_policy(self) -> FxPolicy                           # AU: RBA daily; crypto: reputable exchange
+    def fx_policy(self) -> FxPolicy                           # AU: RBA F11 daily; crypto: valuation hierarchy (16 §4.1)
     def compute(self, events, lots, tax_year) -> TaxComputation
     def on_residency_change(self, from_, to_, at) -> list[DeemedEvent]   # AU CGT event I1 (+ s104-165 election, modelled both ways)
     def reports(self) -> list[ReportGenerator]
@@ -121,8 +154,8 @@ class JurisdictionRules(Protocol):
 
 | Plugin | Rules (summary) |
 |---|---|
-| **AU_2026** (through FY2026-27) | **Investor:** CGT with the 50% discount for lots held ≥ 12 months excluding acquisition and disposal days; capital losses applied before the discount, to non-discount gains first; carried forward. **Crypto:** every disposal including crypto↔crypto is a CGT event; staking rewards and established airdrops are ordinary income at AUD value (that value becomes the cost base); initial-allocation airdrops have a $0 cost base. **CFDs:** revenue account (TR 2005/15). **Futures:** revenue by default, with a per-instrument override (U). **Forex:** Div 775 gains/losses on foreign-currency cash balances (U on the thresholds and elections). **Trader-in-business mode:** all trading gains are ordinary income. **Wash-sale flags. myTax mapping:** items 18 (capital gains), 20 (foreign income), 24 (other income), 10/11 (interest/dividends), business schedule if trading (labels (U)). **PAYG-instalment estimator. Record retention:** ≥ 5 years (we keep everything). |
-| **AU_2027_REFORM** (FY2027-28 onward) | 30 June 2027 snapshot split; CPI indexation of the cost base (ABS CPI); 30% minimum tax on post-reform real gains (U on the exact mechanism) |
+| **AU_2026** (through FY2026-27) | **Investor:** CGT with the 50% discount for lots held ≥ 12 months excluding acquisition and disposal days; capital losses applied before the discount, to non-discount gains first; carried forward. **Crypto:** every disposal including crypto↔crypto is a CGT event; staking rewards and established airdrops are ordinary income at AUD value (that value becomes the cost base); initial-allocation airdrops have a $0 cost base. **CFDs:** revenue account (TR 2005/15). **Futures:** revenue by default, with a per-instrument override (U). **Perpetual futures:** revenue by default, and funding payments are revenue (U, tax-agent question). **Forex:** Div 775 gains/losses on foreign-currency cash balances (U on the thresholds and elections). **Trader-in-business mode:** all trading gains are ordinary income. **Wash-sale flags** (30 days either side, flag only). **myTax mapping:** items 18 (capital gains), 20 (foreign income), 24 (other income), 10/11 (interest/dividends), business schedule if trading (labels (U)). **PAYG-instalment estimator. Record retention:** ≥ 5 years (we keep everything). |
+| **AU_2027_REFORM** (FY2027-28 onward) | 30 June 2027 snapshot split; CPI indexation of the cost base (ABS All groups CPI, eight-capital weighted average (U)); 30% minimum tax on post-reform real gains (U on the exact mechanism) |
 | **AE** (UAE) | No personal income tax or CGT. **Corporate-tax monitor:** personal investment income is excluded unless the activity needs a licence or is business-like (AED 1m turnover threshold for natural persons). Virtual-asset transfers are VAT-exempt (Cabinet Decision 100/2024). Residency: 183 days, or 90 days + conditions, or principal residence. |
 | **EG** (Egypt) | Listed securities: stamp duty per trade (reported 0.05% per side from 2026 (U)); gains on listed securities exempt; other income at progressive rates up to 27.5%. **Crypto hard-flag (prohibited).** Residency: 183 days. |
 | **CY** (Cyprus) | Securities gains exempt; **8% flat tax on net crypto gains** (Art. 20E from 1 Jan 2026; losses offset same-year crypto gains only; enactment (U)); SDC on dividends/interest by domicile, with non-dom exemption for 17 years; GeSY 2.65%. Residency: 183 days or the 60-day rule. |
@@ -133,7 +166,7 @@ class JurisdictionRules(Protocol):
   - Australia applies **CGT event I1**: a deemed sale of non-TAP assets at market value.
   - You can elect under **s104-165** to defer it; the engine models both outcomes.
   - After departure, it tracks each lot's TAP status.
-- **CARF / CRS 2.0:** exchanges report crypto activity to tax authorities (Australia from 2027/28 (U)). The engine reconciles your journal against the venue's reported totals, and stores each venue's tax-residency declaration.
+- **CARF / CRS 2.0:** exchanges report crypto activity to tax authorities (Australia from 2027/28 (U)). Where a venue provides a CARF statement, the engine reconciles your journal against its reported totals; where none is provided, the check is marked not applicable. It also stores each venue's tax-residency declaration.
 
 **Residency timeline:**
 - A table of entries and exits per country. It can be fed manually or from passport-stamp/ICP reports.
@@ -160,3 +193,8 @@ class JurisdictionRules(Protocol):
 5. Which tax treaties (DTAs) apply to AU-UAE/CY/EG?
 6. Egypt's final stamp-duty rates; whether Cyprus Art. 20E is enacted, and how it interacts with non-dom status.
 7. Australia's CARF start date.
+8. Perpetual futures and funding: revenue by default; confirm.
+9. The ABS CPI series and as-of rule for 2027 indexation (default: All groups, eight-capital weighted average, A2325846C).
+10. The snapshot price convention per asset class (above) and whether our own recorded-trade VWAP is an acceptable valuation method.
+11. PAYG instalments: which method your notice uses, and the due dates.
+12. Wash sales: is 30 days either side a sensible flag window, and do near-identical assets count?

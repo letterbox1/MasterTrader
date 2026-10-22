@@ -4,13 +4,13 @@
 |---|---|
 | **Routes** | `/markets` (cross-asset matrix), `/markets/:instrumentId` (instrument detail) |
 | **Modules** | M1 data, M6 features, M16 costs/DQ, M21 tier B, M5 calendar, M3 events |
-| **Phase** | 1 (charts, matrix); tier-B and intel overlays in 4 |
+| **Phase** | 1 (charts, matrix, P1 macro widgets); positioning, sentiment, prediction markets, nowcasts, tier-B and intel overlays arrive in 4 |
 | **Mock-up reference** | `cross-asset-terminal-free-liquidity-matrix.png` |
 
 ## Purpose
 
 See every tradable market at a glance, then drill into one instrument with:
-- charts at any timeframe (tick → 1W);
+- charts at any timeframe (tick → 1W; fixed sizes 1m, 5m, 15m, 1h, 4h, 1D, 1W come from continuous aggregates, any other size is a `time_bucket` query at read time);
 - book and costs;
 - features, decision-model scores and news;
 - a manual order ticket.
@@ -32,8 +32,8 @@ See every tradable market at a glance, then drill into one instrument with:
 |---|---|---|
 | Watchlists | User lists (pinned, positions, custom); add/remove; sort | `/markets/instruments?watchlist=`, WS `md.quote` |
 | Quadrant cards | Per instrument: last price, Δ (24h / session), spread (bps) vs normal, funding/swap (if applicable), volume, feed status chip, sparkline, tier-B regime chip | `/markets/matrix`, WS `md.quote`, `cost`, `dq.status`, `tierb` |
-| Macro strip | Policy rates, 10Y yields, DXY proxy, VIX, gold, oil; nowcasts (GDPNow, Cleveland inflation) | `/markets/matrix?group=macro` |
-| Positioning | COT net positioning, retail sentiment (Myfxbook / IG / OANDA books), Kalshi/Polymarket event probabilities | `/markets/matrix?group=positioning` |
+| Macro strip | **Phase 1:** policy rates, 10Y yields, DXY proxy (computed from recorded FX quotes), VIX (yfinance), gold, oil. **Arrives in P4:** nowcasts (GDPNow, Cleveland inflation) | `/markets/matrix?group=macro` |
+| Positioning | **Phase 1:** COT net positioning. **Arrives in P4:** retail sentiment (Myfxbook / IG / OANDA books), Kalshi/Polymarket event probabilities | `/markets/matrix?group=positioning` |
 | Correlation heatmap | Rolling correlations (selectable window) across the watchlist | `/markets/matrix?group=correlation` |
 | Cross-venue spreads | Same instrument across venues: mid difference, fees, net edge (info only; not an auto-arb button) | `/data/costs?compare=1` |
 
@@ -61,11 +61,11 @@ See every tradable market at a glance, then drill into one instrument with:
 
 | Widget | Shows | Source |
 |---|---|---|
-| `PriceChart` | Candles at any spec from tick/1s to 1W (incl. tick/volume bars); overlays: indicators (user-selectable), own fills, strategy signals, Decision One nodes, calendar/event markers, blackout windows (shaded) | `/markets/{id}/bars`, WS `md.bar`/`md.trade`, `fills`, `signals`, `cal`, `evt` |
+| `PriceChart` | Candles at any spec from tick/1s to 1W (incl. tick/volume bars; 1m–1W from continuous aggregates, other sizes bucketed at read time); overlays: indicators (user-selectable), own fills, strategy signals, Decision One nodes, calendar/event markers, blackout windows (shaded) | `/markets/{id}/bars`, WS `md.bar`/`md.trade`, `fills`, `signals`, `cal`, `evt` |
 | Timeframe picker | Unsupported resolutions disabled with a reason (e.g. "US stocks: IEX only; no tick L2") | `/markets/instruments/{id}` (min resolution) |
 | `OrderBook` | L2 where available (crypto); top of book for FX/stocks | WS `md.book` |
 | `TradesTape` | Last trades | WS `md.trade` |
-| `OrderTicket` + `RiskPreview` | Manual order with live pre-trade checks | `POST /risk/preview` (dry-run), `order.place` |
+| `OrderTicket` + `RiskPreview` | Manual order (the `manual` sleeve) with live pre-trade checks: limits, price collar (defaults 2% crypto majors / 0.5% FX majors / 1% ETFs from last trade; configurable, [16 §2.1](../../16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)), data age, blackout, venue registry; large orders (default > 2% of sleeve or > A$5,000) need hold-to-confirm | `POST /risk/preview` (dry-run), `order.place` |
 | Positions & orders | For this instrument | `/positions?instrument=`, `/orders?instrument=` |
 | Costs | Spread by hour-of-week heatmap, current fee tier, funding/swap now and history, realised slippage for own fills | `/data/costs?instrument=` |
 | Features & scores | Key feature values; tier-B question probabilities (`TierBScore`) with model version and calibration badge | `/models/tierb/decisions?subject=`, WS `tierb` |
@@ -86,7 +86,8 @@ See every tradable market at a glance, then drill into one instrument with:
 
 ## States
 
-- **Feed stale:** chart and book dimmed; ticket disabled with "Feed stale: risk manager blocks orders".
+- **Arrives in P4:** widgets fed by Phase 4 sources (nowcasts, retail books, prediction markets, sentiment, tier-B scores, news/events) render an empty state "Arrives in Phase 4" with the source named. Never placeholder or sample data (DESIGN §10).
+- **Feed stale:** chart and book dimmed; ticket disabled with "Feed stale: risk manager blocks orders". Stale = data age (now − our receive time) above the threshold (default 2 s fast / 60 s slow, [16 §2.2](../../16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)); closed sessions show `closed`, not stale.
 - **Market closed:** session banner; orders queued only if the venue supports it.
 - **Kill ON:** ticket disabled.
 

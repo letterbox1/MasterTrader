@@ -12,7 +12,7 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 | Reranker | **bge-reranker-v2-m3** or **mxbai-rerank-base-v2**; ms-marco-MiniLM-L-6 if CPU is tight. **Avoid Jina rerankers** (CC-BY-NC) | Apache-2.0 | Tens to hundreds of ms for 30–50 pairs on CPU (U) |
 | Document RAG | Postgres: **pgvector HNSW (halfvec) + native tsvector/`ts_rank_cd` + pg_trgm**, fused with **Reciprocal Rank Fusion**, then cross-encoder rerank, recency decay and a **point-in-time filter** | PostgreSQL | ms-level retrieval + rerank |
 | Hot-path decision, **Decision One tier A** | **LightGBM** (or XGBoost/linear/small MLP) compiled to **ONNX Runtime / Treelite / lleaves**, run **in-process** inside the Nautilus strategy | MIT / Apache-2.0 | **~10–50 µs per prediction** (published benchmarks, indicative) |
-| Text/context decisions, **Decision One tier B** | A **decision model** ("System One" class, no text generation). Phase 1: **SemIf**-style logit readout on Qwen3.5-4B (no training). Phase 2: our own **Qwen3 0.6B/1.7B + LoRA + classification head** (Clef pattern), distilled and calibrated. Benchmarked against **Laya** and **Clef-flash** (both Apache-2.0) | Apache-2.0 / MIT | ~2–12 ms GPU for 0.6B (est.); ~15–40 ms for 4B; Clef-flash ~0.4 s local |
+| Text/context decisions, **Decision One tier B** | A **decision model** ("System One" class, no text generation). Stage 1 (project Phase 4): **SemIf**-style logit readout on Qwen3.5-4B (no training). Stage 2 (Phase 6): our own **Qwen3 0.6B/1.7B + LoRA + classification head** (Clef pattern), distilled and calibrated. Benchmarked against **Laya** and **Clef-flash** (both Apache-2.0) | Apache-2.0 / MIT | ~2–12 ms GPU for 0.6B (est.; SLO p95 < 50 ms); 0.6B on CPU ~100–400 ms; ~15–40 ms for 4B; Clef-flash ~0.4 s local |
 | Research / chat / debate routing | **LiteLLM proxy** (≥ 1.83, pinned by hash or image digest): Claude API → your custom endpoint → local model fallback (`llm-local`); monthly cap + per-role daily budgets ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); every call audited to `audit.llm_call` from P0 | MIT core | A few ms of overhead (U); **never on the hot path** |
 
 ## 1. Hindsight: self-hosted agent memory
@@ -40,6 +40,8 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 - `market-regimes`
 - `user`: your preferences and standing instructions.
 - `ops`: incidents and what fixed them.
+
+**Inputs:** whatever is retained passes the same provenance filter as every model input ([12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)): **no Telegram text** and no rows with `model_input_ok = false`. Telegram postures are for code/policy rules only, so they aren't retained either.
 
 **Point-in-time recall** (backtests must not "remember the future"):
 - **Timestamps:** every memory carries `observed_at` (when the fact or event it records happened) and `ingested_at` (when we stored it).
@@ -83,6 +85,7 @@ LightRAG is kept as an **optional, offline** graph layer over filings (§3.7).
 
 1. **Table:** `rag.doc_chunk(id, doc_id, source, tickers[], published_at, ingested_at, valid_from, section, text, tsv tsvector GENERATED, emb halfvec(384))`.
    - Never update a chunk in place; a revision is a new row.
+   - Each chunk carries the provenance columns (`source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`, [12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)). Rows with `model_input_ok = false`, which includes **all Telegram text**, are never indexed.
 2. **Point-in-time filter on every query:** `ingested_at <= :as_of AND published_at <= :as_of`.
 3. **Indexes:**
    - HNSW on `emb` (`halfvec_cosine_ops`, m=16, ef_construction=64);
@@ -193,14 +196,14 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
   - **Contenders:** our Qwen-LoRA head vs fine-tuned Laya vs self-hosted Clef-flash vs **Kev-4B/9B** (challenger, only if a public, licence-compatible release exists, §4.1) vs SemIf zero-shot vs the old JSON-generation baseline.
   - **Data:** our own data, plus the **CLEF-2026 FinMMEval Buy/Hold/Sell** task as an external check.
   - **Metrics:** accuracy, log-loss, **Brier, ECE per regime**, coverage at target precision, latency p50/p95, determinism (flip rate).
-  - **Promotion:** only via the [03 §8](03-build-spec.md#8-promotion-gates-per-strategy-configurable) gates, with the teacher in shadow, and only if the model meets the tier-B defaults in [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets): coverage at ≥ 0.75 precision, ECE ≤ 0.05, flip rate ≤ 0.1%, and no worse than the frozen baseline on the worst fold. Suggested shadow period ≥ 14 days (not yet in 16).
+  - **Promotion:** only via the [03 §8](03-build-spec.md#8-promotion-gates-per-strategy-configurable) gates, with the teacher in shadow, and only if the model meets the tier-B defaults in [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets): coverage at ≥ 0.75 precision, ECE ≤ 0.05, flip rate ≤ 0.1%, and no worse than the frozen baseline on the worst fold. Shadow period ≥ 14 days before promotion (default, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); the `shadow` role has its own LLM budget.
 - **How outputs are used:**
   - Scores go to NATS KV as tier-A features.
   - A direct **veto** is allowed only above a calibrated high-precision threshold (default ≥ 0.90 precision, configurable, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)).
   - Scores also feed M4 (airdrop/rug text risk), M2 (relevance), M10 (anomaly explanations) and M8 (pre-screening).
 
 **Operating rules (adopted from the CryptoTrader review):**
-- **Inputs:** Telegram text is **never** a model input (Telegram API ToS §1.5). Rows with `model_input_ok = false` are refused at the question boundary ([12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)).
+- **Inputs:** Telegram text, and any Telegram-derived feature such as postures, is **never** a model input for tier A or tier B (Telegram API ToS §1.5; postures feed code/policy rules only). Rows with `model_input_ok = false` are refused at the question boundary ([12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)).
 - **Question shape:** binary or low-option questions only; each question gets a **state budget of ~320 tokens** (compact, structured state, not raw documents).
 - **Thresholds per question** come from measured disagreement with the teacher and with outcomes, not one global cut-off. Each must still meet the precision floors above (0.75 auto-decide, 0.90 veto).
 - **Shadow checks:** ~5% of tier B decisions are re-asked of the teacher (M8 / gateway model) in shadow; disagreement rate is tracked per question in D10.

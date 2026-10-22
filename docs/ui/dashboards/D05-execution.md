@@ -31,11 +31,11 @@ Everything about what is (or should be) in the market:
 | Tab | Shows | Source |
 |---|---|---|
 | **Positions** | Per position: instrument, venue/account, side, qty, avg price, mark, unrealised P&L, % of exposure limit, leverage, liquidation distance (perps/CFDs), strategy, mode (paper/live), reconciliation status | `/positions`, WS `positions` |
-| **Orders** | Open + recent: time, instrument, side, type, qty, filled, price, status, strategy/source (strategy / manual / agent / MCP), risk decision, TIF | `/orders`, WS `orders` |
+| **Orders** | Open + recent: time, instrument, side, type, qty, filled, price, status, bot/source (bot / manual / agent / MCP), client order ID (`{bot}-{engine_epoch}-{seq}`), risk decision, TIF | `/orders`, WS `orders` |
 | **Fills** | Fills with fees, liquidity (maker/taker), venue, slippage vs decision & arrival | `/fills`, WS `fills` |
-| **Approvals** | Pending approval requests (`ApprovalCard`): intent, source, rationale/provenance, risk preview, TTL; history of approved/rejected/expired | `/orders?status=pending_approval`, WS `orders` (approval events) |
-| **TCA** | Implementation shortfall by strategy × venue × instrument; delay / spread-impact / fees decomposition; realised vs modelled ratio (alert > 1.5×); slippage distribution; fill rate; time to fill | `/data/costs?tca=1` |
-| **Venues** | Per venue/account: connection status, latency, rate-limit headroom, balances, margin, sub-account mode (paper/approve/auto), key age (from metadata), last reconciliation result | `/system/services?kind=venue`, `/data/recon`, `/system/keys` (masked) |
+| **Approvals** | Pending approval requests (`ApprovalCard`): bot, intent, source, rationale/provenance, risk preview, TTL (defaults per bot horizon; MCP 5 min; [16 §2.3](../../16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)); batched cards with per-line toggles for dynamic-selection bots; history of approved/rejected/expired with the card shown | `/approvals?status=pending`, WS `orders` (approval events) |
+| **TCA** | Implementation shortfall by bot × venue × instrument; delay / spread-impact / fees decomposition; realised vs modelled ratio (default: > 1.5× over the last 20 fills pauses the bot, configurable); slippage distribution; fill rate; time to fill | `/data/costs?tca=1` |
+| **Venues** | Per venue/account: connection status, latency, rate-limit headroom, balances, margin, sub-account mode (paper / hitl / autonomous), key age (from metadata), last reconciliation result | `/system/services?kind=venue`, `/data/recon`, `/system/keys` (masked) |
 
 ## Actions
 
@@ -47,15 +47,18 @@ Everything about what is (or should be) in the market:
 | Cancel all (scope: all / venue / strategy / instrument) | Orders header | `order.cancel_all` | C2 |
 | Close / reduce position | Position row | `position.close` / `position.reduce` | C2 |
 | Set TP/SL brackets | Position row | `position.set_brackets` | C2 |
-| Approve / reject | Approvals | `approval.approve` / `approval.reject` | C2 / C1 |
-| Bulk approve | Approvals (≤ 5 items, same strategy) | `approval.approve` ×n | C2 (shows the combined risk preview) |
+| Approve / Approve ½ / Reject / Pause bot | Approvals | `approval.approve` / `approval.approve_partial` / `approval.reject` / `bot.pause` | C2 / C2 / C1 / C1 |
+| Large-order approval | Approvals (default > 2% of sleeve or > A$5,000) | `approval.approve` | C2 + hold-to-confirm |
+| Batched card | Approvals (one dynamic-selection bot) | `approval.approve` with per-line toggles | C2 (combined risk preview). No other bulk approve |
+| Flatten-and-halt | Position row / bot | `position.close` (`halt: true`, reason required) | C2 |
 | Run reconciliation now | Venues | `data.recon.run` | C1 |
 | Export CSV | Each table | — | C0 |
 
 ## States & rules
 
 - **Unreconciled positions:** hatched + "unconfirmed". Close actions require reconciliation first, unless using emergency flatten via the kill switch.
-- **Kill ON:** all trading actions disabled except cancel and flatten-via-kill.
+- **Kill ON:** all trading actions disabled except cancel and flatten-via-kill. Protective exits continue.
+- **Manual tickets** trade in the `manual` sleeve with its own limits and journal tag.
 - **Approvals:** show a TTL countdown; expired requests move to history automatically.
 - **Source badges:** orders from MCP/agents always show a source badge.
 
@@ -73,4 +76,5 @@ Everything about what is (or should be) in the market:
   - `/system/services?kind=venue`, `/system/keys`;
   - `POST /risk/preview`.
 - **WebSocket topics:** `positions`, `orders`, `fills`, `risk.event`, `kill`.
-- **Commands:** `order.*`, `position.*`, `approval.*`, `data.recon.run`.
+- **Queries (approvals):** `/approvals?status=pending` (replaces `/orders?status=pending_approval`).
+- **Commands:** `order.*`, `position.*`, `approval.*` (incl. `approval.approve_partial`), `bot.pause`, `data.recon.run`.

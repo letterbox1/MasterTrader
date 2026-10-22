@@ -45,6 +45,7 @@ This doc also covers the **failure-safety design** (what happens when the engine
 | **System drawdown, stage 2** | L1 | **25% below portfolio peak → flatten to stablecoins/AUD + 30-day review lock**. Two such events end the trading programme; capital moves to hold-and-earn | [14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) |
 | Open positions | L3 | 10 per sleeve | — |
 | Leverage | L2/L4 | 1× until you approve more; crypto derivatives ≤ 2× (L0 ceiling) | [12 §1](12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) |
+| Drawdown basis | L1/L3 | **Trading equity** in AUD, marked to market (realised + unrealised; on-chain valued per §4.1), **excluding the vault and hold-and-earn**, adjusted for your deposits and withdrawals, measured from its running peak. The peak resets only after a review lock ends or by a C3 reset | Sleeve stages use the sleeve's own equity on the same basis |
 | Venue concentration | L1 | ≤ 25% of total equity per venue [10–30%] | One value everywhere (replaces "25–30%") |
 | Price collar | L2 | 2% from last trade (crypto majors), 0.5% (FX majors), 1% (ETFs) | Orders outside are rejected |
 | API/RPC error pause | L2 | 5 errors in 60 s → pause that venue's orders 10 min | — |
@@ -116,8 +117,9 @@ Configurable per asset class.
 |---|---|
 | Rolling 60-trade Sharpe or hit rate below the backtest's 5th percentile (or a 26-week window for low-frequency bots) | Alert + **downgrade the bot autonomous → HITL** |
 | CUSUM break on P&L residuals | Alert + downgrade to HITL |
+| 5 consecutive losing trades (per bot) | Alert + downgrade to HITL |
 | Daily health check fails (30-day Sharpe < ½ validated, or drawdown > 1.5× backtest max) | **Halt the bot** pending your review |
-| Kill criteria ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)), e.g. implementation shortfall > 2× modelled, live Sharpe after 60 trades < 5th percentile | **Halt the sleeve**; capital step-down |
+| Kill criteria ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)), e.g. implementation shortfall > 2× modelled, or the **sleeve's** live Sharpe, once it has 60 live trades, below the backtest's 5th percentile | **Halt the sleeve**; capital step-down |
 | System drawdown stages | §2.1 |
 
 ### 2.7 Wallets, signer and gas ([13](13-wallets-treasury-and-onchain.md))
@@ -165,7 +167,8 @@ Configurable per bot and per event type.
 | Direct veto | Only at ≥ 0.90 precision |
 | Calibration | ECE ≤ 0.05 |
 | Determinism | Flip rate ≤ 0.1% |
-| LLM spend | Monthly cap US$40. Daily per-role budgets: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40. Over budget → local model fallback |
+| Shadow period before promotion | ≥ 14 days in shadow (scored, never acting) and meeting the thresholds above |
+| LLM spend | Monthly cap US$40. Daily per-role budgets: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30. Over budget → local model fallback |
 
 ### 2.11 WORM integrity
 
@@ -287,3 +290,9 @@ Each snapshot row records the price source, the method and its timestamps.
 | Egress IP / country | Own check + GeoIP DB (§3.2) | Safety gate, venue access |
 
 Web crawling isn't used for prices or gas: direct APIs and our own recorded data are faster, more accurate, auditable and within terms. Headless browsing is reserved for official pages without feeds, such as regulatory updates.
+
+### 4.4 Tax flags
+
+| Setting | Default |
+|---|---|
+| Wash-sale flag window | Re-acquisition of the same asset within **30 days** either side of a loss disposal is flagged for your tax agent (flag only; nothing is blocked or adjusted automatically) |

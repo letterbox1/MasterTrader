@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| **Route** | `/models` (tabs: Registry · Decision questions · Bake-off · Gateway · Memory · RAG) |
+| **Route** | `/models` (tabs: Registry · Decision questions · Labelling queue · Bake-off · Gateway · Memory · RAG) |
 | **Modules** | M21 Decision One + serving, M9 Hindsight & RAG, M7 training/distillation |
-| **Phase** | 6 (Gateway tab from 0; Decision questions from 4) |
+| **Phase** | 6 (Gateway tab from 0; Decision questions from 4; labelling from 4 via D08 Label mode, queue tab in 6) |
 | **Mock-up reference** | None (new) |
 
 ## Purpose
@@ -27,9 +27,10 @@ Govern every model that influences decisions:
 | Tab | Shows | Source |
 |---|---|---|
 | **Registry** | Models by tier: **Tier A** (GBDT/linear/MLP: version, features, training range, calibration method, Brier/ECE, latency p50/p99 µs, status: candidate / shadow / production / retired), **Tier B** (SemIf readout, own Qwen-LoRA heads, Laya/Clef-flash benchmarks), **Gateway models** (Claude, custom endpoint, local). Detail: reliability diagram, feature importance (tier A), confusion matrix, drift (Evidently), lineage (teacher runs + outcomes used). | `/models/registry` |
-| **Decision questions** | Question registry: id, type (choice/score/yes-no), options, version, model serving it, abstention threshold, calibration status, traffic/day, abstain rate, flip rate (determinism). Detail: recent decisions with inputs (truncated) and probabilities. | `/models/questions`, `/models/tierb/decisions` |
-| **Bake-off** | Benchmark runs comparing decision models (own head vs Laya vs Clef-flash vs SemIf vs JSON generation) and tier-A candidates. Metrics: accuracy, log-loss, Brier, ECE per regime, coverage at target precision, latency p50/p95, flip rate; plus the FinMMEval Buy/Hold/Sell external check. | `/models/benchmarks` |
-| **Gateway** | LiteLLM spend by role (debate, strategy-gen, explain, memory, chat) vs daily budget; requests, errors, fallbacks to local, latency; provider status | `/models/gateway/spend` |
+| **Decision questions** | Question registry: id, type (choice/score/yes-no), options, version, model serving it, abstention threshold, calibration status, traffic/day, abstain rate, flip rate (determinism). Thresholds show their defaults ([16 §2.10](../../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets), configurable): auto-decide at ≥ 0.75 precision, direct veto only at ≥ 0.90, ECE ≤ 0.05, flip rate ≤ 0.1%. Detail: recent decisions with inputs (truncated) and probabilities. | `/models/questions`, `/models/tierb/decisions` |
+| **Labelling queue** | Tier-B decisions sampled for your label (abstentions, teacher disagreements, high-value calls), plus labels already given (from D08 Label mode in P4). Labels come from you or from outcomes, never from shadow-model outputs; Telegram content never appears | `/models/labels`, `/models/labels/queue` |
+| **Bake-off** | Benchmark runs comparing decision models (own head vs Laya vs Clef-flash vs Kev-4B/9B (only if a public, licence-compatible release exists (U)) vs SemIf vs JSON generation) and tier-A candidates. Metrics: accuracy, log-loss, Brier, ECE per regime, coverage at target precision, latency p50/p95, flip rate; plus the FinMMEval Buy/Hold/Sell external check. | `/models/benchmarks` |
+| **Gateway** | LiteLLM spend by role (debate, strategy-gen, explain, memory, chat) vs daily budget (defaults US$1.00 / 0.50 / 0.30 / 0.30 / 0.40 per day; monthly cap US$40; over budget → local model fallback; configurable); requests, errors, fallbacks to local, latency; provider status | `/models/gateway/spend` |
 | **Memory** | Hindsight banks (decisions, strategies, market-regimes, user, ops): counts, recent memories, search (point-in-time `as_of` option), delete a memory (C1; audited) | `/memory/search`, `/memory/banks` |
 | **RAG** | Document search playground: query → hybrid results (vector + keyword, RRF, reranked) with scores, `as_of` filter, chunk source; index stats | `/rag/search` |
 
@@ -37,11 +38,13 @@ Govern every model that influences decisions:
 
 | Control | Command | Level |
 |---|---|---|
-| Promote model (candidate → shadow → production) | `models.promote` | C2 (shows gate results: calibration, OOS, latency SLO); production for tier A/B used by **auto** strategies = **C3** |
+| Promote model (candidate → shadow → production) | `models.promote` | C2 (shows gate results: calibration, OOS, latency SLO); production for tier A/B used by **autonomous** bots = **C3** |
 | Roll back model | `models.rollback` | C1 |
 | Run bake-off | `models.bakeoff.run` | C1 |
-| Run distillation / retrain | `lab.validate.run` (kind = distill) | C1 |
-| Edit question (options, threshold) | `models.question.update` | C1 (new version) |
+| Train tier A (Phase 2+) | `models.tiera.train` | C1 |
+| Run distillation (Phase 6) | `lab.validate.run` (kind = distill) | C1 |
+| Add a label | `models.label.add` | C0 |
+| Edit question (options, threshold) | `models.question.update` | C1 (new version); loosening a threshold below its default precision/calibration bar is C3 |
 | Adjust gateway budget | `system.settings.update` (budgets) | Raise = C3, lower = C1 |
 | Delete memory item | `memory.delete` | C1 |
 
@@ -60,10 +63,10 @@ Govern every model that influences decisions:
 
 ## Backend contract
 
-- **Queries:** `/models/registry`, `/models/questions`, `/models/tierb/decisions`, `/models/benchmarks`, `/models/gateway/spend`, `/memory/search`, `/memory/banks`, `/rag/search`.
+- **Queries:** `/models/registry`, `/models/questions`, `/models/tierb/decisions`, `/models/labels`, `/models/labels/queue`, `/models/benchmarks`, `/models/gateway/spend`, `/memory/search`, `/memory/banks`, `/rag/search`.
 - **WebSocket topics:** `tierb`, `lab.job`.
 - **Commands:**
-  - `models.promote|rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete`;
+  - `models.promote|rollback`, `models.bakeoff.run`, `models.question.update`, `models.label.add`, `models.tiera.train`, `memory.delete`;
   - `lab.validate.run`, `system.settings.update`.
 
 _New relative to architecture §7.2 (added there): `models.question.update`, `memory.delete`, `/memory/banks`._

@@ -153,7 +153,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 **Drawdown notes:**
 - Stage 1 must be below stage 2 (rejected at save time otherwise). If you prefer "15% then a further 15%", set sleeve stage 1 = 15% and stage 2 = 30%.
 - The system stage-1 stop keeps positions under their resting stops, so gaps can still carry drawdown towards stage 2; that's why stage 2 flattens.
-- Equity basis for the system stages: trading equity, excluding the vault and hold-and-earn, adjusted for deposits/withdrawals (suggested in gap P7-B005; not yet in 16).
+- Equity basis for the system stages: trading equity, excluding the vault and hold-and-earn, adjusted for deposits/withdrawals ([16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
 
 **Fallback ladder** (shown live in D06):
 1. Healthy, high confidence → normal size.
@@ -183,35 +183,56 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 1. **Leakage review:**
    - An adversarial checklist is run on the strategy code: look-ahead, survivorship, repainting indicators, costs, fill realism, full-sample fitting, regime coverage, alignment.
    - A model (via the gateway) answers present/absent per item, **quoting the exact line**.
-   - Any "present" blocks the strategy until fixed or waived by you, with the waiver audited.
-   - This runs alongside the vendored freqtrade look-ahead/recursive analysers.
-2. **Deflated Sharpe:**
-   - The probability that the best Sharpe is real, given all variants tried.
-   - Inputs: per-period (not annualised) Sharpe, observation count, skew/kurtosis, variance of Sharpe across trials.
-   - **Pass at > 0.95.**
-3. **Walk-forward:** judged on the **share of positive folds and the worst fold**, not the average.
+   - Any "present" blocks the strategy until fixed or waived by you (`lab.leakage.waive`, C2, with the waiver audited).
+   - This runs alongside the freqtrade look-ahead/recursive analysers, vendored under `third_party/` with their GPL-3.0 licence and isolated in `mt_lab` (fine for personal, never-distributed use, [03 §1](03-build-spec.md#1-ground-rules); a SaaS would need a clean-room rewrite, [05](05-saas-legal-and-licensing.md)).
+2. **Deflated Sharpe (DSR):**
+   - DSR is a **probability** (0–1) that the strategy's true Sharpe is above zero, given all variants tried.
+   - Inputs: per-period (not annualised) Sharpe, observation count, skew/kurtosis, variance of Sharpe across trials (the trial counter).
+   - **Pass at DSR ≥ 0.95** (95% confidence; default, configurable, [16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)). "DSR > 0" in older text was an error.
+3. **Walk-forward:** judged on the **share of positive folds and the worst fold**, not the average. Default: ≥ 60% of folds positive **and** worst fold ≥ −(sleeve halt drawdown).
 4. **Per-year and per-regime:**
    - Profitable in **each year** and **each regime** (bull/bear/chop), across several assets, not just in aggregate.
+   - Regimes are price-based, per asset, daily (`regime_v1`, [16 §2.4.1](16-configuration-and-safety-model.md#241-regime-labels-for-per-regime-results)): **bull** = above the 200-day average and 90-day return > +10%; **bear** = below it and 90-day return < −10%; **chop** = everything else. Sentiment-based regimes (P4) can only become later versions.
    - Single-regime edges are labelled and only run in that regime.
-5. **Cost stress:** results must survive **2× and 3× measured costs**.
+5. **Cost stress:** results must stay profitable at **2× measured costs**; **3×** is reported.
 6. **Benchmark:** beats the asset-class passive benchmark (§1) after costs.
 7. **Paper then small money:**
-   - Paper through the real policy, risk and execution path (≥ 2–4 weeks; ≥ 8 weeks for P1 sleeves; ≥ 300 trades for memecoins).
+   - Paper/HITL through the real policy, risk and execution path before autonomous mode or a capital step: default **≥ 8 weeks and ≥ 50 trades**. Class overrides: P1 sleeves ≥ 8 weeks; memecoins ≥ 300 trades; low-frequency bots that can't reach the trade count use a ≥ 26-week window ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)).
    - Live results must sit within the backtest's expected range before capital steps up.
+8. **Monte Carlo permutation:** p < 0.05.
+9. **Safety drills:** kill switch, dead-man and restart drills passed on the bot's venue.
 
-**Decay monitoring (live):**
-- Alert when the rolling 60-trade Sharpe or hit rate falls below the backtest's **5th percentile**.
-- Run a **CUSUM** test on P&L residuals.
-- Models retrain on schedule and are promoted only if they beat a frozen baseline on unseen data **on the worst fold and calibration**.
+Gate values are defaults, configurable per strategy. **Loosening any gate is C3**; tightening is free.
+
+**Decay monitoring (live): one meaning per signal** ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)):
+
+| Signal | Action |
+|---|---|
+| A bot's rolling 60-trade Sharpe or hit rate below the backtest's **5th percentile** (low-frequency bots: a 26-week window) | Alert + **downgrade autonomous → HITL**; the week isn't clean |
+| **CUSUM** break on P&L residuals | Alert + downgrade to HITL |
+| Daily health check fails (§5) | **Halt the bot** pending your review |
+| Kill criteria (§7) | **Halt the sleeve** + capital step-down |
+
+Built in Phase 2 for paper bots; Phase 7 extends it to live with the kill criteria. Models retrain on schedule and are promoted only if they beat a frozen baseline on unseen data **on the worst fold and calibration**.
 
 ## 7. Phase capital steps & kill criteria (refines 04 Phase 7)
 
 | Phase | Capital at risk | Exit / kill criteria |
 |---|---|---|
-| Paper (all P1 sleeves ≥ 8 weeks) | A$0 | Every P1 sleeve has a walk-forward deflated Sharpe > 0 at 95% with measured costs |
-| Micro-live | A$2–5k | **Kill if:** live implementation shortfall > 2× modelled; live Sharpe after 60 trades < the backtest 5th percentile; **any reconciliation mismatch unexplained within 24h halts everything** |
-| Scale P1, add P2 | Up to A$10–25k in **25% steps after 4 clean weeks each** | **Memecoin kill:** sleeve DD > 30%; negative expectancy after 200 live trades; rug rate among entries > 5%; any single loss > 1% of total equity |
-| 12-month review | Decided at review | Keep only sleeves with positive live net P&L, live Sharpe > 0.5 over 12 months, and beating the benchmark. **Portfolio DD > 25% → flatten to stables + a 30-day review; two such events end the trading programme** and capital moves to hold-and-earn. |
+| Paper (all P1 sleeves ≥ 8 weeks) | A$0 | Every P1 sleeve passes its gate profile (§6): walk-forward **DSR ≥ 0.95** with measured costs, paper ≥ 8 weeks and ≥ 50 trades by default |
+| Micro-live | Starting allocation set per bot: default A$2,000 (suggested A$2–5k) | **Kill (halt the sleeve) if:** live implementation shortfall > 2× modelled; the sleeve's live Sharpe, once it has 60 live trades, < the backtest 5th percentile; **any reconciliation mismatch unexplained within 24 h halts everything** ([16 §2.9](16-configuration-and-safety-model.md#29-reconciliation)) |
+| Scale P1, add P2 | **+25% of the current allocation** (A → 1.25A) after **4 consecutive clean weeks**, up to the sleeve's target cap (e.g. A$10–25k); each step is C3 | **Memecoin kill:** sleeve DD > 30%; negative expectancy after 200 live trades; rug rate among entries > 5%; any single loss > 1% of total equity |
+| 12-month review | Decided at review | Keep only sleeves with positive live net P&L, live Sharpe > 0.5 over 12 months, and beating the benchmark. **System drawdown stage 2 (default 25% below portfolio peak) → flatten to stablecoins/AUD + a 30-day review lock; two such events end the trading programme** and capital moves to hold-and-earn. |
+
+**Capital steps** (defaults, configurable, [16 §2.5](16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)):
+- **Clean week:** a calendar week (Mon–Sun, Sydney) with no kill-criterion breach, no unexplained reconciliation mismatch, no S1/S2 incident on that bot, live implementation shortfall ≤ 1.5× modelled, and weekly P&L inside the backtest's 5th–95th percentile band.
+- **Step up:** after 4 consecutive clean weeks, +25% of the **current** allocation, up to the sleeve's target cap. Each step needs your approval (C3).
+- **Step down:** a kill-criterion warning → back one step. A halt → back to the starting allocation after your review.
+
+**Notes:**
+- The 12-month review is a **scheduled recurring review** (a calendar task), not a phase item; Phase 7 closes once micro-live is stable.
+- If hold-and-earn (M22, Phase 6) isn't built yet when capital must leave trading, the fallback is stablecoins on the venue plus a USER task to move them.
+- The "Kill" column above refines the general signal table in §6; the per-bot rolling 60-trade window there only downgrades.
 
 ## 8. MasterTradingBot integration
 
@@ -222,7 +243,7 @@ You have an existing **deterministic** system (EMA, scalping and rule-based stra
    - A **sizing/risk library** (vol-targeting, per-asset caps, correlation buckets).
    - These live in `mt_core`/`mt_strategy` as our own licence-clean code.
 2. **Execution stays on FP Markets** at first:
-   - **Primary:** the MT5 Python API on a Windows VPS near FP's MT5 servers (LD4 vs NY4 is settled by your client-area server name).
+   - **Primary:** the MT5 Python API on a Windows VPS near FP's MT5 servers (LD4 vs NY4 is settled by your client-area server name). The VPS is hardened, reachable over Tailscale only, holds only the MT5 trade-only login and no other secrets ([07](07-security-notes.md)).
    - **Linux route:** FP Markets' **cTrader Open API**, the M12 cTrader adapter to prototype.
    - NautilusTrader has no official MT5/cTrader adapter, and the community ones are immature, so **none touches live money until tested in paper**.
 3. **Merging:** once merged, MasterTradingBot strategies appear as M0 strategies (template "deterministic rule-based"). They share the risk manager, journal, tax and UI, and their execution adapter is MT5 or cTrader.

@@ -24,7 +24,7 @@ Backtest, validate, optimise and compare strategies, and understand them, using 
 | Field | Options |
 |---|---|
 | Strategy + version | Combobox |
-| Run type | Backtest (fast vectorised screener **or** Nautilus "truth" engine), walk-forward, purged K-fold, Monte Carlo permutation, parameter sweep (Optuna), validation suite (all), distillation (tier A/B) |
+| Run type | Backtest (fast vectorised screener **or** Nautilus "truth" engine), walk-forward, purged K-fold, Monte Carlo permutation, parameter sweep (Optuna), validation suite (all), **tier A training** (Phase 2: train → calibrate → compile, on forward-return / triple-barrier labels from market data), **distillation** (tier A/B from the teacher; Phase 6, hidden until then) |
 | Data range | Date range + `as_of` (point-in-time); instruments; resolution (tick → 1D) |
 | Cost model | **Measured (default)** or custom fees/slippage/latency/funding; shows which measured snapshot is used |
 | Fill model (Nautilus) | L1/L2 replay, queue position, latency |
@@ -32,7 +32,7 @@ Backtest, validate, optimise and compare strategies, and understand them, using 
 | Sweep space | Param ranges from the manifest, objective, trials, complexity penalty |
 | Resources | Max workers, time cap |
 
-**Submit:** `lab.backtest.run` / `lab.sweep.run` / `lab.validate.run` (C1). The run shows in the queue with progress.
+**Submit:** `lab.backtest.run` / `lab.sweep.run` / `lab.validate.run` / `models.tiera.train` (C1). The run shows in the queue with progress.
 
 **Job queue:**
 - **Columns:** status, type, strategy, progress, ETA, started.
@@ -55,10 +55,10 @@ Backtest, validate, optimise and compare strategies, and understand them, using 
 |---|---|
 | Summary | Return, CAGR, Sharpe, Sortino, Calmar, max DD, hit rate, profit factor, turnover, exposure, **costs breakdown** (fees, spread, slippage, funding/swap); equity curve vs benchmark; drawdown chart; monthly returns heatmap |
 | Trades | Trade list (`DataTable`, card view on phones); click → chart with entry/exit markers |
-| Robustness | Walk-forward folds table; MC permutation distribution with p-value marker; bootstrap Sharpe CI; deflated Sharpe; parameter-stability heatmap (sweeps) |
-| Bias checks | Look-ahead & recursive analyser results (pass/fail with offending signals); point-in-time audit (any data with `ingest_time > as_of` → fail) |
-| Costs | Modelled vs measured costs; sensitivity (results at 0.5×/1×/2× costs) |
-| Gates | Which promotion gates this run satisfies (feeds D03 Gates) |
+| Robustness | Walk-forward folds table with the **positive-fold share** and the **worst fold** (vs the default gate: ≥ 60% positive, worst ≥ −sleeve halt drawdown); MC permutation distribution with p-value marker; bootstrap Sharpe CI; **deflated Sharpe** (a probability; gate default ≥ 0.95) shown next to the **trial counter**; **per-year** and **per-regime** tables (bull/bear/chop, [16 §2.4.1](../../16-configuration-and-safety-model.md#241-regime-labels-for-per-regime-results)); parameter-stability heatmap (sweeps) |
+| Bias checks | Look-ahead & recursive analyser results (pass/fail with offending signals); leakage review findings, each **waivable by you** (`lab.leakage.waive`, C2, reason required, audited); point-in-time audit (any data with `ingest_time > as_of` → fail) |
+| Costs | Modelled vs measured costs; sensitivity at 0.5× / 1× / 2× / 3× costs with the **2× verdict** (gate: still profitable, default) and the 3× result reported |
+| Gates | `GateChecklist`: which gates of the strategy's profile this run satisfies, with each threshold (default or overridden, [16 §2.4](../../16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)) (feeds D03 Gates) |
 | Reproduce | Code version, manifest, data snapshot ids, seed, engine version; "Re-run" button |
 
 **Actions:**
@@ -67,6 +67,7 @@ Backtest, validate, optimise and compare strategies, and understand them, using 
 |---|---|---|
 | Re-run | `lab.backtest.run` | C1 |
 | Promote strategy stage | `strategy.promote` | C1 |
+| Waive a leakage finding | `lab.leakage.waive` | C2 (reason required) |
 | Export report (PDF/HTML) | — | C0 |
 | Open in notebook | Deep link (desktop) | C0 |
 
@@ -99,4 +100,4 @@ Opened from D03 "Describe it", or from here:
 
 - **Queries:** `/lab/backtests`, `/lab/backtests/{id}`, `/lab/experiments`, `/lab/experiments/{id}`, `/lab/jobs`, `/data/costs?snapshot=`.
 - **WebSocket topics:** `lab.job`.
-- **Commands:** `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `strategy.create`, `strategy.promote`.
+- **Commands:** `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `lab.leakage.waive`, `models.tiera.train`, `strategy.create`, `strategy.promote`.

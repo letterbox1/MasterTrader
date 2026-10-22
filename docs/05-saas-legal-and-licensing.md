@@ -6,7 +6,7 @@
 
 The personal-use freedoms **do not carry over**, but the project doesn't "go out the window" either. Three separate things change:
 
-1. **Open-source licences:** mostly manageable if you followed the hygiene in [build spec §9](03-build-spec.md#9-minimal-future-proof-hygiene-cheap-now-saves-a-rewrite-if-you-ever-go-saas). Only the **AGPL** parts and a few source-available licences force real changes.
+1. **Open-source licences:** mostly manageable if you followed the hygiene in [build spec §9](03-build-spec.md#9-future-proof-hygiene). Only the **AGPL** parts and a few source-available licences force real changes.
 2. **Data licences:** the **biggest practical blocker**. Most free data is personal/non-commercial only, and serving it to paying users needs paid commercial or redistribution licences.
 3. **Financial regulation:** potentially the **biggest legal blocker**. Giving other people trading signals or running automated trading on their accounts can make you an investment adviser or a broker under the law.
 
@@ -22,7 +22,7 @@ Key facts:
 | Component | Licence | SaaS impact | What to do |
 |---|---|---|---|
 | NautilusTrader | LGPL-3.0 | ✅ OK as an unmodified dependency on your servers | If you modify Nautilus itself, you only have to publish those changes if you *distribute* it (e.g., a desktop app). Simplest: don't fork it; upstream fixes. |
-| freqtrade code | GPL-3.0 | ✅ OK for pure server-side SaaS (no distribution) | ⚠️ If you ever ship a desktop/on-prem/self-hosted version to customers, the whole combined program must be GPL. Keep it isolated (§9) or rewrite it clean-room. |
+| freqtrade code (look-ahead/recursive analysers, vendored under `third_party/` and isolated in `mt_lab` for personal use, [03 §1](03-build-spec.md#1-ground-rules)) | GPL-3.0 | ⚠️ Licence-wise OK for pure server-side SaaS (no distribution) | **Decided (P2-B051):** for a SaaS, replace the vendored analysers with a **clean-room re-implementation** before launch. That also keeps any later desktop/on-prem/self-hosted version from forcing the whole combined program to be GPL. Until then, keep it isolated (§9). |
 | Hummingbot, TradingAgents, FinRobot | Apache-2.0 | ✅ OK | Keep LICENSE/NOTICE files. **Don't use "FinRobot" in your product name** (its trademark policy). |
 | Vibe-Trading, osiris, Hindsight, LightRAG, ccxt | MIT | ✅ OK | Keep copyright notices. Remove osiris's token panel and unreviewable `.pyc` files anyway. |
 | **nofx** | **AGPL-3.0** | ❌ Using its code in the SaaS forces you to publish the SaaS source to users | Don't use it; re-implement ideas clean-room (already the plan). |
@@ -37,7 +37,7 @@ Key facts:
 
 **Licence checklist for a SaaS launch:**
 1. Generate an SBOM (e.g., `pip-licenses`, `syft`) and fail CI on AGPL, SSPL, Commons Clause or "non-commercial" licences in customer-facing services.
-2. Remove or replace: nofx-derived code, MiroFish, vectorbt (open), any GPL code *if* you will ever distribute software.
+2. Remove or replace: nofx-derived code, MiroFish, vectorbt (open), the vendored freqtrade analysers (clean-room rewrite), and any other GPL code *if* you will ever distribute software.
 3. Ship a "third-party notices" page in the product (Apache/MIT attribution).
 4. Have a lawyer review the result once, before launch.
 
@@ -58,7 +58,7 @@ Key facts:
 | Free tiers: Finnhub, Alpha Vantage, FMP, Twelve Data, CoinGecko Demo, Etherscan, Polygon free | ✅ | ❌ Paid commercial plans required. |
 | Reddit API | ✅ (approved app) | ❌ Commercial use needs a paid Reddit data agreement. |
 | X/Twitter | ⚠️ (official API only) | Official paid API tiers only. |
-| Telegram public channels | ✅ | ⚠️ Grey area; follow Telegram's terms and the channels' rights. |
+| Telegram public channels | ✅ postures only: no Telegram text in any model, RAG index or training set ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) | ⚠️ Grey area; follow Telegram's terms and the channels' rights. |
 | News article full text | ✅ (reading) | ❌ Storing or redisplaying full articles is a copyright issue. Show headline + link + your own summary/sentiment, or license a news API. |
 | LLM providers (Claude, OpenAI…) | ✅ | ✅ Commercial API terms allow it; follow the usage policies on financial advice. |
 
@@ -89,7 +89,7 @@ Other SaaS obligations:
 
 ## 4. What to do *now* so a SaaS flip stays cheap
 
-1. Follow [build spec §9](03-build-spec.md#9-minimal-future-proof-hygiene-cheap-now-saves-a-rewrite-if-you-ever-go-saas):
+1. Follow [build spec §9](03-build-spec.md#9-future-proof-hygiene):
    - keep a `third_party/LICENSES.md` manifest;
    - keep GPL/AGPL code isolated;
    - tag every data source `license: personal|commercial_ok|unknown`.
@@ -103,6 +103,6 @@ Other SaaS obligations:
 |---|---|
 | Can I use everything (incl. GPL/AGPL) for personal use? | **Yes.** |
 | Does flipping to a SaaS make the project impossible? | **No.** |
-| What must change for a SaaS? | Drop/replace the AGPL bits (nofx, MiroFish), Commons-Clause vectorbt and non-commercial data. Pay for commercial data. Choose a product shape that fits your regulatory appetite. |
+| What must change for a SaaS? | Drop/replace the AGPL bits (nofx, MiroFish), Commons-Clause vectorbt and non-commercial data; rewrite the vendored freqtrade analysers clean-room. Pay for commercial data. Choose a product shape that fits your regulatory appetite. |
 | Biggest cost? | Data licences. |
 | Biggest legal risk? | Financial regulation (advice / managing others' money), not GitHub licences. |
