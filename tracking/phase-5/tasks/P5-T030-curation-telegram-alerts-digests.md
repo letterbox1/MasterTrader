@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T029]
+depends_on: [P5-T029, P2-T035, P1-T045]
 requirements: [R5.20, R5.22]
 roadmap_todos: [T5.30]
 modules: [M19, M15]
 dashboards: [D13]
+tools: [uv]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p5/P5-T030-curation-telegram-alerts-digests
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T030 · Telegram task buttons, instant alerts and daily/weekly digests
@@ -37,8 +42,8 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 ## Context & references
 
 - Roadmap: [R5.20](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md), [R5.22](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.30 · soak P5-T063
-- [08 cadence](../../../docs/08-airdrops-and-token-launches.md#user-task-queue--digests) · [mobile & Telegram](../../../docs/ui/mobile-and-telegram.md) (buttons; quiet hours except critical) · P2 Telegram bot (T2.33)
-- Buttons list in mobile doc lacks Details → P5-B014
+- [08 cadence](../../../docs/08-airdrops-and-token-launches.md#user-task-queue--digests) · [mobile & Telegram](../../../docs/ui/mobile-and-telegram.md) (buttons; quiet hours except critical) · P2 Telegram bot (P2-T035) and alert fan-out (P1-T045)
+- Buttons Done / Skip / Snooze 1d·1w / Details / Never, as in 08 and [mobile §3](../../../docs/ui/mobile-and-telegram.md) (decision P5-B014, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions))
 
 ## Requirements
 
@@ -61,7 +66,7 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 ### Tests
 - Unit: digest golden snapshots (daily, weekly) from fixture data.
 - Unit: DST transition (first Sunday of April/October) schedules at the right local time.
-- Integration: pressing Done in Telegram and in the UI produce identical `audit.command` rows except `source`.
+- Integration: pressing Done in Telegram and in the UI produce identical `audit.command` rows except `source` (built against a mocked Telegram Bot API; no token needed in CI).
 
 ### Scenarios
 - Given quiet hours 22:00–07:00 and a non-critical deadline alert at 23:00, then it is held until 07:00; a phishing warning on a tracked project is sent immediately.
@@ -85,12 +90,12 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 - Do NOT include Telegram channel text in digests or any model input; postures/counts only.
 - Do NOT send unsolicited messages to anyone but the user.
 - Do NOT let Telegram text reach any model, RAG index or training set; Telegram contributes deterministic postures only (12 §4–5).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
 
-- `docs/ui/mobile-and-telegram.md`: task buttons include Details.
+- `docs/ui/mobile-and-telegram.md`: confirm digest times (Details is already listed).
 - `docs/08-airdrops-and-token-launches.md`: digest times.
 - `docs/roadmap/phase-5-airdrops-wallets-curation.md`: tick T5.30 when this lands (with the other tasks sharing that ToDo).
 
@@ -103,3 +108,4 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Details button per P5-B014; mocked Telegram in CI; P2 bot and P1 alerts as deps)

@@ -15,17 +15,22 @@ requirements: [R5.13]
 roadmap_todos: [T5.26]
 modules: [M4]
 dashboards: [D12]
+tools: [uv, docker]
+mcp: []
+env: []
+services: []
 branch: p5/P5-T037-risk-heuristics-score-composition
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T037 · Risk heuristics (solana-rugchecker, CRPWarner concepts, EVM/Solana features) and 0–100 score
@@ -101,3 +106,4 @@ A deterministic, explainable risk score 0–100 combines re-implemented solana-r
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; content already matches 08 risk score)

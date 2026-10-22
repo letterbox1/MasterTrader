@@ -10,29 +10,34 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T011, P5-T041, P5-T043, P5-T044, P5-T046]
+depends_on: [P5-T011, P5-T041, P5-T043, P5-T044, P5-T046, P0-T050]
 requirements: [R5.23]
 roadmap_todos: [T5.31]
 modules: [M15, M4, M19, M18]
 dashboards: [D12]
+tools: [pnpm, node>=20, uv]
+mcp: []
+env: []
+services: [mt-api]
 branch: p5/P5-T048-ui-d12-airdrops
 pr: ""
 doc_sync: [docs/ui/dashboards/D12-airdrops.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T048 · UI: D12 Airdrops & Launches (radar, detail, wallet & mandates)
 
 ## Goal / expected outcome
 
-D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with filters and Viable/Watching/Rejected/Claims segments, detail with overview, risk report (hard fails, findings, raw provider reports collapsed), viability/EV breakdown, eligibility, path (auto-claim with simulation diff or task steps) and history; wallet page with hot wallets, mandates (create = C3), approvals audit and exec log — passing the viewport matrix.
+D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with filters and Viable/Watching/Rejected/Claims segments, detail with overview, risk report (hard fails, findings, raw provider reports collapsed), viability/EV breakdown, eligibility, path (auto-claim with simulation diff or task steps) and history; wallet page with the airdrop identity wallets and burners (not the hot trading wallet), mandates (create = C3), approvals audit and exec log — passing the viewport matrix.
 
 ## Context & references
 
@@ -47,6 +52,8 @@ D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with f
 - Links re-checked against blocklists at render; unsafe links as plain text with warning.
 - Actions: re-score C0, reject C1, add URL C0, execute claim C2 (simulation shown), create mandate C3, revoke mandate C1, revoke approval C2, sweep C2.
 - Kill switch ON: banner and auto-claim controls disabled.
+- Identity wallet widget: balance vs float (default ≤ A$300 per chain; burners ≤ A$50), gas budget used today (default A$20/day, alert at 80%), signer cap usage (defaults A$250 per transaction, A$1,000 per rolling 24 h), all read from the limits store ([16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)), never hard-coded.
+- History shows the manual-sale disposal task for each claim (P5-B010).
 - Layouts per tier (≥ 2xl 6/12/6; xl–md stacked; ≤ ph segmented cards); live updates p95 < 500 ms; tables ≤ 1 Hz.
 
 ## ToDo
@@ -85,7 +92,7 @@ D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with f
 
 - Do NOT render connect-wallet, sign-permit, approve-unknown-contract, seed/key entry, multi-wallet or automated-social controls anywhere (D12/D18 never-offered lists).
 - Do NOT enforce confirmation levels only in the UI; the server enforces C0–C3 (02 §7.2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -102,3 +109,4 @@ D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with f
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (identity wallets not hot per P5-B017; limits from 16 §2.7; disposal tasks in history; P0 app shell dep)

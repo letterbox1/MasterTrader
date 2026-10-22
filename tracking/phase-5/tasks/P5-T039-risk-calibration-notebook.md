@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T037, P5-T038]
+depends_on: [P5-T037, P5-T038, P2-T046]
 requirements: [R5.13]
 roadmap_todos: [T5.26]
 modules: [M4, M7]
 dashboards: []
+tools: [uv, jupyter]
+mcp: []
+env: []
+services: [mlflow]
 branch: p5/P5-T039-risk-calibration-notebook
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T039 · Risk calibration notebook on SoK, SolRPDS, Pump.fun corpus and MemeTrans
@@ -98,3 +103,4 @@ A reproducible notebook (`notebooks/m4_risk_calibration.ipynb` + `mt_airdrop.ris
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; MLflow registry P2-T046 as an explicit dep)

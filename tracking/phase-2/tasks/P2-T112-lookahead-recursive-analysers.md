@@ -15,29 +15,34 @@ requirements: [R2.43]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T112-lookahead-recursive-analysers
 pr: ""
 doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T112 · Look-ahead and recursive bias analysers
 
 ## Goal / expected outcome
 
-Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-analysis` / `recursive-analysis` methods) that run on every validation and fail strategies whose signals change when future data is removed or whose indicators depend on start-up length.
+Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-analysis` / `recursive-analysis`, **vendored under `third_party/` with their GPL-3.0 licence and isolated in `mt_lab`**) that run on every validation and fail strategies whose signals change when future data is removed or whose indicators depend on start-up length.
 
 ## Context & references
 
 - Roadmap: [R2.43](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27 · verified by P2-T160
-- [03 M7 'freqtrade analysers (vendored)'](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) vs [01 §3.3 freqtrade GPL-3.0, re-implement](../../../docs/01-repo-vetting-report.md#33-freqtrade--reference-only): licence route decided in P2-B051 — default here is a clean-room re-implementation in `mt_lab/bias/`
+- Licence route decided ([17 §A P2-B051](../../../docs/17-decisions-register.md#a-s2-items-all-resolved), [03 §1 personal use](../../../docs/03-build-spec.md#1-ground-rules), [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab)): MasterTrader is personal and never distributed, so the freqtrade analysers are **vendored** under `third_party/freqtrade_analysers/` with their GPL-3.0 licence, isolated in `mt_lab` (only `mt_lab/bias/` imports them); a clean-room rewrite is needed only for a SaaS ([05](../../../docs/05-saas-legal-and-licensing.md)).
 - [D04 Bias checks tab](../../../docs/ui/dashboards/D04-research-lab.md) · [03 §8 item 3](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable)
 
 ## Requirements
@@ -50,8 +55,9 @@ Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-a
 
 ## ToDo
 
-- [ ] Decide licence route per P2-B051 (default: clean-room from the public docs, no GPL code copied); record in `third_party/LICENSES.md` if vendoring as an external process
-- [ ] Implement `mt_lab/bias/lookahead.py`, `recursive.py`, `repaint.py` against the M0 strategy interface (works for template and code strategies)
+- [ ] Vendor the freqtrade look-ahead/recursive analyser modules (pinned upstream commit) under `third_party/freqtrade_analysers/` with the GPL-3.0 `LICENSE` and a NOTICE; record them in `third_party/LICENSES.md`; strip any telemetry
+- [ ] Implement `mt_lab/bias/lookahead.py`, `recursive.py` (adapters calling the vendored analysers) and `repaint.py` against the M0 strategy interface (works for template and code strategies)
+- [ ] Import-linter contract: only `mt_lab.bias` may import `third_party.freqtrade_analysers`
 - [ ] Register as validation sections; persist details for D04
 - [ ] Fixture strategies: clean, look-ahead (uses `close.shift(-1)`), recursive (EMA without warm-up), repainting (uses the forming bar)
 - [ ] Tests + docs
@@ -73,7 +79,7 @@ Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-a
 
 - [ ] Four fixture strategies classified correctly
 - [ ] Results visible per validation run
-- [ ] Licence route recorded (P2-B051)
+- [ ] Vendored code isolated in `mt_lab` (import contract) with its GPL licence recorded in `third_party/LICENSES.md`
 - [ ] CI green (lint, types, tests, `pit` check)
 
 ## Exceptions & edge cases
@@ -83,14 +89,14 @@ Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-a
 
 ## Cardinal rules (do NOT)
 
-- Do NOT copy freqtrade (GPL-3.0) source into the platform packages unless P2-B051 explicitly decides to accept GPL for this module.
+- Do NOT import the vendored GPL analysers from anywhere but `mt_lab.bias`, and do NOT distribute or serve the platform to others (that would need the clean-room rewrite, 05).
 - Do NOT add telemetry or referral IDs via vendored code; pin images by digest; record vendored code in `third_party/LICENSES.md`.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
 
-- `docs/03-build-spec.md` M7: replace 'vendored' with the chosen route.
-- `third_party/LICENSES.md`: entry if anything is vendored.
+- `docs/03-build-spec.md` M7: confirm the vendored path and pinned upstream commit.
+- `third_party/LICENSES.md`: freqtrade analysers entry (GPL-3.0).
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.27 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
@@ -102,3 +108,4 @@ Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-a
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (freqtrade analysers vendored under third_party/ with GPL licence, isolated in mt_lab (17 §A P2-B051))

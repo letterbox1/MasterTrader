@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P2-T104, P2-T113]
+depends_on: [P2-T101, P2-T104, P2-T113, P2-T044, P2-T005, P0-T042]
 requirements: [R2.45]
 roadmap_todos: [T2.28]
 modules: [M7, M0, M21]
 dashboards: [D03, D04]
+tools: [uv, docker, runsc]
+mcp: []
+env: []
+services: [litellm]
 branch: p2/P2-T116-sandbox-runner-and-generator
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T116 · Sandbox runner and LLM strategy generator
@@ -38,7 +43,8 @@ checkpoint: ""
 
 - Roadmap: [R2.45](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.28 · verified by P2-T165 (escape test)
 - [SPEC NN4](../../../SPEC.md#non-negotiable-requirements) · [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [07 security notes](../../../docs/07-security-notes.md) (gVisor/`--network none`; never run cloned bot code outside the sandbox) · [01 §3.4 Vibe-Trading in-process exec risk](../../../docs/01-repo-vetting-report.md#34-hkudsvibe-trading--research-and-strategy-generation-layer)
-- Part-A prerequisites: `sandbox` container + gVisor runtime + resource limits (T2.40), manifest validator incl. never-build rules (T2.20) in part A (P2-T001–T099)
+- Prerequisites (`depends_on`): `sandbox` container + gVisor runtime + resource limits (P2-T044, T2.40); never-build validator (P2-T005, T2.20); LiteLLM gateway role keys (P0-T042).
+- Budget: role `strategy-gen` default $0.50/day, over budget → local model fallback ([16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)).
 - UI: [D03 'Describe it' tab](../../../docs/ui/dashboards/D03-strategies.md), [D04 generator panel](../../../docs/ui/dashboards/D04-research-lab.md)
 
 ## Requirements
@@ -109,3 +115,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (sandbox/never-build/gateway deps, strategy-gen budget default)

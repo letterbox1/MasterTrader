@@ -15,17 +15,22 @@ requirements: [R5.11]
 roadmap_todos: [T5.25]
 modules: [M4]
 dashboards: [D12]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p5/P5-T034-normalise-official-domain-corroboration
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T034 · Normalise and dedupe, verify official domain, corroboration score
@@ -98,3 +103,4 @@ Observations collapse into `airdrop_opportunity` keyed by (chain, contract) else
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; content already matches 08 normalise/corroboration)

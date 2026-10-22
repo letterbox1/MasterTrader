@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T032]
+depends_on: [P5-T032, P4-T019, P4-T020, P4-T025, P4-T028]
 requirements: [R5.10]
 roadmap_todos: [T5.25]
 modules: [M4, M2]
 dashboards: [D12]
+tools: [uv]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p5/P5-T033-discovery-intake-discord-telegram-add
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T033 · Discovery intake: Discord inbox classification, Telegram postures, news and /add <url>
@@ -37,7 +42,7 @@ Airdrop candidates also arrive from the P4 Discord inbox (followed announcement 
 ## Context & references
 
 - Roadmap: [R5.10](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.25
-- P4 prerequisites: Discord bot (R4.04), Telegram postures (R4.02, R4.03), text chain (R4.06)
+- P4 prerequisites: Discord bot ingest (P4-T020), Telegram postures (P4-T019; table `text.telegram_posture`, subject `posture.telegram.*`, 17 §D P4-B002), provenance gate (P4-T025), tier B question registry (P4-T028)
 - [08 autonomous 4](../../../docs/08-airdrops-and-token-launches.md#what-may-run-autonomously) (Discord classification) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (Telegram)
 
 ## Requirements
@@ -101,3 +106,4 @@ Airdrop candidates also arrive from the P4 Discord inbox (followed announcement 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit P4 deps; Telegram postures only per 02 F3/P4-B001)

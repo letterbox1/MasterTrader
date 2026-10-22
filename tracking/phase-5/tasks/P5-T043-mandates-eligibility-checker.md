@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T010, P5-T011, P5-T012, P5-T042]
+depends_on: [P5-T010, P5-T011, P5-T012, P5-T042, P2-T035]
 requirements: [R5.15]
 roadmap_todos: [T5.28]
 modules: [M4, M22]
 dashboards: [D12]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p5/P5-T043-mandates-eligibility-checker
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T043 · Mandates (C3 create, C1 revoke, expiry) and public-address eligibility checker
@@ -41,7 +46,7 @@ checkpoint: ""
 
 ## Requirements
 
-- Create validation: wallet tier = identity (or burner for burner runs); contracts verified; selectors decode to claim-type functions (no approve/permit/transfer-out — NA checks); `msg.value` cap = 0; expiry ≤ 90 days; gas cap within custody caps.
+- Create validation: wallet tier = identity (or burner for burner runs); contracts verified; selectors decode to claim-type functions (no approve/permit/transfer-out — NA checks); `msg.value` cap = 0; expiry ≤ 90 days; gas/value caps within the confirmed limits store (P5-T012; defaults [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)).
 - C3 flow: preview in D12 → Telegram approve + TOTP → cool-down (default 15 min) → `created` row; revoke = immediate `revoked` row (C1); expiry job appends `expired` rows.
 - Signer allow-list for the wallet derives from the union of active mandates (tighten on revoke/expiry within 1 min).
 - Eligibility: fetch official Merkle tree/proof from the official domain (verified link) or call view functions via RPC with the public address; record proof hash and amount; never connect a wallet or post the address to third-party "checkers".
@@ -99,3 +104,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (mandate caps bounded by the 16 §2.7 limits store; Telegram C3 dep P2-T035)

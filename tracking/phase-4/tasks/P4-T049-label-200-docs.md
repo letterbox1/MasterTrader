@@ -56,7 +56,7 @@ You have labelled the ~200-document batch relevant/irrelevant (and, where obviou
 - [ ] Open the link the agent posts to Telegram (`/intel?label=batch-<id>`) on desktop or phone.
 - [ ] Label each document: **1** relevant, **0** irrelevant, **s** skip if unsure (aim for < 10% skips).
 - [ ] Optionally set direction (bull/bear/neutral) when clear.
-- [ ] When done, reply 'labels done' to the agent or tick this task; the agent runs calibration.
+- [ ] When done, reply 'labels done' to the agent or tick this task; the agent runs calibration in P4-T053.
 
 ## Verification
 
@@ -72,7 +72,7 @@ You have labelled the ~200-document batch relevant/irrelevant (and, where obviou
 ## Acceptance criteria
 
 - [ ] ≥ 180 non-skip labels recorded
-- [ ] Agent confirms calibration ran on your labels (P4-T048)
+- [ ] Agent confirms calibration ran on your labels (P4-T053)
 
 ## Exceptions & edge cases
 

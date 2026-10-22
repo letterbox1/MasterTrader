@@ -15,17 +15,22 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04, D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T109-walk-forward-and-purged-kfold
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T109 · Walk-forward (worst fold) and purged K-fold validation
@@ -40,11 +45,12 @@ checkpoint: ""
 - [14 §6 gate 3](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (worst fold, share of positive folds) · [03 §8 items 1 and 7](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable)
 - Shown in [D04 Robustness tab](../../../docs/ui/dashboards/D04-research-lab.md) and [D03 detail 'worst walk-forward fold'](../../../docs/ui/dashboards/D03-strategies.md)
 - Runs on truth results only for gate purposes (P2-T105); screener allowed for exploration
+- Gate default ([16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile), per-strategy gate profile, loosening C3): **≥ 60% of folds positive and worst fold ≥ −(sleeve halt drawdown)** (sleeve halt default 15%).
 
 ## Requirements
 
 - Walk-forward: anchored and rolling modes; configurable train/test lengths (defaults: 24 months train / 3 months test for daily/4h strategies; scaled by bar spec); re-optimisation per fold optional (Optuna inside the train window only).
-- Outputs per fold: OOS return, Sharpe, max DD, trade count, after measured costs; summary: share of positive folds, worst-fold Sharpe/return, fold dispersion.
+- Outputs per fold: OOS return, Sharpe, max DD, trade count, after measured costs; summary: share of positive folds, worst-fold Sharpe/return/drawdown, fold dispersion; the worst-fold comparison uses the strategy's sleeve halt drawdown from the layered policy, never a constant.
 - Purged K-fold (López de Prado): K default 5, purge observations whose label horizon overlaps the test fold, embargo default 1% of observations after each test fold.
 - Fold boundaries align to bar closes (P2-T103 convention); each fold's data hash recorded.
 - Every fold trial registers with the trial counter (P2-T108).
@@ -104,3 +110,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (walk-forward gate default from 16 §2.4 (≥ 60% positive, worst fold ≥ −sleeve halt DD))

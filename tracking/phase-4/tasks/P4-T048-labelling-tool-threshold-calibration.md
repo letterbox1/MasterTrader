@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A calibration script reads your labels from `models.label` (written through the P4-T062 labelling tool during P4-T049) and picks the relevance-gate threshold at the target precision, writing it as a new `models.question` version. It's built and tested on synthetic labels first, then run on your ~200 labels; P4-T053 measures the result.
+A calibration script reads your labels from `models.label` (written through the P4-T062 labelling tool during P4-T049) and picks the relevance-gate threshold at the target precision, writing it as a new `models.question` version. It's built and tested on synthetic labels, so it doesn't wait for your labelling; P4-T053 runs it on your ~200 labels, activates the threshold and measures the result.
 
 ## Context & references
 
@@ -57,7 +57,6 @@ A calibration script reads your labels from `models.label` (written through the 
 
 - [ ] Calibration script (`tools/calibrate/semif_threshold.py`) + MLflow logging.
 - [ ] `models.question.update` activation step with the chosen threshold.
-- [ ] Run on the P4-T049 labels and record the outcome.
 - [ ] Tests.
 
 ## Verification
@@ -76,7 +75,7 @@ A calibration script reads your labels from `models.label` (written through the 
 
 ## Acceptance criteria
 
-- [ ] Calibration runs on your labels and writes a new question version with the chosen threshold
+- [ ] Calibration runs end to end on a synthetic labelled set and writes a new question version with the chosen threshold (the run on your labels is P4-T053)
 - [ ] MLflow run records precision/recall/F1/ECE and the 16 §2.10 targets used
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, viewport matrix + axe)
 

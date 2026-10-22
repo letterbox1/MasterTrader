@@ -15,17 +15,22 @@ requirements: [R2.47]
 roadmap_todos: [T2.30]
 modules: [M21, M7]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [mlflow, postgres]
 branch: p2/P2-T125-tier-a-training-pipeline
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T125 · Tier A training pipeline (dataset, labels, GBDT/linear/MLP)
@@ -38,7 +43,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 
 - Roadmap: [R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.30
 - [10 §4.3 tier A](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [12 §5 provenance](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (training refuses `train_ok=false`)
-- Label source before the P6 teacher exists is unspecified: P2-B057 (this task uses outcome labels: forward-return sign / triple-barrier)
+- Label source decided ([17 §D P2-B057](../../../docs/17-decisions-register.md#d-other-decisions), [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design)): until the P6 teacher exists, tier A trains on forward-return sign / triple-barrier labels from market data; training runs via `models.tiera.train` (C1).
 - Distillation from the M8 teacher is P6 ([phase 6](../../../docs/roadmap/phase-6-ai-models-treasury.md) R6.14); this pipeline must accept a teacher-label source later without redesign
 
 ## Requirements
@@ -53,7 +58,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 ## ToDo
 
 - [ ] Implement `packages/mt_models/tier_a/train.py` (dataset, LabelSource, splits, trainers)
-- [ ] Register `tier_a_train` JobRunner, the `lab.tier_a.train` command (P2-B056) and the D04 run type
+- [ ] Register `tier_a_train` JobRunner, the `models.tiera.train` command (C1, 02 §7.2) and the D04 'tier A training' run type
 - [ ] Provenance refusal + tests
 - [ ] MLflow logging
 - [ ] Doc
@@ -106,3 +111,4 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (labels and models.tiera.train (C1) per 17 §D)

@@ -15,17 +15,22 @@ requirements: [R2.47]
 roadmap_todos: [T2.30]
 modules: [M21]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T126-tier-a-calibration
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T126 · Tier A calibration (isotonic/Platt) with Brier and ECE
@@ -94,3 +99,4 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

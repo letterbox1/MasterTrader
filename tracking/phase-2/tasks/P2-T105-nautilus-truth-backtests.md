@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T102, P2-T103]
+depends_on: [P2-T102, P2-T103, P2-T003, P2-T017]
 requirements: [R2.40, R2.41, R2.01]
 roadmap_todos: [T2.27]
 modules: [M7, M0]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p2/P2-T105-nautilus-truth-backtests
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T105 · Nautilus truth backtest runner with L1/L2 replay and measured fills
@@ -46,7 +51,7 @@ checkpoint: ""
 - Load the strategy by id/version from the registry and run it with zero code changes in `BacktestEngine` (same class used by `engine` for paper).
 - Data: Nautilus catalog replay of ticks/quotes/trades/book deltas or bars from P2-T103 datasets; L2 replay where recorded.
 - Fill model: fills only at prices/sizes that existed (book walk on L2; L1 with size cap otherwise), optional queue-position model, latency from the cost snapshot; venue fees and funding/swap applied at their timestamps.
-- Risk: route orders through the M11 pre-trade layer in backtest mode (part A API) so limits, collars, DQ blocks and the 2× cap apply identically.
+- Risk: route orders through the M11 pre-trade layer in backtest mode (P2-T017 API) so effective limits (strictest across L0–L4, as of the run's policy version), two-stage drawdowns, collars, DQ blocks, data age on the simulated clock, decision deadlines and the 2× cap apply identically; live-only states (`audit.integrity`, `egress.status`) are treated as `ok` and recorded as such.
 - Determinism: fixed seed + data_hash + code_sha + Nautilus version ⇒ identical trades (D04 acceptance 4).
 - Result row: `engine=truth`, `gate_eligible=true` unless costs are custom/zero; trades, fills, positions, equity, cost breakdown (fees, spread, slippage, funding/swap).
 - Runtime target: 1 month of 1-s L1 for one crypto symbol in < 10 min on 1 core.
@@ -111,3 +116,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (M11 in backtest mode applies layered limits, drawdown stages, data age on the simulated clock; deps on base classes and RiskGate)

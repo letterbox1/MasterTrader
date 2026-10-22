@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T047, P4-T030, P4-T044, P4-T049, P4-T003, P4-T067, P4-T068]
+depends_on: [P4-T047, P4-T030, P4-T044, P4-T053, P4-T003, P4-T067, P4-T068]
 requirements: [R4.14, R4.01]
 roadmap_todos: [T4.80]
 modules: [M2, M15]
@@ -104,3 +104,4 @@ For 14 consecutive days the morning brief is delivered, you mark items useful/no
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (first live run: depends on your lists (P4-T003) and live checks P4-T067/T068; brief per mob §3 (17 §D P4-B011))
+- 2026-10-22 00:00 · aligner · waits for the calibrated gate (P4-T053) instead of the raw labels

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T130, P2-T131, P2-T132]
+depends_on: [P2-T130, P2-T131, P2-T132, P2-T002]
 requirements: [R2.48]
 roadmap_todos: [T2.67]
 modules: [M0]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T133-verify-mtb-golden-files
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T133 · Verify MasterTradingBot golden files match
@@ -37,7 +42,7 @@ Proof that the shared libraries reproduce MasterTradingBot exactly: every provid
 ## Context & references
 
 - Roadmap: [R2.48](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.67
-- [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · golden inputs from USER item T2.04 in part A (P2-T001–T099) (currently P2-T002: rule descriptions + historical signal/trade outputs)
+- [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · golden inputs from your USER item P2-T002 (T2.04: rule descriptions + historical signal/trade outputs), a true precondition
 - Libraries/template: P2-T130, P2-T131, P2-T132
 
 ## Requirements
@@ -98,3 +103,4 @@ Proof that the shared libraries reproduce MasterTradingBot exactly: every provid
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on the USER golden inputs (P2-T002))

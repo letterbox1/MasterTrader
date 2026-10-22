@@ -15,17 +15,22 @@ requirements: [R2.47]
 roadmap_todos: [T2.30]
 modules: [M21]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [mlflow]
 branch: p2/P2-T127-tier-a-compile-and-registry
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T127 · Tier A compile (ONNX/Treelite/lleaves) and MLflow registry
@@ -37,7 +42,7 @@ Calibrated tier-A models are compiled to ONNX Runtime, Treelite or lleaves, veri
 ## Context & references
 
 - Roadmap: [R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.30
-- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21 model registry in MLflow](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · registry stages/artefact storage from T2.41 in part A (P2-T001–T099)
+- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21 model registry in MLflow](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · registry stages/artefact storage from P2-T046 (T2.41)
 - [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) M21 owns `models.registry`
 
 ## Requirements
@@ -100,3 +105,4 @@ Calibrated tier-A models are compiled to ONNX Runtime, Treelite or lleaves, veri
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; MLflow storage link)

@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T127, P2-T120]
+depends_on: [P2-T127, P2-T120, P2-T003, P2-T009, P2-T018]
 requirements: [R2.47, R2.N1]
 roadmap_todos: [T2.30]
 modules: [M21, M0]
 dashboards: [D03, D01]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T128-tier-a-inprocess-runtime
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T128 · Tier A in-process runtime loader and latency histogram
@@ -38,7 +43,7 @@ checkpoint: ""
 
 - Roadmap: [R2.47, R2.N1](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.30 · benchmarked in P2-T162
 - [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (in-process, no network hop; inputs M6 + cached tier B) · [02 F2 step 2](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · [02 §9.2 SLO](../../../docs/02-v1-architecture.md#92-observability--slos)
-- Part-A prerequisites: M0 strategy base classes (T2.20) and ML-signal template (T2.21); fallback ladder rung 4 'model service down → deterministic rules only' in M11 (T2.22) in part A (P2-T001–T099)
+- Prerequisites (`depends_on`): M0 strategy base classes (P2-T003, T2.20), ML-signal template slot (P2-T009, T2.21), fallback ladder rung 4 'model service down → rules only' (P2-T018, T2.22).
 
 ## Requirements
 
@@ -105,3 +110,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Part A prerequisites made explicit dependencies)

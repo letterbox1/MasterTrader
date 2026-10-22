@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T009, P5-T011, P5-T018]
+depends_on: [P5-T009, P5-T011, P5-T018, P1-T006]
 requirements: [R5.10]
 roadmap_todos: [T5.25]
 modules: [M4]
 dashboards: [D12]
+tools: [uv, docker]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p5/P5-T032-discovery-api-connectors
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T032 · mt_airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)
@@ -38,7 +43,8 @@ The `airdrop` service discovers candidates from free APIs within quotas — Defi
 
 - Roadmap: [R5.10](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.25
 - [08 pipeline: Discover](../../../docs/08-airdrops-and-token-launches.md#pipeline) · [research discovery sources](../../../docs/research/airdrops-rugpull-discord.md) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)
-- Quota tracker (P1 R1.08), RPC pool P5-T018
+- Quota tracker (P1-T006), RPC pool P5-T018
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): adapters are built and tested on recorded fixtures; keyed sources (CoinGecko Demo, CryptoRank) read keys by name only and are proven live in P5-T068 (keys from P0-T010)
 
 ## Requirements
 
@@ -100,3 +106,4 @@ The `airdrop` service discovers candidates from free APIs within quotas — Defi
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live keys in P5-T068; P1 quota tracker dep)

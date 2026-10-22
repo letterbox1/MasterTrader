@@ -12,20 +12,25 @@ owner: agent
 claimed_by: ""
 depends_on: [P2-T104, P2-T105, P2-T108]
 requirements: [R2.44, R2.07]
-roadmap_todos: [T2.27]
+roadmap_todos: [T2.27, T2.37]
 modules: [M7, M0]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, mlflow]
 branch: p2/P2-T115-optuna-sweeps-and-ab
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T115 · Optuna sweeps with complexity penalty and A/B on identical data
@@ -36,7 +41,7 @@ checkpoint: ""
 
 ## Context & references
 
-- Roadmap: [R2.44, R2.07](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27 (R2.07 shadow mode is engine-side, part A)
+- Roadmap: [R2.44, R2.07](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDos T2.27 and **T2.37** (experimentation: sweeps + A/B on identical data; shadow mode is P2-T030)
 - [03 M7 optimisation](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [01 §3.3 hyperopt overfit warning](../../../docs/01-repo-vetting-report.md#33-freqtrade--reference-only)
 - [D04 'Sweep space' and parameter-stability heatmap](../../../docs/ui/dashboards/D04-research-lab.md); parameter schemas from part A's templates (T2.21)
 
@@ -92,7 +97,7 @@ checkpoint: ""
 ## Doc sync on completion
 
 - `docs/03-build-spec.md` M7: penalty definition and defaults.
-- `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.27 once every task mapped to it (part A and part B) is done.
+- `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.27 and T2.37 once every task mapped to them is done.
 
 ## Branch & PR
 
@@ -103,3 +108,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (mapped to roadmap T2.37 (sweeps + A/B))

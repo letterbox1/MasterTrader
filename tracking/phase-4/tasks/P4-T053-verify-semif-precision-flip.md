@@ -53,6 +53,7 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 
 ## ToDo
 
+- [ ] Run the P4-T048 calibration on your labels (P4-T049) and activate the chosen threshold via `models.question.update` (C1).
 - [ ] Evaluation script `tools/bench/semif_eval.py`.
 - [ ] Run on labelled batch; bootstrap CIs.
 - [ ] Determinism runs (3× + restart).
@@ -102,3 +103,4 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (flip-rate ≤ 0.1%, precision/ECE targets from 16 §2.10; decision-path settings per 17 §A P4-B010; depends on P4-T048 too)
+- 2026-10-22 00:00 · aligner · calibration run on your labels moved here from P4-T048 (threshold activated before the report)

@@ -15,17 +15,22 @@ requirements: [R5.16, R5.15]
 roadmap_todos: [T5.27, T5.28]
 modules: [M4, M19, M22, M15]
 dashboards: [D12, D13, D18]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p5/P5-T042-never-automated-policy-guard
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T042 · Never-automated policy guard enforced server-side at every layer
@@ -78,6 +83,7 @@ One shared policy module (`mt_core.policy.never_automated`) encodes the **never 
 ## Exceptions & edge cases
 
 - Ambiguous classification (e.g. unknown selector that might approve): refuse by default.
+- Proof of control (P5-T067) only verifies a signature you made in your own wallet app; the system never requests or produces one, so NA-03 still holds.
 
 ## Cardinal rules (do NOT)
 
@@ -102,3 +108,4 @@ One shared policy module (`mt_core.policy.never_automated`) encodes the **never 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; proof-of-control is verify-only, consistent with NA-03)

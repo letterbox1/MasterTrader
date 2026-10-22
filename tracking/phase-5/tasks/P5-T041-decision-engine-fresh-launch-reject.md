@@ -15,17 +15,22 @@ requirements: [R5.15, R5.17, R5.14]
 roadmap_todos: [T5.27]
 modules: [M4, M19]
 dashboards: [D12, D13]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres, nats]
 branch: p5/P5-T041-decision-engine-fresh-launch-reject
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T041 · Decision engine: reject / task / watch / auto-claim with fresh-launch default-reject
@@ -43,7 +48,7 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 ## Requirements
 
 - Order: hard fail → reject; fresh launch → reject (`fresh_launch`) unless routed to the P7 memecoin template (not in P5); corroboration < 2 → watch; EV ≤ 0 → watch; AU excluded → reject-for-you (`excluded_geo`); otherwise task or auto-claim.
-- Auto-claim candidate only if all hold: claim contract verified and referenced by ≥ 2 official sources; function on an active mandate's allow-list; no approvals/permits/EIP-712, `msg.value = 0`; public-address eligibility proven (Merkle proof/claim contract); burner run clean when required; caps and cost gate pass (checked at execution).
+- Auto-claim candidate (always from the chain's airdrop identity wallet, never the hot trading wallet; P5-B017) only if all hold: claim contract verified and referenced by ≥ 2 official sources; function on an active mandate's allow-list; no approvals/permits/EIP-712, `msg.value = 0`; public-address eligibility proven (Merkle proof/claim contract); burner run clean when required; caps and cost gate pass (checked at execution).
 - Task mapping: social → JOIN_DISCORD/FOLLOW_X/QUEST; claims needing signatures or borderline risk → CLAIM_MANUAL; ICO/IDO → ICO_REVIEW (always a user task); protocol use → ONCHAIN_ACTION_MANUAL or GENUINE_USE.
 - Decision row: inputs snapshot (score versions), outcome, reasons, policy version; re-decide on rescore (`airdrop.rescore`).
 - Publishes `airdrop.decision`.
@@ -84,7 +89,7 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 
 - Do NOT auto-claim anything the never-automated list covers (P5-T042).
 - Do NOT apply loosening (new mandate, higher caps, autonomous claims) without C3 (Telegram approve + TOTP + cool-down); protective actions (revoke, sweep, kill) never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order, including disposal-rule sells, goes through M11.
+- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT add paid data/APIs or scraping that breaks terms; no self-bots or user tokens; no sybil, multi-wallet or fake-engagement patterns.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -103,3 +108,4 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (auto-claims from the identity wallet per P5-B017; canonical task types)

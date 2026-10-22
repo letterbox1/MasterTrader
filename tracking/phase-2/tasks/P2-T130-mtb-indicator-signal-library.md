@@ -15,17 +15,22 @@ requirements: [R2.48]
 roadmap_todos: [T2.31]
 modules: [M0]
 dashboards: []
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T130-mtb-indicator-signal-library
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T130 · MasterTradingBot pure indicator/signal library with golden-file harness
@@ -104,3 +109,4 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; golden inputs from P2-T002 are checked in P2-T133)

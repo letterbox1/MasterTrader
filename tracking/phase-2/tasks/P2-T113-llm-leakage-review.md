@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101]
+depends_on: [P2-T101, P0-T042, P0-T029]
 requirements: [R2.43]
 roadmap_todos: [T2.27]
 modules: [M7, M21]
 dashboards: [D04, D03]
+tools: [uv]
+mcp: []
+env: []
+services: [litellm, postgres]
 branch: p2/P2-T113-llm-leakage-review
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T113 · LLM leakage review via the gateway with audited waivers
@@ -38,16 +43,16 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 
 - Roadmap: [R2.43](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27 · verified by P2-T160
 - [14 §6 gate 1](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (checklist items, quote exact line, waiver audited) · [10 §5 gateway](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (per-role virtual keys, budgets, local fallback)
-- Missing waiver command in the catalogue: P2-B056
-- Cross-phase: P0 T0.45 LiteLLM config (role keys) and T0.23 WORM layer
+- Decision: `lab.leakage.waive` is **C2**, reason required, audited ([17 §D P2-B056](../../../docs/17-decisions-register.md#d-other-decisions), [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write), 14 §6); LLM budgets per role ([16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)).
+- Cross-phase (`depends_on`): LiteLLM gateway with per-role keys and budgets (P0-T042, T0.45); WORM layer (P0-T029, T0.23); `audit.llm_call` written from P0 via the LiteLLM callback (17 §D P6-B010).
 
 ## Requirements
 
 - Checklist (versioned `leakage_checklist_v1`): look-ahead, survivorship, repainting indicators, costs, fill realism, full-sample fitting, regime coverage, alignment.
-- Prompt includes only the strategy's own code + manifest (no data rows, no secrets, no Telegram text); calls go via gateway role `lab-review` (or `strategy-gen` key) with its daily budget; route research-primary → research-custom → local-advisor.
+- Prompt includes only the strategy's own code + manifest (no data rows, no secrets, no Telegram text); calls go via the gateway role `strategy-gen` with its daily budget (default $0.50/day, 16 §2.10; over budget → local model fallback); route research-primary → research-custom → local-advisor.
 - Structured JSON output per item: `present|absent|unsure`, file, line range, quoted text; the quote must match the file at those lines exactly or the item becomes `unsure` (hallucination guard).
 - `present` or `unsure` blocks the 'leakage review' gate until fixed (new code version) or waived.
-- Waiver: command `lab.leakage.waive` (C1, reason required) → `audit.command` + insert-only `audit.leakage_waiver` row referencing the review id and item; waivers never carry over to a new code version.
+- Waiver: command `lab.leakage.waive` (**C2**: risk-preview hash bound to the exact item + a session re-authenticated within 12 h; reason required) → `audit.command` + insert-only `audit.leakage_waiver` row referencing the review id and item; waivers never carry over to a new code version.
 - Every LLM call logged in `audit.llm_call` (model, prompt hash, cost).
 
 ## ToDo
@@ -99,7 +104,7 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 ## Doc sync on completion
 
 - `docs/14-strategy-evidence-and-validation.md` §6: checklist version and waiver flow.
-- `docs/02-v1-architecture.md` §7.2: add `lab.leakage.waive` (per P2-B056).
+- `docs/02-v1-architecture.md` §7.2: confirm `lab.leakage.waive` (C2) as built.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.27 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
@@ -111,3 +116,4 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (leakage waiver is C2 (17 §D P2-B056), strategy-gen budget per 16 §2.10, cross-phase gateway/WORM deps)

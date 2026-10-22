@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P2-T106]
+depends_on: [P2-T101, P2-T106, P2-T046]
 requirements: [R2.44]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: [mlflow, postgres]
 branch: p2/P2-T107-mlflow-tracking-and-repro
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T107 · MLflow experiment tracking and reproducible re-runs
@@ -38,7 +43,7 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 
 - Roadmap: [R2.44](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
 - Spec: [03 M7 optimisation/MLflow](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [D04 Reproduce tab + acceptance 4](../../../docs/ui/dashboards/D04-research-lab.md)
-- MLflow server from P0 T0.41; artefact storage + registry stages from T2.41 in part A (P2-T001–T099)
+- MLflow server from P0 (P0-T020, T0.41); artefact storage + registry stages from P2-T046 (T2.41)
 
 ## Requirements
 
@@ -101,3 +106,4 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (MLflow storage dep (P2-T046))

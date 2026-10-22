@@ -15,17 +15,22 @@ requirements: [R5.13, R5.18]
 roadmap_todos: [T5.26]
 modules: [M4]
 dashboards: [D12]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p5/P5-T038-wallet-cluster-graph-blacklist
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T038 · Wallet-cluster detection (funding graph) and entity blacklist
@@ -52,6 +57,7 @@ Our own wallet-cluster detection builds a funding graph of early buyers/holders 
 - [ ] Implement `packages/mt_airdrop/risk/clusters/` (tracer, cluster rules, supply share).
 - [ ] Implement `risk/blacklist.py` with add (C1 command `airdrop.reject` with `blacklist=true`) and link-propagation checks.
 - [ ] CEX hot-wallet label list (curated, versioned).
+- [ ] Build and test on recorded traces (fixtures); the live RPC budget is measured after P5-T068.
 - [ ] Tests on fixture graphs + one real recorded launch; doc sync.
 
 ## Verification
@@ -100,3 +106,4 @@ Our own wallet-cluster detection builds a funding graph of early buyers/holders 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless recorded traces)

@@ -15,17 +15,22 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6, M7]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T123-ic-evaluator
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T123 · Feature IC, rank-IC and decay evaluator
@@ -94,3 +99,4 @@ An evaluator that reports, per feature version and instrument set, the informati
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

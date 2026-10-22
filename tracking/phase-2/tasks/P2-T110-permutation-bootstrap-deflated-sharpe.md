@@ -15,17 +15,22 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04, D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T110-permutation-bootstrap-deflated-sharpe
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T110 · MC permutation, bootstrap Sharpe CI and deflated Sharpe
@@ -37,7 +42,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 ## Context & references
 
 - Roadmap: [R2.42](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
-- [14 §6 gate 2](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (DSR inputs; pass > 0.95) · [03 §8 item 2](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) (MC permutation p < 0.05) — threshold conflict tracked in P2-B050
+- [14 §6 gate 2](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (DSR inputs) · [03 §8 item 2](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) (MC permutation p < 0.05) · decision [17 §A P2-B050](../../../docs/17-decisions-register.md#a-s2-items-all-resolved): **DSR ≥ 0.95** (a probability; "> 0" was an error) · [16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile) gate profile
 - [01 §3.4](../../../docs/01-repo-vetting-report.md#34-hkudsvibe-trading--research-and-strategy-generation-layer): Vibe-Trading `validation.py` (MIT) as a reference implementation
 - Inputs from P2-T106 (per-period returns) and P2-T108 (trial count, Sharpe variance across trials)
 
@@ -46,7 +51,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 - MC permutation: ≥ 1,000 permutations (default 2,000) of signal-to-return alignment (or trade-order shuffling for path stats); p-value = share of permuted Sharpe ≥ observed; seeded.
 - Bootstrap Sharpe CI: stationary block bootstrap (block length auto from autocorrelation), 5,000 resamples, 95% CI.
 - Deflated Sharpe (Bailey & López de Prado 2014): uses per-period (not annualised) Sharpe, T observations, skewness, kurtosis, N = trial count, variance of Sharpe across trials; returns a probability in [0,1].
-- Thresholds configurable per strategy (03 §8 'configurable'); defaults MC p < 0.05 and DSR > 0.95 pending P2-B050.
+- Thresholds come from the strategy's gate profile (P2-T007; defaults MC p < 0.05 and **DSR ≥ 0.95**, 16 §2.4); tightening free, loosening C3.
 - All results stored with the inputs used (N, T, skew, kurt) so the D04 Robustness tab can show them.
 
 ## ToDo
@@ -90,7 +95,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 ## Doc sync on completion
 
 - `docs/14-strategy-evidence-and-validation.md` §6: formulas, permutation count, bootstrap method.
-- `docs/03-build-spec.md` §8: confirmed thresholds after P2-B050.
+- `docs/03-build-spec.md` §8: confirm the DSR ≥ 0.95 wording matches the implementation.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.27 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
@@ -102,3 +107,4 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (DSR ≥ 0.95 decided (17 §A P2-B050), thresholds from the gate profile)

@@ -15,17 +15,22 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T120-feature-registry-and-store
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T120 · mt_features registry, versioning and batch/incremental parity
@@ -103,3 +108,4 @@ A versioned feature registry (`features.def`) with one definition per feature th
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

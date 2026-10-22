@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P2-T107, P2-T114]
+depends_on: [P2-T101, P2-T107, P2-T114, P0-T034, P0-T035, P0-T036]
 requirements: [R2.40, R2.44, R2.50]
 roadmap_todos: [T2.27, T2.32]
 modules: [M7, M15]
 dashboards: [D04, D03]
+tools: [uv, pnpm]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p2/P2-T117-lab-api-endpoints
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T117 · Lab REST queries, WebSocket topic and commands in mt_api
@@ -39,13 +44,14 @@ checkpoint: ""
 - Roadmap: [R2.40, R2.44, R2.50](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDos T2.27, T2.32
 - [02 §7.1 queries](../../../docs/02-v1-architecture.md#71-queries-rest-read) (`/lab/backtests`, `/lab/experiments`, `/lab/jobs`) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`) · [02 §7.3 WS](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws)
 - Backend contracts: [D04](../../../docs/ui/dashboards/D04-research-lab.md) and [D03](../../../docs/ui/dashboards/D03-strategies.md) (`/strategies/{id}?gates=1`, `/strategies/templates`)
-- Cross-phase: P0 T0.24 command bus, confirmation levels, WS hub
+- Cross-phase (`depends_on`): command bus (P0-T034), confirmation levels (P0-T035), WS hub (P0-T036), all T0.24.
+- Decisions: `lab.leakage.waive` is **C2** and tier-A training is `models.tiera.train` (C1) ([17 §D P2-B056/B057](../../../docs/17-decisions-register.md#d-other-decisions), [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)).
 
 ## Requirements
 
 - Queries: `GET /lab/backtests` (cursor pagination, filters strategy/engine/status), `/lab/backtests/{id}` (summary, trades, robustness, bias, costs, gates, reproduce sections), `/lab/experiments`, `/lab/experiments/{id}` (compare ≤ 6 runs), `/lab/jobs`, `/data/costs?snapshot=`.
 - `/strategies/{id}?gates=1` returns gate list + reasons from P2-T114; `?metrics=1` returns latest truth metrics.
-- Commands (C1): `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `lab.leakage.waive`, `lab.tier_a.train` (P2-B056); all with idempotency keys and `audit.command` rows.
+- Commands: `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `lab.gate_report.generate` (C1); `lab.leakage.waive` (**C2**, reason required); `models.tiera.train` (C1: train → calibrate → compile); all with idempotency keys and `audit.command` rows.
 - WS topic `lab.job` fans out `lab.job.*` at ≤ 1 Hz per job with `seq` for gap detection.
 - Decimals as strings, ISO-8601 UTC times, problem+json errors.
 
@@ -90,7 +96,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/02-v1-architecture.md` §7: add `lab.leakage.waive`, `lab.tier_a.train` and the gates/metrics query params.
+- `docs/02-v1-architecture.md` §7: confirm `lab.leakage.waive` (C2), `models.tiera.train` (C1) and the gates/metrics query params as built.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.27, T2.32 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
@@ -102,3 +108,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (lab.leakage.waive C2 and models.tiera.train C1 per 17 §D; cross-phase API deps)

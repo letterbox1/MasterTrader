@@ -15,17 +15,22 @@ requirements: [R2.40, R2.41]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T104-screening-engine
 pr: ""
 doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T104 · Vectorised screening backtest engine
@@ -107,3 +112,4 @@ A fast vectorised screener (vectorbt or a port of the MIT Vibe-Trading engines) 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))

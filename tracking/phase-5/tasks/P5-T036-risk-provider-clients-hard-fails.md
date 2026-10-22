@@ -15,17 +15,22 @@ requirements: [R5.13]
 roadmap_todos: [T5.26]
 modules: [M4]
 dashboards: [D12]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p5/P5-T036-risk-provider-clients-hard-fails
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T036 · Risk providers (GoPlus, Honeypot.is, RugCheck) and hard-fail rules
@@ -41,7 +46,7 @@ Provider clients for **GoPlus** (EVM primary + approval/phishing checks), **Hone
 
 ## Requirements
 
-- GoPlus limits: 150K CU/month, 30K/day, 150/min; one key, cache per token (24 h), no proxies.
+- GoPlus limits: 150K CU/month, 30K/day, 150/min; one key, cache per token (24 h), no proxies. Built and tested on recorded fixtures without the key; the live keyed run is P5-T068 (key from P0-T010).
 - Honeypot.is and RugCheck read endpoints free (limits unverified): conservative 30/min each with backoff.
 - Raw provider reports stored (collapsed in D12) with provenance; normalised flags mapped to our feature names.
 - Hard-fail evaluation is deterministic, ordered, and every fail carries a human-readable reason and source.
@@ -98,3 +103,4 @@ Provider clients for **GoPlus** (EVM primary + approval/phishing checks), **Hone
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live run in P5-T068)

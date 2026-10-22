@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T130, P2-T131]
+depends_on: [P2-T130, P2-T131, P2-T003, P2-T009]
 requirements: [R2.48, R2.02]
 roadmap_todos: [T2.31]
 modules: [M0]
 dashboards: [D03]
+tools: [uv]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T132-deterministic-rule-based-template
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T132 · Deterministic rule-based template on the shared libraries
@@ -38,7 +43,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 
 - Roadmap: [R2.48, R2.02](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.31
 - [03 M0 templates](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [14 §8 merging](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MTB strategies appear as M0 strategies with template 'deterministic rule-based')
-- Part-A prerequisites: M0 base classes, manifest schema, registry and template parameter-schema conventions (T2.20/T2.21 in part A (P2-T001–T099)); part A registers the `deterministic_rule_based` template slot (currently P2-T009) that this task fills
+- Prerequisites (`depends_on`): M0 base classes (P2-T003) and the `deterministic_rule_based` template slot (P2-T009) that this task fills; manifest proposals per [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance).
 
 ## Requirements
 
@@ -100,3 +105,4 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (template slot and base-class deps explicit)

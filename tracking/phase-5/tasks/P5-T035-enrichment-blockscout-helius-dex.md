@@ -15,17 +15,22 @@ requirements: [R5.12]
 roadmap_todos: [T5.25]
 modules: [M4]
 dashboards: [D12]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p5/P5-T035-enrichment-blockscout-helius-dex
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/12-policy-and-compliance.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P5-T035 · Enrichment: Blockscout/own RPC, Helius, DexScreener/GeckoTerminal, CryptoRank
@@ -47,6 +52,7 @@ Each opportunity is enriched with contract facts from **Blockscout/own RPC** (ve
 - Funding: CryptoRank rounds/investors.
 - All enrichment rows carry provenance; Etherscan URLs may appear only as manual links in D12 (display), never stored as inputs; a CI source-audit test greps for Etherscan API hosts in decision code.
 - Cache per token 1 h (market) / 24 h (contract facts) within quotas.
+- Build first, keys last: adapters built and tested on recorded fixtures (Blockscout needs no key; Helius/CryptoRank keys read by name only); the live keyed run is P5-T068.
 
 ## ToDo
 
@@ -99,3 +105,4 @@ Each opportunity is enriched with contract facts from **Blockscout/own RPC** (ve
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live run in P5-T068)
