@@ -1,7 +1,7 @@
 ---
 id: P5-T045
 kind: task
-title: Burner-first and identity flow, genuine-use tasks and disposal-rule orders via M11
+title: Burner-first and identity flow, genuine-use tasks and disposal rule (manual-sale task until P7)
 phase: 5
 type: BUILD
 status: backlog
@@ -13,7 +13,7 @@ claimed_by: ""
 depends_on: [P5-T044, P5-T029, P5-T020]
 requirements: [R5.17, R5.15]
 roadmap_todos: [T5.28]
-modules: [M4, M11, M19, M22]
+modules: [M4, M19, M22]
 dashboards: [D12, D13]
 tools: [uv, anvil]
 mcp: []
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T045 · Burner-first and identity flow, genuine-use tasks and disposal-rule orders via M11
+# P5-T045 · Burner-first and identity flow, genuine-use tasks and disposal rule (manual-sale task until P7)
 
 ## Goal / expected outcome
 
@@ -86,7 +86,6 @@ New or untrusted dApp interactions always run first from a **burner** with minim
 ## Cardinal rules (do NOT)
 
 - Do NOT create an automated sale (M11 order, DEX swap or signer intent) for disposal before the P7 gates pass (P5-B010).
-- Do NOT place disposal orders outside M11 or before P7 gates on live venues (paper/testnet or manual only in P5).
 - Do NOT propose dust loops or volume farming as genuine use.
 - Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT add paid data/APIs or scraping that breaks terms; no self-bots or user tokens; no sybil, multi-wallet or fake-engagement patterns.
@@ -101,7 +100,7 @@ New or untrusted dApp interactions always run first from a **burner** with minim
 ## Branch & PR
 
 - Branch: `p5/P5-T045-burner-first-identity-disposal-rule`
-- PR title: `P5-T045: Burner-first and identity flow, genuine-use tasks and disposal-rule orders via M11`
+- PR title: `P5-T045: Burner-first and identity flow, genuine-use tasks and disposal rule (manual-sale task until P7)`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T045` run
 
 ## Progress log
