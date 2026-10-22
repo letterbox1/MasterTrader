@@ -4,7 +4,7 @@ kind: gap
 title: Strategy/bot mode names differ across docs (approve/auto vs hitl/autonomous)
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.20, R2.50]
 roadmap_todos: []
 modules: [M0, M15]
 dashboards: [D01, D03, D05]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B053-mode-vocabulary-mismatch
 pr: ""
 doc_sync: [docs/ui/dashboards/D01-cockpit.md, docs/ui/dashboards/D03-strategies.md, docs/ui/components.md, docs/ui/README.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D01-cockpit.md, D03-strategies.md, docs/ui/components.md (ModeSwitch), docs/03-build-spec.md M0 manifest vs docs/15 §1.2, docs/02 §7.2, roadmap R2.20
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B053 · Strategy/bot mode names differ across docs (approve/auto vs hitl/autonomous)
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: one enum used in 
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: modes are `paper` / `hitl` / `autonomous`, set per bot; "approve"/"auto" are retired aliases; a strategy is promoted through gates, a bot is switched between modes
+- [x] Docs agree: 15 §1.2, D03, components, 03 M0
+- [x] Tasks updated: P2-T004, P2-T007, P2-T033, P2-T140
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: one enum used in 
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (15 §1.2; D03 lines on strategy vs bot modes; components `StatusChip`/`ModeSwitch` (labels "Paper", "Approve (HITL)", "Autonomous"); 03 M0 manifest and lifecycle)
+- [x] Affected tasks reference the decision (P2-T004, P2-T007, P2-T033, P2-T140)
 
 ## Exceptions & edge cases
 
@@ -98,3 +101,7 @@ The docs agree and part-B tasks can be built without guessing: one enum used in 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §B (P2-B053); docs carry it (15 §1.2; D03 lines on strategy vs bot modes; components `StatusChip`/`ModeSwitch` (labels "Paper", "Approve (HITL)", "Autonomous"); 03 M0 manifest and lifecycle); implementation owned by P2-T004, P2-T007, P2-T033, P2-T140)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B (P2-B053)); docs updated: 15 §1.2; D03 lines on strategy vs bot modes; components `StatusChip`/`ModeSwitch` (labels "Paper", "Approve (HITL)", "Autonomous"); 03 M0 manifest and lifecycle; implementation owned by P2-T004, P2-T007, P2-T033, P2-T140
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

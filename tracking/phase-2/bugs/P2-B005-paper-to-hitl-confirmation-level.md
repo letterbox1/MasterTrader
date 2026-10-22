@@ -4,7 +4,7 @@ kind: gap
 title: Confirmation level for paper to HITL conflicts (C1 vs C2)
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.53, R2.54]
 roadmap_todos: []
 modules: [M11, M15]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B005-paper-to-hitl-confirmation-level
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/ui/dashboards/D03-strategies.md, docs/ui/mobile-and-telegram.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/15-bots-hitl-and-worm-audit.md §1.2 vs §1.4; docs/ui/dashboards/D03-strategies.md Bots tab
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B005 · Confirmation level for paper to HITL conflicts (C1 vs C2)
@@ -49,9 +54,9 @@ One level for switching a bot from paper to HITL, used by API, web and Telegram.
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: paper → HITL is C2 everywhere; HITL → autonomous C3; any downgrade C1
+- [x] Docs agree: 15 §1.2/§1.4/§1.5, D03, components, 16 §2.3
+- [x] Tasks updated: P2-T037, P2-T040, P2-T041, P2-T140
 
 ## Verification
 
@@ -66,8 +71,8 @@ One level for switching a bot from paper to HITL, used by API, web and Telegram.
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (15 §1.2 modes table, §1.4 Telegram commands, §1.5 `bot.set_mode`; D03 Bots actions; components `ModeSwitch`; 16 §2.3)
+- [x] Affected tasks reference the decision (P2-T037, P2-T040, P2-T041, P2-T140)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ One level for switching a bot from paper to HITL, used by API, web and Telegram.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §B (P2-B005); docs carry it (15 §1.2 modes table, §1.4 Telegram commands, §1.5 `bot.set_mode`; D03 Bots actions; components `ModeSwitch`; 16 §2.3); implementation owned by P2-T037, P2-T040, P2-T041, P2-T140)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B (P2-B005)); docs updated: 15 §1.2 modes table, §1.4 Telegram commands, §1.5 `bot.set_mode`; D03 Bots actions; components `ModeSwitch`; 16 §2.3; implementation owned by P2-T037, P2-T040, P2-T041, P2-T140
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

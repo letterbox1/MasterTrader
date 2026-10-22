@@ -82,6 +82,7 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 ## Exceptions & edge cases
 
 - Venue ack latency is outside our control: SLO measured to 'cancel sent'; ack times reported separately.
+- Postgres-stop drill: expected outcome follows 16 §3.1 until gap P2-B015 settles the 02 §9.3 wording; the drill records both the buffer behaviour and the layer-1 action.
 
 ## Cardinal rules (do NOT)
 

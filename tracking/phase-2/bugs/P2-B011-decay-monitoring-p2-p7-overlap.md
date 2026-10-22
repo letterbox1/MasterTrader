@@ -4,7 +4,7 @@ kind: gap
 title: Decay monitoring and health check are required in both P2 (R2.21) and P7 (R7.07/T7.22)
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R2.21]
 roadmap_todos: []
 modules: [M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B011-decay-monitoring-p2-p7-overlap
 pr: ""
 doc_sync: [docs/roadmap/phase-7-prove-and-go-live.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-2-strategies-risk-lab.md R2.21; docs/roadmap/phase-7-prove-and-go-live.md R7.07/T7.22
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B011 · Decay monitoring and health check are required in both P2 (R2.21) and P7 (R7.07/T7.22)
@@ -49,9 +54,9 @@ P7's item is scoped as live hardening of the P2 jobs, not a second build.
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: decay/health jobs are built in P2 for paper; P7 extends them to live with kill criteria
+- [x] Docs agree: 16 §2.6, roadmap R2.21 and R7.07/T7.22, 03 §8
+- [x] Tasks updated: P2-T034, P2-T060
 
 ## Verification
 
@@ -66,8 +71,8 @@ P7's item is scoped as live hardening of the P2 jobs, not a second build.
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (16 §2.6 (one meaning per signal); roadmap P2 R2.21 (built for paper) and P7 R7.07 / T7.22 (extend the P2 jobs to live); 03 §8 item 8)
+- [x] Affected tasks reference the decision (P2-T034, P2-T060 (P7 T7.22 extends them))
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ P7's item is scoped as live hardening of the P2 jobs, not a second build.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §B (P2-B011); docs carry it (16 §2.6 (one meaning per signal); roadmap P2 R2.21 (built for paper) and P7 R7.07 / T7.22 (extend the P2 jobs to live); 03 §8 item 8); implementation owned by P2-T034, P2-T060 (P7 T7.22 extends them))
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B (P2-B011)); docs updated: 16 §2.6 (one meaning per signal); roadmap P2 R2.21 (built for paper) and P7 R7.07 / T7.22 (extend the P2 jobs to live); 03 §8 item 8; implementation owned by P2-T034, P2-T060 (P7 T7.22 extends them)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

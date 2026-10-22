@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T009]
+depends_on: [P6-T009, P0-T045, P1-T045]
 requirements: [R6.07]
 roadmap_todos: [T6.41]
 modules: [M17, M21]
 dashboards: [D10]
+tools: [git, docker]
+mcp: []
+env: []
+services: [grafana, prometheus, alertmanager, ntfy]
 branch: p6/P6-T010-grafana-spend-panel-alerts
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T010 · Grafana LLM spend panel and budget alerts
@@ -38,7 +43,8 @@ A provisioned Grafana dashboard shows LLM spend by role vs budget, month-to-date
 
 - Roadmap: [R6.07](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.41
 - Spec: [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (spend panel in Grafana) · [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (spend goes to Grafana) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs)
-- Cross-phase: P1 R1.14 alert channels
+- Cross-phase: P0-T045 (Grafana provisioning), P1-T045 (alert fan-out to Telegram/ntfy/email)
+- Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) (budgets the panel compares against; read from settings, never hard-coded)
 - Depends on (this phase): P6-T009
 
 ## Requirements
@@ -95,3 +101,4 @@ A provisioned Grafana dashboard shows LLM spend by role vs budget, month-to-date
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P0-T045/P1-T045; budgets from 16 §2.10 settings; run fields)

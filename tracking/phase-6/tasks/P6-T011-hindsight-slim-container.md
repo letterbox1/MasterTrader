@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
-requirements: [R6.04]
+depends_on: [P0-T020, P0-T022, P0-T024, P0-T042, P0-T043]
+requirements: [R6.04, R6.N2]
 roadmap_todos: [T6.40]
 modules: [M9]
 dashboards: [D10]
+tools: [git, docker, sops]
+mcp: []
+env: []
+services: [postgres, tei-embed, tei-rerank, litellm]
 branch: p6/P6-T011-hindsight-slim-container
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T011 · Hindsight slim container on our Postgres, TEI and the gateway
@@ -38,21 +43,22 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 
 - Roadmap: [R6.04](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.40
 - Spec: [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (deployment table, env vars, 384-d warning) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`hindsight` container, phase 6) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
-- Gap: P6-B005 (`hindsight` schema not in P0's schema list)
-- Cross-phase: P0 R0.02 Compose, R0.09 TEI + LiteLLM
+- Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P0-B005/P6-B005: all 13 schemas incl. `hindsight` are created in P0 by P0-T024; this task adds the Hindsight role, grants and its tables)
+- Cross-phase: P0-T020 (Compose), P0-T022 (secrets → tmpfs), P0-T024 (`hindsight` schema), P0-T042 (LiteLLM `memory` key), P0-T043 (TEI)
+- Security: [R6.N2](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) (bind `127.0.0.1` + API key; checked by P6-T069)
 
 ## Requirements
 
 - Env: `HINDSIGHT_API_DATABASE_URL` (least-privilege role), `HINDSIGHT_API_DATABASE_SCHEMA=hindsight`, `VECTOR_EXTENSION=pgvector`, `TEXT_SEARCH_EXTENSION=native`, `HINDSIGHT_API_EMBEDDINGS_PROVIDER=tei` (bge-small-en-v1.5, **384-d**), `HINDSIGHT_API_RERANKER_PROVIDER=tei`, `HINDSIGHT_API_LLM_PROVIDER=litellm` with the `memory` virtual key; for local models `HINDSIGHT_API_LLM_STRICT_SCHEMA=true`, `RETAIN_MAX_COMPLETION_TOKENS` > 3000.
 - Reranker candidate count lowered from 300 (start at 100) to keep recall 100–600 ms.
-- API :8888 and UI :9999 bound to the internal network only; no published ports; OpenTelemetry/Prometheus opt-in to our stack only.
+- API :8888 and UI :9999 bound to `127.0.0.1`/the internal network only and **API key required** (R6.N2, 07 §5): Hindsight's own auth if it has one (U), else an auth-proxy sidecar; no published ports; OpenTelemetry/Prometheus opt-in to our stack only.
 - Footprint budget: 0.5–1 GB RAM (slim).
 - Backups: the `hindsight` schema is covered by pgBackRest like every other schema.
 
 ## ToDo
 
 - [ ] Add the service to `docker-compose.yml` with image digest, healthcheck, resource limits, internal network.
-- [ ] Create the `hindsight` schema and DB role via Alembic (owner role separate from the app role).
+- [ ] Create the Hindsight DB role and grants on the existing `hindsight` schema (P0-T024) via Alembic (owner role separate from the app role).
 - [ ] Secrets (DB password, LiteLLM `memory` key) via sops → tmpfs.
 - [ ] Outbound-traffic check: no phone-home (tcpdump/egress deny test).
 - [ ] Smoke: create bank, retain one item, recall it.
@@ -106,3 +112,4 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (hindsight schema exists from P0 (17 §B); R6.N2 127.0.0.1 + API key; cross-phase deps P0-T020/T022/T024/T042/T043; run fields)

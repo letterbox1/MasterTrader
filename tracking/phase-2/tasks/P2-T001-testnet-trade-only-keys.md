@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/practice venue Phase 2 trades on, one sub-account (or account) per mode (`paper`, `hitl`, `autonomous`), stored only in the sops/age secrets file. Build first, keys last: the engine and adapters are built and tested keyless against recorded fixtures, emulators and the sandbox venue; these keys are needed only for the late live checks: the testnet/practice end-to-end run (P2-T071, T2.72), the key-audit run (P2-T045 tool).
+Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/practice venue Phase 2 trades on, one sub-account (or account) per mode (`paper`, `hitl`, `autonomous`), stored only in the sops/age secrets file. Build first, keys last: the engine and adapters are built and tested keyless against recorded fixtures, emulators and the sandbox venue; these keys are needed only for the late live check, the testnet/practice end-to-end run (P2-T071, T2.72), which also runs the P2-T045 key audit on them.
 
 ## Context & references
 

@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T004]
-requirements: [R6.01, R6.02]
+depends_on: [P6-T004, P0-T027, P4-T025, P4-T032]
+requirements: [R6.01, R6.02, R6.N1]
 roadmap_todos: [T6.20]
 modules: [M8, M9]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [postgres, nats, tei-embed, tei-rerank]
 branch: p6/P6-T006-agent-tools-pit-finrobot-cache
 pr: ""
 doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T006 · Agent tools: pit data tools, FinRobot operators, untrusted wrapping and the (instrument, as_of) cache
@@ -39,14 +44,15 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.02](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.20
 - Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) (FinRobot V2 valuation operators, `pit` tools, memory recall) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (cache per (instrument, as_of)) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (read-only tools, untrusted wrapping) · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md)
 - RAG: [10 §3](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) (P4 `rag.search` with `as_of`)
-- Cross-phase: P0 R0.04 `pit(as_of)`, P4 R4.07 RAG, P4 R4.12 tier-B scores, P0 R0.N5 vendoring
+- Cross-phase: P0-T027 (`pit(as_of)`), P4-T025 (provenance gate, untrusted wrapping), P4-T032 (RAG retrieval with `as_of`); tier-B scores (P4-T029) are read from KV and mocked in tests
+- Security: [R6.N1](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) (untrusted text wrapped and marked can't trigger commands; tested by P6-T054)
 - Depends on (this phase): P6-T004
 
 ## Requirements
 
 - Tools (LangGraph tool specs): `get_bars(instrument, spec, as_of, lookback)`, `get_features(...)`, `search_docs(query, tickers, as_of)`, `get_filing_sections(...)`, `get_calendar(window, as_of)`, `get_events(...)`, `get_tierb_scores(subject, as_of)`, `recall_memory(bank, query, as_of)` (bound in P6-T012), FinRobot operators (DCF, WACC, DDM, comps, Monte Carlo, SOTP).
 - Every tool reads only via `mt_store.pit(as_of)`; no tool can write, place orders or call `mt_api` commands.
-- Every tool result returns `provenance[]` entries matching the Signal v2 schema.
+- Every tool result returns `sources[]` entries matching the Signal schema (03 M8).
 - Untrusted text (documents, filings, social) is wrapped `<untrusted source=… id=…>…</untrusted>` and stripped of tool-call-like syntax; rows with `model_input_ok=false` are refused.
 - Cache: key `sha256(tool, args, instrument, as_of_bucket)` in Postgres `ops.tool_cache` (or NATS KV) with TTL; hit-rate metric.
 - FinRobot V2 operators vendored under `third_party/finrobot_ops/` (Apache-2.0 + NOTICE; no "FinRobot" in product naming) with pinned commit.
@@ -111,3 +117,4 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (sources[] per 03 M8; R6.N1 untrusted wrapping; cross-phase deps P0-T027/P4-T025/P4-T032; run fields)

@@ -101,7 +101,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D03-strategies.md`: template list matches the shipped catalogue (see P2-B054).
+- `docs/ui/dashboards/D03-strategies.md`: template list matches the shipped catalogue (rendered from `/strategies/templates`, 17 §D P2-B054).
 - `docs/03-build-spec.md` M0: link templates folder.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.21 when all tasks mapped to it are done.
 

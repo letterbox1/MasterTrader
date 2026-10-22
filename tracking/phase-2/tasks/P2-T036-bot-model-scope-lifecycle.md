@@ -10,7 +10,7 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T006, P2-T010, P2-T019]
+depends_on: [P2-T006, P2-T010, P2-T019, P2-T069]
 requirements: [R2.53]
 roadmap_todos: [T2.34]
 modules: [M0, M11, M15]

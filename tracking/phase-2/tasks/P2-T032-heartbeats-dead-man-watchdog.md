@@ -92,6 +92,7 @@ Critical services (engine, feeds/monitor, risk, postgres probe, nats probe) publ
 
 - Sidecar itself down: engine alerts on the missing `sys.heartbeat.deadman` (does not halt).
 - Clock skew between containers: use monotonic receive time in the watchdog.
+- Postgres heartbeat: 02 §9.3 (engine continues on the JetStream buffer) and 16 §3.1 (DB is a watched component) differ, gap P2-B015; default follows 16 §3.1 and the watched-component list is an L1 setting so the decision needs no code change.
 - Whole host or internet down: nothing on our side can act; only layer 3 (venue timers + resting stops, P2-T073) protects (16 §3.1).
 
 ## Cardinal rules (do NOT)

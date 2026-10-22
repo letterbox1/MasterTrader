@@ -4,7 +4,7 @@ kind: gap
 title: Tier A training label source before the P6 teacher exists is unspecified
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.47]
 roadmap_todos: []
 modules: [M21, M7]
 dashboards: [D04]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B057-tier-a-labels-before-teacher
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/10-memory-rag-and-models.md §4.3; docs/03-build-spec.md M21 (distillation); roadmap R2.47
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B057 · Tier A training label source before the P6 teacher exists is unspecified
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: an explicit P2 la
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: until the P6 teacher exists, tier A trains on forward-return / triple-barrier labels from market data; teacher labels are an extra source later
+- [x] Docs agree: 10 §4.3, 03 M21
+- [x] Tasks updated: P2-T125
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: an explicit P2 la
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (10 §4.3 training labels; 03 M21 labels and distillation)
+- [x] Affected tasks reference the decision (P2-T125)
 
 ## Exceptions & edge cases
 
@@ -95,3 +98,7 @@ The docs agree and part-B tasks can be built without guessing: an explicit P2 la
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B057); docs carry it (10 §4.3 training labels; 03 M21 labels and distillation); implementation owned by P2-T125)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B057)); docs updated: 10 §4.3 training labels; 03 M21 labels and distillation; implementation owned by P2-T125
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

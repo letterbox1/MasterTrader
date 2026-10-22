@@ -4,7 +4,7 @@ kind: gap
 title: D06 shows a 5-rung ladder and different sleeve names than M11/14
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.15, R2.13]
 roadmap_todos: []
 modules: [M11]
 dashboards: [D06]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B004-d06-ladder-rungs-sleeve-names
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D06-risk.md 'Additions from the CryptoTrader review'
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B004 · D06 shows a 5-rung ladder and different sleeve names than M11/14
@@ -49,9 +54,9 @@ D06 matches the 6-rung ladder in 03 M11 / 14 §5 and the sleeve list in 14 §3.
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: six rungs (normal · half size/observe · hold · rules only · halt sleeve · kill); sleeves come from policy
+- [x] Docs agree: D06 Overview additions match 14 §5 and 03 M11
+- [x] Tasks updated: P2-T018, P2-T042 render rungs and sleeves from the API
 
 ## Verification
 
@@ -66,8 +71,8 @@ D06 matches the 6-rung ladder in 03 M11 / 14 §5 and the sleeve list in 14 §3.
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (D06 Sleeves row (sleeves from policy) and Fallback ladder row (six rungs, rendered from the API))
+- [x] Affected tasks reference the decision (P2-T018, P2-T042)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ D06 matches the 6-rung ladder in 03 M11 / 14 §5 and the sleeve list in 14 §3.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B004, suggested fix adopted); docs carry it (D06 Sleeves row (sleeves from policy) and Fallback ladder row (six rungs, rendered from the API)); implementation owned by P2-T018, P2-T042)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B004, suggested fix adopted)); docs updated: D06 Sleeves row (sleeves from policy) and Fallback ladder row (six rungs, rendered from the API); implementation owned by P2-T018, P2-T042
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

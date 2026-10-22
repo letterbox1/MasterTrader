@@ -4,7 +4,7 @@ kind: gap
 title: "Client order ID derivation is ambiguous: signal-derived vs restart epoch"
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.32]
 roadmap_todos: []
 modules: [M12]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B007-client-order-id-derivation
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/07-security-notes.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M12; docs/07-security-notes.md §6
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B007 · Client order ID derivation is ambiguous: signal-derived vs restart epoch
@@ -49,9 +54,9 @@ One ID scheme that both prevents duplicates across restarts and keeps the epoch 
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: client order ID = `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency
+- [x] Docs agree: 03 M12, 02 F2, 07 §6
+- [x] Tasks updated: P2-T027 (format + signal-hash ledger), P2-T055 (restart test)
 
 ## Verification
 
@@ -66,8 +71,8 @@ One ID scheme that both prevents duplicates across restarts and keeps the epoch 
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (03 M12 key safety (client order ID); 02 F2 step 4; 07 §6 idempotent orders)
+- [x] Affected tasks reference the decision (P2-T027, P2-T055)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ One ID scheme that both prevents duplicates across restarts and keeps the epoch 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B007); docs carry it (03 M12 key safety (client order ID); 02 F2 step 4; 07 §6 idempotent orders); implementation owned by P2-T027, P2-T055)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B007)); docs updated: 03 M12 key safety (client order ID); 02 F2 step 4; 07 §6 idempotent orders; implementation owned by P2-T027, P2-T055
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: "Risk defaults left unspecified: dead-man N, collar %, decision deadlines, cost-blowout and downgrade thresholds"
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.14, R2.16, R2.18, R2.53]
 roadmap_todos: []
 modules: [M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B003-unspecified-risk-defaults
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/15-bots-hitl-and-worm-audit.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md M11/M16; docs/14 §5; docs/15 §1.2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B003 · Risk defaults left unspecified: dead-man N, collar %, decision deadlines, cost-blowout and downgrade thresholds
@@ -49,9 +54,9 @@ Every threshold the risk manager needs has a documented default (user-editable i
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Defaults recorded in 16 §2–§3 for every open number (dead-man 5 s/10 s, collar 2%/0.5%/1%, deadlines 1 s/10 s/5 min/1 h, spread 3×, cost blow-out 1.5× over 20 fills → pause the bot, 5 consecutive losses → downgrade, leverage raise C3)
+- [x] Docs agree: 14 §5 and 03 M11 reference 16
+- [x] Tasks updated: values are policy defaults with 16 links (P2-T012, P2-T017, P2-T032, P2-T034, P2-T037, P2-T048, P2-T070)
 
 ## Verification
 
@@ -66,8 +71,8 @@ Every threshold the risk manager needs has a documented default (user-editable i
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (16 §2.1 (collar, API-error pause, cost blow-out), §2.2 (stale 2 s/60 s), §2.3 (decision deadlines, TTLs, mode levels), §2.6 (5 losing trades downgrade), §3.1 (dead-man 5 s/10 s); 14 §5 table; 03 M11)
+- [x] Affected tasks reference the decision (P2-T012, P2-T017, P2-T032, P2-T034, P2-T037, P2-T048, P2-T070)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ Every threshold the risk manager needs has a documented default (user-editable i
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §C (P2-B003); docs carry it (16 §2.1 (collar, API-error pause, cost blow-out), §2.2 (stale 2 s/60 s), §2.3 (decision deadlines, TTLs, mode levels), §2.6 (5 losing trades downgrade), §3.1 (dead-man 5 s/10 s); 14 §5 table; 03 M11); implementation owned by P2-T012, P2-T017, P2-T032, P2-T034, P2-T037, P2-T048, P2-T070)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C (P2-B003)); docs updated: 16 §2.1 (collar, API-error pause, cost blow-out), §2.2 (stale 2 s/60 s), §2.3 (decision deadlines, TTLs, mode levels), §2.6 (5 losing trades downgrade), §3.1 (dead-man 5 s/10 s); 14 §5 table; 03 M11; implementation owned by P2-T012, P2-T017, P2-T032, P2-T034, P2-T037, P2-T048, P2-T070
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

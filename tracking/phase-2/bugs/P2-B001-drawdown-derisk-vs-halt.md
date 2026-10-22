@@ -4,7 +4,7 @@ kind: gap
 title: "Sleeve drawdown rule conflicts: halve exposure at 15% vs halt at 15%"
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -15,17 +15,22 @@ requirements: [R2.14]
 roadmap_todos: []
 modules: [M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B001-drawdown-derisk-vs-halt
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/14-strategy-evidence-and-validation.md §4 and §5
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B001 · Sleeve drawdown rule conflicts: halve exposure at 15% vs halt at 15%
@@ -49,9 +54,9 @@ One unambiguous drawdown rule set per sleeve: a de-risking threshold and a halt 
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: sleeve stage 1 at 10% halves new sizes, stage 2 at 15% halts (restart C3); system stage 1 at 10% stops new entries, stage 2 at 25% flattens + 30-day lock; all configurable, stage 1 < stage 2 at save
+- [x] Docs agree: 16 §2.1 holds the values; 14 §4/§5 and 03 M11 point to it
+- [x] Tasks updated: P2-T012 (evaluators), P2-T014 (sleeves), P2-T051 (goldens)
 
 ## Verification
 
@@ -66,8 +71,8 @@ One unambiguous drawdown rule set per sleeve: a de-risking threshold and a halt 
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (16 §2.1 (two-stage sleeve 10%/15% and system 10%/25% drawdowns, drawdown basis); 14 §4 drawdown de-risking; 14 §5 default-limits table)
+- [x] Affected tasks reference the decision (P2-T012, P2-T014, P2-T051)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ One unambiguous drawdown rule set per sleeve: a de-risking threshold and a halt 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §A P2-B001; docs carry it (16 §2.1 (two-stage sleeve 10%/15% and system 10%/25% drawdowns, drawdown basis); 14 §4 drawdown de-risking; 14 §5 default-limits table); implementation owned by P2-T012, P2-T014, P2-T051)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A P2-B001); docs updated: 16 §2.1 (two-stage sleeve 10%/15% and system 10%/25% drawdowns, drawdown basis); 14 §4 drawdown de-risking; 14 §5 default-limits table; implementation owned by P2-T012, P2-T014, P2-T051
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

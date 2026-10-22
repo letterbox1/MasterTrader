@@ -4,7 +4,7 @@ kind: gap
 title: Venue registry semantics for paper/testnet orders are undefined
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.17]
 roadmap_todos: []
 modules: [M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B008-venue-registry-paper-semantics
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/12-policy-and-compliance.md §2; docs/roadmap/phase-2-strategies-risk-lab.md §7
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B008 · Venue registry semantics for paper/testnet orders are undefined
@@ -49,9 +54,9 @@ The registry says whether `read_only`/`blocked` products may be paper-traded (sa
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: paper/testnet orders allowed for `allowed` or `read_only`; `blocked` products only if marked `paper_ok`; testnets are their own rows
+- [x] Docs agree: 12 §2
+- [x] Tasks updated: P2-T016 (check), P2-T009 (carry/unlock templates)
 
 ## Verification
 
@@ -66,8 +71,8 @@ The registry says whether `read_only`/`blocked` products may be paper-traded (sa
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (12 §2 (paper/testnet rule and `paper_ok` flag in the registry table))
+- [x] Affected tasks reference the decision (P2-T016, P2-T009)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ The registry says whether `read_only`/`blocked` products may be paper-traded (sa
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B008); docs carry it (12 §2 (paper/testnet rule and `paper_ok` flag in the registry table)); implementation owned by P2-T016, P2-T009)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B008)); docs updated: 12 §2 (paper/testnet rule and `paper_ok` flag in the registry table); implementation owned by P2-T016, P2-T009
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

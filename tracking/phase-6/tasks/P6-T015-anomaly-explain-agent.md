@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T014, P6-T005, P6-T009, P6-T006]
+depends_on: [P6-T014, P6-T005, P6-T006, P6-T009, P1-T045, P0-T034]
 requirements: [R6.05]
 roadmap_todos: [T6.22]
 modules: [M10, M8, M15]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [litellm, llm-local, nats, telegram-bot-api]
 branch: p6/P6-T015-anomaly-explain-agent
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/mobile-and-telegram.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T015 · Explain agent: anomaly briefs to Telegram
@@ -41,6 +46,8 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) Anomaly explanations (`/notifications?kind=anomaly`)
 - Exit: [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 2
 - Depends on (this phase): P6-T014, P6-T005, P6-T009, P6-T006
+- Cross-phase: P1-T045 (Telegram/ntfy alert fan-out), P0-T034 (command bus)
+- Command: [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) `anomaly.explain` (C1; result arrives as a notification)
 
 ## Requirements
 
@@ -49,12 +56,15 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 - Delivery: Telegram bot message (alert channel) + `ops.notification` (kind=anomaly) + WS `notifications`; brief text stored with the anomaly id.
 - Rate limit: ≤ 1 brief per (subject) per 60 min; info-severity anomalies batched into the daily digest.
 - Telegram output only: Telegram content is never an input to the brief.
+- Command `anomaly.explain` (C1): explain any anomaly id on request; the brief arrives as a notification (02 §7.2).
+- Built keyless: tests use `local-advisor` and recorded responses; the `explain` role's default daily budget is $0.30 (16 §2.10).
 
 ## ToDo
 
 - [ ] `mt_anomaly.explain` consumer + prompt (registry versioned).
 - [ ] Context-pack builder using the tool belt.
 - [ ] Telegram + notification delivery; link to D09.
+- [ ] `anomaly.explain` command handler (C1).
 - [ ] Tests with recorded LLM responses; docs.
 
 ## Verification
@@ -102,3 +112,4 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (anomaly.explain command (C1, 02 §7.2); explain budget default 16 §2.10; keyless; cross-phase deps P1-T045/P0-T034; run fields)

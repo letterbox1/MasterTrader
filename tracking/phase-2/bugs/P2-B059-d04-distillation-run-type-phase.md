@@ -4,7 +4,7 @@ kind: gap
 title: D04 lists a distillation run type that belongs to Phase 6
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R2.47]
 roadmap_todos: []
 modules: [M7, M21]
 dashboards: [D04]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B059-d04-distillation-run-type-phase
 pr: ""
 doc_sync: [docs/ui/dashboards/D04-research-lab.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D04-research-lab.md (New run panel, Run type)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B059 · D04 lists a distillation run type that belongs to Phase 6
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: D04 lists 'tier A
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: D04 lists tier A training (P2) and distillation (P6, hidden)
+- [x] Docs agree: D04 run-type row
+- [x] Tasks updated: P2-T145
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: D04 lists 'tier A
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (D04 run types (tier A training in P2; distillation P6, hidden until then))
+- [x] Affected tasks reference the decision (P2-T145)
 
 ## Exceptions & edge cases
 
@@ -94,3 +97,7 @@ The docs agree and part-B tasks can be built without guessing: D04 lists 'tier A
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B059, suggested fix adopted); docs carry it (D04 run types (tier A training in P2; distillation P6, hidden until then)); implementation owned by P2-T145)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B059, suggested fix adopted)); docs updated: D04 run types (tier A training in P2; distillation P6, hidden until then); implementation owned by P2-T145
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

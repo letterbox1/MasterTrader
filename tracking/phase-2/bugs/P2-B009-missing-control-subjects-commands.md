@@ -4,7 +4,7 @@ kind: gap
 title: Engine control NATS subjects and some commands are missing from 02
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R2.06, R2.07, R2.14]
 roadmap_todos: []
 modules: [M0, M11, M12]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B009-missing-control-subjects-commands
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §4, §6, §7.2
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B009 · Engine control NATS subjects and some commands are missing from 02
@@ -49,9 +54,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: engine control subjects `engine.cmd.*`; sleeve restart is `risk.sleeve.restart` (C3, 16 §2.3) rather than the proposed C1 resume; `strategy.run_shadow` (C1); WS topic `approvals`
+- [x] Docs agree: 02 §6/§7.2/§7.3
+- [x] Tasks updated: P2-T021, P2-T030, P2-T012/P2-T020 (`risk.sleeve.restart`), P2-T038
 
 ## Verification
 
@@ -66,8 +71,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (02 §6 subjects (`engine.cmd.{command}`, `strat.status.{strategy}`, `bot.{id}.status`); 02 §7.2 (`strategy.run_shadow` C1, `risk.sleeve.restart` C3); 02 §7.3 WS `approvals`)
+- [x] Affected tasks reference the decision (P2-T021, P2-T030, P2-T012, P2-T020, P2-T038)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B009, suggested fix adopted with `engine.cmd.*`); docs carry it (02 §6 subjects (`engine.cmd.{command}`, `strat.status.{strategy}`, `bot.{id}.status`); 02 §7.2 (`strategy.run_shadow` C1, `risk.sleeve.restart` C3); 02 §7.3 WS `approvals`); implementation owned by P2-T021, P2-T030, P2-T012, P2-T020, P2-T038)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B009, suggested fix adopted with `engine.cmd.*`)); docs updated: 02 §6 subjects (`engine.cmd.{command}`, `strat.status.{strategy}`, `bot.{id}.status`); 02 §7.2 (`strategy.run_shadow` C1, `risk.sleeve.restart` C3); 02 §7.3 WS `approvals`; implementation owned by P2-T021, P2-T030, P2-T012, P2-T020, P2-T038
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: Command catalogue lacks a leakage-waiver command and a tier-A training run
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.43, R2.47]
 roadmap_todos: []
 modules: [M7, M21]
 dashboards: [D04]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B056-missing-lab-commands
 pr: ""
 doc_sync: [docs/02-v1-architecture.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7.2 (Lab, Agents & models groups); docs/14-strategy-evidence-and-validation.md §6 gate 1
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B056 · Command catalogue lacks a leakage-waiver command and a tier-A training run
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: every lab action 
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: commands `lab.leakage.waive` (C2, not the proposed C1) and `models.tiera.train` (C1, replacing the proposed `lab.tier_a.train`); flatten-and-halt is `position.close {halt: true, reason}`
+- [x] Docs agree: 02 §7.2, 14 §6
+- [x] Tasks updated: P2-T113, P2-T117, P2-T125, P2-T146, P2-T148
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: every lab action 
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (02 §7.2: `lab.leakage.waive` (C2, reason required, audited), `models.tiera.train` (C1: train → calibrate → compile), `position.close {halt: true, reason}` (flatten-and-halt); 14 §6)
+- [x] Affected tasks reference the decision (P2-T113, P2-T117, P2-T125, P2-T148)
 
 ## Exceptions & edge cases
 
@@ -94,3 +97,7 @@ The docs agree and part-B tasks can be built without guessing: every lab action 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B056); docs carry it (02 §7.2: `lab.leakage.waive` (C2, reason required, audited), `models.tiera.train` (C1: train → calibrate → compile), `position.close {halt: true, reason}` (flatten-and-halt); 14 §6); implementation owned by P2-T113, P2-T117, P2-T125, P2-T148)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B056)); docs updated: 02 §7.2: `lab.leakage.waive` (C2, reason required, audited), `models.tiera.train` (C1: train → calibrate → compile), `position.close {halt: true, reason}` (flatten-and-halt); 14 §6; implementation owned by P2-T113, P2-T117, P2-T125, P2-T148
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

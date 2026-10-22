@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T005]
+depends_on: [P0-T042, P0-T044, P2-T019]
 requirements: [R6.07]
-roadmap_todos: [T6.41]
+roadmap_todos: [T6.32]
 modules: [M21, M15]
 dashboards: [D10, D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [litellm, llm-local, postgres, prometheus]
 branch: p6/P6-T009-llm-budgets-local-fallback
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T009 · Enforce the monthly LLM cap, per-role budgets and local fallback
@@ -36,20 +41,22 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 
 ## Context & references
 
-- Roadmap: [R6.07](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.41
+- Roadmap: [R6.07](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.32
 - Spec: [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (monthly cap, spend panel) · [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (virtual keys, `max_budget`, `budget_duration`, fallbacks) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) ("Local models" badge)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Gateway tab (raise = C3, lower = C1) · [D09](../../../docs/ui/dashboards/D09-agents.md) budget estimate
-- Gap: P6-B012 (cap vs daily budget semantics)
-- Cross-phase: P0 T0.45 (keys exist)
-- Depends on (this phase): P6-T005
+- Decision: [17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (P6-B012) → defaults [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets): monthly cap US$40 per UTC month (month-to-date); daily per-role budgets debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30; whichever runs out first routes to `local-advisor`
+- Cross-phase: P0-T042 (LiteLLM per-role keys, `audit.llm_call` writer), P0-T044 (`local-advisor` on `llm-local`), P2-T019 (tighten/loosen classifier + C3 flow)
+- Depends on (this phase): none; built and tested against a fake provider (no keys). Verified by P6-T053 (T6.70); live check P6-T070
 
 ## Requirements
 
-- Per-role virtual keys (`debate`, `strategy-gen`, `explain`, `memory`, `chat`, `shadow`) with `max_budget` + `budget_duration: 1d`; a global provider budget derived from the monthly cap (month-to-date check).
+- Per-role virtual keys (`debate`, `strategy-gen`, `explain`, `memory`, `chat`, `shadow`) with `max_budget` + `budget_duration: 1d`, values from the settings (defaults 16 §2.10, never hard-coded); extend the keys P0-T042 provisions, don't duplicate them.
+- Global monthly cap (default US$40 per UTC month) checked month-to-date by a pre-call hook reading spend from `audit.llm_call`.
 - On budget exhaustion for a role or the global cap: route to `local-advisor` (and mark responses `fallback_used`), never hard-fail unless local is down.
 - `system.settings.update` for budgets: lowering = C1, raising = C3 (server-side diff classification).
 - `GET /models/gateway/spend`: by role, today vs budget, month-to-date vs cap, requests, errors, fallbacks, latency, provider status.
 - UI flag `local_models=true` exposed via `/system/health` for the global badge.
+- Spend events `llm.budget.warn` / `llm.budget.exhausted` (role, period, spend, budget) on NATS for P6-T010 alerts and D10.
 
 ## ToDo
 
@@ -95,7 +102,7 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 
 - `docs/10-memory-rag-and-models.md` §5: month-to-date guard and `shadow` role.
 - `docs/03-build-spec.md` §7: cap semantics.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.41 (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.32 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -106,3 +113,4 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.32; 16 §2.10 defaults incl. shadow, month-to-date US$40 cap, precedence; spend events; keyless vs fake provider; deps P0-T042/P0-T044/P2-T019 (no longer P6-T005); run fields)

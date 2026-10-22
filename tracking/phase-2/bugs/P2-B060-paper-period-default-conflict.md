@@ -4,7 +4,7 @@ kind: gap
 title: Default paper period differs between 03 §8 (3 months) and 14 §6 (2–4 weeks)
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R2.06]
 roadmap_todos: []
 modules: [M0, M7]
 dashboards: [D03]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B060-paper-period-default-conflict
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md §8 item 5; docs/14-strategy-evidence-and-validation.md §6 gate 7; docs/02-v1-architecture.md §13
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B060 · Default paper period differs between 03 §8 (3 months) and 14 §6 (2–4 weeks)
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: one rule shown in
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: one paper/HITL period rule in the gate profile (16 §2.4); the old '3 months' and '2–4 weeks' wording is gone
+- [x] Docs agree: 16 §2.4, 03 §8, 14 §6, roadmap R7.02
+- [x] Tasks updated: P2-T007, P2-T114, P2-T180
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: one rule shown in
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (16 §2.4 gate profile (paper/HITL ≥ 8 weeks and ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks); 03 §8 item 5; 14 §6 item 7; roadmap P7 R7.02)
+- [x] Affected tasks reference the decision (P2-T007, P2-T114, P2-T180)
 
 ## Exceptions & edge cases
 
@@ -95,3 +98,7 @@ The docs agree and part-B tasks can be built without guessing: one rule shown in
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §B (P2-B060, with P7-B001/B002); docs carry it (16 §2.4 gate profile (paper/HITL ≥ 8 weeks and ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks); 03 §8 item 5; 14 §6 item 7; roadmap P7 R7.02); implementation owned by P2-T007, P2-T114, P2-T180)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B (P2-B060, with P7-B001/B002)); docs updated: 16 §2.4 gate profile (paper/HITL ≥ 8 weeks and ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks); 03 §8 item 5; 14 §6 item 7; roadmap P7 R7.02; implementation owned by P2-T007, P2-T114, P2-T180
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

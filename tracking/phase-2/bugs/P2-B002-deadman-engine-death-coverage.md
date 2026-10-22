@@ -4,7 +4,7 @@ kind: gap
 title: Dead-man watchdog lives in the engine, so engine death is not covered
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -15,17 +15,22 @@ requirements: [R2.18]
 roadmap_todos: []
 modules: [M11]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B002-deadman-engine-death-coverage
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/07-security-notes.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §6 rules; docs/03-build-spec.md M11
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B002 · Dead-man watchdog lives in the engine, so engine death is not covered
@@ -49,9 +54,9 @@ The dead-man design covers a dead or hung engine (the most important case) with 
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: in-engine watchdog + external `deadman` sidecar with its own keys/connections + venue cancel-after timers and resting stops; per-bot `on_system_failure` (default `flatten`); restart flat with bots paused
+- [x] Docs agree: 16 §3.1, 02 §3.2/§6/F6/§9.3, 03 M11, 07 §3
+- [x] Tasks updated/created: P2-T032, P2-T072, P2-T073, P2-T074, P2-T075
 
 ## Verification
 
@@ -66,8 +71,8 @@ The dead-man design covers a dead or hung engine (the most important case) with 
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (16 §3.1 (three-layer dead-man); 02 §3.2 `deadman` container, §6 dead-man layers, F6, §9.3 engine-down row; 03 M11 dead-man; 07 §3 deadman keys)
+- [x] Affected tasks reference the decision (P2-T032 (layer 1), P2-T072 (sidecar), P2-T073 (venue timers + resting stops), P2-T074 (restart flat), P2-T075 (drill))
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ The dead-man design covers a dead or hung engine (the most important case) with 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §A P2-B002; docs carry it (16 §3.1 (three-layer dead-man); 02 §3.2 `deadman` container, §6 dead-man layers, F6, §9.3 engine-down row; 03 M11 dead-man; 07 §3 deadman keys); implementation owned by P2-T032 (layer 1), P2-T072 (sidecar), P2-T073 (venue timers + resting stops), P2-T074 (restart flat), P2-T075 (drill))
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A P2-B002); docs updated: 16 §3.1 (three-layer dead-man); 02 §3.2 `deadman` container, §6 dead-man layers, F6, §9.3 engine-down row; 03 M11 dead-man; 07 §3 deadman keys; implementation owned by P2-T032 (layer 1), P2-T072 (sidecar), P2-T073 (venue timers + resting stops), P2-T074 (restart flat), P2-T075 (drill)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

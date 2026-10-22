@@ -4,7 +4,7 @@ kind: gap
 title: Deflated Sharpe gate threshold conflicts (> 0 vs > 0.95)
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: high
 size: XS
 severity: S2
@@ -15,17 +15,22 @@ requirements: [R2.42]
 roadmap_todos: []
 modules: [M7]
 dashboards: [D03, D04]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B050-deflated-sharpe-threshold-conflict
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/14-strategy-evidence-and-validation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md §8 items 2 and 7; docs/02-v1-architecture.md §13; docs/14-strategy-evidence-and-validation.md §6–7
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B050 · Deflated Sharpe gate threshold conflicts (> 0 vs > 0.95)
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: one deflated-Shar
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: deflated Sharpe gate is DSR ≥ 0.95 (a probability); "> 0" was an error
+- [x] Docs agree: 16 §2.4, 03 §8, 02 §13, 14 §6/§7
+- [x] Tasks updated: P2-T110, P2-T114 (threshold from the gate profile)
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: one deflated-Shar
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (16 §2.4 (DSR ≥ 0.95, a probability); 03 §8 item 2; 02 §13 item 2; 14 §6 gate 2; 14 §7 table)
+- [x] Affected tasks reference the decision (P2-T110, P2-T114)
 
 ## Exceptions & edge cases
 
@@ -96,3 +99,7 @@ The docs agree and part-B tasks can be built without guessing: one deflated-Shar
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §A (P2-B050); docs carry it (16 §2.4 (DSR ≥ 0.95, a probability); 03 §8 item 2; 02 §13 item 2; 14 §6 gate 2; 14 §7 table); implementation owned by P2-T110, P2-T114)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A (P2-B050)); docs updated: 16 §2.4 (DSR ≥ 0.95, a probability); 03 §8 item 2; 02 §13 item 2; 14 §6 gate 2; 14 §7 table; implementation owned by P2-T110, P2-T114
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

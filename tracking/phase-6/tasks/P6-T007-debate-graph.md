@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T004, P6-T005, P6-T006]
+depends_on: [P6-T004, P6-T005, P6-T006, P0-T042, P0-T044]
 requirements: [R6.01]
 roadmap_todos: [T6.20]
 modules: [M8]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [litellm, llm-local, postgres, nats]
 branch: p6/P6-T007-debate-graph
 pr: ""
 doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T007 · LangGraph debate graph producing a sourced Signal
@@ -40,7 +45,8 @@ checkpoint: ""
 - Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) · [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–3 · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md) (TradingAgents v0.7.0 graph, Pydantic schemas, quick/deep tiers)
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) `/agents/runs/:id` stage timeline
 - Security: [07 §6](../../../docs/07-security-notes.md#6-application-controls), [02 §9.1](../../../docs/02-v1-architecture.md#91-security)
-- Cross-phase: P0 R0.09 gateway roles
+- Cross-phase: P0-T042 (gateway roles, `audit.llm_call` writer), P0-T044 (`local-advisor` for keyless runs)
+- Verified by: P6-T067 (sample runs, T6.66, keyless) and P6-T070 (live provider with your keys)
 - Depends on (this phase): P6-T004, P6-T005, P6-T006
 
 ## Requirements
@@ -48,7 +54,8 @@ checkpoint: ""
 - Stages: analysts (technical, sentiment, news, fundamentals, macro/events) → bull/bear debate (configurable rounds, default 2) → research manager → trader → risk debate (aggressive / conservative / neutral) → PM → Signal.
 - Depth presets quick/standard/deep map to model routes: analysts on `local-advisor` or `research-primary` (quick tier), managers/PM on `research-primary` (deep tier); local-only option.
 - Each `AgentTurn` stored with role, stance, confidence, text, cited provenance ids, tool calls; turns are part of `decision_run.stages`.
-- PM output validated against the Signal v2 schema; invalid output → one repair attempt, else run `status=failed` (no Signal).
+- Built and tested keyless (build first, keys last): `local-advisor` + recorded gateway responses; no API key is needed to finish this task.
+- PM output validated against the Signal schema (every 03 M8 field); invalid output → one repair attempt, else run `status=failed` (no Signal).
 - Memory recall node (bank `decisions`, `market-regimes`) with `as_of` (wired in P6-T012).
 - Checkpointing so a crashed run resumes from the last completed stage.
 - Budget preflight: estimated tokens/cost shown and checked against the role budget before the run (P6-T009).
@@ -115,3 +122,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (Signal = 03 M8 fields; keyless build on local-advisor/recorded responses, live check in P6-T070; cross-phase deps P0-T042/P0-T044; run fields)

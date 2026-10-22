@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T007, P6-T009]
+depends_on: [P6-T007, P6-T009, P0-T034, P0-T036]
 requirements: [R6.02, R6.01]
 roadmap_todos: [T6.20]
 modules: [M8, M15]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [prefect, nats, postgres, mt-api]
 branch: p6/P6-T008-agent-scheduler-triggers-api
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T008 · Agent scheduler, event triggers and the agents API
@@ -40,6 +45,8 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 - Spec: [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (cadence, event-triggered, never per tick) · [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 1 · [02 §7.1](../../../docs/02-v1-architecture.md#71-queries-rest-read) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`agents.run_analysis` C1) · [02 §7.3](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws)
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) (New analysis, Runs list, Signals; Schedule recurring analysis via `system.settings.update`)
 - Depends on (this phase): P6-T007, P6-T009
+- Cross-phase: P0-T034 (command bus, `audit.command`), P0-T036 (WebSocket hub)
+- Verified by: P6-T052 (scheduler test, T6.67)
 
 ## Requirements
 
@@ -105,3 +112,4 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P0-T034/P0-T036; scheduler test is T6.67 (P6-T052); run fields)

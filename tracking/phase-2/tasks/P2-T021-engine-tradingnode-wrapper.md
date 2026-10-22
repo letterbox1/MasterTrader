@@ -85,7 +85,7 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 
 ## Acceptance criteria
 
-- [ ] Engine container runs sandbox + testnet nodes from config
+- [ ] Engine container runs the sandbox node from config; the testnet node config is validated against mock venues (live run in P2-T071)
 - [ ] Every order/fill audited with trace_id
 - [ ] External intents only enter via the gate
 - [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)

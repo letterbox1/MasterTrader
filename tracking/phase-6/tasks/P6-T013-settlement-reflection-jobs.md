@@ -15,17 +15,22 @@ requirements: [R6.04, R6.14]
 roadmap_todos: [T6.21]
 modules: [M9, M8, M21]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [prefect, postgres, hindsight, litellm]
 branch: p6/P6-T013-settlement-reflection-jobs
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T013 · Decision settlement and reflection jobs
@@ -45,8 +50,8 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 
 - Settlement flow (Prefect, every 15 min): select runs with `settlement_due_at ≤ now` and no settlement row.
 - Outcome via `pit(as_of=settlement_time)`: forward return over horizon, alpha vs the instrument's benchmark (manifest/asset-class default), triple-barrier hit (upper/lower/time) with barriers from the Signal or volatility default, hit/miss vs direction, P&L if traded (join fills).
-- `audit.decision_settlement` WORM row referencing `run_id`/`signal_id`; never update the run.
-- Reflection: gateway role `memory` (budgeted) writes a short reflection; stored with the settlement; Hindsight retain into `decisions` (episode) and `strategies` (lesson) with `created_at` = settlement time.
+- `audit.decision_settlement` WORM row referencing `run_id`/the Signal `id`; never update the run.
+- Reflection: gateway role `memory` (budgeted) writes a short reflection; stored with the settlement; Hindsight retain into `decisions` (episode) and `strategies` (lesson) with `observed_at` = the horizon end (when the outcome happened) and `ingested_at` = settlement time; the reflection's lineage lists the run and settlement so derived memories inherit the latest source time (P6-T012, 17 §A P6-B016).
 - Scorecard metrics endpoint `GET /agents/runs?settled=1&metrics=1`: hit rate, Brier, reliability bins, by role/model/horizon.
 - Settlement never visible in views with as_of before the horizon end (D09 acceptance 3).
 
@@ -107,3 +112,4 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (memory timestamps observed_at/ingested_at per 17 §A P6-B016; Signal id per 03 M8; run fields)

@@ -4,7 +4,7 @@ kind: gap
 title: D05/D01 approvals spec misses 15 §1.3 card actions and conflicts on bulk approve
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.51, R2.54]
 roadmap_todos: []
 modules: [M15]
 dashboards: [D05, D01]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B058-approvals-card-spec-mismatch
 pr: ""
 doc_sync: [docs/ui/dashboards/D05-execution.md, docs/ui/dashboards/D01-cockpit.md, docs/ui/components.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/ui/dashboards/D05-execution.md (Approvals), docs/ui/components.md (ApprovalCard) vs docs/15-bots-hitl-and-worm-audit.md §1.3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B058 · D05/D01 approvals spec misses 15 §1.3 card actions and conflicts on bulk approve
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: the web `Approval
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: the web card matches the Telegram card (Approve · Approve ½ · Reject · Pause bot, large-order rule); no bulk approve except the batched dynamic-selection card; D01/D05 read `/approvals`
+- [x] Docs agree: components, D05, D01, 15 §1.3
+- [x] Tasks updated: P2-T038, P2-T149 (bulk approve removed)
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: the web `Approval
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (components `ApprovalCard`; D05 Approvals tab and actions (Approve ½, Pause bot, large-order hold-to-confirm, batched card, `/approvals?status=pending`); D01 Needs-you)
+- [x] Affected tasks reference the decision (P2-T038, P2-T149)
 
 ## Exceptions & edge cases
 
@@ -96,3 +99,7 @@ The docs agree and part-B tasks can be built without guessing: the web `Approval
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B058); docs carry it (components `ApprovalCard`; D05 Approvals tab and actions (Approve ½, Pause bot, large-order hold-to-confirm, batched card, `/approvals?status=pending`); D01 Needs-you); implementation owned by P2-T038, P2-T149)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B058)); docs updated: components `ApprovalCard`; D05 Approvals tab and actions (Approve ½, Pause bot, large-order hold-to-confirm, batched card, `/approvals?status=pending`); D01 Needs-you; implementation owned by P2-T038, P2-T149
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

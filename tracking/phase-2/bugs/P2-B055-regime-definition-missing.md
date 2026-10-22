@@ -4,7 +4,7 @@ kind: gap
 title: Bull/bear/chop regime definition for the per-regime gate is unspecified
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.42, R2.46]
 roadmap_todos: []
 modules: [M6, M7]
 dashboards: [D03, D04]
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B055-regime-definition-missing
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/14-strategy-evidence-and-validation.md §6 gate 4; docs/03-build-spec.md §8 item 7 and M6
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B055 · Bull/bear/chop regime definition for the per-regime gate is unspecified
@@ -49,10 +54,9 @@ The docs agree and part-B tasks can be built without guessing: a deterministic, 
 
 ## ToDo
 
-- [ ] Decide the resolution (owner: you, with the planner's suggestion as default)
-- [ ] Edit the listed docs in one PR so they agree
-- [ ] Update the affected part-B task files (Requirements/Acceptance) if the decision differs from the default
-- [ ] Add/adjust the regression test named below where code depends on it
+- [x] Decision recorded: `regime_v1` price-based regimes per asset, daily (bull/bear/chop), configurable per asset class
+- [x] Docs agree: 16 §2.4.1, 14 §6
+- [x] Tasks updated: P2-T111
 
 ## Verification
 
@@ -67,9 +71,8 @@ The docs agree and part-B tasks can be built without guessing: a deterministic, 
 
 ## Acceptance criteria
 
-- [ ] Docs listed under Doc sync agree with each other
-- [ ] Affected tasks reference the decision
-- [ ] Root cause noted in the progress log
+- [x] Docs agree in one place, cross-linked from the others (16 §2.4.1 regime labels; 14 §6 item 4 (`regime_v1`))
+- [x] Affected tasks reference the decision (P2-T111)
 
 ## Exceptions & edge cases
 
@@ -95,3 +98,7 @@ The docs agree and part-B tasks can be built without guessing: a deterministic, 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §C (P2-B055); docs carry it (16 §2.4.1 regime labels; 14 §6 item 4 (`regime_v1`)); implementation owned by P2-T111)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §C (P2-B055)); docs updated: 16 §2.4.1 regime labels; 14 §6 item 4 (`regime_v1`); implementation owned by P2-T111
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

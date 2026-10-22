@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P1-T013, P4-T040, P0-T031]
 requirements: [R6.05]
 roadmap_todos: [T6.22]
 modules: [M10]
 dashboards: [D09]
+tools: [git, uv, python>=3.12, docker]
+mcp: []
+env: []
+services: [nats, postgres, mlflow, prefect]
 branch: p6/P6-T014-anomaly-detectors
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P6-T014 · mt_anomaly detectors on market, sentiment and event streams
@@ -38,14 +43,14 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 
 - Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.22
 - Spec: [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor--mt_anomaly) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M10 owns `audit.anomaly`, publishes `alert.anomaly.*`, consumes `md.*`, `text.*`, `evt.*`) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`anomaly` container)
-- Cross-phase: P1 R1.02 bars, P4 R4.11 sentiment/regime features, P4 R4.08 events
+- Cross-phase: P1-T013 (bars + continuous aggregates), P4-T040 (sentiment/regime features), P0-T031 (WORM helper); event streams (P4-T033/P4-T034) are optional inputs, mocked in tests
 
 ## Requirements
 
 - Detectors: robust z (median/MAD) on returns, volume, spread, funding; IsolationForest on multivariate feature windows (fit nightly, time-ordered, per asset class); change points (PELT via `ruptures`, or BOCPD) on volatility/sentiment; correlation breaks (rolling 30d correlation vs 1y baseline, Fisher z test) for key pairs (BTC-ETH, DXY-gold, SPY-VIX…).
 - Runs on bars (1m/1h/1D) not raw ticks; DQ status `stale|bad` suppresses detections for that instrument.
 - Each anomaly: id, detector, subject(s), score, threshold, window, `event_time`, inputs snapshot hash, severity (info/warn/high); dedupe and cool-down per (subject, detector) (default 60 min).
-- Thresholds configurable per detector/asset class; false-positive budget target ≤ 3 high-severity alerts/day (tunable).
+- Thresholds are settings per detector/asset class (defaults documented, never hard-coded); false-positive budget target ≤ 3 high-severity alerts/day (tunable).
 - Model artefacts (IsolationForest) logged to MLflow with training window.
 
 ## ToDo
@@ -107,3 +112,4 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P1-T013/P4-T040/P0-T031; thresholds as settings; run fields)

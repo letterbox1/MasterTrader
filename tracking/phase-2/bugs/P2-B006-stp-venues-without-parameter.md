@@ -4,7 +4,7 @@ kind: gap
 title: STP rule undefined for venues with no STP parameter (Alpaca, OANDA, IG, IBKR)
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: XS
 severity: S3
@@ -15,17 +15,22 @@ requirements: [R2.31]
 roadmap_todos: []
 modules: [M12]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B006-stp-venues-without-parameter
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/12-policy-and-compliance.md §3
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B006 · STP rule undefined for venues with no STP parameter (Alpaca, OANDA, IG, IBKR)
@@ -49,9 +54,9 @@ checkpoint: ""
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: netting brokers (OANDA, IG, Alpaca, IBKR) have no STP field → registry `stp: n/a (netting)`; one strategy per account/sub-account where netting would merge bots
+- [x] Docs agree: 12 §2/§3
+- [x] Tasks updated: engine-guard design replaced by the netting rule (P2-T022, adapters, P2-T036 bot creation, P2-T056 audit)
 
 ## Verification
 
@@ -66,8 +71,8 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (12 §2 registry table (STP row) and §3 STP table (netting-broker row `stp: n/a (netting)`))
+- [x] Affected tasks reference the decision (P2-T022, P2-T024, P2-T025, P2-T026, P2-T036, P2-T056)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B006); docs carry it (12 §2 registry table (STP row) and §3 STP table (netting-broker row `stp: n/a (netting)`)); implementation owned by P2-T022, P2-T024, P2-T025, P2-T026, P2-T036, P2-T056)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B006)); docs updated: 12 §2 registry table (STP row) and §3 STP table (netting-broker row `stp: n/a (netting)`); implementation owned by P2-T022, P2-T024, P2-T025, P2-T026, P2-T036, P2-T056
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

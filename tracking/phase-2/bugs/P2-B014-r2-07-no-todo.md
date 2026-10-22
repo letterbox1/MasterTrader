@@ -4,7 +4,7 @@ kind: gap
 title: R2.07 (sweeps, A/B, shadow mode) has no roadmap ToDo
 phase: 2
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -15,17 +15,22 @@ requirements: [R2.07]
 roadmap_todos: []
 modules: [M0, M7]
 dashboards: []
+tools: []
+mcp: []
+env: []
+services: []
 branch: p2/P2-B014-r2-07-no-todo
 pr: ""
 doc_sync: [docs/roadmap/phase-2-strategies-risk-lab.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-2-strategies-risk-lab.md §3/§4
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-B014 · R2.07 (sweeps, A/B, shadow mode) has no roadmap ToDo
@@ -49,9 +54,9 @@ Every Phase 2 requirement maps to at least one ToDo.
 
 ## ToDo
 
-- [ ] Decide the rule with the user (or record the decision taken in the linked task)
-- [ ] Update the source doc(s) so they agree
-- [ ] Update the affected task file(s) to match
+- [x] Decision recorded: a dedicated ToDo T2.37 covers R2.07
+- [x] Docs agree: roadmap §4 B
+- [x] Tasks updated: P2-T030 (shadow) and P2-T115 (sweeps + A/B) map to T2.37
 
 ## Verification
 
@@ -66,8 +71,8 @@ Every Phase 2 requirement maps to at least one ToDo.
 
 ## Acceptance criteria
 
-- [ ] Docs agree in one place, cross-linked from the others
-- [ ] Affected tasks reference the decision
+- [x] Docs agree in one place, cross-linked from the others (roadmap phase 2 ToDo T2.37 → R2.07 (sweeps, A/B on identical data, shadow mode))
+- [x] Affected tasks reference the decision (P2-T030, P2-T115)
 
 ## Exceptions & edge cases
 
@@ -91,3 +96,7 @@ Every Phase 2 requirement maps to at least one ToDo.
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (resolved by 17 §D (P2-B014, suggested fix adopted); docs carry it (roadmap phase 2 ToDo T2.37 → R2.07 (sweeps, A/B on identical data, shadow mode)); implementation owned by P2-T030, P2-T115)
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D (P2-B014, suggested fix adopted)); docs updated: roadmap phase 2 ToDo T2.37 → R2.07 (sweeps, A/B on identical data, shadow mode); implementation owned by P2-T030, P2-T115
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave
