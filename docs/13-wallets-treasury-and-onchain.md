@@ -6,20 +6,36 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 
 A fully air-gapped machine can't also serve an API. So bots sign only with **capped hot keys**, and everything above the cap moves through an offline signer.
 
+**Vault and warm are watch-only:** the system never holds their keys. It may *prepare* unsigned transactions (QR / WalletConnect) for you to sign in your own wallet.
+
 | Tier | Holds | Key location | Signs how | Limit |
 |---|---|---|---|---|
-| **Vault (cold)** | Treasury stablecoins, BTC, long holds | Air-gapped hardware (e.g. your Ellipal Titan: MetaMask-QR signing only, no EIP-712, no xpub) | Unsigned transaction shown as QR/file, signed offline, broadcast from the online side | **Manual only**; watched by address; sweeps *to* it are automatic (receiving needs no key) |
+| **Vault (cold)** | Treasury stablecoins, BTC, long holds | Air-gapped hardware (e.g. your Ellipal Titan: MetaMask-QR signing only, no EIP-712, no xpub) | Unsigned transaction prepared as QR/file, signed offline by you, broadcast from the online side | **Manual only**; watch-only in the system; sweeps *to* it are automatic (receiving needs no key) |
 | **Hyperliquid master** (only if Hyperliquid is approved, see 12 §1) | Deposits, withdrawals, agent approval, vault transfers | Hardware signer with EIP-712 (Ledger Flex/Nano X or Trezor Safe 5) | Software builds the action on an offline host; you sign on the device after an independent hash check | Manual only |
-| **Warm** | Staking, node collateral, governance | Hardware wallet | You approve on the device | Manual or scheduled, with approval |
-| **Hot (trading)** | Working capital per sleeve | Signer service (isolated) | Automatic after policy + cost gate + simulation | Per-transaction and rolling 24h caps |
-| **Airdrop identity** | One long-lived wallet **per chain** (EVM, Solana) with organic history | Signer service (capped) or warm | Mandated claims / genuine-use tasks | Never used for memecoin churn or unvetted contracts |
-| **Burner** | Interacting with new dApps/airdrop sites during vetting | Signer service | Automatic, tiny float | Refilled to a fixed float only |
+| **Warm** | Staking, node collateral, governance | Hardware wallet (yours) | The system prepares an unsigned transaction; you sign it on the device | Manual only; watch-only in the system |
+| **Hot (trading)** | Working capital per sleeve | Signer service (isolated) | Automatic after policy + cost gate + simulation | Float default ≤ A$500 per chain; per-transaction and rolling 24 h caps |
+| **Airdrop identity** | One long-lived wallet **per chain** (EVM, Solana) with organic history | Signer service (capped) | Mandated claims (all autonomous claims use it, never the hot wallet) / genuine-use tasks | Float default ≤ A$300 per chain; never used for memecoin churn or unvetted contracts |
+| **Burner** | Interacting with new dApps/airdrop sites during vetting | Signer service | Automatic, tiny float | Float default ≤ A$50; refilled to the float only |
 
 **Rules:**
 - **The burner goes first.** The identity wallet only follows a successful burner run.
 - **Separate wallets by purpose**, and keep investment and trading wallets separate for tax.
 - **No multi-wallet airdrop participation.**
-- **Sweeps:** hot balances above the float sweep to the vault address on a schedule. Moving funds *out of* the vault is always manual and signed offline.
+- **Sweeps:** hot balances above the float sweep to the vault address daily (default). Moving funds *out of* the vault is always manual and signed offline.
+- **Kill switch:** stops new trading, cancels orders, applies each bot's failure policy and freezes new treasury/earn moves. From P5 (default on) it also sweeps hot trading balances to the vault address; sweeps *to* the vault and approval revokes are protective, so the freeze doesn't block them.
+
+**Default limits (configurable, [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)):**
+
+| Setting | Default |
+|---|---|
+| Hot (trading) float | ≤ A$500 per chain |
+| Airdrop identity float | ≤ A$300 per chain |
+| Burner float | ≤ A$50 |
+| Signer per-transaction cap | A$250 |
+| Signer rolling 24 h cap | A$1,000 per wallet |
+| Daily gas budget | Airdrops A$20/day · DEX trading A$50/day (§7) |
+
+Tightening is immediate; loosening is C3. The defaults only prefill the form: **signing stays disabled until you confirm these numbers on first setup** (a USER task in Phase 5).
 
 ## 2. Signer service (the only process that sees hot keys)
 
@@ -28,13 +44,13 @@ A fully air-gapped machine can't also serve an API. So bots sign only with **cap
   - loaded into memory at start;
   - never logged and never in `.env`.
 - **Interface:**
-  - accepts **intents** over a local socket / mTLS from the policy service only, never raw transactions;
+  - accepts **intents** over a local socket / mTLS **only from the policy service**, never raw transactions. `airdrop-exec` is the policy service in P5 (claims, revokes, sweeps); treasury (P6) and DEX execution (P7) also go through it, never straight to the signer;
   - re-decodes and re-builds everything itself.
 - **Enforced checks:**
   - a per-wallet allow-list of programs/contracts;
-  - per-transaction and rolling-24h caps;
-  - the **cost gate** (§7);
-  - **mandatory successful simulation** (Solana `simulateTransaction`; local **Anvil** fork for EVM, since Tenderly's free plan has no API).
+  - per-transaction and rolling 24 h caps (defaults in §1);
+  - the **cost gate** (§7, the `mt_onchain.costgate` library);
+  - **mandatory successful simulation** (Solana `simulateTransaction`; local **Anvil** fork for EVM). These are the only simulators; Tenderly is not used.
   - Simulation is a sanity check only: adversarial tokens can behave differently on execution.
 - **Hard blocks (in code):**
   - EIP-2612 `permit` and Permit2 signatures, `setApprovalForAll`, unlimited approvals;
@@ -59,16 +75,17 @@ A fully air-gapped machine can't also serve an API. So bots sign only with **cap
 
 Wallet apps (MetaMask, Trust Wallet, Phantom, Rabby, Ledger, Ellipal) have no portfolio API, so the view is built from **public addresses**.
 
-1. **Register** every address in `ops.wallets`: address, chain, provider label ("Trust Wallet – phone"), role (vault, warm, hot, identity, burner, governance), tax segregation (investment vs trading).
+1. **Register** every address in `ops.wallets`, the one registry for accounts and on-chain addresses (created in P3, extended additively by the P5 wallet-indexer; there is no separate treasury wallet table): address, chain, provider label ("Trust Wallet – phone"), role (vault, warm, hot, identity, burner, governance), tax segregation (investment vs trading).
+   - **Proof of control:** you sign a one-time challenge in **your own wallet app** (EIP-4361-style text on EVM, Solana `signMessage`), or make a tiny self-transfer. **The system never signs it.** Signer-created wallets (hot, identity, burner) are registered by the signer itself.
 2. **Read** (read-only):
    - Helius DAS `getAssetsByOwner` (Solana);
    - Blockscout/own RPC + DefiLlama adapters logic (EVM positions); Zerion's free tier is optional (U);
    - Hyperliquid `/info`;
    - ccxt with **read-only, IP-locked** keys for exchanges;
-   - prices from our own sources (CoinGecko cached ≤ 24 h).
+   - prices from our own recorded data per the valuation hierarchy ([16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal)); CoinGecko (cached ≤ 24 h) is a display cross-check only.
 3. **Reconcile** monthly against **rotki** (self-hosted, AGPL; fine privately) and daily against the journal.
 4. **Render:** total → chain → provider → protocol → position, in base currency (UI D18).
-5. **Manual signing** happens from the local UI via EIP-6963 browser wallets, WalletConnect (phone) and QR (vault). **The system never holds vault keys.**
+5. **Manual signing** happens **in your own wallet**, never in the system. The system may prepare an unsigned transaction and hand it over as a QR (vault) or a WalletConnect / EIP-6963 request (phone or browser wallet); you review and sign there. **The system never holds vault or warm keys**, and P5 has no UI signing path (D18 is a view); any later prepare-to-sign feature builds unsigned payloads only and is scoped separately.
 
 ## 4. Hold-and-earn module (M22, `mt_treasury`)
 
@@ -76,20 +93,21 @@ Idle capital earns while it waits.
 - Every position is scored on **net yield after gas, lock-up and smart-contract risk**.
 - Warm-wallet actions need your approval.
 - Moves happen only between **allow-listed** protocols, and adding a protocol is a manual decision.
+- Automated moves sign only through the policy service and the cost gate (§2, §7).
 
 | Type | Examples | Earns | Main risks | Automation |
 |---|---|---|---|---|
 | Native / liquid staking | JitoSOL, mSOL (~6–6.7% APY, vendor); stETH (10% protocol fee) | Staking yield (+ points) | Depeg, exploit, unbonding | Rebalance suggestions; you approve; peg alerts |
 | Stablecoin lending | Core Aave, Spark, Kamino markets | Interest | Exploit, rate collapse, **curator risk in third-party vaults** (Stream Finance Nov 2025: ~US$160M frozen) | Auto-move within the allow-list + caps |
 | Fixed yield | Pendle PTs | Yield to maturity | Protocol, liquidity at exit | Suggest; you approve |
-| Hyperliquid HLP (if approved) | HLP vault | Share of the market-making P&L (past-month APR ~4% late Sep 2026) | Shared losses (~US$4M Mar 2025; POPCAT bad debt Nov 2025); **4-day lock that resets on each deposit** | **≤ 5–10% of portfolio / ≤ 10% of stables**; one deposit per cycle |
+| Hyperliquid HLP (if approved) | HLP vault | Share of the market-making P&L (past-month APR ~4% late Sep 2026) | Shared losses (~US$4M Mar 2025; POPCAT bad debt Nov 2025); **4-day lock that resets on each deposit** | Default **≤ 10% of stablecoins and ≤ 5% of total portfolio, whichever is smaller** ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13); raising it is C3); one deposit per cycle |
 | Nodes (light/testnet/incentivised) | Per programme | Possible airdrop/rewards | Malicious node software; rewards never materialise; often KYC / one per person | Pinned container on a separate network; retire when EV < 0 |
 | Validators | ETH solo (32 ETH), Lido CSM (2.4 → 1.3 ETH bond), Rocket Pool Saturn I (4 ETH), DVT | Rewards + MEV | Slashing (same key on two machines), penalties | Only with idle long-term ETH; **Solana validators: avoid** (1.6 SOL per epoch admission ≈ 290 SOL/yr) |
 
 **Yield allocator:**
 - **Net yield** = `apyBase` (never rely on `apyReward` emissions) − entry/exit gas amortised over the expected hold − a risk haircut (protocol age, audits, TVL trend).
-- **Caps:** ≤ 20% of treasury per protocol, plus per-chain and per-stablecoin caps.
-- **Discovery:** DefiLlama yields API (free, cached hourly).
+- **Caps:** default ≤ 20% of treasury per protocol ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)), plus per-chain and per-stablecoin caps; all configurable.
+- **Discovery:** DefiLlama's official free yields API host `yields.llama.fi` (cached hourly; no site scraping, [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 
 **Node/validator earnings, monthly:**
 - `net = rewards + MEV fees + commission − infra − ops time − E[slash] − opportunity cost`.
@@ -115,22 +133,25 @@ Idle capital earns while it waits.
 - **Your target split:** working floats per sleeve, stablecoin reserve, cold holdings.
 - **Daily sweep:** realised profit above the floats → stablecoins → vault address.
 - **Stablecoin concentration limits,** so one issuer failing is survivable.
-- **Reserve:** 20–40% kept in stables/AUD.
+- **Reserve:** a target of 20–40% kept in stables/AUD (your setting in the treasury policy, D18).
+- **EV hurdle** for airdrops and launches ([08](08-airdrops-and-token-launches.md#expected-value-gate-airdrops-icosidos-points-programmes)): default 5% p.a. on capital locked (AUD cash-rate proxy), configurable ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)). It stays a fixed default until the P6 treasury has a live stablecoin yield you choose to use instead.
 
 ## 6. Monitors (feed M16 and M11)
 
 | Monitor | Rule |
 |---|---|
-| Stablecoin depeg (USDC, USDT, USDe, USDG…) | Auto-reduce beyond **50 bps** deviation |
-| Protocol exploit / oracle deviation / sharp TVL drop | Auto-withdraw from that protocol (if allow-listed for auto), else an urgent task |
-| Venue health | Withdrawal delays, proof-of-reserve changes, **AUSTRAC registration status** (12 §2) |
+| Stablecoin depeg (USDC, USDT, USDe, USDG…) | Deviation beyond **50 bps** (default, configurable, [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)). **Before P6:** alert + task only, with no automated reduce. **From P6:** the treasury reduces exposure, on-chain through the policy service and cost gate |
+| Protocol exploit / oracle deviation / sharp TVL drop | Auto-withdraw from that protocol (if allow-listed for auto; from P6), else an urgent task |
+| Venue health | Our own measured withdrawal/deposit times, venue deposit/withdraw flags, status pages and proof-of-reserve changes via the venue watch ([06](06-aggregators-and-market-providers.md#regulatory--venue-watch-m5--m16)); **AUSTRAC registration status** is a quarterly USER re-check (`VENUE_CHECK`), not automated (12 §2) |
 | Bridge policy | Native USDC via CCTP or canonical bridges only; per-bridge caps; **no bridging inside a live strategy leg** |
 | Hyperliquid | HLP lock in the liquidity plan; alerts on manipulation events |
-| Concentration | Per protocol, chain, stablecoin and venue (≤ 25% equity per exchange) |
+| Concentration | Per protocol, chain, stablecoin and venue. Venue: default **≤ 25% of total equity per venue** [10–30%], one value everywhere, set in the L1 risk policy ([16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)); loosening is C3 |
 
 ## 7. On-chain cost gate & DEX execution (extends M12 / M16)
 
-**Rule:** no on-chain action is signed unless its expected benefit exceeds its all-in cost by a set margin. `gate(action) → allow / wait / reject`, with the numbers logged.
+**Rule:** no on-chain action is signed unless its expected benefit exceeds its all-in cost by a set margin: default **≥ 2×** all-in cost (gas + fees + impact + MEV/tips), configurable ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)). `gate(action) → allow / wait / reject`, with the numbers logged.
+
+The gate is one library, `mt_onchain.costgate`: the signer path uses it from P5 and the treasury from P6. Gas and fees are **live inputs** from our RPCs and venue APIs, never constants ([16 §4.3](16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants)).
 
 | Cost | Formula / source |
 |---|---|
@@ -140,9 +161,9 @@ Idle capital earns while it waits.
 | All-in round trip | Entry transaction + exit transaction + entry/exit impact at your size + venue fees + withdrawal fees |
 
 **Policies:**
-- **Airdrop/yield gas windows:** wait for a base fee below the 7-day 30th percentile unless the deadline is < 48 h.
+- **Airdrop/yield gas windows:** by default, wait for a base fee below its 7-day 30th percentile unless the deadline is < 48 h (configurable).
 - **Tips:** raise priority/tips only where the edge decays fast.
-- **Budgets:** daily gas spend per module, with alerts on a weekly budget breach.
+- **Budgets:** daily gas spend per module, default airdrops A$20/day and DEX trading A$50/day; alert at 80%, stop at 100% (configurable, [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)).
 
 **DEX execution (free tiers):**
 - **Solana:** Jupiter (Portal key, 1 rps) + Jito.

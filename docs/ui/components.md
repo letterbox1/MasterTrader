@@ -32,7 +32,7 @@ Props are TypeScript-style. `?` means optional.
 | `Tile` | Base container | `title`, `live?`, `state`, `actions?`, `help?`, `span{tier}` | 32px header; window controls hidden ≤ ph |
 | `KpiCard` | One metric | `label`, `value`, `unit?`, `delta?`, `deltaPct?`, `sparkline?`, `mode?: paper\|live`, `href?` | Value in `data-mono-xl`; tooltip shows the full value |
 | `KpiStrip` | Row of KPIs | `items: KpiCard[]` | Grid ≥ md; snap scroller ph–sm; vertical stack at xxs |
-| `StatusChip` | Status | `status: running\|idle\|degraded\|breach\|stale\|paper\|live\|approve`, `label` | Always has text |
+| `StatusChip` | Status | `status: running\|idle\|degraded\|breach\|stale\|paper\|hitl\|autonomous\|live`, `label` | Always has text. Mode labels: "Paper", "Approve (HITL)", "Autonomous" |
 | `HealthDot` | Heartbeat | `service`, `lastBeat`, `threshold` | Tooltip; pulses when live |
 | `Delta` | Change display | `value`, `format`, `invert?` | Sign + ▲/▼ + colour |
 | `Money` / `Qty` / `Price` | Formatters | `value: string(decimal)`, `ccy?`, `precision?`, `instrument?` | Tabular nums |
@@ -58,9 +58,9 @@ Props are TypeScript-style. `?` means optional.
 | `RiskPreview` | Pre-trade check preview | `intent` | Lists each check pass/fail, projected exposure, limits used, est. cost/slippage |
 | `PositionRow` / `PositionCard` | Position | `position` | Actions: close (C2), reduce (C2), set brackets (C2) |
 | `OrderRow` / `OrderCard` | Order | `order` | Actions: modify (C2), cancel (C1) |
-| `ApprovalCard` | Approval request | `request` (intent, source, risk preview, TTL) | Approve (C2) / Reject; TTL countdown |
+| `ApprovalCard` | Approval request | `request` (bot, intent, source, risk preview, signal reasons, chart link, TTL), `lines?` (batched card) | Same capabilities as the Telegram card ([15 §1.3](../15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram)): **Approve** (C2) · **Approve ½** (C2, bot requests) · **Reject** (C1) · **Pause bot** (C1). TTL countdown (defaults per bot horizon; MCP cards 5 min; [16 §2.3](../16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)); expiry = reject. Large orders (default > 2% of sleeve or > A$5,000) need hold-to-confirm. A batched card from one dynamic-selection bot has per-line toggles; there is no other bulk approve |
 | `FillMarker` | Chart marker | `fill` | — |
-| `ModeSwitch` | paper / approve / auto per strategy | `value`, `strategyId` | Changing to auto = C3 |
+| `ModeSwitch` | `paper` / `hitl` / `autonomous` per bot | `value`, `botId` | paper → hitl = C2; → autonomous = C3 (disabled while gates fail); autonomous → hitl and anything → paper = C1 |
 | `KillSwitchButton` | Global halt | `state` | Kill level; never hidden |
 
 ## 4. Forms & controls
@@ -71,7 +71,9 @@ Props are TypeScript-style. `?` means optional.
 | `ConfirmSheet` | Levels C1/C2; dialog ≥ md, bottom sheet < md, full screen at xxs; hold-to-confirm on touch |
 | `C3Flow` | Shows the Telegram approval status → TOTP → cool-down timer → applied; cancellable |
 | `DiffView` | Before/after for risk policy and strategy params; marks tighten (mint) vs loosen (flare) |
-| `ParamForm` | Generated from a strategy manifest param schema (types, ranges, defaults) |
+| `ParamForm` | Generated from a strategy manifest param schema (types, ranges, defaults). Manifest values are **proposals**: each field shows the proposal next to your sleeve/system limits; looser than a parent layer is rejected |
+| `SettingField` | One configurable value ([README §3.7](README.md#37-settings-show-configurable-defaults-and-their-layer)): effective value, the layer that set it (`LayerBadge`: L0–L4), the 16 default with a link, inherited value, override toggle, tighten/loosen tag on edit |
+| `LayerBadge` | Small chip naming the configuration layer (L0 ceiling · L1 system · L2 venue · L3 sleeve · L4 bot) that sets an effective value; tooltip shows the value at each layer |
 
 ## 5. Intel, agents & records components
 
@@ -92,7 +94,9 @@ Props are TypeScript-style. `?` means optional.
 | `AuditRow` | Command/audit entry with hash-chain status |
 | `CustodyTierBadge` | Wallet tier (vault / HL master / warm / hot / identity / burner) with watch-only lock |
 | `CostGateResult` | On-chain cost gate: expected edge vs gas + slippage + MEV + fees, pass/block |
-| `LadderIndicator` | Fallback-ladder rung with trigger reason |
+| `LadderIndicator` | Fallback-ladder rung (1–6: normal · half size/observe · hold · rules only (exits) · halt sleeve · kill) with trigger reason; rungs come from the API |
+| `CapitalStepCard` | Phase 7: a bot's or sleeve's live allocation, current step, clean weeks (n/4 by default), next step size, kill-criteria status, approve-step action (C3) |
+| `GateChecklist` | Gate profile results ([16 §2.4](../16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)): each gate's threshold (default or overridden), observed value, pass/fail, waiver link |
 | `VenueStatusChip` | Registry status, AUSTRAC check age, max leverage |
 | `PostureCard` | Telegram-derived postures (counts only, no text) |
 | `ProvenanceFlags` | `train_ok` / `model_input_ok` / retention badges on sources and rows |

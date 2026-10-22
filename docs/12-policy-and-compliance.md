@@ -21,7 +21,7 @@ _Adopted from the CryptoTrader spec review ([11](11-cryptotrader-crossover-revie
   - Whether these provisions reach **spot tokens** is unresolved, so **the system behaves as if they do** (no self-trading, spoofing, layering or quote stuffing on any venue).
 - **Leverage:**
   - ASIC's product intervention order caps **retail crypto CFDs at 2:1**. The order expires 23 May 2027, with a renewal consultation in Q4 2026 (U).
-  - The default MasterTrader leverage cap for crypto derivatives is **2×**, whatever a venue allows.
+  - MasterTrader caps crypto-derivatives leverage with an **L0 hard ceiling, default 2×**, whatever a venue allows. You edit it in the agent/bot strategy settings (the ceilings section applies to every bot): tightening is immediate, loosening is C3 ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)). Bots start at 1× until you approve more ([16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
   - Never misstate wholesale status: ASIC fined Binance Australia Derivatives **A$10m** for misclassifying retail clients.
 - **Travel Rule:**
   - AUSTRAC's Travel Rule has applied at a **zero threshold since 1 Jul 2026**.
@@ -34,11 +34,13 @@ _Adopted from the CryptoTrader spec review ([11](11-cryptotrader-crossover-revie
 - **Hyperliquid:**
   - Australia isn't on its restricted list, but it provides no Australian consumer protections, and masking your location breaches its terms.
   - Use it **only after professional advice**, with a consistent KYC country and location.
-- **Moving countries:** if residency changes (UAE/Egypt/Cyprus, see [09](09-journal-and-tax.md)), the boundary flips to that jurisdiction's rules. The venue registry and jurisdiction plugins switch together. **Egypt: crypto activity is hard-blocked.**
+- **Moving countries:** if residency changes (UAE/Egypt/Cyprus, see [09](09-journal-and-tax.md)), the boundary flips to that jurisdiction's rules. The venue registry and jurisdiction plugins switch together: a residency change emits `tax.residency.changed`, the venue registry recomputes, and any loosening that results (e.g. removing a block) is C3. **Egypt: crypto activity is hard-blocked.**
 
 ## 2. Venue access registry
 
-There's one registry table, `ops.venue_registry`. The risk manager blocks orders to any venue/product that isn't `allowed` for your current residency.
+There's one registry table, `ops.venue_registry`. The risk manager blocks **live** orders to any venue/product that isn't `allowed` for your current residency.
+
+**Paper and testnet orders** are allowed for venues/products marked `allowed` or `read_only`; a `blocked` product takes paper orders only if it's also marked `paper_ok` (e.g. carry research on perps you can't trade live). Testnets are registered as their own rows.
 
 | Field | Purpose |
 |---|---|
@@ -46,11 +48,11 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks orders
 | AUSTRAC VASP register status + date checked | Re-checked **quarterly** (registrations have been cancelled, e.g. GetCoins, Sep 2026) |
 | Products allowed for your status (spot / margin / perps / CFDs) + max leverage | E.g. "OKX AU perps: **unresolved** (retail 2:1 per help page vs wholesale-only AFSL 379035)" |
 | Key model (scopes, IP allow-list, withdrawal whitelist) | Prefer venues with whitelist-only withdrawal roles (e.g. Independent Reserve) |
-| STP parameter & mode (§3) | Sent on every order |
+| STP parameter & mode (§3) | Sent on every order. Netting brokers with no STP field are marked `stp: n/a (netting)` |
 | Rate limits (from live headers) | Retry storms cause bans (Binance 418 escalates to 3-day bans) |
-| Health: withdrawal delays, proof-of-reserve changes, incidents | Feeds M16 venue health |
-| Concentration cap | Default ≤ 25–30% of equity per venue |
-| Status | `allowed` / `read_only` / `blocked` + reason |
+| Health: withdrawal delays, proof-of-reserve changes, incidents | Feeds M16 venue health. Inputs: our own measured withdrawal/deposit times, venue deposit/withdraw flags, status pages and proof-of-reserve pages via the regulatory & venue watch ([06](06-aggregators-and-market-providers.md#regulatory--venue-watch-m5--m16)). The AUSTRAC check is a quarterly USER task (`VENUE_CHECK`); the register has no API |
+| Concentration cap | Default **≤ 25% of total equity per venue** [10–30%], one value everywhere, configurable in the L1 risk policy ([16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)); loosening is C3 |
+| Status | `allowed` / `read_only` / `blocked` + reason; `paper_ok` flag for paper/testnet use of `blocked` products |
 
 **Starting classification** (from CryptoTrader research, Sep–Oct 2026; verify before funding):
 
@@ -73,7 +75,7 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks orders
   - wash trading, spoofing, layering, quote stuffing;
   - self-matching across sub-accounts;
   - multiple KYC accounts;
-  - VPNs/proxies;
+  - VPNs/proxies that hide your location. (The fixed-IP exit node in Australia that all exchange traffic leaves through ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)) isn't location masking: it matches your KYC country and residency.)
   - exploiting pricing bugs.
 - **Arbitrage scope:** only genuine price differences between independent venues.
 - **STP:**
@@ -87,20 +89,21 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks orders
 | Binance | `selfTradePreventionMode` | EXPIRE_TAKER / EXPIRE_MAKER / EXPIRE_BOTH / NONE / DECREMENT / TRANSFER (per symbol) | EXPIRE_MAKER (read per symbol from exchangeInfo) |
 | Kraken spot | `stptype` (REST) / `stp_type` (WS) / FIX 7928 | cancel-newest / cancel-oldest / cancel-both | cancel-newest (the arriving order is the one killed) |
 | BTC Markets | `selfTrade` | `P` = prevent | — |
+| OANDA, IG, Alpaca, IBKR (netting brokers) | None | `stp: n/a (netting)`: positions net per account, so there's no STP field. Where netting would merge two bots' positions, each strategy gets its own account/sub-account | — |
 
 ## 4. Per-platform data & automation rules
 
 | Platform | Do | Don't |
 |---|---|---|
-| **Telegram (user client, Telethon)** | Own long-standing account; joined channels only; honour `FLOOD_WAIT`; joins go through a rate-limited queue; cap of 500 channels/supergroups (1,000 with Premium) | Mass-join; scrape member lists; auto-DM/forward; read-receipt tricks; **any Telegram text or Telegram-derived feature in a model input, RAG index or training set** (Telegram API ToS §1.5: no training, fine-tuning or deployment of AI on Telegram data). **Allowed:** regex-extracted contract addresses/tickers and counts → deterministic **postures** (mention velocity, channel count, new-channel share, time since first call) used by code/policy only. |
+| **Telegram (user client, Telethon)** | Own long-standing account; joined channels only; honour `FLOOD_WAIT`; joins go through a rate-limited queue; cap of 500 channels/supergroups (1,000 with Premium) | Mass-join; scrape member lists; auto-DM/forward; read-receipt tricks; **any Telegram text or Telegram-derived feature in a model input, RAG index or training set** (Telegram API ToS §1.5: no training, fine-tuning or deployment of AI on Telegram data). **Allowed:** regex-extracted contract addresses/tickers and counts → deterministic **postures** (mention velocity, channel count, new-channel share, time since first call) used by code/policy only: table `text.telegram_posture` (`model_input_ok = false`, `train_ok = false`), subject `posture.telegram.*`, consumed only by M4 and M11 rules; never by M6 features, tier A/B models, agents, RAG or MCP. |
 | Telegram Bot API | Alerts, approvals, digests; minimal data, encrypted at rest | > 30 msg/s; unsolicited messages |
 | Discord | Own bot, added by an admin (your server); followed announcement channels | Self-bots / user tokens |
 | X | (Deferred.) If used: official API, narrow filtered stream, hard monthly cap; posting only via **web intent from your account after approval** (M23) | Scraping (twscrape/Nitter/Apify); auto-replies/mentions; duplicate posts; bulk follows; pay-to-post schemes |
 | Reddit | (Optional, if approved) official API | AI training on Reddit data without approval |
 | Quest platforms (Galxe, Layer3, Zealy, TaskOn…) | Read public task pages; alert you; let platforms verify on-chain actions | Headless browsers, captcha solvers, internal endpoints, auto-follows, re-registering after a ban |
-| CoinGecko / GeckoTerminal | One key; **cache ≤ 24 h, encrypted, deleted on exit**; attribution on display | Long-lived archive (build long price history from exchanges/on-chain instead); redistribution |
+| CoinGecko / GeckoTerminal | One key; **cache ≤ 24 h, encrypted at rest** (pgcrypto with a key from the sops file), **purged on shutdown/exit**; attribution on display; display and cross-check only, never the stored journal/tax value ([16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal)) | Long-lived archive (build long price history from exchanges/on-chain instead); persisting to `journal.*`; redistribution |
 | DexScreener | Keyless API within limits (60/min profiles/boosts; ~300/min pairs; search ≤ 30 results) | Resale; a competing screener; search-driven discovery (use addresses) |
-| DefiLlama | `api.llama.fi` only | Site scraping, unofficial APIs, republishing (damages clause) |
+| DefiLlama | The official free API hosts only: `api.llama.fi` (protocols/TVL) and `yields.llama.fi` (yield pools); cache results | Site scraping, unofficial APIs, republishing (damages clause) |
 | Birdeye | — | Any use (bans storage; "not intended for actual trading") |
 | Etherscan | Manual lookups | **Decision input** (terms bar use as a basis for financial gain); extra accounts → use **Blockscout** / own RPC |
 | GoPlus / RugCheck | One key; cache per token; stay under limits | Proxies to beat limits; bulk data-mining |
@@ -110,13 +113,13 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks orders
 | Solana public RPC / PublicNode | Low-volume fallback | Production traffic; IP rotation |
 | All exchanges | Trade-only, IP-locked keys; whitelist-only withdrawals; explicit STP; rate-limit from live headers | §3 list |
 | Lido CSM / validators | Allow-listed relays; fixed fee recipient; timely exits | Changing the fee recipient; a second instance with the same keys |
-| Anthropic / OpenAI | Human approval on trade decisions (usage policy treats financial decisions as high-risk) | Deceptive promotion/shilling drafts |
+| Anthropic / OpenAI | Human approval on trade decisions (usage policy treats financial decisions as high-risk). **MCP-originated orders always need your approval card** (Telegram/web, TTL 5 min, expiry = reject); MCP can never approve ([16 §2.3, §2.12](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) | Deceptive promotion/shilling drafts; any "skip approval" or auto rule for MCP orders |
 | Datasets: MemeTrans (CC BY-NC-SA), SolRPDS (CC BY), Pumpfun corpus (CC BY) | Private models; attribution | Shipping MemeTrans-trained models commercially |
 | Tailscale Personal | Private use | Staying on the free plan if commercial |
 
 ## 5. Data-provenance tagging (one mechanism for all data terms)
 
-- **Every stored row carries** `source`, `licence` and `use_flags`:
+- **Every stored row carries seven separate provenance columns** (not a grouped field): `source`, `licence`, and five use columns:
   - `train_ok`: may be used for training;
   - `model_input_ok`: may be fed to a model;
   - `display_ok`: may be shown;
@@ -125,7 +128,8 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks orders
 - **Training pipelines** (M7, M21 distillation, Laya/decision-model fine-tunes, Hindsight retain) **refuse rows** whose `train_ok = false`.
   - Defaults: Telegram, Birdeye and Etherscan rows are false.
   - Models trained on MemeTrans are flagged `commercial_ok = false`.
-- **Inference paths** (tier B, agents, RAG retrieval) refuse rows with `model_input_ok = false`. This covers Telegram.
+- **Inference paths** (tier B, agents, RAG retrieval, **MCP responses**) refuse rows with `model_input_ok = false`. This covers Telegram.
+  - MCP tool results go into an external model's context, so `mt_api` filters every `source = mcp` response like any model input: no Telegram text (postures only), no `model_input_ok = false` rows, PII (TFN, addresses, statements) redacted, untrusted text wrapped and marked.
 - **Retention jobs** enforce `retention_days` (e.g. CoinGecko ≤ 1 day).
 - **The licence tag on each source** (06) is the default for its rows. A SaaS pivot becomes a retrain on `commercial_ok` rows, not a redesign.
 
@@ -139,7 +143,7 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks orders
   - investor vs trader-in-business, before any live trade (see 09);
   - the 2027 CGT reform status (sources conflict, see 11 §3).
 - **Venue checks:**
-  - AUSTRAC register entries by ABN for every venue, before funding and quarterly;
+  - AUSTRAC register entries by ABN for every venue, before funding and quarterly (a `VENUE_CHECK` USER task; until the task queue exists in P5, a Telegram/notification reminder);
   - reconcile OKX AU derivatives (retail vs wholesale);
   - read each AU venue's conduct, STP and rate-limit terms;
   - FP Markets client-agreement clauses on algorithmic trading.

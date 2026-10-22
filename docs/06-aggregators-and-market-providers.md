@@ -58,7 +58,7 @@ _(U) = unverified._
 | Optional | Extra routes (Asian finance/crypto) | **RSSHub** (AGPL, fine for personal use) | Varies | Only for routes RSS-Bridge lacks |
 | **Excluded** | Instagram, TikTok, LinkedIn, Facebook, Threads scrapers, Discord self-bots / user-token scraping, Nitter, snscrape, twscrape, threads-scraper, log, Spacebar | — | — | — |
 
-**Processing chain (unchanged, plus one step):**
+**Processing chain (unchanged, plus one step).** Telegram never enters this chain: its messages go only to the regex posture extractor (02 F3b, [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). Every other source runs:
 1. Fetch.
 2. Dedupe (canonical URL + content hash).
 3. **Local-LLM relevance gate** ("is this about a tradable instrument / macro event?", the OpenMagpie idea).

@@ -43,7 +43,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 | Trend on majors (BTC/ETH/SOL; also FX majors, gold, indices), daily/4h, vol-targeted | Under-/over-reacting speculators; hedgers | A$2–5k | Minutes–hours | SSRN walk-forward: net Sharpe 1.41 vs 0.70 buy-and-hold, max DD −44.6% vs −84.4%; but trend adds ~0.05 Sharpe over pure vol-scaling (independent) | **P1** |
 | Funding carry (long spot / short perp, same venue) | Leveraged longs paying funding | A$10k per venue | Minutes | Only ~40% of top spreads profitable after costs (MDPI 2026) | **P1, regime-gated** (AU derivatives access permitting, 12 §2) |
 | Hold-and-earn (LSTs, blue-chip lending, Pendle PTs) | Borrowers, fixed-rate buyers | Any | — | On-chain dashboards | **P1 base layer** (M22) |
-| HLP vault, capped | Hyperliquid traders | Any; ≤ 10% of stables | — | Past-month APR ~4% (late Sep 2026) | **P1 capped**, if Hyperliquid is approved |
+| HLP vault, capped | Hyperliquid traders | Any; ≤ 10% of stables **and** ≤ 5% of total portfolio, whichever is smaller (default, [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)) | — | Past-month APR ~4% (late Sep 2026) | **P1 capped**, if Hyperliquid is approved |
 | Cross-sectional momentum, top-20 liquid | Attention flows | A$10k+ | Hours | SSRN (survivorship-free rotation, Sharpe > 1.5) | **P2** |
 | Cross-venue funding/basis | Fragmented price discovery | A$20k+ | Seconds–minutes | Most spreads revert before costs | **P2** |
 | Memecoin momentum with rug filtering (enter 5–60 min after launch, not first slot) | Late retail buyers | A$1–5k sleeve; A$20–200 per trade | Seconds–minutes | Realised-PnL data bot-contaminated; small, concentrated gains | **P2, paper first** (≥ 300 paper trades) |
@@ -62,7 +62,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 |---|---|---|
 | Trend on majors (vol-targeted, long-biased) | 40% | 30–40% |
 | Funding carry (regime-gated, hedged) | 15% | 20–30% |
-| Hold-and-earn (HLP ≤ 10% of stables) | 10% | 20–30% |
+| Hold-and-earn (HLP ≤ 10% of stables and ≤ 5% of portfolio) | 10% | 20–30% |
 | Memecoin engine | 25% | ≤ 5–10% |
 | Unlock/event sleeve | 10% | 5–10% |
 
@@ -77,7 +77,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 | Single-venue carry | A$10k |
 | Cross-venue arbitrage | A$20k+ |
 | Memecoin | A$1k (learning only) |
-| Sensible first live allocation | **A$10–25k, only after paper passes** |
+| Starting live allocation | Set per bot when it goes live: **default A$2,000** (suggested A$2–5k micro-live), only after paper passes ([16 §2.5](16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)). It grows toward A$10–25k only through capital steps (§7) |
 
 ## 4. Trading methods (enforced in code; defaults, user-editable in D06)
 
@@ -92,12 +92,12 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 **Sizing:**
 - **Volatility targeting first:** e.g. 15–20% annualised for trend, from 30–60d realised vol.
 - **Kelly:** `f = (p·b − q)/b`, with b = measured average win ÷ average loss. **Quarter-Kelly is a ceiling, never a target.** Never the `(2p − 1)` shortcut, and never stack Kelly on a vol-targeted sleeve.
-- **Drawdown de-risking:** halve exposure when a sleeve is > 15% below its peak.
+- **Drawdown de-risking (two stages, before the halt):** at **10%** below the sleeve's peak, new position sizes are halved; at **15%** the sleeve halts (§5). Both are defaults, configurable, with stage 1 always below stage 2 ([16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
 - **Per-trade risk:**
-  - directional strategies: ≤ 0.5–1% of sleeve equity;
+  - directional strategies: default 1% of sleeve equity (UI range 0.1–2%; 0.5–1% is the evidence-based band);
   - memecoin positions: ≤ 0.25–0.5% of total equity, with the sleeve ≤ 5–10% of the book;
   - from the stop: `units = capital × risk% ÷ |entry − stop|`.
-- **Leverage:** trend 1–1.5× gross; carry hedged at 1×; **2× hard cap** for crypto derivatives (12 §1).
+- **Leverage:** trend 1–1.5× gross; carry hedged at 1×; **2× hard cap** for crypto derivatives (12 §1), an L0 ceiling set in the bot strategy settings ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance); loosening is C3).
 
 **Stops and exits:**
 - ATR-scaled trailing stops (2–4× daily ATR for swing/trend).
@@ -111,7 +111,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - **Costs:** fees, spread, slippage and funding per venue are re-measured monthly, and backtests use those measured figures.
 
 **Discipline:**
-- **No discretionary overrides.** The only manual trading action outside approve-mode is **flatten-and-halt with a required reason**. Manual tickets in D05 are their own `manual` sleeve with their own limits and journal tag.
+- **No discretionary overrides.** The only manual trading action outside HITL approvals is **flatten-and-halt with a required reason** (`position.close` with `halt: true` and a reason). Manual tickets in D05 are their own `manual` sleeve with their own limits and journal tag.
 - **Review:** weekly review of the five worst trades.
 
 **TradFi → 24/7 crypto porting pitfalls** (also for MasterTradingBot strategies):
@@ -128,20 +128,32 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - Capital is split into **sleeves (engines)**, each with its own capital, limits and kill switch, so one sleeve's bad week can't drain another.
 - The risk engine **nets exposure per asset across sleeves** and enforces a total per-asset cap.
 
-**Default hard limits** (per sleeve unless noted; user-editable, loosening = C3):
+**Default limits** (per sleeve unless noted). These are defaults, not fixed rules: the reference values live in [16 §2](16-configuration-and-safety-model.md#2-default-values-all-configurable); tightening is immediate, loosening is C3:
 
 | Limit | Default | On breach |
 |---|---|---|
 | Risk per trade | 1% of sleeve | Reject |
 | Max position | 10% of sleeve (memecoins 2%) | Reject |
-| Daily loss | 3% of sleeve | Sleeve halts until the next day |
-| Drawdown from peak | 15% sleeve / **10% whole system** | Halt + alert + manual restart |
+| Daily loss | 3% of sleeve | Sleeve halts until the next day (Sydney time) |
+| **Sleeve drawdown, stage 1** | 10% below sleeve peak | **Halve new position sizes** |
+| **Sleeve drawdown, stage 2** | 15% below sleeve peak | **Halt the sleeve:** cancel orders, close per the sleeve's exit rule, alert; restart is C3 |
+| **System drawdown, stage 1** | 10% below portfolio peak | **No new entries anywhere**; exits and protective orders continue, positions keep their stops; restart is C3 |
+| **System drawdown, stage 2** | 25% below portfolio peak | **Flatten** to stablecoins/AUD + 30-day review lock (§7) |
 | Open positions | 10 per sleeve | Reject new entries |
-| Stale data | 2 s (fast sleeves), 60 s (slow) | Hold, no new orders |
-| **Decision deadline** | Per sleeve | Drop the decision (never act late) |
-| API/RPC errors | 5 in 1 min | Sleeve pauses 10 min |
-| Exchange concentration | 25–30% of total capital per venue | Block deposits/new exposure there |
-| Leverage | 1× until approved; then ≤ 2× on majors | Reject |
+| Stale data | Per bot: 2 s (fast), 60 s (slow); data age = now − our receive time; closed sessions aren't stale | M11 checks age **inline on every order** → reject; the ladder holds ([16 §2.2](16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)) |
+| **Decision deadline** | Per bot: scalping 1 s · intraday 10 s · swing 5 min · position 1 h | Drop the decision (never act late) |
+| Price collar | 2% from last trade (crypto majors) · 0.5% (FX majors) · 1% (ETFs) | Reject |
+| API/RPC errors | 5 in 60 s | That venue's orders pause 10 min |
+| Cost blow-out | Realised ÷ modelled cost > 1.5× over the last 20 fills | Pause the bot, alert |
+| Calendar blackout | 15 min before to 15 min after high-importance events (CB decisions, CPI, NFP, …), for bots marked `event_sensitive` (scalping/intraday by default) | Block new entries; exits and protective orders continue ([16 §2.8](16-configuration-and-safety-model.md#28-calendar-blackouts)) |
+| Venue concentration | ≤ 25% of total equity per venue (range 10–30%) | Block deposits/new exposure there |
+| Leverage | 1× until you approve more; crypto derivatives ≤ 2× (L0 ceiling) | Reject |
+| Dead-man | Three layers: engine/component heartbeat missing 5 s → cancel orders; 10 s → each bot's `on_system_failure` (default `flatten`); venue cancel-after timers + resting venue stops ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) | Restart flat, bots paused until you resume |
+
+**Drawdown notes:**
+- Stage 1 must be below stage 2 (rejected at save time otherwise). If you prefer "15% then a further 15%", set sleeve stage 1 = 15% and stage 2 = 30%.
+- The system stage-1 stop keeps positions under their resting stops, so gaps can still carry drawdown towards stage 2; that's why stage 2 flattens.
+- Equity basis for the system stages: trading equity, excluding the vault and hold-and-earn, adjusted for deposits/withdrawals (suggested in gap P7-B005; not yet in 16).
 
 **Fallback ladder** (shown live in D06):
 1. Healthy, high confidence → normal size.
@@ -149,9 +161,9 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 3. Decision late or feed stale → **hold** (never act on old state).
 4. Model service down → deterministic rules only: manage exits, no new entries.
 5. Hard limit breached → halt the sleeve, cancel open orders, close per the sleeve rule, alert.
-6. Kill switch (you, from your phone) → everything halts, and hot balances sweep to the vault address.
+6. Kill switch (you, from your phone) → stops all new trading, cancels open orders, applies each bot's `on_system_failure` policy, freezes new treasury/earn moves, and (from Phase 5, default on) **sweeps hot trading balances to the vault address**. The protective sweep is exempt from the freeze. In Phase 2 there are no hot wallets yet, so the sweep is a logged no-op hook.
 
-**Daily health check (per sleeve):** the sleeve halts pending review if either:
+**Daily health check (per bot):** the bot halts pending your review if either ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)):
 - the live 30-day Sharpe is < ½ the validated figure; or
 - drawdown is > 1.5× the backtest maximum.
 

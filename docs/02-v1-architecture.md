@@ -35,9 +35,10 @@ This is the blueprint that backend and frontend work build against.
    - Raw text is archived so backtests can be replayed.
 4. **One engine for backtest, paper and live:** NautilusTrader.
 5. **Measure, then feed back.** Live data quality and trading costs (M16) gate trading and calibrate backtests.
-6. **Record everything.** Append-only, hash-chained audit and journal; logs only for operations.
+6. **Record everything.** Audit and journal are WORM (write-once, hash-chained, externally sealed; [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)); logs only for operations.
 7. **One command layer (`mt_api`).** The web UI, Telegram and (Phase 8) MCP are thin clients of the same typed, audited commands.
 8. **Free only, personal use, private, no telemetry.** Generated code is sandboxed; GPL/AGPL code is isolated; secrets never reach LLMs.
+9. **Nothing that shapes trading is hard-coded.** Limits, sizing, timers, gates and failure behaviour are layered settings with defaults (L0 hard ceilings → L4 bot; the strictest wins), set in the UI or Telegram and versioned as WORM rows ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)).
 
 ## 2. System context
 
@@ -151,7 +152,7 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | M16 Monitor | `mt_monitor` | monitor | `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `market.spread_*`, `audit.recon` | `dq.status.*`, `cost.*`, `recon.*`, `egress.status` | `md.*`, `dq.raw.*`, fills, venues |
 | M17 Observability & audit | `mt_obs` | all | `audit.*` hash chain, `audit.command`, `audit.llm_call` (from P0, LiteLLM callback), `audit.seal`, `audit.integrity_incident` | metrics, logs, KV `audit.integrity` | — |
 | M18 Journal & tax | `mt_journal` | journal | `journal.*`, `ops.wallets` (account and address registry, created P3) | `journal.*`, `tax.residency.changed` | fills, ledgers, chain, airdrops |
-| M19 Curation | `mt_curation` | curation, telegram-bot | `curation.task`, `curation.community` | `task.*` | `airdrop.*`, `risk.approval.*` |
+| M19 Curation | `mt_curation` | curation, telegram-bot | `curation.task` (minimal table from P3 for tax questions; P5 extends it additively), `curation.community` | `task.*` | `airdrop.*`, `risk.approval.*` |
 | M20 MCP | `mt_mcp` | mcp | — (via `mt_api`: `audit.mcp_call` for every MCP call, `audit.command` for commands) | — | `mt_api` |
 | M22 Treasury & hold-and-earn | `mt_treasury` | treasury, wallet-indexer | `treasury.transfer`, `treasury.position`, `treasury.policy`; extends `ops.wallets` (P5) | `wallet.*`, `treasury.*` | chain RPC, venues, `risk.*` |
 | M23 Social participation | `mt_social` | social | `curation.social_draft` | `social.draft.*` | `text.doc.*`, `task.*` |
@@ -168,12 +169,12 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 
 | Store | Holds | Retention | Backup |
 |---|---|---|---|
-| **Postgres** (`market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `models`, `rag`, `hindsight`, `ops`) | System of record: bars (hypertables + continuous aggregates 1s→1D), business data, audit, journal, documents + embeddings | Audit/journal ≥ 7 years; bars forever (compressed); documents forever | pgBackRest (full weekly, WAL continuous) + restic off-site; monthly automated restore test |
-| **Parquet catalog** (Nautilus `ParquetDataCatalog`) | Raw trades, quotes, L2 deltas/snapshots, backfills | Forever (hot NVMe 90 days → cold HDD) | restic (cold) |
-| **NATS JetStream** | Streams (§6) + KV (`risk_state`, `kill`, `feed_status`, `tierb_scores`, `heartbeat`) | Streams 24h–7d; KV latest | Not backed up (rebuildable) |
+| **Postgres** (`market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight`; **all 13 schemas created in P0**, tables added by later phases) | System of record: bars (hypertables + continuous aggregates at 1m, 5m, 15m, 1h, 4h, 1D, 1W; any other size via `time_bucket` at read time), business data, audit, journal, documents + embeddings | Audit/journal ≥ 7 years; bars forever (compressed); documents forever | pgBackRest: continuous WAL archive, nightly incremental, weekly full; restic off-site; monthly automated restore test; monthly immutable WORM export ([15 §2.2](15-bots-hitl-and-worm-audit.md#22-layers)) |
+| **Parquet catalog** (Nautilus `ParquetDataCatalog`) | Raw trades, quotes, L2 deltas/snapshots, backfills. L2 deltas are recorded at native speed only for symbols a bot needs order-book data for (default ≤ 3); others get 1 s snapshots | Forever (hot NVMe 90 days → cold HDD) | restic (cold) |
+| **NATS JetStream** | Streams (§6) + KV (`risk_state`, `kill`, `feed_status`, `tierb_scores`, `heartbeat`, `audit.integrity`) | Streams 24h–7d; KV latest. When Postgres is unreachable, WORM writes buffer here: default bound 1 GB or 24 h; above 80% new entries stop, exits continue ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)) | Not backed up (rebuildable) |
 | **MLflow** | Experiments, model artifacts (ONNX, LoRA), metrics | Forever | restic |
 | **Loki / Prometheus** | Logs 30–90d / metrics 90d | Rolling | Not backed up |
-| **Secrets** | sops+age file → tmpfs | — | Encrypted copy off-site |
+| **Secrets** | sops+age file **outside the repo** (e.g. `~/.config/mastertrader/`) → tmpfs | — | Encrypted copy off-site (restic) |
 
 ### 5.2 Key conventions
 
@@ -188,7 +189,9 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 
 ### 5.3 Core entities (abbreviated; full DDL in migrations)
 
-`instrument`, `bar`, `feature_value`, `document`, `geo_event`, `calendar_event`, `strategy`, `strategy_version`, `strategy_run`, `backtest`, `experiment`, `signal`, `decision_run`, `tierb_decision`, `order`, `fill`, `position_snapshot`, `risk_policy`, `risk_limit_state`, `risk_change`, `risk_event`, `mandate`, `dq_event`, `cost_event`, `recon_result`, `journal_event`, `lot`, `lot_match`, `fx_rate`, `residency_period`, `tax_report`, `airdrop_opportunity`, `token_risk_report`, `user_task`, `community_item`, `notification`, `command`, `llm_call`, `model_registry`, `question`.
+`instrument`, `bar`, `feature_value`, `document`, `telegram_posture`, `geo_event`, `calendar_event`, `strategy`, `strategy_version`, `strategy_run`, `bot`, `bot_version`, `backtest`, `experiment`, `signal` (fields in [03 M8](03-build-spec.md)), `decision_run`, `tierb_decision`, `order`, `fill`, `position_snapshot`, `risk_policy`, `risk_limit_state`, `risk_change`, `risk_event`, `risk_approval`, `mandate`, `dq_event`, `dq_ack`, `cost_event`, `recon`, `journal_event`, `lot`, `lot_match`, `fx_rate`, `residency_period`, `tax_report`, `airdrop_opportunity`, `token_risk_report`, `user_task`, `community_item`, `wallets`, `notification`, `command`, `llm_call`, `mcp_call`, `seal`, `integrity_incident`, `model_registry`, `question`, `label`.
+
+Table names follow the §4 naming rules (singular, schema-qualified, e.g. `audit.recon`, `audit.mcp_call`).
 
 ## 6. Messaging (NATS)
 
@@ -197,35 +200,48 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | Subject | Payload | Producers → consumers |
 |---|---|---|
 | `md.{venue}.{symbol}.trade` / `.quote` / `.book` / `.bar.{spec}` | Market data | ingest-market → engine, monitor, features, UI (throttled) |
-| `dq.status.{venue}.{symbol}` | `ok \| degraded \| stale \| bad` + reasons | monitor → engine (risk), UI |
+| `dq.raw.{venue}.{symbol}` | Raw feed health: receive times, gaps, sequence breaks, clock skew | ingest-market → monitor |
+| `dq.status.{venue}.{symbol}` | `ok \| degraded \| stale \| closed \| bad` + reasons | monitor → engine (risk), UI |
+| `recon.{venue}` | Reconciliation result (positions, orders, balances; matched / explained / unexplained) | monitor → risk, journal, UI |
+| `egress.status` | Egress IP and country check ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)) | monitor → risk, UI |
 | `cost.{venue}.{symbol}` | spread/fee/funding/swap snapshot | monitor → risk, lab, UI |
 | `feat.{name}.{symbol}` | Feature values | features → engine |
-| `text.doc.new` | Document id + tickers + scores | nlp → decision-svc, agents, UI |
+| `text.doc.new` | Document id + tickers + scores (never Telegram) | nlp → decision-svc, agents, UI |
+| `posture.telegram.{subject}` | Structured Telegram posture (no text) | ingest-text → M4 airdrop rules, M11 rules, UI (D08). Never M6 features, tier A/B, agents or RAG |
 | `evt.{kind}` / `cal.{kind}` | Global events / calendar items | ingest → risk (blackouts), agents, UI |
 | `dec.tierb.{question}.{subject}` | Option probabilities | decision-svc → engine (KV), UI |
 | `sig.{source}.{strategy}` | Signal | strategies/agents → engine |
+| `engine.cmd.{command}` | Engine control (strategy and bot start/pause/resume/stop, mode, shadow runs) | mt-api → engine |
+| `strat.status.{strategy}` / `bot.{id}.status` | Strategy and bot status | engine → mt-api, UI |
 | `ord.intent.{strategy}` → `ord.risk.{decision}` → `ord.{state}` | Order lifecycle | engine/mt-api → risk → venue |
 | `fill.{venue}` / `pos.{account}` | Fills / positions | engine → journal, monitor, UI |
-| `risk.event` / `risk.approval.request` / `risk.approval.result` | Risk events and approvals | risk ↔ mt-api, telegram |
-| `kill.set` / KV `kill` | Kill switch | mt-api/telegram/monitor → engine, hummingbot, airdrop-exec |
-| `sys.heartbeat.{service}` | Liveness | all → dead-man watchdog |
-| `alert.{severity}.{kind}` | Alerts | all → telegram, UI |
+| `risk.event` / `risk.approval.request` / `risk.approval.result` | Risk events and approvals (carry `bot_id`) | risk ↔ mt-api, telegram |
+| `kill.set` / KV `kill` | Kill switch | mt-api/telegram/monitor → engine, deadman, hummingbot, airdrop-exec, treasury |
+| KV `audit.integrity` | WORM integrity status from `audit.verify` (`ok` or the configured mismatch action) | mt_obs → M11 (read pre-trade), UI |
+| `sys.heartbeat.{service}` | Liveness (every 1 s) | all → in-engine watchdog (dead-man layer 1); the engine's heartbeat also → `deadman` sidecar (layer 2) |
+| `alert.{severity}.{kind}` | Alerts | all services, plus Grafana/Alertmanager via webhook → the single alert consumer → Telegram, ntfy, email, UI notifications |
 | `task.new` / `task.updated` | User tasks | airdrop, curation, risk → telegram, UI |
 | `journal.event.new` | Journal | journal → UI |
+| `tax.residency.changed` | Residency period added or changed | journal → mt-api (venue registry recompute), UI |
 | `wallet.{chain}.{address}.balance` / `.transfer` / `.approval` / `.nonce_authority` | Wallet events | wallet-indexer → risk, journal, UI |
 | `treasury.intent` / `treasury.result` / `treasury.depeg` | Treasury moves and depeg alerts | treasury ↔ risk, signer; → UI |
 | `social.draft.new` / `social.draft.decision` | Social drafts | social → telegram, UI |
 | `venue.registry.changed` | Venue registry updates | mt-api → risk, engine |
 
 **Rules:**
-- **Dead-man's switch:** the engine's watchdog consumes `sys.heartbeat.*`. A missing critical heartbeat (engine, monitor, risk, postgres, nats) for N seconds triggers cancel-all and, if configured, flatten.
+- **Dead-man's switch (three layers, [16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)):**
+  1. The in-engine watchdog consumes `sys.heartbeat.*`. A critical component (feeds, risk, postgres, nats) missing for 5 s (default) → cancel open orders for affected bots; 10 s (default) → apply each bot's `on_system_failure` (default `flatten`).
+  2. The `deadman` sidecar watches the **engine's** heartbeat with its own keys and venue connections: missing 5 s → cancel all open orders; 10 s → flatten per `on_system_failure`.
+  3. Venue-side cancel-after timers and resting stops cover a dead host or network.
+- **Telegram `/kill` when mt-api is down:** the bot publishes `kill.set` with NATS credentials that may publish nothing else. The engine writes the kill event to WORM with source `telegram`.
+- **One alert path:** nothing sends alerts directly to a channel; everything goes through `alert.*`, so dedupe happens in one place.
 - **UI streams** are fanned out by mt-api over WebSocket topics with server-side throttling (≤ 4 Hz per symbol in charts, ≤ 1 Hz in tables).
 
 ## 7. API contract (`mt_api`)
 
 **Transport and auth:**
 - FastAPI under `/api/v1`, with OpenAPI generated and versioned.
-- Auth: single user, local login (Argon2) + **TOTP**, over Tailscale only. Session cookie (`SameSite=Strict`, `HttpOnly`) for the web; scoped tokens for Telegram and MCP.
+- Auth: single user, local login (Argon2) + **TOTP**, over Tailscale only. Session cookie (`SameSite=Strict`, `HttpOnly`) for the web; scoped tokens for Telegram and MCP (MCP token rules in §7.4).
 
 **Conventions:**
 - JSON bodies with snake_case keys.
@@ -240,15 +256,17 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 |---|---|
 | `/portfolio/summary` | Value, P&L, margin, exposure, drawdown |
 | `POST /risk/preview` | Dry-run pre-trade checks for an intent (no side effects) |
-| `/positions`, `/orders`, `/fills` | Positions, orders, fills |
+| `/positions`, `/orders`, `/fills` | Positions, orders, fills (`/orders?source=web\|telegram\|mcp\|system`) |
+| `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=pending` | Bots and HITL approvals ([15 §1.5](15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)) |
 | `/markets/instruments`, `/markets/{id}/bars?spec=&from=&to=` | Instruments, bars |
 | `/markets/{id}/book`, `/markets/matrix` | Order book, cross-asset matrix |
-| `/strategies`, `/strategies/{id}`, `/strategies/{id}/runs`, `/strategies/templates` | Strategies |
+| `/strategies`, `/strategies/{id}`, `/strategies/{id}/runs`, `/strategies/templates`, `/strategies/{id}/gate-report` | Strategies; gate report against the strategy's gate profile ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)) |
 | `/lab/backtests`, `/lab/backtests/{id}`, `/lab/experiments`, `/lab/jobs` | Research lab |
 | `/agents/runs`, `/agents/runs/{id}`, `/signals` | Agent runs, signals |
-| `/models/registry`, `/models/questions`, `/models/tierb/decisions`, `/models/benchmarks`, `/models/gateway/spend` | Models |
+| `/models/registry`, `/models/questions`, `/models/tierb/decisions`, `/models/benchmarks`, `/models/gateway/spend`, `/models/labels`, `/models/labels/queue` | Models; labels and the labelling queue |
 | `/memory/search`, `/memory/banks`, `/rag/search` | Memory and document search |
-| `/risk/policy`, `/risk/state`, `/risk/events`, `/risk/changes`, `/risk/stress` | Risk |
+| `/risk/policy`, `/risk/state`, `/risk/events`, `/risk/changes`, `/risk/stress` | Risk. `/risk/policy` returns the effective value of each setting and the layer (L0–L4) that set it ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)); `/risk/changes?source=` filters by source |
+| `/risk/capital-steps`, `/risk/kill-criteria` | Capital-step plan and state per sleeve/bot, kill-criteria state (Phase 7, [16 §2.5–2.6](16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)) |
 | `/data/feeds`, `/data/quotas`, `/data/dq-events`, `/data/costs`, `/data/recon` | Data quality, costs, reconciliation |
 | `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment` | Intel |
 | `/mm/bots` (+ `/{id}`, `/{id}/pnl`) | Market-making bots |
@@ -256,50 +274,55 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
 | `/tasks` (+ `/{id}`), `/community`, `/social/drafts` | Tasks, curation and social drafts |
 | `/wallets` (+ `/{id}`, `/transfers`), `/treasury`, `/treasury/earn` | Unified wallet view, treasury, hold-and-earn |
 | `/venues/registry` | Venue access registry (12 §2) |
-| `/journal/trades` (+ `/{id}`), `/journal/events`, `/journal/lots` | Journal |
+| `/journal/trades` (+ `/{id}`), `/journal/events`, `/journal/lots`, `/journal/reviews` | Journal; weekly reviews (Phase 7) |
 | `/tax/summary?fy=`, `/tax/reports`, `/tax/residency` | Tax |
-| `/system/health`, `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings` | System |
-| `/mcp/tools` | MCP tool registry (Phase 8) |
-| `/audit/log` | Audit log |
+| `/system/health`, `/system/services` (`?kind=`), `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings`, `/system/preflight` | System; go-live preflight (Phase 7) |
+| `/mcp/tools`, `/mcp/tokens`, `/mcp/sessions` | MCP tool registry, tokens (metadata only, never the secret), sessions (Phase 8) |
+| `/audit/log` (`?source=`), `/audit/integrity` | Audit log; WORM integrity status and incidents |
 | `/notifications` | Notifications |
 
 ### 7.2 Commands (REST, write)
 
 `POST /api/v1/commands/{command}`:
-- Body: `{ "args": {...}, "idempotency_key": "...", "reason": "..." }`.
+- Body: `{ "args": {...}, "idempotency_key": "...", "reason": "...", "confirm_token": "..." }`.
+- `POST /api/v1/commands/{command}/preview` validates the args, runs the risk preview where relevant, and returns the confirmation level plus a `confirm_token` bound to the exact args. Executing a C1+ command without a valid token returns `428 Precondition Required`.
 - Every command is written to `audit.command` with source = `web | telegram | mcp | system`.
 
 **Confirmation levels** (enforced server-side, never only in the UI):
 
-| Level | When | Flow |
-|---|---|---|
-| **C0** | Reads, harmless toggles (UI prefs, marking a task) | None |
-| **C1** | Reversible actions (pause strategy, cancel order, run backtest) | In-app confirm sheet |
-| **C2** | Trading actions (place/modify order, flatten, start a live strategy in approve mode) | Confirm sheet showing the risk-check preview; hold-to-confirm on touch |
-| **C3** | **Loosening risk**: raise limits, enable `auto` mode, new mandate, disable kill switch | C2 + **Telegram approve + TOTP**, then a cool-down (default 15 min) before it takes effect |
-| **Kill** | Kill switch ON | Single confirm (never blocked); turning it OFF is C3 |
+| Level | When | Flow | Server check |
+|---|---|---|---|
+| **C0** | Reads, harmless toggles (UI prefs, marking a task) | None | — |
+| **C1** | Reversible or tightening actions (pause a bot, cancel order, run backtest, tighten a limit) | In-app confirm sheet | Explicit `confirm_token` from the preview call |
+| **C2** | Trading actions (place/modify order, flatten, switch a bot `paper` → `hitl`) | Confirm sheet showing the risk-check preview; hold-to-confirm on touch | Token carries a hash of the risk preview bound to the exact command, and the session re-authenticated within 12 h |
+| **C3** | **Loosening risk**: loosen any setting on any layer (incl. the L0 hard ceilings, [16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)), switch a bot to `autonomous`, new mandate, kill switch OFF | C2 + **Telegram approve + TOTP**, then a cool-down (default 15 min, configurable) before it takes effect | C2 checks + a Telegram approval and TOTP for this command id |
+| **Kill** | Kill switch ON | Single confirm (never blocked); turning it OFF is C3 | — |
+
+**Before Telegram C3 exists (P0–P1):** C3 commands complete through a host-only break-glass CLI, `mtctl approve <id>` + TOTP, over SSH on Tailscale; audited like any C3. It is retired once Telegram C3 works (P2).
+
+Every C3 approval and every settings change is a WORM row (`audit.command`, `risk.change`).
 
 **Command catalogue (v1):**
 
 | Group | Commands |
 |---|---|
-| Orders | `order.place`, `order.modify`, `order.cancel`, `order.cancel_all`, `position.close`, `position.reduce`, `position.set_brackets` |
-| Approvals | `approval.approve`, `approval.reject` |
-| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.set_mode` (paper / hitl / autonomous) |
-| Bots ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `bot.create`, `bot.update_scope`, `bot.update_params`, `bot.set_mode` (paper/hitl C1, autonomous **C3**), `bot.start`, `bot.pause`, `bot.resume`, `bot.stop`, `bot.approval_policy.set`, `approval.approve_partial` |
-| Lab | `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel` |
-| Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.promote`, `models.rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete` |
+| Orders | `order.place`, `order.modify`, `order.cancel`, `order.cancel_all`, `position.close` (`{halt: true, reason}` = flatten-and-halt the bot), `position.reduce`, `position.set_brackets` |
+| Approvals | `approval.approve`, `approval.approve_partial`, `approval.reject` ([15 §1.5](15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)); never callable from MCP (§7.4) |
+| Strategies | `strategy.create`, `strategy.update_params`, `strategy.clone`, `strategy.archive`, `strategy.start`, `strategy.pause`, `strategy.resume`, `strategy.stop`, `strategy.promote`, `strategy.demote`, `strategy.run_shadow` (C1). A strategy is **promoted through gates**; modes are set per bot |
+| Bots ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)) | `bot.create`, `bot.update_scope`, `bot.update_params` (incl. `on_system_failure`), `bot.set_mode` (`paper` C1, `paper` → `hitl` C2, `autonomous` → `hitl` C1, → `autonomous` **C3**), `bot.start`, `bot.pause`, `bot.resume`, `bot.stop`, `bot.approval_policy.set` |
+| Lab | `lab.backtest.run`, `lab.sweep.run`, `lab.validate.run`, `lab.generate_strategy`, `lab.job.cancel`, `lab.leakage.waive` (C2, reason required, audited), `lab.gate_report.generate` |
+| Agents & models | `agents.run_analysis`, `models.tierb.ask`, `models.tiera.train` (C1: train → calibrate → compile), `models.label.add` (C0), `models.promote`, `models.rollback`, `models.bakeoff.run`, `models.question.update`, `memory.delete`, `anomaly.explain` (C1; result arrives as a notification) |
 | Market making | `mm.bot.create`, `mm.bot.start`, `mm.bot.stop`, `mm.bot.update`, `mm.bot.cancel_all` |
-| Risk | `risk.policy.update` (diff; tighten = C1, loosen = C3), `risk.kill.on`, `risk.kill.off`, `risk.deadman.ack`, `risk.stress.run` |
-| Data | `data.feed.pause`, `data.feed.resume`, `data.backfill.run`, `data.recon.run` |
+| Risk | `risk.policy.update` (diff on any layer L0–L4, including the hard-ceilings section of the bot strategy settings; tighten = C1 and immediate, loosen = C3), `risk.kill.on`, `risk.kill.off`, `risk.deadman.ack`, `risk.stress.run`, `risk.sleeve.restart` (C3; after a sleeve drawdown or health halt), `risk.capital.fund` (C3), `risk.capital_step.approve` (C3), `risk.review.close` (C3) |
+| Data | `data.feed.pause`, `data.feed.resume`, `data.backfill.run`, `data.recon.run`, `data.incident.ack` (C0; appends an `audit.dq_ack` row, never updates the incident) |
 | Intel | `intel.source.add`, `intel.source.mute`, `intel.watchlist.update` |
 | Airdrops | `airdrop.add_url`, `airdrop.rescore`, `airdrop.reject`, `airdrop.mandate.create` (C3), `airdrop.mandate.revoke`, `airdrop.claim.execute` (C2 unless covered by a mandate), `wallet.revoke_approval`, `wallet.sweep` |
-| Tasks | `task.done`, `task.skip`, `task.snooze`, `task.never`, `social.draft.approve` (C1, opens a web intent), `social.draft.reject` |
+| Tasks | `task.done`, `task.skip`, `task.snooze`, `task.never`, `task.answer` (C1; e.g. a tax-agent answer), `social.draft.approve` (C1, opens a web intent), `social.draft.reject` |
 | Wallets & treasury | `wallet.register` (C1), `wallet.tag` (C1), `treasury.allocate` (C2; loosening policy C3), `treasury.earn.enter` / `treasury.earn.exit` (C2) |
 | Venues & ladder | `venue.registry.update` (tighten C1, allow C3), `risk.ladder.set` (down C1, up C3) |
-| Journal & tax | `journal.note.add`, `journal.tag`, `tax.report.generate`, `tax.export`, `tax.residency.add`, `tax.regime.set`, `tax.lot.select` |
-| System | `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.settings.update`, `system.service.restart`, `audit.verify` |
-| MCP (Phase 8) | `mcp.tool.set`, `mcp.policy.set`, `mcp.token.revoke` |
+| Journal & tax | `journal.note.add` (optional attachment, stored content-addressed under `data/attachments/` and referenced by hash), `journal.tag`, `journal.manual_event.add` (C2), `journal.review.signoff`, `tax.report.generate`, `tax.export`, `tax.residency.add` (emits `tax.residency.changed`; any loosening it causes in the venue registry is C3), `tax.regime.set`, `tax.lot.select`, `tax.fy.lock` / `tax.fy.unlock` (C3) |
+| System | `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.settings.update`, `system.service.restart` (allow-listed containers only, via `docker-proxy`), `audit.verify`, `audit.integrity.ack` (C3; clears a WORM verify mismatch after investigation, [16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)), `ops.drill.record` |
+| MCP (Phase 8) | `mcp.token.create` (C1; C3 for indefinite expiry or the `trade`, `strategy`, `risk_tighten` scopes), `mcp.token.revoke`, `mcp.tool.set`, `mcp.policy.set` |
 
 ### 7.3 Real-time (WebSocket `/api/v1/ws`)
 
@@ -309,16 +332,25 @@ Docker Compose on one host. Images are pinned by digest. Everything is reachable
   - `md.quote`, `md.trade`, `md.book`, `md.bar`;
   - `dq.status`, `cost`;
   - `risk.state`, `risk.event`, `kill`, `heartbeat`;
+  - `bots`, `approvals`;
   - `signals`, `tierb`, `agents.run`;
   - `text.doc`, `evt`, `cal`;
-  - `airdrop`, `tasks`, `journal`, `notifications`, `lab.job`, `system`;
+  - `airdrop`, `tasks`, `journal`, `notifications`, `alert`, `lab.job`, `system`;
+  - `wallet` (P5), `treasury` (P6);
   - `mm`, `recon`.
 - **Message envelope:** `{topic, seq, ts, data}`. The client detects gaps via `seq` and re-syncs with the matching REST query.
 
 ### 7.4 Telegram & MCP
 
-- **Telegram** maps buttons and slash commands to the same commands. It holds the **C3 confirmation** channel (approve + TOTP prompt).
-- **MCP** (Phase 8) exposes the queries plus a subset of commands. MCP-originated orders default to approval-required. Withdrawals, keys and mandates are never exposed.
+- **Telegram** maps buttons and slash commands to the same commands. It holds the **C3 confirmation** channel (approve + TOTP prompt) from P2; before that, the break-glass CLI (§7.2). When mt-api is down, `/kill` still works via NATS (§6).
+- **MCP** (Phase 8) exposes the queries plus a subset of commands ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)):
+  - **Levels for `source = mcp`:** C0 reads run directly; C1 runs if the token has the scope; C2 orders **always** create an approval card on Telegram/web (TTL default 5 min, expiry = reject), with no "skip approval" option; C3 goes through Telegram + TOTP as usual.
+  - **MCP can never approve** anything, its own orders included. Approvals come only from you on Telegram or the web.
+  - **Never exposed:** withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key and token management, `approval.*`, `mcp.*`, restore/delete, audit writes. Loosening risk is never a scope.
+  - **Tokens:** opaque 256-bit, shown once, stored hashed (HMAC-SHA-256 with a server pepper), scoped (`read`, `analyse`, `trade`, `strategy`, `risk_tighten`, `curation`), revocable instantly, last use and client identity recorded. Expiry is chosen per token (1 day · 7 days · 30 days · 1 year · custom · indefinite; indefinite shows a warning, needs C3 and a monthly reminder). OAuth 2.1 (PKCE, resource indicators) for clients that support MCP authorization.
+  - **Transport:** Streamable HTTP (JSON-RPC 2.0, SSE streaming, resumable) at `/mcp` on Caddy, Tailscale/TLS only; stdio locally; an optional legacy HTTP+SSE endpoint for older clients. Server notifications (fills, approvals, alerts) via resource subscriptions.
+  - **Responses** pass the same provenance filter as any model input: no Telegram text, no `model_input_ok = false` rows, tax PII redacted, untrusted text wrapped and marked.
+  - **Audit:** every MCP call, reads included, is a WORM row in `audit.mcp_call`; commands are also in `audit.command`. Default limits: 60 reads/min and 10 writes/min per token, 256 KB per result.
 
 ## 8. End-to-end flows
 

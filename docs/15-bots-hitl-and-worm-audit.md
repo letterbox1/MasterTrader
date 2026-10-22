@@ -23,30 +23,35 @@ A **bot** is one deployment of one **strategy version** onto a **market scope**,
 | Timeframes & schedule | Data subscriptions, trading hours/sessions, blackout rules |
 | Parameter overrides | Within the strategy's parameter schema |
 | Risk overrides | **Only tighter** than the policy; never looser |
-| **Mode** | `paper` · `hitl` · `autonomous` |
+| **Mode** | `paper` · `hitl` · `autonomous`, set **per bot** ("approve"/"auto" are retired aliases; UI labels Paper · Approve (HITL) · Autonomous) |
 | Approval policy | For HITL bots (and escalations from autonomous bots), see §1.3 |
+| Failure behaviour | `on_system_failure`: `flatten` (default) · `cancel_orders_only` · `hold` ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) |
 | Status | `draft` · `running` · `paused` · `stopped` · `halted` (by risk) |
 
 ### 1.2 Modes
 
 | Mode | Behaviour | Changing to it |
 |---|---|---|
-| `paper` | Simulated fills through the real risk and execution path | Any time (C1) |
-| `hitl` | Every **new entry** (and, if configured, every size increase or modification) is sent to you as an **approval card** on Telegram (and the web). Nothing executes without your tap. | From paper: C2. From autonomous: C1 (tightening, immediate) |
-| `autonomous` | Orders go straight to the risk manager and the venue | **C3** (Telegram approve + TOTP + cool-down), and only while the strategy version passes all gates |
+| `paper` | Simulated fills through the real risk and execution path | Any time (C1, tightening) |
+| `hitl` | Every **new entry** (and, if configured, every size increase or modification) is sent to you as an **approval card** on Telegram (and the web). Nothing executes without your tap. | From paper: **C2** (it starts real venue orders). From autonomous: C1 (tightening, immediate) |
+| `autonomous` | Orders go straight to the risk manager and the venue | **C3** (Telegram approve + TOTP + cool-down), and only while the strategy version passes its gate profile ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile): DSR ≥ 0.95, paper/HITL ≥ 8 weeks **and** ≥ 50 trades by default) |
+
+**Mode lives on the bot, gates on the strategy.** A strategy version is *promoted* through gates; a *bot* is switched between modes. There is no separate strategy-level mode: a bot can only use the modes its strategy version's gate status allows. Confirmation levels for each change are in [16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl).
 
 **Rules that apply in every mode:**
 - Every order passes the risk manager (M11). The mode decides *who approves*, never *whether risk checks run*.
 - **Protective exits never wait for approval:** stop-losses, take-profits set at entry, kill-switch flattening and risk-forced reductions run automatically even for HITL bots.
-- **Never act late:** an approval that arrives after the TTL is rejected, and the bot logs "expired" (14 §5 decision deadline).
+- **Never act late:** an approval that arrives after the TTL is rejected, and the bot logs "expired". Signals past the bot's decision deadline are dropped (defaults per horizon, [16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)).
 
 **Automatic downgrade:** an autonomous bot drops to `hitl` (or `paused`, configurable) on any of these:
-- decay alert;
+- decay alert: rolling 60-trade Sharpe or hit rate below the backtest's 5th percentile, or a CUSUM break ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each));
 - fallback-ladder rung ≥ 3;
 - DQ degraded on its instruments;
-- N consecutive losses;
+- consecutive losses (default 5, configurable; not yet in 16);
 - model service down;
 - a venue registry status change.
+
+**Stronger signals halt rather than downgrade** (one meaning each, [16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)): a failed daily health check **halts the bot** pending your review; a kill criterion ([14 §7](14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)) **halts the sleeve** and steps capital down.
 
 Upgrading back is C3 again.
 
@@ -62,15 +67,18 @@ Upgrading back is C3 again.
 
 **Buttons:** **Approve** · **Approve ½ size** · **Reject** · **Pause bot**.
 
+Defaults below are configurable per bot ([16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)).
+
 | Setting | Default |
 |---|---|
 | TTL | Per bot; 60 s for intraday/scalping, 15 min for swing, 4 h for position |
 | On expiry | Reject (never execute late) |
-| Large orders | Above a per-bot notional, approval also needs **hold-to-confirm** (web) or a **TOTP** reply (Telegram) |
+| Large orders | Orders > 2% of sleeve or > A$5,000 notional also need **hold-to-confirm** (web) or a **TOTP** reply (Telegram) |
 | Quiet hours | HITL bots don't open new entries during your quiet hours unless you set "wake me" |
-| Batching | Several signals from one dynamic-selection bot can be grouped into one card with per-line toggles |
+| Batching | Several signals from one dynamic-selection bot can be grouped into one card with per-line toggles. This is the **only** form of bulk approval; there is no "approve all" |
+| MCP-originated orders | Always raise this approval card (Telegram/web), TTL 5 min, expiry = reject |
 
-Approvals are bound to your Telegram user id. Every approval, rejection and expiry is recorded (WORM, §2) with the card content that was shown.
+Approvals come **only from you, on Telegram or the web**, and are bound to your Telegram user id or web session. MCP can never approve anything (`approval.*` is never exposed, [16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)). Every approval, rejection and expiry is recorded (WORM, §2) with the card content that was shown.
 
 ### 1.4 Telegram commands for bots
 
@@ -79,8 +87,9 @@ Approvals are bound to your Telegram user id. Every approval, rejection and expi
 | `/bots` | List bots with mode, scope, status, today's P&L | C0 |
 | `/bot <id>` | Status card: positions, open orders, last signals, mode, pending approvals | C0 |
 | `/bot <id> pause` · `resume` · `stop` | Lifecycle | C1 |
-| `/bot <id> mode paper` · `mode hitl` | Tightening, immediate | C1 |
-| `/bot <id> mode auto` | Loosening: Approve → TOTP → cool-down | **C3** |
+| `/bot <id> mode paper` | Tightening, immediate | C1 |
+| `/bot <id> mode hitl` | From autonomous: tightening, immediate (C1). From paper: starts real venue orders (**C2**) | C1 / C2 |
+| `/bot <id> mode autonomous` | Loosening: Approve → TOTP → cool-down | **C3** |
 | `/approvals` | Pending approval cards | C0 |
 
 ### 1.5 API, data and UI
@@ -88,12 +97,12 @@ Approvals are bound to your Telegram user id. Every approval, rejection and expi
 - **Commands (`mt_api`):**
   - `bot.create` (C1);
   - `bot.update_scope`, `bot.update_params` (C1; widening the scope of an autonomous bot is C3);
-  - `bot.set_mode`: paper/hitl C1, autonomous **C3**;
+  - `bot.set_mode`: → paper C1; autonomous → hitl C1; paper → hitl **C2**; → autonomous **C3**;
   - `bot.start`, `bot.pause`, `bot.resume`, `bot.stop` (C1);
   - `bot.approval_policy.set` (tighten C1, loosen C3);
-  - `approval.approve`, `approval.approve_partial`, `approval.reject` (C2).
+  - `approval.approve`, `approval.approve_partial` (C2); `approval.reject` (C1, it only tightens). Accepted from `web` and `telegram` sources only.
 - **Queries:** `/bots`, `/bots/{id}`, `/bots/{id}/approvals`, `/approvals?status=pending`.
-- **Tables:** `strategy.bot`, `strategy.bot_version` (every scope/param/mode change is a new row), `risk.approval` (request, card snapshot, decision, latency, outcome).
+- **Tables:** `strategy.bot`, `strategy.bot_version` (every scope/param/mode change is a new row), `risk.approval` (request, card snapshot, decision, latency, outcome; the request and the decision are separate rows, never an update).
 - **NATS:**
   - `bot.{id}.status`;
   - `risk.approval.request` / `risk.approval.result` (existing), carrying `bot_id`.
@@ -101,7 +110,7 @@ Approvals are bound to your Telegram user id. Every approval, rejection and expi
   - **D03 Strategies → Bots tab:** list, plus a create wizard (strategy → scope → venue & sleeve → mode → approval policy → review);
   - **D01 Needs-you:** approval cards;
   - **D05:** a bot column on orders and fills.
-- **MCP (Phase 8):** the same commands. Autonomous is still C3.
+- **MCP (Phase 8):** bot commands within each token's scopes ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)). MCP can never approve (`approval.*` is never exposed); MCP orders always raise your approval card; switching to autonomous and any other loosening stays C3 on Telegram + TOTP.
 
 ---
 
@@ -110,9 +119,10 @@ Approvals are bound to your Telegram user id. Every approval, rejection and expi
 ### 2.1 Scope
 
 **WORM tables:**
-- all of `audit.*`: orders, fills, decisions, LLM calls, DQ/cost events, commands, approvals;
+- all of `audit.*`, with the canonical (singular) names from [17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer): `audit.order`, `audit.fill`, `audit.command` (source `web` / `telegram` / `mcp` / `system`), `audit.llm_call` (from P0, via the LiteLLM callback), `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call` (every MCP call, reads included; commands also land in `audit.command`);
+- `risk.approval` (requests, decisions, expiries);
 - `journal.*`;
-- `risk.change`;
+- `risk.change` (every configuration version, [16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance));
 - `strategy.bot_version`;
 - `curation.mandate` and `curation.exec_log`;
 - the signer's signature ledger;
@@ -128,9 +138,18 @@ Market data hypertables and caches are **not** WORM, because they can be rebuilt
 | **Triggers** | `BEFORE UPDATE OR DELETE` and `BEFORE TRUNCATE` triggers **raise an exception** on every WORM table, as a second line if a grant is ever wrong. Partitions are never dropped inside the retention period (≥ 7 years). |
 | **Row hash chain** | Each row carries `chain_id`, `seq`, `prev_hash` and `row_hash = sha256(prev_hash ‖ canonical_json(row))`, computed in a `BEFORE INSERT` trigger and serialised per chain (advisory lock). Timestamps come from `clock_timestamp()` with chrony-synced time. |
 | **Daily seal** | A Merkle root per table per day goes to `audit.seal` and is **anchored outside the database**: (1) written to **immutable storage** (S3-compatible **Object Lock** in compliance mode, e.g. Backblaze B2; or a restic `rest-server --append-only` on a second box as the free option); (2) optionally an **OpenTimestamps** proof (free); (3) the root is sent to your Telegram as a timestamped witness. |
-| **Corrections** | Never edits. A correction is a new row with `supersedes_id`. "Current" views pick the latest row per key. |
-| **Backups** | pgBackRest repo + WAL archive on immutable/append-only storage. A **monthly immutable export** of WORM tables (Parquet + manifest with hashes) is kept ≥ 7 years. |
-| **Verification** | `audit.verify` runs daily: it recomputes every chain and checks it against the anchored seals. A mismatch is a **critical incident**: alert on all channels, and (configurable, default on) **halt new trading**, because the records can no longer be trusted. |
+| **Corrections** | Never edits. A correction is a new row with `supersedes_id`. "Current" views pick the latest row per key. **Acknowledgements are new rows too:** a DQ incident ack is an `audit.dq_ack` row referencing the incident, and an integrity ack is an `audit.integrity_incident` row; nothing is ever marked "acked" in place. |
+| **Write path** | Rows are written as events happen; inserts stay fast (p99 < 5 ms) and the order path **never waits on seals**. If Postgres is unreachable, writes buffer in NATS JetStream (default bound 1 GB or 24 h; above 80% new entries stop, exits continue). Nothing executes without a record ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)). |
+| **Encryption** | Sensitive columns use envelope encryption: yearly data keys wrapped by a master key. Key rotation **re-wraps the keys** in a non-WORM key table; rows are never re-encrypted (that would be an UPDATE). |
+| **Backups** | pgBackRest: continuous WAL archive, nightly incremental, weekly full, on immutable/append-only storage; a **monthly restore test**. A **monthly immutable export** of WORM tables (Parquet + manifest with hashes) is kept ≥ 7 years. |
+| **Verification** | `audit.verify` runs an **hourly incremental** check plus a **daily full verify**: it recomputes every chain and checks it against the anchored seals. A mismatch is a **critical incident** (see the integrity response below). |
+
+**Integrity response** (defaults, configurable, [16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)):
+- A mismatch writes an `audit.integrity_incident` row and sets the `audit.integrity` status in NATS KV, which M11 reads **before every trade**.
+- **Default action `block_new_entries`:** critical alert on every channel; no new entries; exits and protective orders continue; no risk loosening. Options: `alert_only` · `block_new_entries` · `halt_all`.
+- This is separate from the kill switch: it doesn't cancel or flatten anything by itself.
+- It clears only when you acknowledge with `audit.integrity.ack` (**C3**) after investigating. The ack is a new `audit.integrity_incident` row.
+- Why block: trades themselves don't "fail" verification, but positions, P&L, journal and tax records can no longer be trusted until you've checked.
 
 ### 2.3 What this protects against
 
@@ -146,6 +165,7 @@ Market data hypertables and caches are **not** WORM, because they can be rebuilt
 
 - An UPDATE, DELETE or TRUNCATE by any app role fails.
 - A row edited directly as `worm_owner` is detected by `audit.verify`.
-- A seal mismatch triggers the incident path.
+- A seal mismatch triggers the incident path: an `audit.integrity_incident` row, `audit.integrity` set, and M11 rejecting new entries while exits still go through. Only a C3 `audit.integrity.ack` clears it, as a new row.
+- An incident ack (DQ or integrity) adds a row and never updates the incident.
 - A restore from immutable backup re-verifies cleanly.
-- Insert throughput with hashing stays within the SLOs (fills and commands on the order path never wait on seals).
+- Insert latency with hashing stays within the SLO (p99 < 5 ms; fills and commands on the order path never wait on seals).
