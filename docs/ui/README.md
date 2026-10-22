@@ -133,7 +133,7 @@ These map to the API confirmation levels ([architecture §7.2](../02-v1-architec
 | C0 | Immediate; toast with undo where possible |
 | C1 | Confirm sheet: title, consequence, Confirm / Cancel. Confirm sends the **confirm token** returned by the command's preview call |
 | C2 | Confirm sheet + **risk preview**: projected exposure, limits used, checks pass/fail, estimated cost. **Hold-to-confirm** (600 ms) on touch, Enter on desktop. Submit sends the **risk-preview hash**, bound to the exact command and args; the session must have re-authenticated within the last 12 h |
-| C3 | C2, then "Approval sent to Telegram" state with a countdown; waits for Telegram approval + TOTP; then shows a cool-down timer until it takes effect; can be cancelled |
+| C3 | C2, then "Approval sent to Telegram" state with a countdown; waits for Telegram approval + TOTP; then shows a cool-down timer (default 15 min, configurable) until it takes effect; can be cancelled |
 | Kill | Single confirm with a large target; never behind a menu |
 
 **Server enforcement:** the UI never decides that a confirmation happened. The server issues the C1 confirm token or C2 preview hash, rejects an execute call without a matching one, and re-checks the C2 session age. If the args change after preview, the token is void and the sheet re-previews ([02 §7.2](../02-v1-architecture.md#72-commands-rest-write)).

@@ -63,6 +63,9 @@ This doc also covers the **failure-safety design** (what happens when the engine
 | Session awareness | Closed sessions (weekend FX, exchange holidays) are not stale; they're `closed` |
 | **Order-time check** | M11 checks data age **inline on every order**. Older than the bot's threshold → rejected, and the ladder holds. No order can act on stale data, whatever the monitor's timing |
 | Monitor reaction | The DQ monitor flips `dq.status` to `stale` within **≤ 250 ms (p99)** of the threshold being crossed, which pauses strategies and turns the UI amber |
+| Wide spread | Spread > 3× its normal level → pause the affected bots |
+| Cross-source divergence | Mid-price difference between two free sources ≥ 25 bps (crypto) / 5 bps (FX majors) → alert |
+| Bad tick | Robust z-score (median/MAD) ≥ 8, a price outside the spread band, or a crossed/locked book → flag and drop the tick |
 
 This replaces the earlier "detection → paused < 2 s" SLO.
 

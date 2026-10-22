@@ -133,7 +133,7 @@ The executor only acts inside an active, user-signed, expiring **mandate**: one 
   - `ONCHAIN_ACTION_MANUAL` (e.g. use or bridge a protocol, or a manual sale, with a step list, estimated gas and capital);
   - `CLAIM_MANUAL` (needs a signature, or the risk is borderline);
   - `GENUINE_USE` (modest real use from the identity wallet after a clean burner run).
-- **Review and housekeeping:** `ICO_REVIEW`, `REVOKE_APPROVAL`, `TAX_QUESTION` (formerly `TAX_RECORD`), `PRO_ADVICE`, `VENUE_CHECK`, `APPROVE_ORDER`.
+- **Review and housekeeping:** `ICO_REVIEW`, `REVOKE_APPROVAL`, `TAX_QUESTION` (formerly `TAX_RECORD`), `PRO_ADVICE`, `VENUE_CHECK`, `APPROVE_ORDER`, `REG_CHANGE` (regulatory & venue watch review).
 
 **Each task carries:**
 - numbered steps;

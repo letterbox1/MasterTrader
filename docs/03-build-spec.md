@@ -178,7 +178,7 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
   - **sleeve** (capital bucket with its own limits and kill switch);
   - **kill criteria**, written before deployment;
   - **benchmark** (asset-class passive alternative).
-- **Lifecycle:** a strategy version is **promoted** draft → backtested → validated through the gates in §8. A **bot** running a validated version is **switched** between modes: `paper` → `hitl` (C2) → `autonomous` (C3); stepping back is C1 ([16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)). `approve`/`auto` are retired aliases for `hitl`/`autonomous`. Every transition is logged.
+- **Lifecycle:** a strategy version is **promoted** draft → backtested → validated through the gates in §8. A **bot** running a validated version is **switched** between modes: `paper` → `hitl` (C2) → `autonomous` (C3); stepping back is C1 ([16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)). A strategy's own mode (`strategy.set_mode`) caps its bots: the stricter of strategy and bot mode applies. `approve`/`auto` are retired aliases for `hitl`/`autonomous`. Every transition is logged.
 - **Ways to create a strategy:**
   1. write Python;
   2. configure a template in the UI;
@@ -428,7 +428,7 @@ Full design: [10](10-memory-rag-and-models.md).
 | Portfolio | Correlation/cluster exposure (e.g. USD, crypto beta), VaR/ES estimate, concentration |
 | Sizing models (selectable per strategy) | Fixed size, fixed fractional, volatility target (ATR), **stop-distance sizing**, Kelly (`f = (p·b − q)/b`, quarter-Kelly ceiling, never `2p − 1`), risk-parity |
 | Sleeves | Capital split into sleeves with separate limits/kill switches; exposure **netted per asset across sleeves** |
-| Defaults | Every value is a configurable default in [16 §2](16-configuration-and-safety-model.md#2-default-values-all-configurable): risk per trade, venue concentration (default ≤ 25% of equity per venue), two-stage sleeve and system drawdowns, **decision deadlines**, price collar, API-error pause, cost blow-out, 2× crypto-derivatives cap |
+| Defaults | Every value is a configurable default in [16 §2](16-configuration-and-safety-model.md#2-default-values-all-configurable): risk per trade, venue concentration (default ≤ 25% of equity per venue), two-stage sleeve and system drawdowns (measured on trading equity, excluding the vault and hold-and-earn, adjusted for your deposits and withdrawals: the drawdown basis in [16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)), **decision deadlines**, price collar, API-error pause, cost blow-out, 2× crypto-derivatives cap |
 
 **Fallback ladder** (live state shown in D06):
 1. Healthy + high confidence → normal size.
@@ -465,7 +465,7 @@ Full design: [10](10-memory-rag-and-models.md).
 
 **Change control** (see [07 §6](07-security-notes.md#6-application-controls)):
 - **Tightening** applies immediately.
-- **Loosening** (raising a limit, enabling `autonomous`) is **C3**: Telegram approve + TOTP + cool-down.
+- **Loosening** (raising a limit, enabling `autonomous`) is **C3**: Telegram approve + TOTP + cool-down (default 15 min, [16 §2.3](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)). Restarting a halted sleeve (`risk.sleeve.restart`) is also C3.
 - **L0 hard ceilings** are edited in the agent/bot strategy settings (the ceilings section applies to every bot): tightening is immediate, loosening is C3 like every other loosening ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)).
 - Until the Telegram C3 path exists (P2), C3 commands complete through a host-only break-glass CLI (`mtctl approve <id>` + TOTP over SSH/Tailscale), audited.
 - Every change is audited and versioned (rollback).
@@ -728,7 +728,7 @@ Full design: [13 §8](13-wallets-treasury-and-onchain.md#8-social-participation-
 **How it's built:**
 - A thin adapter over `mt_api`, using the official `mcp` Python SDK or FastMCP.
 - **Transport:** Streamable HTTP (JSON-RPC 2.0, SSE streaming, resumable) on Tailscale/TLS, or stdio (newline-delimited JSON) locally; an optional legacy HTTP+SSE endpoint for older clients. The `mcp` container sits on the internal network behind Caddy, on Tailscale only. Server notifications (fills, approvals, alerts) use resource subscriptions.
-- **Tokens:** opaque 256-bit, shown once, stored hashed (HMAC-SHA-256 with a server pepper), scoped, revocable instantly, with last-used time and client identity recorded. Expiry is your choice per token: 1 day · 7 days · 30 days · 1 year · custom · indefinite (indefinite = red warning + C3 + monthly reminder). OAuth 2.1 (PKCE, resource indicators) for clients that support MCP authorization.
+- **Tokens:** opaque 256-bit, shown once, stored hashed (HMAC-SHA-256 with a server pepper), scoped, revocable instantly, with last-used time and client identity recorded. Expiry is your choice per token: 1 day · 7 days · 30 days · 1 year · custom · indefinite (indefinite = red warning + C3 + monthly reminder). Creating a token is C2 for `read` / `analyse` / `curation` scopes and C3 for `trade` / `strategy` / `risk_tighten` scopes or indefinite expiry ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)). OAuth 2.1 (PKCE, resource indicators) for clients that support MCP authorization.
 - **Because the UI and Telegram already use `mt_api`, this is mostly wiring.**
 
 **Scope (all via `mt_api`; every order still passes through M11):**

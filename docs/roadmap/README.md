@@ -62,11 +62,11 @@ Calendar dates are indicative; halve the durations if you work full-time.
 | [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 45 | 9 | 21 | 3 | 13 | 2 | 48 |
 | [P3 Journal & Tax](phase-3-journal-and-tax.md) | 21 | 6 | 14 | 3 | 8 | 1 | 32 |
 | [P4 News, Social, Events & Calendars](phase-4-intel.md) | 18 | 6 | 13 | 3 | 8 | 1 | 31 |
-| [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 23 | 8 | 13 | 3 | 6 | 1 | 31 |
-| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 21 | 5 | 12 | 2 | 6 | 1 | 26 |
+| [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 24 | 9 | 14 | 3 | 8 | 1 | 35 |
+| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 24 | 5 | 13 | 2 | 14 | 1 | 35 |
 | [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 14 | 11 | 6 | 3 | 5 | 3 | 28 |
 | [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 8 | 3 | 3 | 1 | 3 | 1 | 11 |
-| **Total** | | **67** | **107** | **31** | **67** | **12** | **284** |
+| **Total** | | **68** | **109** | **31** | **77** | **12** | **297** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
@@ -189,14 +189,15 @@ Everything only you can do, in order. The phase documents hold the detail.
 | T5.01 | P5 | Set up the **vault** (air-gapped hardware) and **warm** hardware wallet yourself; the system only gets public addresses. | R5.01 |
 | T5.02 | P5 | **Seed backup:** Shamir (SLIP-39) shares or multisig, stored in separate locations; write the sealed **estate letter** (where shares are, how to unwind, no secrets). | [07 §4](../07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims) |
 | T5.03 | P5 | Approve creation of the hot, identity (one per chain) and burner keys in the signer; fund them with minimal floats. | R5.01, R5.07 |
-| T5.04 | P5 | Register every address/account you own (proof of control), with role and investment/trading tag. | R5.05 |
+| T5.04 | P5 | Register every address/account you own, with role and investment/trading tag; prove control by signing a one-time challenge in **your own wallet app** or making a tiny self-transfer (the system never signs). | R5.05, R5.25 |
 | T5.05 | P5 | Sign the first **mandates** (C3): wallet, chain, allowed contracts/functions, caps, expiry. | R5.15 |
-| T5.06 | P5 | Set the disposal rule (default sell 50% on claim) and EV hurdle. | R5.14, R5.17 |
+| T5.06 | P5 | Review the disposal rule (default sell 50% on claim) and EV hurdle (default 5% p.a.); both are settings. | R5.14, R5.17 |
 | T5.07 | P5 | Work the task queue: join/follow communities, do social tasks yourself, ICO reviews. | R5.20, R5.21 |
 | T5.08 | P5 | Review and confirm the wallet/signer/gas limits (prefilled defaults) to enable signing. | R5.24 |
-| T6.01 | P6 | Set LLM budgets (monthly cap, per role) and confirm your custom endpoint details for the gateway. | R6.07 |
+| T5.09 | P5 | Until the P7 live gates pass, sell claimed airdrop tokens yourself when the disposal task arrives, then mark it done. | R5.17 |
+| T6.01 | P6 | Review the LLM budgets (defaults: US$40/month cap and per-role daily budgets, 16 §2.10; all settings) and confirm your custom endpoint details for the gateway (keys from T0.13). | R6.07 |
 | T6.02 | P6 | Work the **D10 labelling queue** (~15 min/day while it's new). | R6.13 |
-| T6.03 | P6 | Approve the **treasury policy** and protocol allow-list (C3); decide on HLP (only if Hyperliquid is approved). | R6.20–R6.22 |
+| T6.03 | P6 | Approve the **treasury policy** and protocol allow-list (C3); decide on HLP (only if Hyperliquid is approved; default cap ≤ 10% of stables and ≤ 5% of portfolio). | R6.20–R6.22 |
 | T6.04 | P6 | Decide whether to run Hummingbot, social drafts, crowd-sim (all optional). | R6.30–R6.32 |
 | T6.05 | P6 | Approve/edit/skip social drafts and click Post yourself (if M23 is on). | R6.31 |
 | T7.01 | P7 | **Tax agent decision recorded** (investor vs trader) and set in D15 for the FY. | entry criterion · R7.13 |

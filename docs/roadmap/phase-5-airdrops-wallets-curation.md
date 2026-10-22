@@ -27,13 +27,13 @@
 ### Wallets, signer, monitors (M22 part 1)
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
-| R5.01 | Six custody tiers (vault, Hyperliquid master if approved, warm, hot, airdrop identity per chain, burner) with limits; vault/warm watch-only in the system | [13 §1](../13-wallets-treasury-and-onchain.md#1-custody-tiers) | Config review |
-| R5.02 | **Signer accepts intents only** (local socket/mTLS from the policy service), re-builds transactions, per-wallet allow-lists, per-tx and rolling-24h caps, mandatory simulation (Anvil / `simulateTransaction`) | [13 §2](../13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys), [SPEC NN6](../../SPEC.md#non-negotiable-requirements) | Signer tests |
+| R5.01 | Six custody tiers (vault, Hyperliquid master if approved, warm, hot, airdrop identity per chain, burner) with limits; vault/warm watch-only: the system never holds their keys, but may *prepare* unsigned transactions (QR/WalletConnect) for you to sign in your own wallet | [13 §1](../13-wallets-treasury-and-onchain.md#1-custody-tiers), [17 §B](../17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) | Config review |
+| R5.02 | **Signer accepts intents only** (local socket/mTLS from the policy service; airdrop-exec, treasury (P6) and DEX execution (P7) all go through it), re-builds transactions, per-wallet allow-lists, per-tx and rolling-24h caps, mandatory simulation (Anvil / `simulateTransaction` only; Tenderly isn't used) | [13 §2](../13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys), [SPEC NN6](../../SPEC.md#non-negotiable-requirements) | Signer tests |
 | R5.03 | **Hard blocks:** permit/Permit2, `setApprovalForAll`, unlimited approvals, foreign `SetAuthority`/SPL `Approve`, unknown programs/routers; approvals sized and revoked; **durable-nonce block** + nonce-authority alerts | [13 §2](../13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys), [07 §4](../07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims) | Drainer tests |
-| R5.04 | **On-chain cost gate** (Solana/EVM cost formulas, AMM impact, all-in round trip; gas windows; daily gas budgets) → allow/wait/reject, logged | [13 §7](../13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) | Gate tests |
-| R5.05 | **Unified wallet view:** `ops.wallets` registry (role, provider, tax tag), read-only aggregation (Helius DAS, Blockscout/RPC, Hyperliquid `/info`, ccxt read-only), daily journal reconciliation, monthly rotki | [13 §3](../13-wallets-treasury-and-onchain.md#3-unified-wallet-view) | Recon report |
-| R5.06 | Monitors: approvals, nonce authority, **stablecoin depeg > 50 bps**, exploit/oracle/TVL drop, venue health, bridge policy, concentration | [13 §6](../13-wallets-treasury-and-onchain.md#6-monitors-feed-m16-and-m11) | Simulated events |
-| R5.07 | Scheduled sweeps of hot/burner balances above float to the vault address; kill switch sweeps hot balances | [13 §1](../13-wallets-treasury-and-onchain.md#1-custody-tiers), [14 §5 ladder](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) | Sweep test |
+| R5.04 | **On-chain cost gate** as the library `mt_onchain.costgate`, used by the signer path from P5 (treasury uses it in P6): Solana/EVM cost formulas, AMM impact, all-in round trip (default margin: act only if benefit ≥ 2× all-in cost); gas windows; daily gas budgets → allow/wait/reject, logged | [13 §7](../13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) | Gate tests |
+| R5.05 | **Unified wallet view:** extends the P3 `ops.wallets` registry additively (role, provider, tax tag), read-only aggregation (Helius DAS, Blockscout/RPC, Hyperliquid `/info`, ccxt read-only), daily journal reconciliation, monthly rotki | [13 §3](../13-wallets-treasury-and-onchain.md#3-unified-wallet-view) | Recon report |
+| R5.06 | Monitors: approvals, nonce authority, **stablecoin depeg** (default > 50 bps; until the P6 treasury exists: alert + task, no automated reduce), exploit/oracle/TVL drop, venue health, bridge policy, venue concentration (default ≤ 25% of equity per venue) | [13 §6](../13-wallets-treasury-and-onchain.md#6-monitors-feed-m16-and-m11) | Simulated events |
+| R5.07 | Scheduled sweeps of hot/burner balances above float to the vault address; the kill switch sweeps hot trading balances to the vault address (from P5, default on, configurable) | [13 §1](../13-wallets-treasury-and-onchain.md#1-custody-tiers), [14 §5 ladder](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) | Sweep test |
 
 ### Airdrops & launches (M4)
 | ID | Requirement | Source | Verified by |
@@ -42,22 +42,23 @@
 | R5.11 | Normalise by (chain, contract)/slug; official domain verified; **corroboration score** (< 2 independent sources → watch only) | [08 pipeline](../08-airdrops-and-token-launches.md#pipeline) | Unit tests |
 | R5.12 | Enrichment via **Blockscout/own RPC** (Etherscan manual only), Helius, DexScreener/GeckoTerminal, CryptoRank | [08 pipeline](../08-airdrops-and-token-launches.md#pipeline), [12 §4](../12-policy-and-compliance.md#4-per-platform-data--automation-rules) | Source audit |
 | R5.13 | Risk score: GoPlus, Honeypot.is, RugCheck, solana-rugchecker + CRPWarner heuristics, blocklists, **wallet-cluster detection**, **blacklist**; hard-fail = reject; calibrated on SoK (+ SolRPDS / Pump.fun corpus / MemeTrans, private) | [08 risk score](../08-airdrops-and-token-launches.md#risk-score-0100-any-hard-fail--100--reject), [03 M4](../03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop) | Calibration report |
-| R5.14 | Viability score incl. **AU geo/KYC exclusion** + **EV gate** (EV > 0 to reach the digest) | [08 viability](../08-airdrops-and-token-launches.md#viability-score), [08 EV gate](../08-airdrops-and-token-launches.md#expected-value-gate-airdrops-icosidos-points-programmes) | Unit tests |
-| R5.15 | Autonomy limited to: read-only work; eligible claims from the identity wallet under a signed, expiring mandate with simulation + cost gate; genuine-use tasks after a clean burner run; defensive revokes/sweeps | [08 autonomous](../08-airdrops-and-token-launches.md#what-may-run-autonomously), [03 M4](../03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop) | Policy tests |
+| R5.14 | Viability score incl. **AU geo/KYC exclusion** + **EV gate** (EV > 0 after the hurdle, default 5% p.a. on capital locked, configurable, to reach the digest) | [08 viability](../08-airdrops-and-token-launches.md#viability-score), [08 EV gate](../08-airdrops-and-token-launches.md#expected-value-gate-airdrops-icosidos-points-programmes) | Unit tests |
+| R5.15 | Autonomy limited to: read-only work; eligible claims from the chain's airdrop identity wallet (never the hot trading wallet) under a signed, expiring mandate with simulation + cost gate; genuine-use tasks after a clean burner run; defensive revokes/sweeps | [08 autonomous](../08-airdrops-and-token-launches.md#what-may-run-autonomously), [03 M4](../03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop) | Policy tests |
 | R5.16 | **Never automated** list enforced server-side (permits, SIWE on unknown domains, approvals, buying/bridging into launches, connecting wallets, sybil, social actions, captchas, KYC) | [08 never automated](../08-airdrops-and-token-launches.md#never-automated) | Policy tests |
-| R5.17 | Burner-first; one identity wallet per chain; **disposal rule** (default sell 50% on claim, via M11); fresh launches default-rejected | [08 wallet discipline](../08-airdrops-and-token-launches.md#wallet-discipline) | Flow tests |
+| R5.17 | Burner-first; one identity wallet per chain; **disposal rule** (default sell 50% on claim; before P7 it creates a manual-sale USER task; automated sale via M11 only once live execution passes the P7 gates); fresh launches default-rejected | [08 wallet discipline](../08-airdrops-and-token-launches.md#wallet-discipline) | Flow tests |
 | R5.18 | Records: campaign record, project dossier, blacklist, wallet clusters; airdrop/staking income journalled with classification evidence | [08 records](../08-airdrops-and-token-launches.md#records), [09 key findings](../09-journal-and-tax.md#️-key-findings-that-shape-the-design) | Journal link test |
 
 ### Curation (M19) & UI
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
-| R5.20 | One task queue (social tasks, ICO reviews, manual claims, communities, revokes, tax questions, approve-mode orders, `GENUINE_USE`, `PRO_ADVICE`, `VENUE_CHECK`); Telegram Done/Skip/Snooze/Details/Never; auto-expiry; feedback ranking | [03 M19](../03-build-spec.md#m19-user-task-queue--community-curation--mt_curation), [D13](../ui/dashboards/D13-tasks-curation.md) | Flow tests |
-| R5.21 | Community curation: invites from **official sources only**, blocklist-checked, "which announcement channel to Follow", "leave when", **bot verifies delivery** after Done | [08 Discord queue](../08-airdrops-and-token-launches.md#discord-curation-queue) | Delivery test |
+| R5.20 | One task queue with the canonical task types of 03 M19 (social tasks, ICO reviews, manual claims, communities, revokes, tax questions, HITL orders, `GENUINE_USE`, `PRO_ADVICE`, `VENUE_CHECK`, manual disposal sales), extending the P3 `curation.task` table additively; Telegram Done/Skip/Snooze/Details/Never; auto-expiry; feedback ranking | [03 M19](../03-build-spec.md#m19-user-task-queue--community-curation--mt_curation), [D13](../ui/dashboards/D13-tasks-curation.md) | Flow tests |
+| R5.21 | Community curation: invites from **official sources only**, blocklist-checked, "which announcement channel to Follow", "leave when", **bot verifies delivery** after Done (re-prompt if a followed channel delivers nothing in 7 days; ≤ 3 new servers suggested per week; defaults, [16 §2.13](../16-configuration-and-safety-model.md#213-curation)) | [08 Discord queue](../08-airdrops-and-token-launches.md#discord-curation-queue) | Delivery test |
 | R5.22 | Cadence: instant urgent alerts, daily digest, weekly curation/review digest (AU timezone, quiet hours) | [08 task queue](../08-airdrops-and-token-launches.md#user-task-queue--digests) | Digest preview |
 | R5.23 | D12 (radar, detail, wallet & mandates), D13 (inbox, communities, digests, history), D18 view (net worth, allocation, wallet table, transfers, venue health) | [D12](../ui/dashboards/D12-airdrops.md) [D13](../ui/dashboards/D13-tasks-curation.md) [D18](../ui/dashboards/D18-wallets-treasury.md) | Playwright |
 | R5.N1 | Signer and Anvil on the isolated network; no LLM can reach keys | [07 §5](../07-security-notes.md#5-network--host), [02 §3.1](../02-v1-architecture.md#31-networks) | Network test |
-| R5.N2 | Kill switch ON freezes auto-claims and treasury moves | [02 F6](../02-v1-architecture.md#8-end-to-end-flows) | Drill |
+| R5.N2 | Kill switch ON freezes auto-claims and treasury moves and sweeps hot trading balances to the vault (default on) | [02 F6](../02-v1-architecture.md#8-end-to-end-flows) | Drill |
 | R5.24 | **Wallet, signer and gas limits are configuration** (floats, per-tx/24 h caps, gas budgets, cost-gate margin, EV hurdle; defaults in 16 §2.7); **signing stays disabled until you confirm them** | [16 §2.7](../16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) | Config test |
+| R5.25 | **Proof of control** for every registered address: you sign a one-time challenge in your own wallet app (EIP-4361-style text / Solana `signMessage`) or make a tiny self-transfer; the system only verifies and never signs it | [17 §B](../17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) | Unit tests |
 
 ## 4. ToDo sets
 
@@ -65,25 +66,27 @@
 - [ ] **T5.01** `USER` Set up the **vault** (air-gapped hardware) and **warm** hardware wallet yourself; the system only gets public addresses. → R5.01
 - [ ] **T5.02** `USER` **Seed backup:** Shamir (SLIP-39) shares or multisig, stored in separate locations; write the sealed **estate letter** (where shares are, how to unwind, no secrets). → [07 §4](../07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims)
 - [ ] **T5.03** `USER` Approve creation of the hot, identity (one per chain) and burner keys in the signer; fund them with minimal floats. → R5.01, R5.07
-- [ ] **T5.04** `USER` Register every address/account you own (proof of control), with role and investment/trading tag. → R5.05
+- [ ] **T5.04** `USER` Register every address/account you own, with role and investment/trading tag; prove control by signing a one-time challenge in **your own wallet app** or making a tiny self-transfer (the system never signs). → R5.05, R5.25
 - [ ] **T5.05** `USER` Sign the first **mandates** (C3): wallet, chain, allowed contracts/functions, caps, expiry. → R5.15
-- [ ] **T5.06** `USER` Set the disposal rule (default sell 50% on claim) and EV hurdle. → R5.14, R5.17
+- [ ] **T5.06** `USER` Review the disposal rule (default sell 50% on claim) and EV hurdle (default 5% p.a.); both are settings. → R5.14, R5.17
 - [ ] **T5.07** `USER` Work the task queue: join/follow communities, do social tasks yourself, ICO reviews. → R5.20, R5.21
 - [ ] **T5.08** `USER` Review and confirm the wallet/signer/gas limits (prefilled defaults) to enable signing. → R5.24
+- [ ] **T5.09** `USER` Until the P7 live gates pass, sell claimed airdrop tokens yourself when the disposal task arrives, then mark it done. → R5.17
 
 ### B. Build (`BUILD`, code)
 - [ ] **T5.20** `BUILD` `mt_signer`: intent API, builders/decoders (EVM, Solana), allow-lists, caps, hard blocks, durable-nonce rules, simulation hooks, ledger of signatures. → R5.02, R5.03
-- [ ] **T5.21** `BUILD` On-chain cost gate service (fee sampling, Anvil gas, impact formulas, gas windows, budgets). → R5.04
-- [ ] **T5.22** `BUILD` `wallet-indexer`: registry, aggregators, transfer classifier (internal tagging into M18), reconciliation, rotki export. → R5.05
-- [ ] **T5.23** `BUILD` Monitors: approvals, nonce authority, depeg, exploit/TVL, venue health, bridge policy, concentration → M16/M11. → R5.06
+- [ ] **T5.21** `BUILD` On-chain cost gate library `mt_onchain.costgate` (fee sampling, Anvil gas, impact formulas, gas windows, budgets). → R5.04
+- [ ] **T5.22** `BUILD` `wallet-indexer`: additive `ops.wallets` extensions, aggregators, transfer classifier (internal tagging into M18), reconciliation, rotki export. → R5.05
+- [ ] **T5.23** `BUILD` Monitors: approvals, nonce authority, depeg (alert + task until P6), exploit/TVL, venue health, bridge policy, concentration → M16/M11. → R5.06
 - [ ] **T5.24** `BUILD` Sweep scheduler + kill-switch sweep. → R5.07, R5.N2
 - [ ] **T5.25** `BUILD` `mt_airdrop` discovery, normalisation + corroboration, enrichment. → R5.10–R5.12
 - [ ] **T5.26** `BUILD` Risk scoring: provider clients, heuristics, blocklists, wallet-cluster graph, blacklist; SoK/SolRPDS/Pump.fun calibration notebook. → R5.13
 - [ ] **T5.27** `BUILD` Viability + EV gate; decision engine (reject / task / watch / auto-claim). → R5.14, R5.15
-- [ ] **T5.28** `BUILD` Mandates + claim executor + burner-first/identity flow + disposal-rule order via M11. → R5.15–R5.17
+- [ ] **T5.28** `BUILD` Mandates + claim executor + burner-first/identity flow + disposal rule (manual-sale USER task until P7; automated via M11 only after the P7 gates). → R5.15–R5.17
 - [ ] **T5.29** `BUILD` Campaign records, dossiers, income journal linking. → R5.18
-- [ ] **T5.30** `BUILD` `mt_curation`: task types, queue, ranking, expiry, digests, Telegram buttons, Discord delivery verification. → R5.20–R5.22
+- [ ] **T5.30** `BUILD` `mt_curation`: canonical task types (03 M19) on the P3 `curation.task` table, queue, ranking, expiry, digests, Telegram buttons (incl. Details), Discord delivery verification (7-day re-prompt). → R5.20–R5.22
 - [ ] **T5.31** `BUILD` UI: D12, D13, D18 (view). → R5.23
+- [ ] **T5.32** `BUILD` Proof-of-control: one-time challenge generation and verification of wallet-app signatures (EIP-4361-style / Solana `signMessage`) or a self-transfer. → R5.25
 
 ### C. Ops & config (`OPS`)
 - [ ] **T5.40** `OPS` `signer` + `anvil` containers on the isolated network; keys in OpenBao or sops files. → R5.N1 · [07 §2](../07-security-notes.md#2-secrets)
@@ -94,9 +97,11 @@
 - [ ] **T5.60** `VERIFY` **Drainer test suite:** permit, Permit2, `setApprovalForAll`, unlimited approval, unknown router, "claim fee" to an EOA, foreign durable nonce → all refused. → R5.03, R5.16
 - [ ] **T5.61** `VERIFY` Testnet claim: simulation shows only "+tokens, −gas", mandate respected, journal entry created. → R5.15, R5.18
 - [ ] **T5.62** `VERIFY` SoK evaluation report (precision/recall vs the rule-based baseline). → R5.13
-- [ ] **T5.63** `VERIFY` Depeg and exploit simulations trigger auto-reduce / urgent task. → R5.06
+- [ ] **T5.63** `VERIFY` Depeg and exploit simulations raise an alert + urgent task (no automated reduce before P6). → R5.06
 - [ ] **T5.64** `VERIFY` Kill switch freezes claims and sweeps hot balances. → R5.N2
 - [ ] **T5.65** `VERIFY` Wallet view total reconciles with the journal for a test week. → R5.05
+- [ ] **T5.66** `VERIFY` Live read-only check with your keys (after T0.10, T5.04): Helius, Alchemy, GoPlus and CryptoRank calls succeed on your registered addresses within quota. → R5.05, R5.12, R5.13
+- [ ] **T5.67** `VERIFY` Proof-of-control test: a forged or replayed challenge signature is rejected; a valid wallet-app signature or self-transfer registers the address. → R5.25
 
 ### E. Run / soak (`RUN`)
 - [ ] **T5.80** `RUN` Two weekly digests; review rejected-with-reasons for false positives. → R5.22

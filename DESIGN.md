@@ -237,7 +237,7 @@ landscape-short: rail 56 │ main │ (no bottom nav), top bar 40
   - The **top bar, status bar and bottom nav** are sticky in normal flow, or fixed with a reserved spacer.
   - Fixed bars must not overlap content. The v1 risk-hub and tax screens' fixed status bar paints over content mid-page.
   - The sidebar must span the full height (it ends mid-page in v1).
-- **Global safety controls:** **Emergency Halt / Kill switch** and **Live/Paper mode** are visible on every tier.
+- **Global safety controls:** **Emergency Halt / Kill switch** and the **mode badge** (bot modes `paper` / `hitl` / `autonomous`, with a LIVE marker for real money) are visible on every tier.
   - xxs–sm: in the top bar as an icon button with a text label in its accessible name.
   - Kill switch: always one tap from anywhere, with a confirm sheet (never a browser `alert()`/`confirm()`).
 - **Navigation overflow:**
@@ -346,7 +346,8 @@ Every chip has a text label (never a dot alone).
 **Inputs:**
 - Inset `#161B24` fields with `border-medium`; Cobalt focus ring.
 - Steppers and leverage sliders use Paper grips and Mint fill tracks.
-- Any value that loosens risk shows the **confirmation flow** (Telegram + TOTP) inline, per the build spec M11.
+- Any value that loosens risk shows the **confirmation flow** (Telegram + TOTP) inline, per the build spec M11. This includes L0 hard ceilings.
+- Every configurable setting shows its effective value, the layer that set it (L0–L4) and its default from [16](docs/16-configuration-and-safety-model.md) ([ui §3.7](docs/ui/README.md#37-settings-show-configurable-defaults-and-their-layer)). Mock-ups never present a default as a fixed rule.
 
 **Candlesticks:**
 - Wicks are 1px hairlines; bodies are 4px wide at default zoom.
@@ -388,3 +389,5 @@ Mock data must reflect the actual product spec, so designs don't promise things 
   - Cite real ATO references only, or none (v1 cites unverified rulings).
   - "Not tax advice" footers on tax screens.
 - **Risk:** every order surface shows the risk-manager status (pass / veto / needs approval).
+- **Modes:** use `Paper` / `Approve (HITL)` / `Autonomous` (set per bot); never `APPROVE` / `LIVE AUTO`.
+- **Telegram:** shown only as postures (numbers); never Telegram message text.

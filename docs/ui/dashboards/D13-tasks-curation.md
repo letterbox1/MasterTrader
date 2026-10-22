@@ -14,7 +14,8 @@ One place for everything that needs a human:
 - **Discord servers and announcement channels to follow**;
 - Telegram channels to join;
 - manual claims and approval revokes;
-- tax-agent questions.
+- tax-agent questions;
+- regulatory and venue-watch changes to review (`REG_CHANGE`; rules are never auto-applied).
 
 Each task comes with exact steps and verified links.
 
@@ -30,7 +31,7 @@ Each task comes with exact steps and verified links.
 
 | Tab | Shows | Source |
 |---|---|---|
-| **Inbox** | `TaskCard`s sorted by urgency (deadline) and value: type (the canonical list in [03 M19](../../03-build-spec.md#m19-user-task-queue--community-curation--mt_curation): JOIN_DISCORD, FOLLOW_ANNOUNCEMENTS, JOIN_TELEGRAM, FOLLOW_X, QUEST, ONCHAIN_ACTION_MANUAL, CLAIM_MANUAL, ICO_REVIEW, REVOKE_APPROVAL, TAX_QUESTION, GENUINE_USE, PRO_ADVICE, VENUE_CHECK, APPROVE_ORDER), project, deadline, estimated minutes, risk/viability, steps preview | `/tasks`, WS `tasks` |
+| **Inbox** | `TaskCard`s sorted by urgency (deadline) and value: type (the canonical list in [03 M19](../../03-build-spec.md#m19-user-task-queue--community-curation--mt_curation): JOIN_DISCORD, FOLLOW_ANNOUNCEMENTS, JOIN_TELEGRAM, FOLLOW_X, QUEST, ONCHAIN_ACTION_MANUAL, CLAIM_MANUAL, ICO_REVIEW, REVOKE_APPROVAL, TAX_QUESTION, GENUINE_USE, PRO_ADVICE, VENUE_CHECK, APPROVE_ORDER, REG_CHANGE (regulatory & venue watch review, [16 §4.3](../../16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants))), project, deadline, estimated minutes, risk/viability, steps preview | `/tasks`, WS `tasks` |
 | Task detail | Numbered steps; **official links only** with "verified via …" tags; warnings (never connect main wallet, never sign Permit); related opportunity; "leave when" condition | `/tasks/{id}` |
 | **Communities** | Curated Discord/Telegram/Galxe list: project, platform, invite link (verified), **which announcement channel to Follow**, destination inbox channel (`#mt-inbox`), status (suggested / joined / following / verified / left), last post received, "leave when". Defaults ([16 §2.13](../../16-configuration-and-safety-model.md#213-curation), configurable): re-prompt if a followed channel delivers nothing in 7 days; ≤ 3 new servers suggested per week | `/community`, WS `tasks` |
 | **Digests** | Cadence settings per type (instant / daily / weekly; quiet hours; AU timezone), morning-brief time (contents are canonical in [mobile-and-telegram §3](../mobile-and-telegram.md#3-telegram-bot)), preview of the next digest, delivery channels (Telegram, web) | `/system/settings?section=digests` |
