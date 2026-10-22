@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T030, P1-T011, P1-T016, P1-T017]
+depends_on: [P1-T030]
 requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p1/P1-T034-dq-check-cross-source-divergence
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T034 · Add the cross-source divergence check
@@ -39,14 +44,14 @@ Mid prices of the same instrument from two free sources are compared continuousl
 - Roadmap: requirements [R1.10](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.27](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (DQ checks table) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 5 · subjects [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · degraded modes [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · UI [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Quality tab (Binance vs Bybit/OKX/Coinbase; OANDA vs Dukascopy/IG)
 - Risk table: "cross-source references for every critical feed" ([phase 1 §7 risks](../../../docs/roadmap/phase-1-data-and-monitoring.md#7-risks--open-questions))
-- Depends on (this phase): P1-T030, P1-T011, P1-T016, P1-T017
+- Depends on (this phase): P1-T030
 
 ## Requirements
 
 - Pairs configured in `config/dq_checks.yaml` (e.g. BTCUSDT Binance↔OKX, Binance↔Coinbase (USD vs USDT basis tracked separately); EURUSD OANDA↔IG; nightly OANDA↔Dukascopy)
 - Time-aligned mids (last quote within 500 ms on both sides); divergence bps = |m1 − m2| / avg · 1e4
-- Thresholds per class (defaults: crypto 25 bps, FX majors 5 bps), sustained ≥ 5 s → `degraded`; ≥ 4× threshold → `bad` on the outlier side when a third source agrees with the other
-- Stocks: compare Alpaca IEX vs Finnhub free quotes (60/min, P0 key) at low frequency, or record "single source" explicitly in D07
+- Thresholds per class (defaults from [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means): crypto 25 bps, FX majors 5 bps; configurable), sustained ≥ 5 s (default) → `degraded` + alert; ≥ 4× threshold → `bad` on the outlier side when a third source agrees with the other
+- Stocks: compare Alpaca IEX vs Finnhub free quotes (60/min) at low frequency when `FINNHUB_API_KEY` is present (CI uses fixtures; live in P1-T073), or record "single source" explicitly in D07
 - Metric `mt_dq_divergence_bps{pair}` for the D07 chart
 
 ## ToDo
@@ -84,7 +89,7 @@ Mid prices of the same instrument from two free sources are compared continuousl
 
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); resolutions and corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down); tightening is C1.
+- Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down; in P1 via the break-glass CLI `mtctl approve` + TOTP); tightening is C1.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
 ## Doc sync on completion
@@ -101,3 +106,4 @@ Mid prices of the same instrument from two free sources are compared continuousl
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (thresholds linked to 16 §2.2; deps trimmed to P1-T030 (sources faked in tests); Finnhub live in P1-T073)

@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T102, P2-T106]
+depends_on: [P2-T102, P2-T106, P2-T029]
 requirements: []
 roadmap_todos: [T2.81]
 modules: [M7, M16]
 dashboards: [D04, D05]
+tools: [uv]
+mcp: []
+env: []
+services: [postgres]
 branch: p2/P2-T150-weekly-worst-trades-report
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T150 · Weekly five-worst-trades and realised-vs-modelled cost report
@@ -97,3 +102,4 @@ A Prefect flow that every Monday 08:00 AEST/AEDT produces the weekly review pack
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; reads TCA from P2-T029)

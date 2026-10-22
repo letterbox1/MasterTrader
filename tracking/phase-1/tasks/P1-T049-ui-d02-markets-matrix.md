@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T046, P1-T047]
+depends_on: [P1-T046, P1-T047, P0-T049, P0-T050]
 requirements: [R1.15]
 roadmap_todos: [T1.32]
 modules: [M15, M1]
 dashboards: [D02]
+tools: [git, pnpm, node>=20]
+mcp: []
+env: []
+services: [mt-api]
 branch: p1/P1-T049-ui-d02-markets-matrix
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D02-markets.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T049 · Build the D02 cross-asset markets matrix
@@ -38,15 +43,16 @@ checkpoint: ""
 
 - Roadmap: requirements [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.32](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) `/markets` layout and widgets · [ui components](../../../docs/ui/components.md) · [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass) · phase note: tier-B and intel overlays come in P4
-- Data gaps for macro strip/positioning/correlation: P1-B012
+- P4-fed widgets show "Arrives in Phase 4" states per [D02](../../../docs/ui/dashboards/D02-markets.md) and R1.15 (gap P1-B012 closed); P4 T4.32 makes them live
 - Depends on (this phase): P1-T046, P1-T047
+- Cross-phase prerequisites (depends_on): P0-T049 (component library v0), P0-T050 (app shell)
 
 ## Requirements
 
 - Watchlists from `/markets/instruments?watchlist=` with add/remove (`intel.watchlist.update`, C0)
 - Quadrant cards: last, Δ 24 h/session, spread bps vs normal (from `cost`), funding/swap where applicable, volume, feed status chip, sparkline; WS `md.quote`, `cost`, `dq.status` at ≤ 1 Hz
-- Macro strip: policy rates, 10Y yields, DXY proxy, VIX, gold, oil from P1 macro/daily data; nowcasts shown as "not yet available" until sourced (P1-B012)
-- Positioning widget: CFTC COT only in P1; Myfxbook/IG/OANDA books/Kalshi marked "coming in P4" (empty state, no fake data)
+- Macro strip (P1): policy rates, 10Y yields, DXY proxy (computed from recorded FX quotes), VIX (yfinance), gold, oil; nowcasts show the "Arrives in Phase 4" empty state naming the source
+- Positioning widget: CFTC COT in P1; retail sentiment (Myfxbook/IG/OANDA books) and Kalshi/Polymarket show the "Arrives in Phase 4" empty state (no placeholder or sample data, DESIGN §10)
 - Correlation heatmap from daily returns of the watchlist (ECharts `Heatmap`); cross-venue spreads table (info only, no arb button)
 - Tier layouts: ≥ 2xl watchlist + quadrants; xl/lg tabs + drawer; md 2-col cards; ≤ ph segmented control + instrument cards
 
@@ -65,7 +71,7 @@ checkpoint: ""
 
 ### Scenarios
 
-- Given a crypto feed goes stale, when viewing the matrix, then its card dims with the stale chip within 2 s
+- Given a crypto feed goes stale, when viewing the matrix, then its card dims with the stale chip within the live-update budget (p95 < 500 ms) after the monitor publishes it
 - Given no COT data yet, when the positioning widget loads, then an empty state explains the source, never placeholder numbers
 
 ### Stress / failure injection
@@ -85,7 +91,7 @@ checkpoint: ""
 
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
 ## Doc sync on completion
@@ -102,3 +108,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 ("Arrives in Phase 4" states for P4-fed widgets (P1-B012); P0 UI deps)

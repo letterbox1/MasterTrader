@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T048, P1-T052, P1-T045]
+depends_on: [P1-T045, P1-T048, P1-T052, P1-T070, P1-T071]
 requirements: [R1.10, R1.12, R1.N3]
 roadmap_todos: []
 modules: [M1, M16]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [mt-api, nats, postgres]
 branch: p1/P1-T055-runbooks-data-ops
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/runbooks/data-feeds.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T055 · Write data-operations runbooks
@@ -38,12 +43,12 @@ checkpoint: ""
 
 - Roadmap: requirements [R1.10](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.12](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements)
 - Runbooks home: [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) (P2 adds "bad data" for trading impact) · [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) actions
-- Depends on (this phase): P1-T048, P1-T052, P1-T045
+- Depends on (this phase): P1-T045, P1-T048, P1-T052, P1-T070, P1-T071
 
 ## Requirements
 
 - One section per scenario: symptoms (alert text, D07 view), checks, commands (`mt-data`, `mt-monitor`, D07 actions), escalation, how to confirm resolved
-- Covers: stale feed, divergence incident, clock skew/chrony, gap + backfill, quota exhausted, recon mismatch/testnet reset, disk > 85%, alert channel down, provider API change
+- Covers: stale feed (data age vs threshold; closed sessions), divergence incident, clock skew/chrony, gap + backfill, quota exhausted, recon unexplained mismatch/testnet reset, disk > 85%, alert channel down, provider API change, egress IP/country mismatch, IB Gateway login failure, AUSTRAC reminder (what you do in P1-T069), loosening a DQ threshold via the break-glass CLI (C3)
 - No secrets or account numbers in the runbook
 
 ## ToDo
@@ -68,7 +73,7 @@ checkpoint: ""
 
 ## Acceptance criteria
 
-- [ ] Runbook covers all nine scenarios and every command was executed once
+- [ ] Runbook covers all thirteen scenarios and every command was executed once
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -77,7 +82,7 @@ checkpoint: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 
 ## Doc sync on completion
@@ -94,3 +99,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (runbook adds egress, IB Gateway, AUSTRAC reminder and break-glass C3 scenarios)

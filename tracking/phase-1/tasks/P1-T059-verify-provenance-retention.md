@@ -15,17 +15,22 @@ requirements: [R1.09]
 roadmap_todos: [T1.63]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T059-verify-provenance-retention
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compliance.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T059 · Verify provenance tagging and retention end to end
@@ -97,3 +102,4 @@ On the running stack, CoinGecko rows disappear after 24 h, untagged writes are r
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless (CoinGecko fixture rows via the real write path))

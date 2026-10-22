@@ -15,17 +15,22 @@ requirements: [R1.02]
 roadmap_todos: [T1.62]
 modules: [M1]
 dashboards: []
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres]
 branch: p1/P1-T058-verify-bar-parity
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T058 · Verify bar parity between Timescale and Parquet ticks
@@ -42,8 +47,8 @@ For a sample day, bars rebuilt from Parquet ticks equal the Timescale 1s/1m bars
 
 ## Requirements
 
-- Script `tools/verify/bar_parity.py --date --instrument` rebuilding 1s/1m/5m/1h/1d from Parquet trades (DuckDB) and comparing with Timescale (exact on OHLC and volume, Decimal)
-- Compare our 1s bars to data.binance.vision 1s klines for the same day: report mismatched seconds (expect only at disconnect edges)
+- Script `tools/verify/bar_parity.py --date --instrument` rebuilding 1s/1m/5m/15m/1h/4h/1D/1W from Parquet trades (DuckDB) and comparing with Timescale (exact on OHLC and volume, Decimal)
+- Compare our 1s bars to data.binance.vision 1s klines (`market.bar_1s_vendor`) for the same day: report mismatched seconds (expect only at disconnect edges)
 - Run for ≥ 3 instruments across 2 venues and 1 FX (mid bars from quotes)
 
 ## ToDo
@@ -94,3 +99,4 @@ For a sample day, bars rebuilt from Parquet ticks equal the Timescale 1s/1m bars
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (parity covers every aggregate up to 1W; vendor klines table)

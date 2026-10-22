@@ -15,17 +15,22 @@ requirements: [R2.50, R2.40, R2.42, R2.43, R2.45]
 roadmap_todos: [T2.32]
 modules: [M15, M7]
 dashboards: [D04]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T146-d04-result-compare-generator
 pr: ""
 doc_sync: [docs/ui/dashboards/D04-research-lab.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T146 · D04 backtest result, compare view and generator panel
@@ -37,7 +42,7 @@ checkpoint: ""
 ## Context & references
 
 - Roadmap: [R2.40, R2.42, R2.43, R2.45, R2.50](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.32 · exit criterion 1 ('the validation report shows all harness sections')
-- [D04 result/compare/generator](../../../docs/ui/dashboards/D04-research-lab.md) · tab gaps (cost stress 2×/3×, per-year/regime, trial counter) tracked in P2-B052
+- [D04 result/compare/generator](../../../docs/ui/dashboards/D04-research-lab.md) · tab contents decided ([17 §D P2-B052](../../../docs/17-decisions-register.md#d-other-decisions)): D04 now lists cost stress 2×/3×, per-year/per-regime, trial counter and worst fold
 
 ## Requirements
 
@@ -45,7 +50,7 @@ checkpoint: ""
 - Summary: metrics, costs breakdown, equity vs benchmark, drawdown, monthly heatmap.
 - Trades: DataTable (cards on phones); click → chart with entry/exit markers.
 - Robustness: walk-forward folds incl. worst fold + positive share, purged K-fold, MC distribution with p-value, bootstrap CI, DSR with trial count, parameter-stability heatmap, per-year and per-regime tables.
-- Bias checks: look-ahead/recursive/repaint results with offending signals; PIT audit; LLM leakage items with quoted lines and waive action (C1, reason).
+- Bias checks: look-ahead/recursive/repaint results with offending signals; PIT audit; LLM leakage items with quoted lines and waive action (`lab.leakage.waive`, **C2**, reason required).
 - Costs: modelled vs measured; sensitivity 0.5×/1×/2×/3× with the 2×/3× stress verdicts.
 - Gates: which gates this run satisfies; Reproduce: code version, manifest, snapshots, seed, engine version, Re-run (C1); Export report (HTML/PDF).
 - Compare: ≤ 6 runs, best values highlighted, overlaid equity, param diff, cost-assumption diff.
@@ -95,7 +100,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D04-research-lab.md`: tab contents after P2-B052.
+- `docs/ui/dashboards/D04-research-lab.md`: confirm tab contents as built.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.32 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
@@ -107,3 +112,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (leakage waiver C2, D04 tabs per 17 §D P2-B052)

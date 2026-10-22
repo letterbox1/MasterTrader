@@ -94,7 +94,7 @@ The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of
 ## Doc sync on completion
 
 - `docs/roadmap/phase-1-data-and-monitoring.md`: tick T1.24 once every task traced to it in PHASE.md is done; note P1-T027 next to it.
-- `docs/09-journal-and-tax.md`: link the CPI series loaded and the open question in P1-B016
+- `docs/09-journal-and-tax.md`: 09 already names A2325846C (U); record the ID as verified by P1-T056 (or the corrected ID)
 
 ## Branch & PR
 

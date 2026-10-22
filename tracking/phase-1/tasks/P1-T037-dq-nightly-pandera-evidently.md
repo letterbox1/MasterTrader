@@ -15,17 +15,22 @@ requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [postgres, prefect-server]
 branch: p1/P1-T037-dq-nightly-pandera-evidently
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T037 · Run nightly Pandera validation and Evidently drift reports
@@ -81,7 +86,7 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); resolutions and corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down); tightening is C1.
+- Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down; in P1 via the break-glass CLI `mtctl approve` + TOTP); tightening is C1.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
 ## Doc sync on completion
@@ -98,3 +103,4 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)

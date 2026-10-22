@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T140]
+depends_on: [P2-T140, P2-T020, P2-T029]
 requirements: [R2.50, R2.34]
 roadmap_todos: [T2.32]
 modules: [M15, M12, M16]
 dashboards: [D05]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T147-d05-execution-tabs
 pr: ""
 doc_sync: [docs/ui/dashboards/D05-execution.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T147 · D05 Execution: positions, orders, fills, TCA and venues
@@ -43,7 +48,7 @@ checkpoint: ""
 
 - KPI strip: gross/net exposure, open orders, pending approvals, today fees, avg slippage bps, unreconciled items.
 - Positions/Orders/Fills columns per D05; source badges (strategy/manual/agent/MCP); mode (paper/live) column.
-- TCA tab: implementation shortfall by strategy × venue × instrument; delay/spread-impact/fees decomposition; realised vs modelled ratio with alert styling > 1.5×; slippage distribution; fill rate; time to fill; sum of fees equals fills' fees (D05 acceptance 3).
+- TCA tab: implementation shortfall by strategy × venue × instrument; delay/spread-impact/fees decomposition; realised vs modelled ratio with alert styling > 1.5× over the last 20 fills (16 §2.1 cost blow-out default); slippage distribution; fill rate; time to fill; sum of fees equals fills' fees (D05 acceptance 3).
 - Venues tab: connection, latency, rate-limit headroom, balances, margin, sub-account mode, key age (masked metadata only), last reconciliation; run reconciliation (C1).
 - Cancel all with scope (all/venue/strategy/instrument) = C2; toast shows the server-measured time to all cancels sent (< 1 s target, D05 acceptance 2).
 - Unreconciled positions hatched + 'unconfirmed'; close requires reconciliation unless via kill flatten.
@@ -105,3 +110,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (cost blow-out default; backend deps (orders API, TCA))

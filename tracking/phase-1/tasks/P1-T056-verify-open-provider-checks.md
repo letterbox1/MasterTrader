@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T009]
 requirements: [R1.04, R1.05, R1.06]
 roadmap_todos: [T1.60]
 modules: [M1]
 dashboards: []
+tools: [git, uv, sops]
+mcp: []
+env: [OANDA_PRACTICE_TOKEN, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
+services: [oanda-practice, ig-demo]
 branch: p1/P1-T056-verify-open-provider-checks
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T056 · Run the open provider checks and record them in 06
@@ -38,6 +43,9 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.60](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Checks: [06 §3 Open checks](../../../docs/06-aggregators-and-market-providers.md#open-checks-do-these-in-phase-1) · exit criterion 4 ([phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo)) · P4 depends on the StockTwits result ([P4 roadmap](../../../docs/roadmap/phase-4-intel.md) R4.05)
+- Keys: the OANDA books and IG sentiment checks need your practice/demo credentials (P0-T009), loaded with `sops exec-env`; TrueFX needs a free registration (if you haven't registered, record "needs registration")
+- Decision context: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B016 (ABS CPI series ID (U), verified here)
+- Cross-phase prerequisites (depends_on): P0-T009 (practice/testnet accounts, your T0.09)
 
 ## Requirements
 
@@ -48,12 +56,14 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 - StockTwits API reachability (`streams/symbol/{SYM}`), without auth and within terms
 - Tardis.dev free monthly samples (which exchanges/data types, licence)
 - BoC Valet and BoJ time-series work without a key
+- ABS CPI series ID `A2325846C` (All groups CPI, weighted average of eight capital cities) and its release calendar: confirm the ID and title via the ABS Data API; if different, set `macro.abs_cpi_series` (P1-T027)
 - Scripts in `tools/provider_checks/` (no secrets in output); results table appended to 06 §3 "Open checks"
 
 ## ToDo
 
 - [ ] Write one check script per item using quota-aware clients
 - [ ] Run each, capture status code, sample size and date
+- [ ] Record the ABS CPI result in P1-B016's progress log and close it if the ID is confirmed
 - [ ] Update 06 §3 with a pass/fail table and consequences (e.g. disable source in `config/sources.yaml` on fail)
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -67,6 +77,7 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 - Given StockTwits is unreachable, when recorded, then 06 marks it fail and P4 keeps it out of scope (R4.05)
 - Given IMF moved its SDMX 3.0 URL, when found, then P1-T025 config uses the new URL
+- Given the ABS ID differs from A2325846C, when found, then P1-T027's config uses the verified ID and P1-B016 records it
 
 ### Stress / failure injection
 
@@ -74,7 +85,7 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 ## Acceptance criteria
 
-- [ ] All seven checks have a pass/fail line with date in 06 §3
+- [ ] All eight checks (incl. the ABS CPI series ID) have a pass/fail line with date in 06 §3
 - [ ] Sources that failed are disabled in `config/sources.yaml` with the reason
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
@@ -84,7 +95,7 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 ## Cardinal rules (do NOT)
 
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 
@@ -102,3 +113,4 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (adds the ABS CPI series ID check (P1-B016, T1.60); credential env names; dep P0-T009)

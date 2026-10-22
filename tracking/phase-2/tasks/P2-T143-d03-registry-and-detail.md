@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T140, P2-T141, P2-T117]
+depends_on: [P2-T140, P2-T141, P2-T117, P2-T006, P2-T007]
 requirements: [R2.50, R2.04, R2.06, R2.42]
 roadmap_todos: [T2.32]
 modules: [M15, M0, M7]
 dashboards: [D03]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T143-d03-registry-and-detail
 pr: ""
 doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T143 · D03 Strategies registry and detail (gates, versions, performance)
@@ -46,7 +51,8 @@ checkpoint: ""
 - Manifest fields on registry + detail: counterparty, benchmark, priority (P1/P2/P3/X), sleeve, kill criteria, evidence.
 - Detail header: stage stepper ('Stage 4/6' on phones), `ModeSwitch`, status, Start/Pause/Stop.
 - Gates tab: checklist per 03 §8 with exact failing gate + reason; worst fold, trial count, DSR, MC p, per-year/per-regime tables, cost-stress results, leakage review items with waivers, paper period elapsed/required.
-- Mode → autonomous can't be selected while gates fail (D03 acceptance 2); edit params: C1 paper, C2 live, C3 if risk-increasing (DiffView).
+- The strategy `ModeSwitch` sets the **mode ceiling** (`strategy.set_mode`: allow hitl C2, allow autonomous C3, restrict C1; the stricter of strategy and bot mode applies, 16 §2.3); autonomous can't be selected while gates fail (D03 acceptance 2); edit params: tightening C1, any risk-increasing change C3 (DiffView, 16 §1).
+- Gates tab shows the strategy's gate profile (16 §2.4: DSR ≥ 0.95 with trial counter, walk-forward ≥ 60% positive and worst fold ≥ −sleeve halt drawdown, 2× cost gate with 3× reported, per-year/per-regime, paper ≥ 8 weeks and ≥ 50 trades, safety drills) with each threshold (default or overridden) via `GateChecklist`.
 - Performance tab: metrics incl. realised vs modelled costs, tracking error vs backtest; equity live vs paper vs backtest expectation.
 - Versions tab with DiffView + rollback; Logs tab via `/system/logs?strategy=`.
 - Every tile implements the [data states](../../../docs/ui/README.md#31-data-states-every-tile-implements-all-of-them) (loading skeleton ≤ 300 ms, live, stale chip, degraded, error card with retry → D16, empty with primary action, PAPER/LIVE markers, unconfirmed hatching).
@@ -107,3 +113,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (mode ceiling levels (C2/C3/C1), param edits tighten C1/loosen C3, gate profile per 16 §2.4; backend deps)

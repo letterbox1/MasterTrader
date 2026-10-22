@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T043, P1-T055, P1-T056, P1-T057, P1-T058, P1-T059, P1-T060, P1-T061, P1-T062, P1-T063, P1-T064, P1-T065, P1-T066, P1-T020, P1-T026, P1-T027, P1-T028]
-requirements: [R1.01, R1.02, R1.03, R1.04, R1.05, R1.06, R1.07, R1.08, R1.09, R1.10, R1.11, R1.12, R1.13, R1.14, R1.15, R1.N1, R1.N2, R1.N3]
+depends_on: [P1-T020, P1-T026, P1-T027, P1-T028, P1-T043, P1-T055, P1-T056, P1-T057, P1-T058, P1-T059, P1-T060, P1-T061, P1-T062, P1-T063, P1-T064, P1-T065, P1-T066, P1-T072, P1-T073, P1-T074]
+requirements: [R1.01, R1.02, R1.03, R1.04, R1.05, R1.06, R1.07, R1.08, R1.09, R1.10, R1.11, R1.12, R1.13, R1.14, R1.15, R1.16, R1.17, R1.N1, R1.N2, R1.N3]
 roadmap_todos: [T1.60, T1.61, T1.62, T1.63, T1.64, T1.80]
 modules: [M1, M16, M17, M15]
 dashboards: [D07, D02]
+tools: [git, uv, docker, pnpm, node>=20]
+mcp: []
+env: []
+services: [nats, postgres, mt-api, grafana, ntfy, telegram]
 branch: p1/P1-T067-phase-1-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/roadmap/README.md, docs/04-plan-of-action.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T067 · Run the Phase 1 exit demo
@@ -38,15 +43,15 @@ In one recorded session, every Phase 1 exit criterion is demonstrated live and e
 
 - Roadmap: requirements [R1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.03](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.07](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.08](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.09](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.10](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.12](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.13](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N1](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N2](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.60](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.61](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.62](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.63](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.64](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.80](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Exit criteria: [phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo) · PHASE.md exit checklist (`tracking/phase-1/PHASE.md`) · evidence from P1-T056…T066
-- Depends on (this phase): P1-T043, P1-T055, P1-T056, P1-T057, P1-T058, P1-T059, P1-T060, P1-T061, P1-T062, P1-T063, P1-T064, P1-T065, P1-T066, P1-T020, P1-T026, P1-T027, P1-T028
+- Depends on (this phase): P1-T020, P1-T026, P1-T027, P1-T028, P1-T043, P1-T055, P1-T056, P1-T057, P1-T058, P1-T059, P1-T060, P1-T061, P1-T062, P1-T063, P1-T064, P1-T065, P1-T066, P1-T072, P1-T073, P1-T074
 
 ## Requirements
 
-- Demo 1: Grafana and D02 show live prices at every timeframe from ticks to 1D for crypto, FX/metals and ETFs, plus daily futures and macro (re-run P1-T061 live)
+- Demo 1: Grafana and D02 show live prices at every timeframe from ticks to 1W for crypto, FX/metals and ETFs, plus daily futures and macro (re-run P1-T061 live)
 - Demo 2: spread/funding/swap panels populated; reconciliation clean on practice accounts (P1-T064 evidence + a live `data.recon.run`)
-- Demo 3: kill a feed → `stale` in < 2 s on D07 and the alert arrives on Telegram, email and ntfy (live, timed)
+- Demo 3: kill a feed → `stale` within 250 ms (p99) of its data-age threshold on D07 and the alert arrives on Telegram, ntfy and (if on) email (live, timed)
 - Demo 4: 06 §3 open checks recorded pass/fail (P1-T056)
-- Also show: RBA F11 and ABS CPI loaded with pit queries (P3 prerequisite), EDGAR filings, venue health panel, storage projection from the soak, provenance/retention report
+- Also show: RBA F11 and ABS CPI loaded with pit queries (P3 prerequisite), EDGAR filings, venue health panel, storage projection from the soak, provenance/retention report, egress status and the egress fault report (P1-T072), live connector and live reconciliation reports (P1-T073, P1-T074)
 - Evidence pack under `reports/exit/P1/` (screen recording link, timings, report index)
 
 ## ToDo
@@ -84,7 +89,7 @@ In one recorded session, every Phase 1 exit criterion is demonstrated live and e
 ## Cardinal rules (do NOT)
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT put Telegram text into any model input, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)); the bot only sends alerts.
 
 ## Doc sync on completion
@@ -102,3 +107,4 @@ In one recorded session, every Phase 1 exit criterion is demonstrated live and e
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit criteria per aligned roadmap (tick → 1W, ≤ 250 ms after threshold, email optional); adds R1.16/R1.17 and deps P1-T072/T073/T074)

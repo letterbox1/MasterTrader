@@ -15,17 +15,22 @@ requirements: [R1.N3, R1.02, R1.10]
 roadmap_todos: [T1.80]
 modules: [M1, M16]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats, postgres, prefect-server, grafana]
 branch: p1/P1-T065-run-7-day-recording-soak
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T065 · Run the 7-day continuous recording soak
@@ -43,6 +48,7 @@ The full P1 stack records the agreed universe for 7 consecutive days without man
 ## Requirements
 
 - Start only after the universe (P1-T001) is merged and all connectors run; freeze config for the 7 days (no deploys except emergency fixes, logged)
+- Recording policy: native L2 diffs only for the `l2: true` symbols (≤ 3 by default), 1 s book snapshots for the rest; the end report recalculates the storage budget for R1.N3 and 03 M1
 - Daily check (2 min): D07 KPI strip screenshot and any incidents noted in the progress log
 - End report: per instrument gaps (count, total seconds, longest, cause), recorder loss (expected 0), restarts, incidents by type, alert counts per channel, bytes/day per venue/type and projected yearly growth vs ~0.3–1 TB, CPU/RAM peaks
 - Report under `reports/run/P1-T065/`
@@ -81,7 +87,7 @@ The full P1 stack records the agreed universe for 7 consecutive days without man
 ## Cardinal rules (do NOT)
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
 ## Doc sync on completion
 
@@ -98,3 +104,4 @@ The full P1 stack records the agreed universe for 7 consecutive days without man
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 recording policy and budget recalculation (P1-B002))

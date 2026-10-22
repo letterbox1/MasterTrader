@@ -15,17 +15,22 @@ requirements: [R1.06, R1.08]
 roadmap_todos: [T1.41]
 modules: [M1]
 dashboards: [D07]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [prefect-server]
 branch: p1/P1-T053-prefect-batch-schedules
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T053 · Schedule batch flows by source update time in AEST/AEDT
@@ -80,7 +85,7 @@ Every P1 batch flow has a Prefect deployment with a schedule aligned to its sour
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
 ## Doc sync on completion
 
@@ -96,3 +101,4 @@ Every P1 batch flow has a Prefect deployment with a schedule aligned to its sour
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)

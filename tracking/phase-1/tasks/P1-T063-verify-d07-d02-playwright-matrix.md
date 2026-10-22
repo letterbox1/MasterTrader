@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T048, P1-T049, P1-T050, P1-T051]
+depends_on: [P1-T048, P1-T049, P1-T050, P1-T051, P0-T053]
 requirements: [R1.15]
 roadmap_todos: [T1.32]
 modules: [M15]
 dashboards: [D07, D02]
+tools: [git, docker, pnpm, node>=20]
+mcp: []
+env: []
+services: [mt-api]
 branch: p1/P1-T063-verify-d07-d02-playwright-matrix
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D07-data-quality.md, docs/ui/dashboards/D02-markets.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T063 · Verify D07 and D02 acceptance across the viewport matrix
@@ -39,12 +44,13 @@ A single Playwright run covers D07, D02 (matrix and detail) and the notification
 - Roadmap: requirements [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.32](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass) (viewports and pass criteria) · [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) acceptance 1–3 · [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) acceptance 1 and 3 (ticket acceptance 2 belongs to P2)
 - Depends on (this phase): P1-T048, P1-T049, P1-T050, P1-T051
+- Cross-phase prerequisites (depends_on): P0-T053 (Playwright viewport matrix)
 
 ## Requirements
 
 - Viewports: all of DESIGN §6.8 (desktop 2560×1440 → floor 240×320, portrait + landscape, foldables)
 - Pass criteria per viewport: no horizontal scroll, no clipped/overlapping controls, kill switch visible within one tap, touch targets per §6.7, contrast, no fixed element covering content, 200% zoom reflow at 320 px
-- D07: stale within 2 s of detection, paid feed blocked, quota warning before throttle; D02: timeframe switch < 500 ms cached; ticket sheet fits 320×568 (disabled in P1)
+- D07: stale shown within the live-update budget after the monitor publishes it (≤ 250 ms p99 after the threshold + UI p95 < 500 ms), paid feed blocked, quota warning before throttle; D02: timeframe switch < 500 ms cached; ticket sheet fits 320×568 (disabled in P1)
 - Screenshots + axe report under `reports/verify/P1-T063/`
 
 ## ToDo
@@ -94,3 +100,4 @@ A single Playwright run covers D07, D02 (matrix and detail) and the notification
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (D07 stale acceptance per 16 §2.2; P0 viewport matrix dep)

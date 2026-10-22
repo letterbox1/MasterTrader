@@ -1,7 +1,7 @@
 ---
 id: P2-T149
 kind: task
-title: Web approvals queue: D05 Approvals tab, history, bulk approve and Cockpit Needs-you
+title: Web approvals queue: D05 Approvals tab, history, batched card and Cockpit Needs-you
 phase: 2
 type: BUILD
 status: backlog
@@ -10,41 +10,46 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T140, P2-T147]
+depends_on: [P2-T140, P2-T147, P2-T038]
 requirements: [R2.51, R2.20, R2.54]
 roadmap_todos: [T2.32]
 modules: [M15, M11]
 dashboards: [D05, D01]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T149-web-approvals-queue
 pr: ""
 doc_sync: [docs/ui/dashboards/D05-execution.md, docs/ui/dashboards/D01-cockpit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
-# P2-T149 · Web approvals queue: D05 Approvals tab, history, bulk approve and Cockpit Needs-you
+# P2-T149 · Web approvals queue: D05 Approvals tab, history, batched card and Cockpit Needs-you
 
 ## Goal / expected outcome
 
-The web approvals queue in part B's dashboards — D05 Approvals tab (pending + history of approved/rejected/expired, bulk approve) and the Cockpit Needs-you tile — built on part A's `ApprovalCard`, approvals API and top-bar sheet, actionable in ≤ 2 taps on a phone.
+The web approvals queue in part B's dashboards — D05 Approvals tab (pending + history of approved/rejected/expired, batched cards for dynamic-selection bots) and the Cockpit Needs-you tile — built on part A's `ApprovalCard`, approvals API and top-bar sheet, actionable in ≤ 2 taps on a phone.
 
 ## Context & references
 
 - Roadmap: [R2.51, R2.20, R2.54](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) (web side; Telegram side is part A T2.33/T2.34) · ToDo T2.32 · exit criterion 2
-- [D05 Approvals](../../../docs/ui/dashboards/D05-execution.md) · [ui §2.1 top bar approvals](../../../docs/ui/README.md#2-app-shell-all-routes) · [15 §1.3 approval card](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) · [mob §2 approve flow](../../../docs/ui/mobile-and-telegram.md) · approvals spec mismatches in P2-B058
+- [D05 Approvals](../../../docs/ui/dashboards/D05-execution.md) · [ui §2.1 top bar approvals](../../../docs/ui/README.md#2-app-shell-all-routes) · [15 §1.3 approval card](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) · [mob §2 approve flow](../../../docs/ui/mobile-and-telegram.md) · approvals spec decided ([17 §D P2-B058](../../../docs/17-decisions-register.md#d-other-decisions): web card = Telegram card capabilities; **no bulk approve** except the batched dynamic-selection card)
 - From part A (P2-T001–T099): `/approvals` API, WS approval events, `approval.approve|reject|approve_partial`, `ApprovalCard` and the top-bar approvals sheet (currently P2-T038); TTL/expiry enforcement (T2.25/T2.34)
 
 ## Requirements
 
 - List pending requests (strategy and bot) with `ApprovalCard`: order, risk preview (R and % of sleeve, exposure after fill, blackout/DQ warnings), why (signal reasons), chart deep link, TTL countdown, source badge.
-- Actions: Approve (C2 hold-to-confirm), Approve ½ (bot requests), Reject (C1), Pause bot; large orders show the extra confirmation requirement.
-- Bulk approve ≤ 5 items from the same strategy with a combined risk preview (C2).
+- Actions: Approve (C2 hold-to-confirm), Approve ½ (bot requests), Reject (C1), Pause bot (C1); large orders (default > 2% of sleeve or > A$5,000) need hold-to-confirm (16 §2.3); MCP-originated cards (P8) carry TTL 5 min.
+- Batched card (one dynamic-selection bot): per-line toggles + one combined risk preview, approved as one `approval.approve` (C2). No other multi-card approve.
 - Expiry is decided server-side; the UI moves expired items to history and never sends late approvals (server rejects them anyway).
 - Decisions taken on Telegram update the web card within 1 s via WS (`orders` approval events / `risk.approval.result`).
 - D05 tab badge count matches the top-bar count from part A; background tabs still receive approvals at full rate (ui §3.4).
@@ -53,9 +58,9 @@ The web approvals queue in part B's dashboards — D05 Approvals tab (pending + 
 ## ToDo
 
 - [ ] Approvals tab + history in D05 using part A's `ApprovalCard`
-- [ ] Bulk approve (≤ 5, same strategy) with combined RiskPreview
+- [ ] Batched card with per-line toggles and combined RiskPreview (no other bulk approve)
 - [ ] Needs-you integration in D01 (top 3 + count)
-- [ ] Playwright approve/reject/expire/bulk flows; matrix; doc sync
+- [ ] Playwright approve/reject/expire/batched-card flows; matrix; doc sync
 
 ## Verification
 
@@ -65,7 +70,7 @@ The web approvals queue in part B's dashboards — D05 Approvals tab (pending + 
 
 ### Scenarios
 - Given a request with 60 s TTL, when the user approves at 61 s, then the server rejects as expired and the card shows 'expired — not executed'.
-- Given 6 selected requests, then bulk approve is disabled ('max 5, same strategy').
+- Given several pending cards from different bots, then there is no 'approve all' action; each card is approved on its own (only a batched card from one dynamic-selection bot approves several lines at once).
 - Given a protective stop from an HITL bot, then it never appears in the queue (executes automatically).
 
 ### Stress / failure injection
@@ -95,16 +100,17 @@ The web approvals queue in part B's dashboards — D05 Approvals tab (pending + 
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D05-execution.md`: Approve ½ / Pause bot on the web card (P2-B058).
-- `docs/ui/dashboards/D01-cockpit.md`: Needs-you reads `/approvals` (P2-B058).
+- `docs/ui/dashboards/D05-execution.md`: confirm Approvals tab as built (Approve ½, Pause bot, batched card).
+- `docs/ui/dashboards/D01-cockpit.md`: confirm Needs-you reads `/approvals?status=pending`.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.32 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
 
 - Branch: `p2/P2-T149-web-approvals-queue`
-- PR title: `P2-T149: Web approvals queue: D05 Approvals tab, history, bulk approve and Cockpit Needs-you`
+- PR title: `P2-T149: Web approvals queue: D05 Approvals tab, history, batched card and Cockpit Needs-you`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P2-T149` run · Playwright viewport matrix + axe green
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (no bulk approve except the batched dynamic-selection card (17 §D P2-B058), large-order hold-to-confirm; ApprovalCard dep)

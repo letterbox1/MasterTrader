@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T048, P0-T049]
 requirements: [R2.50, R2.51]
 roadmap_todos: [T2.32]
 modules: [M15]
 dashboards: [D01, D03, D05]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T140-ui-trading-components
 pr: ""
 doc_sync: [docs/ui/components.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T140 · Trading components: RiskPreview, OrderTicket, position/order rows and cards, ModeSwitch
@@ -38,15 +43,15 @@ The Phase 2 trading components in `apps/web/src/components` that part B's dashbo
 
 - Roadmap: [R2.50, R2.51](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.32
 - [components §3 trading](../../../docs/ui/components.md) · [ui §3.3 confirmation](../../../docs/ui/README.md#33-actions--confirmation) · [DESIGN §6](../../../DESIGN.md#6-responsive-system-1920px--240px-portrait--landscape)
-- Backend + shared components from part A (P2-T001–T099): `POST /risk/preview` and order commands (currently P2-T017/P2-T020), `ApprovalCard` + approvals sheet (P2-T038), `KillSwitchButton` wiring (P2-T042), `DiffView`/`C3Flow` (P2-T043); mode vocabulary conflict tracked in P2-B053
-- Cross-phase: P0 T0.26 component library v0 (shell, tiles, data states, ConfirmSheet)
+- Backend + shared components from part A (P2-T001–T099): `POST /risk/preview` and order commands (currently P2-T017/P2-T020), `ApprovalCard` + approvals sheet (P2-T038), `KillSwitchButton` wiring (P2-T042), `DiffView`/`C3Flow` (P2-T043); mode vocabulary decided ([17 §B P2-B053](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer): `paper`/`hitl`/`autonomous` per bot; "approve"/"auto" retired)
+- Cross-phase (`depends_on`): component library v0 incl. ConfirmSheet (P0-T049) and typed API/WS client (P0-T048), T0.26
 
 ## Requirements
 
 - `RiskPreview(intent)`: calls `POST /risk/preview` (debounced 250 ms); lists each check pass/fail with reason, projected exposure, limits used (`LimitBar`), est. cost/slippage; stale preview (> 5 s or inputs changed) blocks submit.
 - `RiskPreview` is the same component part A's `ApprovalCard` embeds; agree its props with part A before building (one implementation).
 - `OrderTicket`: side, type (market/limit/stop/stop-limit), qty or notional, price, TIF, reduce-only, TP/SL brackets; sleeve fixed to `manual`; `inputmode=decimal`; live `RiskPreview`; submit = C2.
-- `ModeSwitch`: paper / hitl (approve) / autonomous (auto) per P2-B053 resolution; autonomous triggers the `C3Flow` and is disabled with the failing gate list while gates fail.
+- `ModeSwitch` (components.md): values `paper` / `hitl` / `autonomous`, labels "Paper", "Approve (HITL)", "Autonomous"; paper → hitl = **C2**; → autonomous = **C3** via `C3Flow`, disabled with the failing gate list while gates fail; autonomous → hitl and anything → paper = C1 ([16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)).
 - Touch targets ≥ 44 px on touch; ≥ 8 px gap between destructive and safe actions; Flare styling + specific labels ('Cancel 3 orders').
 - Every tile implements the [data states](../../../docs/ui/README.md#31-data-states-every-tile-implements-all-of-them) (loading skeleton ≤ 300 ms, live, stale chip, degraded, error card with retry → D16, empty with primary action, PAPER/LIVE markers, unconfirmed hatching).
 
@@ -110,3 +115,4 @@ The Phase 2 trading components in `apps/web/src/components` that part B's dashbo
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (ModeSwitch values/labels/levels per 17 §B and 16 §2.3; cross-phase UI deps)

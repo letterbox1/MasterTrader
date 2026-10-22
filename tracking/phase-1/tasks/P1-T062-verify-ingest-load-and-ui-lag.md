@@ -11,28 +11,33 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P1-T047, P1-T050, P1-T012, P1-T013, P1-T031]
-requirements: [R1.N2, R1.02, R1.N1]
+requirements: [R1.N2, R1.02, R1.N1, R1.17]
 roadmap_todos: []
 modules: [M1, M16, M15]
 dashboards: [D02, D07]
+tools: [git, uv, docker, pnpm, node>=20]
+mcp: []
+env: []
+services: [nats, postgres, mt-api]
 branch: p1/P1-T062-verify-ingest-load-and-ui-lag
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T062 · Stress ingest, recording and UI lag under burst load
 
 ## Goal / expected outcome
 
-Replaying a volatile market day at 10× through the live pipeline shows the recorder, bar builder, DQ monitor and UI keep up: no loss, stale detection still < 2 s, UI lag p95 < 500 ms with ≤ 4 Hz charts and ≤ 1 Hz tables.
+Replaying a volatile market day at 10× through the live pipeline shows the recorder, bar builder, DQ monitor and UI keep up: no loss, stale reaction still ≤ 250 ms p99 after the data-age threshold, UI lag p95 < 500 ms with ≤ 4 Hz charts and ≤ 1 Hz tables.
 
 ## Context & references
 
@@ -44,7 +49,7 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 
 - Replay tool `tools/replay/md_replay.py` publishing recorded `md.*` at N× speed into a staging NATS account
 - Measure: recorder consumer lag, bar builder lag, DQ evaluation p99, stale detection with a feed killed mid-burst, WS fan-out rates, UI lag p95 via telemetry (3 browser clients incl. a phone profile)
-- Pass thresholds: no dropped messages, consumer lag < 30 s, stale < 2 s, UI lag p95 < 500 ms, chart ≤ 4 Hz, tables ≤ 1 Hz
+- Pass thresholds: no dropped messages, consumer lag < 30 s, stale reaction ≤ 250 ms p99 after the threshold, UI lag p95 < 500 ms, chart ≤ 4 Hz, tables ≤ 1 Hz
 - Report under `reports/verify/P1-T062/`
 
 ## ToDo
@@ -61,7 +66,7 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 
 ### Scenarios
 
-- Given 10× replay and a killed feed, when measured, then stale detection still meets < 2 s
+- Given 10× replay and a killed feed, when measured, then the stale reaction still meets ≤ 250 ms p99 after the threshold
 
 ### Stress / failure injection
 
@@ -94,3 +99,4 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (stale SLO ≤ 250 ms p99 after the data-age threshold (P1-B001))

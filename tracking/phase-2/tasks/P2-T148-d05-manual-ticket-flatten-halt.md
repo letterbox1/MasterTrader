@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T140, P2-T147]
+depends_on: [P2-T140, P2-T147, P2-T020, P2-T014]
 requirements: [R2.50, R2.13]
 roadmap_todos: [T2.32]
 modules: [M15, M11, M12]
 dashboards: [D05]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T148-d05-manual-ticket-flatten-halt
 pr: ""
 doc_sync: [docs/ui/dashboards/D05-execution.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T148 · D05 manual ticket (manual sleeve) and flatten-and-halt with reason
@@ -38,7 +43,7 @@ Manual trading in D05 is limited to what 14 §4 allows: the `OrderTicket` places
 
 - Roadmap: [R2.50, R2.13](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.32
 - [14 §4 discipline](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (no discretionary overrides; only flatten-and-halt with a required reason; manual tickets are their own `manual` sleeve) · [D05 actions](../../../docs/ui/dashboards/D05-execution.md) · [components OrderTicket/RiskPreview](../../../docs/ui/components.md)
-- Backend from part A (P2-T001–T099): `manual` sleeve limits (T2.22), `order.place` through M11 and flatten-and-halt as `position.close` with `halt=true` + required `reason` (currently P2-T020); catalogue doc gap noted in P2-B056
+- Backend from part A (P2-T001–T099): `manual` sleeve limits (T2.22), `order.place` through M11 and flatten-and-halt as `position.close` with `halt=true` + required `reason` (currently P2-T020); flatten-and-halt form decided ([17 §D P2-B056](../../../docs/17-decisions-register.md#d-other-decisions), 02 §7.2: `position.close {halt: true, reason}`)
 
 ## Requirements
 
@@ -109,3 +114,4 @@ Manual trading in D05 is limited to what 14 §4 allows: the `OrderTicket` places
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (flatten-and-halt form per 17 §D; backend deps)

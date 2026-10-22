@@ -51,7 +51,7 @@ The bar builder consumes trades and quotes, writes 1s OHLCV bars to a Timescale 
 - Hypertable `market.bar_1s` (OHLCV, trade count, VWAP, `event_time` bucket start, `ingest_time`, provenance), compression after 7 days (default), keep forever (02 §5.1). Vendor bars from backfills live in separate tables (`market.bar_1s_vendor`, `market.bar_1m_vendor`, `market.bar_daily_vendor`) so they never mix into the aggregates
 - Hierarchical continuous aggregates `market.bar_1m` (over 1s), `bar_5m`, `bar_15m`, `bar_1h`, `bar_4h`, `bar_1d`, `bar_1w` (week buckets from Monday 00:00 UTC) with refresh policies (defaults: 1m/5m every 1 min, 1d/1w every 15 min) and real-time aggregation on
 - FX/stock bars from quotes (mid) where no trades exist; `bar_source` = trade|mid recorded
-- Late data: messages up to 10 s late (default, configurable) update the open/last bar; later ones go to a correction path that re-writes the affected 1s/1m bars (market tables are not WORM)
+- Late data: messages up to 10 s late (default, configurable) update the open/last bar; later ones go to a correction path that re-writes the affected 1s bars and refreshes the aggregates (market tables are not WORM)
 - `/markets/{id}/bars?spec=` (P1-T046) chooses the finest stored table ≥ requested spec and applies `time_bucket` for non-standard sizes
 - Bars publish to `md.*.bar.1s|1m` for UI and strategies
 

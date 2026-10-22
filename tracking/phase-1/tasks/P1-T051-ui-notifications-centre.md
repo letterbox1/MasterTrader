@@ -10,22 +10,27 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T045, P1-T046]
+depends_on: [P1-T045, P1-T046, P0-T050]
 requirements: [R1.15, R1.14]
 roadmap_todos: [T1.32]
 modules: [M15]
 dashboards: [D07]
+tools: [git, pnpm, node>=20]
+mcp: []
+env: []
+services: [mt-api]
 branch: p1/P1-T051-ui-notifications-centre
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/README.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T051 · Build the notifications centre
@@ -40,6 +45,7 @@ The top-bar notifications icon shows an unread count and opens a notification ce
 - Shell: [ui §2 top bar](../../../docs/ui/README.md#21-top-bar-always-visible) (notifications icon + unread count) · [ui components](../../../docs/ui/components.md) (`TopBar.notificationsCount`) · [mobile & Telegram](../../../docs/ui/mobile-and-telegram.md)
 - Data: `ops.notification` from P1-T045 via `/notifications` and WS `notifications`
 - Depends on (this phase): P1-T045, P1-T046
+- Cross-phase prerequisites (depends_on): P0-T050 (app shell)
 
 ## Requirements
 
@@ -83,7 +89,7 @@ The top-bar notifications icon shows an unread count and opens a notification ce
 
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
 ## Doc sync on completion
 
@@ -99,3 +105,4 @@ The top-bar notifications icon shows an unread count and opens a notification ce
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; P0 shell dep)

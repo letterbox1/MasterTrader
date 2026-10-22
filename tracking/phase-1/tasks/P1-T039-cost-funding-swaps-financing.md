@@ -15,17 +15,22 @@ requirements: [R1.11]
 roadmap_todos: [T1.28]
 modules: [M16]
 dashboards: [D07, D02]
+tools: [git, uv, docker]
+mcp: []
+env: []
+services: [nats, postgres]
 branch: p1/P1-T039-cost-funding-swaps-financing
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T039 · Measure funding rates and swap/financing costs
@@ -42,6 +47,7 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 
 ## Requirements
 
+- Build first, keys last: funding (public streams/REST) runs live keyless; OANDA financing and IG funding are built against fixtures and read live with your practice credentials in P1-T073
 - Funding: predicted (next funding rate from public mark-price/premium-index streams) and realised (settled rates history) for perps on Binance, Bybit, OKX; table `market.funding_rate` (venue, symbol, kind predicted|realised, rate, interval, `event_time`)
 - Financing: OANDA instrument financing rates (long/short) daily and realised financing transactions from the practice account; IG funding from demo transactions; table `market.financing_rate`
 - Publish on `cost.{venue}.{symbol}` with funding/swap fields
@@ -70,7 +76,7 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 
 ## Acceptance criteria
 
-- [ ] Funding and financing series populate D07 Costs and D02 Costs for universe instruments
+- [ ] Funding series populate D07/D02 Costs live; financing proven on fixtures here and populated live in P1-T073
 - [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -79,9 +85,9 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 
 ## Cardinal rules (do NOT)
 
-- Do NOT use keys with withdrawal rights or without an IP allow-list; practice/testnet/paper only, no live money before the P7 gates.
+- Do NOT use keys with withdrawal rights, or without an IP allow-list where the venue supports one; practice/testnet/paper only, no live money before the P7 gates.
 - Do NOT place, modify or cancel orders from this code; P1 is read-only toward venues (orders arrive in P2 through M11).
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
@@ -99,3 +105,4 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, live financing in P1-T073)

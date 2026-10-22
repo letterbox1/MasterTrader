@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T140, P2-T141]
+depends_on: [P2-T140, P2-T141, P2-T020, P0-T050]
 requirements: [R2.50]
 roadmap_todos: [T2.32]
 modules: [M15, M11, M12, M16]
 dashboards: [D01]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T142-d01-cockpit
 pr: ""
 doc_sync: [docs/ui/dashboards/D01-cockpit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T142 · D01 Cockpit dashboard
@@ -105,3 +110,4 @@ The `/` Cockpit answers 'am I safe, what's running, what changed, what needs me,
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; backend dep on the risk/order API (P2-T020))

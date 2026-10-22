@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T046]
+depends_on: [P1-T046, P0-T036, P0-T048]
 requirements: [R1.N2, R1.15]
 roadmap_todos: [T1.32]
 modules: [M15]
 dashboards: [D07, D02]
+tools: [git, uv, docker, pnpm, node>=20]
+mcp: []
+env: []
+services: [mt-api, nats]
 branch: p1/P1-T047-ws-throttled-fanout-ui-lag-telemetry
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md, docs/ui/README.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T047 · Throttle WebSocket fan-out and measure UI update lag
@@ -39,6 +44,7 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 - Roadmap: requirements [R1.N2](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.32](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) (UI live update lag p95 < 500 ms, client telemetry local only) · throttling [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) rules and [ui §3.4 real-time](../../../docs/ui/README.md#34-real-time) · WS protocol [02 §7.3](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws)
 - Depends on (this phase): P1-T046
+- Cross-phase prerequisites (depends_on): P0-T036 (WebSocket hub), P0-T048 (typed API and WS client)
 
 ## Requirements
 
@@ -84,7 +90,7 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
 ## Doc sync on completion
 
@@ -101,3 +107,4 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; P0 WS hub and client deps)

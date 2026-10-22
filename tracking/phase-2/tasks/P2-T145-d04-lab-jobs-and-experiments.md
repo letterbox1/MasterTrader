@@ -15,17 +15,22 @@ requirements: [R2.50, R2.40, R2.44]
 roadmap_todos: [T2.32]
 modules: [M15, M7]
 dashboards: [D04]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T145-d04-lab-jobs-and-experiments
 pr: ""
 doc_sync: [docs/ui/dashboards/D04-research-lab.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T145 · D04 Research Lab: new run panel, job queue, experiments
@@ -42,7 +47,7 @@ checkpoint: ""
 ## Requirements
 
 - New run panel fields per D04: strategy+version, run type, data range + `as_of`, instruments, resolution, cost model (measured default, shows snapshot id; custom flagged), fill model, benchmark, sweep space (from ParamForm), resources (max workers, time cap).
-- Distillation run type hidden until P6 (D04 lists it; see P2-B059).
+- Run types include **tier A training** (P2: train → calibrate → compile on forward-return / triple-barrier labels, `models.tiera.train` C1); **distillation** is hidden until P6 ([17 §D P2-B059](../../../docs/17-decisions-register.md#d-other-decisions), D04 run-type row).
 - Submit = C1 confirm; job appears in the queue with progress/ETA via WS `lab.job`.
 - Job queue columns status, type, strategy, progress, ETA, started; cancel (C1).
 - Experiments table from `/lab/experiments`; multi-select → Compare (≤ 6).
@@ -100,3 +105,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (tier A training run type, distillation hidden until P6 (17 §D))

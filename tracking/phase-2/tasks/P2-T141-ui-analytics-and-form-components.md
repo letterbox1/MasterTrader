@@ -10,22 +10,27 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: []
+depends_on: [P0-T049]
 requirements: [R2.50]
 roadmap_todos: [T2.32]
 modules: [M15]
 dashboards: [D03, D04]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T141-ui-analytics-and-form-components
 pr: ""
 doc_sync: [docs/ui/components.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T141 · Analytics and form components: EquityCurve, Distribution, Heatmap, ParamForm, CodeEditor
@@ -102,3 +107,4 @@ The analytics (ECharts) and form components D03/D04 need — `EquityCurve`, `Dis
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; cross-phase component library dep)

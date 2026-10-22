@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T046, P1-T047]
+depends_on: [P1-T046, P1-T047, P0-T049, P0-T050]
 requirements: [R1.15, R1.08, R1.10, R1.11, R1.12, R1.13]
 roadmap_todos: [T1.32]
 modules: [M15, M16]
 dashboards: [D07]
+tools: [git, pnpm, node>=20]
+mcp: []
+env: []
+services: [mt-api]
 branch: p1/P1-T048-ui-d07-data-quality
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D07-data-quality.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P1-T048 · Build D07 Data & Quality with all six tabs
@@ -40,18 +45,20 @@ checkpoint: ""
 - Spec: [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) (layout by tier, tabs & widgets, actions, acceptance) · components [ui components](../../../docs/ui/components.md) (`KpiStrip`, `DataTable`, `StatusChip`, `Heatmap`, `Sparkline`) · [ui §3.1 data states](../../../docs/ui/README.md#31-data-states-every-tile-implements-all-of-them) · [ui §3.3 confirmation](../../../docs/ui/README.md#33-actions--confirmation) · [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
 - Venue health panel: R1.13 (`/venues/registry`)
 - Depends on (this phase): P1-T046, P1-T047
+- Cross-phase prerequisites (depends_on): P0-T049 (component library v0), P0-T050 (app shell)
 
 ## Requirements
 
 - KPI strip (≥ 2xl): feeds ok/degraded/stale/bad, incidents 24 h, max divergence, min quota headroom, recon mismatches, storage used
-- Feeds tab: per feed status, last message age (live-updating), msgs/s, latency p50/p99, reconnects 24 h, gaps 24 h, licence and cost tag, msg-rate sparkline; pause/resume (C1, shows dependent strategies)
-- Quality tab: incident list with all D07 columns, divergence chart, clock-skew chart, nightly Pandera/Evidently results with report links, acknowledge (C0, see P1-B018)
-- Costs tab: spread hour-of-week heatmap, fee tiers, funding predicted/realised, swap/financing, borrow; highlight spread > 3× normal
+- Feeds tab: per feed status (`ok/degraded/stale/closed/bad`), data age vs threshold (and the bots using it; none yet in P1), live-updating, msgs/s, latency p50/p99, reconnects 24 h, gaps 24 h, licence and cost tag, msg-rate sparkline; pause/resume (C1, shows dependent strategies)
+- Quality tab: incident list with all D07 columns (incl. the threshold and the layer that set it, auto-action), divergence chart, clock-skew chart, nightly Pandera/Evidently results with report links, acknowledge via `data.incident.ack` (C0; a separate `audit.dq_ack` row)
+- Costs tab: spread hour-of-week heatmap, fee tiers, funding predicted/realised, swap/financing, borrow; highlight spread > 3× normal (default, configurable)
 - Quotas tab: limit, used, headroom %, throttle state, next reset, history chart, warnings at 80%
-- Reconciliation tab: last run, mismatches, status, notes; "Run now" (C1). Venue health panel with AUSTRAC check age (`VenueStatusChip`)
+- Reconciliation tab: last run per scope (positions/open orders 60 s, balances 5 min, EOD), mismatches (ours, venue's, diff), status, explanation or "unexplained" with time left before the 24 h halt rule; "Run now" (C1). Venue health panel with measured withdrawal times, flags, notes and AUSTRAC check age (`VenueStatusChip`)
+- Threshold adjust: link to `system.settings.update` (tighten C1; loosen C3, via the break-glass CLI in P1)
 - Storage tab: catalog size by venue/type, hot/cold tiers, Timescale compression, backfill jobs with progress; "Run backfill" (C1)
 - Data states on every tile (loading, live, stale, degraded, error, empty); `DataTable` priority columns and card renderer ≤ ph; nav badge for open DQ incidents; "Data degraded" global banner when any feed is stale/bad ([ui §2.2 banners](../../../docs/ui/README.md#22-global-banners-stacked-under-the-top-bar-highest-severity-first))
-- D07 acceptance: stale shows in UI within 2 s of detection; paid feed cannot be enabled (UI blocks, server rejects); quota warnings before throttling
+- D07 acceptance: the monitor publishes `stale` ≤ 250 ms p99 after the threshold and the UI shows it within the live-update lag (p95 < 500 ms); paid feed cannot be enabled (UI blocks, server rejects); quota warnings before throttling
 
 ## ToDo
 
@@ -67,7 +74,7 @@ checkpoint: ""
 
 - Component (Vitest): each tile renders all data states
 - Playwright: viewport matrix 240×320 → 2560×1440 portrait/landscape (no horizontal scroll, no overlap, kill switch visible)
-- Playwright: inject a stale `dq.status` via the test hook → feed chip turns stale within 2 s of publish and the banner appears
+- Playwright: inject a stale `dq.status` via the test hook → feed chip turns stale within the 500 ms live-update budget and the banner appears; a `closed` status shows the session label, not amber
 
 ### Scenarios
 
@@ -92,8 +99,8 @@ checkpoint: ""
 
 - Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down); tightening is C1.
+- Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
+- Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down; in P1 via the break-glass CLI `mtctl approve` + TOTP); tightening is C1.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
 ## Doc sync on completion
@@ -110,3 +117,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (data age vs threshold, closed state, ack via data.incident.ack, recon 16 §2.9 view, D07 acceptance at 250 ms + UI lag; P0 UI deps)

@@ -10,22 +10,27 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T141, P2-T116, P2-T117]
+depends_on: [P2-T141, P2-T116, P2-T117, P2-T006]
 requirements: [R2.50, R2.02, R2.03, R2.04, R2.05, R2.45]
 roadmap_todos: [T2.32]
 modules: [M15, M0, M7]
 dashboards: [D03]
+tools: [pnpm]
+mcp: []
+env: []
+services: []
 branch: p2/P2-T144-d03-builder
 pr: ""
 doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
 checkpoint: ""
+review_result: ""
 ---
 
 # P2-T144 · D03 strategy builder: template, code and describe-it
@@ -37,7 +42,7 @@ checkpoint: ""
 ## Context & references
 
 - Roadmap: [R2.50, R2.02–R2.05, R2.45](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.32 · exit criterion 1 ('create a strategy from a template, from code and by describe it')
-- [D03 builder](../../../docs/ui/dashboards/D03-strategies.md) · template list mismatch tracked in P2-B054
+- [D03 builder](../../../docs/ui/dashboards/D03-strategies.md) · template list decided ([17 §D P2-B054](../../../docs/17-decisions-register.md#d-other-decisions)): the tab renders `/strategies/templates`; market making and LLM-signal shown disabled with their phase (P6)
 - Backend from part A (P2-T001–T099): `/strategies/templates`, manifest validator incl. never-build rules, `strategy.create` (T2.20/T2.21); generator from P2-T116
 
 ## Requirements
@@ -95,7 +100,7 @@ checkpoint: ""
 
 ## Doc sync on completion
 
-- `docs/ui/dashboards/D03-strategies.md`: template list per P2-B054 resolution.
+- `docs/ui/dashboards/D03-strategies.md`: confirm the template list renders from the API as built.
 - `docs/roadmap/phase-2-strategies-risk-lab.md`: tick T2.32 once every task mapped to it (part A and part B) is done.
 
 ## Branch & PR
@@ -107,3 +112,4 @@ checkpoint: ""
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
+- 2026-10-22 00:00 · aligner · updated for docs/16–17 (template list per 17 §D P2-B054; registry/validator deps)
