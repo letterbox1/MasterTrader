@@ -4,7 +4,7 @@ kind: gap
 title: Windows VPS for the MT5 bridge is outside the security model
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B010-windows-vps-not-in-security-model
 pr: ""
 doc_sync: [docs/07-security-notes.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/07-security-notes.md §1, §2, §5 (single Linux host, Tailscale-only, sops); docs/14-strategy-evidence-and-validation.md §8 (MT5 on a Windows VPS)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: add a '5.1 Optional Windows
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §D P7-B010): the MT5 Windows VPS is hardened, Tailscale-only, holds only the MT5 trade-only login and no other secrets
+- [x] Owning docs carry it: 07 §5.1; 14 §8 item 2; roadmap R7.10/T7.43
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T005, P7-T035
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: add a '5.1 Optional Windows
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (07 §5.1; 14 §8 item 2; roadmap R7.10/T7.43)
+- [x] Affected tasks consistent with it (P7-T005, P7-T035)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +93,7 @@ The docs agree and are specific enough to implement: add a '5.1 Optional Windows
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §D P7-B010: the MT5 Windows VPS is hardened, Tailscale-only, holds only the MT5 trade-only login and no other secrets. Docs now carry it: 07 §5.1; 14 §8 item 2; roadmap R7.10/T7.43. Implementation owned by P7-T005, P7-T035. Root cause: 07 assumed a single Linux host.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P7-B010); docs updated: 07 §5.1; 14 §8 item 2; roadmap R7.10/T7.43; implementation owned by P7-T005, P7-T035
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

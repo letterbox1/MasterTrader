@@ -4,7 +4,7 @@ kind: gap
 title: No API or dashboard spec for capital steps, kill-criteria state, gate reports and weekly reviews
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B008-no-api-ui-for-phase7-state
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D06-risk.md, docs/ui/dashboards/D14-journal.md, docs/ui/dashboards/D03-strategies.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/02-v1-architecture.md §7 (command catalogue, queries); docs/ui/dashboards/D03-strategies.md, D06-risk.md, D14-journal.md
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: add the entries above to 02
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §D P7-B008): Phase 7 API and dashboard spec: /system/preflight, /strategies/{id}/gate-report, /risk/capital-steps, /risk/kill-criteria, /journal/reviews; lab.gate_report.generate (C1), risk.capital.fund, risk.capital_step.approve, risk.sleeve.restart, risk.review.close (C3), journal.review.signoff, ops.drill.record (C1); D06 Live tab, D03 Go-live, D14 Weekly reviews
+- [x] Owning docs carry it: 02 §7 queries and §7.2 command catalogue; D06 Live tab; D03 Go-live and Gates; D14 Weekly reviews; roadmap R7.15/T7.26
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T067, P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: add the entries above to 02
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (02 §7 queries and §7.2 command catalogue; D06 Live tab; D03 Go-live and Gates; D14 Weekly reviews; roadmap R7.15/T7.26)
+- [x] Affected tasks consistent with it (P7-T067, P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -95,3 +96,7 @@ The docs agree and are specific enough to implement: add the entries above to 02
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §D P7-B008: Phase 7 API and dashboard spec: /system/preflight, /strategies/{id}/gate-report, /risk/capital-steps, /risk/kill-criteria, /journal/reviews; lab.gate_report.generate (C1), risk.capital.fund, risk.capital_step.approve, risk.sleeve.restart, risk.review.close (C3), journal.review.signoff, ops.drill.record (C1); D06 Live tab, D03 Go-live, D14 Weekly reviews. Docs now carry it: 02 §7 queries and §7.2 command catalogue; D06 Live tab; D03 Go-live and Gates; D14 Weekly reviews; roadmap R7.15/T7.26. Implementation owned by P7-T067, P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022. Root cause: Phase 7 state existed only in task files, not in the API catalogue or dashboard specs.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P7-B008); docs updated: 02 §7 queries and §7.2 command catalogue; D06 Live tab; D03 Go-live and Gates; D14 Weekly reviews; roadmap R7.15/T7.26; implementation owned by P7-T067, P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

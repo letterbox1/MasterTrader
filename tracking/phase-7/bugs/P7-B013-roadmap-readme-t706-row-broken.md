@@ -4,7 +4,7 @@ kind: gap
 title: Roadmap README USER register row T7.06 has a stray '|' that breaks the table
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B013-roadmap-readme-t706-row-broken
 pr: ""
 doc_sync: [docs/roadmap/README.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/README.md §6 (USER action register, row T7.06)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -48,10 +48,10 @@ The docs agree and are specific enough to implement: fix the row (or the generat
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §D P7-B013): fix the roadmap text of the USER register row T7.06
+- [x] Owning docs carry it: roadmap README §6 USER action register row T7.06 (now one clean row)
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by n/a
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -66,8 +66,9 @@ The docs agree and are specific enough to implement: fix the row (or the generat
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (roadmap README §6 USER action register row T7.06 (now one clean row))
+- [x] Affected tasks consistent with it (n/a)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -91,3 +92,7 @@ The docs agree and are specific enough to implement: fix the row (or the generat
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §D P7-B013: fix the roadmap text of the USER register row T7.06. Docs now carry it: roadmap README §6 USER action register row T7.06 (now one clean row). Implementation owned by n/a. Root cause: a '→' became '|' in the generated row.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P7-B013); docs updated: roadmap README §6 USER action register row T7.06 (now one clean row); implementation owned by n/a
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

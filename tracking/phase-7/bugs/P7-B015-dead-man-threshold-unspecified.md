@@ -21,7 +21,7 @@ doc_sync: [docs/07-security-notes.md, docs/ui/dashboards/D06-risk.md]
 doc_sync_status: n/a
 found_in: docs/07-security-notes.md §6; docs/02-v1-architecture.md §6 rules; docs/03-build-spec.md M11
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: document defaults (e.g. int
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §C P7-B015): three-layer dead-man: in-engine watchdog and deadman sidecar cancel at 5 s and apply each bot's on_system_failure at 10 s; venue cancel-after timers (15 s refresh, 60 s timeout) + resting stops
+- [x] Owning docs carry it: 16 §3.1; 07 §5 and §6; D06 Dead-man tile
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T033, P7-T052
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: document defaults (e.g. int
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (16 §3.1; 07 §5 and §6; D06 Dead-man tile)
+- [x] Affected tasks consistent with it (P7-T033, P7-T052)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +94,4 @@ The docs agree and are specific enough to implement: document defaults (e.g. int
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §C P7-B015: three-layer dead-man: in-engine watchdog and deadman sidecar cancel at 5 s and apply each bot's on_system_failure at 10 s; venue cancel-after timers (15 s refresh, 60 s timeout) + resting stops. Docs now carry it: 16 §3.1; 07 §5 and §6; D06 Dead-man tile. Implementation owned by P7-T033, P7-T052. Root cause: fail-flat timing was written as 'N seconds' everywhere.

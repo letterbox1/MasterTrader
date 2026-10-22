@@ -4,7 +4,7 @@ kind: gap
 title: Same decay signal is an alert, a downgrade and a kill in different docs
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B006-decay-signal-action-ambiguous
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/15-bots-hitl-and-worm-audit.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/14-strategy-evidence-and-validation.md §6 (decay → alert) vs §7 (live Sharpe after 60 trades < p5 → kill); docs/15-bots-hitl-and-worm-audit.md §1.2 (decay alert → downgrade); docs/03-build-spec.md §8 item 8
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: write the ladder above into
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §B P7-B006/P2-B011): one meaning per signal: rolling 60-trade Sharpe/hit rate < p5, CUSUM break or 5 consecutive losses → downgrade the bot to HITL; daily health check fail → halt the bot; kill criteria → halt the sleeve + step-down
+- [x] Owning docs carry it: 16 §2.6; 14 §6 decay table and §7 note; 03 §8 item 8; 15 §1.2
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T020, P7-T023, P7-T024, P7-T029, P7-T049
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: write the ladder above into
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (16 §2.6; 14 §6 decay table and §7 note; 03 §8 item 8; 15 §1.2)
+- [x] Affected tasks consistent with it (P7-T020, P7-T023, P7-T024, P7-T029, P7-T049)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +95,7 @@ The docs agree and are specific enough to implement: write the ladder above into
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §B P7-B006/P2-B011: one meaning per signal: rolling 60-trade Sharpe/hit rate < p5, CUSUM break or 5 consecutive losses → downgrade the bot to HITL; daily health check fail → halt the bot; kill criteria → halt the sleeve + step-down. Docs now carry it: 16 §2.6; 14 §6 decay table and §7 note; 03 §8 item 8; 15 §1.2. Implementation owned by P7-T020, P7-T023, P7-T024, P7-T029, P7-T049. Root cause: the same 60-trade signal was an alert, a downgrade and a kill in three docs.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P7-B006/P2-B011); docs updated: 16 §2.6; 14 §6 decay table and §7 note; 03 §8 item 8; 15 §1.2; implementation owned by P7-T020, P7-T023, P7-T024, P7-T029, P7-T049
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

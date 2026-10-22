@@ -4,7 +4,7 @@ kind: gap
 title: Capital-step rules undefined: 'clean week', 25% base, step-down
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: high
 size: S
 severity: S2
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B003-capital-step-semantics-undefined
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/14-strategy-evidence-and-validation.md §7; docs/03-build-spec.md §8 item 6
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: adopt the P7-T018 defaults 
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §A P7-B003): clean week = Mon–Sun Sydney week with no kill-criterion breach, no unexplained recon mismatch, no S1/S2 incident, shortfall ≤ 1.5× modelled and weekly P&L inside the backtest 5th–95th band; step = +25% of the current allocation after 4 consecutive clean weeks up to the sleeve cap, each C3; warning → back one step; halt → starting allocation (default A$2,000 per bot) after review
+- [x] Owning docs carry it: 16 §2.5; 14 §7 capital steps; 03 §8 item 6
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T018, P7-T019, P7-T059, P7-T061
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: adopt the P7-T018 defaults 
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (16 §2.5; 14 §7 capital steps; 03 §8 item 6)
+- [x] Affected tasks consistent with it (P7-T018, P7-T019, P7-T059, P7-T061)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +94,7 @@ The docs agree and are specific enough to implement: adopt the P7-T018 defaults 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §A P7-B003: clean week = Mon–Sun Sydney week with no kill-criterion breach, no unexplained recon mismatch, no S1/S2 incident, shortfall ≤ 1.5× modelled and weekly P&L inside the backtest 5th–95th band; step = +25% of the current allocation after 4 consecutive clean weeks up to the sleeve cap, each C3; warning → back one step; halt → starting allocation (default A$2,000 per bot) after review. Docs now carry it: 16 §2.5; 14 §7 capital steps; 03 §8 item 6. Implementation owned by P7-T018, P7-T019, P7-T059, P7-T061. Root cause: the step rule named '25% after 4 clean weeks' without defining either term.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A P7-B003); docs updated: 16 §2.5; 14 §7 capital steps; 03 §8 item 6; implementation owned by P7-T018, P7-T019, P7-T059, P7-T061
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

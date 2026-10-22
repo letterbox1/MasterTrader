@@ -4,7 +4,7 @@ kind: gap
 title: 12-month review outlasts every phase; nothing owns its completion
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B012-twelve-month-review-has-no-owner-phase
 pr: ""
 doc_sync: [docs/roadmap/README.md, docs/roadmap/phase-7-prove-and-go-live.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/roadmap/phase-7-prove-and-go-live.md T7.10, T7.82; docs/roadmap/README.md §6
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: add a 'Standing operations'
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §D P7-B012): P7 closes once micro-live is stable; the 12-month review is a scheduled recurring calendar review, not a phase item
+- [x] Owning docs carry it: roadmap README §10 standing operations; roadmap T7.10, T7.82, R7.05 and §6 exit 4; 14 §7 note; 02 §12 Phase 7 row
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T042 (yearly REVIEW_12M schedule + report), P7-T063 (you diary it); P7-T062 cancelled
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: add a 'Standing operations'
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (roadmap README §10 standing operations; roadmap T7.10, T7.82, R7.05 and §6 exit 4; 14 §7 note; 02 §12 Phase 7 row)
+- [x] Affected tasks consistent with it (P7-T042 (yearly REVIEW_12M schedule + report), P7-T063 (you diary it); P7-T062 cancelled)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +94,7 @@ The docs agree and are specific enough to implement: add a 'Standing operations'
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §D P7-B012: P7 closes once micro-live is stable; the 12-month review is a scheduled recurring calendar review, not a phase item. Docs now carry it: roadmap README §10 standing operations; roadmap T7.10, T7.82, R7.05 and §6 exit 4; 14 §7 note; 02 §12 Phase 7 row. Implementation owned by P7-T042 (yearly REVIEW_12M schedule + report), P7-T063 (you diary it); P7-T062 cancelled. Root cause: a 12-month RUN item outlived every phase with no owner.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P7-B012); docs updated: roadmap README §10 standing operations; roadmap T7.10, T7.82, R7.05 and §6 exit 4; 14 §7 note; 02 §12 Phase 7 row; implementation owned by P7-T042 (yearly REVIEW_12M schedule + report), P7-T063 (you diary it); P7-T062 cancelled
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

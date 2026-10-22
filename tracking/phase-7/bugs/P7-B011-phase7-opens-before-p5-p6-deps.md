@@ -4,7 +4,7 @@ kind: gap
 title: Phase 7 opens after P3 but its entry/kill rules need P5 and P6 deliverables
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B011-phase7-opens-before-p5-p6-deps
 pr: ""
 doc_sync: [docs/roadmap/phase-7-prove-and-go-live.md, docs/14-strategy-evidence-and-validation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: tracking/phase-7/PHASE.md opens_after [3]; docs/roadmap/phase-7-prove-and-go-live.md §2 (runbooks incl. wallet drained) and §7 rows; docs/14-strategy-evidence-and-validation.md §7 (capital to hold-and-earn)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: amend roadmap §2: 'wallet 
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §D P7-B011 (and §E)): P7 opens after P3 (hard-gated); items that need P5/P6 deliverables carry their own task dependencies; wallet-drained drill only if a hot/burner wallet exists; before the P6 treasury, flattened capital stays as stables on the venue + a USER task
+- [x] Owning docs carry it: roadmap Phase 7 header and §2 entry criteria; 14 §7 note; tracking PHASE.md opens_after [3], hard_gate
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T021 (depends on P5-T036), P7-T045, P7-T022, P7-T011, P7-T008 (ops.wallets from P3-T012)
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: amend roadmap §2: 'wallet 
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (roadmap Phase 7 header and §2 entry criteria; 14 §7 note; tracking PHASE.md opens_after [3], hard_gate)
+- [x] Affected tasks consistent with it (P7-T021 (depends on P5-T036), P7-T045, P7-T022, P7-T011, P7-T008 (ops.wallets from P3-T012))
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -93,3 +94,7 @@ The docs agree and are specific enough to implement: amend roadmap §2: 'wallet 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §D P7-B011 (and §E): P7 opens after P3 (hard-gated); items that need P5/P6 deliverables carry their own task dependencies; wallet-drained drill only if a hot/burner wallet exists; before the P6 treasury, flattened capital stays as stables on the venue + a USER task. Docs now carry it: roadmap Phase 7 header and §2 entry criteria; 14 §7 note; tracking PHASE.md opens_after [3], hard_gate. Implementation owned by P7-T021 (depends on P5-T036), P7-T045, P7-T022, P7-T011, P7-T008 (ops.wallets from P3-T012). Root cause: entry and kill rules implicitly needed P5/P6 while the phase opened after P3.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P7-B011 (and §E)); docs updated: roadmap Phase 7 header and §2 entry criteria; 14 §7 note; tracking PHASE.md opens_after [3], hard_gate; implementation owned by P7-T021 (depends on P5-T036), P7-T045, P7-T022, P7-T011, P7-T008 (ops.wallets from P3-T012)
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

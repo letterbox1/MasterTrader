@@ -21,7 +21,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md]
 doc_sync_status: n/a
 found_in: docs/14-strategy-evidence-and-validation.md §6 (rolling 60-trade decay) and §7 (live Sharpe after 60 trades)
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: add a horizon-based criteri
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §C P7-B016): low-frequency bots that can't reach the trade counts use time windows: ≥ 26 weeks for the paper/HITL period and a 26-week rolling window for decay
+- [x] Owning docs carry it: 16 §2.4 and §2.6; 14 §6 item 7 and the decay table; roadmap R7.02/R7.07
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T017, P7-T013, P7-T023
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: add a horizon-based criteri
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (16 §2.4 and §2.6; 14 §6 item 7 and the decay table; roadmap R7.02/R7.07)
+- [x] Affected tasks consistent with it (P7-T017, P7-T013, P7-T023)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -92,3 +93,4 @@ The docs agree and are specific enough to implement: add a horizon-based criteri
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §C P7-B016: low-frequency bots that can't reach the trade counts use time windows: ≥ 26 weeks for the paper/HITL period and a 26-week rolling window for decay. Docs now carry it: 16 §2.4 and §2.6; 14 §6 item 7 and the decay table; roadmap R7.02/R7.07. Implementation owned by P7-T017, P7-T013, P7-T023. Root cause: only trade-count windows were specified, which starve daily trend sleeves.

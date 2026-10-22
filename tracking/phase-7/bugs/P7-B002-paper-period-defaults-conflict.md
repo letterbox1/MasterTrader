@@ -4,7 +4,7 @@ kind: gap
 title: Paper/approve period defaults conflict across docs
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B002-paper-period-defaults-conflict
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/02-v1-architecture.md, docs/03-build-spec.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md §8 item 5; docs/14-strategy-evidence-and-validation.md §6 item 7; docs/02-v1-architecture.md §12 (Phase 7 row) and §13 item 5
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: replace '≥ 2–4 weeks' i
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §B P7-B002): paper/HITL period default ≥ 8 weeks and ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks
+- [x] Owning docs carry it: 16 §2.4; 03 §8 item 5; 14 §6 item 7; 02 §12 Phase 7 row and §13 item 5
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T011, P7-T013, P7-T056
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: replace '≥ 2–4 weeks' i
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (16 §2.4; 03 §8 item 5; 14 §6 item 7; 02 §12 Phase 7 row and §13 item 5)
+- [x] Affected tasks consistent with it (P7-T011, P7-T013, P7-T056)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +95,7 @@ The docs agree and are specific enough to implement: replace '≥ 2–4 weeks' i
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §B P7-B002: paper/HITL period default ≥ 8 weeks and ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks. Docs now carry it: 16 §2.4; 03 §8 item 5; 14 §6 item 7; 02 §12 Phase 7 row and §13 item 5. Implementation owned by P7-T011, P7-T013, P7-T056. Root cause: each doc carried its own minimum (2–4 weeks, 3 months, 8 weeks).
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P7-B002); docs updated: 16 §2.4; 03 §8 item 5; 14 §6 item 7; 02 §12 Phase 7 row and §13 item 5; implementation owned by P7-T011, P7-T013, P7-T056
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave

@@ -4,7 +4,7 @@ kind: gap
 title: Deflated Sharpe gate threshold stated three different ways
 phase: 7
 type: DOC
-status: backlog
+status: done
 priority: medium
 size: S
 severity: S3
@@ -18,12 +18,12 @@ dashboards: []
 branch: p7/P7-B001-deflated-sharpe-threshold-conflict
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/14-strategy-evidence-and-validation.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: docs/03-build-spec.md §8 item 2 / item 7; docs/02-v1-architecture.md §13; docs/14-strategy-evidence-and-validation.md §6–§7
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 started: ""
-completed: ""
+completed: 2026-10-22
 blocked_reason: ""
 checkpoint: ""
 ---
@@ -49,10 +49,10 @@ The docs agree and are specific enough to implement: rewrite 03 §8 item 2 and 0
 
 ## ToDo
 
-- [ ] Confirm the conflict/omission against the cited sections
-- [ ] Agree the resolution (the user decides where it changes risk or money rules)
-- [ ] Edit the docs listed under Doc sync in one PR
-- [ ] Update any Phase 7 task text that depended on the assumption
+- [x] Decision recorded in docs/17 (17 §B P7-B001/P2-B060): deflated Sharpe ratio (DSR) is a probability; gate passes at DSR ≥ 0.95 ("> 0" was an error), a gate-profile default
+- [x] Owning docs carry it: 16 §2.4; 03 §8 items 2 and 7; 02 §13 item 2; 14 §6 gate 2 and §7 paper row
+- [x] Affected Phase 7 tasks aligned in the 2026-10-22 task-alignment wave; implementation owned by P7-T012
+- [x] Decision and root cause noted in the progress log
 
 ## Verification
 
@@ -67,8 +67,9 @@ The docs agree and are specific enough to implement: rewrite 03 §8 item 2 and 0
 
 ## Acceptance criteria
 
-- [ ] Docs updated and consistent
-- [ ] Root cause noted in the progress log
+- [x] Decision recorded in the owning docs (16 §2.4; 03 §8 items 2 and 7; 02 §13 item 2; 14 §6 gate 2 and §7 paper row)
+- [x] Affected tasks consistent with it (P7-T012)
+- [x] Root cause noted in the progress log
 
 ## Exceptions & edge cases
 
@@ -94,3 +95,7 @@ The docs agree and are specific enough to implement: rewrite 03 §8 item 2 and 0
 ## Progress log
 
 - 2026-10-21 00:00 · planner · opened
+- 2026-10-22 00:00 · aligner · resolved by docs/17 17 §B P7-B001/P2-B060: deflated Sharpe ratio (DSR) is a probability; gate passes at DSR ≥ 0.95 ("> 0" was an error), a gate-profile default. Docs now carry it: 16 §2.4; 03 §8 items 2 and 7; 02 §13 item 2; 14 §6 gate 2 and §7 paper row. Implementation owned by P7-T012. Root cause: 03 §8 item 2 and 02 §13 stated "DSR > 0" while other sections said 0.95.
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §B P7-B001/P2-B060); docs updated: 16 §2.4; 03 §8 items 2 and 7; 02 §13 item 2; 14 §6 gate 2 and §7 paper row; implementation owned by P7-T012
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · done
+- 2026-10-22 02:31 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave
