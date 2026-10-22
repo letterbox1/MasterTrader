@@ -44,7 +44,7 @@ Every MCP-originated order and C2 change raises your approval card on Telegram a
 - Roadmap: [R8.04, R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - HITL card: [15 §1.3](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) (order, risk preview, why, links, TTL; Approve / Approve ½ / Reject; TOTP for large orders; bound to your Telegram id)
 - UI: [D17 Pending approvals](../../../docs/ui/dashboards/D17-mcp-console.md) (`ApprovalCard` with source "MCP" + conversation excerpt) · [D05 source badges](../../../docs/ui/dashboards/D05-execution.md)
-- Decisions: [17 §A P8-B001/B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (MCP can never approve; C2 orders always your card, TTL 5 min) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (large-order TOTP threshold) · [17 §D P2-B013…](../../../docs/17-decisions-register.md#d-other-decisions) (no bulk approve except the dynamic-selection batch card)
+- Decisions: [17 §A P8-B001/B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (MCP can never approve; C2 orders always your card, TTL 5 min) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (large-order TOTP threshold) · [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P2-B013 row: no bulk approve except the dynamic-selection batch card)
 - Cross-phase (depends_on): P2-T038 (approvals API + `ApprovalCard`), P2-T039 (Telegram HITL cards), P2-T149 (web approvals queue, Cockpit Needs-you).
 
 ## Requirements
