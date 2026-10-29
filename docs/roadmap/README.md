@@ -21,7 +21,7 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:phase-status:start -->
 | Phase | Status | Progress | Tasks done/total | Board |
 |---|---|---|---|---|
-| P0 Foundations & security baseline | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-0/BOARD.md) |
+| P0 Foundations & security baseline | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-0/BOARD.md) |
 | P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/74 | [BOARD](../../tracking/phase-1/BOARD.md) |
 | P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/128 | [BOARD](../../tracking/phase-2/BOARD.md) |
 | P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-3/BOARD.md) |

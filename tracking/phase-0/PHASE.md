@@ -2,13 +2,13 @@
 phase: 0
 title: Foundations & security baseline
 roadmap: docs/roadmap/phase-0-foundations.md
-status: not_started
+status: in_progress
 opens_after: []
 force_open: false
-started: ""
+started: 2026-10-29
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-10-29
 ---
 
 # Phase 0 · Foundations & security baseline

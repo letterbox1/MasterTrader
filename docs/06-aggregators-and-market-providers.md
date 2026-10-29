@@ -14,7 +14,7 @@ _(U) = unverified._
 | When | What | Action |
 |---|---|---|
 | **Decision (2026-10-21)** | **Reddit and X are deferred** for v1, unless a free and permitted route appears | Free social coverage comes from **Telegram** (client + Bot API) and **Discord** (own server + followed announcement channels + own bot), plus Bluesky and Mastodon |
-| By 2026-10-31 | Reddit reportedly stops accepting new public API access requests (U, from secondary reporting of a 2026-09-30 announcement) | Deferred, so no action. If you change your mind, apply before this date. |
+| By 2026-10-31 | Reddit reportedly stops accepting new public API access requests (U, from secondary reporting of a 2026-09-30 announcement) | **Applied 2026-10-29** (P0-T001). Reddit is in or out on Reddit's decision; the commitments made in the request are in [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules). Previously: deferred; if you change your mind, apply before this date. |
 | 2026-11-13 | Reddit RSS reportedly ends (U) | Don't build on Reddit RSS (that includes RSS-Bridge's Reddit bridge and listeningkit's Reddit source) |
 | 2027-01 → 2027-03 | Unregistered apps lose access, then the public Data API closes (U) | Treat Reddit as a **sunsetting** source; never core |
 | Now | Telethon's GitHub repo is archived; development moved to Codeberg | Pin the version and keep RSS-Bridge's Telegram bridge as a fallback |
@@ -51,7 +51,7 @@ _(U) = unverified._
 | Core: social | Mastodon / fediverse | Mastodon.py or the RSS-Bridge Mastodon bridge | Low | Low volume |
 | Core: social | **Farcaster** | Self-hosted **Hubble** node or a free hub endpoint | None | Crypto-native; useful for airdrop/launch chatter |
 | Core: news | **CryptoPanic** (free tier) | REST | Low | Crypto headline aggregation with votes; attribution required |
-| **Deferred** | Reddit | (PRAW, official OAuth) | — | Closing to new apps 2026-10-31, sunset 2027 (U). Stays optional: if access is ever granted, a connector is an optional item, and not worth building once the public Data API closes |
+| **Pending (access requested 2026-10-29)** | Reddit | (PRAW, official OAuth, read-only) | Low | Aggregates only, raw text ≤ 24 h, no training, local model only ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). In or out on Reddit's decision. Closing to new apps 2026-10-31, sunset 2027 (U). Stays optional: if access is ever granted, a connector is an optional item, and not worth building once the public Data API closes |
 | Conditional | StockTwits | v2 REST `streams/symbol/{SYM}` (U) | Low–moderate | Most finance-relevant social source if still reachable; checked in Phase 1 (open checks, §3) |
 | Conditional | YouTube | Channel RSS + Data API v3; yt-dlp for subtitles and transcripts | Low | Finance channels, earnings calls. Checked in **Phase 4** (P4-T066; connector P4-T024), not Phase 1 (open checks, §3) |
 | **Deferred** | X / Twitter | (Official API v2 is pay-per-use, ~$0.005 per post read (U)) | — | Revisit if budget allows; scraping (twscrape) not in v1 |

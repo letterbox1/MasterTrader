@@ -4,7 +4,7 @@ kind: task
 title: Decide on Reddit and apply for API access before 2026-10-31
 phase: 0
 type: USER
-status: ready
+status: blocked
 priority: critical
 size: XS
 severity: ""
@@ -25,11 +25,11 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-0-fou
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-10-29
 started: ""
 completed: ""
-blocked_reason: ""
-checkpoint: ""
+blocked_reason: waiting on Reddit's decision on the 2026-10-29 Data API access request
+checkpoint: Data API access request submitted 2026-10-29; waiting on Reddit's decision, which decides Reddit in or out (P4-T004)
 review_result: ""
 ---
 
@@ -58,12 +58,12 @@ A recorded yes/no decision on Reddit as an optional source, made **before 2026-1
 
 ## ToDo
 
-- [ ] Read 06 §0 and decide: is a sunsetting, optional Reddit feed worth one account? Write the decision and reason in this task's progress log.
-- [ ] If **no**: log `decision: no Reddit`, tick the remaining boxes as `n/a` in the log, and finish.
+- [x] Read 06 §0 and decide: is a sunsetting, optional Reddit feed worth one account? Write the decision and reason in this task's progress log.
+- [x] If **no**: n/a (decision was yes). Log `decision: no Reddit`, tick the remaining boxes as `n/a` in the log, and finish.
 - [ ] If **yes**: create a dedicated Reddit account with a unique email and 2FA (authenticator app).
 - [ ] Go to reddit.com/prefs/apps → 'create another app' → type **script**, name `mastertrader-reader`, redirect `http://localhost:8080` (unused); then submit the Data API access request form for personal, non-commercial, read-only use.
 - [ ] Record client id, client secret and a user agent of the form `linux:mastertrader-reader:0.1 (by /u/<account>)` in your password manager now; move them into the secrets file under `reddit:` once P0-T022 lands.
-- [ ] Log the submission date and any ticket/confirmation number (not the secret) in the progress log.
+- [x] Log the submission date and any ticket/confirmation number (not the secret) in the progress log.
 
 ## Verification
 
@@ -111,3 +111,6 @@ A recorded yes/no decision on Reddit as an optional source, made **before 2026-1
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)
+- 2026-10-29 02:06 · cloud:vm:be04b6ae61f8 · checkpoint: Data API access request submitted 2026-10-29; waiting on Reddit's decision, which decides Reddit in or out (P4-T004)
+- 2026-10-29 00:00 · user · decision: yes (apply). Data API access request submitted 2026-10-29 via the Reddit Help Center bot/app form: personal, non-commercial, read-only; aggregates only, raw text ≤ 24 h, no training, local model only, no third-party AI (commitments recorded in docs/12 §4). Outcome pending; execution of code is on hold until Reddit replies and Reddit is ruled in or out.
+- 2026-10-29 02:06 · cloud:vm:be04b6ae61f8 · blocked: waiting on Reddit's decision on the 2026-10-29 Data API access request

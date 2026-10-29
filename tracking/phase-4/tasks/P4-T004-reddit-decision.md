@@ -49,7 +49,8 @@ A recorded yes/no on Reddit API access (applied for in P0 T0.08, before 2026-10-
 ## Requirements
 
 - Record: was access granted (yes/no), client id stored in secrets if yes, and the date checked.
-- If yes: the agent files `P4-T0xx Reddit connector (optional)` with official OAuth only; `train_ok = false` by default (12 §4), and only if the public Data API isn't closing before it would be useful (06 §0: 2027-01 → 03 (U)).
+- If yes: the agent files `P4-T0xx Reddit connector (optional)` with official OAuth only, built to the commitments made in the 2026-10-29 request ([12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)): read-only; the requested subreddits only; ~4–6 requests/min with back-off; hourly per-asset aggregates only (`train_ok = false`, `model_input_ok` for the aggregates only); no usernames stored; raw text deleted within 24 h and never written to WORM/journal tables; local sentiment model only, never a third-party AI service; no training or fine-tuning. Only worth building if the public Data API isn't closing before it would be useful (06 §0: 2027-01 → 03 (U)).
+- If no: Reddit is out; D08 Sources shows it as not available, and nothing is built.
 
 ## ToDo
 
