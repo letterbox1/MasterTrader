@@ -8,10 +8,12 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 3. Each phase ends with a **demo you can actually use**.
 4. **MCP is last** (Phase 8), and only if you want it.
 5. **How work runs** ([17 §E](17-decisions-register.md#e-ratification-2026-10-22)): a task starts as soon as its own dependencies are done, in any phase (Phases 7 and 8 stay hard-gated on their prerequisite phases). Integrations are built and tested against mocks, fixtures, testnets and paper accounts first; live checks that need your keys, accounts or money are final `VERIFY` tasks. Up to 6 agents work in parallel, and every task passes an independent review before it's done.
+6. **Workstation first, test, then shift** ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)): Phases 0–6 build, test and paper-trade on your workstation (Supabase CLI stack, Docker Compose, keyless fixtures). No dedicated host, LUKS, Tailscale, YubiKey or GPU is needed before Phase 7. Before live money, Phase 7 shifts to the runtime host you choose (default: stay on the workstation) and reruns the full verification suite there.
+7. **Values you'd otherwise be asked to set** (risk values, L0 ceilings, sleeves, first manifests) are seeded by agents from the defaults in [16](16-configuration-and-safety-model.md) and [14](14-strategy-evidence-and-validation.md), and you approve them once in the **go-live pack** in Phase 7 ([17 §G](17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)).
 
 Every number in this plan (periods, sizes, limits, timers) is a **default you can change in settings** ([16](16-configuration-and-safety-model.md)), not a fixed rule.
 
-Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md).
+Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md). The stack (Rust first, Python where necessary, NautilusTrader, Supabase Postgres, the web app local or on Vercel) and the deployment modes are in [18](18-platform-and-deployment.md).
 
 **Detailed scoping per phase** (requirements with IDs, ToDos split into `USER` / `BUILD` / `OPS` / `VERIFY` / `RUN`, exit criteria, traceability to every doc) lives in the **[roadmap](roadmap/README.md)**, and execution is tracked task-by-task on per-phase kanbans in [`tracking/`](../tracking/README.md) (project board: [`KANBAN.md`](../KANBAN.md) / `kanban.html`). This page is the summary.
 
@@ -34,47 +36,48 @@ Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md).
 
 ## Phase 0 — Foundations & security baseline (weeks 1–2)
 Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
-- [ ] **Monorepo and code quality:**
-  - `uv` workspace, packages per [build spec §3](03-build-spec.md#3-repository-layout);
-  - ruff, mypy, pytest, pre-commit with **gitleaks**;
+- [ ] **Monorepo and code quality** ([18 §3](18-platform-and-deployment.md#3-repository-layout)):
+  - Cargo workspace (`crates/`, Rust services) + `uv` workspace (`packages/`, Python only where necessary) + `pnpm` for `apps/web`;
+  - `cargo clippy`/`cargo test`, ruff, mypy, pytest, pre-commit with **gitleaks**;
   - `third_party/LICENSES.md`.
-- [ ] **Host:**
-  - LUKS full-disk encryption, firewall deny-inbound;
-  - Tailscale-only access;
-  - chrony for time sync.
-- [ ] **`infra/docker-compose.yml`** (images pinned by digest):
-  - Postgres 16 + TimescaleDB (TSL image) + pgvector;
+- [ ] **Workstation baseline** (the live hardening profile is applied at the Phase 7 shift):
+  - firewall deny-inbound, Docker, automatic security updates;
+  - chrony for time sync;
+  - workstation profile (cores, RAM, disk, GPU if any) picks the CPU or GPU model profiles (`models.gpu_profile: auto`);
+  - Tailscale optional until go-live (needed only for phone access); LUKS and a YubiKey come before live money ([18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)).
+- [ ] **Supabase stack** ([18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)): `supabase start` (Supabase CLI) for development and tests; self-hosted Supabase on the always-on workstation; pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP (no TimescaleDB).
+- [ ] **`infra/` Compose files** (images pinned by digest):
   - NATS JetStream;
   - Prefect;
   - Grafana + Loki + Prometheus + Vector;
   - MLflow;
-  - Caddy (serves the web app, Tailscale only);
+  - Caddy (serves the web app locally; the same build can go to Vercel at the shift);
   - a restricted Docker-socket proxy that lets `system.service.restart` restart only allow-listed containers.
 - [ ] **Core code:**
-  - `mt_core` types;
-  - `mt_store` schemas: all 13 canonical schemas (`market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight`, [03 §4](03-build-spec.md#4-data-model-overview)) + Alembic migrations;
-  - `pit(as_of)` API + CI test.
+  - core types (Rust, with Python bindings where Python needs them);
+  - all 13 canonical schemas (`market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight`, [03 §4](03-build-spec.md#4-data-model-overview)) as SQL migrations in `supabase/migrations/`, with pgTAP tests (`supabase test db`); row-level security deny-all, Data API and Realtime off;
+  - `pit(as_of)` in the `mt-store` crate with Python bindings (one implementation) + CI test.
 - [ ] **WORM audit and logging** ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)):
   - offline `worm_owner`, INSERT/SELECT-only app roles, blocking triggers, per-row hash chain, daily seal anchored outside the DB;
   - `audit.verify` → `audit.integrity` status (default `block_new_entries`; cleared by `audit.integrity.ack`, C3) ([16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity));
   - `audit.llm_call` written from day one via the LiteLLM callback;
-  - structured logging (structlog) with `trace_id`.
+  - structured logging (`tracing` in Rust, structlog in Python) with `trace_id`.
 - [ ] **Secrets and backups:**
-  - `sops`/`age` secrets; the encrypted file lives outside the repo (e.g. `~/.config/mastertrader/`);
-  - pgBackRest + restic off-site backups: continuous WAL, nightly incremental, weekly full, monthly immutable WORM export;
+  - `sops`/`age` secrets; the encrypted file lives outside the repo (e.g. `~/.config/mastertrader/`); the age identities stay in the OS keychain until the YubiKey in Phase 7;
+  - pgBackRest (against the Supabase Postgres container) + restic off-site backups: continuous WAL, nightly incremental, weekly full, monthly immutable WORM export;
   - monthly automated restore test.
-- [ ] **`mt_api` command layer skeleton:** login + TOTP, C0–C3/Kill enforced server-side, every command written to `audit.command`. The UI and Telegram will call it; MCP will later wrap it. Until Telegram C3 exists (P2), C3 completes via the host-only break-glass CLI (`mtctl approve <id>` + TOTP), audited.
+- [ ] **`mt-api` command layer skeleton** (Rust, axum, OpenAPI via utoipa): login via **Supabase Auth** (password + TOTP MFA, sign-ups off; commands need `aal2`), C0–C3/Kill enforced server-side, every command written to `audit.command`. The UI and Telegram will call it; MCP will later wrap it. Until Telegram C3 exists (P2), C3 completes via the workstation-only break-glass CLI (`mtctl approve <id>` + TOTP), audited.
 - [ ] **Web shell:** top bar, nav, status bar, kill-switch placeholder and the D16 System dashboard on the DESIGN.md v2 Tailwind preset.
 - [ ] **Model gateway:**
   - LiteLLM proxy (≥ 1.83, pinned by digest) with Claude + your custom endpoint + a local model;
-  - `llm-local` (llama-server on CPU, or vLLM on GPU) serving the `local-advisor` route;
+  - `llm-local` (llama-server on CPU by default, or vLLM when a GPU is detected) serving the `local-advisor` route;
   - per-role budgets;
-  - two **TEI** containers: `tei-embed` (bge-small-en-v1.5) and `tei-rerank` (bge-reranker-v2-m3).
+  - two **TEI** containers: `tei-embed` (bge-small-en-v1.5) and `tei-rerank` (bge-reranker-v2-m3), CPU profile by default.
 
-**Demo:** `docker compose up` gives a healthy stack, with Grafana showing DB/NATS/host health and logs in Loki; you log in with TOTP to the responsive web shell.
+**Demo:** `supabase start` + `docker compose up` on your workstation give a healthy stack, with Grafana showing DB/NATS/workstation health and logs in Loki; you log in with password + TOTP (Supabase Auth) to the responsive web shell.
 
 ## Phase 1 — Market data, recording & live monitoring (weeks 3–6)
-- [ ] **Crypto real-time** via Nautilus/ccxt WebSockets: trades, L1, L2. Recorded to the **Parquet catalog** (raw L2 diffs only for symbols a bot needs order-book data for, default ≤ 3; 1 s snapshots for the rest), plus a bar builder writing 1s bars to Timescale with continuous aggregates at 1m, 5m, 15m, 1h, 4h, 1D, 1W.
+- [ ] **Crypto real-time** via Nautilus/ccxt WebSockets: trades, L1, L2. Recorded by `mt-recorder` to the **Parquet catalog** (raw L2 diffs only for symbols a bot needs order-book data for, default ≤ 3; 1 s snapshots for the rest). The recorder also writes every standard bar size (1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W) into monthly partitions in Postgres; a rollup job rebuilds higher sizes after backfills and corrections, and other sizes use `date_bin` at read time ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)).
 - [ ] **Crypto history:** data.binance.vision backfill (trades/aggTrades/1s klines).
 - [ ] **FX & metals:**
   - OANDA practice stream + IG demo stream;
@@ -94,7 +97,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - venue balance/position reconciliation (defaults in [16 §2.9](16-configuration-and-safety-model.md#29-reconciliation)) → `audit.recon`.
 - [ ] Run the open provider checks in [06 §3](06-aggregators-and-market-providers.md#open-checks-do-these-in-phase-1).
 - [ ] **Row-level provenance tags** (`source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`) on every ingested row, plus retention jobs ([12 §5](12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)).
-- [ ] **ntfy** (self-hosted, Tailscale only) as the second alert channel; email via your own provider's SMTP or off; venue-health monitor (our measured withdrawal times, venue status feeds, quarterly AUSTRAC check as a USER task).
+- [ ] **ntfy** (self-hosted, private; reached from the phone over Tailscale) as the second alert channel; email via your own provider's SMTP or off; venue-health monitor (our measured withdrawal times, venue status feeds, quarterly AUSTRAC check as a USER task).
 
 **Demo:** Grafana shows live prices at every timeframe from ticks to 1D across all asset classes, plus live spread/funding/swap panels and data-quality alerts arriving on Telegram.
 
@@ -102,12 +105,12 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **M0 strategy framework:**
   - templates for scalping, intraday, EMA/MA, mean-reversion, breakout, swing, grid/DCA, pairs, event, ML;
   - manifest schema; registry; multi-timeframe helpers.
-- [ ] **M11 risk manager:**
+- [ ] **M11 risk manager** (`mt-risk` crate: one implementation linked into `mt-api`, the engine and the dead-man; golden tests run against it):
   - policy model at global, venue, strategy, instrument and portfolio levels;
   - sizing models;
   - pre-trade checks (incl. DQ status and event blackout);
   - kill switch (no vault sweep until P5; P2 has a logged no-op hook);
-  - **three-layer dead-man's switch**: in-engine watchdog, external `deadman` sidecar, venue-side cancel-after timers + resting stops; per-bot `on_system_failure` (default `flatten`); restart flat with bots paused ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch));
+  - **three-layer dead-man's switch**: in-engine watchdog, external `deadman` sidecar (`mt-deadman`), venue-side cancel-after timers + resting stops; per-bot `on_system_failure` (default `flatten`); restart flat with bots paused ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch));
   - change control: tighten instantly, loosen = C3 (Telegram + TOTP + cool-down);
   - L0 hard ceilings in the agent/bot strategy settings (tighten immediate, loosen C3);
   - inline data-age check and `audit.integrity` check on every order;
@@ -115,7 +118,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - **venue access registry** check on every order, **2× crypto-derivatives leverage cap**, explicit **STP mode** on every order where the venue supports it (netting brokers: `stp: n/a`);
   - **sleeves**, two-stage sleeve/system drawdowns and the **fallback ladder**, all with defaults from [16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown).
 - [ ] **Trading bots** with modes `paper` / `hitl` / `autonomous` ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)); decay/kill signals for paper ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)).
-- [ ] **M12 engine wrapper:** Nautilus sandbox/paper on testnets/practice accounts. Custom **Alpaca, OANDA and IG** adapters.
+- [ ] **M12 engine (`mt-engine`):** Nautilus sandbox/paper on testnets/practice accounts; Rust live node where the venue's Rust adapter is production-ready (U, per venue), else the Python node, with `mt-risk` linked in either way. Custom **Alpaca, OANDA and IG** adapters (Rust, against Nautilus's adapter traits).
 - [ ] **M7 lab:**
   - fast screener + Nautilus truth backtests using **measured costs from M16**;
   - validation suite (walk-forward, purged CV, MC permutation, bootstrap Sharpe, deflated Sharpe with the default gate DSR ≥ 0.95);
@@ -130,14 +133,14 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - latency benchmark (target < 50 µs);
   - MLflow model registry.
 - [ ] **Design system:** implement DESIGN.md v2 tokens/breakpoints as a shared Tailwind preset + component library, with a Playwright viewport-matrix CI check (DESIGN.md §6.8).
-- [ ] **M15 web UI v1:** strategy builder/registry, backtest viewer, risk-policy editor, positions, manual trade ticket. **Telegram bot v1:** alerts, `/kill`, `/status`, `/pause`, HITL approval cards and the C3 approve + TOTP path (retiring the break-glass CLI as the main path).
+- [ ] **M15 web UI v1:** strategy builder/registry, backtest viewer, risk-policy editor, positions, manual trade ticket. **Telegram bot v1** (Rust `mt-telegram-bot`): alerts, `/kill`, `/status`, `/pause`, HITL approval cards and the C3 approve + TOTP path (retiring the break-glass CLI as the main path).
 
 **Demo:** you create any strategy type on any timeframe (template, code or "describe it"), backtest it with realistic costs, validate it, and run it on paper behind the risk manager.
 
 ## Phase 3 — Journal & tax (weeks 12–15)
 - [ ] **M18 journal ingestion:** Nautilus fills, ccxt ledgers (funding, fees, transfers), broker statements (IBKR Flex, OANDA, IG), and on-chain events.
 - [ ] **FX and valuation:** RBA F11 for AUD (missing days: last business day; other currencies via USD); crypto valued per the hierarchy in [16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal); source and method recorded per event.
-- [ ] **Lot engine:** specific-ID → FIFO; FX-cash lots (Div 775); Decimal.
+- [ ] **Lot engine** (`mt-journal` crate): specific-ID → FIFO; FX-cash lots (Div 775); `rust_decimal`.
 - [ ] **Rules plugins:**
   - **AU_2026** plugin plus golden tests from ATO examples;
   - PAYG-instalment estimator (both ATO methods computed);
@@ -177,7 +180,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 **Demo:** a morning Telegram brief covering news, sentiment movers, global events mapped to assets, today's calendar with risk blackouts, and data/cost health. The canonical brief contents are in [mobile-and-telegram §3](ui/mobile-and-telegram.md#3-telegram-bot).
 
 ## Phase 5 — Airdrops, launches & curation queue (weeks 20–23)
-- [ ] **Custody tiers + intents-only signer** ([13 §1–2](13-wallets-treasury-and-onchain.md#1-custody-tiers)); the signer accepts intents only from the policy service; durable-nonce hard block; sized approvals; cost gate library `mt_onchain.costgate`. Vault and warm are watch-only.
+- [ ] **Custody tiers + intents-only signer** ([13 §1–2](13-wallets-treasury-and-onchain.md#1-custody-tiers)); the signer accepts intents only from the policy service; durable-nonce hard block; sized approvals; on-chain cost gate library (`mt-onchain` crate; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Vault and warm are watch-only.
 - [ ] **USER:** confirm wallet floats, signer caps and gas budgets ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)); signing stays disabled until you do. Prove control of each address by signing a challenge in your own wallet app.
 - [ ] **Wallet-indexer + unified wallet view** (D18) extending `ops.wallets`, internal-transfer tagging into the journal, approval/nonce/depeg monitors (depeg: alert + task until the P6 treasury exists). Kill switch sweep of hot trading balances to the vault (default on).
 - [ ] **M4 additions:** corroboration score, EV gate, burner-first + one identity wallet per chain, campaign record, project dossier, blacklist, wallet-cluster detection, disposal rule ([08](08-airdrops-and-token-launches.md#additions-from-the-cryptotrader-review-see-11-13)).
@@ -212,7 +215,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - train our own Qwen3-0.6B/1.7B + LoRA + classification head (distilled + outcome-corrected, calibrated, abstention);
   - serve via vLLM `/classify` or ONNX;
   - scores to NATS KV as tier-A features;
-  - thresholds and latency: [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) defaults, p95 < 50 ms on GPU.
+  - thresholds and latency: [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) defaults, p95 < 50 ms on GPU (CPU figures recorded; GPU-only checks run when a GPU is present, `models.gpu_profile: auto`).
 - [ ] **Decision-model bake-off:**
   - **Contenders:** own head vs fine-tuned Laya vs Clef-flash vs SemIf vs JSON generation, plus Kev-4B/9B only if a public, licence-compatible release exists (U).
   - **Data:** our data + FinMMEval Buy/Hold/Sell.
@@ -239,6 +242,10 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - DQ incidents;
   - journal reconciliation;
   - clean-week status per bot ([16 §2.5](16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)).
+- [ ] **Go-live pack:** you approve, once, the values agents seeded during the build (risk values, L0 ceilings, sleeves, first manifests), shown in D16 → Go-live preflight → Settings pack (C3). Everything stays editable afterwards.
+- [ ] **Runtime host and cloud choice** (yours; default: stay on the workstation): workstation, home server or Sydney cloud VM; optionally the web app on Vercel and the database on Supabase cloud (paid) ([18 §5](18-platform-and-deployment.md#5-deployment-modes)).
+- [ ] **Hardware key:** move the age identities from the OS keychain onto a YubiKey before live keys exist ([18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)).
+- [ ] **The shift** ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)): harden the runtime host for live money (LUKS, Tailscale-only SSH, firewall), migrate the database if it moves, deploy the web app if it moves, set up the egress IP, then rerun the full verification suite on the target. Live money starts only after it passes.
 - [ ] **Static AU egress:** a WireGuard/Tailscale exit node with a fixed IP; only that IP allow-listed on every key; egress IP/country check ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
 - [ ] **Safety drills** (kill switch, dead-man, restart) passed on each live venue.
 - [ ] Promote strategies that pass the [gates](03-build-spec.md#8-promotion-gates-per-strategy-configurable) to small live allocations (starting allocation set per bot, default A$2,000), using separate live sub-accounts with withdrawals disabled.
@@ -248,7 +255,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 Phase 7 closes once micro-live is stable. The **12-month keep/kill review** is a recurring calendar review (a scheduled task), not a phase item.
 
 ## Phase 8 — MCP control plane (last; only if you want it)
-- [ ] **`mt_mcp` adapter over `mt_api`:** read & analyse, talk to agents, trade & adjust positions, strategies, risk, curation. See [build spec M20](03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted).
+- [ ] **`mt-mcp` adapter (Rust, `rmcp`) over `mt-api`:** read & analyse, talk to agents, trade & adjust positions, strategies, risk, curation. See [build spec M20](03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted).
 - [ ] **Safeguards** ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)):
   - every MCP order creates your approval card (TTL default 5 min); MCP can never approve anything;
   - loosening risk is C3 (Telegram + TOTP), never a token scope;
@@ -260,6 +267,7 @@ Phase 7 closes once micro-live is stable. The **12-month keep/kill review** is a
 **Demo:** from Claude, "how are my strategies doing, tighten BTC max position to X, and close half my EURUSD", with the order confirmed on Telegram.
 
 ## Standing rules
+- **Workstation first, test, then shift.** Nothing runs live until the full verification suite passes on the chosen runtime host.
 - **Platform first, strategies second.** The system never hard-codes a trading style or timeframe.
 - **Paper first, always.** Live keys have no withdrawal rights, are IP-locked to the fixed egress IP, and start with small caps.
 - **Settings, not constants:** every limit, threshold and allocation is a default you change in settings ([16](16-configuration-and-safety-model.md)); tightening is immediate, loosening is C3.

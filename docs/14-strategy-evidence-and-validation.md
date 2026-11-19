@@ -128,6 +128,8 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - Capital is split into **sleeves (engines)**, each with its own capital, limits and kill switch, so one sleeve's bad week can't drain another.
 - The risk engine **nets exposure per asset across sleeves** and enforces a total per-asset cap.
 
+**Where it runs:** all of these are the one Rust crate **`mt-risk`**, linked into `mt-api`, the engine (via a PyO3 binding for Python strategies) and `mt-deadman`; the risk golden tests run against the crate ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
+
 **Default limits** (per sleeve unless noted). These are defaults, not fixed rules: the reference values live in [16 §2](16-configuration-and-safety-model.md#2-default-values-all-configurable); tightening is immediate, loosening is C3:
 
 | Limit | Default | On breach |
@@ -178,13 +180,14 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - **Universe:** **delisted, rugged and dead instruments stay in the universe.**
 - **Conventions:** one timezone and bar-close convention.
 - **Trial counter:** every run records its parameter set and a **trial counter, incremented automatically on every tweak** (it feeds deflated Sharpe).
+- **Data:** backtests read only through `pit(as_of)`: the Rust `mt-store` implementation, through its Python binding in the lab ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). The harness and lab are Python (`mt_lab`); strategies may be Rust or Python on the same NautilusTrader engine ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)).
 
 **Gates (all must pass):**
 1. **Leakage review:**
    - An adversarial checklist is run on the strategy code: look-ahead, survivorship, repainting indicators, costs, fill realism, full-sample fitting, regime coverage, alignment.
    - A model (via the gateway) answers present/absent per item, **quoting the exact line**.
    - Any "present" blocks the strategy until fixed or waived by you (`lab.leakage.waive`, C2, with the waiver audited).
-   - This runs alongside the freqtrade look-ahead/recursive analysers, vendored under `third_party/` with their GPL-3.0 licence and isolated in `mt_lab` (fine for personal, never-distributed use, [03 §1](03-build-spec.md#1-ground-rules); a SaaS would need a clean-room rewrite, [05](05-saas-legal-and-licensing.md)).
+   - This runs alongside the freqtrade look-ahead/recursive analysers, vendored under `third_party/` with their GPL-3.0 licence and isolated in the Python `mt_lab` package (fine for personal, never-distributed use, [03 §1](03-build-spec.md#1-ground-rules); a SaaS would need a clean-room rewrite, [05](05-saas-legal-and-licensing.md)).
 2. **Deflated Sharpe (DSR):**
    - DSR is a **probability** (0–1) that the strategy's true Sharpe is above zero, given all variants tried.
    - Inputs: per-period (not annualised) Sharpe, observation count, skew/kurtosis, variance of Sharpe across trials (the trial counter).
@@ -241,7 +244,7 @@ You have an existing **deterministic** system (EMA, scalping and rule-based stra
 1. **Shared libraries, not merged engines.**
    - A pure-function **indicator/signal library** (EMA, ATR, scalper triggers; no I/O), tested with **golden files** against MasterTradingBot's historical outputs.
    - A **sizing/risk library** (vol-targeting, per-asset caps, correlation buckets).
-   - These live in `mt_core`/`mt_strategy` as our own licence-clean code.
+   - These live in our own licence-clean code: Rust crates for deterministic strategies (they may be written in Rust from the start, [18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)) or `mt_strategy` for Python ones; sizing/risk rules go in `mt-risk`.
 2. **Execution stays on FP Markets** at first:
    - **Primary:** the MT5 Python API on a Windows VPS near FP's MT5 servers (LD4 vs NY4 is settled by your client-area server name). The VPS is hardened, reachable over Tailscale only, holds only the MT5 trade-only login and no other secrets ([07](07-security-notes.md)).
    - **Linux route:** FP Markets' **cTrader Open API**, the M12 cTrader adapter to prototype.

@@ -2,7 +2,7 @@
 
 This doc tightens two parts of the spec:
 1. **Trading bots:** you deploy a strategy onto a market or a selection of markets, then choose **autonomous** or **human-in-the-loop (HITL) via Telegram** per bot.
-2. **WORM records:** audit and journal data in Postgres are **write-once, read-many**, so they're tamper-evident and tamper-resistant.
+2. **WORM records:** audit and journal data in Supabase Postgres ([18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)) are **write-once, read-many**, so they're tamper-evident and tamper-resistant.
 
 Both build on existing modules: M0, M11, M12, M15 for bots; M17, M18 for WORM. The phases are in the [roadmap](roadmap/README.md).
 
@@ -94,7 +94,7 @@ Approvals come **only from you, on Telegram or the web**, and are bound to your 
 
 ### 1.5 API, data and UI
 
-- **Commands (`mt_api`):**
+- **Commands (`mt-api`):**
   - `bot.create` (C1);
   - `bot.update_scope`, `bot.update_params` (tighten C1; loosen C3, including widening the scope of an autonomous bot);
   - `bot.set_mode`: → paper C1; autonomous → hitl C1; paper → hitl **C2**; → autonomous **C3**;
@@ -128,21 +128,25 @@ Approvals come **only from you, on Telegram or the web**, and are bound to your 
 - the signer's signature ledger (`audit.signer_ledger`);
 - `audit.seal`.
 
-Market data hypertables and caches are **not** WORM, because they can be rebuilt from sources and Parquet.
+Market data tables (the monthly partitions of `market.bar_*`, [18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)) and caches are **not** WORM, because they can be rebuilt from sources and Parquet.
 
 ### 2.2 Layers
 
+The layers are the same in every deployment mode: self-hosted Supabase Postgres on the workstation or Supabase cloud ([18 §4.4](18-platform-and-deployment.md#44-point-in-time-and-worm)). Roles, grants, triggers and the hash-chain trigger are plain SQL in `supabase/migrations/`; pgTAP tests (`supabase test db`) hold them. The writer, the hash-chain helpers, the daily seal and the integrity response are the Rust **`mt-obs`** crate ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
+
 | Layer | Mechanism |
 |---|---|
-| **Privileges** | WORM tables are owned by `worm_owner`, a role whose credentials **aren't present on the running host** (used only for migrations, from an offline secret). App roles get `INSERT` + `SELECT` only. `UPDATE`, `DELETE`, `TRUNCATE` are revoked. No `ON DELETE CASCADE` reaches a WORM table. |
+| **Privileges** | WORM tables are owned by `worm_owner`, a role whose credentials **aren't present on the running host** (used only for migrations, from an offline secret). App roles get `INSERT` + `SELECT` only. `UPDATE`, `DELETE`, `TRUNCATE` are revoked. No `ON DELETE CASCADE` reaches a WORM table. Supabase's own API roles (`anon`, `authenticated`, `service_role`) get no grants on WORM tables (`service_role` bypasses RLS, so the grants are what stop it), and RLS is on with no policies. The `worm_owner` credential is never the Supabase `postgres` password or a service key. |
 | **Triggers** | `BEFORE UPDATE OR DELETE` and `BEFORE TRUNCATE` triggers **raise an exception** on every WORM table, as a second line if a grant is ever wrong. Partitions are never dropped inside the retention period (≥ 7 years). |
 | **Row hash chain** | Each row carries `chain_id`, `seq`, `prev_hash` and `row_hash = sha256(prev_hash ‖ canonical_json(row))`, computed in a `BEFORE INSERT` trigger and serialised per chain (advisory lock). Timestamps come from `clock_timestamp()` with chrony-synced time. |
 | **Daily seal** | A Merkle root per table per day goes to `audit.seal` and is **anchored outside the database**: (1) written to **immutable storage** (S3-compatible **Object Lock** in compliance mode, e.g. Backblaze B2; or a restic `rest-server --append-only` on a second box as the free option); (2) optionally an **OpenTimestamps** proof (free); (3) the root is sent to your Telegram as a timestamped witness. |
 | **Corrections** | Never edits. A correction is a new row with `supersedes_id`. "Current" views pick the latest row per key. **Acknowledgements are new rows too:** a DQ incident ack is an `audit.dq_ack` row referencing the incident, and an integrity ack is an `audit.integrity_incident` row; nothing is ever marked "acked" in place. |
-| **Write path** | Rows are written as events happen; inserts stay fast (p99 < 5 ms) and the order path **never waits on seals**. If Postgres is unreachable, writes buffer in NATS JetStream (default bound 1 GB or 24 h; above 80% new entries stop, exits continue). Nothing executes without a record ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)). |
+| **Write path** | Rows are written as events happen; inserts stay fast (p99 < 5 ms) and the order path **never waits on seals**. If the database is unreachable (local or cloud), writes buffer in NATS JetStream (default bound 1 GB or 24 h; above 80% new entries stop, exits continue). Nothing executes without a record ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)). |
 | **Encryption** | Sensitive columns use envelope encryption: yearly data keys wrapped by a master key. Key rotation **re-wraps the keys** in a non-WORM key table; rows are never re-encrypted (that would be an UPDATE). |
-| **Backups** | pgBackRest: continuous WAL archive, nightly incremental, weekly full, on immutable/append-only storage; a **monthly restore test**. A **monthly immutable export** of WORM tables (Parquet + manifest with hashes) is kept ≥ 7 years. |
+| **Backups** | Per mode ([18 §4.7](18-platform-and-deployment.md#47-backups)). Workstation: pgBackRest (continuous WAL archive, nightly incremental, weekly full) on immutable/append-only storage. Supabase cloud: Supabase's managed backups plus our own nightly logical dump to restic. Every mode: a **monthly restore test** and a **monthly immutable export** of WORM tables (Parquet + manifest with hashes), kept ≥ 7 years. |
 | **Verification** | `audit.verify` runs an **hourly incremental** check plus a **daily full verify**: it recomputes every chain and checks it against the anchored seals. A mismatch is a **critical incident** (see the integrity response below). |
+
+**Cloud caveat** ([18 §4.4](18-platform-and-deployment.md#44-point-in-time-and-worm)): on Supabase cloud the platform operator holds the real superuser, not you. Roles and triggers can't stop a privileged operator from changing rows. The **external seal** is what proves tampering there. It's unchanged and runs in every mode.
 
 **Integrity response** (defaults, configurable, [16 §2.11](16-configuration-and-safety-model.md#211-worm-integrity)):
 - A mismatch writes an `audit.integrity_incident` row and sets the `audit.integrity` status in NATS KV, which M11 reads **before every trade**.
@@ -158,7 +162,7 @@ Market data hypertables and caches are **not** WORM, because they can be rebuilt
   - compromised application credentials;
   - accidental edits;
   - a wrong migration.
-- **Not prevented, but detected:** someone with OS root rewriting the database. The external seals make any rewrite **detectable**.
+- **Not prevented, but detected:** someone with OS root rewriting the database, or (on Supabase cloud) the platform operator's superuser. The external seals make any rewrite **detectable**.
 - **Legal fit:** ATO record-keeping (≥ 5 years, 7 kept) and any later need to show an auditor an unbroken trail.
 
 ### 2.4 Tests (part of every phase that adds a WORM table)

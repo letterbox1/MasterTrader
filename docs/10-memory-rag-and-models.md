@@ -1,17 +1,17 @@
 # Memory, RAG & Model Serving (M9, M21)
 
-_Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware first principles. Latencies must be benchmarked on the actual box._
+_Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware first principles. Latencies must be benchmarked on the actual machine (your workstation now, the runtime host after the shift, [18 §5](18-platform-and-deployment.md#5-deployment-modes)). Code split: training, agents, memory and the tier B service are Python (`mt_models`, `mt_agents`, `mt_memory`); tier A inference can run in Rust ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary))._
 
 ## Summary
 
 | Area | Pick | Licence | Latency |
 |---|---|---|---|
-| Agent memory | **Hindsight 1.0.0**, self-hosted: **slim** image, our Postgres 16 in its own schema, local embedder + reranker via TEI, LLM via the LiteLLM gateway | MIT | Recall 100–600 ms with a CPU reranker (vendor figure); retain is LLM-bound (seconds) |
-| Embedder | **bge-small-en-v1.5** (384-d) now. **Qwen3-Embedding-0.6B** (Matryoshka 512/1024) once a GPU is available | MIT (U) / Apache-2.0 (U) | ~2–5 ms / ~40–100 ms per query on CPU (est.) |
+| Agent memory | **Hindsight 1.0.0**, self-hosted: **slim** image, our Supabase Postgres in its own schema, local embedder + reranker via TEI, LLM via the LiteLLM gateway | MIT | Recall 100–600 ms with a CPU reranker (vendor figure); retain is LLM-bound (seconds) |
+| Embedder | **bge-small-en-v1.5** (384-d) now. **Qwen3-Embedding-0.6B** (Matryoshka 512/1024) once a GPU is available (`models.gpu_profile: auto`) | MIT (U) / Apache-2.0 (U) | ~2–5 ms / ~40–100 ms per query on CPU (est.) |
 | Embedding/rerank server | **HF Text Embeddings Inference (TEI)**, CPU image, as **two containers** (`tei-embed`, `tei-rerank`; TEI serves one model per instance); **fastembed** (ONNX) for in-process use | Apache-2.0 | ~900–2,000 texts/s (Hindsight's measurement) |
 | Reranker | **bge-reranker-v2-m3** or **mxbai-rerank-base-v2**; ms-marco-MiniLM-L-6 if CPU is tight. **Avoid Jina rerankers** (CC-BY-NC) | Apache-2.0 | Tens to hundreds of ms for 30–50 pairs on CPU (U) |
-| Document RAG | Postgres: **pgvector HNSW (halfvec) + native tsvector/`ts_rank_cd` + pg_trgm**, fused with **Reciprocal Rank Fusion**, then cross-encoder rerank, recency decay and a **point-in-time filter** | PostgreSQL | ms-level retrieval + rerank |
-| Hot-path decision, **Decision One tier A** | **LightGBM** (or XGBoost/linear/small MLP) compiled to **ONNX Runtime / Treelite / lleaves**, run **in-process** inside the Nautilus strategy | MIT / Apache-2.0 | **~10–50 µs per prediction** (published benchmarks, indicative) |
+| Document RAG | Supabase Postgres: **pgvector HNSW (halfvec) + native tsvector/`ts_rank_cd` + pg_trgm**, fused with **Reciprocal Rank Fusion**, then cross-encoder rerank, recency decay and a **point-in-time filter** | PostgreSQL | ms-level retrieval + rerank |
+| Hot-path decision, **Decision One tier A** | **LightGBM** (or XGBoost/linear/small MLP) compiled to **ONNX Runtime / Treelite / lleaves**, run **in-process** inside the Nautilus strategy (Rust strategies: ONNX Runtime via the `ort` crate) | MIT / Apache-2.0 | **~10–50 µs per prediction** (published benchmarks, indicative) |
 | Text/context decisions, **Decision One tier B** | A **decision model** ("System One" class, no text generation). Stage 1 (project Phase 4): **SemIf**-style logit readout on Qwen3.5-4B (no training). Stage 2 (Phase 6): our own **Qwen3 0.6B/1.7B + LoRA + classification head** (Clef pattern), distilled and calibrated. Benchmarked against **Laya** and **Clef-flash** (both Apache-2.0) | Apache-2.0 / MIT | ~2–12 ms GPU for 0.6B (est.; SLO p95 < 50 ms); 0.6B on CPU ~100–400 ms; ~15–40 ms for 4B; Clef-flash ~0.4 s local |
 | Research / chat / debate routing | **LiteLLM proxy** (≥ 1.83, pinned by hash or image digest): Claude API → your custom endpoint → local model fallback (`llm-local`); monthly cap + per-role daily budgets ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); every call audited to `audit.llm_call` from P0 | MIT core | A few ms of overhead (U); **never on the hot path** |
 
@@ -24,13 +24,13 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 | Setting | Value |
 |---|---|
 | Image | `ghcr.io/vectorize-io/hindsight` **slim** variant (~500 MB; the full image is ~9 GB with bundled models), pinned by digest |
-| Database | Our Postgres 16: `HINDSIGHT_API_DATABASE_URL`, `HINDSIGHT_API_DATABASE_SCHEMA=hindsight`; `VECTOR_EXTENSION=pgvector`; `TEXT_SEARCH_EXTENSION=native` |
+| Database | Our Supabase Postgres (own `hindsight` schema and role; RLS deny-all for the API roles like every table): `HINDSIGHT_API_DATABASE_URL`, `HINDSIGHT_API_DATABASE_SCHEMA=hindsight`; `VECTOR_EXTENSION=pgvector`; `TEXT_SEARCH_EXTENSION=native` |
 | Embeddings | `HINDSIGHT_API_EMBEDDINGS_PROVIDER=tei` → our `tei-embed` container running bge-small-en-v1.5. The **same embedder as document RAG**, so one model serves both. |
 | Reranker | `HINDSIGHT_API_RERANKER_PROVIDER=tei` → our `tei-rerank` container (bge-reranker-v2-m3). Lower the candidate count (default 300) to cut recall time. |
 | LLM (retain / consolidate / reflect) | `HINDSIGHT_API_LLM_PROVIDER=litellm` → our gateway. Spend is metered and capped, and the provider can be switched (Claude, custom endpoint, local Qwen) without touching Hindsight. For small local models: set `HINDSIGHT_API_LLM_STRICT_SCHEMA=true` and `RETAIN_MAX_COMPLETION_TOKENS` (> 3000). |
 | Access | API :8888 and UI :9999, internal network only. Hindsight's built-in **MCP endpoint** (`/mcp/{bank_id}/`) is **not exposed**: in Phase 8, memory is reachable over MCP only through our `mcp` server (M20), so token scopes, the provenance filter and `audit.mcp_call` apply ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)). |
 | Telemetry | No phone-home was found. OpenTelemetry and Prometheus are opt-in. |
-| Footprint | API ~1–1.5 GB RAM (slim: 0.5–1 GB) + Postgres |
+| Footprint | API ~1–1.5 GB RAM (slim: 0.5–1 GB) + the shared Supabase Postgres |
 
 > ⚠️ **The embedding dimension is fixed once memories exist.** Changing it means re-embedding everything. Choose 384-d (bge-small) now. If we later move to Qwen3-Embedding, do a planned re-embed migration.
 
@@ -47,7 +47,7 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 - **Timestamps:** every memory carries `observed_at` (when the fact or event it records happened) and `ingested_at` (when we stored it).
 - **Derived memories:** consolidated/reflection memories (observations, mental models) carry the **latest** `observed_at`/`ingested_at` of their sources, not their own creation time.
 - **Filter:** at `as_of`, a memory is visible only if both its times are ≤ `as_of`; derived memories whose latest source time is > `as_of` are excluded.
-- **Enforcement:** `mt_memory` applies the filter (over-fetch, then post-filter with a lineage check), since Hindsight's own API may not filter on these times (U).
+- **Enforcement:** `mt_memory` (Python) applies the filter (over-fetch, then post-filter with a lineage check), since Hindsight's own API may not filter on these times (U).
 - **Fallback:** if Hindsight can't enforce this, backtests run with memory **disabled**, or from a **frozen per-`as_of` snapshot** of the bank.
 - **Test:** a PIT recall test is **mandatory** in CI. It seeds memories after `as_of` (including a consolidated memory that summarises older facts plus one newer fact) and asserts none are recalled.
 
@@ -160,7 +160,8 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
 - **Model and runtime:**
   - LightGBM/XGBoost/linear/small MLP;
   - compiled to **ONNX Runtime / Treelite / lleaves**;
-  - **in-process** in the Nautilus strategy (no network hop).
+  - **in-process** in the Nautilus strategy (no network hop);
+  - a Python strategy uses the Python runtimes; a Rust strategy or the Rust live node loads the same exported **ONNX** model through `ort` ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)). Training stays Python (M7); a parity test checks the Rust and Python scores match on a fixed sample before promotion.
 - **Latency:** ~10–50 µs.
 - **Calibration:** isotonic/Platt on a time-ordered holdout, tracking Brier/ECE.
 - **Inputs:** M6 numeric features + **cached tier B scores** (from NATS KV).
@@ -222,6 +223,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
 - **Backtests:** run on CPU ONNX FP32 so they reproduce exactly.
 
 **Hardware:**
+- GPU is optional: `models.gpu_profile: auto` ([16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions)) uses a GPU if one is detected, else the CPU profiles (the default). GPU-only checks run only when a GPU is present.
 - Tier A: CPU only.
 - Tier B at ~10 ms: one consumer GPU (16–24 GB also covers Clef-flash FP8 and the Hindsight/LightRAG LLM work). Without a GPU, tier B runs on CPU at hundreds of ms and serves slower flags only.
 
@@ -235,7 +237,7 @@ Everything else (M8 debate agents, M7 strategy generator, M10 explain agent, Hin
 model_list:
   - model_name: research-primary      # Claude (Anthropic API, prompt caching on)
   - model_name: research-custom       # your custom OpenAI-compatible endpoint
-  - model_name: local-advisor         # llm-local container: llama-server (CPU, small Qwen GGUF) from P0; vLLM Qwen3.5-4B (or 9B) once a GPU exists
+  - model_name: local-advisor         # llm-local container: llama-server (CPU, small Qwen GGUF) from P0; vLLM Qwen3.5-4B (or 9B) when a GPU is detected (models.gpu_profile: auto)
   - model_name: local-embed           # tei-embed container, bge-small (embeddings)
 router_settings:
   routing_strategy: latency-based-routing

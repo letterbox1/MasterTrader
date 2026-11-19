@@ -7,7 +7,7 @@
 | **Depends on** | P0 (TEI, gateway, provenance columns), P1 (store patterns, monitor), P2 (risk blackout hook, features framework) |
 | **Unlocks** | P5 (Discord/Telegram discovery for airdrops), P6 (agents, RAG, tier B stage 2 training data) |
 | **Modules** | M2 news & social, M3 global events, M5 calendars, M6 sentiment/regime features, M9 document RAG, M21 tier B stage 1 (SemIf) |
-| **Containers** | `ingest-text`, `rss-bridge`, `nlp`, `ingest-events`, `decision-svc` (SemIf) |
+| **Containers** | `ingest-text` (Python: Telethon, trafilatura, crawl4ai), `rss-bridge`, `nlp` (Python), `ingest-events` (`mt-events`, Rust), `decision-svc` (SemIf) ([18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
 | **Dashboards** | [D08](../ui/dashboards/D08-intel.md) Intel; tier B outputs on [D02](../ui/dashboards/D02-markets.md) and [D01](../ui/dashboards/D01-cockpit.md) |
 | **Primary docs** | [03 M2](../03-build-spec.md#m2-news--social--mt_datatext) · [03 M3](../03-build-spec.md#m3-global-events--mt_dataevents) · [03 M5](../03-build-spec.md#m5-calendars--mt_datacalendar) · [03 M6](../03-build-spec.md#m6-features--mt_features) · [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · [10 §3](../10-memory-rag-and-models.md#3-document-rag-design-postgres) · [10 §4.3](../10-memory-rag-and-models.md#43-design) · [12 §4](../12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [02 F3](../02-v1-architecture.md#8-end-to-end-flows) |
 
@@ -19,7 +19,7 @@
 
 ## 2. Entry criteria
 
-- P2 exit met (risk blackout hook exists). Telegram account + Discord server/bot ready (T0.06, T0.07). GPU decision made (T0.01) or CPU fallback accepted.
+- P2 exit met (risk blackout hook exists). Telegram account + Discord server/bot ready (T0.06, T0.07). Model profile selected (T0.01): CPU by default, GPU when one is present (`models.gpu_profile: auto`).
 
 ## 3. Requirements
 
@@ -61,7 +61,7 @@
 - [ ] **T4.22** `BUILD` Discord bot (discord.py), Bluesky Jetstream, Mastodon, Farcaster clients. → R4.04, R4.05
 - [ ] **T4.23** `BUILD` `nlp` service: provenance gate, dedupe, relevance gate, entity linking, FinBERT, TEI embeddings. → R4.06
 - [ ] **T4.24** `BUILD` `mt_memory` RAG: chunkers, hybrid retrieval, RRF, rerank, `as_of`, caches. → R4.07
-- [ ] **T4.25** `BUILD` `mt_data.events` + exposure map + event score; Polymarket/Kalshi read-only clients. → R4.08, R4.09
+- [ ] **T4.25** `BUILD` `mt-events` pollers (Rust) + exposure map + event score; Polymarket/Kalshi read-only clients. → R4.08, R4.09
 - [ ] **T4.26** `BUILD` `mt_data.calendar` + blackout query API consumed by M11, with the default blackout window (±15 min, `event_sensitive` bots). → R4.10
 - [ ] **T4.27** `BUILD` Feature pipelines for sentiment/regime per market type, positioning, nowcasts, Fed path, VIX regime, forecasts. → R4.11
 - [ ] **T4.28** `BUILD` `decision-svc` stage 1: question registry, SemIf readout, KV publishing, determinism controls (prefix caching off, fixed batch on the decision path) and logging; stage-1 queue off the order path. → R4.12, R4.N2
@@ -105,5 +105,5 @@ Text/social/event/calendar ingestion · Telegram postures · RAG · sentiment/re
 | Risk | Mitigation |
 |---|---|
 | Source volume overwhelms the relevance gate | Per-source caps; mute in D08; relevance hit-rate tracking |
-| CPU-only SemIf is slow | Restrict to the relevance gate until the GPU arrives |
+| CPU-only SemIf is slow | Restrict to the relevance gate while no GPU is present (`models.gpu_profile: auto`) |
 | Free-API terms change (Finnhub ML clause, CryptoPanic) | Read terms before enabling; provenance flags per source |

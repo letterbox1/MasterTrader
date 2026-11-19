@@ -1,6 +1,6 @@
 # MasterTrader — Build Spec (personal-use edition, v2)
 
-**Context:** a proprietary, private, single-user platform. The aim is **minimal hoops**: use whatever works best (including GPL/AGPL code), self-host on one machine, **free data and free tiers only**, and keep only the disciplines that protect money, records and future options.
+**Context:** a proprietary, private, single-user platform. The aim is **minimal hoops**: use whatever works best (including GPL/AGPL code), self-host (your workstation first, [18](18-platform-and-deployment.md)), **free data and free tiers only**, and keep only the disciplines that protect money, records and future options.
 
 **Design stance:** MasterTrader is a **platform, not a strategy**.
 - It doesn't presume any trading style or timeframe.
@@ -17,6 +17,7 @@ Companion docs:
 - [15 bots, HITL & WORM records](15-bots-hitl-and-worm-audit.md)
 - [16 configuration, defaults & failure safety](16-configuration-and-safety-model.md)
 - [17 decisions register](17-decisions-register.md) (the decision for every planning gap)
+- [18 platform & deployment](18-platform-and-deployment.md) (canonical for languages, the database, deployment modes and the workstation-first path; where this spec and 18 differ on those, 18 wins)
 
 ---
 
@@ -24,6 +25,7 @@ Companion docs:
 
 | Rule | Meaning |
 |---|---|
+| **Languages** | **Rust first** for every service we write; **Python only where necessary**: ML training, agents/RAG, Python-only data SDKs (OpenBB, edgartools, Telethon, trafilatura), Python strategies and the research lab. TypeScript for the web app. **Python services never place orders or sign**: they publish to NATS or call `mt-api`, so every order still passes `mt-risk`, and research reads only through `pit(as_of)` ([18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)). |
 | **Personal use** | GPL/AGPL code can be used directly, because nothing is distributed or served to others (e.g. freqtrade's analysers are vendored in M7). Yahoo, Myfxbook, ForexFactory and similar personal-use terms are fine. Keep the repo **private**. |
 | **Configuration** | **Nothing that shapes trading is hard-coded.** Limits, sizing, drawdown triggers, capital steps, wallet caps, gas budgets, validation gates, approval timers and failure behaviour are configuration with documented defaults ([16](16-configuration-and-safety-model.md)). Layers inherit **tighten-only**: L0 hard ceilings (edited in the agent/bot strategy settings; the ceilings section applies to every bot) → L1 system → L2 venue/account → L3 sleeve → L4 bot; the effective value is the strictest. Tightening is immediate; loosening is C3, at every layer including L0. A strategy manifest *proposes* values, never imposes them. Every change is a versioned WORM row ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)). |
 | **Free only** | Only free sources and free tiers. A single user should stay under the free limits. **Excluded (paid):** X API, CoinGlass, CME FedWatch API, TokenSniffer, Glassnode, Trading Economics, Databento credits, paid exchange data. **Every connector has a quota tracker that throttles before the limit.** |
@@ -40,64 +42,79 @@ Companion docs:
 
 | Item | Choice |
 |---|---|
-| Host | One Linux box: 8–16 cores, 32–64 GB RAM, **2–4 TB NVMe** (tick/L2 storage), plus a HDD for cold Parquet. Optional GPU for local LLMs. Full-disk encryption. |
-| Language / packaging | Python 3.12, `uv` workspace monorepo |
-| Runtime | Docker Compose, with images pinned by digest |
-| Engine | **NautilusTrader** (pinned), event-driven: the same code runs backtest, sandbox/paper and live |
+| Host | **Workstation first.** Phases 0–6 build, test and paper-trade on your workstation (Mode 1); no dedicated host, full-disk encryption, Tailscale or hardware key is needed before Phase 7. The optional shift to a runtime host (workstation, home server or Sydney VM), Vercel and Supabase cloud is a set of Phase 7 OPS tasks: P7-T071 (choose), P7-T072 (YubiKey), P7-T073 (harden, migrate, deploy, re-verify) ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)). As a guide for an always-on runtime host: 8–16 cores, 32–64 GB RAM, **2–4 TB NVMe** (tick/L2 storage), plus a HDD for cold Parquet; full-disk encryption from the shift. |
+| Deployment modes | `deploy.mode`: `workstation` (default) \| `hybrid` \| `regional` ([18 §5](18-platform-and-deployment.md#5-deployment-modes), [16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions)). The always-on services (engine, dead-man, recorder, NATS, workers, signer) never run on Vercel ([18 §6](18-platform-and-deployment.md#6-what-cant-run-on-vercel-and-why)). |
+| Language / packaging | **Rust** (Cargo workspace, `crates/`) first; **Python 3.12** (`uv` workspace, `packages/`) only where necessary; **TypeScript** (`pnpm`) for `apps/web`. One `just` (or `make`) entry point runs the lot. |
+| Runtime | Docker Compose, one compose file per mode in `infra/`, with images pinned by digest |
+| Engine | **NautilusTrader** (pinned), event-driven: the same code runs backtest, sandbox/paper and live. The **Rust live node** runs where the venue's Rust adapter is production-ready (U, per venue), otherwise the Python node; both link `mt-risk` |
 | Bus | **NATS JetStream** (market data fan-out, events, alerts) |
-| Databases | **Postgres 16 + TimescaleDB (TSL Community image) + pgvector** is the system of record. **Nautilus ParquetDataCatalog + DuckDB** hold raw ticks/L2. **QuestDB** is optional, only if live SQL over raw ticks is ever needed. |
+| Databases | **Supabase Postgres** (Postgres 17 with pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U)) is the system of record. **No TimescaleDB** (deprecated on Supabase Postgres 17): bars use monthly native partitions ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)). Where it runs (`db.target`): Supabase CLI for development and tests, self-hosted Supabase on the workstation (default), optionally Supabase cloud in Sydney (paid; a USER decision at shift time) ([18 §4.1](18-platform-and-deployment.md#41-where-it-runs)). **Nautilus ParquetDataCatalog + DuckDB** hold raw ticks/L2. **QuestDB** is optional, only if live SQL over raw ticks is ever needed. |
+| Auth | **Supabase Auth**: your one account, password + TOTP MFA, sign-ups off. `mt-api` verifies the JWT and requires `aal2` for every command ([18 §4.6](18-platform-and-deployment.md#46-auth)) |
+| Web hosting | The same SPA served locally by Caddy (`web.host: local`, default) or deployed to Vercel (`web.host: vercel`); the browser never talks to the database ([18 §4.5](18-platform-and-deployment.md#45-access-rules)) |
 | Observability | **Grafana + Loki** (logs, shipped by Vector) + **Prometheus** (metrics) + **OpenTelemetry** traces. **One alert fan-out:** Grafana alerts → webhook → the `alert.*` consumer → Telegram / ntfy / email |
 | Models | **Decision One** (M21): tier A = in-process compiled GBDT/ONNX (~10–50 µs) in the order path; tier B = **decision models** (SemIf readout → own Qwen3 + LoRA + classification head, ~2–12 ms on GPU) for text/context judgements, async. Research/chat/debate go through the **LiteLLM gateway** → Claude API / your custom endpoint / local fallback. Local fallback model served by `llm-local` (llama-server on CPU or vLLM on GPU) for the `local-advisor` route. Embeddings and rerank via **two TEI containers**: `tei-embed` (bge-small-en-v1.5) and `tei-rerank` (bge-reranker-v2-m3). See [10](10-memory-rag-and-models.md). |
-| GPU (recommended) | One consumer GPU (16–24 GB VRAM) makes tier B fast: ~2–12 ms per decision (0.6B head), p95 SLO < 50 ms. Without one, tier B runs CPU ONNX at ~100–400 ms per decision and is used only for slower flags ([10 §4.3](10-memory-rag-and-models.md#43-design)) |
+| GPU (optional) | `models.gpu_profile: auto` uses a GPU if one is detected, otherwise CPU profiles (the default); GPU-only checks run only when a GPU is present ([16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions)). One consumer GPU (16–24 GB VRAM) makes tier B fast: ~2–12 ms per decision (0.6B head), p95 SLO < 50 ms. Without one, tier B runs CPU ONNX at ~100–400 ms per decision and is used only for slower flags ([10 §4.3](10-memory-rag-and-models.md#43-design)) |
 | Orchestration | Prefect (batch and scheduled flows); long-running services under Compose |
-| Access | Everything bound to localhost or the internal network; remote access via **Tailscale** only |
-| Secrets | `sops` + `age` encrypted file → tmpfs at start. The encrypted file lives **outside this repo** (e.g. `~/.config/mastertrader/`), backed up by restic ([07 §2](07-security-notes.md#2-secrets)) |
+| Access | Everything bound to localhost or the internal network. Remote access via **Tailscale** only, and only where needed: phone access, hybrid mode with `api.exposure: tailnet` (default), and the go-live egress exit node ([18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) |
+| Secrets | `sops` + `age` encrypted file → tmpfs at start. The encrypted file lives **outside this repo** (e.g. `~/.config/mastertrader/`), backed up by restic ([07 §2](07-security-notes.md#2-secrets)). The age identities sit in the OS keychain (or a passphrase-protected age file) until Phase 7, then on a YubiKey before live money (`secrets.age_identity_store`, P7-T072) |
 
 ---
 
 ## 3. Repository layout
 
-This is the **canonical** layout; [02 §11](02-v1-architecture.md#11-repository-layout) points here. The full container list is in [02 §3.2](02-v1-architecture.md#32-containers).
+This is the **canonical** layout; [02 §11](02-v1-architecture.md#11-repository-layout) points here and [18 §3](18-platform-and-deployment.md#3-repository-layout) summarises it. Crate and package names follow [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary). The full container list is in [02 §3.2](02-v1-architecture.md#32-containers).
 
 ```
 MasterTrader/
-├── pyproject.toml / uv.lock      # uv workspace
-├── packages/                     # Python packages
-│   ├── mt_core/        # shared types (Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent), config, clock, logging
-│   ├── mt_store/       # schema definitions (all 13 schemas in §4), point-in-time query API, WORM helpers, Parquet catalog helpers
-│   ├── mt_data/        # connectors + recorders: market (M1), text/social (M2), events (M3), calendars (M5); quota tracker
-│   ├── mt_features/    # feature library + evaluator (M6)
-│   ├── mt_strategy/    # strategy framework: base classes, templates, registry, parameter schemas, multi-timeframe helpers (M0)
-│   ├── mt_lab/         # backtest/sim orchestration, validation, optimisation, sandboxed LLM strategy generation (M7)
-│   ├── mt_agents/      # LangGraph decision graph + tools (M8)
-│   ├── mt_memory/      # Hindsight agent memory + document RAG (hybrid pgvector/tsvector, rerank) + decision settlement (M9)
-│   ├── mt_models/      # Decision One tier A runtime + tier B advisor client, model registry, distillation, gateway config (M21)
-│   ├── mt_anomaly/     # anomaly detectors + explain agent (M10)
-│   ├── mt_risk/        # risk manager: policies, pre-trade checks, portfolio risk, kill switch, dead-man's switch incl. the `deadman` sidecar (M11)
-│   ├── mt_engine/      # Nautilus wrapper + custom adapters (Alpaca, OANDA, IG, cTrader, MT5) (M12)
-│   ├── mt_monitor/     # live data-quality + cost/TCA monitor (M16)
-│   ├── mt_obs/         # logging/metrics/tracing setup, audit writers, LLM-call audit (M17)
-│   ├── mt_journal/     # journal ingestion, lot engine, FX service, jurisdiction plugins, reports, exports (M18)
-│   ├── mt_airdrop/     # airdrop/launch discovery, risk & viability scoring, mandates, claim executor (M4)
-│   ├── mt_curation/    # user task queue + community curation (Discord/Telegram/Galxe) + digests (M19)
-│   ├── mt_onchain/     # on-chain helpers: the cost gate library (`mt_onchain.costgate`), simulation, live fee inputs
-│   ├── mt_signer/      # intents-only signer for hot/burner/identity keys; accepts intents only from the policy service; writes `audit.signer_ledger` (13 §2)
-│   ├── mt_treasury/    # wallets registry + unified view, custody tiers, signer client, hold-and-earn, yield allocator, DAO/depeg/exploit monitors (M22)
-│   ├── mt_social/      # social participation: drafts → your approval → web-intent post; credibility + shill-burst posture (M23)
-│   ├── mt_api/         # internal command API used by UI, Telegram and (later) MCP; all actions go through it
-│   ├── mt_ui/          # Telegram bot (M15); the web app is `apps/web`
-│   └── mt_mcp/         # (Phase 8, last) MCP server: thin adapter over mt_api (M20)
-├── apps/web/           # React + TypeScript SPA (M15 web UI, [02 §10](02-v1-architecture.md#10-frontend-architecture)), served by Caddy
-├── infra/              # docker-compose.yml (images pinned by digest), caddy, grafana dashboards, prometheus/alert rules, sops config (no secrets), host provisioning, seeds
-├── migrations/         # Alembic migrations for every schema
-├── services/           # hummingbot (M13), crowdsim (M14), rss-bridge config, optional rotki / ghostfolio / beancount-fava
-├── strategies/         # user strategies (any type), each with a manifest
-├── third_party/        # vendored code (pinned commit + licence) + LICENSES.md
+├── Cargo.toml / Cargo.lock       # Rust workspace
+├── crates/                       # Rust crates (18 §2.1)
+│   ├── mt-core/          # shared types (Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent), config, clock, message schemas (Python models generated from them), quota-tracker client (U: crate not yet named in 18 §2.1)
+│   ├── mt-api/           # command layer (M15): axum + tokio REST/WS, utoipa OpenAPI, Supabase JWT check (aal2), C0–C3 confirmations; used by the web app, Telegram and (later) MCP
+│   ├── mt-risk/          # risk manager (M11): policies, pre-trade checks, portfolio risk, kill switch; one crate linked into mt-api, the engine (PyO3 binding for the Python node) and mt-deadman
+│   ├── mt-deadman/       # dead-man layer 2 sidecar: small static binary, own trade-only keys, cancel/flatten only (M11)
+│   ├── mt-engine/        # NautilusTrader live node + custom Rust adapters (Alpaca, OANDA, IG, cTrader); MT5 Windows bridge ((U) language) (M12)
+│   ├── mt-recorder/      # streaming market data (M1): venue WS → Parquet catalog + standard bar sizes into monthly partitions, rollup job
+│   ├── mt-monitor/       # live data-quality + cost/TCA + reconciliation + egress check (M16)
+│   ├── mt-store/         # pit(as_of) read path with Python bindings (PyO3 module `mt_store`), WORM helpers, Parquet catalog helpers, partition job; sqlx compile-checked queries
+│   ├── mt-obs/           # WORM writer, hash chain, daily seal, integrity response, tracing/metrics, LLM-call audit (M17)
+│   ├── mt-signer/        # intents-only signer for hot/burner/identity keys (alloy for EVM, Solana SDK); accepts intents only from the policy service; writes `audit.signer_ledger` (13 §2)
+│   ├── mt-journal/       # journal ingestion, lot engine, FX service, jurisdiction plugins, reports, exports; rust_decimal; tax golden tests (M18)
+│   ├── mt-events/        # global-event pollers: USGS, GDACS, NOAA, FIRMS, ReliefWeb, UCDP, Kalshi, Polymarket (M3)
+│   ├── mt-telegram-bot/  # Telegram bot (teloxide, Bot API): alerts, digests, approvals, task buttons, /kill (M15)
+│   ├── mt-mcp/           # (Phase 8, last) MCP server on the official Rust SDK (rmcp): thin adapter over mt-api (M20)
+│   ├── mt-onchain/       # on-chain helpers: the cost gate (`costgate`), simulation calls to Anvil, live fee inputs
+│   ├── mt-treasury/      # wallet-indexer + unified view, custody tiers, signer client, hold-and-earn, yield allocator, DAO/depeg/exploit monitors (M22)
+│   └── mt-airdrop-exec/  # airdrop policy service: mandated claims, simulation, revokes, sweeps (M4 execution)
+├── pyproject.toml / uv.lock      # uv workspace (Python only where necessary)
+├── packages/                     # Python packages (18 §2.2)
+│   ├── mt_strategy/      # Python strategies on Nautilus's strategy API: base classes, templates, registry, parameter schemas, multi-timeframe helpers (M0)
+│   ├── mt_lab/           # backtest/sim orchestration, validation, optimisation, sandboxed LLM strategy generation (M7)
+│   ├── mt_features/      # feature library + evaluator, research side (M6); `mt_features.text` is the nlp service
+│   ├── mt_models/        # model training, Decision One tier B advisor + decision-svc, model registry, distillation, gateway config (M21)
+│   ├── mt_anomaly/       # anomaly detectors + explain agent (M10)
+│   ├── mt_agents/        # LangGraph decision graph + tools (M8)
+│   ├── mt_memory/        # Hindsight agent memory + document RAG (hybrid pgvector/tsvector, rerank) + decision settlement (M9)
+│   ├── mt_data/          # batch flows (Prefect) on Python-only SDKs: macro, fundamentals, calendars (M5), backfills; `mt_data.text`: ingest-text with Telethon (M2); the intel-writer; quota tracker
+│   ├── mt_airdrop/       # airdrop/launch discovery, risk & viability scoring (M4); signing goes through mt-airdrop-exec and mt-signer
+│   ├── mt_curation/      # user task queue + community curation (Discord/Telegram/Galxe) + digests (M19)
+│   ├── mt_social/        # social participation: drafts → your approval → web-intent post; credibility + shill-burst posture (M23)
+│   └── mt_journal/       # only statement parsers that need a Python-only library; the journal itself is crates/mt-journal (M18)
+├── apps/web/             # React + TypeScript SPA (M15 web UI, [02 §10](02-v1-architecture.md#10-frontend-architecture)), served by Caddy or Vercel; vercel.json for the optional Vercel deploy
+├── supabase/             # config.toml, migrations/*.sql (all 13 schemas in §4), seed.sql, tests/ (pgTAP: schema, WORM and pit invariants)
+├── infra/                # compose files per mode (images pinned by digest), caddy, grafana dashboards, prometheus/alert rules, sops config (no secrets), host provisioning (P7 shift), seeds
+├── services/             # hummingbot (M13), crowdsim (M14), rss-bridge config, optional rotki / ghostfolio / beancount-fava
+├── strategies/           # user strategies (Python or Rust, any type), each with a manifest
+├── third_party/          # vendored code (pinned commit + licence) + LICENSES.md
 ├── notebooks/  tests/  docs/  docs/runbooks/  ui-examples/  brand/  DESIGN.md
 ```
 
-**Design choice that keeps MCP cheap later:** every user action (change a risk limit, pause a strategy, adjust a position, approve an order, mark a task) is a typed command in **`mt_api`**.
-- The web UI and the Telegram bot call `mt_api` from day one.
+**Builds and checks:**
+- Rust: `cargo test -p <crate>` and `cargo clippy`. Python: `uv run pytest`. Web: `pnpm test` and `pnpm playwright`.
+- **Migrations:** plain SQL in `supabase/migrations/` (no Alembic). Applied locally with `supabase db reset` / `supabase migration up`, and to a cloud project with `supabase db push`. SQL invariants: `supabase test db` (pgTAP).
+- The golden tests (risk, `pit`, WORM, tax) live in the Rust crates; `pit` is also tested through its Python binding.
+
+**Design choice that keeps MCP cheap later:** every user action (change a risk limit, pause a strategy, adjust a position, approve an order, mark a task) is a typed command in **`mt-api`**.
+- The web UI and the Telegram bot call `mt-api` from day one.
 - The MCP server (M20) is then just a thin adapter that exposes the same commands to Claude.
 - It needs no new business logic, so building it last costs little.
 
@@ -105,8 +122,8 @@ MasterTrader/
 
 ## 4. Data model (overview)
 
-Postgres schemas (one canonical list; **all 13 are created in Phase 0**, later phases add tables additively):
-- **`market`**: instruments, bars (hypertables), cost and spread series, funding/swap rates.
+**Supabase Postgres** schemas (one canonical list; **all 13 are created in Phase 0** by SQL migrations in `supabase/migrations/`, later phases add tables additively with new migration files). The same migrations deploy to the local stack and, optionally, Supabase cloud ([18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)):
+- **`market`**: instruments, bars (monthly native range partitions, created ahead by pg_partman where available, otherwise by the `mt-store` partition job on pg_cron (U); [18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)), cost and spread series, funding/swap rates.
 - **`text`**: documents, events, calendars, Telegram postures (`text.telegram_posture`).
 - **`features`**
 - **`strategy`**: registry, runs, results, bots.
@@ -122,14 +139,24 @@ Postgres schemas (one canonical list; **all 13 are created in Phase 0**, later p
 
 Raw ticks, quotes and L2 live in the **Parquet catalog**.
 
+**Bars without TimescaleDB** ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)):
+- `mt-recorder` writes 1s bars and every standard size (1m, 5m, 15m, 1h, 4h, 1D, 1W) as it builds them from ticks.
+- Backfills and corrections re-run an idempotent rollup job (upsert by key) that rebuilds the higher sizes from 1m.
+- Any other size is `date_bin()` at read time inside `pit(as_of)`.
+- Bars older than `db.bars_hot_months` ([16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions)) are exported to Parquet and their partitions dropped; `pit(as_of)` reads both transparently.
+
+**Access rules** ([18 §4.5](18-platform-and-deployment.md#45-access-rules)): row-level security on every table with no policies for `anon` and `authenticated` (deny all); the Supabase Data API and Realtime off for MasterTrader schemas; the browser reads only through `mt-api`. Supabase Storage holds private buckets for reports, tax exports and attachments.
+
 **Point-in-time rule:**
 - Every fact carries an `event_time` and an `ingest_time`.
-- Research and backtests read only through `mt_store.pit(as_of=…)`.
-- A CI test fails if a module bypasses it.
+- Research and backtests read only through `pit(as_of=…)` in the `mt-store` crate; Python code calls the same implementation through its binding, `mt_store.pit(as_of=…)`.
+- A CI test fails if a module, Rust or Python, bypasses it.
 
 **Audit tables are WORM** (write-once, read-many; full design in [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)):
 - Owned by an offline `worm_owner` role; app roles INSERT/SELECT only; UPDATE/DELETE/TRUNCATE revoked and blocked by triggers.
 - Per-row hash chain (`prev_hash`, `row_hash`) plus a daily Merkle seal anchored outside the DB (object-locked storage, optional OpenTimestamps, Telegram witness).
+- pgTAP tests (`supabase test db`) hold the WORM invariants.
+- On Supabase cloud the platform operator holds the real superuser, so the external seal is what proves tampering; it runs in every mode ([18 §4.4](18-platform-and-deployment.md#44-point-in-time-and-worm)).
 
 **Append-only rules:**
 - Insert-only DB roles.
@@ -137,7 +164,7 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
 - Corrections are new rows that reference the original.
 - WORM insert p99 < 5 ms; the order path never waits on seals.
 
-(Full column lists live in each module's spec and in migrations. Earlier tables (`document`, `geo_event`, `calendar_event`, `signal`, `decision_log`, `exposure_map`) are kept.)
+(Full column lists live in each module's spec and in `supabase/migrations/`. Earlier tables (`document`, `geo_event`, `calendar_event`, `signal`, `decision_log`, `exposure_map`) are kept.)
 
 ---
 

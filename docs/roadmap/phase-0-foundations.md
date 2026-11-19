@@ -2,47 +2,47 @@
 
 | | |
 |---|---|
-| **Goal** | A secure, reproducible single-box stack with the system of record, the audit chain, the `mt_api` command layer and the web shell, so every later phase plugs into it. |
+| **Goal** | A secure, reproducible stack on your workstation with the system of record, the audit chain, the `mt-api` command layer and the web shell, so every later phase plugs into it ([18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)). |
 | **Duration** | Weeks 1–2 (plus the "do now" account actions, which run in parallel and gate later phases) |
 | **Depends on** | Nothing |
 | **Unlocks** | Every other phase |
-| **Modules** | `mt_core`, `mt_store`, `mt_api`, M17 observability & audit, M21 gateway pieces (LiteLLM, TEI, local model), M15 shell |
-| **Containers** | `caddy`, `mt-api`, `postgres`, `nats`, `prefect-*`, `grafana`/`loki`/`prometheus`/`vector`/`alertmanager`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `docker-proxy` ([02 §3.2](../02-v1-architecture.md#32-containers)) |
+| **Modules** | Core types, `mt-store` (`pit` with Python bindings), `mt-api`, M17 observability & audit (`mt-obs`), M21 gateway pieces (LiteLLM, TEI, local model), M15 shell |
+| **Containers** | Supabase stack (Supabase CLI for development and tests; self-hosted Supabase on the workstation), `caddy`, `mt-api`, `nats`, `prefect-*`, `grafana`/`loki`/`prometheus`/`vector`/`alertmanager`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `docker-proxy` ([02 §3.2](../02-v1-architecture.md#32-containers)) |
 | **Dashboards** | App shell + [D16](../ui/dashboards/D16-system.md) System |
-| **Primary docs** | [03 §3](../03-build-spec.md#3-repository-layout) · [03 §4](../03-build-spec.md#4-data-model-overview) · [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs) · [02 §7](../02-v1-architecture.md#7-api-contract-mt_api) · [07](../07-security-notes.md) · [DESIGN §6](../../DESIGN.md#6-responsive-system-1920px--240px-portrait--landscape) · [ui §2](../ui/README.md#2-app-shell-all-routes) |
+| **Primary docs** | [18 §3–4](../18-platform-and-deployment.md#3-repository-layout) · [03 §3](../03-build-spec.md#3-repository-layout) · [03 §4](../03-build-spec.md#4-data-model-overview) · [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs) · [02 §7](../02-v1-architecture.md#7-api-contract-mt_api) · [07](../07-security-notes.md) · [DESIGN §6](../../DESIGN.md#6-responsive-system-1920px--240px-portrait--landscape) · [ui §2](../ui/README.md#2-app-shell-all-routes) |
 
 ## 1. Scope
 
-**In:** host hardening, the Compose stack, schemas and migrations (including provenance columns and the venue registry table), `pit(as_of)`, the append-only audit chain, secrets, backups and restore tests, the `mt_api` skeleton (auth, commands, confirmation levels, WebSocket), the model gateway (with the `audit.llm_call` callback), the embedder, reranker and local model, the web shell and the System dashboard, CI.
+**In:** the workstation baseline, the Supabase stack and the Compose stack, schemas as SQL migrations in `supabase/` (including provenance columns and the venue registry table), `pit(as_of)`, the append-only audit chain, secrets, backups and restore tests, the `mt-api` skeleton (Supabase Auth, commands, confirmation levels, WebSocket), the model gateway (with the `audit.llm_call` callback), the embedder, reranker and local model, the web shell and the System dashboard, CI.
 
-**Out (later phases):** any market data (P1), strategies and risk logic (P2), Telegram bot features (alerts P1, commands P2).
+**Out (later phases):** any market data (P1), strategies and risk logic (P2), Telegram bot features (alerts P1, commands P2), the live hardening profile, the YubiKey and the shift to a runtime host (P7).
 
 ## 2. Entry criteria
 
-- The host hardware exists (T0.01). Everything else can start on a laptop and move over.
+- Nothing to buy. Everything is built and tested on your workstation; the agent profiles it first (T0.01) and picks the CPU or GPU profiles. Tailscale, LUKS and a YubiKey are not needed before Phase 7 ([18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)).
 
 ## 3. Requirements
 
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
-| R0.01 | `uv` workspace monorepo with the package layout of 03 §3; ruff, mypy, pytest, pre-commit with gitleaks | [03 §3](../03-build-spec.md#3-repository-layout) | CI green |
-| R0.02 | Compose stack with every image **pinned by digest**; all services healthy on `docker compose up` | [03 §2](../03-build-spec.md#2-target-environment), [07 §5](../07-security-notes.md#5-network--host) | Health checks |
-| R0.03 | Postgres schemas `market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight` via Alembic: all 13 are created in P0; later phases only add tables | [03 §4](../03-build-spec.md#4-data-model-overview), [02 §5.1](../02-v1-architecture.md#51-stores), [17 §B](../17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) | Migration test |
-| R0.04 | Every fact carries `event_time` + `ingest_time`; research reads only via `mt_store.pit(as_of)`; **CI fails on bypass** | [SPEC NN1](../../SPEC.md#non-negotiable-requirements), [03 §4](../03-build-spec.md#4-data-model-overview) | `pit` CI test |
+| R0.01 | Monorepo per [18 §3](../18-platform-and-deployment.md#3-repository-layout): Cargo workspace (`crates/`, Rust services), `uv` workspace (`packages/`, Python only where necessary), `apps/web` (pnpm), `supabase/`; `cargo clippy` + `cargo test`, ruff, mypy, pytest, pre-commit with gitleaks | [18 §2–3](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), [03 §3](../03-build-spec.md#3-repository-layout) | CI green |
+| R0.02 | Compose stack with every image **pinned by digest**; all services healthy on `docker compose up` on the workstation; model containers use CPU profiles by default and a GPU profile when one is detected (`models.gpu_profile: auto`) | [18 §5](../18-platform-and-deployment.md#5-deployment-modes), [03 §2](../03-build-spec.md#2-target-environment), [07 §5](../07-security-notes.md#5-network--host) | Health checks |
+| R0.03 | Supabase Postgres schemas `market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight` as SQL migrations in `supabase/migrations/`: all 13 are created in P0; later phases only add tables. Bars use monthly native partitions (no TimescaleDB). Row-level security on every table with no policies for `anon`/`authenticated`; Data API and Realtime off for these schemas | [18 §4](../18-platform-and-deployment.md#4-database-supabase-postgres), [03 §4](../03-build-spec.md#4-data-model-overview), [02 §5.1](../02-v1-architecture.md#51-stores), [17 §B](../17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) | `supabase db reset` + pgTAP (`supabase test db`) |
+| R0.04 | Every fact carries `event_time` + `ingest_time`; research reads only via `pit(as_of)` (the `mt-store` crate, with the `mt_store` Python binding: one implementation); **CI fails on bypass** in Rust and Python | [SPEC NN1](../../SPEC.md#non-negotiable-requirements), [03 §4](../03-build-spec.md#4-data-model-overview) | `pit` CI test |
 | R0.05 | Ingest tables carry provenance columns `source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok` (populated from P1) | [12 §5](../12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) | Schema test |
 | R0.06 | `ops.venue_registry` table exists and is seeded from your venue checks | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) | Seed present |
 | R0.07 | **WORM** audit/journal tables: offline `worm_owner`, INSERT/SELECT-only app roles, UPDATE/DELETE/TRUNCATE blocked by triggers, **per-row hash chain**, daily Merkle seal anchored outside the DB (object-locked/append-only storage, optional OpenTimestamps, Telegram witness), corrections as new rows; a verify mismatch triggers the integrity response (R0.12, default `block_new_entries`) | [15 §2](../15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many), [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs), [07 §8](../07-security-notes.md#8-data-protection-backups--audit) | WORM test suite |
-| R0.08 | `mt_api`: Argon2 login + **TOTP**, session cookie, `POST /commands/{command}` with idempotency key, every command written to `audit.command`; **C0–C3/Kill enforced server-side** (C1 = explicit confirm token from the preview call; C2 = a risk-preview hash bound to the exact command + a session re-authenticated within 12 h; C3 = C2 + Telegram approve + TOTP + cool-down, completed via the break-glass CLI until Telegram C3 lands in P2, R0.12); WebSocket envelope `{topic, seq, ts, data}` | [02 §7](../02-v1-architecture.md#7-api-contract-mt_api), [02 §7.2](../02-v1-architecture.md#72-commands-rest-write), [17 §D](../17-decisions-register.md#d-other-decisions) | API tests |
+| R0.08 | `mt-api` (Rust, axum): login via **Supabase Auth** (password + **TOTP** MFA enrolment required, sign-ups off); `mt-api` verifies the Supabase JWT (JWKS) and requires `aal2` for every command; `POST /commands/{command}` with idempotency key, every command written to `audit.command`; **C0–C3/Kill enforced server-side** (C1 = explicit confirm token from the preview call; C2 = a risk-preview hash bound to the exact command + a session re-authenticated within 12 h; C3 = C2 + Telegram approve + TOTP + cool-down, completed via the break-glass CLI until Telegram C3 lands in P2, R0.12); WebSocket envelope `{topic, seq, ts, data}` | [18 §4.6](../18-platform-and-deployment.md#46-auth), [02 §7](../02-v1-architecture.md#7-api-contract-mt_api), [02 §7.2](../02-v1-architecture.md#72-commands-rest-write), [17 §D](../17-decisions-register.md#d-other-decisions) | API tests |
 | R0.09 | LiteLLM ≥ 1.83 pinned by digest (Claude, your custom endpoint, a local model), per-role budgets (defaults in [16 §2.10](../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets), configurable); TEI with bge-small-en-v1.5 (`tei-embed`) + bge-reranker-v2-m3 (`tei-rerank`) | [10 §5](../10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21), [10 §2](../10-memory-rag-and-models.md#2-local-embedders--rerankers) | Smoke calls |
-| R0.10 | Structured logs (structlog) with `trace_id`; Loki/Prometheus/Grafana showing host, DB and NATS health | [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs) | Grafana board |
+| R0.10 | Structured logs (`tracing` in Rust, structlog in Python) with `trace_id`; Loki/Prometheus/Grafana showing workstation, DB and NATS health | [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs) | Grafana board |
 | R0.11 | Web shell (top bar, nav, status bar, kill-switch placeholder) and D16 System on the DESIGN.md v2 Tailwind preset | [ui §2](../ui/README.md#2-app-shell-all-routes), [D16](../ui/dashboards/D16-system.md), [DESIGN §6.3](../../DESIGN.md#63-tailwind-configuration-use-in-every-implementation-and-mock-up) | Playwright |
-| R0.N1 | **Secrets:** `sops` + `age` decrypted into tmpfs; age key off the backup disk; the encrypted sops file lives **outside this repo** (e.g. `~/.config/mastertrader/`), backed up by restic; no secret in git | [07 §2](../07-security-notes.md#2-secrets), [17 §D](../17-decisions-register.md#d-other-decisions) | gitleaks, review |
-| R0.N2 | **Host:** LUKS, deny-inbound firewall, SSH keys only, **Tailscale-only access**, chrony | [07 §5](../07-security-notes.md#5-network--host) | Host checklist |
+| R0.N1 | **Secrets:** `sops` + `age` decrypted into tmpfs; age key off the backup disk; the encrypted sops file lives **outside this repo** (e.g. `~/.config/mastertrader/`), backed up by restic; no secret in git; the age identities live in the OS keychain until the YubiKey before live money (`secrets.age_identity_store`, R7.19) | [07 §2](../07-security-notes.md#2-secrets), [18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode), [17 §D](../17-decisions-register.md#d-other-decisions) | gitleaks, review |
+| R0.N2 | **Host (workstation baseline):** deny-inbound firewall, SSH keys only (if SSH is on), automatic security updates, chrony; services bind to localhost; **Tailscale optional** until go-live (needed only for phone access). LUKS is a warning now and required in the live profile at the shift (R7.18) | [07 §5](../07-security-notes.md#5-network--host), [18 §8–9](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode) | Workstation checklist |
 | R0.N3 | **Network segmentation:** scrapers/RSS-Bridge network has no route to the DB or signer | [02 §3.1](../02-v1-architecture.md#31-networks) | Port scan |
-| R0.N4 | **Backups:** continuous WAL archive, nightly incremental, weekly full (pgBackRest) + restic to an encrypted off-site target; monthly automated restore test; monthly immutable WORM export | [07 §8](../07-security-notes.md#8-data-protection-backups--audit), [02 F11](../02-v1-architecture.md#8-end-to-end-flows) | Restore test passes |
+| R0.N4 | **Backups:** continuous WAL archive, nightly incremental, weekly full (pgBackRest against the Supabase Postgres container, [18 §4.7](../18-platform-and-deployment.md#47-backups)) + restic to an encrypted off-site target; monthly automated restore test; monthly immutable WORM export | [07 §8](../07-security-notes.md#8-data-protection-backups--audit), [02 F11](../02-v1-architecture.md#8-end-to-end-flows) | Restore test passes |
 | R0.N5 | Vendored code under `third_party/` with pinned commit + `LICENSES.md`; images scanned (trivy/grype) | [07 §7](../07-security-notes.md#7-supply-chain), [03 §9](../03-build-spec.md#9-future-proof-hygiene) | CI scan |
 | R0.N6 | Responsive shell passes the viewport matrix 240 → 2560 px, portrait + landscape | [DESIGN §6.8](../../DESIGN.md#68-test-matrix-every-screen-must-pass) | Playwright matrix |
-| R0.12 | **WORM integrity response:** `audit.verify` publishes `audit.integrity` (NATS KV); default action `block_new_entries` (exits continue), options `alert_only`/`halt_all`; cleared by `audit.integrity.ack` (C3); incidents/acks are WORM rows; until Telegram C3 exists, C3 completes via the host-only break-glass CLI `mtctl approve` + TOTP | [16 §2.11, §3.3](../16-configuration-and-safety-model.md#211-worm-integrity), [17 §A](../17-decisions-register.md#a-s2-items-all-resolved) | Integrity drill |
+| R0.12 | **WORM integrity response:** `audit.verify` publishes `audit.integrity` (NATS KV); default action `block_new_entries` (exits continue), options `alert_only`/`halt_all`; cleared by `audit.integrity.ack` (C3); incidents/acks are WORM rows; until Telegram C3 exists, C3 completes via the workstation-only break-glass CLI `mtctl approve` + TOTP | [16 §2.11, §3.3](../16-configuration-and-safety-model.md#211-worm-integrity), [17 §A](../17-decisions-register.md#a-s2-items-all-resolved) | Integrity drill |
 | R0.13 | `audit.llm_call` written from day one via the LiteLLM callback; `tei-embed` + `tei-rerank` containers; `llm-local` serves the `local-advisor` route | [17 §D](../17-decisions-register.md#d-other-decisions) | Smoke + audit check |
 | R0.14 | `system.service.restart` goes through the restricted `docker-proxy` (Docker-socket proxy on the `ctl` network) that may restart only allow-listed containers; `mt-api` never mounts the Docker socket | [02 §3.2](../02-v1-architecture.md#32-containers), [17 §D](../17-decisions-register.md#d-other-decisions) | Refusal test |
 | R0.N7 | WORM insert p99 < 5 ms; the order path never waits on seals | [17 §D](../17-decisions-register.md#d-other-decisions), [15 §2](../15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) | Benchmark |
@@ -50,9 +50,8 @@
 ## 4. ToDo sets
 
 ### A. Your actions (`USER`)
-- [ ] **T0.01** `USER` Provision the host: 8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + HDD; decide on a **16–24 GB GPU** now (it shapes P4/P6 speed). → R0.02 · [03 §2](../03-build-spec.md#2-target-environment)
 - [ ] **T0.02** `USER` Order a **UPS** and a **4G failover** router (needed before live, cheap to set up early). → [07 §5](../07-security-notes.md#5-network--host)
-- [ ] **T0.03** `USER` Create the Tailscale account with MFA on the identity provider; buy/assign a YubiKey (or OS keychain) for the age key. → R0.N1, R0.N2
+- [ ] **T0.03** `USER` Optional now: create the Tailscale tailnet with MFA on the identity provider (phone access; required at go-live). The YubiKey moved to Phase 7 (T7.14); until then the age key stays in the OS keychain. → R0.N2 · [18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)
 - [ ] **T0.04** `USER` Open the off-site backup target with **Object Lock** (e.g. Backblaze B2 compliance mode) or a second box running restic `rest-server --append-only`; store credentials in the secrets file. → R0.N4, R0.07
 - [ ] **T0.05** `USER` Keep the GitHub repo **private**; turn on secret scanning. → [SPEC NN8](../../SPEC.md#non-negotiable-requirements)
 - [ ] **T0.06** `USER` **Telegram:** dedicated number (landline voice code or prepaid SIM), `api_id`/`api_hash`, 2-step password, bot via @BotFather. → gates P1 alerts, P4 ingest · [07 §10](../07-security-notes.md#10-social--scraping-accounts)
@@ -61,26 +60,27 @@
 - [ ] **T0.09** `USER` Free demo/practice accounts: OANDA practice, IG demo, Alpaca paper, IBKR paper, Binance + Bybit testnets. → gates P1/P2
 - [ ] **T0.10** `USER` Free API keys: FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. → gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md)
 - [ ] **T0.11** `USER` **Venue checks:** look up each AU venue you may use on the AUSTRAC register by ABN; note products available to you as a retail client; send the results for the registry seed. → R0.06 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry)
-- [ ] **T0.12** `USER` Set your login password and enrol TOTP on first boot. → R0.08
+- [ ] **T0.12** `USER` Create your login (Supabase Auth: password) and enrol TOTP when you first open the app. → R0.08
 - [ ] **T0.13** `USER` Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). → R0.09, R0.13
 
 ### B. Build (`BUILD`, code)
-- [ ] **T0.20** `BUILD` Monorepo skeleton: `uv` workspace, all packages from 03 §3 as stubs, `third_party/LICENSES.md`, ruff/mypy/pytest/pre-commit (gitleaks). → R0.01, R0.N5
-- [ ] **T0.21** `BUILD` `mt_core` types: Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent; config, clock, logging. → R0.01
-- [ ] **T0.22** `BUILD` `mt_store`: schemas + Alembic migrations incl. provenance columns and `ops.venue_registry`; `pit(as_of)` API; Parquet catalog helpers. → R0.03–R0.06
+- [ ] **T0.20** `BUILD` Monorepo skeleton per 18 §3: Cargo workspace with the crates of 18 §2.1 as stubs, `uv` workspace with the packages of 18 §2.2, `apps/web`, `supabase/`, `third_party/LICENSES.md`; clippy/cargo test, ruff/mypy/pytest, pre-commit (gitleaks). → R0.01, R0.N5
+- [ ] **T0.21** `BUILD` Core types (Rust, shared by the crates; Python bindings for the types Python packages need): Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent; config, clock, logging. → R0.01
+- [ ] **T0.22** `BUILD` Schemas as SQL migrations in `supabase/migrations/` incl. provenance columns, `ops.venue_registry`, monthly bar partitions and RLS deny-all, with pgTAP tests; `mt-store` crate: `pit(as_of)` with Python bindings (PyO3), partition job, Parquet catalog helpers. → R0.03–R0.06
 - [ ] **T0.23** `BUILD` WORM layer: `worm_owner` role + grants, blocking triggers, per-row hash-chain trigger, correction rows, daily Merkle seal + external anchoring, `audit.verify` command and incident path. → R0.07 · [15 §2](../15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
-- [ ] **T0.24** `BUILD` `mt_api` skeleton (FastAPI): auth (Argon2 + TOTP), command bus with idempotency + `audit.command`, confirmation-level engine (C0–C3, Kill; C1 preview confirm token, C2 risk-preview hash + 12 h re-auth, C3 = C2 + approve + TOTP + cool-down), problem+json errors, OpenAPI, WebSocket hub with `seq` gap detection. → R0.08 · [02 §7.2](../02-v1-architecture.md#72-commands-rest-write)
-- [ ] **T0.25** `BUILD` `mt_obs`: structlog JSON with `trace_id`, Prometheus metrics helpers, OpenTelemetry setup. → R0.10
-- [ ] **T0.26** `BUILD` Web app: React + TS + Vite PWA, TanStack Router/Query, typed WS client, Tailwind **DESIGN.md v2 preset**, component library v0 (shell, tiles, data states), app shell, D16 System (health, services, backups, keys metadata, settings). → R0.11 · [02 §10](../02-v1-architecture.md#10-frontend-architecture) · [comp](../ui/components.md)
+- [ ] **T0.24** `BUILD` `mt-api` skeleton (Rust, axum, utoipa OpenAPI): Supabase Auth JWT verification (JWKS, `aal2` required for commands), command bus with idempotency + `audit.command`, confirmation-level engine (C0–C3, Kill; C1 preview confirm token, C2 risk-preview hash + 12 h re-auth, C3 = C2 + approve + TOTP + cool-down), problem+json errors, OpenAPI, WebSocket hub with `seq` gap detection. → R0.08 · [02 §7.2](../02-v1-architecture.md#72-commands-rest-write)
+- [ ] **T0.25** `BUILD` `mt-obs`: `tracing` JSON logs with `trace_id` (structlog for the Python packages), Prometheus metrics helpers, OpenTelemetry setup. → R0.10
+- [ ] **T0.26** `BUILD` Web app: React + TS + Vite PWA, TanStack Router/Query, typed WS client, Tailwind **DESIGN.md v2 preset**, component library v0 (shell, tiles, data states), app shell with the Supabase Auth login and TOTP screens, D16 System (health, services, backups, keys metadata, settings); served locally by Caddy, with `vercel.json` ready for the optional Vercel deploy at the shift. → R0.11 · [02 §10](../02-v1-architecture.md#10-frontend-architecture) · [comp](../ui/components.md)
 - [ ] **T0.27** `BUILD` Integrity response: `audit.integrity` KV, M11 hook point, `audit.integrity.ack` (C3), break-glass `mtctl approve` CLI with TOTP. → R0.12
 - [ ] **T0.28** `BUILD` LiteLLM callback → `audit.llm_call` (WORM); split TEI containers; `llm-local` service; built and tested against a mock provider (live calls in T0.69). → R0.13
 
 ### C. Ops & config (`OPS`)
-- [ ] **T0.40** `OPS` Host hardening: LUKS, firewall, SSH keys, auto security updates, Tailscale, chrony. → R0.N2
-- [ ] **T0.41** `OPS` `docker-compose.yml` with digests: Postgres 16 + TimescaleDB (TSL) + pgvector + pg_trgm, NATS JetStream, Prefect, Grafana/Loki/Prometheus/Vector/Alertmanager, MLflow, Caddy, LiteLLM, `tei-embed` + `tei-rerank`, `llm-local`, `docker-proxy`. → R0.02
+- [ ] **T0.01** `OPS` Profile the workstation (cores, RAM, disks, GPU if any) and select the CPU or GPU model profiles (`models.gpu_profile: auto`). Was a `USER` item (provision a host, decide on a GPU); now agent work, nothing to buy. → R0.02 · [18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)
+- [ ] **T0.40** `OPS` Workstation baseline: deny-inbound firewall, SSH keys only, automatic security updates, chrony, Docker; LUKS checked (warning only before Phase 7); Tailscale optional. The live profile is applied at the shift (T7.44). → R0.N2
+- [ ] **T0.41** `OPS` Supabase stack (`supabase start` for development and tests; self-hosted Supabase Compose on the workstation) with pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP; `infra/` Compose files with digests: NATS JetStream, Prefect, Grafana/Loki/Prometheus/Vector/Alertmanager, MLflow, Caddy, LiteLLM, `tei-embed` + `tei-rerank`, `llm-local` (CPU profile by default), `docker-proxy`. → R0.02
 - [ ] **T0.42** `OPS` Docker networks per 02 §3.1 (internal, scrapers, signer isolated). → R0.N3
-- [ ] **T0.43** `OPS` `sops` + `age` secrets file (kept outside the repo, e.g. `~/.config/mastertrader/`, backed up by restic) → tmpfs at container start; per-service secret scoping. → R0.N1
-- [ ] **T0.44** `OPS` pgBackRest (continuous WAL archive, nightly incremental, weekly full) + restic off-site; Prefect flows for the monthly restore test and the monthly immutable WORM export. → R0.N4
+- [ ] **T0.43** `OPS` `sops` + `age` secrets file (kept outside the repo, e.g. `~/.config/mastertrader/`, backed up by restic) → tmpfs at container start; per-service secret scoping; age identities in the OS keychain (`secrets.age_identity_store: keychain`) until T7.14. → R0.N1
+- [ ] **T0.44** `OPS` pgBackRest against the Supabase Postgres container (continuous WAL archive, nightly incremental, weekly full) + restic off-site; Prefect flows for the monthly restore test and the monthly immutable WORM export. → R0.N4
 - [ ] **T0.45** `OPS` LiteLLM config: model list (research-primary, research-custom, local-advisor, local-embed), per-role virtual keys and budgets. → R0.09 · [10 §5](../10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21)
 - [ ] **T0.46** `OPS` Grafana provisioning: host, Postgres, NATS, container dashboards; Loki retention 30–90 days. → R0.10
 - [ ] **T0.47** `OPS` `docker-proxy` on the `ctl` network with the restart allow-list; `system.service.restart` wired through it. → R0.14
@@ -91,7 +91,7 @@
 - [ ] **T0.62** `VERIFY` Confirmation-level tests: a C1 command without its confirm token, or a C2 command with a mismatched preview hash or a session older than 12 h, is rejected; a C3 command cannot apply without approval + TOTP + cool-down (break-glass `mtctl approve` in P0); Kill ON is never blocked. → R0.08
 - [ ] **T0.63** `VERIFY` First restore test from the off-site backup to a scratch DB. → R0.N4
 - [ ] **T0.64** `VERIFY` Playwright viewport matrix + axe on the shell and D16. → R0.N6
-- [ ] **T0.65** `VERIFY` trivy/grype scan; external port scan shows nothing exposed outside Tailscale. → R0.N2, R0.N3, R0.N5
+- [ ] **T0.65** `VERIFY` trivy/grype scan; port scan shows nothing exposed beyond localhost (and Tailscale, if on). → R0.N2, R0.N3, R0.N5
 - [ ] **T0.66** `VERIFY` Integrity drill: tamper a row → mismatch → new entries blocked, exits allowed → ack (C3) clears. → R0.12
 - [ ] **T0.67** `VERIFY` WORM insert benchmark: p99 < 5 ms under load; no order-path call waits on a seal. → R0.N7
 - [ ] **T0.68** `VERIFY` `system.service.restart` of a non-allow-listed container is refused and audited; `mt-api` has no Docker socket mounted. → R0.14
@@ -105,12 +105,12 @@
 
 ## 5. Deliverables
 
-Running stack · migrations · `mt_api` with OpenAPI · web shell + D16 · CI (lint, types, tests, `pit`, Playwright, scans) · first runbooks · seeded venue registry.
+Running stack (Supabase + Compose) on the workstation · SQL migrations + pgTAP tests · `mt-api` with OpenAPI · web shell + D16 · CI (lint, types, tests, `pit`, Playwright, scans) · first runbooks · seeded venue registry.
 
 ## 6. Exit criteria (demo)
 
-1. `docker compose up` → all services healthy; Grafana shows host/DB/NATS health and logs in Loki.
-2. Log in with password + TOTP; a test command appears in `audit.command` with a valid hash chain.
+1. `supabase start` (or the self-hosted Supabase stack) + `docker compose up` on the workstation → all services healthy; Grafana shows workstation/DB/NATS health and logs in Loki.
+2. Log in with password + TOTP (Supabase Auth); a test command appears in `audit.command` with a valid hash chain.
 3. A restore from the off-site backup succeeds.
 4. The shell passes the viewport matrix from 240 px to 2560 px.
 
@@ -118,6 +118,7 @@ Running stack · migrations · `mt_api` with OpenAPI · web shell + D16 · CI (l
 
 | Risk | Mitigation |
 |---|---|
-| GPU decision delayed | Tier B and local models fall back to CPU (slower); decide by P4 |
-| Hardware lead time | Start on a laptop/VM; the stack is portable |
+| No GPU on the workstation | CPU profiles are the default (`models.gpu_profile: auto`); tier B and local models are slower; GPU-only checks run only when a GPU is present |
+| Runtime host changes later | The stack is portable (same images and migrations); the shift is a Phase 7 OPS task (T7.44), not a rewrite |
+| Supabase self-hosted vs CLI drift | Same images (pinned by digest) and the same migrations in both; pgTAP runs in CI |
 | Reddit deadline (2026-10-31) | Optional; nothing in the plan depends on Reddit |

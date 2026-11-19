@@ -4,16 +4,16 @@
 |---|---|
 | **Goal** | You can create **any strategy type on any timeframe**, backtest it with **measured costs**, validate it, and run it on **paper behind the risk manager**, controlled from the web UI and Telegram. |
 | **Duration** | Weeks 7–11 |
-| **Depends on** | P0 (`mt_api`, audit, shell), P1 (data, DQ status, measured costs) |
+| **Depends on** | P0 (`mt-api`, audit, shell), P1 (data, DQ status, measured costs) |
 | **Unlocks** | **The paper clock starts here** (P1 sleeves need ≥ 8 weeks of paper before P7). P3 (fills to journal), P6 (lab + tier A for distillation), P7 |
 | **Modules** | M0 strategy framework, M11 risk manager, M12 execution, M7 research lab, M6 core features, M21 tier A, M15 UI v1 + Telegram bot v1, MasterTradingBot shared libraries |
-| **Containers** | `engine`, `deadman`, `backtest-worker`, `sandbox`, `telegram-bot` (commands) |
+| **Containers** | `engine` (`mt-engine`), `deadman` (`mt-deadman`), `backtest-worker`, `sandbox`, `telegram-bot` (`mt-telegram-bot`, commands) |
 | **Dashboards** | [D01](../ui/dashboards/D01-cockpit.md) Cockpit, [D03](../ui/dashboards/D03-strategies.md) Strategies, [D04](../ui/dashboards/D04-research-lab.md) Research Lab, [D05](../ui/dashboards/D05-execution.md) Execution, [D06](../ui/dashboards/D06-risk.md) Risk |
-| **Primary docs** | [03 M0](../03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [03 M12](../03-build-spec.md#m12-execution--mt_engine) · [03 M7](../03-build-spec.md#m7-research-lab--mt_lab) · [03 §8](../03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §4](../14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [14 §6](../14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [12 §3](../12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) · [10 §4.3 tier A](../10-memory-rag-and-models.md#43-design) |
+| **Primary docs** | [18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) · [03 M0](../03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [03 M12](../03-build-spec.md#m12-execution--mt_engine) · [03 M7](../03-build-spec.md#m7-research-lab--mt_lab) · [03 §8](../03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §4](../14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [14 §6](../14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [12 §3](../12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) · [10 §4.3 tier A](../10-memory-rag-and-models.md#43-design) |
 
 ## 1. Scope
 
-**In:** the strategy manifest, templates and lifecycle; the full risk manager (policy levels, sizing, sleeves, defaults, fallback ladder, venue registry, 2× cap, STP, kill and dead-man switches, change control, hard ceilings); Nautilus paper/testnet execution with custom Alpaca/OANDA/IG adapters; the lab (screening + truth backtests, the validation suite and its extensions, optimisation, MLflow, sandboxed generator); core features; tier A pipeline; UI v1 and Telegram v1; shared libraries for MasterTradingBot strategies.
+**In:** the strategy manifest, templates and lifecycle (strategies in Python, or in Rust for deterministic ones, [18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)); seeding the risk values, L0 ceilings, sleeves and first manifests from the documented defaults (approved once in the go-live pack, T7.12); the full risk manager (policy levels, sizing, sleeves, defaults, fallback ladder, venue registry, 2× cap, STP, kill and dead-man switches, change control, hard ceilings); Nautilus paper/testnet execution with custom Alpaca/OANDA/IG adapters; the lab (screening + truth backtests, the validation suite and its extensions, optimisation, MLflow, sandboxed generator); core features; tier A pipeline; UI v1 and Telegram v1; shared libraries for MasterTradingBot strategies.
 
 **Out:** live money (P7), text/agent signals (P4/P6), tier B (P4/P6), MT5/cTrader execution (P7).
 
@@ -42,7 +42,7 @@
 | R2.11 | Versioned policy at global, venue, strategy, instrument and portfolio levels | [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) | Policy tests |
 | R2.12 | Sizing models: fixed, fixed-fractional, vol target, stop-distance, Kelly (quarter-Kelly ceiling, never `2p−1`, never stacked on vol targeting), risk parity | [14 §4](../14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) | Golden tests |
 | R2.13 | **Sleeves** with own limits/kill switches and a **two-stage drawdown** (default 10% de-risk / 15% halt, configurable); exposure **netted per asset across sleeves**; `manual` sleeve for manual tickets | [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) | Golden tests |
-| R2.14 | Default limits table (risk/trade, max position, daily loss, two-stage sleeve drawdown 10%/15%, system drawdown 10% no new entries / 25% flatten + 30-day lock, open positions, stale data, decision deadline, price collar, API-error pause, cost blow-out, venue concentration 25%, leverage): all defaults, configurable | [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11), [16 §2.1–§2.3](../16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown) | Golden tests |
+| R2.14 | Default limits table (risk/trade, max position, daily loss, two-stage sleeve drawdown 10%/15%, system drawdown 10% no new entries / 25% flatten + 30-day lock, open positions, stale data, decision deadline, price collar, API-error pause, cost blow-out, venue concentration 25%, leverage): all defaults, configurable; seeded by the agent from 16 §2 and approved once in the go-live pack (R7.17) | [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11), [16 §2.1–§2.3](../16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown) | Golden tests |
 | R2.15 | **Fallback ladder** (6 rungs) live in D06 | [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp), [14 §5](../14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) | Ladder tests |
 | R2.16 | Pre-trade checks: limits, price collar, liquidity/spread (M16), duplicate (idempotent IDs), event blackout hook, **DQ status** | [03 M11](../03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp), [SPEC NN3](../../SPEC.md#non-negotiable-requirements) | Unit tests |
 | R2.17 | **Venue registry check** on every order; **2× crypto-derivatives cap**; paper/testnet orders are allowed on venues/products marked `allowed` or `read_only`, and on `blocked` products only if marked `paper_ok` | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry), [12 §1](../12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) | Rejection tests |
@@ -87,7 +87,7 @@
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
 | R2.N1 | Pre-trade risk check p99 < 1 ms; signal → order submitted p99 < 5 ms (excl. venue); tier A p99 < 50 µs; kill → all cancels < 1 s | [02 §9.2](../02-v1-architecture.md#92-observability--slos) | Benchmarks |
-| R2.N2 | Risk-manager golden tests are mandatory for merge | [04 standing rules](../04-plan-of-action.md#standing-rules) | CI |
+| R2.N2 | Risk-manager golden tests are mandatory for merge (they run against the `mt-risk` crate, `cargo test -p mt-risk`) | [04 standing rules](../04-plan-of-action.md#standing-rules) | CI |
 | R2.N3 | Trade-only keys, withdrawals disabled, IP allow-listed, separate sub-accounts per mode | [07 §3](../07-security-notes.md#3-broker--exchange-keys), [SPEC NN5](../../SPEC.md#non-negotiable-requirements) | Key audit |
 | R2.55 | **Configuration layering:** L0 hard ceilings → L1 system → L2 venue → L3 sleeve → L4 bot; effective = strictest; manifest values are proposals only; versioned (WORM); save-time validation; UI shows which layer sets each limit | [16 §1](../16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance) | Golden tests |
 | R2.57 | D06 Stress tab ships as a **placeholder** in P2 ("arrives in P7"); the historical shock replay against current positions and policy (`risk.stress.run`, C1) is built in P7 before live capital (R7.16) | [D06](../ui/dashboards/D06-risk.md), [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates), [17 §D](../17-decisions-register.md#d-other-decisions) | Placeholder present |
@@ -97,40 +97,40 @@
 ## 4. ToDo sets
 
 ### A. Your actions (`USER`)
-- [ ] **T2.01** `USER` Review the prefilled defaults ([16 §2](../16-configuration-and-safety-model.md#2-default-values-all-configurable)) and set the **initial risk policy values** and the **L0 hard ceilings** in the agent/bot strategy settings (the ceilings section applies to every bot). Every value stays a setting you can change; loosening is C3. → R2.14, R2.19
-- [ ] **T2.02** `USER` Decide **sleeves** and their risk budgets (14 §3 allocation table is the suggested start). → R2.13
 - [ ] **T2.03** `USER` Create **trade-only, IP-locked, no-withdrawal** keys on testnets/practice accounts, one sub-account per mode. → R2.N3
 - [ ] **T2.04** `USER` Provide **MasterTradingBot** rule descriptions + historical signal/trade outputs for golden files. → R2.48
-- [ ] **T2.05** `USER` Write your first strategy manifests (counterparty sentence, kill criteria, benchmark) for the P1 candidates: trend on majors, funding carry if access permits. → R2.04 · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates)
-- [ ] **T2.06** `USER` Take part in the **kill-switch drill** from your phone (Telegram `/kill`, then C3 to turn off). → R2.18
-- [ ] **T2.07** `USER` Approve a test C3 loosening to prove the TOTP + cool-down path. → R2.19
-- [ ] **T2.09** `USER` Create your first bots (scope + mode) and do one HITL approval from Telegram end to end. → R2.53, R2.54
-- [ ] **T2.08** `USER` Start the **paper clock**: switch the validated P1 candidates to paper at the end of this phase. → unlocks P7
+- [ ] **T2.06** `USER` Take part in the **kill-switch drill** from your phone (Telegram `/kill`, then C3 to turn off), any time before go-live; no build task waits on it. → R2.18
+- [ ] **T2.07** `USER` Approve a test C3 loosening to prove the TOTP + cool-down path, any time before go-live; no build task waits on it. → R2.19
+- [ ] **T2.09** `USER` Walk through your first bot (scope + mode) and do one HITL approval from Telegram end to end, any time before go-live; no build task waits on it. → R2.53, R2.54
 
 ### B. Build (`BUILD`, code)
+- [ ] **T2.01** `BUILD` Seed the **initial risk policy values** (L1–L3) and the **L0 hard ceilings** in the agent/bot strategy settings from the [16 §2](../16-configuration-and-safety-model.md#2-default-values-all-configurable) defaults (the ceilings section applies to every bot). Was a `USER` item; you now approve the values once in the go-live pack (T7.12). Every value stays a setting you can change; loosening is C3. → R2.14, R2.19
+- [ ] **T2.02** `BUILD` Seed the **sleeves** and their risk budgets from the [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) allocation table. Was a `USER` decision; approved once in the go-live pack (T7.12), editable any time. → R2.13
+- [ ] **T2.05** `BUILD` Draft the first strategy manifests (counterparty sentence, kill criteria, benchmark) for the P1 candidates: trend on majors, funding carry if access permits. Was a `USER` item; approved once in the go-live pack (T7.12), editable any time. → R2.04 · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates)
 - [ ] **T2.20** `BUILD` `mt_strategy`: base classes, multi-timeframe helpers, manifest schema + validator (incl. never-build rules), registry, lifecycle state machine. → R2.01–R2.06
 - [ ] **T2.21** `BUILD` Templates (all of R2.02) with parameter schemas driving UI forms and Optuna. → R2.02, R2.03
-- [ ] **T2.22** `BUILD` `mt_risk` policy model + store + versioning/rollback; pre-trade checks; sizing models; sleeves + netting; default limits; ladder; venue registry + 2× cap; health check + decay alerts. → R2.10–R2.17, R2.21
+- [ ] **T2.22** `BUILD` `mt-risk` crate (one implementation, linked into `mt-api`, the engine and the dead-man; PyO3 binding for the Python node): policy model + store + versioning/rollback; pre-trade checks; sizing models; sleeves + netting; default limits; ladder; venue registry + 2× cap; health check + decay alerts. → R2.10–R2.17, R2.21
 - [ ] **T2.23** `BUILD` Kill switch (KV `kill`, triggers, actions: stop, cancel, per-bot failure policy, freeze treasury moves) and the in-engine dead-man watchdog (layer 1) on `sys.heartbeat.*`. → R2.18
 - [ ] **T2.24** `BUILD` Change-control service: tighten/loosen classifier, C3 flow, L0 hard-ceilings section in the strategy settings (applies to every bot), audit; retire the P0 break-glass C3 path once Telegram C3 passes (T2.07). → R2.19
-- [ ] **T2.25** `BUILD` `mt_engine`: Nautilus TradingNode wrapper, testnet configs, Alpaca/OANDA/IG adapters, STP per venue (`stp: n/a (netting)` for netting brokers), client IDs `{bot}-{engine_epoch}-{seq}` + signal hash, restart reconciliation, HITL routing; built and tested against recorded fixtures and emulators (live testnet run in T2.72). → R2.20, R2.30–R2.33
-- [ ] **T2.26** `BUILD` TCA in `mt_monitor` on paper fills; feed measured costs back into lab cost models. → R2.34
+- [ ] **T2.25** `BUILD` `mt-engine`: Nautilus live node wrapper (Rust node where the venue's Rust adapter is production-ready (U, per venue), else the Python node, `mt-risk` linked in either way), testnet configs, Alpaca/OANDA/IG adapters (Rust, against Nautilus's adapter traits), STP per venue (`stp: n/a (netting)` for netting brokers), client IDs `{bot}-{engine_epoch}-{seq}` + signal hash, restart reconciliation, HITL routing; built and tested against recorded fixtures and emulators (live testnet run in T2.72). → R2.20, R2.30–R2.33
+- [ ] **T2.26** `BUILD` TCA in `mt-monitor` on paper fills; feed measured costs back into lab cost models. → R2.34
 - [ ] **T2.27** `BUILD` `mt_lab`: screening engine, Nautilus truth backtests, validation harness + extensions (trial counter, worst fold, per-year/regime, cost stress, benchmark), vendored freqtrade analysers (GPL, `third_party/`, isolated in `mt_lab`), leakage review via the gateway + `lab.leakage.waive` (C2), Optuna, MLflow. → R2.40–R2.44
 - [ ] **T2.28** `BUILD` Sandbox runner + LLM strategy generator. → R2.45
 - [ ] **T2.29** `BUILD` `mt_features` core + IC evaluator. → R2.46
 - [ ] **T2.30** `BUILD` `mt_models` tier A: training pipeline on forward-return / triple-barrier labels (until the P6 teacher), `models.tiera.train` (C1), calibration, compile, in-process loader, latency histogram. → R2.47
 - [ ] **T2.31** `BUILD` Shared indicator/signal + sizing libraries for MasterTradingBot strategies; "deterministic rule-based" template using them. → R2.48
 - [ ] **T2.32** `BUILD` UI: D01, D03, D04, D05, D06 + approvals queue + manual ticket. → R2.50, R2.51
-- [ ] **T2.33** `BUILD` Telegram v1 commands, approval buttons, C3 TOTP prompt; NATS fallback path for `/kill` (credentials limited to `kill.set`; WORM kill event with source `telegram`). → R2.51, R2.52
+- [ ] **T2.33** `BUILD` Telegram v1 commands in `mt-telegram-bot` (Rust, teloxide), approval buttons, C3 TOTP prompt; NATS fallback path for `/kill` (credentials limited to `kill.set`; WORM kill event with source `telegram`). → R2.51, R2.52
 - [ ] **T2.34** `BUILD` Trading bots: `strategy.bot`/`bot_version`, scope resolver (dynamic selections), `bot.*` commands, approval policy + escalation, auto-downgrade, HITL approval cards on Telegram + web, D03 Bots tab. → R2.53, R2.54
 - [ ] **T2.37** `BUILD` Experimentation: parameter sweeps, A/B on identical data, shadow mode (live bot mirrored in paper). → R2.07
 - [ ] **T2.38** `BUILD` D06 Stress tab placeholder ("arrives in P7"); the shock replay and `risk.stress.run` are built in P7 (T7.27). → R2.57
-- [ ] **T2.35** `BUILD` Config layering service in `mt_risk`: layer store, merge (strictest wins), validation, effective-limits API for D06/D03. → R2.55
-- [ ] **T2.36** `BUILD` `deadman` sidecar + venue cancel-after timers + resting venue stops at entry + restart-flat/paused-resume flow. → R2.56
-- [ ] **T2.39** `BUILD` Inline pre-trade safety-state checks in `mt_risk`: data age vs the bot's threshold, `audit.integrity` status, `egress.status`, decision deadline. → R2.58
+- [ ] **T2.35** `BUILD` Config layering service in `mt-risk`: layer store, merge (strictest wins), validation, effective-limits API for D06/D03. → R2.55
+- [ ] **T2.36** `BUILD` `deadman` sidecar (`mt-deadman`, small static binary) + venue cancel-after timers + resting venue stops at entry + restart-flat/paused-resume flow. → R2.56
+- [ ] **T2.39** `BUILD` Inline pre-trade safety-state checks in `mt-risk`: data age vs the bot's threshold, `audit.integrity` status, `egress.status`, decision deadline. → R2.58
 - [ ] **T2.43** `BUILD` Setup-odds simulator in `mt_lab` (seeded bootstrap of session continuations + historical analogues of the same setup, PIT-only) and its odds block on the ApprovalCard and Telegram approval cards. → R2.59
 
 ### C. Ops & config (`OPS`)
+- [ ] **T2.08** `OPS` Start the **paper clock** automatically: the P1 candidates switch to paper as soon as their validation passes, at the seeded values. Was a `USER` item; paper needs no approval. → unlocks P7
 - [ ] **T2.40** `OPS` `engine`, `backtest-worker`, `sandbox` containers; gVisor runtime; resource limits. → R2.45
 - [ ] **T2.41** `OPS` MLflow artefact storage + model registry stages. → R2.44, R2.47
 - [ ] **T2.42** `OPS` Grafana: risk state, ladder rung, kill/dead-man, latency SLO panels, TCA. → R2.N1
@@ -152,7 +152,7 @@
 - [ ] **T2.73** `VERIFY` Setup odds: same seed → same odds; no bar after `as_of` is ever used (leak test); odds appear on approval cards and never change what M11 allows. → R2.59
 
 ### E. Run / soak (`RUN`)
-- [ ] **T2.80** `RUN` **Paper clock (starts now, runs through P3–P6):** P1 sleeves on paper for ≥ 8 weeks through the real policy/risk/execution path. → gates P7 · [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)
+- [ ] **T2.80** `RUN` **Paper clock (starts automatically via T2.08, runs through P3–P6):** P1 sleeves on paper for ≥ 8 weeks through the real policy/risk/execution path. → gates P7 · [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)
 - [ ] **T2.81** `RUN` Weekly: five-worst-trades review, realised vs modelled costs. → [14 §4](../14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06)
 
 ### F. Docs

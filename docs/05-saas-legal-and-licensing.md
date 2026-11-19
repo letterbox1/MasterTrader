@@ -21,8 +21,8 @@ Key facts:
 
 | Component | Licence | SaaS impact | What to do |
 |---|---|---|---|
-| NautilusTrader | LGPL-3.0 | ✅ OK as an unmodified dependency on your servers | If you modify Nautilus itself, you only have to publish those changes if you *distribute* it (e.g., a desktop app). Simplest: don't fork it; upstream fixes. |
-| freqtrade code (look-ahead/recursive analysers, vendored under `third_party/` and isolated in `mt_lab` for personal use, [03 §1](03-build-spec.md#1-ground-rules)) | GPL-3.0 | ⚠️ Licence-wise OK for pure server-side SaaS (no distribution) | **Decided (P2-B051):** for a SaaS, replace the vendored analysers with a **clean-room re-implementation** before launch. That also keeps any later desktop/on-prem/self-hosted version from forcing the whole combined program to be GPL. Until then, keep it isolated (§9). |
+| NautilusTrader | LGPL-3.0 | ✅ OK as an unmodified dependency on your servers | If you modify Nautilus itself, you only have to publish those changes if you *distribute* it (e.g., a desktop app). Simplest: don't fork it; upstream fixes. The Rust live node and custom adapters link Nautilus crates statically; that changes nothing on your own servers, but a distributed binary would have to let users relink against a changed Nautilus (U: lawyer). |
+| freqtrade code (look-ahead/recursive analysers, vendored under `third_party/` and isolated in the Python `mt_lab` package for personal use, [03 §1](03-build-spec.md#1-ground-rules)) | GPL-3.0 | ⚠️ Licence-wise OK for pure server-side SaaS (no distribution) | **Decided (P2-B051):** for a SaaS, replace the vendored analysers with a **clean-room re-implementation** before launch. That also keeps any later desktop/on-prem/self-hosted version from forcing the whole combined program to be GPL. Until then, keep it isolated (§9). |
 | Hummingbot, TradingAgents, FinRobot | Apache-2.0 | ✅ OK | Keep LICENSE/NOTICE files. **Don't use "FinRobot" in your product name** (its trademark policy). |
 | Vibe-Trading, osiris, Hindsight, LightRAG, ccxt | MIT | ✅ OK | Keep copyright notices. Remove osiris's token panel and unreviewable `.pyc` files anyway. |
 | **nofx** | **AGPL-3.0** | ❌ Using its code in the SaaS forces you to publish the SaaS source to users | Don't use it; re-implement ideas clean-room (already the plan). |
@@ -30,13 +30,17 @@ Key facts:
 | Grafana | AGPL-3.0 | ⚠️ OK if **unmodified** and internal-only; risky if you modify it and expose it to customers | Keep it as an internal ops tool; build the customer UI yourself. |
 | worldmonitor, Firecrawl server, backtesting.py | AGPL-3.0 | ❌ for customer-facing use | Avoid, or use permissive alternatives (crawl4ai). |
 | vectorbt (open) | Apache-2.0 + **Commons Clause** | ❌ You can't sell a product or service whose value derives substantially from it | Replace with Nautilus / your own vectorised engine, or buy vectorbt PRO's licence. |
-| ArcticDB | BSL 1.1 | ⚠️ Fine as your internal DB; not as a database service offered to third parties | Fine to keep internally, or use Timescale/Parquet. |
-| TimescaleDB (TSL features) | Timescale License | ✅ OK for your SaaS; ❌ only if you sell "Timescale-as-a-service" | Fine. |
+| ArcticDB | BSL 1.1 | ⚠️ Fine as your internal DB; not as a database service offered to third parties | Fine to keep internally, or use Postgres/Parquet. |
+| TimescaleDB (TSL features) | Timescale License | No longer used: Supabase Postgres with native partitions replaces it ([18 §4.2](18-platform-and-deployment.md#42-extensions)) | Nothing to do. |
+| Supabase stack (self-hosted or CLI) | Mostly **Apache-2.0** (Studio, Storage, Realtime, Kong, Supavisor, postgres-meta); Auth and PostgREST **MIT**; Postgres and the extensions we use (pgvector, pg_partman, pgTAP) under the **PostgreSQL** licence; the log-shipper Vector **MPL-2.0** (U per component: check each image's licence when pinning it) | ✅ OK, all permissive or weak copyleft, used unmodified | Keep the notices; re-check the licence of each Supabase image on every bump. |
+| Rust crates: axum, tokio, sqlx, utoipa, alloy, `ort`, PyO3, `rust_decimal` | MIT and/or Apache-2.0 | ✅ OK | `cargo deny` enforces an allow-list of licences ([07 §7](07-security-notes.md#7-supply-chain)). |
+| teloxide (Telegram bot) | MIT | ✅ OK | Keep the notice. |
+| `rmcp` (official Rust MCP SDK) | MIT and/or Apache-2.0 (U) | ✅ OK if permissive | Confirm the licence before Phase 8. |
 | Redis 8 | RSAL / SSPL / AGPL tri-licence | ⚠️ | Use **Valkey** (BSD). |
 | LLM weights (Qwen/Llama/Chronos/TimesFM/Kronos) | Varies (Apache, Llama licence, custom) | ⚠️ Check each model's licence for commercial-use and user-count clauses | Keep a model licence register. |
 
 **Licence checklist for a SaaS launch:**
-1. Generate an SBOM (e.g., `pip-licenses`, `syft`) and fail CI on AGPL, SSPL, Commons Clause or "non-commercial" licences in customer-facing services.
+1. Generate an SBOM (e.g., `cargo deny` / `cargo about` for Rust, `pip-licenses` for Python, `syft` for images) and fail CI on AGPL, SSPL, Commons Clause or "non-commercial" licences in customer-facing services.
 2. Remove or replace: nofx-derived code, MiroFish, vectorbt (open), the vendored freqtrade analysers (clean-room rewrite), and any other GPL code *if* you will ever distribute software.
 3. Ship a "third-party notices" page in the product (Apache/MIT attribution).
 4. Have a lawyer review the result once, before launch.
@@ -61,6 +65,10 @@ Key facts:
 | Telegram public channels | ✅ postures only: no Telegram text in any model, RAG index or training set ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) | ⚠️ Grey area; follow Telegram's terms and the channels' rights. |
 | News article full text | ✅ (reading) | ❌ Storing or redisplaying full articles is a copyright issue. Show headline + link + your own summary/sentiment, or license a news API. |
 | LLM providers (Claude, OpenAI…) | ✅ | ✅ Commercial API terms allow it; follow the usage policies on financial advice. |
+
+**Hosting services (Vercel, Supabase cloud).** These are services you use, not data you redistribute. Both are optional and only used if you shift to the cloud ([18 §5](18-platform-and-deployment.md#5-deployment-modes)):
+- **Personal use:** Vercel Hobby is free for personal, non-commercial use (U). Supabase cloud needs a paid plan for a trading database (the free plan is capped at 500 MB and pauses after 7 idle days, [18 §4.1](18-platform-and-deployment.md#41-where-it-runs)). Paid plans are your choice at shift time; workstation mode costs nothing.
+- **SaaS:** commercial use of Vercel needs a paid plan (Hobby excludes it (U)). Supabase's paid plans allow commercial use; you'd also need its DPA for customer data (U). Self-hosting Supabase avoids both.
 
 Rough budget to make a multi-asset SaaS data-legal: **hundreds to thousands of US$ per month** in data licences before your first customer, scaling with user count for real-time exchange data.
 
@@ -93,7 +101,7 @@ Other SaaS obligations:
    - keep a `third_party/LICENSES.md` manifest;
    - keep GPL/AGPL code isolated;
    - tag every data source `license: personal|commercial_ok|unknown`.
-2. Keep the core (`mt_core`, `mt_store`, `mt_guard`, `mt_agents`, `mt_engine` wrapper) **your own code** or MIT/Apache-derived.
+2. Keep the core (the shared `mt_core` types, the Rust crates `mt-store`, `mt-risk`, `mt-api` and the `mt-engine` wrapper ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), and the Python `mt_agents`) **your own code** or MIT/Apache-derived.
 3. Design data access behind provider interfaces so yfinance can be swapped for a licensed feed with a config change.
 4. Keep the repo private. Publishing it would count as distributing any GPL code inside it.
 

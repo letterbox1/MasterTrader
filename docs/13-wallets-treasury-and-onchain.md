@@ -39,17 +39,19 @@ Tightening is immediate; loosening is C3. The defaults only prefill the form: **
 
 ## 2. Signer service (the only process that sees hot keys)
 
+The signer is the Rust crate and service **`mt-signer`** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): alloy for EVM, the Solana SDK for Solana. Python services (`mt_airdrop` discovery and scoring, `mt_social`, agents) never sign; they send intents through the policy service. The signer runs on a host you control, never on Vercel ([18 §6](18-platform-and-deployment.md#6-what-cant-run-on-vercel-and-why)).
+
 - **Keys:**
-  - stored in **OpenBao** (MPL-2.0 fork of Vault) or as sops-encrypted files;
+  - stored in **OpenBao** (MPL-2.0 fork of Vault) or as sops-encrypted files, whose age identity sits in the OS keychain until Phase 7 and on a YubiKey before live money ([07 §2](07-security-notes.md#2-secrets));
   - loaded into memory at start;
   - never logged and never in `.env`.
 - **Interface:**
-  - accepts **intents** over a local socket / mTLS **only from the policy service**, never raw transactions. `airdrop-exec` is the policy service in P5 (claims, revokes, sweeps); treasury (P6) and DEX execution (P7) also go through it, never straight to the signer;
+  - accepts **intents** over a local socket / mTLS **only from the policy service**, never raw transactions. `airdrop-exec` (Rust `mt-airdrop-exec`) is the policy service in P5 (claims, revokes, sweeps); treasury (P6) and DEX execution (P7) also go through it, never straight to the signer;
   - re-decodes and re-builds everything itself.
 - **Enforced checks:**
   - a per-wallet allow-list of programs/contracts;
   - per-transaction and rolling 24 h caps (defaults in §1);
-  - the **cost gate** (§7, the `mt_onchain.costgate` library);
+  - the **cost gate** (§7, the `mt_onchain::costgate` module of the Rust `mt-onchain` crate);
   - **mandatory successful simulation** (Solana `simulateTransaction`; local **Anvil** fork for EVM). These are the only simulators; Tenderly is not used.
   - Simulation is a sanity check only: adversarial tokens can behave differently on execution.
 - **Hard blocks (in code):**
@@ -88,6 +90,8 @@ Wallet apps (MetaMask, Trust Wallet, Phantom, Rabby, Ledger, Ellipal) have no po
 5. **Manual signing** happens **in your own wallet**, never in the system. The system may prepare an unsigned transaction and hand it over as a QR (vault) or a WalletConnect / EIP-6963 request (phone or browser wallet); you review and sign there. **The system never holds vault or warm keys**, and P5 has no UI signing path (D18 is a view); any later prepare-to-sign feature builds unsigned payloads only and is scoped separately.
 
 ## 4. Hold-and-earn module (M22, `mt_treasury`)
+
+M22 is the Rust crate **`mt-treasury`** (indexer, allocator, cost-gate use; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Yield research and scoring that need Python data tooling stay in Python and hand results to it.
 
 Idle capital earns while it waits.
 - Every position is scored on **net yield after gas, lock-up and smart-contract risk**.
@@ -151,7 +155,7 @@ Idle capital earns while it waits.
 
 **Rule:** no on-chain action is signed unless its expected benefit exceeds its all-in cost by a set margin: default **≥ 2×** all-in cost (gas + fees + impact + MEV/tips), configurable ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)). `gate(action) → allow / wait / reject`, with the numbers logged.
 
-The gate is one library, `mt_onchain.costgate`: the signer path uses it from P5 and the treasury from P6. Gas and fees are **live inputs** from our RPCs and venue APIs, never constants ([16 §4.3](16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants)).
+The gate is one library, `mt_onchain::costgate` in the Rust `mt-onchain` crate (decision P5-B002): the signer path uses it from P5 and the treasury from P6. Gas and fees are **live inputs** from our RPCs and venue APIs, never constants ([16 §4.3](16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants)).
 
 | Cost | Formula / source |
 |---|---|
@@ -178,6 +182,8 @@ The gate is one library, `mt_onchain.costgate`: the signer path uses it from P5 
 - **Paid upgrades** (Helius Developer $49, Yellowstone gRPC ~$98) only once logs prove a free tier is losing money.
 
 ## 8. Social participation (M23, `mt_social`)
+
+M23 stays Python (`mt_social`, LLM drafting tooling, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); it never signs or posts by itself.
 
 Social tasks run from **your real accounts, with you approving every post**. The system removes the grind (finding tasks, drafting, tracking) without pretending to be anyone.
 

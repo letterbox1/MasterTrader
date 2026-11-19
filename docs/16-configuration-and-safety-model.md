@@ -23,7 +23,7 @@ This doc also covers the **failure-safety design** (what happens when the engine
 **Rules:**
 - **Effective value = the strictest across layers.** A bot can never exceed its sleeve, a sleeve its system policy, or anything L0. The risk manager (M11) evaluates the merged view on every order, and the UI shows which layer set each effective limit.
 - **A strategy manifest proposes values; it never imposes them.** When you create a bot, the wizard shows the manifest's proposals next to your sleeve/system limits. You accept or tighten, and anything looser than a parent layer is rejected.
-- **Every change** is a typed `mt_api` command, recorded as a new version row (WORM). Rollback re-applies an earlier version as a new row.
+- **Every change** is a typed `mt-api` command, recorded as a new version row (WORM). Rollback re-applies an earlier version as a new row.
 - **Validation:** inconsistent settings are rejected at save time, with the reason. For example, a de-risk drawdown must be lower than the halt drawdown, and a per-transaction cap can't exceed the 24 h cap.
 
 ---
@@ -215,14 +215,14 @@ Configurable per bot and per event type.
 
 | Setting | Default | Notes |
 |---|---|---|
-| Login lockout | 5 failed logins in 15 min → locked 15 min, doubling on each repeat up to 24 h | Per-IP and global counters; alert on lockout |
-| Session lifetime | Idle 12 h ([ui §3.6](ui/README.md#36-permissions--sessions)); absolute 7 d | Re-login needs TOTP |
+| Login lockout | 5 failed logins in 15 min → locked 15 min, doubling on each repeat up to 24 h | Sign-in is Supabase Auth ([18 §4.6](18-platform-and-deployment.md#46-auth)), on top of its own rate limits. `mt-api` keeps the per-IP and global counters (from the Supabase Auth audit log (U) or its own login route) and refuses every token while locked; alert on lockout |
+| Session lifetime | Idle 12 h ([ui §3.6](ui/README.md#36-permissions--sessions)); absolute 7 d | Supabase Auth session settings where available (cloud may need a paid plan for them (U)); `mt-api` enforces both limits itself from the session's times either way. Re-login needs TOTP: commands need a JWT at MFA level `aal2` |
 | Service heartbeat | Every service publishes `sys.heartbeat.{service}` every 1 s | The cadence the dead-man watches (§3.1) |
 | Log retention (Loki) | 30 d [30–90 d] | — |
 | WORM seal grace | The seal for day D runs after D closes (UTC) plus 10 min for late inserts | Rows arriving later count into D+1 and are flagged |
 | Seal anchor retry | Hourly for 24 h after a failed anchor | Seal row marked `partial`; critical alert |
-| Backups | Continuous WAL archive; nightly incremental 02:00 and weekly full Sun 02:00 (Australia/Sydney); pgBackRest keeps 4 full backups | Monthly restore test and WORM export ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) P0-B011) |
-| Service-restart allow-list (`docker-proxy`) | `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | `postgres`, `nats`, `mt-api` and `docker-proxy` are never on it by default. Adding a container is C3; removing one is C1 |
+| Backups | Per mode ([18 §4.7](18-platform-and-deployment.md#47-backups)). **Workstation:** pgBackRest on the Supabase Postgres container: continuous WAL archive; nightly incremental 02:00 and weekly full Sun 02:00 (Australia/Sydney); keeps 4 full backups; restic off-site. **Supabase cloud:** Supabase's managed daily backups (point-in-time recovery is a paid add-on, your call) plus our own nightly logical dump at 02:00 to restic | Every mode: monthly restore test and WORM export ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) P0-B011) |
+| Service-restart allow-list (`docker-proxy`) | `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | The Supabase services (`supabase-db`, `supabase-auth`, `supabase-storage`, `supabase-kong` and the rest of the stack), `nats`, `mt-api` and `docker-proxy` are never on it by default. Adding a container is C3; removing one is C1 |
 | Intel pipeline | Poll intervals, per-source caps, Telegram join pacing and posture windows live in `config/intel/*.yaml`. Defaults: RSS poll 5 min (min 2 min, [P4-T011](../tracking/phase-4/tasks/P4-T011-rss-trafilatura-crawl4ai.md)); 200 docs/hour per source ([P4-T030](../tracking/phase-4/tasks/P4-T030-nlp-relevance-gate.md)); Telegram ≤ 500 channels ([P4-T001](../tracking/phase-4/tasks/P4-T001-telegram-channel-list.md)), ≤ 1 join per 10–20 min and ≤ 20 per day ([P4-T018](../tracking/phase-4/tasks/P4-T018-telethon-join-queue.md)); posture windows 15 min / 1 h / 24 h ([P4-T019](../tracking/phase-4/tasks/P4-T019-telegram-postures.md)) | Tightening is free; the Telegram caps never exceed the platform rules ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
 
 ### 2.15 Platform, deployment and regions
@@ -260,7 +260,7 @@ See [18](18-platform-and-deployment.md). Changing the mode is an OPS task; loose
 
 `on_system_failure` is set per bot. The default is **`flatten`**: close the position at market, so a down system holds no live exposure. The alternatives are `cancel_orders_only` (keep the position under its resting venue stop; useful for long-horizon holds) and `hold`. Hold-and-earn positions are exempt.
 
-**Important limit:** if the whole host or its internet is down, nothing on our side can send orders. Then only layer 3 protects you: open orders get cancelled by the venue timer, and positions are protected by the **resting venue stop**. That's why every live position carries a venue-side stop from entry.
+**Important limit:** if the whole runtime host ([18 §5](18-platform-and-deployment.md#5-deployment-modes)) or its internet is down, nothing on our side can send orders. Then only layer 3 protects you: open orders get cancelled by the venue timer, and positions are protected by the **resting venue stop**. That's why every live position carries a venue-side stop from entry.
 
 **Clean restart after an unplanned stop:**
 1. The engine starts with every bot **paused**.
@@ -279,22 +279,26 @@ See [18](18-platform-and-deployment.md). Changing the mode is an OPS task; loose
 - A small **WireGuard/Tailscale exit node** on a cloud VM in Sydney with a **static IP**. It can be a free-tier VM where available (e.g. an always-free instance in a Sydney region (U), otherwise a few dollars a month).
 - **Only that IP** is allow-listed on every key.
 - Broadband and 4G both reach the exit node over the tunnel, so failover doesn't change the IP the exchanges see.
+- **When it's needed:** from go-live (Phase 7). Paper and testnet on the workstation use your broadband IP ([18 §5](18-platform-and-deployment.md#5-deployment-modes)).
+- **If the runtime host is itself a Sydney cloud VM with a static IP** ([18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)), that IP is the egress IP and no separate exit node is needed. The same rules apply: only that IP is allow-listed, and the egress check below runs.
+- **Regional engines** (later, optional, [18 §7](18-platform-and-deployment.md#7-latency-and-regions)): each region has its own static egress IP, added to that venue's key allow-list, and its own `deadman` and venue timers. The region must be one where the venue serves an Australian-resident account.
 
 **Compliance:**
-- The exit node is in Australia, matching your KYC country and residency.
+- The exit node (or static-IP runtime host) is in Australia, matching your KYC country and residency.
 - It isn't location masking, so it doesn't conflict with the "no VPN/proxy" rule ([12 §3](12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention)), which is about hiding location.
 
 **If the tunnel itself is down:** fail-flat via layer 3 (venue timers + resting stops), alert on every channel.
 
 **Egress check:**
-- The monitor checks every minute that our exchange traffic leaves via the allow-listed IP, and that the IP's country matches your configured residency (free GeoIP database, e.g. DB-IP Lite (CC BY)).
+- The monitor checks every minute that our exchange traffic leaves via the allow-listed IP, and that the IP's country matches your configured residency (free GeoIP database, e.g. DB-IP Lite (CC BY)). A regional engine is checked against its own IP and the allowed regions in the venue registry.
 - A mismatch blocks new orders and alerts. This is a **safety check, not a tax input**: tax residency is your legal status (D15 residency timeline), never inferred from IP.
 
 ### 3.3 Records: the write path vs the integrity check
 
 **At trade time (write path):**
 - Every order, fill and command is written to the WORM tables **as it happens**.
-- If Postgres is unreachable, writes buffer in NATS JetStream: bounded at 1 GB or 24 h.
+- If the database (Supabase Postgres, local or cloud, [18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)) is unreachable, writes buffer in NATS JetStream: bounded at 1 GB or 24 h. NATS runs on the runtime host next to the engine, so the buffer works the same in every mode.
+- The writer is the Rust `mt-obs` crate ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
 - The engine doesn't keep opening positions meanwhile: the DB heartbeat is one of the components the dead-man watches (§3.1), so the buffer mainly carries exits and records already in flight ([02 §9.3](02-v1-architecture.md#93-degraded-modes)).
 - Above 80% of the buffer, new entries stop; exits continue.
 - The buffer is the JetStream subject `worm.buffer.>`. Its fill level is in NATS KV `worm_buffer`, which M11 reads pre-trade (80% → new entries stop).

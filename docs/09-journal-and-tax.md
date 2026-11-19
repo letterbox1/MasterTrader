@@ -9,7 +9,7 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 3. **Pluggable jurisdictions:** Australia now; UAE, Egypt and Cyprus (or anywhere else) later, driven by a **residency timeline**.
 4. **Independent audit trail:** an hledger/Beancount export an accountant can read and diff.
 5. **Three currencies on every event:** native amount, **USD** and **AUD** (RBA F11 daily rate, with the rate source and timestamp stored; rules in [FX and valuation](#fx-and-valuation-rules)), so a later change of base currency or residency doesn't need a re-price.
-6. **Wallet registry:** every exchange account and on-chain address you own is registered in **`ops.wallets`**, the one registry table. It's created in Phase 3 (seed-file loader through `mt_api`, plus a minimal Accounts page) and extended additively by the Phase 5 wallet indexer (M22 unified wallet view, [13 §3](13-wallets-treasury-and-onchain.md#3-unified-wallet-view)). Transfers between your own wallets are tagged **internal** and are never disposals.
+6. **Wallet registry:** every exchange account and on-chain address you own is registered in **`ops.wallets`**, the one registry table. It's created in Phase 3 (seed-file loader through `mt-api`, plus a minimal Accounts page) and extended additively by the Phase 5 wallet indexer (M22 unified wallet view, [13 §3](13-wallets-treasury-and-onchain.md#3-unified-wallet-view)). Transfers between your own wallets are tagged **internal** and are never disposals.
 7. **Investment vs trading segregation:** wallets/sub-accounts are tagged `investment` or `trading`, so long-term holdings can be argued as capital even if active trading is treated as revenue (ask your tax agent).
 8. **Optional export** to Syla / Koinly-style CSV so a tax agent can cross-check with their usual tool. Our engine stays primary.
 
@@ -41,9 +41,14 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 | **Rotki** | AGPL-3.0 | Optional sidecar | Local on-chain/DeFi event decoding (airdrops, staking, LP). Ingest its decoded events; **don't** use its P&L (German defaults). |
 | Ghostfolio | AGPL-3.0 | Optional sidecar | Portfolio dashboard via `POST /api/v1/import`. Not tax. |
 
-**On log stores (Loki, Graylog, OpenObserve):** these are operational logs, not the journal of record. The journal lives in **Postgres** (append-only, hash-chained); Loki holds the operational logs. See [03-build-spec §5 M17](03-build-spec.md#m17-observability--audit--mt_obs).
+**On log stores (Loki, Graylog, OpenObserve):** these are operational logs, not the journal of record. The journal lives in **Supabase Postgres** (append-only, hash-chained, [18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)); Loki holds the operational logs. See [03-build-spec §5 M17](03-build-spec.md#m17-observability--audit--mt_obs).
 
 ## Architecture
+
+**Where the code lives** ([18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)):
+- The **lot engine, FX/valuation, jurisdiction rules, reports and exports** are the Rust crate **`mt-journal`** (`rust_decimal` for every amount). The tax golden tests run against the crate (`cargo test -p mt-journal`).
+- **Ingestion adapters** are Rust where the format is simple (CSV, JSON, REST ledgers). A statement format that needs a Python-only parser stays in a small Python adapter that hands normalised events to `mt-journal`; it never computes tax.
+- The journal schema and its WORM rules are SQL in `supabase/migrations/`.
 
 ```
 NautilusTrader fills/positions ─┐
@@ -51,11 +56,11 @@ Broker statements (IBKR Flex, OANDA, IG…; CommSec optional/later) ─┤→ In
 Exchange REST (ccxt ledgers) / on-chain (own indexer or Rotki sidecar) ─┤
 Airdrop module (M4) / staking / funding / swaps / manual events ─┘
         ↓
-Append-only JOURNAL (Postgres `journal` schema, main table `journal.event`; WORM; raw payload + normalised event; hash chain; corrections via supersedes_event_id)
+Append-only JOURNAL (Supabase Postgres `journal` schema, main table `journal.event`; WORM; raw payload + normalised event; hash chain; corrections via supersedes_event_id)
         ↓
 FX & price service (RBA F11 daily for AUD; crypto by the valuation hierarchy below; ECB / CBE / CBUAE for other homes; source and method recorded per event)
         ↓
-LOT ENGINE (rp2-style; SPECIFIC_ID primary, FIFO fallback; Decimal; lots for every asset AND every non-AUD cash balance (Div 775);
+LOT ENGINE (`mt-journal`; rp2-style; SPECIFIC_ID primary, FIFO fallback; rust_decimal; lots for every asset AND every non-AUD cash balance (Div 775);
             snapshots: 30-Jun-2027 reform, residency change (CGT event I1))
         ↓
 JURISDICTION RULES ENGINE (plugins, versioned by date) + RESIDENCY TIMELINE
@@ -65,14 +70,14 @@ REPORTS: myTax worksheet · CGT schedule · revenue/trading P&L · PAYG-I estima
 EXPORTS: Beancount/hledger ledger · CSV/PDF accountant pack · CARF reconciliation (venue-reported vs journal)
 ```
 
-**Journal storage:** journal events live in `journal.event`, part of the `journal` schema, which is **WORM** ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)). Other modules (airdrops [08](08-airdrops-and-token-launches.md), curation and treasury [13](13-wallets-treasury-and-onchain.md)) write their journal events to the same table. If Postgres is unreachable, writes buffer in NATS JetStream, so an outage delays rather than loses them ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)).
+**Journal storage:** journal events live in `journal.event`, part of the `journal` schema, which is **WORM** ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)). Other modules (airdrops [08](08-airdrops-and-token-launches.md), curation and treasury [13](13-wallets-treasury-and-onchain.md)) write their journal events to the same table. If the database is unreachable, writes buffer in NATS JetStream, so an outage delays rather than loses them ([16 §3.3](16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)).
 
-**Commands** (via `mt_api`, audited):
+**Commands** (via `mt-api`, audited):
 - `journal.manual_event.add` (C2) for anything not captured automatically (opening lots, off-platform events). Never direct SQL.
 - `tax.fy.lock` / `tax.fy.unlock` (C3) freeze or reopen a financial year's reports.
 - `task.answer` records a tax-agent answer against its question task.
 
-Attachments (e.g. a statement or screenshot on a note) are stored content-addressed under `data/attachments/` and referenced by hash.
+Attachments (e.g. a statement or screenshot on a note) are stored content-addressed in a private Supabase Storage bucket ([18 §4.5](18-platform-and-deployment.md#45-access-rules)) and referenced by hash. Tax exports go to a private bucket too.
 
 ### FX and valuation rules
 
@@ -137,19 +142,24 @@ Each snapshot row records the price source, the method and its timestamps.
 
 ### Jurisdiction plugin interface
 
-```python
-class JurisdictionRules(Protocol):
-    code: str; valid_from: date; valid_to: date | None      # e.g. AU_2026, AU_2027_REFORM
-    home_currency: str
-    def tax_year(self, local_date) -> TaxYear                 # AU 1 Jul–30 Jun; CY/EG calendar year
-    def is_resident(self, timeline, tax_year) -> ResidencyResult
-    def classify(self, event, regime) -> Treatment            # CAPITAL | REVENUE | INCOME | EXEMPT | STAMP_DUTY | CRYPTO_FLAT
-    def lot_policy(self, asset_class) -> LotPolicy            # AU: SPECIFIC_ID → FIFO
-    def fx_policy(self) -> FxPolicy                           # AU: RBA F11 daily; crypto: valuation hierarchy (16 §4.1)
-    def compute(self, events, lots, tax_year) -> TaxComputation
-    def on_residency_change(self, from_, to_, at) -> list[DeemedEvent]   # AU CGT event I1 (+ s104-165 election, modelled both ways)
-    def reports(self) -> list[ReportGenerator]
-    def compliance_flags(self, events) -> list[Flag]
+A Rust trait in `mt-journal` (sketch; names may change in the build):
+
+```rust
+pub trait JurisdictionRules {
+    fn code(&self) -> &str;                                   // e.g. AU_2026, AU_2027_REFORM
+    fn valid_from(&self) -> NaiveDate;
+    fn valid_to(&self) -> Option<NaiveDate>;
+    fn home_currency(&self) -> Currency;
+    fn tax_year(&self, local_date: NaiveDate) -> TaxYear;     // AU 1 Jul–30 Jun; CY/EG calendar year
+    fn is_resident(&self, timeline: &ResidencyTimeline, year: TaxYear) -> ResidencyResult;
+    fn classify(&self, event: &JournalEvent, regime: Regime) -> Treatment; // CAPITAL | REVENUE | INCOME | EXEMPT | STAMP_DUTY | CRYPTO_FLAT
+    fn lot_policy(&self, asset_class: AssetClass) -> LotPolicy;            // AU: SPECIFIC_ID → FIFO
+    fn fx_policy(&self) -> FxPolicy;                          // AU: RBA F11 daily; crypto: valuation hierarchy (16 §4.1)
+    fn compute(&self, events: &[JournalEvent], lots: &LotBook, year: TaxYear) -> TaxComputation;
+    fn on_residency_change(&self, from: Country, to: Country, at: DateTime<Utc>) -> Vec<DeemedEvent>; // AU CGT event I1 (+ s104-165 election, modelled both ways)
+    fn reports(&self) -> Vec<Box<dyn ReportGenerator>>;
+    fn compliance_flags(&self, events: &[JournalEvent]) -> Vec<Flag>;
+}
 ```
 
 | Plugin | Rules (summary) |
@@ -176,7 +186,7 @@ class JurisdictionRules(Protocol):
 
 ### Quality
 
-- **Golden-file tests** from ATO worked examples (e.g. bought 2 Feb 2018 → discount eligible from 3 Feb 2019) and each jurisdiction's published examples.
+- **Golden-file tests** (in `mt-journal`) from ATO worked examples (e.g. bought 2 Feb 2018 → discount eligible from 3 Feb 2019) and each jurisdiction's published examples.
 - **Property tests:**
   - lots are conserved;
   - matched quantity = disposed quantity;

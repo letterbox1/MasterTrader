@@ -33,6 +33,7 @@ This doc is canonical for **which language each service is written in, where eac
 
 | Crate / service | Module | Replaces | Notes |
 |---|---|---|---|
+| `mt-core` | shared types | `mt_core` | Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent, config, clock. Exposed to Python through the same PyO3 module as `pit`, so both languages share one definition |
 | `mt-api` | M15 command layer | FastAPI `mt_api` | axum + tokio; OpenAPI generated with utoipa, so `openapi-typescript` still generates the web client. REST + WebSocket; verifies Supabase Auth JWTs (§4.6); C0–C3 confirmation and preview tokens unchanged |
 | `mt-risk` | M11 | `mt_risk` | **One implementation**: linked into `mt-api` (policy, previews), the engine (pre-trade checks, via a PyO3 binding where the strategy or node is Python) and `deadman`. Risk golden tests run against the crate |
 | `mt-deadman` | M11 layer 2 | `mt_risk.deadman` | Small static binary, own trade-only keys, cancel/flatten only |
@@ -200,7 +201,7 @@ If the disk or a backup is stolen, the secrets stay encrypted, because the key t
 | Stage | Where the age keys live |
 |---|---|
 | Build, tests, paper and testnet | OS keychain (or a passphrase-protected age file) is enough: no real money is at stake |
-| Before live money (P7) | YubiKey recommended for both identities ([07 §2](07-security-notes.md#2-secrets)) |
+| Before live money (P7) | YubiKey for both identities: the default from P7 (`secrets.age_identity_store: yubikey`, [16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions)), done in P7-T072 ([07 §2](07-security-notes.md#2-secrets)) |
 
 ## 9. Workstation-first build path
 

@@ -75,7 +75,8 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks **live
   - wash trading, spoofing, layering, quote stuffing;
   - self-matching across sub-accounts;
   - multiple KYC accounts;
-  - VPNs/proxies that hide your location. (The fixed-IP exit node in Australia that all exchange traffic leaves through ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)) isn't location masking: it matches your KYC country and residency.)
+  - VPNs/proxies that hide your location. (The fixed-IP exit node in Australia that all exchange traffic leaves through ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)) isn't location masking: it matches your KYC country and residency. The same holds when the runtime host is itself a Sydney VM with a static IP.)
+    - **Regional engines** (optional, later, [18 §7](18-platform-and-deployment.md#7-latency-and-regions)) must sit in a jurisdiction where the venue serves an Australian-resident account (the venue registry lists the allowed regions). Only under that condition are they not location masking; a region used to reach a venue or product you couldn't otherwise use is banned.
   - exploiting pricing bugs.
 - **Arbitrage scope:** only genuine price differences between independent venues.
 - **STP:**
@@ -115,7 +116,9 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks **live
 | Lido CSM / validators | Allow-listed relays; fixed fee recipient; timely exits | Changing the fee recipient; a second instance with the same keys |
 | Anthropic / OpenAI | Human approval on trade decisions (usage policy treats financial decisions as high-risk). **MCP-originated orders always need your approval card** (Telegram/web, TTL 5 min, expiry = reject); MCP can never approve ([16 §2.3, §2.12](16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) | Deceptive promotion/shilling drafts; any "skip approval" or auto rule for MCP orders |
 | Datasets: MemeTrans (CC BY-NC-SA), SolRPDS (CC BY), Pumpfun corpus (CC BY) | Private models; attribution | Shipping MemeTrans-trained models commercially |
-| Tailscale Personal | Private use | Staying on the free plan if commercial |
+| Tailscale Personal | Private use (needed only for phone access, the private API in hybrid mode and the go-live exit node, [18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) | Staying on the free plan if commercial |
+| Vercel Hobby (optional web host) | Personal, non-commercial use of the static web app (U) | Commercial use on Hobby; exchange keys or the order path in Vercel Functions ([18 §6](18-platform-and-deployment.md#6-what-cant-run-on-vercel-and-why)) |
+| Supabase cloud (optional) | A paid plan for the trading database (the free plan pauses after 7 idle days) | Turning on the Data API or Realtime for MasterTrader schemas ([16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions)); the free plan for live data |
 
 ## 5. Data-provenance tagging (one mechanism for all data terms)
 
@@ -129,7 +132,7 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks **live
   - Defaults: Telegram, Birdeye and Etherscan rows are false.
   - Models trained on MemeTrans are flagged `commercial_ok = false`.
 - **Inference paths** (tier B, agents, RAG retrieval, **MCP responses**) refuse rows with `model_input_ok = false`. This covers Telegram.
-  - MCP tool results go into an external model's context, so `mt_api` filters every `source = mcp` response like any model input: no Telegram text (postures only), no `model_input_ok = false` rows, PII (TFN, addresses, statements) redacted, untrusted text wrapped and marked.
+  - MCP tool results go into an external model's context, so `mt-api` filters every `source = mcp` response like any model input: no Telegram text (postures only), no `model_input_ok = false` rows, PII (TFN, addresses, statements) redacted, untrusted text wrapped and marked.
 - **Retention jobs** enforce `retention_days` (e.g. CoinGecko ≤ 1 day).
 - **The licence tag on each source** (06) is the default for its rows. A SaaS pivot becomes a retrain on `commercial_ok` rows, not a redesign.
 

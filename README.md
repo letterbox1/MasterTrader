@@ -16,6 +16,13 @@ Around that it adds:
 - vetted airdrop/launch tracking with a user task queue;
 - optional Claude/MCP control, built last.
 
+**Stack and where it runs** (full picture in [docs/18](docs/18-platform-and-deployment.md)):
+- **Rust first** for every service we write (API, risk, dead-man, recorder, monitor, `pit`, WORM writer, signer, journal, Telegram bot, MCP); **Python only where necessary** (ML training, agents/RAG, Python-only data SDKs, Python strategies and the research lab).
+- **NautilusTrader** stays the trading engine (Rust core; strategies in Rust or Python).
+- **Supabase Postgres**, local (Supabase CLI, or self-hosted on the workstation) or, if you choose, Supabase cloud. One set of SQL migrations serves both.
+- **Web app** (React + TypeScript), served locally or deployed to **Vercel**. Login is Supabase Auth with password + TOTP.
+- **Workstation first:** everything is built, tested and paper-traded on your workstation. Before live money, Phase 7 shifts to the runtime host you choose (default: stay on the workstation). The always-on trading services never run on Vercel.
+
 ## Documents
 
 | File | Contents |
@@ -30,12 +37,13 @@ Around that it adds:
 | [brand/](brand/README.md) | Signal M logo, app icon, palette |
 | [SPEC.md](SPEC.md) | v1 specification and core decisions |
 | [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) | Vetting of 10 open-source repos: licenses, code audit, reputation, overlap and redundancy, verdicts, and the supporting free data/memory/quant ecosystem |
-| [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | **End-to-end architecture v3:** deployment topology, networks & containers, module ownership, data stores, NATS subjects, `mt_api` REST/WS contract + confirmation levels + command catalogue, end-to-end flows, SLOs, degraded modes, frontend stack, phase-by-phase build plan |
-| [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec v2:** ground rules (free only), stack, repo layout, modules M0–M23 (strategy framework, risk manager, live monitor, observability, journal/tax, curation, MCP), timeframes per asset class, gates |
+| [docs/02-v1-architecture.md](docs/02-v1-architecture.md) | **End-to-end architecture v3** (stack and deployment superseded by [18](docs/18-platform-and-deployment.md) where they differ): deployment topology, networks & containers, module ownership, data stores, NATS subjects, `mt-api` REST/WS contract + confirmation levels + command catalogue, end-to-end flows, SLOs, degraded modes, frontend stack, phase-by-phase build plan |
+| [docs/03-build-spec.md](docs/03-build-spec.md) | **Build spec v2:** ground rules (free only), stack and repo layout (see [18](docs/18-platform-and-deployment.md) for the current stack), modules M0–M23 (strategy framework, risk manager, live monitor, observability, journal/tax, curation, MCP), timeframes per asset class, gates |
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phases 0–8 with checklists and a demo per phase (platform first, strategies second, MCP last) |
-| [docs/15-bots-hitl-and-worm-audit.md](docs/15-bots-hitl-and-worm-audit.md) | **Trading bots** (strategy × market scope × mode; autonomous vs HITL via Telegram approval cards) and **WORM records** (tamper-proof Postgres audit/journal with external seals) |
+| [docs/15-bots-hitl-and-worm-audit.md](docs/15-bots-hitl-and-worm-audit.md) | **Trading bots** (strategy × market scope × mode; autonomous vs HITL via Telegram approval cards) and **WORM records** (tamper-proof Supabase Postgres audit/journal with external seals) |
 | [docs/16-configuration-and-safety-model.md](docs/16-configuration-and-safety-model.md) | **Configuration & failure safety:** tighten-only configuration layers, every default value (all changeable in settings), three-layer dead-man, fixed egress IP, valuation and live inputs |
-| [docs/17-decisions-register.md](docs/17-decisions-register.md) | **Decisions register:** the decision for every planning gap, ratified 2026-10-22, and how work runs |
+| [docs/17-decisions-register.md](docs/17-decisions-register.md) | **Decisions register:** the decision for every planning gap, ratified 2026-10-22, and how work runs; §G records the 2026-11-19 re-platform |
+| [docs/18-platform-and-deployment.md](docs/18-platform-and-deployment.md) | **Platform & deployment (canonical for the stack):** Rust first / Python where necessary, repository layout, Supabase Postgres (bars without TimescaleDB, access rules, Supabase Auth, backups), deployment modes (workstation, hybrid with Vercel + Supabase cloud, regional engines), what can't run on Vercel, latency and regions, Tailscale and the hardware key per mode, the workstation-first build path |
 | [docs/roadmap/](docs/roadmap/README.md) | **Roadmap:** one scoped document per phase (requirements with IDs, ToDos split into your actions / build / ops / verify / run, entry & exit criteria, risks), timeline, dependencies, fixed external dates, a register of every action only you can do, and traceability back to SPEC, GOAL, modules, dashboards and docs |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
 | [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets. **Reddit and X are deferred; Telegram and Discord are the free social feeds** |

@@ -17,6 +17,7 @@
 - [docs/16-configuration-and-safety-model.md](docs/16-configuration-and-safety-model.md): configuration layers, **every default value**, failure safety. Where another doc quotes a number, 16 is the reference.
 - [docs/17-decisions-register.md](docs/17-decisions-register.md): the decision for every planning gap.
 - [docs/02-v1-architecture.md](docs/02-v1-architecture.md): architecture overview.
+- [docs/18-platform-and-deployment.md](docs/18-platform-and-deployment.md): **platform and deployment (canonical for the stack):** Rust first, Python where necessary, Supabase Postgres, the web app served locally or on Vercel, deployment modes, regions, workstation-first build path. Where 02 or 03 differ on the stack, 18 wins.
 - [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) and [docs/06](docs/06-aggregators-and-market-providers.md): justify the component choices.
 - [docs/05](docs/05-saas-legal-and-licensing.md): what a SaaS would require.
 
@@ -25,13 +26,15 @@
 | Area | Decision |
 |---|---|
 | Platform stance | **Strategy-agnostic, any timeframe** (tick/L2 → 1D+). Strategies, risk limits and preferences are user inputs (M0) |
-| Execution / backtest core | **NautilusTrader**: the same code runs backtest, paper and live. Custom adapters for Alpaca, OANDA, IG (optional cTrader/Saxo/MT5) |
+| Languages | **Rust first** for every service we write (`mt-api`, `mt-risk`, `mt-deadman`, `mt-engine`, `mt-recorder`, `mt-monitor`, `mt-store`, `mt-obs`, `mt-signer`, `mt-journal`, `mt-events`, `mt-telegram-bot`, `mt-mcp`; Cargo workspace in `crates/`). **Python only where necessary** (ML training, agents/RAG, Python-only data SDKs such as OpenBB, edgartools and Telethon, Python strategies and the research lab; uv workspace in `packages/`). Python never places orders or signs ([18 §2](docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
+| Deployment | **Workstation first:** Phases 0–6 build, test and paper-trade on your workstation (Mode 1, free). Before live money, Phase 7 shifts to the runtime host you choose (default: stay on the workstation) and can optionally move the web app to **Vercel** and the database to **Supabase cloud** (Mode 2). Always-on trading services never run on Vercel. One region (Sydney) by default ([18 §5–9](docs/18-platform-and-deployment.md#5-deployment-modes)) |
+| Execution / backtest core | **NautilusTrader** (Rust core): the same code runs backtest, paper and live. Rust live node where the venue's Rust adapter is production-ready (U, per venue), otherwise the Python node; `mt-risk` is linked in either way. Custom adapters for Alpaca, OANDA, IG (optional cTrader/Saxo/MT5) |
 | Risk | Built-in **risk manager** (M11): default-deny; tighten-only configuration layers L0–L4 with defaults ([16](docs/16-configuration-and-safety-model.md)); sizing models; two-stage drawdowns; kill switch; **three-layer dead-man's switch** (in-engine, external `deadman` sidecar, venue-side timers + resting stops); tighten instantly, loosen C3 (Telegram + TOTP + cool-down) |
 | Market-making sidecar | **Hummingbot** (telemetry off) |
 | AI decision layer | **TradingAgents** debate pattern on LangGraph + **FinRobot V2** valuation operators |
 | Research lab | Nautilus truth backtests with **measured costs**; Vibe-Trading-style screener and validation; freqtrade look-ahead analysers (GPL, vendored under `third_party/`, isolated in `mt_lab`; personal use); Optuna; **MLflow** experiment tracking |
 | Live monitoring | **M16:** always-on data-quality and cost/TCA monitor with venue reconciliation. It feeds the risk manager and the backtest cost models |
-| Storage | **Postgres + TimescaleDB + pgvector** (system of record, bars at every size); **Nautilus Parquet catalog + DuckDB** (raw ticks/L2) |
+| Storage | **Supabase Postgres + pgvector** (system of record; local via the Supabase CLI or self-hosted on the workstation, optionally Supabase cloud; SQL migrations in `supabase/`). Bars at every size in monthly native partitions, no TimescaleDB ([18 §4.3](docs/18-platform-and-deployment.md#43-bars-without-timescaledb)); **Nautilus Parquet catalog + DuckDB** (raw ticks/L2, older bars) |
 | Observability & audit | **Grafana + Loki + Prometheus + Vector + OpenTelemetry**; WORM audit tables (`audit.order`, `audit.fill`, `audit.command`, `audit.llm_call` from P0, `audit.mcp_call`, …) |
 | Journal & tax | In-house jurisdiction-pluggable engine (rp2/ledger ideas): **AU_2026**, **AU_2027_REFORM**, AE, EG, CY; PAYG-instalment estimator; Beancount/hledger audit export |
 | Memory / RAG | **Hindsight** (self-hosted, our Postgres, local TEI embedder bge-small + reranker) + hybrid document RAG in Postgres (pgvector + tsvector, RRF, rerank, point-in-time); LightRAG optional later |
@@ -45,9 +48,10 @@
 | Global events | GDELT/USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP + Kalshi/Polymarket probabilities |
 | Airdrops / launches | Vet (GoPlus, RugCheck, Honeypot.is, blocklists, rug-pull heuristics) → auto-claim only for eligible claims from the chain's mandate-bound **airdrop identity wallet** → everything else becomes user tasks |
 | Curation | **One task queue** for social tasks, Discord/Telegram servers and channels to follow, manual claims, and approvals; daily and weekly digests with Telegram buttons |
-| Command layer | **`mt_api`**: every action (UI, Telegram, later MCP) is a typed, audited command |
+| Command layer | **`mt-api`** (Rust, axum, OpenAPI): every action (UI, Telegram, later MCP) is a typed, audited command. Login is **Supabase Auth** (password + TOTP; commands need the MFA level `aal2`); the browser never reads the database directly ([18 §4.5–4.6](docs/18-platform-and-deployment.md#45-access-rules)) |
+| Web app | React + TypeScript SPA (`apps/web`), built once; served locally by Caddy or deployed to Vercel (`web.host`, [16 §2.15](docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)) |
 | Trading bots | A **bot** = strategy version × market scope (instrument, list or dynamic selection) × venue/sleeve × mode. Modes `paper` / `hitl` / `autonomous` per bot: paper → HITL is C2; **autonomous** is C3, gates required, auto-downgrade on decay/DQ; **HITL** sends Telegram approval cards (TTL, protective exits automatic). See [15](docs/15-bots-hitl-and-worm-audit.md) |
-| MCP | **Last (Phase 8), optional.** A thin adapter over `mt_api`: read/analyse, talk to agents, **trade and adjust positions**, strategies, risk, curation. Orders go through the risk manager and **always** need your approval card; MCP can never approve, and the never-exposed list is in [16 §2.12](docs/16-configuration-and-safety-model.md#212-mcp-phase-8) |
+| MCP | **Last (Phase 8), optional.** A thin adapter (`mt-mcp`, Rust) over `mt-api`: read/analyse, talk to agents, **trade and adjust positions**, strategies, risk, curation. Orders go through the risk manager and **always** need your approval card; MCP can never approve, and the never-exposed list is in [16 §2.12](docs/16-configuration-and-safety-model.md#212-mcp-phase-8) |
 | Rejected | VibeTradingLabs/vibetrading, nofx as a platform, threads-scraper, log, Spacebar, Graylog, OpenObserve, TDengine, ArcticDB, Soda Core, paid data |
 
 ## Non-negotiable requirements
@@ -83,7 +87,7 @@
 | 4 | News, social, events & calendars |
 | 5 | Airdrops, launches & curation queue |
 | 6 | AI decision layer, memory & anomalies |
-| 7 | Prove it, then go small-live (opens after Phase 3; hard-gated) |
+| 7 | Prove it, then go small-live (opens after Phase 3; hard-gated). Includes the go-live pack approval and the shift to the runtime host before any live money |
 | 8 | MCP control plane (optional, last; hard-gated) |
 
-Tasks run in parallel by dependency across phases, each claimed by one agent and independently reviewed before it's done; Phases 7 and 8 wait for their prerequisite phases ([17 §E](docs/17-decisions-register.md#e-ratification-2026-10-22)).
+Tasks run in parallel by dependency across phases, each claimed by one agent and independently reviewed before it's done; Phases 7 and 8 wait for their prerequisite phases ([17 §E](docs/17-decisions-register.md#e-ratification-2026-10-22)). Everything up to Phase 7 builds and runs on your workstation: no dedicated host, LUKS, Tailscale, YubiKey or GPU is needed before then ([18 §9](docs/18-platform-and-deployment.md#9-workstation-first-build-path)).
