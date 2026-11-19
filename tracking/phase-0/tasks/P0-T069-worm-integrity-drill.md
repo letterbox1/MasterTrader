@@ -15,17 +15,17 @@ requirements: [R0.12, R0.07]
 roadmap_todos: [T0.66]
 modules: [M17, M11, mt_risk, mt_api]
 dashboards: [D16]
-tools: [git, uv, python>=3.12, docker, psql]
+tools: [git, cargo, supabase, docker, psql]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, minio, prefect-server]
+services: [supabase-postgres, supabase-auth, nats, mt-api, minio, prefect-server]
 branch: p0/P0-T069-worm-integrity-drill
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,12 +56,12 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
   1. Baseline: hourly incremental and daily full verify `ok`; KV `audit.integrity = ok`; D16 shows no banner.
   2. Tamper: as superuser on the **scratch** DB with triggers disabled, change one payload field of a sealed `audit.command` row.
   3. Detect: run `audit.verify` (incremental, then full) → mismatch at the right table/seq; an `audit.integrity_incident` row (critical); `alert.critical.audit_verify` published; KV `audit.integrity = block_new_entries`; red D16 banner on every route.
-  4. Gate: through the `mt_risk.integrity_gate` hook (a test harness standing in for P2's M11) an entry intent and a risk-increasing intent are rejected; a reduce-only exit and a protective stop pass; Kill ON still works.
+  4. Gate: through the `mt_risk::integrity_gate` hook (`mt-risk` crate) (a test harness standing in for P2's M11) an entry intent and a risk-increasing intent are rejected; a reduce-only exit and a protective stop pass; Kill ON still works.
   5. No loosening: a C3 loosening (e.g. raising an LLM budget) is refused while the incident is open; tightening still applies.
   6. Clear: `audit.integrity.ack` (C3) → `mtctl approve <id>` over SSH + TOTP → the configured cool-down (default 15 min, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) → applied: a new `audit.integrity_incident` ack row referencing the incident, the incident row unchanged, KV back to `ok`, banner gone.
   7. Repeat steps 3–4 with the action set to `halt_all` (exits also rejected, Kill still works) and to `alert_only` (alerts fire, nothing blocked); changing the action towards `alert_only` is itself C3.
-- Non-functional: the automated version runs in CI with SimClock for the cool-down; the host run uses real time (no shortened cool-down). Evidence in `docs/runbooks/evidence/p0-integrity-drill-<date>.md`.
-- Tools & access: listed in the front matter; no secrets beyond your own TOTP for the host run.
+- Non-functional: the automated version runs in CI with SimClock for the cool-down; the workstation run uses real time (no shortened cool-down). Evidence in `docs/runbooks/evidence/p0-integrity-drill-<date>.md`.
+- Tools & access: listed in the front matter; no secrets beyond the TOTP of the account used for the workstation run (the seeded test account on the scratch stack).
 
 ## ToDo
 
@@ -84,7 +84,7 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
 
 ## Acceptance criteria
 
-- [ ] Steps 1–7 pass in CI (SimClock) and once on the scratch host stack (real cool-down)
+- [ ] Steps 1–7 pass in CI (SimClock) and once on a scratch workstation stack (real cool-down)
 - [ ] Entries blocked, exits/protective orders/Kill allowed under `block_new_entries`
 - [ ] Only a C3 `audit.integrity.ack` clears it, as a new row; the incident row is never updated
 - [ ] Runbook followed literally and corrected where needed; evidence committed
@@ -98,7 +98,7 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
 ## Cardinal rules (do NOT)
 
 - Do NOT tamper with production data or production anchors; scratch environments only.
-- Do NOT shorten the cool-down on the host run or skip TOTP; SimClock only in CI.
+- Do NOT shorten the cool-down on the workstation run or skip TOTP; SimClock only in CI.
 - Do NOT clear the status any way other than `audit.integrity.ack`.
 - Do NOT UPDATE or DELETE WORM rows, ever (the drill's tamper is a deliberate superuser fault on a scratch DB); corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down; break-glass CLI in P0); protective exits never wait for approval.
@@ -120,3 +120,4 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
 
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for R0.12 / T0.66, decided in 17 §A P0-B001 and 16 §2.11)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (drill automated as Rust integration tests against the Supabase CLI stack; `mt_risk::integrity_gate`; workstation run with the seeded test account (no wait on P0-T062))

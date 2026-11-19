@@ -15,17 +15,17 @@ requirements: [R0.09, R0.13]
 roadmap_todos: [T0.69]
 modules: [M21, M17]
 dashboards: [D16]
-tools: [docker, uv, sops, curl]
+tools: [docker, cargo, sops, curl]
 mcp: []
 env: [ANTHROPIC_API_KEY, MT_CUSTOM_LLM_BASE_URL, MT_CUSTOM_LLM_API_KEY]
-services: [anthropic-api, custom-llm-endpoint, litellm, llm-local, tei-embed, postgres]
+services: [anthropic-api, custom-llm-endpoint, litellm, llm-local, tei-embed, supabase-postgres]
 branch: p0/P0-T068-live-gateway-smoke
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ With your real keys from P0-T007 in the secrets file, the LiteLLM gateway built 
 ## Requirements
 
 - Functional:
-  - Run on the host (or the dev stack) with the secrets file decrypted into tmpfs as usual; the agent's checks read the env names in the front matter via `sops exec-env` only, so no value is typed, echoed or logged.
+  - Run on the workstation stack with the secrets file decrypted into tmpfs as usual; the agent's checks read the env names in the front matter via `sops exec-env` only, so no value is typed, echoed or logged.
   - One short completion per route through LiteLLM with a test virtual key: `research-primary` and `local-advisor` return 200; `research-custom` returns 200 if P0-T007 provided it, otherwise the log records "disabled" and the fallback chain skips it.
   - One embedding via `local-embed` (`tei-embed`) returns 384 dims; one rerank via `tei-rerank` orders a relevant passage first.
   - Budget fallback against the real provider: a test role with a tiny daily budget (e.g. US$0.001) → the second call is served by `local-advisor` and marked `fallback_used`.
@@ -118,3 +118,4 @@ With your real keys from P0-T007 in the secrets file, the LiteLLM gateway built 
 
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for T0.69: live smoke split from T0.28 per build first, keys last, 17 §E)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (runs on the workstation; checks driven by curl and a Rust test instead of uv; Supabase Postgres holds `audit.llm_call`; keeps USER P0-T007 as the late live check)

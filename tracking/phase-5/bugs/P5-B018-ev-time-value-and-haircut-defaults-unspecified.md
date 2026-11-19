@@ -4,7 +4,7 @@ kind: gap
 title: EV time value and default haircut have no documented default
 phase: 5
 type: DOC
-status: backlog
+status: done
 priority: low
 size: XS
 severity: S4
@@ -22,12 +22,12 @@ services: []
 branch: p5/P5-B018-ev-time-value-and-haircut-defaults-unspecified
 pr: ""
 doc_sync: [docs/16-configuration-and-safety-model.md, docs/08-airdrops-and-token-launches.md]
-doc_sync_status: n/a
+doc_sync_status: done
 found_in: P5-T007
 created: 2026-11-19
 updated: 2026-11-19
 started: ""
-completed: ""
+completed: 2026-11-19
 blocked_reason: ""
 checkpoint: ""
 review_result: ""
@@ -54,9 +54,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Take the values drafted in P5-T007 and add them to 16 §2.7 as configurable defaults (with the reasoning), and link them from the 08 EV gate
-- [ ] Record the outcome in the decisions register if the values change
-- [ ] Confirm the P5-T007 seed now cites 16 §2.7 for every EV input
+- [x] Take the values drafted in P5-T007 and add them to 16 §2.7 as configurable defaults (with the reasoning), and link them from the 08 EV gate
+- [x] Record the outcome in the decisions register if the values change
+- [x] Confirm the P5-T007 seed now cites 16 §2.7 for every EV input
 
 ## Verification
 
@@ -71,8 +71,8 @@ review_result: ""
 
 ## Acceptance criteria
 
-- [ ] 16 §2.7 lists default time value and haircut
-- [ ] P5-T007 seed sources updated
+- [x] 16 §2.7 lists default time value and haircut
+- [x] P5-T007 seed sources updated
 
 ## Exceptions & edge cases
 
@@ -97,3 +97,8 @@ review_result: ""
 ## Progress log
 
 - 2026-11-19 00:00 · aligner · opened during the re-platform task wave (P5-T007 conversion)
+- 2026-11-19 · main · resolved: 16 §2.7 now lists time value A$1/min and default haircut 50% (conservative), linked from 08 EV gate; P5-T007 cites them. Values are defaults, not decisions, so no 17 row needed.
+- 2026-11-19 09:44 · cloud:vm:be04b6ae61f8 · verified: 16 §2.7 rows 'EV time value' (A$1/min) and 'EV default haircut' (50%); 08 EV gate links them; P5-T007 cites 16 §2.7
+- 2026-11-19 09:44 · cloud:vm:be04b6ae61f8 · commits: ab8a69e
+- 2026-11-19 09:44 · cloud:vm:be04b6ae61f8 · done
+- 2026-11-19 09:44 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in this wave

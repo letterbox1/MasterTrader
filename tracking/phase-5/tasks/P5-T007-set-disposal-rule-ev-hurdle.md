@@ -37,14 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The airdrop settings section holds the **disposal rule** (default: sell 50% on claim; until the P7 gates each disposal is a manual-sale USER task, P5-T066) and the **EV inputs** (hurdle 5% p.a. on capital locked; time value and default haircut drafted by the agent because the docs give no default), seeded through `mt-api` with source `seed`, so the EV gate (P5-T040) and disposal tasks (P5-T045) run on documented defaults. Nothing is asked of you during the build: you review these once in the go-live pack (P7-T070) and can change them in D12 settings any time.
+The airdrop settings section holds the **disposal rule** (default: sell 50% on claim; until the P7 gates each disposal is a manual-sale USER task, P5-T066) and the **EV inputs** (hurdle 5% p.a. on capital locked; time value A$1/min and default haircut 50% from 16 §2.7), seeded through `mt-api` with source `seed`, so the EV gate (P5-T040) and disposal tasks (P5-T045) run on documented defaults. Nothing is asked of you during the build: you review these once in the go-live pack (P7-T070) and can change them in D12 settings any time.
 
 ## Context & references
 
 - Roadmap: ToDo T5.06 → R5.14, R5.17
 - [08 EV gate](../../../docs/08-airdrops-and-token-launches.md#expected-value-gate-airdrops-icosidos-points-programmes) · [08 wallet discipline](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline)
 - Defaults: [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) (EV hurdle 5% p.a. on capital locked, an AUD cash-rate proxy; decision P5-B012) and [08 wallet discipline](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline) (disposal 50%); both are settings ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)); loosening is C3
-- Time value and haircut: 08 names them but neither 08 nor 16 gives a default; the agent drafts conservative values and records them for 16 §2.7 (gap P5-B018).
+- Time value and haircut: defaults in 16 §2.7 (A$1/min, 50%), added when gap P5-B018 closed.
 - Disposal before P7: manual-sale task (decision P5-B010, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer))
 - Decision: [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19): configurable values are seeded from the doc defaults and approved once in the go-live pack (P7-T070), never asked during the build.
 - Depends on: P5-T040 (EV gate settings), P5-T045 (disposal rule)
@@ -52,15 +52,15 @@ The airdrop settings section holds the **disposal rule** (default: sell 50% on c
 ## Requirements
 
 - Disposal rule: percent to sell on claim (default 50%) and what happens to the rest (hold under M22 rules). Before the P7 gates every disposal is a manual-sale `ONCHAIN_ACTION_MANUAL` task; from P7 it becomes an M11 order.
-- EV inputs: hurdle rate (default 5% p.a.), time value (AUD/min) and default haircut, each with `seed_source` (doc section, or "drafted, gap P5-B018").
+- EV inputs: hurdle rate (default 5% p.a.), time value (AUD/min) and default haircut, each with `seed_source` (doc section, (all now 16 §2.7)).
 - Drafted values must be conservative: they may only remove opportunities from the digest compared with a zero time value and zero haircut, never add them.
 - Seeded through `system.settings.update` section `airdrop` via `mt-api` with source `seed`; idempotent; never overwrites your edits. Later changes by you: tightening applies at once; loosening (e.g. a lower hurdle → more tasks) is C3 ([02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write); 08 principle 5).
 
 ## ToDo
 
-- [ ] Write `config/defaults/airdrop_settings.yaml` (disposal 50%, hurdle 5% p.a. from 16 §2.7 / 08; drafted time value and haircut) and a doc-parse test against 08 and 16 §2.7
+- [ ] Write `config/defaults/airdrop_settings.yaml` (disposal 50%, hurdle 5% p.a. from 16 §2.7 / 08; time value and haircut from 16 §2.7) and a doc-parse test against 08 and 16 §2.7
 - [ ] Extend the settings seed command with the `airdrop` section; run it; D12 settings show each value with its source
-- [ ] Record the drafted time value and haircut in gap P5-B018 so 16 §2.7 can list them
+- [ ] Cite 16 §2.7 for the time value and haircut (gap P5-B018 closed 2026-11-19)
 - [ ] Tests; progress log; `./kanban done P5-T007`
 
 ## Verification

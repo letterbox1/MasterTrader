@@ -150,6 +150,8 @@ Configurable per asset class.
 | Cost-gate margin | Act only if expected benefit ≥ **2×** all-in cost (gas + fees + impact + MEV/tips) | [13 §7](13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) |
 | Gas window | Wait for base fee < its 7-day 30th percentile unless the deadline is < 48 h | Live gas comes from RPC fee APIs (§5) |
 | EV hurdle for airdrops/launches | 5% p.a. on capital locked (AUD cash-rate proxy) | [08](08-airdrops-and-token-launches.md) |
+| EV time value (`your_minutes × time_value`) | A$1.00 per minute of your time (A$60/h) | Conservative: it only removes opportunities that need your effort; [08 EV gate](08-airdrops-and-token-launches.md#expected-value-gate-airdrops-icosidos-points-programmes) |
+| EV default haircut | 50% of the expected value at unlock, when the scorer has no better estimate | Covers vesting, sell pressure and delisting risk; per-opportunity estimates replace it |
 | Stablecoin depeg | > 50 bps → reduce exposure; until the P6 treasury exists, alert + task | — |
 | HLP (if Hyperliquid is approved) | ≤ 10% of stablecoins **and** ≤ 5% of total portfolio, whichever is smaller | — |
 | Per-protocol cap (yield) | ≤ 20% of treasury | — |

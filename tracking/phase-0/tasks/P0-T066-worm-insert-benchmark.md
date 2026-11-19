@@ -15,17 +15,17 @@ requirements: [R0.N7, R0.07]
 roadmap_todos: [T0.67]
 modules: [M17, mt_obs, mt_store]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker, just]
 mcp: []
 env: []
-services: [postgres, nats, prefect-server, minio]
+services: [supabase-postgres, nats, prefect-server, minio]
 branch: p0/P0-T066-worm-insert-benchmark
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A repeatable benchmark (`make wormbench`) proves the WORM write-path SLO on the production host: inserts into hash-chained WORM tables stay at **p99 < 5 ms** under sustained load, including while the daily seal and a full verify run, and no call that later phases put on the order path (`mt_obs.audit.write` for `audit.order`/`audit.fill`/`audit.command`) ever waits on a seal or a verify (R0.N7, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B004).
+A repeatable benchmark (`just wormbench`) proves the WORM write-path SLO on the always-on workstation stack (self-hosted Supabase Postgres; re-run on the runtime host at the shift, P7-T073): inserts into hash-chained WORM tables stay at **p99 < 5 ms** under sustained load, including while the daily seal and a full verify run, and no call that later phases put on the order path (`mt_obs::audit::write` for `audit.order`/`audit.fill`/`audit.command`) ever waits on a seal or a verify (R0.N7, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B004).
 
 ## Context & references
 
@@ -52,19 +52,19 @@ A repeatable benchmark (`make wormbench`) proves the WORM write-path SLO on the 
 
 - Functional:
   - Load profile: 16 concurrent writers, 1,000 rows/s sustained into one chain of `audit.command` for 10 min, plus 60 s bursts of 5,000 rows/s spread over 4 chains; realistic row sizes (args jsonb ≈ 1 KB).
-  - Measure client-side insert latency (`mt_obs.audit.write` call → commit) as an HDR histogram; report p50/p95/p99/p99.9 and max.
+  - Measure client-side insert latency (`mt_obs::audit::write` call → commit) as an HDR histogram; report p50/p95/p99/p99.9 and max.
   - Run three phases: (a) inserts alone; (b) inserts while `seal_daily` seals 5 M rows; (c) inserts while a full `audit.verify` runs; plus (d) with the seal anchor store hung (MinIO paused) to show anchoring can't back-pressure inserts.
-  - "Never waits on seals" is also checked statically: the seal and verify code paths take no locks on chain heads or WORM tables (no `pg_advisory_xact_lock`, `LOCK TABLE`, `SELECT … FOR UPDATE`), and `mt_obs.audit.write` exposes no call that awaits seal or verify state.
+  - "Never waits on seals" is also checked statically: the seal and verify code paths take no locks on chain heads or WORM tables (no `pg_advisory_xact_lock`, `LOCK TABLE`, `SELECT … FOR UPDATE`), and `mt_obs::audit::write` exposes no call that awaits seal or verify state.
 - Non-functional:
-  - Gate: p99 < 5 ms in every phase on the production host; the CI run is a smaller smoke (non-gated, logged) because shared runners are noisy.
-  - Results committed to `docs/runbooks/evidence/p0-worm-bench-<date>.md` with host spec and Postgres settings.
+  - Gate: p99 < 5 ms in every phase on the always-on workstation stack; the CI run is a smaller smoke (non-gated, logged) because shared runners are noisy.
+  - Results committed to `docs/runbooks/evidence/p0-worm-bench-<date>.md` with the workstation profile (P0-T005) and Postgres settings.
 - Tools & access: listed in the front matter; no secrets (scratch database only).
 
 ## ToDo
 
-- [ ] Write `tools/bench/worm_insert.py` (asyncio writers, HDR histogram, phase orchestration) and `make wormbench`.
+- [ ] Write the Rust benchmark `crates/mt-obs/benches/worm_insert.rs` (tokio writers, `hdrhistogram`, phase orchestration) and `just wormbench`.
 - [ ] Add the static check (`tests/worm/test_no_seal_locks.py`) for seal/verify lock usage and the writer API.
-- [ ] Run phases (a)–(d) on the host against a scratch DB; capture histograms and Grafana screenshots.
+- [ ] Run phases (a)–(d) on the workstation against a scratch DB; capture histograms and Grafana screenshots.
 - [ ] Add the CI smoke variant (2 min, logged, not gated).
 - [ ] File a bug for any phase over the SLO (do not relax the target).
 - [ ] Write the evidence file and update docs listed under Doc sync.
@@ -84,16 +84,16 @@ A repeatable benchmark (`make wormbench`) proves the WORM write-path SLO on the 
 
 ## Acceptance criteria
 
-- [ ] p99 < 5 ms in phases (a)–(d) on the production host (evidence committed)
+- [ ] p99 < 5 ms in phases (a)–(d) on the always-on workstation stack (evidence committed)
 - [ ] Static check proves seal/verify take no chain-head or table locks
 - [ ] CI smoke variant runs and logs results
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
-- Laptop/VM numbers don't count for the gate; only the production host run does.
+- CI-runner numbers don't count for the gate; the always-on workstation run does, and it is repeated on the runtime host at the shift (P7-T073) before live money.
 - Autovacuum or checkpoints can cause outliers: report p99.9/max, but the gate is p99.
-- If the host misses the SLO, tune (e.g. chain key granularity, `synchronous_commit` stays on) and re-run; never weaken the target or the hash.
+- If the workstation misses the SLO, tune (e.g. chain key granularity, `synchronous_commit` stays on) and re-run; never weaken the target or the hash.
 
 ## Cardinal rules (do NOT)
 
@@ -104,7 +104,7 @@ A repeatable benchmark (`make wormbench`) proves the WORM write-path SLO on the 
 
 ## Doc sync on completion
 
-- `docs/15-bots-hitl-and-worm-audit.md` §2.4: link `make wormbench` and the evidence file.
+- `docs/15-bots-hitl-and-worm-audit.md` §2.4: link `just wormbench` and the evidence file.
 - `docs/02-v1-architecture.md` §9.2: note the measured value next to the WORM insert SLO.
 - `docs/roadmap/phase-0-foundations.md`: tick T0.67 when every item mapped to it is done.
 
@@ -118,3 +118,4 @@ A repeatable benchmark (`make wormbench`) proves the WORM write-path SLO on the 
 
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for R0.N7 / T0.67, decided in 17 §D P0-B004)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust benchmark (tokio + hdrhistogram) replaces the asyncio script; gate runs on the always-on workstation and again at the shift; make → just)

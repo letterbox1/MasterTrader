@@ -15,17 +15,17 @@ requirements: [R0.14, R0.02]
 roadmap_todos: [T0.47, T0.41]
 modules: [ops, mt_api]
 dashboards: [D16]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [docker-proxy, mt-api, postgres, nats]
+services: [docker-proxy, mt-api, supabase-postgres, nats]
 branch: p0/P0-T065-docker-proxy-restart-allow-list
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/ui/dashboards/D16-system.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
   - Image: a socket proxy that supports **path allow-lists** (e.g. `wollomatic/socket-proxy` with `-allowGET`/`-allowPOST` regexes; (U) verify licence, no telemetry, and that it rejects everything not allow-listed), pinned by digest in `infra/images.lock`, recorded in `third_party/LICENSES.md` if vendored.
   - Only `docker-proxy` mounts `/var/run/docker.sock`. It joins `ctl` (`internal: true`) only; no published port, no other network.
   - Allowed calls: `GET /containers/json` (status for D16) and `POST /containers/{name}/restart` where `{name}` is in the allow-list; every other method/path → 403 at the proxy.
-  - Allow-list is configuration, not code: `infra/docker-proxy/allowlist.yaml`, loaded as a setting (default: `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager`). `postgres`, `nats`, `mt-api` and `docker-proxy` itself are never on it by default ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)). Adding a container is a loosening (C3 via `system.settings.update`); removing one is C1.
+  - Allow-list is configuration, not code: `infra/docker-proxy/allowlist.yaml`, loaded as a setting (default: `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager`). The Supabase stack containers (`db`, `auth`, `kong`, `storage`, `meta`, `studio`), `nats`, `mt-api` and `docker-proxy` itself are never on it by default ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)). Adding a container is a loosening (C3 via `system.settings.update`); removing one is C1.
   - mt-api handler for `system.service.restart` (C2): validates the name against the allow-list **before** calling the proxy; non-allow-listed → 403 problem+json `not_restartable` and an `audit.command` row `rejected`; allow-listed → preview lists dependents (from compose `depends_on`), then restart via the proxy, wait for health, audit `applied` (or `failed` with the reason).
   - `/system/services` returns `restartable: true|false` per container from the allow-list (consumed by P0-T046/P0-T051).
 - Non-functional:
@@ -79,13 +79,13 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
 ### Tests
 - Unit: allow-list loader; name validation; C1/C3 classification of allow-list edits.
 - Integration (compose in CI): restart `llm-local` via `POST /api/v1/commands/system.service.restart` → container restarted, healthy again, `audit.command` accepted + applied rows.
-- Integration: restart `postgres` → 403 `not_restartable`, `audit.command` `rejected`, no Docker call made (proxy log empty for that request).
+- Integration (`cargo test -p mt-api --test service_restart`): restart the Supabase `db` container → 403 `not_restartable`, `audit.command` `rejected`, no Docker call made (proxy log empty for that request).
 - Lint: a fixture compose that mounts the socket into `mt-api` fails the compose lint.
 
 ### Scenarios
 - Given LiteLLM is wedged, when you press Restart on D16 and confirm (C2), then only `litellm` restarts and the audit trail shows who, when and why.
 - Given mt-api is compromised, when it calls the proxy to create or exec into a container, then the proxy returns 403 (only list + allow-listed restart exist).
-- Given you add `postgres` to the allow-list, then the change is C3 (break-glass approval + TOTP + cool-down in P0).
+- Given you add the Supabase `db` container to the allow-list, then the change is C3 (break-glass approval + TOTP + cool-down in P0).
 
 ### Stress / failure injection
 - docker-proxy stopped: restart commands fail fast with 503 problem+json and an audit `failed` row; D16 shows the restart path as unavailable; nothing else is affected.
@@ -133,3 +133,4 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
 
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for R0.14 / T0.47, decided in 17 §D P0-B012)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Supabase containers replace `postgres` on the never-restartable list; handler and tests in Rust `mt-api`)

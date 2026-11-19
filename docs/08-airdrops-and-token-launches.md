@@ -177,7 +177,7 @@ EV = P(launch) × E[allocation] × E[price at unlock] × (1 − haircut)
      − gas − fees − capital_lockup_cost − (your_minutes × time_value)
 ```
 
-- `P(launch)` from funding, team, testnet/points status and corroboration; `haircut` covers vesting, sell pressure and delisting risk.
+- `P(launch)` from funding, team, testnet/points status and corroboration; `haircut` covers vesting, sell pressure and delisting risk. Defaults for `time_value` (A$1/min) and `haircut` (50%) are settings in [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13).
 - `capital_lockup_cost` = capital × days locked × your hurdle rate (default **5% p.a.** on capital locked, an AUD cash-rate proxy; configurable, [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)).
 - **Only EV > 0 after the risk score reaches the digest as a task**; the EV and its inputs are shown so you can override.
 
