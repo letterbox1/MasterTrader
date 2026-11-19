@@ -209,7 +209,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
 - **Question shape:** binary or low-option questions only; each question gets a **state budget of ~320 tokens** (compact, structured state, not raw documents).
 - **Thresholds per question** come from measured disagreement with the teacher and with outcomes, not one global cut-off. Each must still meet the precision floors above (0.75 auto-decide, 0.90 veto).
 - **Shadow checks:** ~5% of tier B decisions are re-asked of the teacher (M8 / gateway model) in shadow; disagreement rate is tracked per question in D10.
-- **Labels come from outcomes or from you, never from shadow-model outputs**, so models don't train on each other's mistakes. Your labels go in through `models.label.add` (C0): a minimal labelling tool from Phase 4, then the D10 labelling queue tab from Phase 6.
+- **Labels come from outcomes, from silver labels (an LLM labeller via the gateway, `source: silver`, checked against outcomes) or from you, never from shadow-model outputs**, so models don't train on each other's mistakes. Your labels go in through `models.label.add` (C0): a minimal labelling tool from Phase 4, then the D10 labelling queue tab from Phase 6.
 - **Retraining cadence:** monthly fine-tune, promoted only through the gates.
 - **Social battery** (for X/Bluesky/Discord/Farcaster text, never Telegram): `organic`, `bot_like`, `scam_language`, `narrative`, `stance`, `conviction`.
 - **Laya serving:** bind to `127.0.0.1` with `LAYA_API_KEY`; on CPU each question is ~0.7 s and independent, so batch by question. Laya has no ROCm build: on an AMD GPU (e.g. 7900 XTX) use llama.cpp with Vulkan for the Qwen-based models instead.

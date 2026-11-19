@@ -35,7 +35,7 @@ A fully air-gapped machine can't also serve an API. So bots sign only with **cap
 | Signer rolling 24 h cap | A$1,000 per wallet |
 | Daily gas budget | Airdrops A$20/day · DEX trading A$50/day (§7) |
 
-Tightening is immediate; loosening is C3. The defaults only prefill the form: **signing stays disabled until you confirm these numbers on first setup** (a USER task in Phase 5).
+Tightening is immediate; loosening is C3. The defaults only prefill the form: **mainnet signing stays disabled until you confirm these numbers (C3, P5-T004)**. The agent seeds them (P5-T065); testnet and the Anvil fork sign inside the seeded caps.
 
 ## 2. Signer service (the only process that sees hot keys)
 

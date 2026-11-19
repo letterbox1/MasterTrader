@@ -1,7 +1,7 @@
 ---
 id: P0-T060
 kind: task
-title: Write runbooks: backup & restore, host rebuild
+title: Write runbooks: backup & restore, workstation/host rebuild
 phase: 0
 type: DOC
 status: backlog
@@ -15,7 +15,7 @@ requirements: [R0.N4, R0.N2]
 roadmap_todos: [T0.90]
 modules: [ops]
 dashboards: []
-tools: [docker, pgbackrest, restic, sops]
+tools: [docker, supabase, pgbackrest, restic, sops]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/README.md, docs/07-security-notes.md, docs/roadmap/phas
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T060 · Write runbooks: backup & restore, host rebuild
+# P0-T060 · Write runbooks: backup & restore, workstation/host rebuild
 
 ## Goal / expected outcome
 
-`docs/runbooks/backup-restore.md` and `docs/runbooks/host-rebuild.md` let you (or an agent) restore the database to a point in time and rebuild the host from bare metal using only the repo, the hardware keys, the password manager and the off-site buckets — each runbook tested once by following it literally.
+`docs/runbooks/backup-restore.md` and `docs/runbooks/host-rebuild.md` let you (or an agent) restore the database to a point in time and rebuild the workstation (later the runtime host) from bare metal using only the repo, the age identities (OS keychain backup now, YubiKey from P7-T072), the password manager and the off-site buckets — each runbook tested once by following it literally.
 
 ## Context & references
 
@@ -52,24 +52,24 @@ review_result: ""
 ## Requirements
 
 - Format per runbook: purpose, when to use, prerequisites (keys, access), numbered steps with exact commands, verification, rollback, measured duration (RTO/RPO), last tested date.
-- Backup & restore: schedule per 17 §B P0-B011 (continuous WAL, nightly incremental, weekly full, monthly restore test, monthly WORM export); PITR to a timestamp, full-cluster restore to a new host, single-table inspection via scratch restore, restic file restore; RPO target ≤ 1 min (WAL `archive_timeout=60`); RTO measured from P0-T057.
-- Host rebuild: OS + LUKS install, `infra/host` playbook, Tailscale join, secrets file restore from restic to `~/.config/mastertrader/` (outside the repo, 17 §D P0-B018) + age identity on YubiKey, `docker compose up`, restore DB, verify (`audit.verify`, health), re-enable schedules.
+- Backup & restore: schedule per 17 §B P0-B011 (continuous WAL, nightly incremental, weekly full, monthly restore test, monthly WORM export); PITR to a timestamp, full-cluster restore of the Supabase Postgres to a new machine, single-table inspection via scratch restore, restic file restore; RPO target ≤ 1 min (WAL `archive_timeout=60`); RTO measured from P0-T057.
+- Workstation/host rebuild: OS install (full-disk encryption optional before P7, required in the live profile, P7-T073), `infra/host` workstation baseline (P0-T019), Tailscale join only if used, secrets file restore from restic to `~/.config/mastertrader/` (outside the repo, 17 §D P0-B018) + the age identity from its store (`secrets.age_identity_store`: keychain now, YubiKey from P7), `just up` (self-hosted Supabase + compose), `just db-migrate`, restore DB, verify (`audit.verify`, `supabase test db`-equivalent invariants, health), re-enable schedules. A section notes what changes on a cloud VM or with Supabase cloud (P7-T073, [18 §4.7](../../../docs/18-platform-and-deployment.md#47-backups)).
 - No secrets in the runbooks; reference secret **names** only.
 - `docs/runbooks/README.md` index listing all runbooks (P0 + placeholders for later phases: keys leaked, server down with positions, bad data, wallet drained).
 
 ## ToDo
 
 - [ ] Write both runbooks and the index.
-- [ ] Dry-run host rebuild on a VM following the text literally; fix gaps.
+- [ ] Dry-run the rebuild on a VM following the text literally; fix gaps.
 - [ ] Record last-tested dates and durations.
 
 ## Verification
 
 ### Tests
-- Literal dry run on a VM (host rebuild) and on a scratch DB (restore); log any step that needed improvisation and fix the text.
+- Literal dry run on a VM (rebuild) and on a scratch DB (restore); log any step that needed improvisation and fix the text.
 
 ### Scenarios
-- Given the host's NVMe dies, when following host-rebuild.md on new hardware, then the stack is back with data up to ≤ 1 min before failure.
+- Given the workstation's NVMe dies, when following host-rebuild.md on new hardware, then the stack is back with data up to ≤ 1 min before failure.
 
 ### Stress / failure injection
 - n/a: documentation; the dry run is the test.
@@ -82,7 +82,7 @@ review_result: ""
 
 ## Exceptions & edge cases
 
-- If the YubiKeys are lost, the runbook points to the password-manager recovery path and immediate rotation.
+- If the age identity is lost (keychain now, YubiKeys from P7), the runbook points to the password-manager recovery path and immediate rotation.
 
 ## Cardinal rules (do NOT)
 
@@ -104,3 +104,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (backup schedule (P0-B011) and secrets location (P0-B018); deps trimmed; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (rebuild targets the workstation first (LUKS, Tailscale, YubiKey optional before P7); self-hosted Supabase restore and `just` recipes)

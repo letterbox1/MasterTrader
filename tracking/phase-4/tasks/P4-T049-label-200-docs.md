@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-**Optional.** The relevance gate is calibrated and measured on agent-made silver labels by default (P4-T048, P4-T053), so nothing waits for this. If you want the gate tuned to your own judgement, you label a ~200-document batch relevant/irrelevant (and, where obvious, direction) in D08 Label mode. Your labels then take precedence over the silver labels for the same documents, and the agent re-runs the calibration and reports precision/recall on your labels next to the silver-label figures.
+**Optional.** The relevance gate is calibrated and measured on silver labels from an LLM labeller via the gateway by default (P4-T048, P4-T053), so nothing waits for this. If you want the gate tuned to your own judgement, you label a ~200-document batch relevant/irrelevant (and, where obvious, direction) in D08 Label mode. Your labels then take precedence over the silver labels for the same documents, and the agent re-runs the calibration and reports precision/recall on your labels next to the silver-label figures.
 
 ## Context & references
 
@@ -100,4 +100,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (labelling tool is now P4-T062 (R4.16, 17 §D P4-B007))
-- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (per 17 §G this stays USER but is optional: agent silver labels (P4-T048) are the default, your labels take precedence where present; P4-T053 no longer depends on this task; priority low; "host" → workstation)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (per 17 §G this stays USER but is optional: silver labels from the gateway LLM labeller (P4-T048) are the default, your labels take precedence where present; P4-T053 no longer depends on this task; priority low; "host" → workstation)

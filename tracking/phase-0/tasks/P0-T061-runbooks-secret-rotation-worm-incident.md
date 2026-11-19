@@ -15,7 +15,7 @@ requirements: [R0.N1, R0.07, R0.12]
 roadmap_todos: [T0.90]
 modules: [ops, M17]
 dashboards: []
-tools: [sops, age, docker]
+tools: [sops, age, docker, supabase]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/README.md, docs/15-bots-hitl-and-worm-audit.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,9 +51,9 @@ review_result: ""
 
 ## Requirements
 
-- Secret rotation: per class (exchange/broker keys every 90 days by default and immediately after a suspected leak, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), 07 §2) — where it's issued, how to rotate with zero downtime (dual-key where supported), `sops` edit, `mt-secrets.service` reload, container restart order, verify, update `created` date; age identity rotation (`sops updatekeys`); quarterly drill entry.
+- Secret rotation: per class (exchange/broker keys every 90 days by default and immediately after a suspected leak, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), 07 §2) — where it's issued, how to rotate with zero downtime (dual-key where supported), `sops` edit, secrets reload (`just secrets-up` or `mt-secrets.service`), container restart order, verify, update `created` date; age identity rotation (`sops updatekeys`; identities in the OS keychain until P7-T072 moves them to a YubiKey); Supabase JWT signing-key rotation (new asymmetric key, JWKS overlap, then revoke the old one) and `service_role` key rotation; quarterly drill entry.
 - WORM incident: triage (which table/seq/day), preserve evidence (export the affected range + anchors to a new locked prefix), keep the integrity response in force (default `block_new_entries`: no new entries, exits continue, no loosening; [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)), compare with monthly export and restored backup, root-cause (bug vs tamper), corrections as **new rows** only, then `audit.integrity.ack` via C3 (break-glass `mtctl approve` + TOTP until Telegram C3 in P2), post-incident note.
-- worm_owner ceremony: prerequisites, plug-in, `sops exec-env` command, migration, unplug, verify `pg_stat_activity` has no lingering `worm_owner` session, audit note.
+- worm_owner ceremony (before live money, P0-T013): prerequisites, unlock the offline identity (removable media/keychain now, YubiKey from P7-T072), `sops exec-env` + `just db-migrate` for `-- mt:worm` files, lock it again, verify `pg_stat_activity` has no lingering `worm_owner` session, audit note.
 - Each runbook dry-run once (scratch environment).
 
 ## ToDo
@@ -65,7 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- Dry runs: rotate the Grafana admin password and the LiteLLM master key on the host following the text; simulate a WORM mismatch on scratch and follow the incident runbook to `audit.integrity.ack`.
+- Dry runs: rotate the Grafana admin password, the LiteLLM master key and the Supabase JWT signing key on the workstation following the text; simulate a WORM mismatch on scratch and follow the incident runbook to `audit.integrity.ack`.
 
 ### Scenarios
 - Given a venue key leaks (P2+), then the rotation runbook plus the P2 'keys leaked' runbook cover revoke → rotate → verify withdrawals.
@@ -104,3 +104,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (incident runbook ends with audit.integrity.ack (16 §2.11, 17 §A P0-B001) instead of risk.halt.clear; no longer waits on P0-T013 (P0-T013 uses this runbook); rotation default 90 d; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (adds Supabase JWT signing-key and service_role rotation; ceremony via `just db-migrate` for `-- mt:worm` files; YubiKey only from P7-T072)

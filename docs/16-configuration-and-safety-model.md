@@ -156,7 +156,7 @@ Configurable per asset class.
 | Treasury rebalance hurdle | Move yield only if the net improvement is ≥ 1.0% APY **and** the cost gate passes | P6 yield allocator |
 | Stablecoin-issuer cap | ≤ 50% of stablecoins with any one issuer | Breach → rebalance proposal + alert (P6) |
 
-**Signing stays disabled until you confirm these numbers on first setup** (a USER task in Phase 5). The defaults only prefill the form.
+**Mainnet signing stays disabled until you confirm these numbers (C3, P5-T004).** The agent seeds them as defaults (P5-T065); testnet and the Anvil fork sign inside the seeded caps so the build and its tests never wait on you.
 
 ### 2.8 Calendar blackouts
 

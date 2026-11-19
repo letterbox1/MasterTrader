@@ -68,9 +68,9 @@
 - [ ] **T5.03** `USER` Approve creation of the hot, identity (one per chain) and burner keys in the signer; fund them with minimal floats. → R5.01, R5.07
 - [ ] **T5.04** `USER` Register every address/account you own, with role and investment/trading tag; prove control by signing a one-time challenge in **your own wallet app** or making a tiny self-transfer (the system never signs). → R5.05, R5.25
 - [ ] **T5.05** `USER` Sign the first **mandates** (C3): wallet, chain, allowed contracts/functions, caps, expiry. → R5.15
-- [ ] **T5.06** `USER` Review the disposal rule (default sell 50% on claim) and EV hurdle (default 5% p.a.); both are settings. → R5.14, R5.17
+- [ ] **T5.06** `BUILD` Seed the disposal rule (default sell 50% on claim) and EV hurdle (default 5% p.a.) as settings (P5-T007); you change them any time and review them in the go-live pack. → R5.14, R5.17
 - [ ] **T5.07** `USER` Work the task queue: join/follow communities, do social tasks yourself, ICO reviews. → R5.20, R5.21
-- [ ] **T5.08** `USER` Review and confirm the wallet/signer/gas limits (prefilled defaults) to enable signing. → R5.24
+- [ ] **T5.08** `BUILD` Seed the wallet/signer/gas limits from 16 §2.7 (P5-T065). Testnet and Anvil signing run inside the seeded caps; **mainnet signing stays off until you confirm the limits (C3) in P5-T004**. → R5.24
 - [ ] **T5.09** `USER` Until the P7 live gates pass, sell claimed airdrop tokens yourself when the disposal task arrives, then mark it done. → R5.17
 
 ### B. Build (`BUILD`, code)

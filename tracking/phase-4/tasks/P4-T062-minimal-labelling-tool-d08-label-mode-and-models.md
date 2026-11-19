@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-You can label a stratified sample of ~200 documents relevant/irrelevant (plus optional direction/event type) in a **Label mode** on the D08 Feed, each label stored through the `models.label.add` command (C0) as an insert-only `models.label` row. Agent silver labels (P4-T048, `source = agent`) calibrate the SemIf gate and measure it (P4-T053); your labels (P4-T049, optional) take precedence where present. D10's full labelling queue reuses the same table and command in P6.
+You can label a stratified sample of ~200 documents relevant/irrelevant (plus optional direction/event type) in a **Label mode** on the D08 Feed, each label stored through the `models.label.add` command (C0) as an insert-only `models.label` row. Silver labels (P4-T048, gateway LLM labeller, `source = silver`) calibrate the SemIf gate and measure it (P4-T053); your labels (P4-T049, optional) take precedence where present. D10's full labelling queue reuses the same table and command in P6.
 
 ## Context & references
 
@@ -50,11 +50,11 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 
 ## Requirements
 
-- `models.label` (insert-only): id, subject (doc id), question id + version, label, optional direction/event type, `source` (`user` | `agent` | `outcome`), batch id, labelled_at; the latest row per (subject, question) wins, older rows stay.
+- `models.label` (insert-only): id, subject (doc id), question id + version, label, optional direction/event type, `source` (`user` | `silver` | `outcome`), batch id, labelled_at; the latest row per (subject, question) wins, older rows stay.
 - Sampler: a batch of ~200 docs (configurable) stratified by source kind and by SemIf P(yes) decile; excludes Telegram (never sampled) and every `model_input_ok = false` row via the P4-T025 guard; the model score is hidden in Label mode.
 - Command `models.label.add` (C0) through the `mt-api` command bus, audited in `audit.command`; query `/models/labels` (by batch, question, source) and `/models/labels/batches`.
 - Label mode at `/intel?label=batch-<id>`: keyboard 1 / 0 / s (skip) on desktop, large buttons on phones; progress counter; resumable across sessions.
-- Non-functional: label submit p95 < 200 ms; works at every DESIGN §6.8 tier; no shadow/teacher output can be written as a label (`source` limited to `user` from this UI; agent silver labels arrive only through the CLI path with `source = agent`).
+- Non-functional: label submit p95 < 200 ms; works at every DESIGN §6.8 tier; no shadow/teacher output can be written as a label (`source` limited to `user` from this UI; silver labels from the gateway LLM labeller arrive only through the CLI path with `source = silver`).
 
 ## ToDo
 
@@ -118,4 +118,4 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.16 / T4.31 per 17 §D P4-B007; split out of P4-T048)
-- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (labels gain `source = agent` (silver); Rust `mt-api` handler; Supabase migration; services postgres → supabase-postgres; tools +cargo +supabase; `mt_api` → `mt-api`)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (labels gain `source = silver`; Rust `mt-api` handler; Supabase migration; services postgres → supabase-postgres; tools +cargo +supabase; `mt_api` → `mt-api`)

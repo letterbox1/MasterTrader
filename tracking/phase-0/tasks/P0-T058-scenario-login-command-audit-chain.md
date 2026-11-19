@@ -15,17 +15,17 @@ requirements: [R0.08, R0.07, R0.11]
 roadmap_todos: [T0.24, T0.23]
 modules: [mt_api, M17, M15]
 dashboards: [D16]
-tools: [git, node>=20, pnpm, playwright, uv, docker]
+tools: [git, node>=20, pnpm, playwright, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, caddy, loki]
+services: [supabase-postgres, supabase-auth, nats, mt-api, caddy, loki]
 branch: p0/P0-T058-scenario-login-command-audit-chain
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,16 +50,16 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 
 ## Requirements
 
-- Runs against the full compose stack in CI (and on the host for the exit demo) with a seeded test credential.
-- Steps: setup/login (TOTP via test secret) → C0 command → C1 preview + execute → `audit.verify` → D16 Audit shows rows with chain ✓ → click `trace_id` → Loki logs contain the same id.
-- Unhappy paths: wrong TOTP → 401 + `auth_event`; replayed idempotency key → replay; missing `confirm_token` on C1 → 428.
-- Asserts the DB chain directly (`recompute_chain`) as well as through the UI.
+- Runs against the Supabase CLI stack + the full compose stack in CI (and on the workstation's self-hosted stack for the exit demo) with a seeded Supabase test user (password + TOTP secret in test fixtures only).
+- Steps: login through Supabase Auth (password, then TOTP via the test secret → `aal2`) → C0 command → C1 preview + execute → `audit.verify` → D16 Audit shows rows with chain ✓ → click `trace_id` → Loki logs contain the same id.
+- Unhappy paths: wrong TOTP → stays `aal1`, command refused (403) + `auth_event`; replayed idempotency key → replay; missing `confirm_token` on C1 → 428.
+- Asserts the DB chain directly (`mt_store::worm::recompute_chain`, via a small Rust test helper) as well as through the UI.
 
 ## ToDo
 
 - [ ] Write `apps/web/e2e/scenario-login-command.spec.ts` + API assertions.
 - [ ] Seed fixtures and teardown.
-- [ ] Add to CI (nightly + on `packages/mt_api/**`).
+- [ ] Add to CI (nightly + on `crates/mt-api/**`, `supabase/**`, `apps/web/**`).
 - [ ] Record a run video/screens for the exit demo.
 
 ## Verification
@@ -76,7 +76,7 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 
 ## Acceptance criteria
 
-- [ ] Scenario green in CI and on the host
+- [ ] Scenario green in CI and on the workstation
 - [ ] Unhappy paths asserted
 - [ ] Evidence captured for exit criterion 2
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
@@ -88,7 +88,7 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 ## Cardinal rules (do NOT)
 
 - Do NOT use a production credential in CI.
-- Do NOT bypass the UI login with a pre-made cookie for this scenario.
+- Do NOT bypass the UI login with a pre-made token for this scenario.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); Kill ON and protective exits never wait for approval.
 - Do NOT UPDATE or DELETE WORM rows, ever; corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get CI green.
@@ -108,3 +108,4 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (confirm_token name (02 §7.2); deps trimmed to true preconditions; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (login through Supabase Auth (seeded test user, `aal2`); chain check via the Rust `mt-store` helper; runs on the Supabase CLI stack in CI and the workstation for the demo)
