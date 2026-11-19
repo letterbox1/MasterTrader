@@ -15,7 +15,7 @@ requirements: [R1.02, R1.N3]
 roadmap_todos: [T1.21]
 modules: [M1]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,12 +37,13 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into the Nautilus `ParquetDataCatalog`, rolling files every 1–5 minutes and compacting each day into one file per (venue, symbol, type, day).
+A durable JetStream consumer in `mt-recorder` (Rust) writes every `md.*` trade, quote and L2 delta into the Nautilus `ParquetDataCatalog`, rolling files every 1–5 minutes and compacting each day into one file per (venue, symbol, type, day).
 
 ## Context & references
 
 - Roadmap: requirements [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.21](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (recording pipeline) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 3 · stores [02 §5.1](../../../docs/02-v1-architecture.md#51-stores) (Parquet forever; hot NVMe 90 days → cold HDD)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-recorder` → Parquet catalog) · [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb) (raw ticks and L2 live in Parquet; old bars join them via P1-T075)
 - Storage budget R1.N3: ~0.3–1 TB/year for ~10 symbols at trades + L1 + 1 s book snapshots, native L2 diffs only for the default ≤ 3 order-book symbols ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002); recalculated from the soak (P1-T065)
 - Depends on (this phase): P1-T010
 - Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
@@ -50,16 +51,16 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 ## Requirements
 
 - Durable pull consumer on stream `MD` with explicit ack after the file containing the message is fsynced (at-least-once; dedupe on (venue, symbol, seq) at compaction)
-- Roll interval configurable 1–5 min (default 1 min for trades/L2, 5 min for quotes); files written to `/data/hot/catalog/<type>/<venue>/<symbol>/<date>/` as Nautilus-compatible Parquet (zstd)
+- Roll interval configurable 1–5 min (default 1 min for trades/L2, 5 min for quotes); files written to `/data/hot/catalog/<type>/<venue>/<symbol>/<date>/` as Nautilus-compatible Parquet (zstd; Rust `arrow`/`parquet` writers)
 - Daily compaction at 00:30 UTC (default, configurable): merge, sort by `event_time`, dedupe, verify row counts, write provenance metadata, then delete fragments
 - Nanosecond timestamps kept; `ingest_time` stored next to `event_time`
 - Metrics: rows/s written, consumer lag, bytes/day per venue/type (feeds the storage tab and P1-T052)
 
 ## ToDo
 
-- [ ] Implement recorder service inside `ingest-market` (separate process) with durable consumer
-- [ ] Implement compaction flow (Prefect) with verification and idempotent re-run
-- [ ] Read API through `mt_store` catalog helpers (DuckDB) for P1-T058 and P2
+- [ ] Implement the recorder in `crates/mt-recorder` (separate process in `ingest-market`) with a durable `async-nats` consumer
+- [ ] Implement compaction as `mt-recorder compact --date` (Rust) with verification and idempotent re-run; scheduled by Prefect (P1-T053)
+- [ ] Read API through the `mt-store` catalog helpers (Rust, with Python binding; DataFusion or DuckDB) for P1-T058 and P2
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -67,7 +68,7 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 
 ### Tests
 
-- Unit: roll logic; dedupe by sequence; file naming
+- `cargo test -p mt-recorder recorder`: roll logic; dedupe by sequence; file naming
 - Integration: publish 1M synthetic messages, kill the recorder mid-file, restart → no loss, no duplicates after compaction
 - Golden: compacted file for a recorded hour equals the reference row set
 
@@ -85,7 +86,7 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 
 - [ ] Zero loss and zero duplicates in the crash test
 - [ ] Daily bytes per venue/type visible in Prometheus and projected yearly growth inside R1.N3
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -96,7 +97,7 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -114,3 +115,4 @@ A durable JetStream consumer writes every `md.*` trade, quote and L2 delta into 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 recording policy and budget wording (P1-B002); P0 dep on catalog helpers)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (recorder and compaction in Rust `mt-recorder` (compaction scheduled by Prefect); catalog reads via `mt-store` with Python binding; tools cargo)

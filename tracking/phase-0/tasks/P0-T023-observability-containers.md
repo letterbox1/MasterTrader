@@ -13,9 +13,9 @@ claimed_by: ""
 depends_on: [P0-T020, P0-T021]
 requirements: [R0.02, R0.10]
 roadmap_todos: [T0.41, T0.46]
-modules: [M17]
+modules: [M17, mt-obs]
 dashboards: []
-tools: [docker, uv]
+tools: [docker, just]
 mcp: []
 env: []
 services: [prometheus, loki, vector, alertmanager, grafana]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) scraping node_exporter, postgres_exporter, prometheus-nats-exporter, cAdvisor and every `/metrics` endpoint; Vector shipping Docker JSON logs and journald to Loki (retention 30–90 days, default 30); Alertmanager and Grafana up with provisioning folders ready for P0-T045.
+The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) scraping node_exporter, postgres_exporter (against the Supabase Postgres), the Supabase services' own metrics where exposed, prometheus-nats-exporter, cAdvisor and every `/metrics` endpoint; Vector shipping Docker JSON logs and journald to Loki (retention 30–90 days, default 30); Alertmanager and Grafana up with provisioning folders ready for P0-T045.
 
 ## Context & references
 
@@ -54,8 +54,8 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 - Prometheus: `--storage.tsdb.retention.time=90d`, scrape 15 s; file-based targets; `/-/ready` health.
 - Loki: `retention_period=${LOKI_RETENTION:-720h}` with compactor retention on; a config test enforces 720h–2160h (30–90 d; default 30 d, [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
 - Vector: `docker_logs` + `journald` sources; JSON parse; labels only `service`, `level`, `host`; secret-regex masking (defence in depth with P0-T018); 1 GiB disk buffer so Loki outages don't drop logs.
-- Grafana: anonymous off, admin password from tmpfs, analytics and update checks off, reachable only via Caddy route `/grafana/` (Tailscale).
-- cAdvisor and node-exporter with the minimum host mounts documented; postgres-exporter uses the read-only `mt_monitor_ro` role (P0-T024).
+- Grafana: anonymous off, admin password from tmpfs, analytics and update checks off, reachable only via the Caddy route `/grafana/` (localhost; over Tailscale only if it is on).
+- cAdvisor and node-exporter with the minimum host mounts documented; postgres-exporter uses the read-only `mt_monitor_ro` role (P0-T024) on the Supabase Postgres (P0-T070).
 
 ## ToDo
 
@@ -82,7 +82,7 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 - [ ] Every scrape target up
 - [ ] Loki retention 30–90 d enforced by test
 - [ ] Loki outage drill loses no lines
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -90,7 +90,7 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 
 ## Cardinal rules (do NOT)
 
-- Do NOT expose Grafana/Prometheus/Loki outside the Tailscale route.
+- Do NOT expose Grafana/Prometheus/Loki outside the Caddy route on localhost (or the Tailscale route, if on).
 - Do NOT turn on Grafana usage analytics or update checks.
 - Pin every image by digest (no `:latest` or floating tags); no telemetry or referral IDs in vendored code.
 - Do NOT skip, weaken or delete a test to get CI green.
@@ -110,3 +110,4 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (exporters point at the Supabase Postgres; Grafana on localhost with Tailscale optional; uv → just)

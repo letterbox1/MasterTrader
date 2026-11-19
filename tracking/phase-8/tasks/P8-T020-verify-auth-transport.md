@@ -15,17 +15,17 @@ requirements: [R8.02, R8.07, R8.08]
 roadmap_todos: [T8.64, T8.40]
 modules: [M20]
 dashboards: [D17]
-tools: [uv, docker, git, nmap]
+tools: [cargo, docker, git, nmap]
 mcp: []
 env: []
-services: [postgres, nats, caddy, tailscale]
+services: [supabase-postgres, nats, caddy, tailscale]
 branch: p8/P8-T020-verify-auth-transport
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A security test suite (`tests/security/test_mcp_auth.py`, `tests/security/test_mcp_transport.py`) plus an ops exposure check proves T8.64 on the test stack with the MCP SDK's own client and a fixture pepper (no real client app, no real token): a token is shown once and stored only as HMAC-SHA-256; revocation is instant; expiry is enforced and indefinite needs C3; Streamable HTTP resume, stdio, OAuth 2.1 and the optional legacy HTTP+SSE work; every call, reads included, lands in `audit.mcp_call`; and `/mcp` is reachable only through Caddy on Tailscale/TLS. The same checks with your real client are P8-T035.
+A security test suite (`crates/mt-mcp/tests/security_auth.rs`, `crates/mt-mcp/tests/security_transport.rs`) plus an ops exposure check proves T8.64 on the test stack with the `rmcp` client and a fixture pepper (no real client app, no real token): a token is shown once and stored only as HMAC-SHA-256; revocation is instant; expiry is enforced and indefinite needs C3; Streamable HTTP resume, stdio, OAuth 2.1 and the optional legacy HTTP+SSE work; every call, reads included, lands in `audit.mcp_call`; and `/mcp` is reachable only through Caddy on Tailscale/TLS. The same checks with your real client are P8-T035.
 
 ## Context & references
 
 - Roadmap: [R8.02, R8.07, R8.08](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDos [T8.64](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (auth + transport tests), [T8.40](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (container exposure check)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) · [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
 - Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §5](../../../docs/07-security-notes.md#5-network--host), [07 §6](../../../docs/07-security-notes.md#6-application-controls)
 - Related: P8-T002 (tokens), P8-T003 (transports), P8-T007 (audit), P8-T015 (container), P8-T031 (OAuth), P8-T032 (subscriptions, legacy endpoint).
@@ -52,13 +53,13 @@ A security test suite (`tests/security/test_mcp_auth.py`, `tests/security/test_m
 - Expiry: each of 1d/7d/30d/1y/custom is enforced with an injected clock; indefinite triggers the C3 flow and the warning flag; the monthly reminder job fires.
 - Scope cases: `read` token on a write tool → 403; any MCP token on `/auth/*`, `approval.*`, `mcp.*` or the WS command path → 403; a web session cookie on `/mcp` → rejected.
 - Revocation: < 1 s from `mcp.token.revoke` to the first refused call, including mid-Streamable-HTTP-session and on an open subscription stream.
-- Transport: Streamable HTTP initialize → call → stream cut → resume with `Last-Event-ID` (no duplicate execution); stdio round trip; legacy HTTP+SSE round trip when enabled, 404 when disabled; OAuth 2.1 authorization-code + PKCE flow with a resource indicator yields a token bound to `mt_api`; HTTP rejects a foreign `Origin`.
+- Transport: Streamable HTTP initialize → call → stream cut → resume with `Last-Event-ID` (no duplicate execution); stdio round trip; legacy HTTP+SSE round trip when enabled, 404 when disabled; OAuth 2.1 authorization-code + PKCE flow with a resource indicator yields a token bound to `mt-api`; HTTP rejects a foreign `Origin`.
 - Audit: every call in the suite (reads included, denied included) has exactly one `audit.mcp_call` row with the right transport and result status.
 - Exposure: nmap from a LAN host shows no open port for `mcp`; a Tailscale peer reaches `/mcp` only through Caddy TLS. Results stored as CI artefacts; the port-scan summary (no IPs) goes in the Progress log.
 
 ## ToDo
 
-- [ ] Write the pytest suites (MCP SDK client against the compose test stack, fake Telegram + TOTP harness, injected clock).
+- [ ] Write the Rust test suites (`cargo test -p mt-mcp`; `rmcp` client against the compose test stack, fake Telegram + TOTP harness, injected clock).
 - [ ] Write the exposure script `ops/checks/mcp_exposure.sh`.
 - [ ] Run both and record results.
 - [ ] Update the roadmap progress note.
@@ -66,7 +67,7 @@ A security test suite (`tests/security/test_mcp_auth.py`, `tests/security/test_m
 ## Verification
 
 ### Tests
-- The suites themselves (≥ 30 cases above), run in CI on every PR touching `mt_api/auth`, `mt_api/mcp` or `mt_mcp`.
+- The suites themselves (≥ 30 cases above), run in CI on every PR touching `mt-api/auth`, `mt-api/mcp` or `mt-mcp`.
 
 ### Scenarios
 - Given a token revoked while a session is mid-conversation, when the client calls the next tool, then it fails with `token_revoked` and D17 marks the session ended.
@@ -111,3 +112,4 @@ A security test suite (`tests/security/test_mcp_auth.py`, `tests/security/test_m
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (now the keyless T8.64 suite: HMAC + pepper, shown once, expiry options incl. indefinite → C3, Streamable HTTP resume, stdio, OAuth 2.1, legacy HTTP+SSE, `audit.mcp_call` for every call; real-client checks split to P8-T035; deps P8-T007/T031/T032; added R8.07/R8.08; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

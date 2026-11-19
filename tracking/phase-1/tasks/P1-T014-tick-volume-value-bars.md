@@ -15,17 +15,17 @@ requirements: [R1.02]
 roadmap_todos: [T1.21]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p1/P1-T014-tick-volume-value-bars
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,9 +47,9 @@ Information-driven bars (every N trades, every V units, every X notional) are av
 
 ## Requirements
 
-- `mt_store.bars.info_bars(instrument, kind=tick|volume|value, threshold, from, to)` built from Parquet trades via DuckDB
-- Live variant in the bar builder for configured (instrument, kind, threshold) pairs, publishing `md.*.bar.{kind}{threshold}`
-- Not stored as hypertables by default (they are not time-based); cached results keyed by parameters
+- `mt-store` `bars::info_bars(instrument, kind = tick|volume|value, threshold, from, to)` (Rust, exposed to Python through the PyO3 module) built from Parquet trades
+- Live variant in the `mt-recorder` bar builder for configured (instrument, kind, threshold) pairs, publishing `md.*.bar.{kind}{threshold}`
+- Not stored in the partitioned bar tables by default (they are not time-based); cached results keyed by parameters
 - Exact reproducibility: the same trades and threshold always give the same bars
 
 ## ToDo
@@ -63,7 +63,7 @@ Information-driven bars (every N trades, every V units, every X notional) are av
 
 ### Tests
 
-- Property: concatenating live bars equals batch bars over the same trade range
+- Property (`cargo test -p mt-store info_bars`, proptest): concatenating live bars equals batch bars over the same trade range; `uv run pytest -k info_bars` checks the binding
 - Unit: threshold edge cases (a single trade larger than the volume threshold closes one bar)
 
 ### Scenarios
@@ -72,13 +72,13 @@ Information-driven bars (every N trades, every V units, every X notional) are av
 
 ### Stress / failure injection
 
-- Load: one month of BTCUSDT trades → `v100` bars in < 60 s on the target host
+- Load: one month of BTCUSDT trades → `v100` bars in < 60 s on the workstation
 
 ## Acceptance criteria
 
 - [ ] Live and batch info bars match exactly in the property test
 - [ ] D02 can request them via `/markets/{id}/bars?spec=t500`
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -87,7 +87,7 @@ Information-driven bars (every N trades, every V units, every X notional) are av
 ## Cardinal rules (do NOT)
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
 
 ## Doc sync on completion
@@ -105,3 +105,4 @@ Information-driven bars (every N trades, every V units, every X notional) are av
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (info bars in Rust `mt-store` (Python binding) and the `mt-recorder` live builder; no hypertables; tools cargo+uv; services supabase-postgres)

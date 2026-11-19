@@ -15,17 +15,17 @@ requirements: [R2.53, R2.54]
 roadmap_todos: [T2.69]
 modules: [M11, M15]
 dashboards: [D03]
-tools: [uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T061-verify-bot-scenarios
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -69,6 +69,7 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-api --test bot_scenarios -- --ignored` against the compose stack.
 - S1–S8 automated.
 
 ### Scenarios
@@ -88,7 +89,7 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 ## Cardinal rules (do NOT)
 
 - Do NOT test against live accounts.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

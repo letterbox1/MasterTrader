@@ -15,7 +15,7 @@ requirements: [R2.30]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,19 +49,20 @@ One shared conformance suite runs keyless against the sandbox venue, mock server
 ## Requirements
 
 - Cases: market, limit (rest + cancel), modify price/qty, stop, bracket, partial fill, reject (insufficient margin, bad tick size), reconnect mid-order, status/fill/position reports for reconciliation.
-- Runs per PR with cassettes and nightly against mock servers/emulators; the suite takes a `--live` flag used only by P2-T071 on the host runner.
+- Runs per PR with cassettes and nightly against mock servers/emulators; the suite takes a `--live` flag used only by P2-T071 on the workstation.
 - Output matrix venue × case pass/fail stored as artefact.
 
 ## ToDo
 
 - [ ] `tests/conformance/` parametrised by venue
-- [ ] Nightly runner on the host (not GitHub-hosted)
+- [ ] Nightly runner on the workstation (not GitHub-hosted)
 - [ ] Matrix report
 - [ ] Record results (numbers, run IDs, screenshots) in the progress log and tick the roadmap ToDo box
 
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine --test conformance`.
 - The suite.
 
 ### Scenarios

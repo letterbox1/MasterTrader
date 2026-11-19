@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,14 +51,14 @@ Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, an
 - IBKR: Flex Query → Activity, XML, include Trades, Cash Transactions, Transfers, Corporate Actions, Open Positions with `openDateTime` and cost basis; one file per year.
 - OANDA: transaction history export (CSV/JSON) per account; IG: transaction + trade history CSV per account.
 - Exchanges: full trade, deposit/withdrawal, funding and fee history CSVs per account (Binance, Kraken, Independent Reserve, BTC Markets, etc. as used).
-- Files go to the host inbox `/srv/mastertrader/journal/inbox/<venue>/<account>/` (bind-mounted read-only into `journal`), **never into git**; the inbox dir is git-ignored and on the encrypted disk.
+- Files go to the workstation inbox `/srv/mastertrader/journal/inbox/<venue>/<account>/` (bind-mounted read-only into `journal`), **never into git**; the inbox dir is git-ignored (disk encryption is part of the P7 live hardening, P7-T073; not a precondition here).
 - Any API token you create for automated retrieval (e.g. IBKR Flex Web Service token) goes **only** into the sops secrets file as `IBKR_FLEX_TOKEN` (read-only).
 
 ## ToDo
 
 - [ ] List every account you've held since your oldest open lot (venue, account id suffix, currency)
 - [ ] Export statements per the formats above; name files `<venue>_<account>_<from>_<to>.<ext>`
-- [ ] Copy them into the inbox paths on the host (scp over Tailscale); confirm checksums
+- [ ] Copy them into the inbox paths on the workstation (a local copy; scp over Tailscale only if the stack runs on another machine); confirm checksums
 - [ ] If using the IBKR Flex Web Service: create a read-only Flex token + query ids; add them to the sops file (`sops secrets/journal.enc.yaml`)
 - [ ] Note any gaps (closed accounts, lost records) in the progress log so P3-T061 can flag those lots as `cost_base_estimated`
 - [ ] Tell the agent (comment here) when the drop is complete
@@ -110,3 +110,4 @@ Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, an
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (real exports now feed late VERIFY P3-T061 (build first, keys last); CommSec optional per P3-B014; services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (kept USER (your own statements; only the late check P3-T061 waits on it); workstation inbox, no LUKS/Tailscale precondition)

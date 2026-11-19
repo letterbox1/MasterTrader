@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k metrics`.
 - Golden: metrics on a fixture equity curve equal hand-computed values to 1e-9.
 - Unit: Sharpe of a zero-variance series returns NaN with a reason, not inf.
 - Unit: benchmark series for BTC hold matches the dataset close series.
@@ -90,7 +91,7 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 ## Cardinal rules (do NOT)
 
 - Do NOT annualise Sharpe before passing it to deflated Sharpe (it needs per-period values).
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT add paid data/APIs or services; free tiers and self-hosted components only (03 §1).
 - Do NOT skip, weaken or delete a test to get green.
 

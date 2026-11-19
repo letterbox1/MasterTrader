@@ -15,7 +15,7 @@ requirements: [R2.31]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-2-strategies-ris
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ Every order to a venue with an STP field leaves the engine with an explicit, ven
 
 ## ToDo
 
-- [ ] `packages/mt_engine/stp.py` (resolver from the registry `stp` column + netting-account rule check)
+- [ ] `crates/mt-engine/src/stp.rs` (resolver from the registry `stp` column + netting-account rule check)
 - [ ] Adapter hook so every venue client sets the param (Nautilus `params`/tags)
 - [ ] Status mapping for STP cancels per venue
 - [ ] Tests
@@ -65,6 +65,7 @@ Every order to a venue with an STP field leaves the engine with an explicit, ven
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine stp`, `cargo clippy -p mt-engine`.
 - Unit: resolver returns the right param/value per venue × order type; FOK + OKX cancel_both rejected.
 - Unit: Alpaca/OANDA/IG/IBKR orders carry no STP field and record `stp_mode=n/a_netting`; a second strategy's bot on the same OANDA practice account with an overlapping instrument → `netting_account_shared`.
 - Integration (recorded Binance testnet fixtures / mock venue, no keys): order payload contains `selfTradePreventionMode`.
@@ -80,7 +81,7 @@ Every order to a venue with an STP field leaves the engine with an explicit, ven
 
 - [ ] No order path without an explicit STP decision (unit test enumerates all venues)
 - [ ] STP cancels recorded as non-fills
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -91,7 +92,7 @@ Every order to a venue with an STP field leaves the engine with an explicit, ven
 
 - Do NOT leave STP to the venue default.
 - Do NOT self-match across sub-accounts (12 §3).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Keys are trade-only, IP-locked, withdrawals disabled. No live money before the P7 gates; this phase is paper/testnet/practice only.

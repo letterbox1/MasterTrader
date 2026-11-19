@@ -15,17 +15,17 @@ requirements: [R2.06]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T007-strategy-lifecycle-state-machine
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ Each strategy version is **promoted** draft → backtested → validated only th
 
 ## ToDo
 
-- [ ] `packages/mt_strategy/lifecycle.py` state machine + mode ceiling + `GateProvider` protocol (stub provider returning 'not evaluated' until P2-T114 lands)
+- [ ] `crates/mt-api/src/strategies/lifecycle.rs` state machine + mode ceiling + `GateProvider` protocol (stub provider returning 'not evaluated' until P2-T114 lands)
 - [ ] Gate-profile store (`strategy.gate_profile` versioned rows, defaults from 16 §2.4 with class overrides) + update command classified tighten/loosen by P2-T019
 - [ ] Migration for `strategy.lifecycle_event` registered with the WORM layer
 - [ ] Commands `strategy.promote`, `strategy.demote`, `strategy.set_mode` with server-side levels
@@ -70,6 +70,7 @@ Each strategy version is **promoted** draft → backtested → validated only th
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-api lifecycle`, `cargo clippy -p mt-api`, `supabase test db`.
 - Unit: every allowed and forbidden transition (table-driven).
 - Integration: `strategy.set_mode autonomous` without C3 → rejected; with C3 approve + TOTP + cool-down (default 15 min) → applied after cool-down. `strategy.set_mode hitl` from paper → C2.
 - Unit: loosening a gate (e.g. DSR 0.95 → 0.90) → C3; tightening → C1.
@@ -87,7 +88,7 @@ Each strategy version is **promoted** draft → backtested → validated only th
 - [ ] All transitions enforced server-side and audited
 - [ ] Autonomous requires C3 + gates
 - [ ] Gates endpoint lists failing gates
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -99,7 +100,7 @@ Each strategy version is **promoted** draft → backtested → validated only th
 
 - Do NOT allow the `autonomous` ceiling through any client without C3, or hard-code a gate threshold.
 - Do NOT skip writing the lifecycle event.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

@@ -15,17 +15,17 @@ requirements: [R2.06, R2.40, R2.42, R2.45, R2.50]
 roadmap_todos: [T2.32, T2.27]
 modules: [M0, M7, M15]
 dashboards: [D03, D04, D05]
-tools: [pnpm, uv, playwright]
+tools: [pnpm, uv, cargo, playwright]
 mcp: []
 env: []
-services: [nats, postgres, mlflow]
+services: [nats, supabase-postgres, mlflow]
 branch: p2/P2-T166-e2e-strategy-lifecycle-scenario
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ A Playwright + API end-to-end scenario of flow F7 through the UI: a strategy cre
 ## Verification
 
 ### Tests
+- Commands: `pnpm playwright`, `uv run pytest tests/scenarios/strategy_lifecycle.py`.
 - The E2E spec (nightly) + manual run with screenshots for the exit demo.
 
 ### Scenarios
@@ -84,7 +85,7 @@ A Playwright + API end-to-end scenario of flow F7 through the UI: a strategy cre
 ## Cardinal rules (do NOT)
 
 - Do NOT stub M11 or the cost snapshot in the E2E; use the real services in the test profile.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

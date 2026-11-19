@@ -25,7 +25,7 @@ doc_sync: [docs/ui/README.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ Evidence that the part-B dashboards behave correctly under WS gaps, mt-api resta
 ## Verification
 
 ### Tests
+- Commands: `pnpm playwright`.
 - Playwright degraded-mode specs (nightly).
 
 ### Scenarios

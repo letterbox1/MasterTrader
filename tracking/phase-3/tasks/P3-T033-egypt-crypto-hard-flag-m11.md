@@ -15,17 +15,17 @@ requirements: [R3.09, R3.16]
 roadmap_todos: [T3.26]
 modules: [M18, M11]
 dashboards: [D15, D06]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, engine]
+services: [supabase-postgres, nats, mt-api, engine]
 branch: p3/P3-T033-egypt-crypto-hard-flag-m11
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ While the residency timeline says Egypt, crypto is blocked through the **venue r
 ## Context & references
 
 - Roadmap: [R3.09, R3.16, T3.26](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 key findings: Egypt](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) (M11 fails closed until the registry has recomputed; loosening C3) · [12 §1 moving countries](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) · [12 §2 venue registry](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) · D15 rules (Egypt red flag) [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Decision: [17 §D P3-B006/B007](../../../docs/17-decisions-register.md#d-other-decisions) (event + registry recompute; replaces the earlier KV `compliance_state` proposal)
 - Cross-phase prerequisites (depends_on): P2-T016 (M11 venue-registry check), P2-T017 (default-deny pre-trade RiskGate); P5 mandates consume the same registry status
@@ -58,7 +59,7 @@ While the residency timeline says Egypt, crypto is blocked through the **venue r
 ## ToDo
 
 - [ ] Write the EG rule set and its loader for the P3-T055 recompute
-- [ ] Reason code + reduce-only exemption check in `packages/mt_risk/checks/venue_registry.py` (extend, don't duplicate)
+- [ ] Reason code + reduce-only exemption check in `crates/mt-risk/src/checks/venue_registry.rs` (extend, don't duplicate)
 - [ ] Mandate check: crypto mandates refused while blocked (hook for P5 consumers)
 - [ ] D15 compliance flag wiring
 - [ ] Tests; docs
@@ -94,7 +95,7 @@ While the residency timeline says Egypt, crypto is blocked through the **venue r
 - Do NOT block protective exits.
 - Do NOT let a residency edit loosen risk without C3.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -114,3 +115,4 @@ While the residency timeline says Egypt, crypto is blocked through the **venue r
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Egypt block now via `tax.residency.changed` → venue-registry recompute (P3-T055) + existing M11 registry check; dropped KV `compliance_state` proposal (P3-B007 closed); explicit P2 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-risk` crate check)

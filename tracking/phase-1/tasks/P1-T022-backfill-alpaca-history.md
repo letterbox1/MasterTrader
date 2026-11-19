@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T021, P1-T012, P1-T013]
+depends_on: [P1-T021, P1-T012, P1-T013, P1-T076]
 requirements: [R1.05]
 roadmap_todos: [T1.22]
 modules: [M1]
@@ -18,14 +18,14 @@ dashboards: [D07]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server]
+services: [supabase-postgres, prefect-server]
 branch: p1/P1-T022-backfill-alpaca-history
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A resumable flow loads Alpaca IEX historical trades and minute bars for universe stocks/ETFs into the catalog and `market.bar_1m`, tagged IEX.
+A resumable flow loads Alpaca IEX historical trades and minute bars for universe stocks/ETFs into the catalog and the vendor bar table, tagged IEX, and has the rebuild/rollup job (P1-T076) build our bars from the trades.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ A resumable flow loads Alpaca IEX historical trades and minute bars for universe
 ## Requirements
 
 - Historical endpoints with `feed=iex`; page through with the quota tracker
-- Trades → catalog (`source=alpaca_iex`); 1m bars → `market.bar_1m_vendor` (`bar_source=vendor_bar`), never into the live aggregates
+- Trades → catalog (`source=alpaca_iex`, via the `mt-store` Python binding); 1m bars → `market.bar_1m_vendor` (`bar_source=vendor_bar`), never into built bars; then request `mt-recorder rebuild` for the range (P1-T076) so 1s … 1W built bars exist ([18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb))
 - Manifest in `ops.backfill_job`; report like P1-T015
 
 ## ToDo
@@ -77,7 +77,7 @@ A resumable flow loads Alpaca IEX historical trades and minute bars for universe
 ## Acceptance criteria
 
 - [ ] Fixture backfill, paging and resume tests pass keyless; the full load with a backfill report runs with your paper keys in P1-T073
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -88,7 +88,7 @@ A resumable flow loads Alpaca IEX historical trades and minute bars for universe
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 - Do NOT use keys with withdrawal rights, or without an IP allow-list where the venue supports one; practice/testnet/paper only, no live money before the P7 gates.
 
 ## Doc sync on completion
@@ -106,3 +106,4 @@ A resumable flow loads Alpaca IEX historical trades and minute bars for universe
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (vendor 1m bars in market.bar_1m_vendor; keyless build, full keyed load in P1-T073)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; built bars via the rebuild/rollup job P1-T076 (new dep); services supabase-postgres)

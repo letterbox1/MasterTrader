@@ -15,7 +15,7 @@ requirements: [R2.33]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 
 ## ToDo
 
-- [ ] Exec algorithms in `packages/mt_engine/algos/`
+- [ ] Exec algorithms in `crates/mt-engine/src/algos/`
 - [ ] Exit plan model + validation in OrderIntent
 - [ ] Sim tests on recorded books
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -62,6 +62,7 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine algos`, `cargo clippy -p mt-engine`.
 - Sim tests: maker-first fills as maker when book trades through; escalates after timeout; respects deadline.
 - Sim: TWAP slices count/size for a 5% of 1-min volume order.
 - Unit: entry without exit plan rejected.
@@ -78,7 +79,7 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 - [ ] Maker-first and TWAP implemented with sim tests
 - [ ] Exit plan mandatory and immutable
 - [ ] Child orders each go through M11
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -89,7 +90,7 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 
 - Do NOT let a child order skip the gate.
 - Do NOT widen stops after entry without C2.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

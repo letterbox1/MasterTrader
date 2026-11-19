@@ -15,17 +15,17 @@ requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18]
 dashboards: [D14]
-tools: [git, uv, docker]
+tools: [git, uv, cargo, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server]
+services: [supabase-postgres, prefect-server]
 branch: p3/P3-T014-ingest-ccxt-ledgers
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1 (funding payments)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · keys policy [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys)
 - Cross-phase prerequisite (depends_on): P1-T006 (shared quota tracker); context: P1-T041 (ccxt reconciliation clients), P1-T002 (read-only keys, used only by P3-T061 and the RUN P3-T053)
 
@@ -55,7 +56,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/ingest/ccxt_ledger.py` with per-venue quirks map
+- [ ] Implement the Python adapter `packages/mt_journal_adapters/ccxt_ledger.py` (ccxt is Python-only here, 18 §2.2) with a per-venue quirks map; it publishes normalised `JournalEvent`s (the `mt-core` types from the PyO3 module) to the `mt-journal` writer and never computes tax or writes SQL
 - [ ] Fee de-duplication against nautilus fill events
 - [ ] Prefect deployment + quota tracker integration
 - [ ] Golden fixtures (recorded ledger responses, secrets scrubbed) for Binance and Bybit testnet
@@ -67,7 +68,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 
 - Golden: recorded ledger JSON → expected events (funding sign, fee dedupe).
 - Unit: venue paging/cursor edge (same timestamp, multiple entries).
-- Integration: recorded HTTP cassettes (secrets scrubbed) replayed through ccxt; the real testnet run is P3-T061.
+- Integration (`uv run pytest packages/mt_journal_adapters`): recorded HTTP cassettes (secrets scrubbed) replayed through ccxt; the real testnet run is P3-T061.
 
 ### Scenarios
 
@@ -96,7 +97,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 - Do NOT use keys with trade or withdrawal permission for ledger reads.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Keys stay read-only/trade-only, IP-locked, withdrawals disabled; no live money before the P7 gates.
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -115,3 +116,4 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: recorded fixtures only, live testnet pull moved to P3-T061; explicit P1-T006 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (ccxt adapter stays Python (Python-only library) and hands normalised events to `mt-journal`)

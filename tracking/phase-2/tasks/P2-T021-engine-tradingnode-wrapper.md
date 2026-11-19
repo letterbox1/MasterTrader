@@ -1,7 +1,7 @@
 ---
 id: P2-T021
 kind: task
-title: mt_engine TradingNode wrapper, intent actor and order audit
+title: mt-engine TradingNode wrapper, intent actor and order audit
 phase: 2
 type: BUILD
 status: backlog
@@ -10,22 +10,22 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T003, P2-T017, P0-T031, P1-T004]
+depends_on: [P2-T003, P2-T017, P0-T031, P1-T004, P2-T200, P2-T202]
 requirements: [R2.30, R2.10, R2.01]
 roadmap_todos: [T2.25]
 modules: [M12, M11, M0]
 dashboards: [D05]
-tools: [uv, docker]
+tools: [cargo, uv, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T021-engine-tradingnode-wrapper
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P2-T021 · mt_engine TradingNode wrapper, intent actor and order audit
+# P2-T021 · mt-engine TradingNode wrapper, intent actor and order audit
 
 ## Goal / expected outcome
 
@@ -51,7 +51,8 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 
 ## Requirements
 
-- `packages/mt_engine/node.py`: builds `TradingNodeConfig` from `config/engine.<env>.yaml` (venues, accounts by mode, strategies by version id, cache/msgbus settings).
+- Node per venue as decided by P2-T200 (`venues.<venue>.node: rust|python`): the NautilusTrader **Rust live node** where the venue's Rust adapter is production-ready, otherwise the **Python node** with the `mt-risk` PyO3 binding (P2-T202); `mt-risk` is linked in either way.
+- `crates/mt-engine/src/node.rs`: builds `TradingNodeConfig` from `config/engine.<env>.yaml` (venues, accounts by mode, strategies by version id, cache/msgbus settings).
 - `IntentActor`: subscribes `ord.intent.{source}` (manual, telegram, agent, bot) via a NATS bridge, validates schema, calls `RiskGate`, then submits; publishes `ord.risk.{decision}`.
 - Strategy control: `strategy.start|pause|resume|stop`, mode, shadow runs and bot lifecycle reach the node through `engine.cmd.{command}` (02 §6) and update `strat.status.{strategy}` / `bot.{id}.status`.
 - Audit writers: `audit.order` (intent, decision, client order id, venue id, STP mode, exit plan, trace_id, bot_id, sleeve), `audit.fill`, `audit.position_snapshot`; inserts never block the order path (async queue, bounded, spill to NATS JetStream when Postgres is down: bounded at 1 GB or 24 h by default; above 80% of the buffer new entries stop and exits continue; nothing is executed without a record, 16 §3.3).
@@ -64,7 +65,7 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 - [ ] Node builder + env configs (`config/engine.sandbox.yaml`, `engine.testnet.yaml`)
 - [ ] NATS ↔ Nautilus msgbus bridge for intents/decisions/control
 - [ ] Audit writer with bounded queue + JetStream spill
-- [ ] Container entrypoint (`python -m mt_engine`)
+- [ ] Container entrypoint (the `mt-engine` binary for the Rust node; the Python-node image starts the Nautilus Python node from the same config)
 - [ ] OTel spans `signal→intent→risk→submit`
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -72,6 +73,7 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine`, `cargo clippy -p mt-engine`, `uv run pytest -k python_node` (Python-node path).
 - Integration (sandbox venue): example strategy → intent → gate → simulated fill → `audit.order` + `audit.fill` rows with matching ids and hash chain.
 - Integration: `ord.intent.manual` path produces the same audit shape.
 - Unit: control commands change strategy state and publish `strat.status`.
@@ -88,7 +90,7 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 - [ ] Engine container runs the sandbox node from config; the testnet node config is validated against mock venues (live run in P2-T071)
 - [ ] Every order/fill audited with trace_id
 - [ ] External intents only enter via the gate
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -98,9 +100,9 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 
 ## Cardinal rules (do NOT)
 
-- Do NOT give mt_api, Telegram or agents a direct handle on Nautilus clients.
+- Do NOT give mt-api, Telegram or agents a direct handle on Nautilus clients.
 - Do NOT block the order path on audit writes.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).
@@ -114,7 +116,7 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 ## Branch & PR
 
 - Branch: `p2/P2-T021-engine-tradingnode-wrapper`
-- PR title: `P2-T021: mt_engine TradingNode wrapper, intent actor and order audit`
+- PR title: `P2-T021: mt-engine TradingNode wrapper, intent actor and order audit`
 - PR checklist: tests added and green · docs synced · task file ticked · no secrets (gitleaks) · `./kanban done P2-T021` run
 
 ## Progress log

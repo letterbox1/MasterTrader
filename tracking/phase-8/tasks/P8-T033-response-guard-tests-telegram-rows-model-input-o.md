@@ -15,17 +15,17 @@ requirements: [R8.09]
 roadmap_todos: [T8.63]
 modules: [M20, M2, M18]
 dashboards: [D17]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T033-response-guard-tests-telegram-rows-model-input-o
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md, docs/12-policy-and-compliance.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A suite `tests/security/test_mcp_response_guard.py`, mandatory for merge, proves T8.63: through every MCP path (every read tool, every resource and notification, and raw `mt_api` calls with an MCP token), a Telegram-sourced row, a `model_input_ok = false` row, a TFN, a postal address and statement numbers never reach the MCP client unredacted, secrets are scrubbed, and untrusted text arrives wrapped and marked. Runs on seeded fixtures; no keys.
+A suite `crates/mt-mcp/tests/security_response_guard.rs`, mandatory for merge, proves T8.63: through every MCP path (every read tool, every resource and notification, and raw `mt-api` calls with an MCP token), a Telegram-sourced row, a `model_input_ok = false` row, a TFN, a postal address and statement numbers never reach the MCP client unredacted, secrets are scrubbed, and untrusted text arrives wrapped and marked. Runs on seeded fixtures; no keys.
 
 ## Context & references
 
 - Roadmap: [R8.09](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.63](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B003](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [17 §B P0-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (provenance columns)
 - Compliance: [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (MCP responses are an inference path) · [SPEC NN10](../../../SPEC.md#non-negotiable-requirements) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) (tax PII excluded from MCP responses)
 - Precedent: P4-T050 (Telegram-text gate test for other inference paths).
@@ -50,10 +51,10 @@ A suite `tests/security/test_mcp_response_guard.py`, mandatory for merge, proves
 ## Requirements
 
 - Seed corpus (canary strings, each unique and searchable): a Telegram-sourced document and community post; a row with `model_input_ok = false` from a non-Telegram source; a journal note with a fake TFN, a postal address and a statement account number; a tax summary with PII fields; a news article with a fake API key and an embedded instruction; a legacy row with no provenance.
-- Probe every MCP read tool and resource from the registry dump (not a hand-picked list), plus raw HTTP calls with an MCP token that skip `mt_mcp`, plus notifications from P8-T032.
+- Probe every MCP read tool and resource from the registry dump (not a hand-picked list), plus raw HTTP calls with an MCP token that skip `mt-mcp`, plus notifications from P8-T032.
 - Assertions on the collected output: no Telegram canary text and no `model_input_ok = false` canary anywhere (postures may appear as numbers); TFN/address/statement canaries only as `[redacted]`; the fake key scrubbed and an alert raised; the article wrapped as `untrusted_text` with source and provenance; the no-provenance row absent.
 - The same probes with a web session show the web rules unchanged (the guard is MCP-only).
-- Marked a required CI check for PRs touching `mt_api`, `mt_core.schemas` or `mt_mcp`.
+- Marked a required CI check for PRs touching `mt-api`, `mt_core::schemas` or `mt-mcp`.
 
 ## ToDo
 
@@ -109,3 +110,4 @@ A suite `tests/security/test_mcp_response_guard.py`, mandatory for merge, proves
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for R8.09 / T8.63 (registry-driven canary probes over tools, resources, notifications and raw calls; 17 §A P8-B003)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

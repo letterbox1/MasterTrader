@@ -15,17 +15,17 @@ requirements: [R2.14, R2.13]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T012-default-limits-evaluators
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/16-configuration-and-safety-model.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,7 +63,7 @@ The default limits of [16 §2.1–§2.3](../../../docs/16-configuration-and-safe
 - [ ] Install defaults mirroring 16 §2.1–§2.3 (data in the policy store, P2-T010), each with its 16 section link
 - [ ] Drawdown-basis equity tracker (trading equity, deposits/withdrawals adjusted, running peak, C3 peak reset) + two-stage sleeve and system evaluators
 - [ ] `risk.sleeve.restart` command (C3) wired through P2-T019; `programme_ended` state after the second system stage-2 event
-- [ ] Evaluators in `packages/mt_risk/limits/` (one module per limit)
+- [ ] Evaluators in `crates/mt-risk/src/limits/` (one module per limit)
 - [ ] `risk.limit_state` table (latest per scope, not WORM) + KV publication
 - [ ] State rebuild from `audit.fill` on restart
 - [ ] Golden tests
@@ -72,6 +72,7 @@ The default limits of [16 §2.1–§2.3](../../../docs/16-configuration-and-safe
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk limits`, `cargo clippy -p mt-risk`.
 - Golden: table of (state, intent) → expected decision for every limit at below/at/above threshold.
 - Unit: daily-loss halt resets at the next day boundary only.
 - Unit: sleeve stage-2 halt requires `risk.sleeve.restart` (C3: Telegram + TOTP + cool-down), logged; system stage 1 restart is C3 too.
@@ -93,7 +94,7 @@ The default limits of [16 §2.1–§2.3](../../../docs/16-configuration-and-safe
 - [ ] Every 14 §5 row has an evaluator, a default and a golden case
 - [ ] Breach actions match the table
 - [ ] State rebuild verified
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -105,7 +106,7 @@ The default limits of [16 §2.1–§2.3](../../../docs/16-configuration-and-safe
 - Do NOT hard-code limit numbers in evaluator code.
 - Do NOT let a halt auto-clear except where 16 §2.1 says so (daily loss at the next Sydney day; venue API pause after 10 min); sleeve and system restarts are C3.
 - Do NOT block exits or protective orders in any drawdown stage.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

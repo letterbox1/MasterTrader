@@ -15,17 +15,17 @@ requirements: [R2.19, R2.55]
 roadmap_todos: [T2.24]
 modules: [M11]
 dashboards: [D03, D06]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T011-hard-ceilings-file
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ The **L0 hard ceilings** (absolute maxima such as crypto-derivatives leverage �
 
 ## ToDo
 
-- [ ] `packages/mt_risk/ceilings.py`: L0 model, validation, clamp helper used by the compiler and every evaluator
+- [ ] `crates/mt-risk/src/ceilings.rs`: L0 model, validation, clamp helper used by the compiler and every evaluator
 - [ ] Store L0 as a layer in `risk.policy` versions (P2-T010) with an install default that prefills the 16 §2 values (e.g. crypto-derivatives leverage ≤ 2×)
 - [ ] Wire `risk.policy.update {layer: L0}` through the change-control classifier (P2-T019): tighten C1 immediate, loosen C3
 - [ ] Expose ceilings in `/risk/policy` (value, version, who/when) for D03 Ceilings section and D06 per-field markers
@@ -69,6 +69,7 @@ The **L0 hard ceilings** (absolute maxima such as crypto-derivatives leverage �
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk ceilings`, `cargo clippy -p mt-risk`, `supabase test db`.
 - Unit: a lower-layer value above L0 → `CeilingExceeded` at save; runtime clamp to L0 when L0 is tightened below an existing value.
 - Unit: L0 missing/corrupt → `trading_allowed=false`, reason `ceilings_missing`; protective exits still pass.
 - Integration: `risk.policy.update {layer: L0}` lowering max leverage → applied immediately (C1) and a `risk.change` row written; raising it → C3 pending until Telegram approve + TOTP + cool-down, then applied.
@@ -88,7 +89,7 @@ The **L0 hard ceilings** (absolute maxima such as crypto-derivatives leverage �
 - [ ] L0 is a versioned layer edited via `risk.policy.update`, tighten C1 / loosen C3, with WORM change rows
 - [ ] Ceilings enforced at save time and clamped at runtime on every check
 - [ ] No host-only ceilings file or path exists (CI guard)
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -102,7 +103,7 @@ The **L0 hard ceilings** (absolute maxima such as crypto-derivatives leverage �
 - Do NOT reintroduce a host-only ceilings file; L0 lives in the strategy settings (17 §E).
 - Do NOT hard-code ceiling numbers in code; install defaults come from 16 §2 and stay editable.
 - Do NOT UPDATE or DELETE WORM rows (`risk.change`, policy versions); rollback is a new row.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

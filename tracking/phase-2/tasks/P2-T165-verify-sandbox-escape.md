@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,13 +53,14 @@ Evidence that hostile generated code cannot reach the network, secrets, the host
 ## ToDo
 
 - [ ] Write `tests/security/sandbox_escape/` fixtures
-- [ ] Run on the host; capture outputs
+- [ ] Run on the workstation; capture outputs
 - [ ] Record results; file S1 bugs for any escape
 
 ## Verification
 
 ### Tests
-- Security integration suite above (runs on the host in CI-self-hosted or manual with evidence).
+- Commands: `uv run pytest tests/security/test_sandbox_escape.py`.
+- Security integration suite above (runs on the workstation, self-hosted runner or manual with evidence).
 
 ### Scenarios
 - Given a fixture that sleeps then exfiltrates via DNS, then no DNS resolution is possible and the attempt is logged.

@@ -15,17 +15,17 @@ requirements: [R1.11]
 roadmap_todos: [T1.28]
 modules: [M16]
 dashboards: [D07, D02]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T040-cost-spreads-hour-of-week-tca-scaffold
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,22 +50,23 @@ review_result: ""
 
 ## Requirements
 
-- Continuous aggregate `market.spread_how` (instrument, hour_of_week 0–167, p50/p90 spread bps, samples) from quotes, refreshed hourly; trailing 4-week baseline
+- Table `market.spread_how` (instrument, hour_of_week 0–167, p50/p90 spread bps, samples), maintained by `mt-monitor` from quotes with an hourly upsert job (no continuous aggregate; [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb)); trailing 4-week baseline
 - Live check: current spread > 3× baseline p50 (default multiple, configurable) for ≥ 10 s (default) → `audit.cost_event` incident + `alert.warning.spread`; payload includes the ratio so P2's M11 can pause the affected bots
 - `cost.{venue}.{symbol}` snapshot at ≤ 1 Hz: spread_bps, normal_bps, ratio, fee tier, funding/swap
-- TCA scaffold: per-order TCA results are WORM rows in `audit.cost_event` (`kind=tca`: order, decision/arrival price, fill VWAP, fees, funding, delay/spread-impact/fee components); `market.cost_model` holds the rolling realised-vs-modelled ratio per strategy × venue × instrument (last 20 fills by default, for the 1.5× blow-out rule); interface `mt_monitor.tca.compute(order, fills)` with tests on synthetic fills
+- TCA scaffold: per-order TCA results are WORM rows in `audit.cost_event` (`kind=tca`: order, decision/arrival price, fill VWAP, fees, funding, delay/spread-impact/fee components); `market.cost_model` holds the rolling realised-vs-modelled ratio per strategy × venue × instrument (last 20 fills by default, for the 1.5× blow-out rule); interface `mt_monitor::tca::compute(order, fills)` (Rust, `rust_decimal`) with tests on synthetic fills
 
 ## ToDo
 
 - [ ] Implement spread aggregation and the blow-out check
 - [ ] Implement the cost snapshot publisher at ≤ 1 Hz
-- [ ] Add the `kind=tca` payload to `audit.cost_event`, create `market.cost_model`, and the compute function with synthetic tests
+- [ ] Add the `kind=tca` payload to `audit.cost_event`, create `market.cost_model` and `market.spread_how` (Supabase migration, pgTAP), and the compute function with synthetic tests
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
 ## Verification
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor spread tca`, `cargo clippy`, `supabase test db`
 - Unit: hour-of-week bucketing in UTC; TCA decomposition sums to total shortfall (property)
 - Integration: quotes fixture → heatmap rows; injected spread blow-out → incident
 - WORM: `audit.cost_event` TCA rows pass the 15 §2.4 tests
@@ -76,13 +77,13 @@ review_result: ""
 
 ### Stress / failure injection
 
-- Load: one month of quotes for 30 instruments aggregated within 5 min
+- Load: one month of quotes for 30 instruments aggregated within 5 min on the workstation
 
 ## Acceptance criteria
 
 - [ ] D07 Costs heatmap populated for every streaming instrument; spread incident fires on injection
 - [ ] TCA compute passes synthetic tests (ready for P2-T2.26)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -93,7 +94,7 @@ review_result: ""
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); resolutions and corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -110,3 +111,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical names: TCA in audit.cost_event, no audit.tca (17 §B); spread 3× and cost blow-out 1.5× as 16 defaults)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (spread hour-of-week table maintained by an hourly `mt-monitor` upsert instead of a continuous aggregate; TCA scaffold in Rust; Supabase migration + pgTAP; tools cargo/supabase; services supabase-postgres)

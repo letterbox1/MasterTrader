@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D04-research-lab.md, docs/roadmap/phase-2-strategi
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: DESIGN.md §6.8 viewport matrix (overflow + fixed-bar overlap checks) and axe on the new routes; Vitest + Testing Library for components.
 - Playwright: validation fixture shows every harness section; Re-run produces `reproduced=true` badge.
 
@@ -92,7 +93,7 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt_api`.
+- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt-api`.
 - Do NOT use `100vh`/`h-screen`, unprefixed multi-column grids or the Tailwind CDN (DESIGN.md §6.3–6.5).
 - Do NOT sum or show paper and live money without a mode label.
 - Do NOT show any gate as passed when its data is missing.

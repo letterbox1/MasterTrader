@@ -15,17 +15,17 @@ requirements: [R2.51, R2.54]
 roadmap_todos: [T2.32, T2.34]
 modules: [M15, M11]
 dashboards: [D01, D05, D03]
-tools: [uv, pnpm]
+tools: [cargo, pnpm]
 mcp: []
 env: []
-services: [nats]
+services: [nats, supabase-auth]
 branch: p2/P2-T038-approvals-api-approvalcard
 pr: ""
 doc_sync: [docs/ui/components.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 ## Requirements
 
 - Queries: `/approvals?status=pending|decided`, `/bots/{id}/approvals`; WS topic `approvals` (new, decided, expired).
-- Commands: `approval.approve` (C2), `approval.approve_partial` (C2, fraction 0.5, bot requests), `approval.reject` (C1), `bot.pause` (C1); large orders (default > 2% of sleeve or > A$5,000 notional) need **hold-to-confirm** on web (TOTP on Telegram, P2-T039).
+- Commands: `approval.approve` (C2), `approval.approve_partial` (C2, fraction 0.5, bot requests), `approval.reject` (C1), `bot.pause` (C1); large orders (default > 2% of sleeve or > A$5,000 notional) need **hold-to-confirm** on web (TOTP on Telegram, P2-T039). Every command needs a Supabase Auth JWT at `aal2` (18 §4.6).
 - Batched card for one dynamic-selection bot: per-line toggles, one combined risk preview, `approval.approve` with the selected lines (C2). No other bulk approve.
 - `ApprovalCard` props: request (bot, instrument, side, size, type/price, stop/target, risk preview R & % of sleeve, exposure after fill, blackout/DQ warnings, reasons, chart deep link), TTL countdown synced to server time, buttons Approve / Approve ½ / Reject / Pause bot; expired → moves to history automatically.
 - Top-bar approvals icon count + sheet listing pending cards.
@@ -59,7 +59,7 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 
 ## ToDo
 
-- [ ] mt_api routers + WS topic
+- [ ] `mt-api` axum routes + WS topic (utoipa OpenAPI)
 - [ ] `apps/web/src/components/trading/ApprovalCard.tsx` + stories + tests
 - [ ] Approvals sheet + top-bar count
 - [ ] Playwright flow test
@@ -84,7 +84,7 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 - [ ] API + component + sheet live
 - [ ] TTL countdown matches server ±1 s
 - [ ] Viewport matrix passes (covered in P2-T062)
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 
 - Do NOT let the UI decide expiry; the server decides.
 - Do NOT approve multiple cards with one tap; the only exception is the batched card of one dynamic-selection bot (17 §D, 15 §1.3).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T029]
 requirements: [R0.07, R0.N7]
 roadmap_todos: [T0.23]
-modules: [M17, mt_store]
+modules: [M17, mt-store]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p0/P0-T030-worm-row-hash-chain
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_hash ‖ canonical_json(row))` computed in a `BEFORE INSERT` trigger serialised per chain with an advisory lock, and a Python reference implementation (`mt_store.worm.canonical_json`, `recompute_chain`) produces byte-identical hashes for verification.
+Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_hash ‖ canonical_json(row))` computed in a `BEFORE INSERT` trigger serialised per chain with an advisory lock, and a Rust reference implementation (`mt_store::worm::canonical_json`, `recompute_chain`, also exposed to Python through the `mt_store` binding) produces byte-identical hashes for verification.
 
 ## Context & references
 
@@ -52,23 +52,23 @@ Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_h
 
 - Columns added by the helper: `chain_id text NOT NULL`, `seq bigint NOT NULL`, `prev_hash bytea NOT NULL`, `row_hash bytea NOT NULL`, `recorded_at timestamptz NOT NULL DEFAULT clock_timestamp()`; `UNIQUE (chain_id, seq)`.
 - Trigger `worm_chain()` (plpgsql, `pgcrypto` `digest()`): `pg_advisory_xact_lock(hashtext(table||chain_id))`, reads the chain head from `audit.chain_head` (WORM-exempt internal table updated only by the trigger function, `SECURITY DEFINER`) or the last row, sets `seq = head.seq + 1`, `prev_hash = head.row_hash` (genesis = 32 zero bytes), computes `row_hash`.
-- **Canonical JSON** (spec written in `packages/mt_store/WORM_CANONICAL.md`): keys sorted, UTF-8, no whitespace, `numeric` as decimal strings without exponent, `timestamptz` as UTC `YYYY-MM-DDTHH:MM:SS.ffffffZ`, `bytea` hex, NULL as `null`, booleans lowercase; excludes `row_hash` itself; includes `chain_id`, `seq`, `prev_hash`, `recorded_at`.
-- Timestamps from `clock_timestamp()` on a chrony-synced host (15 §2.2).
-- Python: `canonical_json(row: Mapping) -> bytes`, `row_hash(prev, row)`, `recompute_chain(rows) -> list[Mismatch]` — must match SQL byte-for-byte (golden vectors committed under `tests/worm/vectors/`).
+- **Canonical JSON** (spec written in `crates/mt-store/WORM_CANONICAL.md`): keys sorted, UTF-8, no whitespace, `numeric` as decimal strings without exponent, `timestamptz` as UTC `YYYY-MM-DDTHH:MM:SS.ffffffZ`, `bytea` hex, NULL as `null`, booleans lowercase; excludes `row_hash` itself; includes `chain_id`, `seq`, `prev_hash`, `recorded_at`.
+- Timestamps from `clock_timestamp()` on a chrony-synced machine (15 §2.2).
+- Rust: `canonical_json(row) -> Vec<u8>`, `row_hash(prev, row)`, `recompute_chain(rows) -> Vec<Mismatch>` — must match SQL byte-for-byte (golden vectors committed under `tests/worm/vectors/`).
 - Chain granularity: one chain per table by default; tables may declare a chain key (e.g. per `source`) to reduce lock contention.
 
 ## ToDo
 
 - [ ] Implement `worm_chain()` and `audit.chain_head`; attach via `create_worm_table()`.
-- [ ] Write `WORM_CANONICAL.md` (the spec) and the Python reference.
-- [ ] Generate golden vectors from SQL and assert Python equality (and vice versa).
+- [ ] Write `WORM_CANONICAL.md` (the spec) and the Rust reference in `mt-store`.
+- [ ] Generate golden vectors from SQL and assert Rust equality (and vice versa); pgTAP asserts the SQL side.
 - [ ] Concurrency test: 16 writers × 5k rows into one chain → contiguous `seq`, valid chain.
 
 ## Verification
 
 ### Tests
-- Golden: SQL vs Python hashes equal for 50 vectors covering numeric precision, unicode, NULLs, timestamps at µs.
-- Property (hypothesis): random rows → Python recompute equals stored `row_hash`.
+- Golden (`cargo test -p mt-store worm` + `supabase test db`): SQL vs Rust hashes equal for 50 vectors covering numeric precision, unicode, NULLs, timestamps at µs.
+- Property (`proptest`): random rows → Rust recompute equals stored `row_hash`.
 - Concurrency: no gaps or duplicate `seq` under 16 parallel writers; chain verifies.
 
 ### Scenarios
@@ -80,11 +80,11 @@ Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_h
 
 ## Acceptance criteria
 
-- [ ] Trigger + chain head + Python reference implemented
-- [ ] Golden and property tests pass (SQL ≡ Python)
+- [ ] Trigger + chain head + Rust reference implemented
+- [ ] Golden and property tests pass (SQL ≡ Rust)
 - [ ] Concurrency test passes
 - [ ] Throughput numbers logged against the p99 < 5 ms SLO
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -113,3 +113,4 @@ Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_h
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (WORM insert p99 < 5 ms is the SLO (17 §D P0-B004, R0.N7), benchmark in P0-T066; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (reference implementation is Rust in `mt-store` (Python via the binding), proptest instead of hypothesis; pgTAP for the SQL side)

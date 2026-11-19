@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ Provisioned Grafana dashboards show risk state, ladder rung, kill and dead-man s
 
 ## Requirements
 
-- Dashboards (JSON in `ops/grafana/dashboards/`): Risk (trading allowed, kill, ladder per sleeve, sleeve and system drawdown vs their two stages, limit usage, rejects by reason incl. safety-state rejects: data age, `audit.integrity`, egress), Dead-man (three layers: in-engine heartbeat ages, `deadman` sidecar heartbeat, venue timer refresh age), Latency SLOs (`mt_risk_check_seconds` p99 < 1 ms, signal→submit p99 < 5 ms, tier-A p99 < 50 µs (metric from Part B), `mt_kill_to_cancels_seconds` < 1 s), TCA (IS bps by strategy/venue, realised-vs-modelled ratio).
+- Dashboards (JSON in `infra/grafana/dashboards/`): Risk (trading allowed, kill, ladder per sleeve, sleeve and system drawdown vs their two stages, limit usage, rejects by reason incl. safety-state rejects: data age, `audit.integrity`, egress), Dead-man (three layers: in-engine heartbeat ages, `deadman` sidecar heartbeat, venue timer refresh age), Latency SLOs (`mt_risk_check_seconds` p99 < 1 ms, signal→submit p99 < 5 ms, tier-A p99 < 50 µs (metric from Part B), `mt_kill_to_cancels_seconds` < 1 s), TCA (IS bps by strategy/venue, realised-vs-modelled ratio).
 - Alerts: SLO burn (p99 above target for 5 min), kill ON, dead-man fired (any layer), `deadman` sidecar missing, venue timer not refreshed, ladder ≥ 4, sleeve/system drawdown stage reached, cost ratio > 1.5× over 20 fills, key age > 90 days. Thresholds read from the 16 defaults, not duplicated by hand where a metric carries the limit.
 - Loki links via `trace_id` exemplars.
 
@@ -74,7 +74,7 @@ Provisioned Grafana dashboards show risk state, ladder rung, kill and dead-man s
 
 - [ ] Dashboards provisioned
 - [ ] All listed alerts fire on synthetic breaches
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: compose config check, image digests pinned, smoke tests
 
 ## Exceptions & edge cases
 

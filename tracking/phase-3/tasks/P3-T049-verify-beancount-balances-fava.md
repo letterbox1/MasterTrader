@@ -15,7 +15,7 @@ requirements: [R3.10]
 roadmap_todos: [T3.63]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, uv, cargo]
 mcp: []
 env: []
 services: [journal, fava, caddy]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ The Beancount export of the real paper-trading period passes `bean-check`, its b
 ## Context & references
 
 - Roadmap: [R3.10, T3.63](../../../docs/roadmap/phase-3-journal-and-tax.md) · export P3-T035 · sidecar P3-T009
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 
 ## Requirements
 
@@ -100,3 +101,4 @@ The Beancount export of the real paper-trading period passes `bean-check`, its b
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (uv kept for `bean-check`/compare script)

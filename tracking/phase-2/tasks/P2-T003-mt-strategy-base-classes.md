@@ -10,12 +10,12 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T016, P1-T009]
+depends_on: [P0-T016, P1-T009, P0-T071]
 requirements: [R2.01, R2.03]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: []
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,14 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`packages/mt_strategy` provides `MTStrategy`/`MTActor` on top of Nautilus `Strategy`/`Actor` so one strategy class runs unchanged in backtest, sandbox/paper and live, subscribes to any data granularity (ticks, quotes, trades, book deltas, time/tick/volume/value bars, several timeframes at once) and can only emit orders through the M11 gate.
+`packages/mt_strategy` provides `MTStrategy`/`MTActor` on top of Nautilus `Strategy`/`Actor` so one strategy class runs unchanged in backtest, sandbox/paper and live, subscribes to any data granularity (ticks, quotes, trades, book deltas, time/tick/volume/value bars, several timeframes at once) and can only emit orders through the M11 gate. Deterministic strategies can be written in Rust instead: the `MtStrategy` trait in `crates/mt-engine/src/strategy/` gives Rust strategies the same hooks, multi-timeframe helpers and single `submit_intent` path on the same engine ([18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path)).
 
 ## Context & references
 
 - Roadmap: [R2.01, R2.03](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
 - Spec: [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 §6 smallest free timeframe](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) · [02 §4 components](../../../docs/02-v1-architecture.md#4-logical-components)
 - Flow: [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Cross-phase (`depends_on`): `mt_core` types `BarSpec`, `Signal`, `OrderIntent` (P0-T016, T0.21); instrument master with finest resolution (P1-T009, T1.22/T1.32). Bars + Parquet catalog (P1 R1.02) are only needed for replay data; tests use recorded fixtures.
+- Cross-phase (`depends_on`): `mt-core` types `BarSpec`, `Signal`, `OrderIntent` (P0-T016, T0.21), reached from Python through the `mt_store` PyO3 module (P0-T071); instrument master with finest resolution (P1-T009, T1.22/T1.32). Bars + Parquet catalog (P1 R1.02) are only needed for replay data; tests use recorded fixtures.
 - Related: P2-T004 (manifest), P2-T017 (RiskGate), P2-T021 (engine). Backtest↔paper parity is verified by Part B (T2.65).
 
 ## Requirements
@@ -60,7 +60,8 @@ review_result: ""
 
 - [ ] Create `packages/mt_strategy/base.py` (`MTStrategy`, `MTActor`, `StrategyContext` with bot mode `paper|hitl|autonomous`, sleeve, bot_id, version, signal timestamp for the decision deadline)
 - [ ] Create `packages/mt_strategy/mtf.py` (BarSpec parser → Nautilus `BarType`, aggregation from finest data, alignment helpers)
-- [ ] Create `packages/mt_strategy/gate.py` protocol `RiskGateProtocol` (implemented by P2-T017) and a `NullGate` that rejects everything (default-deny) for tests
+- [ ] Create `packages/mt_strategy/gate.py` protocol `RiskGateProtocol` (implemented by the `mt-risk` binding, P2-T017/P2-T202) and a `NullGate` that rejects everything (default-deny) for tests
+- [ ] Rust counterpart: `MtStrategy` trait + multi-timeframe helpers in `crates/mt-engine/src/strategy/` on Nautilus's Rust strategy API, calling the linked `mt-risk` gate; the same example strategy written in both languages
 - [ ] Wrap `submit_order`/`submit_order_list` so calling them outside `submit_intent` raises `BypassError`
 - [ ] Add an import-linter contract: only `mt_strategy.base` may call Nautilus `submit_order`
 - [ ] Example strategy `strategies/examples/ema_cross_min/` used by tests
@@ -70,10 +71,11 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_strategy`, `cargo test -p mt-engine strategy`, `cargo clippy -p mt-engine`.
 - Unit: BarSpec parser round-trips all spec kinds; invalid specs rejected.
 - Unit: `TimeframeUnavailable` for a 1s spec on a daily-only instrument.
 - Integration: the same example strategy class runs in a Nautilus `BacktestEngine` and a sandbox `TradingNode` (paper venue) without code changes; produces identical intents for the same replayed data.
-- Unit: direct `submit_order` call raises `BypassError`; import-linter contract fails CI when violated.
+- Unit: direct `submit_order` call raises `BypassError`; import-linter contract fails CI when violated. Rust: the trait exposes no direct submit; a `cargo test` compile-fail case proves it.
 
 ### Scenarios
 - Given a strategy with 1D trend filter + 5m entries + tick execution, when replaying a day, then entries only fire on 5m closes after the 1D bar that closed before them (no look-ahead).
@@ -87,7 +89,7 @@ review_result: ""
 - [ ] Example strategy runs unchanged in backtest and sandbox/paper
 - [ ] All bar kinds and multi-timeframe subscriptions supported and tested
 - [ ] Bypass attempts fail in unit tests and in the import-linter CI contract
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -99,7 +101,7 @@ review_result: ""
 
 - Do NOT give strategies any path to the venue other than `submit_intent` → M11.
 - Do NOT read wall-clock time or raw tables inside strategies (use Nautilus clock and `pit(as_of)` for research).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

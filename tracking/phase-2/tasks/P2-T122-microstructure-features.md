@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 ## Requirements
 
 - Features: OFI (Cont et al.) at levels 1/5/10, quoted and effective spread (bps), depth at ±10/25/50 bps, book imbalance, trade intensity (trades/s), signed volume, micro-price, realised vol (1s/1m).
-- Incremental update from book deltas ≤ 20 µs median per event (Rust/numba allowed) so they can feed tier A in-process.
+- Incremental update from book deltas ≤ 20 µs median per event (numba, or Rust behind the binding when promoted to the engine path) so they can feed tier A in-process.
 - Batch from the Parquet catalog for the same windows; parity harness passes.
 - Book integrity: if the book is flagged bad by M16, features publish `None` with `dq=bad`.
 
@@ -61,6 +61,7 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_features -k micro`.
 - Parity on a 1-hour recorded BTC L2 fixture.
 - Unit: OFI sign correct on synthetic bid/ask events.
 - Benchmark: per-event update latency.
@@ -85,7 +86,7 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 ## Cardinal rules (do NOT)
 
 - Do NOT compute features on a book flagged bad by M16.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ Every exchange/broker account, sub-account and on-chain address you own is in th
 
 - Use **D16 → Settings → Accounts** (P3-T056) to register each entry, or fill `config/journal/accounts.yaml` on the host and load it from that page (masked account ids, public addresses only; **no keys, no seed phrases**).
 - For each entry: venue/chain, masked account id or public address, provider label, role, custody, mode (paper/live), tag `investment` or `trading`, effective_from.
-- Each registration and tag is a C1 command through `mt_api`; confirm each in the UI prompt (the CLI loader `python -m mt_journal.registry.seed` remains as a fallback).
+- Each registration and tag is a C1 command through `mt-api`; confirm each in the UI prompt (the CLI loader `mt-journal registry seed` remains as a fallback).
 - Ask the agent (via a TAX_QUESTION) if any account mixes both purposes.
 
 ## ToDo
@@ -102,3 +102,4 @@ Every exchange/broker account, sub-account and on-chain address you own is in th
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (registration now on the D16 Accounts page (P3-T056, R3.17, P3-B011); services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (kept USER (your own accounts); no longer blocks the paper run P3-T053; CLI renamed)

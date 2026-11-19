@@ -15,7 +15,7 @@ requirements: [R2.N1]
 roadmap_todos: [T2.66]
 modules: [M11]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Reproducible benchmarks on the host show pre-trade risk check p99 < 1 ms and kill → all cancels sent < 1 s, with CI regression guards; tier-A and signal→order benchmarks are P2-T162's share of T2.66.
+Reproducible benchmarks on the workstation show pre-trade risk check p99 < 1 ms and kill → all cancels sent < 1 s, with CI regression guards; tier-A and signal→order benchmarks are P2-T162's share of T2.66.
 
 ## Context & references
 
@@ -48,20 +48,21 @@ Reproducible benchmarks on the host show pre-trade risk check p99 < 1 ms and kil
 
 ## Requirements
 
-- Risk check: pytest-benchmark + in-engine histogram under realistic policy size (50 venues × 200 strategies × 1,000 instruments) and load (1k intents/s), p99 < 1 ms on the host.
+- Risk check: criterion (`cargo bench -p mt-risk`) + in-engine histogram under realistic policy size (50 venues × 200 strategies × 1,000 instruments) and load (1k intents/s), p99 < 1 ms on the workstation.
 - Kill: from P2-T054 drill metrics, p100 of cancels-sent < 1 s with 100 open orders across 3 venues.
 - CI guard: benchmark regression > 20% vs stored baseline fails (on the self-hosted runner).
 
 ## ToDo
 
 - [ ] Benchmark harness + baseline file
-- [ ] Run on host, record numbers
+- [ ] Run on the workstation, record numbers (P7 reruns them on the runtime host after the shift)
 - [ ] CI regression job
 - [ ] Record results (numbers, run IDs, screenshots) in the progress log and tick the roadmap ToDo box
 
 ## Verification
 
 ### Tests
+- Commands: `cargo bench -p mt-risk gate`, `cargo bench -p mt-engine kill`.
 - Benchmarks themselves.
 
 ### Scenarios
@@ -78,11 +79,11 @@ Reproducible benchmarks on the host show pre-trade risk check p99 < 1 ms and kil
 
 ## Exceptions & edge cases
 
-- Shared host noise: pin the benchmark to isolated cores (`taskset`) and report environment.
+- Shared machine noise: pin the benchmark to isolated cores (`taskset`) and report environment.
 
 ## Cardinal rules (do NOT)
 
-- Do NOT measure on a laptop and claim the SLO; use the host.
+- Do NOT claim the SLO from a machine other than the workstation that runs the stack.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 
 ## Doc sync on completion

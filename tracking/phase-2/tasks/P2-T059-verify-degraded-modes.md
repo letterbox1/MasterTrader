@@ -15,17 +15,17 @@ requirements: [R2.52, R2.16, R2.32]
 roadmap_todos: [T2.33]
 modules: [M11, M12, M15]
 dashboards: []
-tools: [uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T059-verify-degraded-modes
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ Fault-injection tests prove the 02 §9.3 / 16 §2–§3 behaviours relevant to P
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine -p mt-risk degraded`, `cargo test -p mt-telegram-bot degraded`.
 - Each degraded row as an automated e2e test on the compose test stack.
 
 ### Scenarios
@@ -87,7 +88,7 @@ Fault-injection tests prove the 02 §9.3 / 16 §2–§3 behaviours relevant to P
 ## Cardinal rules (do NOT)
 
 - Do NOT treat a hold as a failure to be retried around; holds are the intended behaviour.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).
 

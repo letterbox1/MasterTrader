@@ -15,17 +15,17 @@ requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T034-dq-check-cross-source-divergence
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ Mid prices of the same instrument from two free sources are compared continuousl
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor divergence`, `cargo clippy`
 - Fault injection: offset one source → incident within threshold window; majority picks the faulty side with 3 sources
 - Unit: alignment rejects stale counterpart quotes
 
@@ -79,7 +80,7 @@ Mid prices of the same instrument from two free sources are compared continuousl
 ## Acceptance criteria
 
 - [ ] Every major pair has a configured divergence pair (or an explicit single-source note) and the fault test passes
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -107,3 +108,4 @@ Mid prices of the same instrument from two free sources are compared continuousl
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (thresholds linked to 16 §2.2; deps trimmed to P1-T030 (sources faked in tests); Finnhub live in P1-T073)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::divergence`); tools cargo; services supabase-postgres)

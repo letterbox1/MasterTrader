@@ -15,17 +15,17 @@ requirements: [R3.09, R3.16]
 roadmap_todos: [T3.26]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, nats, mt-api]
+services: [supabase-postgres, nats, mt-api]
 branch: p3/P3-T031-residency-timeline-cgt-i1
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 ## Context & references
 
 - Roadmap: [R3.09, T3.26](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 residency timeline + cross-border events](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · D15 Residency tab [D15](../../../docs/ui/dashboards/D15-tax.md) · command `tax.residency.add` (C1, re-computation preview first)
 - Contract: a residency change emits `tax.residency.changed`; the venue registry recomputes; any loosening that results is C3 ([17 §D P3-B006/B007](../../../docs/17-decisions-register.md#d-other-decisions), [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats), [12 §1](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption)); schema and registry consumer in P3-T055
 
@@ -55,7 +56,7 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/residency/` (model, validation, preview, I1 hook in AU_2026)
+- [ ] Implement `crates/mt-journal/src/residency/` (model, validation, preview, I1 hook in AU_2026)
 - [ ] `tax.residency.add` command handler + preview endpoint
 - [ ] Tests; docs
 
@@ -93,7 +94,7 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 - Do NOT decide residency for the user; the timeline is user-entered evidence for the agent.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 - Do NOT expose tax-sensitive fields (TFN, addresses, raw statements) to any LLM prompt, RAG index or the LiteLLM gateway ([07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -112,3 +113,4 @@ A residency timeline (country, from/to, domicile, permanent home, employment and
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (emits `tax.residency.changed` via the P3-T055 contract; loosening C3 (P3-B007 closed); R3.16 mapped; I1 snapshot per 16 §4.2; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust residency module)

@@ -15,7 +15,7 @@ requirements: [R2.N3]
 roadmap_todos: [T2.03, T2.40]
 modules: [M12]
 dashboards: [D05]
-tools: [uv, sops]
+tools: [cargo, sops]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ Venue keys from the sops file reach only the services and modes that need them, 
 ## ToDo
 
 - [ ] Secret → config wiring
-- [ ] `mt keys audit` CLI + nightly Prefect flow
+- [ ] `mt keys audit` CLI (Rust, over `mt-api`) + nightly job scheduled by `mt-monitor`
 - [ ] Metadata endpoint fields
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -66,6 +66,7 @@ Venue keys from the sops file reach only the services and modes that need them, 
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-api keys_audit`, `cargo clippy -p mt-api`.
 - Unit: duplicate key across modes detected.
 - Integration (recorded Binance `apiRestrictions` responses, no keys): restrictions parsed; withdrawal-enabled key → account disabled + alert; IP restriction off → account disabled.
 - Unit: key older than the rotation default (90 days) → `mt_key_age_days` alert.
@@ -80,7 +81,7 @@ Venue keys from the sops file reach only the services and modes that need them, 
 
 - [ ] Audit tool proven on fixtures; the run on your P2 keys is recorded in P2-T071 (masked)
 - [ ] Withdrawal-enabled or shared keys block trading on that account
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 

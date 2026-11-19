@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D01-cockpit.md, docs/roadmap/phase-2-strategies-ri
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,6 +66,7 @@ The `/` Cockpit answers 'am I safe, what's running, what changed, what needs me,
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: DESIGN.md §6.8 viewport matrix (overflow + fixed-bar overlap checks) and axe on the new routes; Vitest + Testing Library for components.
 - Playwright: kill ON via API fixture → banner + Safety red within 1 s; approve from Needs-you.
 
@@ -90,7 +91,7 @@ The `/` Cockpit answers 'am I safe, what's running, what changed, what needs me,
 
 ## Cardinal rules (do NOT)
 
-- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt_api`.
+- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt-api`.
 - Do NOT use `100vh`/`h-screen`, unprefixed multi-column grids or the Tailwind CDN (DESIGN.md §6.3–6.5).
 - Do NOT sum or show paper and live money without a mode label.
 - Do NOT let any UI/API path loosen risk, enable autonomous mode or turn the kill switch off without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.

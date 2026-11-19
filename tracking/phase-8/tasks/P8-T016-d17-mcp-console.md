@@ -15,17 +15,17 @@ requirements: [R8.07, R8.08]
 roadmap_todos: [T8.22]
 modules: [M15, M20]
 dashboards: [D17]
-tools: [pnpm, uv, docker, git]
+tools: [pnpm, cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, supabase-auth, nats]
 branch: p8/P8-T016-d17-mcp-console
 pr: ""
 doc_sync: [docs/ui/dashboards/D17-mcp-console.md, docs/ui/README.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ The `/mcp` route shows the MCP control and audit surface exactly as D17 specifie
 ## Context & references
 
 - Roadmap: [R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.22](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Dashboard: [D17 MCP Console](../../../docs/ui/dashboards/D17-mcp-console.md) (layout by tier, widgets, actions, acceptance criteria, backend contract)
 - UI rules: [ui §3.3 confirmations](../../../docs/ui/README.md#33-actions--confirmation) · [DESIGN §6.8 viewport matrix](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (token expiry options, indefinite = red warning + C3 + monthly reminder; scopes; limits) · [17 §A P8-B001/B002/B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
@@ -118,3 +119,4 @@ The `/mcp` route shows the MCP control and audit surface exactly as D17 specifie
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Tokens widget with 16 §2.12 expiry options and indefinite warning + C3, scope names, `/approvals?source=mcp`, `/mcp/sessions`, `/mcp/tokens`, limit defaults shown, no skip-approval control, D17 AC 1–3; added R8.08; cross-phase deps P0-T049/T050; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

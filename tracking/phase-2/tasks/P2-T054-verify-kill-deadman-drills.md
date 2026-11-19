@@ -15,17 +15,17 @@ requirements: [R2.18, R2.N1]
 roadmap_todos: [T2.61]
 modules: [M11, M12]
 dashboards: [D06]
-tools: [uv, docker]
+tools: [cargo, uv, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T054-verify-kill-deadman-drills
 pr: ""
 doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,13 +49,13 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 ## Requirements
 
 - Setup: ≥ 50 resting orders across the sandbox venue and mock Binance/OANDA venues; open positions on bots with `on_system_failure` = `flatten`, `cancel_orders_only` and `hold`.
-- Kill drill A (web HALT), B (Telegram `/kill` via mt_api), C (Telegram with mt-api stopped → NATS `kill.set`): measure KV ON → last cancel sent (< 1 s) and → last venue ack; verify no new order after ON; each bot's `on_system_failure` applied; the WORM kill event has the right source (`web`/`telegram`).
+- Kill drill A (web HALT), B (Telegram `/kill` via mt-api), C (Telegram with mt-api stopped → NATS `kill.set`): measure KV ON → last cancel sent (< 1 s) and → last venue ack; verify no new order after ON; each bot's `on_system_failure` applied; the WORM kill event has the right source (`web`/`telegram`).
 - Layer-1 dead-man drills: stop `monitor` (affected bots' orders cancelled within 5 s + 1 s, `on_system_failure` at 10 s + 1 s), stop `postgres` (engine continues in memory, layer 1 fires after 5 s / 10 s).
 - Turn-off check: kill OFF requires C3 and cause cleared.
 
 ## ToDo
 
-- [ ] Drill script `ops/drills/kill_drill.py` (seeds orders, triggers, measures from `mt_kill_to_cancels_seconds` + audit timestamps)
+- [ ] Drill script `tests/drills/test_kill_drill.py` (seeds orders, triggers, measures from `mt_kill_to_cancels_seconds` + audit timestamps)
 - [ ] Dead-man drill script
 - [ ] Run each drill 5×, record p50/max
 - [ ] Store drill report in `docs/runbooks/drill-reports/`
@@ -64,6 +64,7 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest tests/drills/test_kill_drill.py` against the compose stack (engine and `deadman` built with `cargo`).
 - Drills A, B, C × 5 runs; dead-man drills × 3 runs.
 
 ### Scenarios
@@ -88,7 +89,7 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 
 - Do NOT run drills against live accounts.
 - Do NOT relax the 1 s target; investigate and fix.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Keys are trade-only, IP-locked, withdrawals disabled. No live money before the P7 gates; this phase is paper/testnet/practice only.
 

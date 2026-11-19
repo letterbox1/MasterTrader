@@ -15,17 +15,17 @@ requirements: [R3.01, R3.05]
 roadmap_todos: [T3.20, T3.23]
 modules: [M18]
 dashboards: [D14, D15]
-tools: [git, uv, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: [BINANCE_TESTNET_READONLY_KEY, BINANCE_TESTNET_READONLY_SECRET, BYBIT_TESTNET_READONLY_KEY, BYBIT_TESTNET_READONLY_SECRET, OANDA_PRACTICE_TOKEN, IG_DEMO_API_KEY]
-services: [postgres, journal, Binance testnet, Bybit testnet, OANDA practice, IG demo]
+services: [supabase-postgres, journal, Binance testnet, Bybit testnet, OANDA practice, IG demo]
 branch: p3/P3-T061-live-importer-check-with-your-real-statements-an
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ The importers built against recorded and sample files (P3-T014/T015/T016/T021) a
 ## Context & references
 
 - Roadmap: [R3.01, R3.05, T3.20, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md) · inputs from USER T3.03 (P3-T003)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Build first, keys last: [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) · [planning brief](../../briefs/PLANNING_BRIEF.md)
 - Cross-phase prerequisite (depends_on): P1-T002 (read-only keys on practice and testnet accounts, stored in the sops file)
 - Related: P3-T003 (your exports), P3-T021 (opening lots import), P3-T014/T015/T016 (adapters), P3-T042 (accounts registered)
@@ -106,3 +107,4 @@ The importers built against recorded and sample files (P3-T014/T015/T016/T021) a
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created (build first, keys last: live checks split out of P3-T014/T015/T016/T021)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (late check keeps P3-T003 and P1-T002 (your statements and keys); tools cargo + uv (ccxt pulls))

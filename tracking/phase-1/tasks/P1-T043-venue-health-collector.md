@@ -15,17 +15,17 @@ requirements: [R1.13]
 roadmap_todos: [T1.30]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T043-venue-health-collector
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compliance.md, docs/13-wallets-treasury-and-onchain.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ A collector maintains the health fields of `ops.venue_registry` from our own mea
 
 ## ToDo
 
-- [ ] Migration for `ops.venue_health` and the derived columns
+- [ ] Supabase migration for `ops.venue_health` and the derived columns; pgTAP test
 - [ ] Withdrawal/deposit-time measurement from history endpoints (fixtures) and hand-recorded transfers; deposit/withdraw flag collectors; the `venue.health.signal` input for P4
 - [ ] AUSTRAC reminder job (daily check, quarterly trigger)
 - [ ] D07 panel data via `/venues/registry` (P1-T046)
@@ -69,6 +69,7 @@ A collector maintains the health fields of `ops.venue_registry` from our own mea
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor venue_health`, `cargo clippy`, `supabase test db`
 - Unit: signal → health_status rules; reminder date maths
 - Integration: fixtures of withdrawal history and deposit/withdraw flags → rows and p50/p95 times; a fixture `venue.health.signal` message → health change; `venue.registry.changed` emitted
 
@@ -84,7 +85,7 @@ A collector maintains the health fields of `ops.venue_registry` from our own mea
 ## Acceptance criteria
 
 - [ ] Health fields populated for every registry venue from the P1 signals (fixtures where keys are needed); the reminder fires in a time-travel test and drives P1-T069
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -115,3 +116,4 @@ A collector maintains the health fields of `ops.venue_registry` from our own mea
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (venue-health inputs per P1-B014 (own withdrawal times, flags, notes; status feeds via P4 watch); AUSTRAC reminder drives USER task P1-T069; P0 dep on registry)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (collector in Rust `mt-monitor`; Supabase migration + pgTAP; tools cargo/supabase; services supabase-postgres)

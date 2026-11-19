@@ -87,7 +87,7 @@ Single-user login works end to end: Argon2id password + RFC 6238 TOTP, first-boo
 - [ ] Cookie flags and CSRF enforced
 - [ ] Lockout + replay protection tested
 - [ ] All auth events audited without secrets
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -99,7 +99,7 @@ Single-user login works end to end: Argon2id password + RFC 6238 TOTP, first-boo
 - Do NOT log or audit passwords, TOTP secrets, codes, recovery codes or session ids.
 - Do NOT add a password-only login path or 'remember me' that skips TOTP.
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); Kill ON and protective exits never wait for approval.
 - Do NOT skip, weaken or delete a test to get CI green.
 

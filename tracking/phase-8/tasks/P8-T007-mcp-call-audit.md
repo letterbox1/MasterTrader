@@ -15,17 +15,17 @@ requirements: [R8.07]
 roadmap_todos: [T8.22, T8.24]
 modules: [M17, M20]
 dashboards: [D17, D16]
-tools: [uv, docker, git]
+tools: [cargo, supabase, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T007-mcp-call-audit
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/15-bots-hitl-and-worm-audit.md, docs/ui/dashboards/D16-system.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Every MCP tool call, reads included, leaves a tamper-evident trail ([R8.07](../.
 ## Context & references
 
 - Roadmap: [R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDos [T8.22, T8.24](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (`audit.mcp_call` logging)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §B P8-B007](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (canonical singular names; source `web`/`telegram`/`mcp`/`system`) · [17 §D P8-B009/B012](../../../docs/17-decisions-register.md#d-other-decisions) (reads logged to `audit.mcp_call`; `/mcp/sessions`, `source=` filters)
 - Spec: [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) (every MCP call, reads included) · [02 §5](../../../docs/02-v1-architecture.md) (`audit` schema) · [02 §7.1](../../../docs/02-v1-architecture.md#71-queries-rest-read) (`/mcp/sessions`, `/approvals?status=&source=`, `/orders?source=`, `/audit/log?source=`) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp)
 - WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) (layers, test suite) · [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity), [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)
@@ -51,7 +52,7 @@ Every MCP tool call, reads included, leaves a tamper-evident trail ([R8.07](../.
 ## Requirements
 
 - `audit.mcp_call` columns: `id, ts, mcp_session_id, token_id, client_identity, transport (stdio|streamable_http|legacy_sse), tool, kind (query|command), args_redacted (jsonb), args_hash (sha256 of canonical raw args), result_status (ok|error|pending_approval|rejected|expired|rate_limited|denied|capped), result_bytes, result_summary (length-capped), linked_command_id, latency_ms, prev_hash, row_hash`.
-- WORM like P0: owned by offline `worm_owner`; mt_api role has INSERT/SELECT only; UPDATE/DELETE/TRUNCATE blocked by triggers; per-row hash chain; in the daily externally anchored seal and `audit.verify`.
+- WORM like P0: owned by offline `worm_owner`; mt-api role has INSERT/SELECT only; UPDATE/DELETE/TRUNCATE blocked by triggers; per-row hash chain; in the daily externally anchored seal and `audit.verify`.
 - Denied calls (never-exposed, disabled, scope missing, rate limited) are recorded too, with `token_id` when known.
 - Fail closed: if the audit insert fails, the command isn't executed and the read returns 503. When Postgres is unreachable, the 16 §3.3 NATS buffer applies to existing write paths; MCP calls are refused rather than buffered.
 - Queries: `/audit/log?source=mcp&session=&tool=` (cursor), `/mcp/sessions` (session list with client, token, call counts, first/last seen). Add `source=` filters on `/orders`, `/approvals` and `/risk/changes` where P2 didn't.
@@ -122,3 +123,4 @@ Every MCP tool call, reads included, leaves a tamper-evident trail ([R8.07](../.
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical `audit.mcp_call`, client identity/transport columns, `/mcp/sessions` and `source=` filters incl. `/approvals`, WORM p99 < 5 ms, 16 §2.11 behaviour; added T8.24; dropped gap dep P8-B012; cross-phase deps P0-T029/T030/T031/T037/T046; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

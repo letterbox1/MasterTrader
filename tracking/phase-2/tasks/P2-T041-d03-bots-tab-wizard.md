@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Component tests for wizard validation.
 - Playwright: create a paper bot, switch to HITL, attempt autonomous (blocked by gate), approve a card from the detail page.
 
@@ -82,7 +83,7 @@ review_result: ""
 - [ ] Bots tab, wizard, detail live and wired
 - [ ] Server-side levels reflected in UI
 - [ ] Phone usable (≤ 3 taps to pause a bot)
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `pnpm test`, `pnpm playwright` (viewport matrix + axe), type check
 
 ## Exceptions & edge cases
 
@@ -92,7 +93,7 @@ review_result: ""
 ## Cardinal rules (do NOT)
 
 - Do NOT enforce confirmation levels only in the UI; the server decides.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

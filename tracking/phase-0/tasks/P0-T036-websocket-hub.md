@@ -84,7 +84,7 @@ review_result: ""
 - [ ] Gap detection proven with a forced drop
 - [ ] Kill propagation < 500 ms p95 in test
 - [ ] Auth/Origin enforced
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -94,7 +94,7 @@ review_result: ""
 
 - Do NOT accept unauthenticated WebSocket connections.
 - Do NOT use WS for writes; commands go through `/commands`.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 
 ## Doc sync on completion

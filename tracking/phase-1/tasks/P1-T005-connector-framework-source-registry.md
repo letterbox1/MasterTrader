@@ -15,7 +15,7 @@ requirements: [R1.01, R1.08, R1.09]
 roadmap_todos: [T1.20]
 modules: [M1]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff, heartbeats, metrics, provenance defaults and quota hooks, registered in `config/sources.yaml` with its licence and cost tag, so new feeds are uniform and a paid feed cannot be enabled.
+Every connector shares one base: streaming connectors in `mt-recorder` (Rust) and batch connectors in `mt_data` (Python, Prefect) implement the same lifecycle, reconnect with backoff, heartbeats, metrics, provenance defaults and quota hooks, and all are registered in one `config/sources.yaml` with licence and cost tags, so new feeds are uniform and a paid feed cannot be enabled.
 
 ## Context & references
 
@@ -46,11 +46,12 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 - Source list and licences: [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1), [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list)
 - UI: [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Feeds tab shows licence/cost tags; acceptance 2 ("a paid feed can't be enabled")
 - Depends on (this phase): P1-T004
-- Cross-phase prerequisites (depends_on): P0-T014 (uv workspace skeleton), P0-T017 (`mt_core` settings and clock)
+- Cross-phase prerequisites (depends_on): P0-T014 (repository skeleton: Cargo and uv workspaces), P0-T017 (`mt-core` settings and clock)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (streaming in Rust; Python only for Python-only SDKs)
 
 ## Requirements
 
-- Package layout: `packages/mt_data/src/mt_data/core/` (`Connector`, `StreamConnector`, `BatchConnector`, `SourceRegistry`), `mt_data/market/` for M1 connectors
+- Layout: `crates/mt-recorder/src/connector/` (`StreamConnector` trait, reconnect, heartbeat, metrics) for streaming; `packages/mt_data/src/mt_data/core/` (`BatchConnector`) for Python batch flows; one `SourceRegistry` in `mt-core` (Rust) loading `config/sources.yaml`, exposed to Python through the PyO3 module so both sides validate the same file
 - `config/sources.yaml` entry per source: `id`, `kind` (stream|batch), `licence` (personal|commercial_ok|unknown), `cost` (free|paid), `use_flags` defaults (`train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`), `quota` reference, `docs` link to 06
 - Registry refuses to start a source with `cost: paid` (server-side) and `data.feed.resume` on it returns problem+json 409
 - Reconnect: exponential backoff with jitter (defaults 1 s → 60 s cap, reset after 5 min healthy; configurable per source in `config/sources.yaml`, not constants); never hammer a venue (Binance 418 escalates to multi-day bans, [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry))
@@ -62,10 +63,10 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 
 ## ToDo
 
-- [ ] Implement `Connector` base classes with start/stop, backoff, heartbeat, metrics and structured logs (`trace_id`)
-- [ ] Implement `SourceRegistry` loading and validating `config/sources.yaml` (pydantic), with the paid-feed refusal
+- [ ] Implement the Rust `StreamConnector` trait and the Python `BatchConnector` base with start/stop, backoff, heartbeat, metrics and structured logs (`trace_id`)
+- [ ] Implement `SourceRegistry` in `mt-core` (serde) loading and validating `config/sources.yaml`, with the paid-feed refusal; Python binding
 - [ ] Seed `config/sources.yaml` with every P1 source from 06 §3 and 03 M1 (licence and cost per 06; yfinance/Twelve Data = personal)
-- [ ] Add `mt-data` CLI: `sources list`, `universe validate`, `feed run <id>`
+- [ ] Add CLIs: `mt-recorder feed run <id>` (streams) and `mt-data sources list`, `universe validate`, `flow run <id>` (Python, batch)
 - [ ] Unit + integration tests; docs
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -73,7 +74,7 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 
 ### Tests
 
-- Unit: registry validation (missing licence → error; `cost: paid` → refused); backoff schedule; timestamp fields always set
+- `cargo test -p mt-core registry` and `cargo test -p mt-recorder connector`: registry validation (missing licence → error; `cost: paid` → refused); backoff schedule; timestamp fields always set; `uv run pytest -k registry` runs the registry cases through the binding
 - Integration: a fake WS server drops the connection 5 times; the connector reconnects with growing delays and publishes again
 - Property: `ingest_time >= event_time - max_skew` holds or the message is flagged for the clock-skew check
 
@@ -90,7 +91,7 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 
 - [ ] All P1 sources listed with licence and cost tags; `mt-data sources list` matches 06
 - [ ] Paid sources cannot be enabled through API or CLI (tested)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -103,7 +104,7 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -121,3 +122,4 @@ Every connector in `mt_data` shares one base: lifecycle, reconnect with backoff,
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (configurable backoff defaults, keyless credentials_missing state, receive time as data-age basis; P0 deps explicit)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (streaming connector trait in Rust `mt-recorder`, batch base in Python `mt_data`, one `SourceRegistry` in `mt-core` with Python binding; tools cargo+uv)

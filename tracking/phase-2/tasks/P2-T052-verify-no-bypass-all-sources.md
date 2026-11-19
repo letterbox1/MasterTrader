@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T021, P2-T035, P2-T020, P2-T038]
+depends_on: [P2-T021, P2-T035, P2-T020, P2-T038, P2-T202]
 requirements: [R2.10]
 roadmap_todos: [T2.60]
 modules: [M11, M12]
 dashboards: []
-tools: [uv, docker]
+tools: [cargo, uv, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Automated tests prove that orders from strategies, bots, an agent-style signal source, the web UI (`mt_api`), Telegram and direct NATS publishing all go through `RiskGate`, and that no code path can reach a venue client without it.
+Automated tests prove that orders from strategies, bots, an agent-style signal source, the web UI (`mt-api`), Telegram and direct NATS publishing all go through `RiskGate`, and that no code path can reach a venue client without it.
 
 ## Context & references
 
@@ -48,9 +48,9 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 
 ## Requirements
 
-- Sources: strategy `submit_intent`; bot; agent stub publishing `sig.agent.*` → strategy; `order.place` via mt_api; Telegram command; raw NATS publish on `ord.intent.*` and on any venue-ish subject.
+- Sources: strategy `submit_intent`; bot; agent stub publishing `sig.agent.*` → strategy; `order.place` via mt-api; Telegram command; raw NATS publish on `ord.intent.*` and on any venue-ish subject.
 - For each: a policy that rejects everything → zero venue submissions (adapter spy) and a `ord.risk.reject` per intent.
-- Static: import-linter contracts (only `mt_engine.node` and `mt_strategy.base` touch Nautilus exec clients); grep test for adapter calls outside allowed modules; NATS account permissions deny `ord.*` publish to non-engine accounts except `ord.intent.*`; the `telegram` account can publish `kill.set` only; the `deadman` sidecar has no path to submit new entries (cancel/flatten only).
+- Static: import-linter contracts for Python (only `mt_strategy.base` and the Python-node wrapper touch Nautilus exec clients) and a Rust module-visibility check (only `mt_engine::node` reaches the exec clients); grep test for adapter calls outside allowed modules; NATS account permissions deny `ord.*` publish to non-engine accounts except `ord.intent.*`; the `telegram` account can publish `kill.set` only; the `deadman` sidecar has no path to submit new entries (cancel/flatten only).
 
 ## ToDo
 
@@ -63,13 +63,14 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk -p mt-engine -p mt-api bypass`, `uv run pytest -k bypass` (Python node and strategies).
 - As described; runs in CI on every PR.
 
 ### Scenarios
 - Given a reject-all policy, when each source sends an order, then the spy adapter records 0 submits and audit shows 1 reject per intent.
 
 ### Stress / failure injection
-- Fuzz `ord.intent.*` payloads (schemathesis/hypothesis) for 10 min: never a submit without a gate decision.
+- Fuzz `ord.intent.*` payloads (cargo-fuzz / proptest) for 10 min: never a submit without a gate decision.
 
 ## Acceptance criteria
 
@@ -83,7 +84,7 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 ## Cardinal rules (do NOT)
 
 - Do NOT whitelist a source in tests to make them pass.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 
 ## Doc sync on completion

@@ -15,17 +15,17 @@ requirements: [R8.03, R8.05]
 roadmap_todos: [T8.20]
 modules: [M0, M7, M11, M20]
 dashboards: [D03, D04, D17]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats, mlflow]
+services: [supabase-postgres, nats, mlflow]
 branch: p8/P8-T011-tools-strategies-bots
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/15-bots-hitl-and-worm-audit.md, docs/ui/dashboards/D17-mcp-console.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Claude can create and edit strategies and bots, run backtests/sweeps/validation,
 ## Context & references
 
 - Roadmap: [R8.03, R8.05](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.20](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §B P2-B053/P7-B009](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (modes `paper`/`hitl`/`autonomous` per bot) · [17 §B P2-B005](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (paper → hitl is C2) · [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance) (L4 bot: tighten C1, loosen C3) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (strategy mode ceiling, C3 cool-down 15 min) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (`strategy` scope; creating it is C3)
 - Spec: [03 M20 Strategies row](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.2 Strategies, Bots, Lab rows](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [02 F7](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Bots: [15 §1.5](../../../docs/15-bots-hitl-and-worm-audit.md#15-api-data-and-ui) ("MCP (Phase 8): bot commands within each token's scopes … autonomous and any other loosening stays C3")
@@ -98,7 +99,7 @@ Claude can create and edit strategies and bots, run backtests/sweeps/validation,
 - Do NOT let MCP shortcut autonomous mode or any loosening (always C3 via Telegram + TOTP + cool-down).
 - Do NOT use the retired mode names "approve"/"auto"; modes are `paper`/`hitl`/`autonomous`.
 - Do NOT run generated code outside the sandbox.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT make loosening risk, autonomous mode, mandates or kill-switch OFF anything less than C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -120,3 +121,4 @@ Claude can create and edit strategies and bots, run backtests/sweeps/validation,
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (`strategy` scope, modes `paper`/`hitl`/`autonomous`, paper → hitl C2 → card, bot param/scope loosening C3 per 02 §7.2, 10 writes/min; cross-phase deps P2-T006/T036/T037/T117; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

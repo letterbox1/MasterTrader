@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,6 +63,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_strategy/templates -k rule_based`.
 - Template test: example manifest validates, backtests on screener and truth, results equal on a fixture where both apply.
 - Unit: DSL schema rejects unknown signals and missing stops.
 
@@ -86,7 +87,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 
 - Do NOT add an MT5/cTrader live adapter here (P7).
 - Do NOT bypass M11 for template orders.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT touch live money; keys are trade-only, IP-locked, withdrawals disabled; live waits for the P7 gates.
 - Do NOT skip, weaken or delete a test to get green.
 

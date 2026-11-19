@@ -18,14 +18,14 @@ dashboards: [D06]
 tools: []
 mcp: []
 env: []
-services: [telegram, mt-web]
+services: [telegram, mt-web, supabase-auth]
 branch: p2/P2-T064-user-kill-drill-phone
 pr: ""
 doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""

@@ -15,7 +15,7 @@ requirements: [R2.10, R2.16, R2.N1]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_risk.RiskGate` is the single, default-deny pre-trade layer every `OrderIntent` passes (strategy, agent, UI, Telegram, later MCP) before Nautilus' own `RiskEngine`; it runs all checks in a fixed order, returns a reasoned decision in p99 < 1 ms, and exposes the same logic as `POST /risk/preview`.
+`mt_risk::RiskGate` is the single, default-deny pre-trade layer every `OrderIntent` passes (strategy, agent, UI, Telegram, later MCP) before Nautilus' own `RiskEngine`; it runs all checks in a fixed order, returns a reasoned decision in p99 < 1 ms, and exposes the same logic as `POST /risk/preview`.
 
 ## Context & references
 
@@ -60,22 +60,23 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `packages/mt_risk/gate.py` pipeline + `checks/` modules (dq, staleness, blackout, duplicate, collar, liquidity)
+- [ ] `crates/mt-risk/src/gate.rs` pipeline + `checks/` modules (dq, staleness, blackout, duplicate, collar, liquidity)
 - [ ] Caches: KV watchers for `risk_state`, `feed_status`, `kill`; spread cache from `cost.*`
 - [ ] Wire into `MTStrategy.submit_intent` (P2-T003) and the engine intent actor (P2-T021)
 - [ ] Nautilus RiskEngine config from ceilings
-- [ ] `/risk/preview` endpoint in mt_api (shared library)
+- [ ] `/risk/preview` endpoint in `mt-api` (same crate, linked)
 - [ ] Prometheus histogram + exemplars with `trace_id`
-- [ ] Tests + microbenchmark (pytest-benchmark)
+- [ ] Tests + microbenchmark (criterion)
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
 
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk gate`, `cargo bench -p mt-risk gate`, `cargo clippy -p mt-risk`.
 - Unit per check: pass/fail boundaries.
 - Golden: 200-case table of intents × states → decision + reason (part of the mandatory suite).
 - Property: random exceptions injected in any check → reject (never approve).
-- Integration: `ord.intent.manual` from mt_api → decision published on `ord.risk.*`.
+- Integration: `ord.intent.manual` from mt-api → decision published on `ord.risk.*`.
 
 ### Scenarios
 - Given BTCUSDT `dq.status=stale`, when a strategy submits an entry, then decision `hold` and no venue order.
@@ -83,7 +84,7 @@ review_result: ""
 - Given a protective stop during a stale feed, when triggered, then it is sent (reduce-only) and logged as protective.
 
 ### Stress / failure injection
-- Benchmark 1M intents with full policy (50 venues × 200 strategies): p99 < 1 ms, p50 < 100 µs on the host; regression > 20% fails CI.
+- Benchmark 1M intents with full policy (50 venues × 200 strategies): p99 < 1 ms, p50 < 100 µs on the workstation (P7 reruns it on the runtime host); regression > 20% fails CI.
 - Fault: KV watcher disconnect → state marked unknown → default-deny within 1 s.
 
 ## Acceptance criteria
@@ -92,7 +93,7 @@ review_result: ""
 - [ ] Default-deny on errors proven by property tests
 - [ ] p99 < 1 ms benchmark recorded
 - [ ] `/risk/preview` shares the code path
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -105,7 +106,7 @@ review_result: ""
 - Do NOT add a fast path that skips checks for any source (UI, Telegram, agents, MCP).
 - Do NOT perform I/O in the hot path.
 - Do NOT let protective exits increase exposure.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

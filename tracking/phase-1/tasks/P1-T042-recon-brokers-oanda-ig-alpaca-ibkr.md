@@ -15,17 +15,17 @@ requirements: [R1.12]
 roadmap_todos: [T1.29]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T042-recon-brokers-oanda-ig-alpaca-ibkr
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,10 +49,10 @@ Recon adapters for the OANDA practice, IG demo, Alpaca paper and IBKR paper acco
 
 ## Requirements
 
-- OANDA: account summary, open positions, open trades (thin httpx, GET only)
+- OANDA: account summary, open positions, open trades (thin `reqwest` client, GET only)
 - IG: accounts, positions (REST, GET only)
 - Alpaca: account, positions (GET only)
-- IBKR paper: via the `ib-gateway` container (P1-T070) with `ib_async` positions + account values in read-only API mode; when `ibkr.enabled: false` the adapter reports `disabled (not used)`
+- IBKR paper: via the `ib-gateway` container (P1-T070) with a Rust TWS API client (U: check a maintained crate first; else a small Python `ib_async` reader that only publishes `recon.raw.ibkr` to NATS, recorded as a decision) for positions + account values in read-only API mode; when `ibkr.enabled: false` the adapter reports `disabled (not used)`
 - Same cadence, tolerances, `audit.recon` rows and `recon.*` publishing as P1-T041 (16 §2.9 defaults)
 
 ## ToDo
@@ -66,6 +66,7 @@ Recon adapters for the OANDA practice, IG demo, Alpaca paper and IBKR paper acco
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor recon_brokers`, `cargo clippy`
 - Unit: response parsing per broker fixture
 - Integration: injected mismatch per broker → incident
 - Security: write attempts blocked before network
@@ -82,7 +83,7 @@ Recon adapters for the OANDA practice, IG demo, Alpaca paper and IBKR paper acco
 ## Acceptance criteria
 
 - [ ] Every adapter reconciles clean against fixtures and raises an incident on an injected mismatch; IBKR disabled cleanly when not used; the live run is P1-T074
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -113,3 +114,4 @@ Recon adapters for the OANDA practice, IG demo, Alpaca paper and IBKR paper acco
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (ib-gateway via P1-T070 (P1-B013); normal practice credentials (P1-B008); keyless build, live run in P1-T074)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (broker adapters in Rust `mt-monitor` (reqwest GET-only; IBKR via a Rust TWS client (U) or a recorded Python reader fallback); tools cargo; services supabase-postgres)

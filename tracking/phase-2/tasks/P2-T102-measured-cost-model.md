@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T102-measured-cost-model
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,13 +60,14 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 - [ ] Implement `mt_lab/costs.py`: `CostSnapshot` loader (pit), `CostModel` with fee/spread/impact/latency/funding/swap components
 - [ ] Implement impact curve fitting from recorded L2 depth and 1-min volume; fallback order when data is missing (instrument → asset-class median → refuse)
 - [ ] Implement `scaled(k)`, custom override and `unrealistic_costs` flag
-- [ ] Prefect flow `lab-cost-snapshot-monthly` creating a new snapshot incl. realised TCA ratios
+- [ ] Prefect flow (Python, `mt_lab`) `lab-cost-snapshot-monthly` creating a new snapshot incl. realised TCA ratios
 - [ ] Adapters exposing the model to the screener (per-trade cost function) and to Nautilus (`FeeModel`, `FillModel`, latency model)
 - [ ] Tests and docs
 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k costs`.
 - Unit: fee/spread lookup by hour-of-week; impact monotonic in size; `scaled(3)` triples every component; zero-cost flag.
 - Golden: a fixed snapshot fixture produces byte-identical cost totals for a fixed trade list.
 - Integration: snapshot built from P1 cost tables via `pit(as_of)`; `ingest_time > as_of` rows excluded.
@@ -96,7 +97,7 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 ## Cardinal rules (do NOT)
 
 - Do NOT default to zero or fixed-bps costs silently; costs are measured or the run is flagged/failed.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT add paid data/APIs or services; free tiers and self-hosted components only (03 §1).
 - Do NOT skip, weaken or delete a test to get green.
 

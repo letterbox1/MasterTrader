@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T164-verify-harness-known-answers
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ An independent test pack proving the harness rejects what it should: random stra
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k known_answer`.
 - The scenarios above as CI-slow tests (nightly).
 
 ### Scenarios

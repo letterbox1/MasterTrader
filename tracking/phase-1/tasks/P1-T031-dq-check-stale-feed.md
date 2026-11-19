@@ -15,17 +15,17 @@ requirements: [R1.10, R1.N1, R1.17]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T031-dq-check-stale-feed
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The DQ monitor measures **data age** per instrument stream (now on the host monotonic clock − the time *we received* the last update) against the per-bot freshness thresholds (defaults 2 s fast / 60 s slow, configurable, session-aware, [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)) and publishes `dq.status = stale` within ≤ 250 ms (p99) of a threshold being crossed, with fault-injection tests that prove it.
+The DQ monitor measures **data age** per instrument stream (now on the workstation's monotonic clock − the time *we received* the last update) against the per-bot freshness thresholds (defaults 2 s fast / 60 s slow, configurable, session-aware, [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)) and publishes `dq.status = stale` within ≤ 250 ms (p99) of a threshold being crossed, with fault-injection tests that prove it.
 
 ## Context & references
 
@@ -71,6 +71,7 @@ The DQ monitor measures **data age** per instrument stream (now on the host mono
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor stale`, `cargo clippy`
 - Fault injection (CI, fake venues, SimClock where possible): silence one symbol → `stale` published ≤ 250 ms after its age crosses 2 s in ≥ 99 of 100 runs (assert p99 ≤ 250 ms; record the max)
 - Fault injection: kill the socket → `stale` for all its streams immediately (connection-level); TCP blackhole (no FIN) → caught by the data-age threshold or the heartbeat miss, whichever comes first
 - Unit: data age uses our receive time, not exchange time (a 10 s old exchange timestamp with a fresh receive is not stale); closed session → `closed`; two thresholds (2 s, 60 s) → `age_ms` and `exceeded=[fast]` at 3 s
@@ -89,7 +90,7 @@ The DQ monitor measures **data age** per instrument stream (now on the host mono
 
 - [ ] Reaction ≤ 250 ms p99 after the threshold in the CI fault-injection suite; metrics exported and graphed
 - [ ] Closed sessions report `closed`; thresholds come from settings with 16 §2.2 defaults (no constants in code)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -121,3 +122,4 @@ The DQ monitor measures **data age** per instrument stream (now on the host mono
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (rewritten for data age = now − our receive time, per-bot thresholds 2 s/60 s, closed sessions, ≤ 250 ms p99 reaction (P1-B001, R1.17))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::stale`); tools cargo; services supabase-postgres)

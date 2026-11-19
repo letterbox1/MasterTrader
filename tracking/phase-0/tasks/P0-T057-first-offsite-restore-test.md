@@ -82,7 +82,7 @@ On the real host, the backups are pointed at the real Object-Locked target from 
 - [ ] Restore from off-site succeeds with all checks green
 - [ ] Result visible in D16 and `ops.restore_test`
 - [ ] Evidence attached for exit criterion 3
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

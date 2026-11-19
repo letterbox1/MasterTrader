@@ -15,17 +15,17 @@ requirements: [R1.05, R1.15]
 roadmap_todos: [T1.34, T1.32]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, docker]
+tools: [git, uv, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p1/P1-T009-instrument-master-and-calendars
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,8 @@ review_result: ""
 
 ## Requirements
 
-- Instrument IDs use Nautilus `InstrumentId` (`BTCUSDT.BINANCE`); precision, tick size, lot size from venue metadata (Nautilus instrument providers / ccxt `load_markets`)
+- Instrument IDs use Nautilus `InstrumentId` (`BTCUSDT.BINANCE`); precision, tick size, lot size from venue metadata (Nautilus instrument providers; ccxt `load_markets` only as fallback in the Python sync flow)
+- Language split ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)): the sync job is a Python Prefect flow because FinanceDatabase and `exchange_calendars` are Python-only; it materialises sessions into `market.session_calendar` so the Rust services (`mt-monitor`, `mt-api`) read them without Python
 - FinanceDatabase (MIT) for equities/ETFs classification (sector, asset class, exchange) refreshed weekly
 - Sessions: `exchange_calendars` for equities (XNYS/XNAS), FX weekly session (Sun 22:00 → Fri 22:00 UTC, broker-specific), crypto 24/7; stored as `session_calendar` reference used by the stale check (P1-T031): closed sessions are `closed`, never `stale` ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means))
 - Resolution metadata per instrument: `rt_finest` (tick|l2_100ms|quote_4hz|iex_trade|daily|none) and `hist_finest` (trade|1s|tick|1m|daily) with a reason string (e.g. "US stocks: IEX only; no tick L2")
@@ -57,9 +58,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Migration for `market.instrument` columns (resolution, session ref, classification) if not in P0 schema
+- [ ] Supabase migration for `market.instrument` columns (resolution, session ref, classification) and `market.session_calendar` if not in P0 schema; pgTAP test
 - [ ] Instrument sync job per venue + FinanceDatabase enrichment
-- [ ] Session resolver API `mt_data.calendar.is_open(instrument_id, ts)`
+- [ ] Session resolver: sessions materialised into `market.session_calendar` (next 400 days, refreshed daily) and `is_open(instrument_id, ts)` in `mt-store` (Rust, with Python binding) reading it
 - [ ] Seed resolution metadata from 03 §6 rules per asset class/venue
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -84,7 +85,7 @@ review_result: ""
 
 - [ ] Every universe instrument has precision, session and resolution metadata
 - [ ] Session resolver passes DST and holiday tests for XNYS and FX
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -95,7 +96,7 @@ review_result: ""
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -112,3 +113,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (traced to new T1.34 (P1-B003 closed); closed sessions are `closed`)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (sync flow stays Python (FinanceDatabase, exchange_calendars); sessions materialised for the Rust `is_open` in `mt-store`; Supabase migration + pgTAP; services supabase-postgres)

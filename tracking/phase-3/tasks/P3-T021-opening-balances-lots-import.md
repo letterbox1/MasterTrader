@@ -15,17 +15,17 @@ requirements: [R3.01, R3.05]
 roadmap_todos: [T3.20, T3.23]
 modules: [M18]
 dashboards: []
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, mt-api]
+services: [supabase-postgres, mt-api]
 branch: p3/P3-T021-opening-balances-lots-import
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,8 @@ The historical import (built and tested on scrubbed sample statements; your real
 ## Context & references
 
 - Roadmap: [R3.01, R3.05, T3.20, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Inputs: sample statements in `tests/journal/fixtures/statements/` for the build; P3-T003 (USER exports) only in the late check P3-T061 · adapters P3-T014/T015/T016 · command `journal.manual_event.add` (C2) from P3-T055
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Inputs: sample statements in `crates/mt-journal/tests/fixtures/statements/` for the build; P3-T003 (USER exports) only in the late check P3-T061 · adapters P3-T014/T015/T016 · command `journal.manual_event.add` (C2) from P3-T055
 - 12-month rule depends on true acquisition dates: [09 AU_2026](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface)
 
 ## Requirements
@@ -54,7 +55,7 @@ The historical import (built and tested on scrubbed sample statements; your real
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/ingest/historical.py` orchestrator + manual CSV loader (one `journal.manual_event.add` C2 command per row, with the CSV row as the reason reference)
+- [ ] Implement `crates/mt-journal/src/ingest/historical.rs` orchestrator + manual CSV loader (one `journal.manual_event.add` C2 command per row, with the CSV row as the reason reference)
 - [ ] Reconciliation against statement closing positions
 - [ ] Import report generator; tests with scrubbed fixtures; docs
 
@@ -92,7 +93,7 @@ The historical import (built and tested on scrubbed sample statements; your real
 - Do NOT invent cost bases; missing evidence stays flagged.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT expose tax-sensitive fields (TFN, addresses, raw statements) to any LLM prompt, RAG index or the LiteLLM gateway ([07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -111,3 +112,4 @@ The historical import (built and tested on scrubbed sample statements; your real
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (manual events are C2 via P3-T055 (was C1, P3-B006); built on sample statements, real exports moved to P3-T061; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust historical import)

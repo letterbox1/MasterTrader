@@ -15,7 +15,7 @@ requirements: [R2.56, R2.18]
 roadmap_todos: [T2.36]
 modules: [M11, M12]
 dashboards: [D06]
-tools: [uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/16-configuration-and-safety-model.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A small `deadman` sidecar (`mt_risk.deadman`, its own container) watches the **engine's** heartbeat with its own trade-only keys and its own venue connections: engine heartbeat missing **5 s → cancel all open orders**; missing **10 s → flatten per each bot's `on_system_failure`**. It covers the case the in-engine watchdog can't: the engine itself dying.
+A small `deadman` sidecar (`mt-deadman`: a small static Rust binary linking `mt-risk`, its own container) watches the **engine's** heartbeat with its own trade-only keys and its own venue connections: engine heartbeat missing **5 s → cancel all open orders**; missing **10 s → flatten per each bot's `on_system_failure`**. It covers the case the in-engine watchdog can't: the engine itself dying.
 
 ## Context & references
 
@@ -59,7 +59,7 @@ A small `deadman` sidecar (`mt_risk.deadman`, its own container) watches the **e
 
 ## ToDo
 
-- [ ] `packages/mt_risk/deadman/` service: heartbeat watcher, venue snapshot poller, action runner (cancel, reduce-only flatten)
+- [ ] `crates/mt-deadman/src/` service: heartbeat watcher, venue snapshot poller, action runner (cancel, reduce-only flatten)
 - [ ] Minimal venue clients for cancel-all / reduce-only close (Binance spot + USD-M, Alpaca, OANDA, IG), reusing adapter REST code where possible
 - [ ] Policy snapshot of `on_system_failure` per bot
 - [ ] WORM audit + JetStream buffering; alerts; metrics
@@ -70,8 +70,9 @@ A small `deadman` sidecar (`mt_risk.deadman`, its own container) watches the **e
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-deadman`, `cargo clippy -p mt-deadman`.
 - Unit: timer stages (5 s cancel, 10 s `on_system_failure`), per-policy actions, hold-and-earn exempt.
-- Static/CI: no code path in `mt_risk.deadman` can place a non-reduce-only order (AST + unit test).
+- Static/CI: no code path in `mt-deadman` can place a non-reduce-only order (its venue client type exposes only cancel and reduce-only flatten, so it cannot compile otherwise; plus a unit test).
 - Integration (mock venues): `docker kill engine` with open orders and positions → cancels within 5 s + 1 s, `flatten` bots flat within 10 s + 1 s.
 
 ### Scenarios
@@ -88,11 +89,11 @@ A small `deadman` sidecar (`mt_risk.deadman`, its own container) watches the **e
 - [ ] Engine death covered: cancel at 5 s, `on_system_failure` at 10 s (defaults from policy)
 - [ ] The sidecar can only cancel and flatten (asserted in CI)
 - [ ] Actions audited (WORM) and alerted
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
-- Sidecar and engine both down (host down): only layer 3 protects (venue timers + resting stops, P2-T073).
+- Sidecar and engine both down (runtime host down): only layer 3 protects (venue timers + resting stops, P2-T073).
 - Sidecar's own keys revoked/invalid: it alerts at startup and the engine shows the dead-man tile red (it does not block trading by itself; you decide).
 - Stale position snapshot: flatten uses a fresh venue query before sending; never closes more than the venue reports.
 
@@ -101,7 +102,7 @@ A small `deadman` sidecar (`mt_risk.deadman`, its own container) watches the **e
 - Do NOT give the sidecar any ability to open or increase positions, or any key beyond its own trade-only deadman keys.
 - Do NOT share the engine's keys or connections with the sidecar.
 - Do NOT hard-code the 5 s / 10 s timers.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

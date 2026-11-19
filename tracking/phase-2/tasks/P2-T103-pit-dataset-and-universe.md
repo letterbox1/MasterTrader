@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P0-T027, P1-T009, P1-T012, P1-T013]
+depends_on: [P2-T101, P0-T027, P1-T009, P1-T012, P1-T013, P0-T071]
 requirements: [R2.41]
 roadmap_todos: [T2.27]
 modules: [M7]
@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T103-pit-dataset-and-universe
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,12 +44,12 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 - Roadmap: [R2.41](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
 - Rules: [14 §6 backtest engine requirements](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [SPEC NN1](../../../SPEC.md#non-negotiable-requirements) · [03 §4 point-in-time rule](../../../docs/03-build-spec.md#4-data-model-overview)
 - [14 §4 porting pitfalls](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06): fixed UTC daily cut for 24/7 crypto
-- Cross-phase (`depends_on`): `pit(as_of)` + Parquet catalog helpers (P0-T027, T0.22); Parquet recorder (P1-T012, T1.21); bars + continuous aggregates (P1-T013, T1.21); instrument master with listing/delisting dates and finest resolution (P1-T009, T1.22/T1.32). Backfills (P1-T015 etc.) are data, not code preconditions.
+- Cross-phase (`depends_on`): `pit(as_of)` + Parquet catalog helpers (P0-T027, T0.22); Parquet recorder (P1-T012, T1.21); bars at the standard sizes in monthly partitions, written by `mt-recorder` (P1-T013, T1.21); instrument master with listing/delisting dates and finest resolution (P1-T009, T1.22/T1.32). Backfills (P1-T015 etc.) are data, not code preconditions.
 
 ## Requirements
 
 - `DatasetSpec(instruments|universe_rule, bar_specs, start, end, as_of, resolution)` → `Dataset` with a SHA-256 `data_hash` over the exact rows/files read.
-- All reads through `mt_store.pit(as_of)` (Timescale) and catalog helpers (Parquet ticks/L2); anything with `ingest_time > as_of` is excluded and counted for the D04 point-in-time audit.
+- All reads through `mt_store.pit(as_of)` (the Python binding of the `mt-store` crate, P0-T071: Supabase Postgres bars, `date_bin` for other sizes, older bars from Parquet, 18 §4.3) and catalog helpers (Parquet ticks/L2); anything with `ingest_time > as_of` is excluded and counted for the D04 point-in-time audit.
 - Universe rules resolve membership as of each rebalance date, keeping delisted, rugged and dead instruments (14 §6); a universe that silently drops them fails a test.
 - One timezone (UTC) and one bar-close convention: bars are labelled by close time; daily bars for 24/7 markets cut at 00:00 UTC; session markets use `exchange_calendars`.
 - Multi-timeframe requests are aligned so a higher-timeframe bar is visible only after its close (no partial-bar leakage).
@@ -67,6 +67,7 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k dataset` (reads through the `mt_store` binding).
 - Unit: hash stable across runs; alignment helper never exposes the 1D bar before 00:00 UTC close.
 - Integration: fixture with an instrument delisted mid-range stays in the universe until delisting and its final loss is counted.
 - `pit` CI bypass test covers `mt_lab.data`.
@@ -97,7 +98,7 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 
 - Do NOT drop delisted/rugged instruments from historical universes.
 - Do NOT fill forward across a data gap without marking it.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

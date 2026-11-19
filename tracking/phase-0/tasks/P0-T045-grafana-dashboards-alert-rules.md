@@ -82,7 +82,7 @@ Grafana shows, from provisioning files in git, dashboards for host, Postgres, NA
 - [ ] Logs searchable in Loki with trace_id links
 - [ ] Alert rules + Telegram route working (test alert received by the mocked Bot API)
 - [ ] Rule/config lint in CI
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

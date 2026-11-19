@@ -15,17 +15,17 @@ requirements: [R2.34]
 roadmap_todos: [T2.26]
 modules: [M16, M12]
 dashboards: [D05]
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T029-tca-paper-fills
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_monitor` computes implementation shortfall for every paper/testnet order (decision, arrival, fill VWAP, fees, funding → delay / spread-impact / fees), keeps the realised-vs-modelled cost ratio per strategy × venue × instrument, tells M11 to pause on blow-outs and publishes measured cost models the lab uses.
+`mt-monitor` computes implementation shortfall for every paper/testnet order (decision, arrival, fill VWAP, fees, funding → delay / spread-impact / fees), keeps the realised-vs-modelled cost ratio per strategy × venue × instrument, tells M11 to pause on blow-outs and publishes measured cost models the lab uses.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `packages/mt_monitor/tca.py` consumer of `fill.*` + `ord.*`
+- [ ] `crates/mt-monitor/src/tca.rs` consumer of `fill.*` + `ord.*`
 - [ ] Cost model table + publisher
 - [ ] M11 pause hook (`risk.event{type: cost_blowout}`)
 - [ ] Tests
@@ -65,6 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-monitor tca`, `cargo clippy -p mt-monitor`, `uv run pytest packages/mt_lab -k costs`.
 - Unit: IS decomposition on hand-worked examples.
 - Integration: sandbox fills → cost events → ratio over 20 fills → bot paused at 1.6×; other bots on the same venue keep trading.
 - Unit: funding accrual for a held perp position.
@@ -80,7 +81,7 @@ review_result: ""
 - [ ] Every paper/testnet order has a cost event
 - [ ] Ratio-based pause works
 - [ ] Measured costs available to the lab
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -90,7 +91,7 @@ review_result: ""
 ## Cardinal rules (do NOT)
 
 - Do NOT use fixed-bps slippage for illiquid assets in the cost model (14 §6).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - No paid data/APIs; free tiers only (03 §1).

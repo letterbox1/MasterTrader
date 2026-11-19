@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/keys-leaked.md, docs/runbooks/server-down-open-position
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,7 +67,7 @@ Four step-by-step runbooks in `docs/runbooks/` let you act correctly under stres
 - Tabletop walkthrough of each runbook on paper with timings recorded.
 
 ### Scenarios
-- Given the host is unreachable, when you follow the runbook on your phone, then all paper positions are flat via venue UIs within 10 minutes.
+- Given the runtime host (your workstation until the P7 shift) is unreachable, when you follow the runbook on your phone, then all paper positions are flat via venue UIs within 10 minutes.
 
 ### Stress / failure injection
 - n/a: documentation; drills in P2-T054 and P7 T7.60.
@@ -75,7 +75,7 @@ Four step-by-step runbooks in `docs/runbooks/` let you act correctly under stres
 ## Acceptance criteria
 
 - [ ] Four runbooks merged and each walked through once
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: docs link check
 
 ## Exceptions & edge cases
 

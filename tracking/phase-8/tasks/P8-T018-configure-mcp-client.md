@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The MCP token pepper exists in your sops file (never seen by anyone), and your Claude Desktop (or Claude Code) is connected to MasterTrader through `mt_mcp` with a token you created, labelled, scoped and given an expiry. The token is stored only in your OS keychain or the sops file (or obtained by OAuth 2.1 sign-in, if your client supports it). A first read call appears in D17.
+The MCP token pepper exists in your sops file (never seen by anyone), and your Claude Desktop (or Claude Code) is connected to MasterTrader through `mt-mcp` with a token you created, labelled, scoped and given an expiry. The token is stored only in your OS keychain or the sops file (or obtained by OAuth 2.1 sign-in, if your client supports it). A first read call appears in D17.
 
 ## Context & references
 
@@ -45,12 +45,12 @@ The MCP token pepper exists in your sops file (never seen by anyone), and your C
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes, expiry options, creation levels) · [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (the MCP token pepper is a secret you add yourself)
 - Guide: `docs/runbooks/mcp-client-setup.md` (P8-T017)
 - UI: [D17 Tokens / Connection](../../../docs/ui/dashboards/D17-mcp-console.md)
-- Unblocks: P8-T019, P8-T028, P8-T029, P8-T035 (live client check).
+- Unblocks: P8-T028, P8-T029, P8-T035 (live client check).
 
 ## Requirements
 
 - Pepper: 32 random bytes generated on the host straight into the sops file key `mcp_token_pepper` (never printed, never pasted). Restart `mt-api` so it loads it.
-- First token: scopes `read`, `analyse`, `curation` (C1). Write scopes come in P8-T019.
+- First token: scopes `read`, `analyse`, `curation` (C1). Write scopes are a separate C3 step you take in D17 whenever you want them (P8-T019 seeds everything read-only).
 - Expiry: your choice per token from 1 day · 7 days · 30 days · 1 year · custom · indefinite. Indefinite shows a red warning, needs C3 (Telegram + TOTP + cool-down) and reminds you monthly; an expiring token is recommended.
 - Where the token goes: laptop → OS keychain entry `mt-mcp` (macOS Keychain / Windows Credential Manager / libsecret); host-local client → the sops file key `mcp_client_token_<label>`. If your client supports MCP OAuth, sign in instead and no token is copied at all. **Never** chat (including Claude itself), email, git or `.env`.
 
@@ -92,7 +92,7 @@ The MCP token pepper exists in your sops file (never seen by anyone), and your C
 ## Cardinal rules (do NOT)
 
 - Do NOT paste the token or the pepper into Claude or any chat, issue or commit.
-- Do NOT give this first token write scopes; that's P8-T019.
+- Do NOT give this first token write scopes; enabling write tool groups is a separate C3 step in D17.
 - Do NOT commit secrets or paste them into chats/issues (including the Claude conversation); secrets live in the sops/age file (07 §2).
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 
@@ -110,3 +110,4 @@ The MCP token pepper exists in your sops file (never seen by anyone), and your C
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (pepper generation into sops added (keys last), 16 §2.12 scope names and expiry options incl. indefinite = warning + C3 + monthly reminder, OAuth 2.1 option; added R8.08; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (kept USER (pepper + your client config); no longer unblocks P8-T019)

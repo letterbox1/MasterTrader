@@ -15,17 +15,17 @@ requirements: [R8.07]
 roadmap_todos: [T8.22, T8.64]
 modules: [M17, M20]
 dashboards: [D17, D16]
-tools: [uv, pnpm, docker, git]
+tools: [cargo, pnpm, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T025-verify-audit-d17
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ R8.07's "Audit check" and the audit part of T8.64 pass. A scripted session of 20
 ## Context & references
 
 - Roadmap: [R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.22](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · UI: [D17](../../../docs/ui/dashboards/D17-mcp-console.md), [D16 Audit](../../../docs/ui/dashboards/D16-system.md)
 - Decisions: [17 §B P8-B007](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (canonical names) · [17 §D P8-B012](../../../docs/17-decisions-register.md#d-other-decisions) (reads logged to `audit.mcp_call`) · [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)
 - Related: P8-T007, P8-T016, P8-T030.
@@ -54,7 +55,7 @@ R8.07's "Audit check" and the audit part of T8.64 pass. A scripted session of 20
 
 ## ToDo
 
-- [ ] Write the scripted session + checks `tests/scenarios/mcp_audit/`.
+- [ ] Write the scripted session + checks `crates/mt-mcp/tests/scenarios/mcp_audit/`.
 - [ ] Run and record counts in the Progress log.
 - [ ] Doc sync.
 
@@ -98,3 +99,4 @@ R8.07's "Audit check" and the audit part of T8.64 pass. A scripted session of 20
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (reads included per 17 §D P8-B012, `/mcp/sessions`, denied `approval.*`/`mcp.*` and capped results in the mix, 16 §2.11 verify behaviour; added T8.64; dep P8-T030; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

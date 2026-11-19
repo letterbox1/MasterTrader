@@ -88,7 +88,7 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
 - [ ] Entries blocked, exits/protective orders/Kill allowed under `block_new_entries`
 - [ ] Only a C3 `audit.integrity.ack` clears it, as a new row; the incident row is never updated
 - [ ] Runbook followed literally and corrected where needed; evidence committed
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

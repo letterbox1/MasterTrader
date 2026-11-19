@@ -15,17 +15,17 @@ requirements: [R2.19]
 roadmap_todos: [T2.24]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats, supabase-auth]
 branch: p2/P2-T019-change-control-service
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,7 +60,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `packages/mt_risk/change_control.py` classifier + pending store
+- [ ] `crates/mt-risk/src/change_control.rs` classifier + pending store
 - [ ] Hook into the P0 confirmation engine for C3; Telegram approve + TOTP as the C3 channel; `c3.break_glass_enabled` setting (default true until P2-T065 retires it)
 - [ ] Cool-down scheduler (survives restart: pending rows re-armed on boot)
 - [ ] `/risk/changes` query
@@ -70,6 +70,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk change_control`, `cargo test -p mt-api c3`, `supabase test db`.
 - Unit: every policy field classified correctly in both directions (generated from the model).
 - Integration: loosen via web without Telegram approval → stays pending, never applied; with approval but wrong TOTP → rejected; correct TOTP → applied only after cool-down.
 - Unit: above-ceiling rejected even with valid C3.
@@ -87,7 +88,7 @@ review_result: ""
 - [ ] Server-side classification for all risk-affecting commands
 - [ ] C3 path enforced and audited
 - [ ] Ceilings always win
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -99,7 +100,7 @@ review_result: ""
 - Do NOT trust a client-provided classification.
 - Do NOT apply a loosening before its cool-down ends.
 - Do NOT allow MCP or agents to approve C3.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

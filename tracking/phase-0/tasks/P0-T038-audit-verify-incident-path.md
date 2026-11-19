@@ -91,7 +91,7 @@ review_result: ""
 - [ ] Mismatch → incident + alert + `audit.integrity` status (default `block_new_entries`) + D16 banner data
 - [ ] `integrity_gate` golden tests pass (entries blocked, exits and protective orders pass)
 - [ ] `audit.integrity.ack` is C3 and appends a row; hourly incremental + daily full schedules live
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -106,7 +106,7 @@ review_result: ""
 - Do NOT let the integrity response block exits, protective orders or Kill ON (except `halt_all`, which still allows Kill).
 - Do NOT UPDATE or DELETE WORM rows, ever; corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); Kill ON and protective exits never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 
 ## Doc sync on completion

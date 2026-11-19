@@ -77,7 +77,7 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 - [ ] Both containers healthy and digest-pinned with pinned model revisions
 - [ ] Smoke tests pass
 - [ ] Licences recorded
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/07-security-notes.md, docs/roadmap/phase-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ review_result: ""
 ## Requirements
 
 - Generation: gateway role `strategy-gen` (its own virtual key + daily budget, local fallback); prompt = your description + the M0 base-class API + template catalogue; output = `strategy.py` + `manifest.yaml`.
-- Static gate before execution: AST import allow-list (`mt_strategy`, `mt_core`, numpy, pandas, talib; no `os`, `subprocess`, `socket`, `importlib`, `ctypes`, `eval/exec`, file writes outside `/tmp`), manifest schema + never-build validator (part A), max file size 200 KB.
+- Static gate before execution: AST import allow-list (`mt_strategy`, the `mt-core` types via `mt_store`, numpy, pandas, talib; no `os`, `subprocess`, `socket`, `importlib`, `ctypes`, `eval/exec`, file writes outside `/tmp`), manifest schema + never-build validator (part A), max file size 200 KB.
 - Sandbox run: `docker run --runtime=runsc --network none --read-only --cap-drop ALL --pids-limit 256 --memory 2g --cpus 2`, tmpfs `/tmp`, no env secrets, data mounted read-only from a pre-built dataset snapshot; wall-clock cap 10 min.
 - In the sandbox: import, instantiate, run a screener backtest on the mounted snapshot; results returned as JSON over stdout only.
 - Output to UI: code (read-only diff), manifest, sandbox log, first backtest, leakage review (P2-T113); banner text 'Generated code ran in an isolated sandbox with no network or secrets.'
@@ -68,6 +68,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k sandbox`.
 - Unit: AST checker rejects each forbidden construct (one fixture per item).
 - Integration: a benign recorded generation runs in the sandbox and returns a backtest JSON.
 - Integration: generated code containing a sniping/copy-trading pattern is rejected by the never-build validator before running.
@@ -78,7 +79,7 @@ review_result: ""
 - Given the sandbox times out at 10 min, then the job fails with the sandbox log and nothing is saved.
 
 ### Stress / failure injection
-- Fork bomb / memory hog fixtures are contained by pids/memory limits and the host stays healthy (asserted in P2-T165).
+- Fork bomb / memory hog fixtures are contained by pids/memory limits and the workstation stays healthy (asserted in P2-T165).
 
 ## Acceptance criteria
 
@@ -89,7 +90,7 @@ review_result: ""
 
 ## Exceptions & edge cases
 
-- gVisor unavailable on the host: generator disabled with a clear error (never falls back to plain Docker or in-process).
+- gVisor unavailable on the workstation: generator disabled with a clear error (never falls back to plain Docker or in-process).
 - Generated manifest missing counterparty/kill criteria/benchmark: shown as validation errors; cannot save until filled.
 
 ## Cardinal rules (do NOT)

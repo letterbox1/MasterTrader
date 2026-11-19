@@ -15,7 +15,7 @@ requirements: [R2.21, R2.15, R2.53]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ Synthetic paper histories and injected faults prove the signals keep **one meani
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk decay`, `cargo test -p mt-api bots::downgrade`.
 - As above.
 
 ### Scenarios
@@ -80,7 +81,7 @@ Synthetic paper histories and injected faults prove the signals keep **one meani
 ## Cardinal rules (do NOT)
 
 - Do NOT tune thresholds to pass tests; thresholds come from policy.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 
 ## Doc sync on completion

@@ -10,7 +10,7 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T102, P2-T103, P2-T003, P2-T017]
+depends_on: [P2-T102, P2-T103, P2-T003, P2-T017, P2-T202]
 requirements: [R2.40, R2.41, R2.01]
 roadmap_todos: [T2.27]
 modules: [M7, M0]
@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T105-nautilus-truth-backtests
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,9 +58,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `mt_lab/truth/runner.py` building `BacktestEngine` venues, instruments and data from a `Dataset`
+- [ ] Implement `mt_lab/truth/runner.py` building `BacktestEngine` venues, instruments and data from a `Dataset`; risk checks through the `mt-risk` binding (P2-T202) so backtests apply the same rules as the engine
 - [ ] Implement `FillModel`/`FeeModel`/latency adapters from P2-T102 and funding/swap event injection
-- [ ] Wire the M11 pre-trade layer in backtest mode (integration with part A's `mt_risk` API) and record rejections
+- [ ] Wire the M11 pre-trade layer in backtest mode (integration with part A's `mt-risk` API) and record rejections
 - [ ] Register `truth` `JobRunner`; store the reproduction record (code SHA, manifest hash, data snapshot ids, seed, engine version)
 - [ ] Determinism test, parity hook for P2-T161
 - [ ] Docs
@@ -68,6 +68,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k truth`.
 - Unit: fill model never fills beyond displayed L2 size at that timestamp; funding applied every interval for perps.
 - Integration: EMA template on a 1-week BTC fixture produces a stored golden trade list; second run identical.
 - Integration: an order breaching the max-position limit is rejected by M11 in backtest exactly as in paper.
@@ -98,8 +99,8 @@ review_result: ""
 
 - Do NOT fork or patch Nautilus (LGPL) in-tree; wrap it.
 - Do NOT bypass the M11 layer in backtests to 'speed up' runs.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

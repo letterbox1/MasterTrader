@@ -15,17 +15,17 @@ requirements: [R3.06]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T023-au2026-cgt-engine
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ The `AU_2026` plugin computes investor-regime CGT per FY: per-parcel 50% discoun
 ## Context & references
 
 - Roadmap: [R3.06, T3.24](../../../docs/roadmap/phase-3-journal-and-tax.md) · golden suite P3-T045
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Rules: [09 AU_2026 row](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · [09 key findings](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) · correct ATO details from isaacrowntree/ledger ([09 tools vetted](../../../docs/09-journal-and-tax.md#tools-vetted))
 - D15 Capital gains tab fields: [D15](../../../docs/ui/dashboards/D15-tax.md)
 
@@ -57,10 +58,10 @@ The `AU_2026` plugin computes investor-regime CGT per FY: per-parcel 50% discoun
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/rules/au_2026/cgt.py` (+ `classify` for capital events)
+- [ ] Implement `crates/mt-journal/src/rules/au_2026/cgt.rs` (+ `classify` for capital events)
 - [ ] Loss-ordering + carry-forward across FYs (reads prior FY report carry-forward)
 - [ ] Line-item model for D15 Capital gains
-- [ ] Golden tests from ATO worked examples (data in `tests/golden/au_2026/cgt/*.yaml`); docs
+- [ ] Golden tests from ATO worked examples (data in `crates/mt-journal/tests/golden/au_2026/cgt/*.yaml`); docs
 
 ## Verification
 
@@ -99,7 +100,7 @@ The `AU_2026` plugin computes investor-regime CGT per FY: per-parcel 50% discoun
 - Do NOT apply the discount before losses.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -117,3 +118,4 @@ The `AU_2026` plugin computes investor-regime CGT per FY: per-parcel 50% discoun
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (values via 16 §4.1 hierarchy; depends_on trimmed to lot engine + framework (P3-T020 not needed for CGT); tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust rules; golden data under the crate)

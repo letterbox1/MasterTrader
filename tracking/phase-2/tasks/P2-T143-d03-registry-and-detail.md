@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: DESIGN.md §6.8 viewport matrix (overflow + fixed-bar overlap checks) and axe on the new routes; Vitest + Testing Library for components.
 - Playwright: failing DSR fixture → autonomous disabled and 'Deflated Sharpe 0.71 < 0.95' shown.
 
@@ -92,7 +93,7 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt_api`.
+- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt-api`.
 - Do NOT use `100vh`/`h-screen`, unprefixed multi-column grids or the Tailwind CDN (DESIGN.md §6.3–6.5).
 - Do NOT sum or show paper and live money without a mode label.
 - Do NOT build the Bots tab here (part A owns it).

@@ -15,7 +15,7 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6]
 dashboards: [D04]
-tools: [uv]
+tools: [uv, supabase]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,13 +49,13 @@ A versioned feature registry (`features.def`) with one definition per feature th
 
 - `features.def`: name, version (semver), inputs (bar spec / tick / L2), params, warm-up bars, code_sha, owner, licence; immutable once published — changes create a new version.
 - `Feature` protocol with `batch(df) -> Series` and `update(state, event) -> value`; the parity harness asserts |batch − incremental| ≤ 1e-9 on fixtures.
-- Batch values computed through `pit(as_of)` datasets; stored in `features.value` (hypertable: feature_id, version, instrument_id, event_time, ingest_time, value) only for features marked `materialise=true`.
-- Engine-side incremental values published on `feat.{name}.{symbol}` (msgspec) with ≤ 1 ms compute per update for TA-style features.
+- Batch values computed through `pit(as_of)` datasets; stored in `features.value` (monthly native partitions, 18 §4.3: feature_id, version, instrument_id, event_time, ingest_time, value) only for features marked `materialise=true`.
+- Engine-side incremental values published on `feat.{name}.{symbol}` (`mt-core` message schema) with ≤ 1 ms compute per update for TA-style features.
 - Provenance: features inherit the most restrictive `train_ok`/`model_input_ok` of their inputs.
 
 ## ToDo
 
-- [ ] Migration for `features.def`, `features.value` (Timescale hypertable)
+- [ ] SQL migration in `supabase/migrations/` for `features.def`, `features.value` (monthly native partitions; pgTAP test)
 - [ ] Implement `packages/mt_features/{registry,base,store,publish}.py`
 - [ ] Implement parity harness `mt_features.testing.assert_parity`
 - [ ] Provenance propagation
@@ -64,6 +64,7 @@ A versioned feature registry (`features.def`) with one definition per feature th
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_features`, `supabase test db`.
 - Unit: registry refuses re-publishing a changed definition under the same version.
 - Property: parity harness passes for a moving-average feature on random series (hypothesis).
 - Integration: materialised feature written and read back via `pit`.
@@ -90,7 +91,7 @@ A versioned feature registry (`features.def`) with one definition per feature th
 
 - Do NOT compute research features from raw tables; use `pit`.
 - Do NOT change a published feature version in place.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT put Telegram text (or any `model_input_ok = false` / `train_ok = false` row) into a model, prompt, RAG index or training set (12 §4–5).
 - Do NOT skip, weaken or delete a test to get green.
 

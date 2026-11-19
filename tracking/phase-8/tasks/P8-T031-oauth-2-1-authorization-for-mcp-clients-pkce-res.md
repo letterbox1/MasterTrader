@@ -15,17 +15,17 @@ requirements: [R8.08, R8.02]
 roadmap_todos: [T8.24]
 modules: [M20]
 dashboards: [D17]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, supabase-auth, nats]
 branch: p8/P8-T031-oauth-2-1-authorization-for-mcp-clients-pkce-res
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/07-security-notes.md, docs/ui/dashboards/D17-mcp-console.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-MCP clients that support MCP authorization can connect to the Streamable HTTP endpoint by signing in instead of pasting a token: `mt_api` acts as the OAuth 2.1 authorization server for the `mt_mcp` resource, with authorization code + PKCE (S256) and resource indicators, and issues exactly the same scoped, expiring, HMAC-stored tokens as P8-T002. Consent happens in the web app after your normal login + TOTP, and write scopes or indefinite expiry still need C3. Tested with a scripted OAuth client on the test stack; no real client or key.
+MCP clients that support MCP authorization can connect to the Streamable HTTP endpoint by signing in instead of pasting a token: `mt-api` acts as the OAuth 2.1 authorization server for the `mt-mcp` resource, with authorization code + PKCE (S256) and resource indicators, and issues exactly the same scoped, expiring, HMAC-stored tokens as P8-T002. Consent happens in the web app after your normal login + TOTP, and write scopes or indefinite expiry still need C3. Tested with a scripted OAuth client on the test stack; no real client or key.
 
 ## Context & references
 
 - Roadmap: [R8.08](../../../docs/roadmap/phase-8-mcp.md#3-requirements) ("OAuth 2.1 (PKCE, resource indicators) where the client supports it") · ToDo [T8.24](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes, expiry options, creation levels)
 - Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4 Tokens](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
 - External specs (pin the versions in the PR): MCP authorization spec for HTTP transports; OAuth 2.1 draft; RFC 7636 (PKCE), RFC 8707 (resource indicators), RFC 8414 (authorization server metadata), RFC 9728 (protected resource metadata).
@@ -49,9 +50,9 @@ MCP clients that support MCP authorization can connect to the Streamable HTTP en
 
 ## Requirements
 
-- `mt_mcp` (resource server) publishes protected-resource metadata pointing at `mt_api` as the authorization server and answers unauthenticated requests with 401 + `WWW-Authenticate` referencing it.
-- `mt_api` publishes authorization-server metadata and implements: authorization endpoint (web app consent screen, requires an existing web session with TOTP), token endpoint, revocation endpoint. Authorization code + PKCE S256 only; no implicit or password grants; exact redirect-URI matching (loopback redirects for desktop clients allowed per OAuth 2.1); short-lived codes (setting).
-- Resource indicators: the `resource` parameter must equal the canonical `mt_mcp` URL; tokens are audience-bound to it and refused elsewhere (no token passthrough).
+- `mt-mcp` (resource server) publishes protected-resource metadata pointing at `mt-api` as the authorization server and answers unauthenticated requests with 401 + `WWW-Authenticate` referencing it.
+- `mt-api` publishes authorization-server metadata and implements: authorization endpoint (web app consent screen, requires your Supabase Auth web session at `aal2` (password + TOTP, 18 §4.6)), token endpoint, revocation endpoint. Authorization code + PKCE S256 only; no implicit or password grants; exact redirect-URI matching (loopback redirects for desktop clients allowed per OAuth 2.1); short-lived codes (setting).
+- Resource indicators: the `resource` parameter must equal the canonical `mt-mcp` URL; tokens are audience-bound to it and refused elsewhere (no token passthrough).
 - Client registration: dynamic client registration if the SDK client needs it, limited to loopback/Tailscale redirect URIs and recorded; or pre-registered clients via D17. Client identity is stored with the token (last used + client identity, 16 §2.12).
 - Consent screen shows the requested scopes and an expiry picker (1 day · 7 days · 30 days · 1 year · custom · indefinite). `read`/`analyse`/`curation` = C1 confirm; `trade`/`strategy`/`risk_tighten` or indefinite = C3 (Telegram approve + TOTP + cool-down) before the token is issued; indefinite shows the red warning.
 - Issued access tokens are the P8-T002 opaque tokens (HMAC-SHA-256 with the pepper, revocable instantly). Refresh tokens, if offered, are also opaque, HMAC-stored, rotated on use and capped by the chosen expiry.
@@ -59,7 +60,7 @@ MCP clients that support MCP authorization can connect to the Streamable HTTP en
 
 ## ToDo
 
-- [ ] Choose and pin the library (e.g. the MCP SDK auth helpers or `authlib`), with hashes; check it for telemetry.
+- [ ] Choose and pin the Rust library (e.g. `rmcp`'s auth support or the `oauth2` crate (U)) in `Cargo.lock`; check it for telemetry.
 - [ ] Implement metadata endpoints, authorize/consent (web), token, revoke; PKCE S256 and `resource` validation.
 - [ ] Hook token issuance into P8-T002 (same table, scopes, levels, C3 path, expiry options).
 - [ ] Optional dynamic client registration with redirect-URI allow-list; pre-registered clients in D17.
@@ -69,7 +70,7 @@ MCP clients that support MCP authorization can connect to the Streamable HTTP en
 
 ### Tests
 - Integration: full code + PKCE flow → token → `tools/list` over Streamable HTTP; wrong `code_verifier` → `invalid_grant`.
-- Integration: missing or wrong `resource` → refused; a token issued for `mt_mcp` is rejected by any other audience.
+- Integration: missing or wrong `resource` → refused; a token issued for `mt-mcp` is rejected by any other audience.
 - Integration: consent for `trade` scope routes through the fake Telegram + TOTP harness and cool-down before issuance; indefinite expiry the same.
 - Unit: redirect-URI exact match; code reuse refused; code expiry enforced.
 - Integration: revoking in D17 kills the access token (< 1 s) and any refresh token.
@@ -121,3 +122,4 @@ MCP clients that support MCP authorization can connect to the Streamable HTTP en
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for R8.08 / T8.24 (OAuth 2.1 with PKCE and resource indicators per 17 §A P8-B004; same tokens and C1/C3 levels as P8-T002)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

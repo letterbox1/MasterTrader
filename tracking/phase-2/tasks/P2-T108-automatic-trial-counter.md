@@ -15,17 +15,17 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D03, D04]
-tools: [uv]
+tools: [uv, supabase]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T108-automatic-trial-counter
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ Every distinct parameter set / code version evaluated for a strategy family incr
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k trials`, `supabase test db`.
 - Unit: identical trial → no increment; param tweak → +1; clone → inherits count.
 - Integration: app role UPDATE/DELETE on `strategy.trial` fails.
 

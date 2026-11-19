@@ -15,17 +15,17 @@ requirements: [R8.03]
 roadmap_todos: [T8.20]
 modules: [M19, M4, M2, M20]
 dashboards: [D13, D12, D17]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T013-tools-curation
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D17-mcp-console.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Claude can add watchlist items and airdrop URLs and mark tasks (done/skip/snooze
 ## Context & references
 
 - Roadmap: [R8.03](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.20](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Spec: [03 M20 Curation row](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.2 Intel, Airdrops, Tasks groups](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (`curation` scope, C1 to create; never-exposed list incl. `airdrop.claim.execute`, mandates, `wallet.sweep`) · [16 §2.13](../../../docs/16-configuration-and-safety-model.md#213-curation) · [17 §B P5-B004](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (canonical task-type names in 03 M19)
 - Cross-phase (depends_on): P5-T029 (task queue), P5-T033 (discovery intake incl. `/add <url>`), P4-T043 (intel commands incl. watchlist).
@@ -82,7 +83,7 @@ Claude can add watchlist items and airdrop URLs and mark tasks (done/skip/snooze
 
 ## Exceptions & edge cases
 
-- Curation service down: commands return 503; nothing is queued in `mt_mcp`.
+- Curation service down: commands return 503; nothing is queued in `mt-mcp`.
 - Duplicate URL: deduped by the P5 normaliser; the result says "already known".
 
 ## Cardinal rules (do NOT)
@@ -90,7 +91,7 @@ Claude can add watchlist items and airdrop URLs and mark tasks (done/skip/snooze
 - Do NOT expose claim execution, mandates or posting through this group.
 - Do NOT add scraping sources that break platform terms.
 - Do NOT expose anything on the 16 §2.12 never-exposed list (withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, keys/tokens, `approval.*`, `mcp.*`, restore/delete, audit writes).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set; Claude via MCP counts as a model input (12 §4–5).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -110,3 +111,4 @@ Claude can add watchlist items and airdrop URLs and mark tasks (done/skip/snooze
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (`curation` scope, never list per 16 §2.12, writes under the 10/min default via P8-T030; cross-phase deps P5-T029/T033, P4-T043; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

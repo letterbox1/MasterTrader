@@ -15,17 +15,17 @@ requirements: [R3.06, R3.12, R3.09]
 roadmap_todos: [T3.24, T3.26]
 modules: [M18]
 dashboards: []
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T022-jurisdiction-plugin-framework
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `JurisdictionRules` protocol from 09 is implemented with a registry of dated plugins selected by the residency timeline, and every computation and report records the rule version, the FX/price sources and a content hash, so the same inputs always give the same output hash.
+The `JurisdictionRules` trait from 09 is implemented with a registry of dated plugins selected by the residency timeline, and every computation and report records the rule version, the FX/price sources and a content hash, so the same inputs always give the same output hash.
 
 ## Context & references
 
 - Roadmap: [R3.06, R3.09, R3.12, T3.24, T3.26](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Interface: [09 jurisdiction plugin interface](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · [09 quality](../../../docs/09-journal-and-tax.md#quality) (rule version + FX source on every report)
 - Reproducibility: [D15 acceptance 2](../../../docs/ui/dashboards/D15-tax.md) (same inputs → same hash)
 - `fx_policy`: RBA F11 for AUD (last published business day; non-F11 via USD) and the crypto valuation hierarchy ([16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal), P3-T011)
@@ -49,17 +50,17 @@ The `JurisdictionRules` protocol from 09 is implemented with a registry of dated
 
 ## Requirements
 
-- Protocol fields/methods exactly as 09: `code`, `valid_from`, `valid_to`, `home_currency`, `tax_year`, `is_resident`, `classify`, `lot_policy`, `fx_policy`, `compute`, `on_residency_change`, `reports`, `compliance_flags`.
-- Registry: plugins discovered via entry points `mt_journal.jurisdictions`; selection by (residency period, FY, feature flags); `AU_2026` default for AU through FY2026-27.
-- `TaxComputation` result (msgspec): inputs manifest (event ids + computation ids + FX rate ids), rule version (`AU_2026@<semver>+<git sha>`), FX/price sources and valuation-method summary, regime, totals, line items; canonical JSON → sha256 `result_hash`.
+- `JurisdictionRules` trait methods exactly as 09: `code`, `valid_from`, `valid_to`, `home_currency`, `tax_year`, `is_resident`, `classify`, `lot_policy`, `fx_policy`, `compute`, `on_residency_change`, `reports`, `compliance_flags`.
+- Registry: plugins registered in a static registry (`mt_journal::jurisdictions`); selection by (residency period, FY, feature flags); `AU_2026` default for AU through FY2026-27.
+- `TaxComputation` result (serde): inputs manifest (event ids + computation ids + FX rate ids), rule version (`AU_2026@<semver>+<git sha>`), FX/price sources and valuation-method summary, regime, totals, line items; canonical JSON → sha256 `result_hash`.
 - Persist each computation to `journal.tax_report` (WORM) with `rule_version`, `fx_sources`, `inputs_hash`, `result_hash`, `generated_by` (command id).
 - Determinism: no wall-clock in computations; `as_of` explicit; Decimal context fixed.
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/rules/base.py` (Protocol, TaxYear, Treatment enum, TaxComputation)
-- [ ] Registry + selection in `rules/registry.py`; feature flags in `config/journal/flags.yaml` (`AU_2027_REFORM: false`, `GST_BAS_MODE: false`) and tax settings in `config/journal/au_settings.yaml` (wash-sale window default 30 days, [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags)); every setting value used is recorded in the report provenance
-- [ ] Report provenance writer in `reports/provenance.py`
+- [ ] Implement `crates/mt-journal/src/rules/base.rs` (`JurisdictionRules` trait, TaxYear, Treatment enum, TaxComputation)
+- [ ] Registry + selection in `rules/registry.rs`; feature flags in `config/journal/flags.yaml` (`AU_2027_REFORM: false`, `GST_BAS_MODE: false`) and tax settings in `config/journal/au_settings.yaml` (wash-sale window default 30 days, [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags)); every setting value used is recorded in the report provenance
+- [ ] Report provenance writer in `reports/provenance.rs`
 - [ ] Tests; docs
 
 ## Verification
@@ -81,7 +82,7 @@ The `JurisdictionRules` protocol from 09 is implemented with a registry of dated
 
 ## Acceptance criteria
 
-- [ ] Protocol + registry merged; at least a dummy plugin passes the conformance test suite
+- [ ] Trait + registry merged; at least a dummy plugin passes the conformance test suite
 - [ ] Every stored report has rule version, sources and hashes
 - [ ] Reproducibility test green
 - [ ] CI green (lint, types, tests, `pit` check; `tax-golden` once P3-T045 lands)
@@ -95,7 +96,7 @@ The `JurisdictionRules` protocol from 09 is implemented with a registry of dated
 - Do NOT compute tax outside a plugin; do NOT hard-code "50% if held ≥ 12 months" anywhere outside AU_2026.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -113,3 +114,4 @@ The `JurisdictionRules` protocol from 09 is implemented with a registry of dated
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (fx_policy = RBA rule + 16 §4.1 valuation; settings recorded in provenance; depends_on trimmed to P3-T008 for parallel start; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (plugin interface is the `JurisdictionRules` trait (09))

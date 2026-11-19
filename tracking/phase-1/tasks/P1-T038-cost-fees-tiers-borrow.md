@@ -15,17 +15,17 @@ requirements: [R1.11]
 roadmap_todos: [T1.28]
 modules: [M16]
 dashboards: [D07, D02]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T038-cost-fees-tiers-borrow
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,26 +37,26 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_monitor.cost` reads current fee tiers and borrow rates from free APIs for every practice/testnet venue, stores them as time series, and publishes snapshots on `cost.{venue}.{symbol}`.
+`mt-monitor` (Rust, module `cost`) reads current fee tiers and borrow rates from free APIs for every practice/testnet venue, stores them as time series, and publishes snapshots on `cost.{venue}.{symbol}`.
 
 ## Context & references
 
 - Roadmap: requirements [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.28](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (Fees: commissions per fill and current fee tiers via ccxt `fetchTradingFees`, Binance commission endpoint, IBKR `commissionAndFeesReport`, Alpaca; borrow rates)
-- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built keyless against ccxt/venue fixtures and public fee schedules (`source=public_schedule`); reading your testnet fee tiers with the read-only keys from P1-T002 is checked in P1-T073
+- Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built keyless against venue REST fixtures and public fee schedules (`source=public_schedule`); reading your testnet fee tiers with the read-only keys from P1-T002 is checked in P1-T073
 - Cross-phase prerequisites (depends_on): P0-T029, P0-T030 (WORM layer for `audit.cost_event`)
 - Depends on (this phase): P1-T004, P1-T005
 
 ## Requirements
 
 - Tables `market.fee_tier` (venue, account, symbol, maker, taker, tier, `event_time`, `ingest_time`, source) and `market.borrow_rate`
-- Collectors: ccxt `fetchTradingFees` (Binance/Bybit testnet), Binance commission endpoint, Alpaca fee schedule (commission-free + regulatory fees), IBKR via its report once fills exist (P2)
+- Collectors ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates); no ccxt in Rust): venue fee endpoints through Nautilus Rust HTTP clients where available (U), else thin `reqwest` GET-only clients: Binance/Bybit testnet trading-fee endpoints, Binance commission endpoint, Alpaca fee schedule (commission-free + regulatory fees), IBKR via its report once fills exist (P2)
 - Refresh every 6 h (default, configurable) and on demand; changes emit `cost.*` snapshot and `audit.cost_event` (WORM)
 - GET-only HTTP client allow-list; credentials never logged
 
 ## ToDo
 
-- [ ] Implement collectors and tables
+- [ ] Implement collectors; Supabase migration for the cost tables with pgTAP test
 - [ ] Cost snapshot payload and publisher
 - [ ] WORM tests for `audit.cost_event`
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -65,9 +65,10 @@ review_result: ""
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor cost`, `cargo clippy`, `supabase test db`
 - Unit: fee parsing per venue fixture; tier change detection
 - WORM: app-role UPDATE/DELETE on `audit.cost_event` fails
-- Integration: ccxt mock → rows + `cost.*` message
+- Integration: mocked venue REST (`wiremock`) → rows + `cost.*` message
 
 ### Scenarios
 
@@ -80,7 +81,7 @@ review_result: ""
 ## Acceptance criteria
 
 - [ ] Fee tiers from public schedules and fixtures visible in D07 Costs, labelled `unverified` until P1-T073 reads them live
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -110,3 +111,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, live fee tiers in P1-T073; deps trimmed (no WS needed); P0 WORM deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (cost collectors in Rust `mt-monitor` with GET-only venue clients instead of ccxt; Supabase migration + pgTAP; tools cargo/supabase; services supabase-postgres)

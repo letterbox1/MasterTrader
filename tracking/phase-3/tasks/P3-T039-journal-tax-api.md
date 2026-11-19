@@ -15,17 +15,17 @@ requirements: [R3.13, R3.14]
 roadmap_todos: [T3.29]
 modules: [M18, M15]
 dashboards: [D14, D15]
-tools: [git, uv, node>=20, pnpm, docker]
+tools: [git, cargo, uv, node>=20, pnpm, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt-api]
+services: [supabase-postgres, supabase-auth, supabase-storage, nats, mt-api]
 branch: p3/P3-T039-journal-tax-api
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,13 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_api` exposes the D14/D15 backend contract — `/journal/trades` (+ `/{id}`, `?analytics=1`), `/journal/events`, `/journal/lots`, `/tax/summary?fy=` (+ sections cgt/income/payg), `/tax/reports`, `/tax/residency`, `/data/recon?scope=journal` — and the commands `journal.note.add`, `journal.tag`, `tax.report.generate`, `tax.export`, `tax.residency.add`, `tax.regime.set`, `tax.lot.select` at their confirmation levels, plus the `journal` WS topic.
+`mt-api` exposes the D14/D15 backend contract — `/journal/trades` (+ `/{id}`, `?analytics=1`), `/journal/events`, `/journal/lots`, `/tax/summary?fy=` (+ sections cgt/income/payg), `/tax/reports`, `/tax/residency`, `/data/recon?scope=journal` — and the commands `journal.note.add`, `journal.tag`, `tax.report.generate`, `tax.export`, `tax.residency.add`, `tax.regime.set`, `tax.lot.select` at their confirmation levels, plus the `journal` WS topic.
 
 ## Context & references
 
 - Roadmap: [R3.13, R3.14, T3.29](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · backend contracts in [D14](../../../docs/ui/dashboards/D14-journal.md) and [D15](../../../docs/ui/dashboards/D15-tax.md)
-- Cross-phase prerequisites (depends_on): P0-T032 (`mt_api` skeleton), P0-T034 (command bus), P0-T035 (C-levels), P0-T036 (WS hub)
+- Cross-phase prerequisites (depends_on): P0-T032 (`mt-api` skeleton), P0-T034 (command bus), P0-T035 (C-levels), P0-T036 (WS hub)
 - Commands from other tasks exposed here: `tax.fy.lock`/`unlock` (C3) and `journal.manual_event.add` (C2) from P3-T055; `task.answer` (C1) from P3-T038
 
 ## Requirements
@@ -52,14 +53,14 @@ review_result: ""
 - Round-trip trades: derived from events (open → close per position) with gross, fees, funding, net, R-multiple (if the strategy supplied initial risk), strategy, signal source (strategy / agent / tier B / manual / MCP), tags, review status.
 - Trade detail `/journal/trades/{id}`: provenance chain (signal → decision run / tier-B scores → risk checks → order → fills), costs vs modelled (from M16 TCA), notes/tags/screenshots, correction chain.
 - Commands: `journal.note.add` C0, `journal.tag` C0, `tax.export` C0, `tax.report.generate` C1, `tax.residency.add` C1 (+ preview; C3 when it removes a compliance flag, P3-T033), `tax.regime.set` C1 (answer id required), `tax.lot.select` C1 (not in locked FY); all written to `audit.command`.
-- Notes/tags/screenshots are WORM rows (`journal.note`, `journal.tag`); an attachment (PNG/JPEG, default ≤ 5 MB, a setting) is stored content-addressed under `data/attachments/<sha256>` and referenced by hash in the note row ([17 §D P3-B013](../../../docs/17-decisions-register.md#d-other-decisions), [D14](../../../docs/ui/dashboards/D14-journal.md)); identical files are stored once.
+- Notes/tags/screenshots are WORM rows (`journal.note`, `journal.tag`); an attachment (PNG/JPEG, default ≤ 5 MB, a setting) is stored content-addressed in the private Supabase Storage bucket `journal-attachments` (object key = sha256, 18 §4.5) and referenced by hash in the note row ([17 §D P3-B013](../../../docs/17-decisions-register.md#d-other-decisions), [D14](../../../docs/ui/dashboards/D14-journal.md)); identical files are stored once.
 - WS `journal` topic publishes `journal.event.new` (throttled ≤ 1 Hz for tables per 02 §6 rules); `recon` topic for recon status.
 - Paper vs live: `mode` filter, default `live` when any live account exists else `paper`.
 
 ## ToDo
 
-- [ ] Implement routers `packages/mt_api/routers/journal.py`, `tax.py`; command handlers in `mt_api/commands/journal.py`, `tax.py`
-- [ ] OpenAPI schemas + regenerated TS types (`openapi-typescript`)
+- [ ] Implement axum routes `crates/mt-api/src/routes/journal.rs`, `tax.rs` (utoipa OpenAPI); command handlers in `crates/mt-api/src/commands/journal.rs`, `tax.rs`
+- [ ] utoipa OpenAPI schemas + regenerated TS types (`openapi-typescript`)
 - [ ] WS fan-out
 - [ ] Contract tests; docs
 
@@ -67,7 +68,7 @@ review_result: ""
 
 ### Tests
 
-- Contract: OpenAPI snapshot; schemathesis run against a fixture DB.
+- Contract: OpenAPI snapshot; `uv run schemathesis` against a fixture DB; `cargo test -p mt-api`.
 - Unit: each command enforces its C-level server-side (C1 without confirm → 409/problem).
 - Integration: `/tax/summary?fy=2026-27` returns both regimes + PAYG with provenance fields.
 
@@ -97,7 +98,7 @@ review_result: ""
 - Do NOT render any edit control on journal records; corrections are server-side superseding events.
 - Do NOT expose decrypted tax-sensitive fields through any endpoint except the accountant-pack download (with `include_identity`).
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT expose tax-sensitive fields (TFN, addresses, raw statements) to any LLM prompt, RAG index or the LiteLLM gateway ([07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -117,3 +118,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (content-addressed attachments (P3-B013); FY lock/manual-event commands from P3-T055 (P3-B006); explicit P0 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (axum routes/commands in `mt-api` (utoipa); attachments in Supabase Storage)

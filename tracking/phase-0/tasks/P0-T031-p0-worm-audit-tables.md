@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T030, P0-T018]
 requirements: [R0.07, R0.08, R0.13, R0.N7]
 roadmap_todos: [T0.23, T0.28]
-modules: [M17, mt_obs]
+modules: [M17, mt-obs]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p0/P0-T031-p0-worm-audit-tables
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,14 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`, `audit.llm_call`, `audit.seal`, `audit.integrity_incident`, `audit.verify_run` (canonical singular names, 17 §B) — with `mt_obs.audit` writers that buffer to NATS JetStream when Postgres is unreachable, `trace_id` on every row, and the correction pattern (`supersedes_id` + `*_current` views that pick the latest row per key).
+The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`, `audit.llm_call`, `audit.seal`, `audit.integrity_incident`, `audit.verify_run` (canonical singular names, 17 §B) — with `mt_obs::audit` writers (Rust; Python callers such as the LiteLLM callback use the same writer through the `mt_store` binding) that buffer to NATS JetStream when Postgres is unreachable, `trace_id` on every row, and the correction pattern (`supersedes_id` + `*_current` views that pick the latest row per key).
 
 ## Context & references
 
 - [Roadmap P0 R0.07, R0.08](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [15 §2.1 scope](../../../docs/15-bots-hitl-and-worm-audit.md#21-scope)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Corrections)
-- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) (every LLM call, every mt_api command)
+- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) (every LLM call, every `mt-api` command)
 - [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`audit.command` source = web|telegram|mcp|system)
 - [17 §B canonical audit names](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P0-B017 closed) · [16 §3.3 write path](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)
 - `audit.auth_event` and `audit.verify_run` follow the singular, schema-qualified convention but aren't yet in the 17 §B list: add them to 02 §4 / 03 §4 at doc sync.
@@ -53,19 +53,19 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 ## Requirements
 
 - `audit.command`: `id uuid`, `command`, `level` (C0|C1|C2|C3|KILL), `source` (`web|telegram|mcp|system`), `actor`, `args_redacted jsonb`, `args_hash bytea`, `idempotency_key`, `reason`, `status` (`accepted|rejected|pending_confirmation|applied|failed|cancelled`), `result jsonb`, `error_type`, `trace_id`, `event_time`, `ingest_time`, `supersedes_id` + chain columns. Status changes are **new rows** referencing the first via `supersedes_id`.
-- `audit.auth_event`: login success/failure, TOTP enrol/verify, logout, session expiry, lockout — no passwords, no TOTP codes.
+- `audit.auth_event`: login success/failure, TOTP enrol/verify, logout, session expiry, lockout, `aal2` step-up, Telegram command-session issue — no passwords, no TOTP codes, no JWTs. Supabase Auth events are copied in by `mt-api` (P0-T033) from what it observes plus the Auth audit log; Supabase's own `auth.audit_log_entries` is not WORM, so this table is the record.
 - `audit.llm_call`: `model`, `route`, `role`, `prompt_hash`, `response_hash`, `prompt_text`, `response_text`, `tokens_in/out`, `cost`, `latency_ms`, `trace_id` (03 M17). Writer is LiteLLM's callback (P0-T042).
 - `audit.seal`, `audit.verify_run`, `audit.integrity_incident` schemas defined here; filled by P0-T037 / P0-T038. `audit.integrity_incident` holds incidents **and** acks as separate rows (`kind` `chain_mismatch|seal_mismatch|anchor_missing|ack`, `action`, `incident_id` reference on acks); nothing is ever marked acked in place (15 §2.2).
-- `mt_obs.audit.write(table, row)` async writer using the role `mt_obs_rw`/`mt_api_rw`; never waits on seals (insert p99 < 5 ms, R0.N7). If Postgres is unreachable it appends the row to the JetStream stream `WORM_BUFFER` (default bound 1 GB or 24 h, [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check), read from settings) and a drainer inserts buffered rows in order when the DB returns. Above 80 % of the bound it reports `buffer_high` and callers refuse new entries (Kill and exits are still recorded). If neither the DB nor the buffer accepts a row the write raises (no silent drop) and increments `mt_audit_write_failures_total`: nothing executes without a record.
+- `mt_obs::audit::write(table, row)` async writer (tokio + sqlx) using the role `mt_obs_rw`/`mt_api_rw`; never waits on seals (insert p99 < 5 ms, R0.N7). If Postgres is unreachable it appends the row to the JetStream stream `WORM_BUFFER` (default bound 1 GB or 24 h, [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check), read from settings) and a drainer inserts buffered rows in order when the DB returns. Above 80 % of the bound it reports `buffer_high` and callers refuse new entries (Kill and exits are still recorded). If neither the DB nor the buffer accepts a row the write raises (no silent drop) and increments `mt_audit_write_failures_total`: nothing executes without a record.
 - Views `audit.command_current` etc.: `DISTINCT ON (root_id) ... ORDER BY root_id, seq DESC`.
 
 ## ToDo
 
-- [ ] Migrations (WORM-tagged, run by ceremony) creating the six tables via `create_worm_table()`; register in `audit.worm_registry`.
-- [ ] Implement `mt_obs.audit` writers and redaction of args (reuse the secret regex).
+- [ ] SQL migrations in `supabase/migrations/` (tagged `-- mt:worm`; throwaway `worm_owner` in dev/CI/paper, the ceremony before live money) creating the six tables via `create_worm_table()`; register in `audit.worm_registry`.
+- [ ] Implement `mt_obs::audit` writers (and the binding entry point) with redaction of args (reuse the secret regex).
 - [ ] Implement the `WORM_BUFFER` fallback + ordered drainer and the 80 % `buffer_high` signal, with bounds from settings.
 - [ ] Create `*_current` views and tests.
-- [ ] Document the correction pattern with an example in `mt_obs` README.
+- [ ] Document the correction pattern with an example in the `mt-obs` README.
 
 ## Verification
 
@@ -80,7 +80,7 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 - Given Postgres is down, when a non-Kill command arrives, then mt-api is read-only and rejects it with 503 problem+json (02 §9.3); a Kill ON is recorded through `WORM_BUFFER` and appears in `audit.command` once the DB returns.
 
 ### Stress / failure injection
-- Burst: 500 commands/s for 60 s through `mt_obs.audit.write` → no lost rows, chain valid, insert p99 < 5 ms (feeds P0-T059; the gated benchmark is P0-T066).
+- Burst: 500 commands/s for 60 s through `mt_obs::audit::write` → no lost rows, chain valid, insert p99 < 5 ms (feeds P0-T059; the gated benchmark is P0-T066).
 
 ## Acceptance criteria
 
@@ -88,7 +88,7 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 - [ ] Writers + redaction + current views tested
 - [ ] No command path can execute without its audit row (tested)
 - [ ] JetStream buffer + drain tested (no loss, order kept, 80 % threshold from settings)
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -118,3 +118,4 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical audit.integrity_incident (17 §B), JetStream write buffer 1 GB/24 h/80 % (16 §3.3), insert SLO (R0.N7), roadmap T0.28; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt_obs::audit` writer (Python via the binding); SQL migrations tagged `-- mt:worm`; `audit.auth_event` records Supabase Auth events seen by `mt-api`)

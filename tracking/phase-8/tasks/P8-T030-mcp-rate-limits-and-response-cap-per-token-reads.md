@@ -15,17 +15,17 @@ requirements: [R8.10]
 roadmap_todos: [T8.21]
 modules: [M20]
 dashboards: [D17]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T030-mcp-rate-limits-and-response-cap-per-token-reads
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/ui/dashboards/D17-mcp-console.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_api` enforces the [R8.10](../../../docs/roadmap/phase-8-mcp.md#3-requirements) limits for every `source = mcp` call: by default **60 reads/min and 10 writes/min per token** and **256 KB per tool result**, all configurable ([16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8)). Excess calls get a clean 429; oversized results are capped with a visible marker (and a cursor where the endpoint pages). The limits live server-side, so they hold for raw calls too. Tested on the test stack; no keys.
+`mt-api` enforces the [R8.10](../../../docs/roadmap/phase-8-mcp.md#3-requirements) limits for every `source = mcp` call: by default **60 reads/min and 10 writes/min per token** and **256 KB per tool result**, all configurable ([16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8)). Excess calls get a clean 429; oversized results are capped with a visible marker (and a cursor where the endpoint pages). The limits live server-side, so they hold for raw calls too. Tested on the test stack; no keys.
 
 ## Context & references
 
 - Roadmap: [R8.10](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) ("rate limits and response cap") · verified by P8-T034 (T8.65)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (60 reads/min, 10 writes/min per token; 256 KB per result) · [17 §C P8-B013](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (MCP limits are 16 defaults) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) (configurable values are settings)
 - Spec: [03 M20 Limits](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4 Audit](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
 - UI: [D17 Tool registry](../../../docs/ui/dashboards/D17-mcp-console.md) (rate limit per tool, configurable) · `mcp.policy.set` (tighten C1, loosen C3)
@@ -58,7 +59,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `packages/mt_api/mcp/limits.py` (token buckets in NATS KV, read/write classification from the registry, kill exemption).
+- [ ] Implement `crates/mt-api/src/mcp/limits.rs` (token buckets in NATS KV, read/write classification from the registry, kill exemption).
 - [ ] Implement the result cap with marker and cursor hand-off, after `McpResponseGuard`.
 - [ ] Settings keys with 16 §2.12 defaults; `mcp.policy.set` fields for per-token overrides (tighten C1, loosen C3).
 - [ ] Metrics, alert rule and D17 usage fields in `/mcp/tools` / `/mcp/tokens`.
@@ -69,7 +70,7 @@ review_result: ""
 ### Tests
 - Unit: bucket math (60 reads then the 61st refused within the minute; refill after 60 s); write bucket separate from read bucket; kill ON never refused.
 - Unit: cap at 256 KB on a 1 MB fixture: valid JSON, `capped: true`, cursor resumes at the next record.
-- Integration: two tokens have independent buckets; a restart of mt_api keeps bucket state.
+- Integration: two tokens have independent buckets; a restart of mt-api keeps bucket state.
 - Integration: raising a token's write limit via `mcp.policy.set` triggers C3; lowering applies at once.
 
 ### Scenarios
@@ -96,10 +97,10 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT implement limits only in `mt_mcp`; `mt_api` is the authority.
+- Do NOT implement limits only in `mt-mcp`; `mt-api` is the authority.
 - Do NOT throttle or delay kill ON or protective exits.
 - Do NOT hard-code the limits; they are 16 §2.12 defaults in settings.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT update or delete WORM rows; corrections are new rows (15 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -118,3 +119,4 @@ review_result: ""
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for R8.10 / T8.21 (limits split out of P8-T005; defaults 60 reads/min, 10 writes/min per token, 256 KB per result from 16 §2.12)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

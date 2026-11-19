@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T024, P0-T027, P0-T020]
+depends_on: [P0-T024, P0-T027, P0-T020, P0-T071]
 requirements: [R2.40, R2.44]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
-tools: [uv, docker]
+tools: [uv, docker, supabase]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T101-lab-job-model-and-worker
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,22 +45,22 @@ review_result: ""
 - Spec: [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · ownership [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M7 owns `strategy.backtest`, `strategy.experiment`, publishes `lab.job.*`)
 - Containers: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) `backtest-worker` (`mt_lab`); the container itself, gVisor and resource limits come from T2.40 in part A (P2-T001–T099)
 - Dashboard consumer: [D04 job queue](../../../docs/ui/dashboards/D04-research-lab.md)
-- Cross-phase (`depends_on`): Alembic baseline (P0-T024) and `pit(as_of)` (P0-T027), both T0.22; compose stack with NATS JetStream + MLflow (P0-T020, T0.41). The `mt_api` command bus (P0-T034) is used by P2-T117.
+- Cross-phase (`depends_on`): Supabase migrations baseline (P0-T024) and `pit(as_of)` (P0-T027) with its Python binding `mt_store` (P0-T071), T0.22; compose stack with NATS JetStream + MLflow (P0-T020, T0.41). The `mt-api` command bus (P0-T034, Rust) is used by P2-T117.
 - Defaults: job caps (2 workers, 2 h) are D04 settings with documented defaults, not constants.
 
 ## Requirements
 
-- Alembic migration in `migrations/` for `strategy.backtest` (id, strategy_id, strategy_version, run_type, engine `screener|truth`, status, params JSON, data_range, as_of, cost_snapshot_id, seed, data_hash, code_sha, mlflow_run_id, metrics JSON, created_at, finished_at) and `strategy.experiment` (id, kind `sweep|validation|ab|generator|tier_a`, parent links, status).
-- Job states `queued → running → succeeded | failed | cancelled | timed_out`; transitions published on `lab.job.{id}` (progress 0–100, ETA, message) via `mt_core.schemas` versioned msgspec payloads.
+- SQL migration in `supabase/migrations/` for `strategy.backtest` (id, strategy_id, strategy_version, run_type, engine `screener|truth`, status, params JSON, data_range, as_of, cost_snapshot_id, seed, data_hash, code_sha, mlflow_run_id, metrics JSON, created_at, finished_at) and `strategy.experiment` (id, kind `sweep|validation|ab|generator|tier_a`, parent links, status).
+- Job states `queued → running → succeeded | failed | cancelled | timed_out`; transitions published on `lab.job.{id}` (progress 0–100, ETA, message) via versioned `mt-core` message schemas (serde in Rust, PyO3 classes in Python).
 - Queue on a JetStream work-queue stream `LAB_JOBS`; at-least-once delivery with an idempotency key so a redelivered job never runs twice concurrently (lease + heartbeat on `sys.heartbeat.backtest-worker`).
-- Resource caps per job from the D04 'Resources' field: max workers (default 2, ceiling = host cores − 4) and time cap (default 2 h); exceeded → `timed_out`.
+- Resource caps per job from the D04 'Resources' field: max workers (default 2, ceiling = workstation cores − 4) and time cap (default 2 h); exceeded → `timed_out`.
 - Cancel: `lab.job.cancel` stops the job within 5 s and marks it `cancelled`; partial artefacts kept and labelled incomplete.
 - Worker is stateless; a worker restart re-queues `running` jobs whose lease expired (≤ 60 s).
 
 ## ToDo
 
-- [ ] Create `packages/mt_lab/{__init__,jobs,models,worker}.py` and the Alembic migration for `strategy.backtest` + `strategy.experiment`
-- [ ] Define msgspec payloads `LabJobRequest`, `LabJobProgress`, `LabJobResult` in `mt_core.schemas.lab` (versioned)
+- [ ] Create `packages/mt_lab/{__init__,jobs,models,worker}.py` and the SQL migration in `supabase/migrations/` for `strategy.backtest` + `strategy.experiment` (pgTAP test)
+- [ ] Define payloads `LabJobRequest`, `LabJobProgress`, `LabJobResult` in `crates/mt-core/src/schemas/lab.rs` (versioned), exposed to Python through the `mt_store` module
 - [ ] Implement JetStream work queue `LAB_JOBS`, lease/heartbeat, redelivery guard and cancel signal (`lab.job.{id}.cancel`)
 - [ ] Implement time cap and worker-count cap enforcement; publish progress at ≤ 1 Hz
 - [ ] Expose a `JobRunner` plugin interface (`run(job, ctx) -> Result`) that later tasks (screener, truth, validation, sweep, generator, tier A) register into
@@ -71,8 +71,9 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k jobs`, `supabase test db`.
 - Unit: state machine rejects illegal transitions; idempotency key dedupes a redelivered message; cap parsing.
-- Integration (compose test profile with NATS + Postgres): enqueue a dummy runner job → progress events → `succeeded` row; cancel mid-run → `cancelled` within 5 s.
+- Integration (compose test profile with NATS + the Supabase CLI stack): enqueue a dummy runner job → progress events → `succeeded` row; cancel mid-run → `cancelled` within 5 s.
 
 ### Scenarios
 - Given a running job, when the worker container is killed, then after the lease (≤ 60 s) another worker picks it up and the job finishes once (no duplicate result rows).
@@ -92,7 +93,7 @@ review_result: ""
 
 ## Exceptions & edge cases
 
-- Clock: job timestamps are UTC from `mt_core.clock`; ETA is advisory only.
+- Clock: job timestamps are UTC from the `mt-core` clock (via the binding); ETA is advisory only.
 - Postgres down (02 §9.3): reject new jobs; running jobs buffer their result and retry the write, never drop it.
 - A job referencing a strategy version deleted/archived later still keeps its rows (never cascade-delete results).
 
@@ -101,7 +102,7 @@ review_result: ""
 - Do NOT run strategy code in the API process; jobs run only in `backtest-worker` (or `sandbox` for generated code).
 - Do NOT allow a job to place orders or reach venue endpoints; lab jobs have no venue credentials.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file (07 §2).
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

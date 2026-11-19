@@ -10,12 +10,12 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T022, P1-T016]
+depends_on: [P2-T022, P1-T016, P2-T201]
 requirements: [R2.30, R2.31, R2.32]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine/adapters/` lets strategies trade the OANDA v20 practice/paper account through the same engine path (M11 gate, explicit STP decision, epoch client IDs, reconciliation).
+A Nautilus live data + execution client for **OANDA v20**, written in Rust against Nautilus's adapter traits (skeleton from P2-T201), in `crates/mt-engine/src/adapters/` lets strategies trade the OANDA v20 practice/paper account through the same engine path (M11 gate, explicit STP decision, epoch client IDs, reconciliation).
 
 ## Context & references
 
@@ -57,7 +57,7 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 - Implements Nautilus `LiveExecutionClient`: submit/modify/cancel, order status reports, fill reports, position reports (`generate_order_status_reports`, `generate_fill_reports`, `generate_position_status_reports`) for restart reconciliation.
 - Maps `client_order_id` to the venue's client reference field; maps venue errors to Nautilus rejects with reason text.
 - Rate limits read from response headers where available; backoff with jitter; never retry a submit without checking status by client id first.
-- Secrets read from tmpfs (sops) via `mt_core.config`; keys never logged.
+- Secrets read from tmpfs (sops) via `mt_core::config`; keys never logged.
 
 ## ToDo
 
@@ -70,6 +70,7 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine adapters::oanda`, `cargo clippy -p mt-engine`.
 - Unit: payload mapping per order type (market, limit, stop, stop-limit, brackets where supported).
 - Integration (CI, cassettes): submit → ack → fill → report round-trip; cancel; reject mapping.
 - Live practice-account smoke with your credentials: P2-T071.
@@ -86,7 +87,7 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 - [ ] Adapter passes cassette tests in CI
 - [ ] Reports support restart reconciliation
 - [ ] No secret appears in logs (log scrubber test)
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -97,7 +98,7 @@ A Nautilus live data + execution client for **OANDA v20** in `packages/mt_engine
 
 - Do NOT hard-code keys or account ids.
 - Do NOT add broker/referral IDs to requests.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Keys are trade-only, IP-locked, withdrawals disabled. No live money before the P7 gates; this phase is paper/testnet/practice only.

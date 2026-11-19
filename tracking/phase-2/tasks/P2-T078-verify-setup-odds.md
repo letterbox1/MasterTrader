@@ -18,7 +18,7 @@ dashboards: [D04, D05]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T078-verify-setup-odds
 pr: ""
 doc_sync: [docs/roadmap/phase-2-strategies-risk-lab.md]
@@ -61,6 +61,7 @@ Evidence that setup odds are reproducible from their seed, never use data after 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k odds`.
 - Re-run with the same seed: byte-identical odds.
 - Inject a future bar: the leak test fails the build.
 
@@ -84,7 +85,7 @@ Evidence that setup odds are reproducible from their seed, never use data after 
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt_api`.
+- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt-api`.
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT copy code from repositories without a compatible licence; keep copyright and NOTICE files for MIT/Apache code ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)).
 

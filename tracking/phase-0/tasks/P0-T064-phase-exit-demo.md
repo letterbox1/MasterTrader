@@ -79,7 +79,7 @@ A recorded walkthrough on the production host proves all four roadmap exit crite
 - [ ] Every R0.xx has linked evidence
 - [ ] 0 open S1/S2 bugs; all tasks closed
 - [ ] PHASE.md exit boxes ticked
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

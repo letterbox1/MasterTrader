@@ -83,7 +83,7 @@ An adversarial test suite proves that confirmation levels are enforced server-si
 - [ ] Positive C3 path applies exactly once incl. across restarts
 - [ ] Kill ON never blocked under the listed faults; p99 < 200 ms
 - [ ] Suite runs in CI
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

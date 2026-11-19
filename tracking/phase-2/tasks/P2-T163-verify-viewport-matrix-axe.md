@@ -25,7 +25,7 @@ doc_sync: [DESIGN.md, docs/ui/README.md, docs/roadmap/phase-2-strategies-risk-la
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ All part-B routes (`/`, `/strategies`, `/strategies/new`, `/strategies/:id`, `/l
 ## Verification
 
 ### Tests
+- Commands: `pnpm playwright`.
 - Playwright matrix + axe across all routes and viewports.
 
 ### Scenarios

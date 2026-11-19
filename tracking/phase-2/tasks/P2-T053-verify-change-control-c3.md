@@ -15,17 +15,17 @@ requirements: [R2.19]
 roadmap_todos: [T2.24]
 modules: [M11]
 dashboards: [D06]
-tools: [uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres, supabase-auth]
 branch: p2/P2-T053-verify-change-control-c3
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,7 +66,8 @@ End-to-end tests prove: tightenings apply immediately at every layer; every loos
 ## Verification
 
 ### Tests
-- As above (pytest e2e against compose test stack).
+- Commands: `cargo test -p mt-api c3`, `cargo test -p mt-telegram-bot c3`.
+- As above (end-to-end against the compose test stack).
 
 ### Scenarios
 - Given cool-down 15 min (test-shortened to 5 s via config), when the timer ends, then the change applies and `risk.change` status becomes applied.
@@ -86,7 +87,7 @@ End-to-end tests prove: tightenings apply immediately at every layer; every loos
 ## Cardinal rules (do NOT)
 
 - Do NOT ship a production config with shortened cool-down.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.
 

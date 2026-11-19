@@ -79,7 +79,7 @@ An automated end-to-end scenario (Playwright + API) covers exit criterion 2: log
 - [ ] Scenario green in CI and on the host
 - [ ] Unhappy paths asserted
 - [ ] Evidence captured for exit criterion 2
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 

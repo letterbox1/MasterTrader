@@ -15,7 +15,7 @@ requirements: [R2.12]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`packages/mt_risk/sizing` implements fixed, fixed-fractional, volatility-target, stop-distance, capped-Kelly and risk-parity sizing, selectable per strategy, with the 14 §4 Kelly rules enforced in code and Decimal math throughout.
+`crates/mt-risk/src/sizing` implements fixed, fixed-fractional, volatility-target, stop-distance, capped-Kelly and risk-parity sizing, selectable per strategy, with the 14 §4 Kelly rules enforced in code and Decimal math throughout.
 
 ## Context & references
 
@@ -57,7 +57,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement models + selector in `packages/mt_risk/sizing/`
+- [ ] Implement models + selector in `crates/mt-risk/src/sizing/`
 - [ ] Policy validation rule (Kelly × vol-target)
 - [ ] Golden fixtures `tests/golden/sizing/*.yaml`
 - [ ] Property tests
@@ -66,6 +66,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk sizing`, `cargo clippy -p mt-risk`.
 - Golden: worked examples per model (inputs → exact Decimal units).
 - Property: size never exceeds risk/trade or max position caps; Kelly output ≤ 0.25·f; monotone in capital.
 - Unit: `2p−1` path impossible (b required); Kelly on vol-target sleeve → validation error.
@@ -82,7 +83,7 @@ review_result: ""
 - [ ] Six models implemented with golden tests
 - [ ] Kelly rules enforced and tested
 - [ ] All sizes Decimal and lot-rounded down
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -94,7 +95,7 @@ review_result: ""
 - Do NOT use floats for sizes or money.
 - Do NOT round sizes up to meet a venue minimum.
 - Do NOT default Kelly's b.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

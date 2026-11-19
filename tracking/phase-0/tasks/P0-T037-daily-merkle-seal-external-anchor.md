@@ -87,7 +87,7 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 - [ ] Anchor object present with compliance retention and recorded version id
 - [ ] Telegram witness delivered to the mocked Bot API with the message id stored (the real-day witness is checked in P0-T063)
 - [ ] Partial-anchor path alerts and retries (tested)
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

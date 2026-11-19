@@ -85,7 +85,7 @@ review_result: ""
 - [ ] P0 commands registered with correct levels
 - [ ] Exactly-once execution under duplicate submits (tested)
 - [ ] No command executes without an `accepted` audit row (tested)
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ review_result: ""
 
 - Do NOT add any write endpoint outside `/commands/{command}`.
 - Do NOT execute a handler before its audit row exists (except Kill ON, whose record goes through the JetStream buffer right after the KV write).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE WORM rows, ever; corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test to get CI green.

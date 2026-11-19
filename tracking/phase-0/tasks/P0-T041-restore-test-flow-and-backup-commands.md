@@ -81,7 +81,7 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 - [ ] Results visible via `/system/backups` and metrics
 - [ ] Alert on failure and on > 35 days without a pass
 - [ ] Scheduled monthly
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

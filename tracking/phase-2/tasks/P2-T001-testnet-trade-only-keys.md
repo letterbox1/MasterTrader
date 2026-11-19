@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/pract
 ## Requirements
 
 - Venues: Binance spot testnet + Binance futures testnet, Bybit testnet (paper only, per registry), Alpaca paper, OANDA v20 practice, IG demo, IBKR paper (optional).
-- Per key: **trade + read only**, withdrawals/transfers disabled, IP allow-list = the one fixed egress IP. The Sydney exit node with a static IP (16 §3.2) arrives with P7; until then allow-list the host's current public IP and re-point every key to the exit-node IP when it exists (a USER step in P7).
+- Per key: **trade + read only**, withdrawals/transfers disabled, IP allow-list = the one fixed egress IP. The Sydney exit node with a static IP (16 §3.2) arrives with P7; until then allow-list the workstation's current public IP and re-point every key to the exit-node IP when it exists (a USER step in P7).
 - **Separate `deadman` key per venue account** (16 §3.1 layer 2): trade-only, same IP lock, used only by the `deadman` sidecar to cancel and flatten (P2-T072). Name it `mt-deadman-<mode>`.
 - Practice/paper accounts that have no API-key concept (OANDA practice token, IG demo login, Alpaca paper keys, IBKR paper) use their normal credentials (no money at risk, 07 §3); record that in the metadata.
 - One sub-account (or separate practice account where sub-accounts don't exist) per mode: `paper`, `hitl`, `autonomous`.
@@ -62,7 +62,7 @@ Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/pract
 
 - [ ] For each venue above: create the sub-accounts (or note why the venue has none) named `mt-paper`, `mt-hitl`, `mt-auto`
 - [ ] Create an API key per sub-account with only trade + read permissions; screenshot (locally, not in git) the permission page showing withdrawals OFF
-- [ ] Set the IP allow-list to the host egress IP (run `curl -s https://ifconfig.me` on the host to read it)
+- [ ] Set the IP allow-list to the workstation's egress IP (run `curl -s https://ifconfig.me` on the workstation to read it)
 - [ ] Create the separate `deadman` key per venue account (trade-only, cancel/flatten use only, same IP lock)
 - [ ] Add each key to the sops file that lives **outside the repo** (07 §2, e.g. `sops ~/.config/mastertrader/secrets.enc.yaml`) → under `venues.<venue>.<mode>` (and `venues.<venue>.deadman`) add `api_key`, `api_secret`, `created`, `scopes`, `ip_allow`
 - [ ] Confirm the repo holds only `.sops.yaml` and the example file with key names (no values); run `gitleaks detect` locally

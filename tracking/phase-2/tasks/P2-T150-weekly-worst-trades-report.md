@@ -18,14 +18,14 @@ dashboards: [D04, D05]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres, supabase-storage]
 branch: p2/P2-T150-weekly-worst-trades-report
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A Prefect flow that every Monday 08:00 AEST/AEDT produces the weekly review pack — the five worst paper trades per sleeve with context, and realised-vs-modelled cost ratios — delivered as a Telegram digest link and an HTML report.
+A Prefect flow that every Monday 08:00 AEST/AEDT produces the weekly review pack — the five worst paper trades per sleeve with context, and realised-vs-modelled cost ratios — delivered as a Telegram digest link and an HTML report stored in a private Supabase Storage bucket (18 §4.5).
 
 ## Context & references
 
@@ -54,7 +54,7 @@ A Prefect flow that every Monday 08:00 AEST/AEDT produces the weekly review pack
 
 ## ToDo
 
-- [ ] Implement Prefect flow `weekly-review` in `mt_lab/reports/weekly.py`
+- [ ] Implement Prefect flow (Python) `weekly-review` in `mt_lab/reports/weekly.py`
 - [ ] HTML template + deep links
 - [ ] Schedule Monday 08:00 Australia/Sydney
 - [ ] Tests with fixture fills
@@ -62,6 +62,7 @@ A Prefect flow that every Monday 08:00 AEST/AEDT produces the weekly review pack
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k weekly`.
 - Unit: worst-five selection by R-multiple with ties broken by $ loss.
 - Integration: fixture week renders a report with cost ratios.
 

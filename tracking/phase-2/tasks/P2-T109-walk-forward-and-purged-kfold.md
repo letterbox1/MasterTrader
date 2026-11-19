@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,6 +66,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k folds`.
 - Unit: purged K-fold drops exactly the overlapping observations on a synthetic label-horizon fixture; embargo size correct.
 - Unit: worst fold equals min over folds; positive share counts folds with OOS return > 0 after costs.
 - Integration: walk-forward of an EMA template over a 3-year fixture produces N folds with stored data hashes.
@@ -93,7 +94,7 @@ review_result: ""
 
 - Do NOT judge walk-forward on the mean fold.
 - Do NOT optimise on test-fold data.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

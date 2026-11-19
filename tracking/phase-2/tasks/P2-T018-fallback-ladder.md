@@ -15,7 +15,7 @@ requirements: [R2.15]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D06-risk.md, docs/14-strategy-evidence-and-validat
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 
 ## ToDo
 
-- [ ] `packages/mt_risk/ladder.py`
+- [ ] `crates/mt-risk/src/ladder.rs`
 - [ ] Gate integration (size multiplier, hold, exits-only)
 - [ ] `risk.ladder.set` command classification
 - [ ] Endpoint + WS `risk.state` field
@@ -65,6 +65,7 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk ladder`, `cargo clippy -p mt-risk`.
 - Ladder tests: each input drives the expected rung; hysteresis; manual floor; C3 for step up.
 - Integration: rung 4 → entry rejected `ladder_exits_only`, exit allowed.
 
@@ -80,7 +81,7 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 - [ ] Six rungs implemented as in 03 M11/14 §5
 - [ ] Gate honours each rung
 - [ ] Manual set levels enforced server-side
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -91,7 +92,7 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 
 - Do NOT auto-recover from rungs 5–6.
 - Do NOT let a manual step-up bypass C3.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

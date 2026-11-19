@@ -84,7 +84,7 @@ review_result: ""
 - [ ] Chain failure banner + C3 Acknowledge work
 - [ ] C3 for loosening settings enforced end to end
 - [ ] No secret values rendered (tested)
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 

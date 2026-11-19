@@ -15,7 +15,7 @@ requirements: [R2.11]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,8 +55,8 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 
 ## ToDo
 
-- [ ] `packages/mt_risk/portfolio.py` (cluster exposure, concentration, VaR/ES job)
-- [ ] Prefect/engine timer for the 5-min recompute
+- [ ] `crates/mt-risk/src/portfolio.rs` (cluster exposure, concentration, VaR/ES job)
+- [ ] Engine timer (tokio interval) for the 5-min recompute
 - [ ] Breakdown endpoint fields
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -64,6 +64,7 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk portfolio`, `cargo clippy -p mt-risk`.
 - Unit: cluster cap rejection.
 - Unit: VaR on a known return series equals the textbook quantile.
 - Integration: breakdown endpoint returns all dimensions.
@@ -78,7 +79,7 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 
 - [ ] Cluster and concentration checks in the gate
 - [ ] VaR/ES cached and shown via API
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -87,7 +88,7 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 ## Cardinal rules (do NOT)
 
 - Do NOT run VaR computation inside the pre-trade check.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

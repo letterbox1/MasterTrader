@@ -88,7 +88,7 @@ With your real keys from P0-T007 in the secrets file, the LiteLLM gateway built 
 - [ ] Budget exhaustion falls back to `local-advisor` against the real provider
 - [ ] Every call is in `audit.llm_call` with a valid chain and matching `trace_id`
 - [ ] Spend ≤ US$0.10 logged; no key value appears in any log, output or file
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

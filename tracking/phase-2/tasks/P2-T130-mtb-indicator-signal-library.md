@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_strategy/lib -k signals`.
 - Unit: EMA/ATR equal TA-Lib on fixtures (where conventions match).
 - Golden: harness runs whatever golden sets exist; CI fails on any mismatch.
 - Property: streaming == batch for random inputs (hypothesis).

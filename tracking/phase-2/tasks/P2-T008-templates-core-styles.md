@@ -15,7 +15,7 @@ requirements: [R2.02, R2.03]
 roadmap_todos: [T2.21]
 modules: [M0]
 dashboards: [D03]
-tools: [uv]
+tools: [uv, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roa
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (vol-targeted), mean reversion, breakout and swing/position exist under `packages/mt_strategy/templates/`, each with a parameter schema that drives the UI `ParamForm` and Optuna.
+Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (vol-targeted), mean reversion, breakout and swing/position exist under `packages/mt_strategy/templates/` (Python), with Rust versions of the deterministic ones (EMA/MA crossover, trend on majors, mean reversion, breakout) under `crates/mt-engine/src/strategy/templates/` sharing the same manifest and parameter schema, each with a parameter schema that drives the UI `ParamForm` and Optuna.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 
 ## Requirements
 
-- Each template: `strategy.py` (MTStrategy subclass), `manifest.template.yaml` (params with types/ranges/defaults, `priority`, `evidence`, default `counterparty`/`benchmark` suggestions), README with evidence summary.
+- Each template: `strategy.py` (MTStrategy subclass) and, for the deterministic ones, `strategy.rs` (`MtStrategy` impl, identical signals on the same data), `manifest.template.yaml` (params with types/ranges/defaults, `priority`, `evidence`, default `counterparty`/`benchmark` suggestions), README with evidence summary.
 - Trend on majors: daily/4h, long only above slow MA or positive 30–90d momentum, shorts capped, vol target 15–20% annualised from 30–60d realised vol, ATR trailing stop 2–4× daily ATR, P1.
 - Scalping: tick/L2 driven, flagged 'deep books only'; intraday: session-aware; breakout + mean reversion: P3 per 14 §3.
 - Every template fixes the exit plan at entry (stop, target, time stop) in the `OrderIntent`.
@@ -67,6 +67,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_strategy/templates`, `cargo test -p mt-engine templates`.
 - Template tests: each creates a valid manifest and runs a backtest to completion on fixture data (D03 acceptance 1).
 - Unit: regime filter (trend long only above slow MA) blocks entries below it.
 - Unit: exit plan present on every emitted intent.
@@ -84,7 +85,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 - [ ] 7 templates with schemas and READMEs
 - [ ] Each passes the template test
 - [ ] Evidence and priority visible via `/strategies/templates`
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -95,7 +96,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 
 - Do NOT hard-code sizes or venue fees in templates; sizing comes from M11 models and costs from M16.
 - Do NOT add a template for any X/Never pattern.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

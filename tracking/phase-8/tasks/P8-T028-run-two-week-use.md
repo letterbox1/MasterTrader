@@ -15,17 +15,17 @@ requirements: [R8.04, R8.07]
 roadmap_todos: [T8.80]
 modules: [M20]
 dashboards: [D17]
-tools: [uv, git]
+tools: [git]
 mcp: []
 env: []
-services: [postgres, tailscale, telegram-bot]
+services: [supabase-postgres, tailscale, telegram-bot]
 branch: p8/P8-T028-run-two-week-use
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ You use MasterTrader through Claude for 14 consecutive days (paper/practice, or 
 ## Context & references
 
 - Roadmap: ToDo [T8.80](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) · [R8.04, R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - UI: [D17 Session activity](../../../docs/ui/dashboards/D17-mcp-console.md)
 - Related: P8-T017 (incident runbook if anything goes wrong).
 
@@ -103,3 +104,4 @@ You use MasterTrader through Claude for 14 consecutive days (paper/practice, or 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (auto-rule exception removed (no skip-approval), invariants incl. `approval.*`/`mcp.*` and C3 loosening, reads from `audit.mcp_call`, indefinite-token check, TTL is a setting; deps P8-T033/T034/T035; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (keeps P8-T018 (your client); tools trimmed)

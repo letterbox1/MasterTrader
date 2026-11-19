@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres, mlflow]
+services: [supabase-postgres, mlflow]
 branch: p2/P2-T115-optuna-sweeps-and-ab
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ review_result: ""
 
 - Search space from the manifest param schema (types, ranges, defaults); objective selectable (Sharpe, Calmar, net return) on in-sample folds only.
 - Complexity penalty: objective − λ·(number of free parameters) − μ·(rule count), λ/μ configurable (default λ = 0.05 Sharpe per free parameter); recorded with the study.
-- Samplers: TPE default, seeded; pruning via Optuna median pruner; storage in Postgres (`optuna` schema) so studies survive restarts.
+- Samplers: TPE default, seeded; pruning via Optuna median pruner; storage in Supabase Postgres (`optuna` schema) so studies survive restarts.
 - Every trial = MLflow run + trial-counter increment (P2-T108); best params never auto-promoted, they must pass validation.
 - Parameter-stability heatmap data (2-D slices around the optimum) for D04 Robustness.
 - A/B: two versions run on the same `data_hash` + `cost_snapshot_id` + seed; output a paired comparison (difference of returns, paired bootstrap CI).
@@ -65,6 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k optimise`.
 - Unit: penalty lowers the score of a 6-parameter variant vs a 2-parameter variant with equal raw Sharpe.
 - Integration: 30-trial sweep on the screener completes; 30 MLflow runs; trial count +30.
 - Integration: A/B on identical data asserts equal data hashes and returns a paired CI.
@@ -91,7 +92,7 @@ review_result: ""
 
 - Do NOT optimise on out-of-sample or test-fold data.
 - Do NOT auto-promote sweep winners.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

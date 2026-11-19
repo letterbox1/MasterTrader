@@ -15,17 +15,17 @@ requirements: [R8.04, R8.07]
 roadmap_todos: [T8.21]
 modules: [M15, M20]
 dashboards: [D01, D05, D17]
-tools: [uv, pnpm, docker, git]
+tools: [cargo, pnpm, docker, git]
 mcp: []
 env: []
-services: [postgres, nats, telegram-bot-api]
+services: [supabase-postgres, nats, telegram-bot-api]
 branch: p8/P8-T014-mcp-approval-cards
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/ui/dashboards/D05-execution.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Every MCP-originated order and C2 change raises your approval card on Telegram a
 ## Context & references
 
 - Roadmap: [R8.04, R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - HITL card: [15 §1.3](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) (order, risk preview, why, links, TTL; Approve / Approve ½ / Reject; TOTP for large orders; bound to your Telegram id)
 - UI: [D17 Pending approvals](../../../docs/ui/dashboards/D17-mcp-console.md) (`ApprovalCard` with source "MCP" + conversation excerpt) · [D05 source badges](../../../docs/ui/dashboards/D05-execution.md)
 - Decisions: [17 §A P8-B001/B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (MCP can never approve; C2 orders always your card, TTL 5 min) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (large-order TOTP threshold) · [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P2-B013 row: no bulk approve except the dynamic-selection batch card)
@@ -114,3 +115,4 @@ Every MCP-originated order and C2 change raises your approval card on Telegram a
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (card mandatory for every MCP order, TTL 5 min, large-order TOTP default from 16 §2.3, no batching for MCP (bulk approve only for dynamic selection), approvals only from web/Telegram; cross-phase deps P2-T038/T039/T149; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

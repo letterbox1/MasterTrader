@@ -15,17 +15,17 @@ requirements: [R2.55, R2.11]
 roadmap_todos: [T2.35]
 modules: [M11]
 dashboards: [D06, D03]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T069-config-layering-effective-limits
 pr: ""
 doc_sync: [docs/16-configuration-and-safety-model.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_risk.layers` merges the five configuration layers (L0 hard ceilings → L1 system → L2 venue/account → L3 sleeve → L4 bot) into one **effective** value per field and scope, where the effective value is always the **strictest** across layers; inconsistent settings are rejected at save time with the reason; and `/risk/policy` returns each effective limit with the layer that set it and its 16 default, so D06, D03 and the RiskGate all read the same merged view.
+`mt_risk::layers` merges the five configuration layers (L0 hard ceilings → L1 system → L2 venue/account → L3 sleeve → L4 bot) into one **effective** value per field and scope, where the effective value is always the **strictest** across layers; inconsistent settings are rejected at save time with the reason; and `/risk/policy` returns each effective limit with the layer that set it and its 16 default, so D06, D03 and the RiskGate all read the same merged view.
 
 ## Context & references
 
@@ -59,9 +59,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `packages/mt_risk/layers/merge.py` (direction-aware merge, scope resolution) and `validate.py` (save-time rules with reason codes)
+- [ ] `crates/mt-risk/src/layers/merge.rs` (direction-aware merge, scope resolution) and `validate.rs` (save-time rules with reason codes)
 - [ ] Hook validation into `risk.policy.update` and `bot.create`/`bot.update_*` before the P2-T019 classifier
-- [ ] Effective-limits endpoints in `mt_api` (`/risk/policy` fields, `/risk/policy/effective`)
+- [ ] Effective-limits endpoints in `mt-api` (`/risk/policy` fields, `/risk/policy/effective`)
 - [ ] Recompile + publish on version change; engine reload test
 - [ ] Golden tests + property tests (see Verification)
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -69,8 +69,9 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk layers`, `cargo clippy -p mt-risk`, `supabase test db`.
 - Golden: table of layer stacks → expected effective value and layer for every field kind (lower-is-tighter, higher-is-tighter, enable/disable).
-- Property (hypothesis): for random layer stacks the effective value is never looser than any layer; changing any layer to a tighter value never loosens the effective value.
+- Property (proptest): for random layer stacks the effective value is never looser than any layer; changing any layer to a tighter value never loosens the effective value.
 - Unit: each save-time rule rejects with its reason code (stage 1 ≥ stage 2, per-tx cap > 24 h cap, out of range, looser than parent, above L0).
 - Integration: `/risk/policy` returns layer, default and the 16 reference for every field.
 
@@ -88,7 +89,7 @@ review_result: ""
 - [ ] Effective value = strictest across L0–L4 for every field (golden + property tests)
 - [ ] Save-time validation rejects inconsistent settings with reasons
 - [ ] `/risk/policy` shows effective value, layer, default and ceiling per field
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -101,7 +102,7 @@ review_result: ""
 - Do NOT let any layer, manifest or bot override loosen beyond a parent layer; loosening within limits is C3 (P2-T019).
 - Do NOT merge layers on the order path; use the compiled tables.
 - Do NOT hard-code limits or defaults in the merge code.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

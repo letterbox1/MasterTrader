@@ -15,7 +15,7 @@ requirements: [R1.14]
 roadmap_todos: [T1.31]
 modules: [M17, M15]
 dashboards: [D16]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
 services: [nats, ntfy, alertmanager]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ One notifier consumes `alert.{severity}.{kind}` and delivers to Telegram (alerts
 
 ## Requirements
 
-- `mt_ui.telegram` alerts-only bot (python-telegram-bot, pinned): sends to your chat ID (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_ALERT_CHAT_ID` from the secrets file at runtime); ignores and does not store incoming messages except `/start` from the configured chat
+- `mt-telegram-bot` (Rust, teloxide, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) alerts-only bot: sends to your chat ID (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_ALERT_CHAT_ID` from the secrets file at runtime); ignores and does not store incoming messages except `/start` from the configured chat
 - Email via your mail provider's SMTP (TLS required; `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_APP_PASSWORD`, `ALERT_EMAIL_FROM`, `ALERT_EMAIL_TO` from the secrets file), or `alerts.email.enabled: false` (P1-T068); ntfy via HTTP publish with `NTFY_NOTIFIER_TOKEN`
 - Routing: `critical` → all three; `warning` → Telegram + ntfy; `info` → notification centre + daily digest; configurable defaults in `config/alerts.yaml` (loosening routing = C3 via the break-glass CLI (`mtctl approve <id>` + TOTP) until Telegram C3 lands in P2; tightening C1)
 - Dedupe key (kind + subject) with a 5 min window and escalation if still open after 15 min (defaults, configurable); global rate limit ≤ 1 msg/s per channel, never above Telegram's 30 msg/s
@@ -61,10 +61,10 @@ One notifier consumes `alert.{severity}.{kind}` and delivers to Telegram (alerts
 
 ## ToDo
 
-- [ ] Implement the notifier service (in `telegram-bot` container or `monitor`) with three channel adapters
+- [ ] Implement the notifier in `crates/mt-telegram-bot` (the `telegram-bot` container) with three channel adapters (teloxide, `lettre` SMTP with TLS, ntfy HTTP via `reqwest`)
 - [ ] Implement Alertmanager webhook bridge and `config/alerts.yaml`
-- [ ] CLI `mt-alerts test --channel <c>` used by P1-T003/T060
-- [ ] Migration for `ops.notification` delivery fields
+- [ ] CLI `mt-alerts test --channel <c>` (a subcommand of `mt-telegram-bot`) used by P1-T060 and P1-T003
+- [ ] Supabase migration for `ops.notification` delivery fields; pgTAP test
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -72,8 +72,9 @@ One notifier consumes `alert.{severity}.{kind}` and delivers to Telegram (alerts
 
 ### Tests
 
+- Run: `cargo test -p mt-telegram-bot alerts`, `cargo clippy`, `supabase test db`
 - Unit: routing matrix; dedupe and escalation timers; message formatting with no secrets/account numbers beyond last 4 chars
-- Integration: fake Telegram API, fake SMTP (aiosmtpd) and real ntfy container receive one alert each; Alertmanager webhook sample → all channels
+- Integration: fake Telegram API (`wiremock`), fake SMTP (a local test SMTP server) and the real ntfy container receive one alert each; Alertmanager webhook sample → all channels
 
 ### Scenarios
 
@@ -90,7 +91,7 @@ One notifier consumes `alert.{severity}.{kind}` and delivers to Telegram (alerts
 
 - [ ] A test alert reaches all three channels in the keyless integration test (fake Telegram/SMTP, real ntfy); delivery latency recorded per channel; email `disabled` handled cleanly
 - [ ] Grafana-originated alerts arrive through the same path
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -122,3 +123,4 @@ One notifier consumes `alert.{severity}.{kind}` and delivers to Telegram (alerts
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (one fan-out via webhook replacing P0 direct route (P1-B007); email via own SMTP app password or off (P1-B005); keyless build, live in P1-T060; P0 deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (notifier in Rust `mt-telegram-bot` (teloxide, lettre, reqwest) replacing python-telegram-bot; Supabase migration + pgTAP; tools cargo/supabase)

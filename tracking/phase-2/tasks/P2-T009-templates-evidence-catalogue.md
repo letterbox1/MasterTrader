@@ -15,7 +15,7 @@ requirements: [R2.02, R2.03]
 roadmap_todos: [T2.21]
 modules: [M0]
 dashboards: [D03]
-tools: [uv]
+tools: [uv, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_strategy/templates`, `cargo test -p mt-engine templates`.
 - Template tests: valid manifest + backtest completes for each (D03 acceptance 1).
 - Unit: carry entry blocked when trailing funding < fees + 8%.
 - Unit: memecoin template refuses averaging down and entries < 5 min after launch.
@@ -84,7 +85,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 - [ ] 8 templates + rule-based slot registered
 - [ ] Paper-only enforcement tested
 - [ ] Regime gates tested
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -95,7 +96,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 
 - Do NOT let memecoin or unlock templates leave paper in this phase.
 - Do NOT read Telegram text as a signal input; postures only (P4).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - No Telegram text in any model, RAG index or training set (12 §4–5).

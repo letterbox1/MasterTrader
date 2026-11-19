@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T017, P2-T018, P2-T069]
+depends_on: [P2-T017, P2-T018, P2-T069, P2-T202]
 requirements: [R2.N2, R2.10, R2.12, R2.13, R2.14]
 roadmap_todos: [T2.60]
 modules: [M11]
 dashboards: []
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/04-plan-of-action.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladder, gate decisions) plus hypothesis property tests runs in CI as a required status check, so no PR merges if any risk golden or property fails.
+A consolidated `crates/mt-risk/tests/golden/` suite (sizing, limits, sleeves/netting, ladder, gate decisions) plus proptest property tests runs in CI against the `mt-risk` crate (`cargo test -p mt-risk`) as a required status check, so no PR merges if any risk golden or property fails.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladd
 ## ToDo
 
 - [ ] Consolidate goldens + add missing cases
-- [ ] Hypothesis strategies for states/intents
+- [ ] proptest strategies for states/intents
 - [ ] CI job + branch protection rule
 - [ ] Golden diff report script
 - [ ] Record results (numbers, run IDs, screenshots) in the progress log and tick the roadmap ToDo box
@@ -64,13 +64,14 @@ A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladd
 ## Verification
 
 ### Tests
-- The suite itself; plus a mutation-testing run (mutmut on `mt_risk/limits` and `gate`) with ≥ 80% mutants killed, recorded.
+- Commands: `cargo test -p mt-risk --test golden`, `cargo test -p mt-risk` (proptest), `uv run pytest packages/mt_strategy -k risk_binding` (binding parity).
+- The suite itself; plus a mutation-testing run (cargo-mutants on `mt-risk` `limits` and `gate`) with ≥ 80% mutants killed, recorded.
 
 ### Scenarios
 - Given a PR that changes the daily-loss evaluator to `>=` instead of `>`, when CI runs, then the golden suite fails and merge is blocked.
 
 ### Stress / failure injection
-- Hypothesis with 50k examples nightly (5k in PR CI).
+- proptest with 50k cases nightly (5k in PR CI).
 
 ## Acceptance criteria
 
@@ -86,7 +87,7 @@ A consolidated `tests/golden/risk/` suite (sizing, limits, sleeves/netting, ladd
 
 - Do NOT update golden expected values without a PR note explaining why.
 - Do NOT mark risk tests skip/xfail.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 
 ## Doc sync on completion

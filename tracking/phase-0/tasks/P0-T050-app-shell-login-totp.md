@@ -89,7 +89,7 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 - [ ] Kill switch visible and keyboard-reachable within 2 tabs everywhere
 - [ ] Auth screens complete the first-boot flow
 - [ ] Routes D01–D18 stubbed with phase labels
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 
@@ -101,7 +101,7 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 - Do NOT render fake data in stubs (empty states only, DESIGN §10).
 - Do NOT store the session token in localStorage.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); Kill ON and protective exits never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 
 ## Doc sync on completion

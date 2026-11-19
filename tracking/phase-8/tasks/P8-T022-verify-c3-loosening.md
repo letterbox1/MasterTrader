@@ -15,17 +15,17 @@ requirements: [R8.05]
 roadmap_todos: [T8.60]
 modules: [M11, M20]
 dashboards: [D06, D17]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T022-verify-c3-loosening
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests" and T8.60's loosening half: loosening is never an MCP scope; every loosening reachable from MCP (any layer, L0 hard ceilings included) is applied only after your Telegram approve + TOTP and the cool-down, out of band; MCP tightening applies instantly. Fake Telegram + TOTP harness and an injected clock; no keys.
+Tests (`crates/mt-mcp/tests/security_c3.rs`) prove the R8.05 "C3 tests" and T8.60's loosening half: loosening is never an MCP scope; every loosening reachable from MCP (any layer, L0 hard ceilings included) is applied only after your Telegram approve + TOTP and the cool-down, out of band; MCP tightening applies instantly. Fake Telegram + TOTP harness and an injected clock; no keys.
 
 ## Context & references
 
 - Roadmap: [R8.05](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.60](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Spec: [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [02 §7.2 C3](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [02 F5](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · [15 §1.2](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots)
 - Decisions: [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance) (tighten immediate, loosen C3, every layer) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) (L0 ceilings in the bot strategy settings, loosening C3) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (cool-down 15 min) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (loosening never a scope)
 - Precedent: P2-T053 (change-control C3 and hard-ceilings tests).
@@ -101,3 +102,4 @@ Tests (`tests/security/test_mcp_c3.py`) prove the R8.05 "C3 tests" and T8.60's l
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (hard-ceilings file replaced by L0 in settings (17 §E): L0 tighten instant, loosen C3; loosening never a scope; path list per 02 §7.2; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

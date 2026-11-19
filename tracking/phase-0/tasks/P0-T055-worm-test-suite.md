@@ -86,7 +86,7 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 - [ ] External-anchor-only detection case (d) passes
 - [ ] Restore re-verify passes
 - [ ] Suite in CI and parametrised by registry
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

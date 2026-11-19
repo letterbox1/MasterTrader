@@ -15,17 +15,17 @@ requirements: [R2.54, R2.51]
 roadmap_todos: [T2.33, T2.34]
 modules: [M15]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
-services: [nats]
+services: [nats, supabase-auth]
 branch: p2/P2-T039-telegram-hitl-approval-cards
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,8 +57,8 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 
 ## ToDo
 
-- [ ] Card renderer + button handlers in `packages/mt_ui/telegram/approvals.py`
-- [ ] TOTP reply sub-flow
+- [ ] Card renderer + button handlers in `crates/mt-telegram-bot/src/approvals.rs`
+- [ ] TOTP reply sub-flow (checked by `mt-api` against the Supabase MFA factor; reuses the short `aal2` command session, 18 §4.6)
 - [ ] Batch card
 - [ ] Rate-limit aware message editor
 - [ ] Tests
@@ -67,6 +67,7 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-telegram-bot approvals`, `cargo clippy -p mt-telegram-bot`.
 - Unit: card render snapshot tests (normal, warnings, batch).
 - Flow tests: approve, ½, reject, pause bot, expiry, large-order TOTP.
 - Unit: callback from another user id ignored.
@@ -83,7 +84,7 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 - [ ] Card content matches 15 §1.3
 - [ ] All four buttons + TOTP path work
 - [ ] Snapshots stored WORM
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -94,7 +95,7 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 
 - Do NOT include any Telegram-sourced text in 'Why'.
 - Do NOT execute on a tap received after TTL.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

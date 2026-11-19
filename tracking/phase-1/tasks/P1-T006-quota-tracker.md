@@ -15,17 +15,17 @@ requirements: [R1.08]
 roadmap_todos: [T1.25]
 modules: [M1]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, uv, supabase, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T006-quota-tracker
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/ui/dashboards/D07-data-quality.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 ## Requirements
 
-- `mt_data.quota.QuotaTracker`: token buckets per (source, scope) with rolling windows (per second, minute, day, month); `acquire(cost)` blocks or raises `QuotaExhausted`
+- `QuotaTracker` in `mt-core` (Rust; [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), used by `mt-recorder`, `mt-monitor` and, through the PyO3 binding, by the Python batch flows: token buckets per (source, scope) with rolling windows (per second, minute, day, month); `acquire(cost)` waits or returns `QuotaExhausted`
 - Budgets from `config/quotas.yaml` with a documented source for each number; live overrides from headers (e.g. Binance `X-MBX-USED-WEIGHT-1M`, Alpaca/Finnhub `X-RateLimit-Remaining`, `Retry-After`)
 - Throttle thresholds are configurable defaults: warn at 80% of the free limit (D07), hard stop at 95%; never exceed 100%
 - Header parsers are tested on recorded/documented headers in CI (keyless); reading them from real keyed endpoints is checked in P1-T073
@@ -62,7 +62,7 @@ Every connector asks one quota tracker before each call; it throttles before any
 - [ ] Implement the token-bucket tracker with NATS KV backing and a local fallback bucket at 50% budget if KV is down
 - [ ] Header parsers for Binance, Bybit, OKX, Alpaca, OANDA, FRED, Finnhub, generic `Retry-After`
 - [ ] Create `config/quotas.yaml` with every P1 source and its cited free limit (mark unknown limits `verify: true` and run at a conservative default)
-- [ ] Migration for `ops.quota_usage`; minute snapshot job
+- [ ] Supabase migration (`supabase/migrations/*.sql`) for `ops.quota_usage` with pgTAP test; minute snapshot job
 - [ ] Wire into the connector base (P1-T005) so no connector can call out without `acquire`
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -71,9 +71,9 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 ### Tests
 
-- Unit: bucket maths across windows; header override lowers budget; `Retry-After` pauses the scope
-- Property (hypothesis): for any random call sequence, granted calls never exceed the configured limit in any window
-- Integration: two worker processes share one KV budget and together stay under the limit
+- `cargo test -p mt-core quota`: bucket maths across windows; header override lowers budget; `Retry-After` pauses the scope
+- Property (proptest): for any random call sequence, granted calls never exceed the configured limit in any window
+- Integration: a Rust connector and a Python worker (through the binding) share one KV budget and together stay under the limit (`uv run pytest -k quota_shared`)
 
 ### Scenarios
 
@@ -83,13 +83,13 @@ Every connector asks one quota tracker before each call; it throttles before any
 ### Stress / failure injection
 
 - Fault injection: provider returns 429 with `Retry-After: 120` → all callers for that source pause 120 s, no retry storm (count requests during pause = 0)
-- Load: 10k `acquire` calls/s from 8 coroutines; p99 acquire latency < 1 ms locally
+- Load: 10k `acquire` calls/s from 8 tokio tasks; p99 acquire latency < 1 ms locally
 
 ## Acceptance criteria
 
-- [ ] No connector code path performs an outbound request without `acquire` (enforced by a test that greps for raw `httpx` clients outside `mt_data.core`)
+- [ ] No connector code path performs an outbound request without `acquire` (enforced by a test that greps for raw `reqwest`/`httpx` clients outside the connector bases in `mt-recorder` and `mt_data.core`)
 - [ ] Quota warnings appear at 80%, before throttling starts (D07 acceptance 3)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -118,3 +118,4 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (thresholds as configurable defaults; live headers verified in P1-T073; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (quota tracker in Rust `mt-core` with Python binding; Supabase migration + pgTAP for `ops.quota_usage`; proptest; tools cargo/uv/supabase; services supabase-postgres)

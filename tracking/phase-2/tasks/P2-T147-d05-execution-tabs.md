@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D05-execution.md, docs/roadmap/phase-2-strategies-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: DESIGN.md §6.8 viewport matrix (overflow + fixed-bar overlap checks) and axe on the new routes; Vitest + Testing Library for components.
 - Playwright: cancel-all on 20 fixture orders shows server timing < 1 s; TCA fee sum equals fills sum.
 
@@ -88,12 +89,12 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt_api`.
+- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt-api`.
 - Do NOT use `100vh`/`h-screen`, unprefixed multi-column grids or the Tailwind CDN (DESIGN.md §6.3–6.5).
 - Do NOT sum or show paper and live money without a mode label.
 - Do NOT display or fetch key secrets; `/system/keys` is masked metadata only.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file (07 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

@@ -15,17 +15,17 @@ requirements: [R3.02, R3.N1]
 roadmap_todos: [T3.41]
 modules: [M18]
 dashboards: []
-tools: [git, uv, docker, sops, age, openssl]
+tools: [git, cargo, supabase, docker, sops, age, openssl]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T006-journal-roles-and-column-keys
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,9 +42,10 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 ## Context & references
 
 - Roadmap: [T3.41, R3.02, R3.N1](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [07 §2 secrets](../../../docs/07-security-notes.md#2-secrets) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · [15 §2 privileges layer](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - Decision: [17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions) (yearly data keys wrapped by a master key; rotation re-wraps keys in a non-WORM key table, never rows) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · [15 §2 Encryption row](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · key rotation reminder every 90 days [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)
-- Cross-phase prerequisites (depends_on): P0-T022 (sops + age → tmpfs, per-service scoping), P0-T024 (schemas, roles, Alembic); P0-T013 (`worm_owner` offline credential) is used to run the role migration
+- Cross-phase prerequisites (depends_on): P0-T022 (sops + age → tmpfs, per-service scoping), P0-T024 (schemas, roles, Supabase migrations); P0-T013 (`worm_owner` offline credential) is used to run the role migration
 - Related: P3-T007 (encryption helpers), P3-T047 (WORM tests), P3-T059 (rotation drill, T3.66)
 
 ## Requirements
@@ -60,10 +61,10 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 - [ ] Add role DDL migration `journal_0002_roles` (run as `worm_owner` from the offline secret)
 - [ ] Migration for `ops.journal_data_key` (non-WORM, audited) and its grants (`journal` only)
 - [ ] Add `journal` secrets stanza to `infra/sops/.sops.yaml` and the compose service's tmpfs mount
-- [ ] Generate `JOURNAL_MASTER_KEY` on the host (`openssl rand -base64 32`) straight into the sops file; never echo it
-- [ ] Implement data-key create/unwrap in `packages/mt_journal/keys.py` and the `mtctl journal-keys rewrap` CLI
+- [ ] Generate `JOURNAL_MASTER_KEY` on the workstation (`openssl rand -base64 32`) straight into the sops file; never echo it
+- [ ] Implement data-key create/unwrap in `crates/mt-journal/src/keys.rs` and the `mtctl journal-keys rewrap` CLI
 - [ ] Ensure `mt-api`, `agents`, `litellm`, `decision-svc` have no access to the master key or the key table (compose scoping + grant test)
-- [ ] Startup check in `mt_journal.app` that refuses to run without the master key and logs only its version
+- [ ] Startup check in `mt_journal::app` that refuses to run without the master key and logs only its version
 - [ ] Write tests; update docs
 
 ## Verification
@@ -123,3 +124,4 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (envelope encryption per P3-B009: master key in sops, yearly data keys wrapped in non-WORM `ops.journal_data_key`, rewrap-only rotation; explicit P0 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Supabase migrations; `mt-journal` key module; tools cargo/supabase)

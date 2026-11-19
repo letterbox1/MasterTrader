@@ -84,7 +84,7 @@ At the end of the phase the agent switches the validated P1 candidates (trend on
 ## Cardinal rules (do NOT)
 
 - Do NOT bypass validation to start the clock early.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Keys are trade-only, IP-locked, withdrawals disabled. No live money before the P7 gates; this phase is paper/testnet/practice only.
 
 ## Doc sync on completion

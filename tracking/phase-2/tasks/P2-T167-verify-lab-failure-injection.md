@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T167-verify-lab-failure-injection
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Evidence that the lab degrades safely: worker crashes, MLflow/Postgres/NATS/gateway outages and resource exhaustion never produce a false 'pass', never lose results, and never affect the trading engine.
+Evidence that the lab degrades safely: worker crashes, MLflow/Supabase Postgres/NATS/gateway outages and resource exhaustion never produce a false 'pass', never lose results, and never affect the trading engine.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ Evidence that the lab degrades safely: worker crashes, MLflow/Postgres/NATS/gate
 
 - Injections: kill `backtest-worker` mid-validation; stop MLflow 10 min; stop Postgres 2 min; drop NATS 30 s; exhaust the `lab-review`/`strategy-gen` gateway budget; fill `/tmp` in the worker; run 3 sweeps + 2 validations + 1 generation concurrently.
 - Expected: jobs re-queued or failed with reason; no duplicate result rows; MLflow sync resumes; gates never 'pass' on missing sections; gateway falls back to local model and reports it; engine heartbeat and order path p99 unaffected (part A metrics).
-- Load: 20 concurrent jobs with 4 workers on the host for 2 h without OOM; CPU isolation keeps engine cores free.
+- Load: 20 concurrent jobs with 4 workers on the workstation for 2 h without OOM; CPU isolation keeps engine cores free.
 
 ## ToDo
 
@@ -59,6 +59,7 @@ Evidence that the lab degrades safely: worker crashes, MLflow/Postgres/NATS/gate
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest tests/chaos/lab`.
 - Chaos suite (manual/nightly-weekly) with assertions on DB state after each injection.
 
 ### Scenarios

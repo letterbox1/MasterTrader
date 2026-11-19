@@ -15,17 +15,17 @@ requirements: [R2.17]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T016-venue-registry-check-2x-cap
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 
 ## ToDo
 
-- [ ] `packages/mt_risk/venue.py` check + cache
+- [ ] `crates/mt-risk/src/venue.rs` check + cache
 - [ ] Command handler with classification
 - [ ] NATS subscriber for reload
 - [ ] Tests
@@ -68,6 +68,7 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk venue`, `cargo clippy -p mt-risk`.
 - Rejection tests: Bybit perps (`blocked`, not `paper_ok`) rejected in every mode; a `blocked` + `paper_ok` perp accepted for a `paper` bot and rejected for a `hitl` bot; a `read_only` venue accepted for paper, rejected for `hitl`; Binance AU spot (`allowed`) accepted.
 - Unit: 3× leverage on a crypto perp clamps/rejects to 2× even if registry says 5×.
 - Unit: loosening `venue.registry.update` requires C3.
@@ -84,7 +85,7 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 - [ ] Every order passes the registry check (bypass test in P2-T052)
 - [ ] 2× cap enforced independent of venue settings
 - [ ] Live reload < 1 s
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -95,7 +96,7 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 
 - Do NOT allow VPN/proxy routing to reach a blocked venue.
 - Do NOT trade Polymarket; read-only only.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

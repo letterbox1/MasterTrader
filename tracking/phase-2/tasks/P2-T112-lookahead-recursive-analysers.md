@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-2-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ Automated look-ahead and recursive-indicator analysers (freqtrade's `lookahead-a
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k bias`.
 - Unit: each fixture is classified correctly (clean passes all; each buggy one fails exactly its analyser).
 - Integration: analysers run on an EMA template via truth runner and pass.
 

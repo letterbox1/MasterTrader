@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,22 +49,23 @@ Calibrated tier-A models are compiled to ONNX Runtime, Treelite or lleaves, veri
 
 - Compilers: lleaves (LightGBM → LLVM), Treelite (XGBoost/LightGBM), ONNX (linear/MLP and fallback); pick the fastest that passes parity.
 - Parity: |compiled − python| ≤ 1e-6 on 10,000 holdout rows (probabilities after calibration).
-- Benchmark: single-row in-process prediction latency histogram (p50/p99/p99.9) on the target host CPU; p99 must be < 50 µs to register as `promotable`.
+- Benchmark: single-row in-process prediction latency histogram (p50/p99/p99.9) on the workstation CPU (the runtime host until the P7 shift); p99 must be < 50 µs to register as `promotable`.
 - Register in MLflow (`tier_a/<strategy>`), stages None → Staging (promotion beyond Staging follows §8 gates); mirror row in `models.registry` (version, data range, feature versions, calibration metrics, latency).
 - Artefacts pinned by hash; the engine loads by hash, not by 'latest'.
 
 ## ToDo
 
 - [ ] Implement `mt_models/tier_a/compile.py` for the three back-ends
-- [ ] Parity and latency benchmark harness (pytest-benchmark + hdrhistogram)
+- [ ] Parity and latency benchmark harness (pytest-benchmark + hdrhistogram; criterion for the ONNX `ort` path)
 - [ ] Migration for `models.registry`; MLflow registration
 - [ ] Tests + doc
 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_models -k compile`.
 - Integration: LightGBM fixture compiled via lleaves and Treelite; parity within 1e-6.
-- Benchmark (CI perf job on the reference host or marked slow): p99 < 50 µs single-row.
+- Benchmark (perf job on the workstation or marked slow): p99 < 50 µs single-row.
 
 ### Scenarios
 - Given a model whose compiled p99 is 80 µs, then it registers as `not_promotable: latency` and the D03 decision section cannot select it.
@@ -82,7 +83,7 @@ Calibrated tier-A models are compiled to ONNX Runtime, Treelite or lleaves, veri
 
 ## Exceptions & edge cases
 
-- CPU without AVX2: compile flags chosen at build time for the host; mismatch detected on load (P2-T128).
+- CPU without AVX2: compile flags chosen at build time for the target CPU; mismatch detected on load (P2-T128).
 
 ## Cardinal rules (do NOT)
 

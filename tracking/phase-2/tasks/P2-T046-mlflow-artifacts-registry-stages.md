@@ -18,14 +18,14 @@ dashboards: []
 tools: [docker, uv]
 mcp: []
 env: []
-services: [mlflow, postgres]
+services: [mlflow, supabase-postgres]
 branch: p2/P2-T046-mlflow-artifacts-registry-stages
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,8 +48,8 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 
 ## Requirements
 
-- Backend store Postgres (`mlflow` DB/schema), artefact root `/data/mlflow/artifacts` (local volume), included in restic backups.
-- Registry aliases: `candidate` → `staging` → `production`, `archived`; promotion to `production` only via `models.promote` command (mt_api, audited) — not via MLflow UI (UI bound to localhost/Tailscale, read-mostly).
+- Backend store: the Supabase Postgres (`mlflow` schema), artefact root `/data/mlflow/artifacts` (local volume), included in restic backups.
+- Registry aliases: `candidate` → `staging` → `production`, `archived`; promotion to `production` only via `models.promote` command (mt-api, audited) — not via MLflow UI (UI bound to localhost, read-mostly; Tailscale only for optional phone access, 18 §8).
 - Service tokens: backtest-worker read/write runs; engine read-only for `production` models.
 - Retention: artefacts forever (02 §5.1).
 
@@ -64,6 +64,7 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k mlflow` against the compose stack.
 - Smoke: log a run with params/metrics/artefact; register model; set alias; engine token can read but not write.
 - Restore test: artefact restored from restic matches hash.
 
@@ -78,7 +79,7 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 - [ ] Artefacts persisted + backed up
 - [ ] Stages/aliases configured
 - [ ] Promotion only via audited command
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: compose config check, image digests pinned, smoke tests
 
 ## Exceptions & edge cases
 
@@ -86,7 +87,7 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 
 ## Cardinal rules (do NOT)
 
-- Do NOT expose MLflow outside localhost/Tailscale.
+- Do NOT expose MLflow outside localhost (or your tailnet when you use one).
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Pin images by digest; no telemetry or referral/broker IDs in vendored code.

@@ -88,7 +88,7 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 - [ ] All routes answer mock-provider smoke calls (live: P0-T068)
 - [ ] Budget exhaustion falls back to local (tested); budgets come from the 16 §2.10 defaults in settings
 - [ ] Every call audited in `audit.llm_call`; spend metric in Prometheus
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

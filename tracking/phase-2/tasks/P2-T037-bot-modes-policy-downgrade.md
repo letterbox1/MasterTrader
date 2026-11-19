@@ -15,17 +15,17 @@ requirements: [R2.53, R2.20]
 roadmap_todos: [T2.34]
 modules: [M11]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T037-bot-modes-policy-downgrade
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 
 ## ToDo
 
-- [ ] Mode/policy service in `packages/mt_strategy/bots/modes.py`
+- [ ] Mode/policy service in `crates/mt-api/src/bots/modes.rs`
 - [ ] Trigger subscribers (risk.event, KV ladder, dq.status, heartbeat, venue.registry.changed)
 - [ ] Escalation evaluator in routing (P2-T033)
 - [ ] Tests
@@ -65,6 +65,7 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-api bots::modes`, `cargo test -p mt-risk modes`, `cargo clippy`.
 - Unit: level matrix for every mode transition.
 - Unit: each downgrade trigger → hitl within 1 s, audited.
 - Unit: escalation rule converts an autonomous order into an approval request.
@@ -82,7 +83,7 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 - [ ] Mode levels enforced server-side
 - [ ] All six downgrade triggers wired and audited
 - [ ] Escalation + quiet hours work
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -93,7 +94,7 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 
 - Do NOT auto-upgrade a bot back to autonomous.
 - Do NOT let escalation be bypassed by order splitting (rule evaluated on parent intent notional).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

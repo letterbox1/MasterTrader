@@ -18,14 +18,14 @@ dashboards: [D05, D01]
 tools: [pnpm]
 mcp: []
 env: []
-services: []
+services: [supabase-auth]
 branch: p2/P2-T149-web-approvals-queue
 pr: ""
 doc_sync: [docs/ui/dashboards/D05-execution.md, docs/ui/dashboards/D01-cockpit.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ The web approvals queue in part B's dashboards — D05 Approvals tab (pending + 
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: DESIGN.md §6.8 viewport matrix (overflow + fixed-bar overlap checks) and axe on the new routes; Vitest + Testing Library for components.
 - Playwright: approve on 390×844 in ≤ 2 taps after opening; expiry fixture moves item to history; Telegram-side decision reflected < 1 s.
 
@@ -85,16 +86,16 @@ The web approvals queue in part B's dashboards — D05 Approvals tab (pending + 
 
 ## Exceptions & edge cases
 
-- Session expired (12 h): approving requires re-login + TOTP; TTL keeps running.
+- Session expired (12 h): approving requires a fresh Supabase Auth login + TOTP (`aal2`, 18 §4.6); TTL keeps running.
 - mt-api down: web approvals unavailable; Telegram path (part A) still works.
 
 ## Cardinal rules (do NOT)
 
-- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt_api`.
+- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt-api`.
 - Do NOT use `100vh`/`h-screen`, unprefixed multi-column grids or the Tailwind CDN (DESIGN.md §6.3–6.5).
 - Do NOT sum or show paper and live money without a mode label.
 - Do NOT queue approvals offline or retry an approval after TTL.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT let any UI/API path loosen risk, enable autonomous mode or turn the kill switch off without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT skip, weaken or delete a test to get green.
 

@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ A pure sizing/risk helper library in `mt_strategy.lib.sizing` (vol targeting, st
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_strategy/lib -k sizing`.
 - Unit: stop-distance formula on worked examples; rounding never exceeds caps.
 - Golden: MTB historical sizes reproduced (when T2.04 data present).
 
@@ -85,7 +86,7 @@ A pure sizing/risk helper library in `mt_strategy.lib.sizing` (vol targeting, st
 
 - Do NOT implement Kelly or stack Kelly on vol targeting here.
 - Do NOT treat library output as approval; every order still goes through M11.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

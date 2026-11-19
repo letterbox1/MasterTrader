@@ -89,7 +89,7 @@ review_result: ""
 - [ ] Vitest + axe clean
 - [ ] Gallery route covers all states
 - [ ] Docs updated
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 

@@ -18,14 +18,14 @@ dashboards: [D15]
 tools: [git, node>=20, pnpm]
 mcp: []
 env: []
-services: [mt-api]
+services: [mt-api, supabase-auth, supabase-storage]
 branch: p3/P3-T041-ui-d15-tax-reports
 pr: ""
 doc_sync: [docs/ui/dashboards/D15-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R3.14, T3.29](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 2 · dashboard spec [D15](../../../docs/ui/dashboards/D15-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Mock-up fix list in D15 (lot method, FY labels, citations, not-advice) · viewport matrix [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
 - Cross-phase prerequisites (depends_on): P0-T048 (typed API + WS client), P0-T049 (component library, confirm sheets), P0-T050 (app shell)
 - Commands: [D15 actions](../../../docs/ui/dashboards/D15-tax.md) (lock/unlock FY C3, unlock needs a reason; `task.answer` C1; residency add C1 with preview, C3 if it loosens) · decisions [17 §D P3-B005/B006/B007/B016](../../../docs/17-decisions-register.md#d-other-decisions)
@@ -100,7 +101,7 @@ review_result: ""
 - Do NOT compute tax figures in the browser; the UI only displays server results.
 - Do NOT hide the not-advice footer at any breakpoint.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -120,3 +121,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (PAYG both methods (P3-B005), FY lock/unlock C3 and `task.answer` C1 (P3-B006), residency loosening C3 (P3-B007), perps question (P3-B016); P3-T055 + P0 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-auth/storage)

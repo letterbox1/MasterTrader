@@ -15,17 +15,17 @@ requirements: [R8.03, R8.04, R8.05, R8.07, R8.08]
 roadmap_todos: [T8.20, T8.21]
 modules: [M20, M8, M11, M19]
 dashboards: [D17, D06, D05, D03]
-tools: [uv, pnpm, docker, git]
+tools: [cargo, pnpm, docker, git]
 mcp: []
 env: []
-services: [postgres, nats, litellm, llm-local, mt-engine]
+services: [supabase-postgres, nats, litellm, llm-local, mt-engine]
 branch: p8/P8-T026-verify-conversational-scenarios
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A scenario suite (`tests/scenarios/mcp_e2e/`, MCP SDK client against the full compose test stack on the sandbox paper venue/testnets, fake Telegram harness, local models) shows each tool group behaving as specified, end to end, including resource notifications, the audit trail and D17. No real client or keys.
+A scenario suite (`crates/mt-mcp/tests/scenarios/mcp_e2e/`, `rmcp` client against the full compose test stack on the sandbox paper venue/testnets, fake Telegram harness, local models) shows each tool group behaving as specified, end to end, including resource notifications, the audit trail and D17. No real client or keys.
 
 ## Context & references
 
 - Roadmap: [R8.03–R8.05, R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDos [T8.20, T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Decisions: [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) · [17 §A P8-B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
 
@@ -86,7 +87,7 @@ A scenario suite (`tests/scenarios/mcp_e2e/`, MCP SDK client against the full co
 ## Cardinal rules (do NOT)
 
 - Do NOT use live accounts.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -104,3 +105,4 @@ A scenario suite (`tests/scenarios/mcp_e2e/`, MCP SDK client against the full co
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (every trade action incl. cancel → card with TTL 5 min expiry case, modes `paper`/`hitl`/`autonomous` with paper → hitl C2, scope errors, S8 resource notifications; dep P8-T032; added R8.08; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

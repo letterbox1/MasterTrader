@@ -15,17 +15,17 @@ requirements: [R2.10, R2.20, R2.18, R2.19, R2.34]
 roadmap_todos: [T2.60, T2.61]
 modules: [M0, M11, M12, M15, M16]
 dashboards: [D06, D03]
-tools: [uv, docker, pnpm]
+tools: [cargo, uv, docker, pnpm]
 mcp: []
 env: []
-services: [nats, postgres, grafana]
+services: [nats, supabase-postgres, grafana, supabase-auth]
 branch: p2/P2-T063-verify-part-a-e2e-flows
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 
 ## ToDo
 
-- [ ] Scenario script `ops/demo/part_a_flows.py`
+- [ ] Scenario script `tests/scenarios/part_a_flows.py`
 - [ ] Run, capture evidence (screenshots, audit ids)
 - [ ] Report in progress log
 - [ ] Record results (numbers, run IDs, screenshots) in the progress log and tick the roadmap ToDo box
@@ -62,6 +62,7 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest tests/scenarios/part_a_flows.py`, `pnpm playwright`.
 - The scripted scenario (repeatable).
 
 ### Scenarios
@@ -82,7 +83,7 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 ## Cardinal rules (do NOT)
 
 - Do NOT stage evidence; run against the real paper path.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.
 

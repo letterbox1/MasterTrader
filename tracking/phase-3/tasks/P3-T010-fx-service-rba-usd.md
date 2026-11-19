@@ -15,17 +15,17 @@ requirements: [R3.03]
 roadmap_todos: [T3.21]
 modules: [M18]
 dashboards: []
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T010-fx-service-rba-usd
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_journal.fx` returns, for any (currency, date/time), the AUD and USD rate with `fx_rate_source` and `fx_rate_ts`, sourced from RBA F11 for AUD, with the decided rule for weekends, public holidays and currencies not in F11 (last published business day; via USD), and every rate used is persisted in `journal.fx_rate` so reports are reproducible.
+`mt_journal::fx` returns, for any (currency, date/time), the AUD and USD rate with `fx_rate_source` and `fx_rate_ts`, sourced from RBA F11 for AUD, with the decided rule for weekends, public holidays and currencies not in F11 (last published business day; via USD), and every rate used is persisted in `journal.fx_rate` so reports are reproducible.
 
 ## Context & references
 
 - Roadmap: [R3.03, T3.21](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 goals §5](../../../docs/09-journal-and-tax.md#goals) (native + USD + AUD, RBA daily) · [11 §3 base currency resolution](../../../docs/11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) · [02 F9 step 2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Rule: [09 FX and valuation rules](../../../docs/09-journal-and-tax.md#fx-and-valuation-rules) · [16 §4.3 FX for tax](../../../docs/16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants) · decision [17 §D P3-B008](../../../docs/17-decisions-register.md#d-other-decisions)
 - Cross-phase prerequisites (depends_on): P1-T020 (RBA F11 daily FX), P1-T019 (Frankfurter/ECB reference rates), P0-T027 (`pit(as_of)`)
@@ -57,7 +58,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/fx/service.py`, `fx/rba.py` (reader over `market.macro_series`), `fx/cross.py`
+- [ ] Implement `crates/mt-journal/src/fx/service.rs`, `fx/rba.rs` (reader over `market.macro_series`), `fx/cross.rs`
 - [ ] Persist used rates to `journal.fx_rate` (append-only, idempotent per (pair, date, source))
 - [ ] Pending-FX queue + retry flow (Prefect `journal-fx-backfill`, hourly)
 - [ ] Unit + golden tests with a fixture of F11 rows (incl. a long weekend and Christmas)
@@ -99,7 +100,7 @@ review_result: ""
 - Do NOT default a missing rate to 1 or interpolate silently.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -118,3 +119,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (RBA gap rule = last published business day, non-F11 via USD (P3-B008 closed); staleness limit is a setting; explicit P1/P0 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (FX service in the `mt-journal` crate (09 architecture, 18 §2.1))

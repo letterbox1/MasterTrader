@@ -15,17 +15,17 @@ requirements: [R3.01, R3.03, R3.04, R3.13, R3.14, R3.15, R3.16, R3.17]
 roadmap_todos: [T3.20, T3.29]
 modules: [M18]
 dashboards: [D14, D15]
-tools: [git, uv, node>=20, pnpm, docker]
+tools: [git, cargo, node>=20, pnpm, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, journal, engine, Binance testnet]
+services: [supabase-postgres, supabase-auth, supabase-storage, nats, mt-api, journal, engine, Binance testnet]
 branch: p3/P3-T051-verify-e2e-scenarios-f9
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Scripted end-to-end scenarios run on the full stack (paper engine → journal �
 ## Context & references
 
 - Roadmap: [R3.01, R3.03, R3.04, R3.13, R3.14](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Flows: [02 F2 step 7, F9](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · acceptance [D14](../../../docs/ui/dashboards/D14-journal.md), [D15](../../../docs/ui/dashboards/D15-tax.md), [D16 Accounts](../../../docs/ui/dashboards/D16-system.md)
 - Cross-phase prerequisite (depends_on): P2-T001 (trade-only testnet keys used by the paper engine for the one live S1 run; no money)
 
@@ -60,7 +61,7 @@ Scripted end-to-end scenarios run on the full stack (paper engine → journal �
 - S10 report generate twice → same hash; export accountant pack.
 - S11 staking reward with no AUD-venue trades in its minute → valued by USD VWAP × RBA with method shown in D14 (16 §4.1); no aggregator value stored.
 - S12 register an address and tag it `investment` on the D16 Accounts page → a transfer to it is internal (no disposal).
-- S13 lock FY (C3) → a late event is held; unlock (C3, reason) → it lands; a note with a screenshot stores the file once under `data/attachments/<sha256>`.
+- S13 lock FY (C3) → a late event is held; unlock (C3, reason) → it lands; a note with a screenshot stores the file once in the `journal-attachments` Storage bucket under its sha256.
 
 ## ToDo
 
@@ -95,7 +96,7 @@ Scripted end-to-end scenarios run on the full stack (paper engine → journal �
 
 - Do NOT stub M11 in S8; the real risk manager must reject.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -114,3 +115,4 @@ Scripted end-to-end scenarios run on the full stack (paper engine → journal �
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added S11 valuation hierarchy, S12 Accounts page, S13 FY lock + content-addressed attachments; S8 via residency contract; new deps P3-T055/T056 + P2-T001 (keys last); tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-auth/storage; attachments in Storage)

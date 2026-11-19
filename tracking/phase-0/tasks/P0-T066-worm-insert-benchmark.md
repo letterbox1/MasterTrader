@@ -87,7 +87,7 @@ A repeatable benchmark (`make wormbench`) proves the WORM write-path SLO on the 
 - [ ] p99 < 5 ms in phases (a)–(d) on the production host (evidence committed)
 - [ ] Static check proves seal/verify take no chain-head or table locks
 - [ ] CI smoke variant runs and logs results
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

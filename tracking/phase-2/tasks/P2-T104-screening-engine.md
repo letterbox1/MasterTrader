@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-2-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ A fast vectorised screener (vectorbt or a port of the MIT Vibe-Trading engines) 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k screening`.
 - Unit: a signal on bar t fills at bar t+1 open; cost totals match CostModel for a fixed trade list.
 - Golden: EMA-cross on a fixture yields a stored trade list and equity curve.
 - Benchmark test asserting the throughput target (marked slow).
@@ -93,7 +94,7 @@ A fast vectorised screener (vectorbt or a port of the MIT Vibe-Trading engines) 
 
 - Do NOT let screener results feed gates or lifecycle promotion.
 - Do NOT import GPL code (freqtrade) into this engine.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT add telemetry or referral IDs via vendored code; pin images by digest; record vendored code in `third_party/LICENSES.md`.
 - Do NOT skip, weaken or delete a test to get green.
 

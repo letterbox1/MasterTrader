@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T013, P3-T014, P3-T034, P3-T009, P3-T042, P2-T180, P1-T002]
+depends_on: [P3-T013, P3-T014, P3-T034, P3-T009, P2-T180, P1-T002]
 requirements: [R3.01, R3.11]
 roadmap_todos: [T3.80]
 modules: [M18]
 dashboards: [D14, D07]
-tools: [git, uv]
+tools: [git]
 mcp: []
 env: [BINANCE_TESTNET_READONLY_KEY, BINANCE_TESTNET_READONLY_SECRET, BYBIT_TESTNET_READONLY_KEY, BYBIT_TESTNET_READONLY_SECRET, OANDA_PRACTICE_TOKEN, IG_DEMO_API_KEY]
 services: [journal, engine, Binance testnet, Bybit testnet, OANDA practice, IG demo]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,9 @@ One calendar month of the P2 paper clock's trades is journalled automatically an
 ## Context & references
 
 - Roadmap: [T3.80](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Cross-phase prerequisites (depends_on): P2-T180 (P1-sleeve paper clock started), P1-T002 (read-only practice/testnet keys for the ledger pulls and recon); P7 R7.03 (weekly review includes journal reconciliation) is where completion is checked if the month outlasts P3
+- Does **not** wait for P3-T042 (your real accounts): the paper/testnet accounts are seeded by the agent (P3-T012 `config/journal/accounts.paper.yaml`); registering your real accounts later feeds the live reconciliation (P7).
 - Recon tolerances and the 24 h explain window: [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)
 - Runbook: P3-T044
 
@@ -55,6 +57,7 @@ One calendar month of the P2 paper clock's trades is journalled automatically an
 
 ## ToDo
 
+- [ ] Check the paper/testnet accounts are in `ops.wallets` (run `mt-journal registry seed config/journal/accounts.paper.yaml` if not; idempotent)
 - [ ] Record the start date in the progress log
 - [ ] Check D14 recon widget daily; log weekly summaries
 - [ ] Follow the runbook for any break; restart the clock if one stays unexplained
@@ -108,3 +111,4 @@ One calendar month of the P2 paper clock's trades is journalled automatically an
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explained = matched within 24 h (16 §2.9); explicit P2-T180/P1-T002 depends_on and read-only key env names (keys last); tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dep P3-T042: paper/testnet accounts are agent-seeded (P3-T012); P1-T002 kept (read-only keys))

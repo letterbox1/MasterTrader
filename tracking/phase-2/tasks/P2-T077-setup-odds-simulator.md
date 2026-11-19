@@ -15,10 +15,10 @@ requirements: [R2.59]
 roadmap_todos: [T2.43]
 modules: [M7, M15]
 dashboards: [D04, D05]
-tools: [uv, pnpm, git]
+tools: [uv, cargo, pnpm, git]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T077-setup-odds-simulator
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/ui/dashboards/D05-execution.md, docs/roadmap/phase-2-strategies-risk-lab.md]
@@ -66,6 +66,7 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k odds`, `cargo test -p mt-api odds`, `pnpm test`.
 - Unit: fixed seed → identical output; block bootstrap preserves session boundaries.
 - Unit: analogue search with a synthetic series containing 40 planted setups finds all 40 and nothing after `as_of`.
 - Integration: approval card renders odds within the time budget, or "odds pending".
@@ -82,7 +83,7 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 - [ ] Odds reproducible from the recorded seed
 - [ ] Leak test proves no post-`as_of` data is used
 - [ ] Odds never alter M11 decisions (test)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `cargo test -p mt-api`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -94,7 +95,7 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt_api`.
+- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt-api`.
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT copy code from repositories without a compatible licence; keep copyright and NOTICE files for MIT/Apache code ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)).
 - Do NOT present odds as a promise or let them auto-approve anything; approval stays with you or the bot's mode rules.

@@ -15,17 +15,17 @@ requirements: [R3.10, R3.12]
 roadmap_todos: [T3.27]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres, supabase-storage]
 branch: p3/P3-T036-accountant-pack-koinly-syla
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ One command produces the accountant pack for an FY — a zip with the myTax work
 ## Context & references
 
 - Roadmap: [R3.10, R3.12, T3.27](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 goals §8](../../../docs/09-journal-and-tax.md#goals) · [11 §3 tax software](../../../docs/11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) (Syla/Koinly optional, paid tools not required) · D15 Reports [D15](../../../docs/ui/dashboards/D15-tax.md)
 
 ## Requirements
@@ -49,11 +50,11 @@ One command produces the accountant pack for an FY — a zip with the myTax work
 - Pack contents (CSV + PDF where noted): `00_manifest.json` (file → sha256, rule version, FX sources, generated_at), `01_mytax_worksheet.pdf/csv`, `02_cgt_schedule.csv`, `03_income_schedule.csv`, `04_payg.csv`, `05_lots_register.csv`, `06_events.csv`, `07_fx_rates.csv` (with the valuation-method register: method, source refs, per 16 §4.1), `08_recon_summary.csv`, `09_ledger.beancount`, `10_open_questions.csv` (TAX_QUESTION tasks), `README.pdf` (method notes, (U) list, not-advice line).
 - Taxpayer details (name/TFN) included only if `include_identity = true` (decrypts from `journal.taxpayer_profile` inside `journal`), default false.
 - Koinly: "universal" CSV columns (Date, Sent Amount, Sent Currency, Received Amount, Received Currency, Fee Amount, Fee Currency, Net Worth Amount, Net Worth Currency, Label, Description, TxHash); Syla: format (U) — generic CSV with the same fields until confirmed.
-- `tax.export` (C0) with formats `accountant_pack`, `koinly_csv`, `syla_csv`; packs written to `/srv/mastertrader/journal/exports/<fy>/` and listed in D15 Reports with hashes.
+- `tax.export` (C0) with formats `accountant_pack`, `koinly_csv`, `syla_csv`; packs written to the private Supabase Storage bucket `tax-exports` under `<fy>/` (18 §4.5) and listed in D15 Reports with hashes.
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/exports/accountant_pack.py`, `koinly.py`, `syla.py`
+- [ ] Implement `crates/mt-journal/src/exports/accountant_pack.rs`, `koinly.rs`, `syla.rs`
 - [ ] PDF templates (local fonts, no network)
 - [ ] Tests; docs
 
@@ -90,7 +91,7 @@ One command produces the accountant pack for an FY — a zip with the myTax work
 - Do NOT add Koinly/Syla API integrations (paid).
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT expose tax-sensitive fields (TFN, addresses, raw statements) to any LLM prompt, RAG index or the LiteLLM gateway ([07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit)).
@@ -110,3 +111,4 @@ One command produces the accountant pack for an FY — a zip with the myTax work
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (pack includes valuation methods (16 §4.1); tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust exports into the private `tax-exports` Storage bucket)

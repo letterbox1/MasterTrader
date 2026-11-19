@@ -18,14 +18,14 @@ dashboards: [D07]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server]
+services: [supabase-postgres, prefect-server, nats]
 branch: p1/P1-T037-dq-nightly-pandera-evidently
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 - Pandera schemas per data type (trades, quotes, L2 deltas, bars): types, non-null, price > 0, monotonic `event_time` within file, `ingest_time ≥ event_time − skew`, provenance present
 - Evidently report per instrument: log returns, spread bps, volume, inter-arrival vs trailing 30-day reference; drift flagged with the report URL stored
-- Runs after compaction (P1-T012) in Prefect; results to `audit.dq_event` (check `batch_schema` / `batch_drift`) and HTML reports under `/data/reports/dq/<date>/`
+- Runs after compaction (P1-T012) as a Python Prefect flow (Pandera and Evidently are Python-only, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); results are published on `dq.raw.batch.*` and `mt-monitor` writes the incidents to `audit.dq_event` (check `batch_schema` / `batch_drift`), so one writer owns the WORM table; HTML reports under `/data/reports/dq/<date>/`
 
 ## ToDo
 
@@ -71,12 +71,12 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 ### Stress / failure injection
 
-- Load: one day of 10-symbol L2 data validated within 30 min on the target host
+- Load: one day of 10-symbol L2 data validated within 30 min on the workstation
 
 ## Acceptance criteria
 
 - [ ] Nightly results visible in D07 Quality; injected failures produce incidents
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -104,3 +104,4 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow (Pandera, Evidently); incidents go through `dq.raw.batch.*` to the Rust `mt-monitor` writer; services supabase-postgres)

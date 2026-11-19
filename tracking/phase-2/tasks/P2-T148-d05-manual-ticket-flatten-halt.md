@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D05-execution.md, docs/14-strategy-evidence-and-va
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,6 +64,7 @@ Manual trading in D05 is limited to what 14 §4 allows: the `OrderTicket` places
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: DESIGN.md §6.8 viewport matrix (overflow + fixed-bar overlap checks) and axe on the new routes; Vitest + Testing Library for components.
 - Playwright: manual order exceeding manual-sleeve max position → preview fails, submit disabled.
 - Playwright: flatten-and-halt without reason → cannot confirm.
@@ -90,12 +91,12 @@ Manual trading in D05 is limited to what 14 §4 allows: the `OrderTicket` places
 
 ## Cardinal rules (do NOT)
 
-- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt_api`.
+- Do NOT enforce confirmation levels only in the UI; C1–C3/Kill are enforced server-side by `mt-api`.
 - Do NOT use `100vh`/`h-screen`, unprefixed multi-column grids or the Tailwind CDN (DESIGN.md §6.3–6.5).
 - Do NOT sum or show paper and live money without a mode label.
 - Do NOT offer discretionary overrides beyond flatten-and-halt.
 - Do NOT let a manual order bypass the risk preview/M11.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows (`audit.*`); corrections are new rows referencing the original (15 §2).
 - Do NOT skip, weaken or delete a test to get green.
 

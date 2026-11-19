@@ -15,17 +15,17 @@ requirements: [R3.N3, R3.02]
 roadmap_todos: [T3.42]
 modules: [M18, M17, M11, nats]
 dashboards: [D16]
-tools: [git, uv, docker, nats]
+tools: [git, cargo, docker, nats]
 mcp: []
 env: []
-services: [nats, postgres, grafana, alertmanager]
+services: [nats, supabase-postgres, grafana, alertmanager]
 branch: p3/P3-T057-jetstream-buffer-bounds-for-the-journal-and-worm
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ When Postgres is unreachable, journal and WORM writes buffer in a bounded NATS J
 ## Context & references
 
 - Roadmap: [R3.N3, T3.42](../../../docs/roadmap/phase-3-journal-and-tax.md) · drill P3-T060 (T3.67)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Defaults: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) · decision [17 §C P3-B015](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified)
 - Architecture: [02 §5.1 stores](../../../docs/02-v1-architecture.md#51-stores) (JetStream bound) · [02 §9.3 degraded modes](../../../docs/02-v1-architecture.md#93-degraded-modes) (Postgres down row) · [15 §2 write path](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) (insert p99 < 5 ms; never waits on seals)
 - Setting surface: D16 Settings → Failure behaviour (NATS buffer bound) [D16](../../../docs/ui/dashboards/D16-system.md)
@@ -51,7 +52,7 @@ When Postgres is unreachable, journal and WORM writes buffer in a bounded NATS J
 ## Requirements
 
 - Stream `WORM_BUFFER` (subjects `worm.buffer.>`, file storage, `max_bytes` = 1 GB, `max_age` = 24 h, discard policy **new** so nothing already buffered is evicted); limits read from the L1 system policy setting `failure.worm_buffer` (defaults from 16 §3.3), never constants.
-- Writer library `mt_store.worm.buffer`: when a WORM insert (`audit.*`, `journal.*`) fails with a connection-class error, the canonical row (with its idempotency key) is published to `worm.buffer.<table>` and the caller gets "recorded (buffered)"; a drainer replays in order per chain on recovery, idempotent on the key, so the hash chain is built at insert time with no gaps.
+- Writer library `mt_obs::worm::buffer` (part of the `mt-obs` WORM writer, 18 §2.1): when a WORM insert (`audit.*`, `journal.*`) fails with a connection-class error, the canonical row (with its idempotency key) is published to `worm.buffer.<table>` and the caller gets "recorded (buffered)"; a drainer replays in order per chain on recovery, idempotent on the key, so the hash chain is built at insert time with no gaps.
 - Buffer level → NATS KV `worm_buffer` {`bytes_used`, `age_s`, `ratio`, `state`: `ok` | `buffering` | `high` | `full`}; `high` at ≥ 80% of either bound (default).
 - M11 pre-trade hook: `state ∈ {high, full}` → reject new entries with reason `worm_buffer_high`; reduce-only exits and protective orders always pass. Mirrors how M11 reads KV `audit.integrity`.
 - If the buffer itself cannot accept a record (`full` or NATS down) → the order path refuses new entries (nothing executes without a record); exits still go out and are recorded in the engine's local spill file, replayed first on recovery.
@@ -61,8 +62,8 @@ When Postgres is unreachable, journal and WORM writes buffer in a bounded NATS J
 ## ToDo
 
 - [ ] Stream + KV bucket definitions in `infra/nats/streams/worm_buffer.json` (bounds templated from settings)
-- [ ] `packages/mt_store/worm/buffer.py` (publish on failure, drainer, idempotency) used by the journal writer and the P0 audit writers
-- [ ] KV status publisher + M11 hook `packages/mt_risk/checks/worm_buffer.py` with reason code
+- [ ] `crates/mt-obs/src/worm/buffer.rs` (publish on failure, drainer, idempotency) used by the journal writer and the P0 audit writers
+- [ ] KV status publisher + M11 hook `crates/mt-risk/src/checks/worm_buffer.rs` with reason code
 - [ ] Setting `failure.worm_buffer` wired to D16 Settings (`system.settings.update`; loosen = C3)
 - [ ] Grafana panel + alert rules; runbook section "Postgres down: write-path buffer" in `docs/runbooks/`
 - [ ] Unit + integration tests; docs
@@ -122,3 +123,4 @@ When Postgres is unreachable, journal and WORM writes buffer in a bounded NATS J
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for R3.N3/T3.42 (docs/16–17 alignment; implementation owner for P3-B015)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (buffer in `mt-obs` (Rust), M11 hook in `mt-risk`)

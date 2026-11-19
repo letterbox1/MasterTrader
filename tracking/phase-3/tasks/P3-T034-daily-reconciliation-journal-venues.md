@@ -15,17 +15,17 @@ requirements: [R3.11]
 roadmap_todos: [T3.28]
 modules: [M18, M16]
 dashboards: [D14, D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server, nats]
+services: [supabase-postgres, prefect-server, nats]
 branch: p3/P3-T034-daily-reconciliation-journal-venues
 pr: ""
 doc_sync: [docs/ui/dashboards/D14-journal.md, docs/03-build-spec.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every day after venue EOD, a Prefect flow compares journal-derived balances and positions per account and asset against each venue's read-only balances (and against `audit.fill` counts), writes the result to `audit.recon` with `scope = journal`, and raises an incident for any mismatch above tolerance — the evidence for the 1-month zero-break run.
+Every day after venue EOD, a Prefect-scheduled `mt-journal recon` job compares journal-derived balances and positions per account and asset against each venue's read-only balances (and against `audit.fill` counts), writes the result to `audit.recon` with `scope = journal`, and raises an incident for any mismatch above tolerance — the evidence for the 1-month zero-break run.
 
 ## Context & references
 
 - Roadmap: [R3.11, T3.28](../../../docs/roadmap/phase-3-journal-and-tax.md) · [09 quality](../../../docs/09-journal-and-tax.md#quality) (journal balances reconcile to venue balances daily)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - D14 Reconciliation status widget (`/data/recon?scope=journal`) [D14](../../../docs/ui/dashboards/D14-journal.md) · M16 owns `audit.recon` ([02 §4](../../../docs/02-v1-architecture.md#4-logical-components))
 - Cross-phase prerequisites (depends_on): P1-T041 (crypto testnet recon clients), P1-T042 (OANDA/IG/Alpaca/IBKR paper recon clients); P7 T7.23 (three-way hardening) builds on this
 - Tolerances and "explained": [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation) (positions exact; balances within 0.01% or dust; explained = matched to a known journal event within 24 h)
@@ -57,7 +58,7 @@ Every day after venue EOD, a Prefect flow compares journal-derived balances and 
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/recon/daily.py` reusing P1 read-only venue clients
+- [ ] Implement `crates/mt-journal/src/recon/daily.rs` reusing P1 read-only venue clients
 - [ ] Write `audit.recon` rows + alerts
 - [ ] `recon.explain` annotation path (command `journal.note.add` with recon ref)
 - [ ] Prefect deployment; tests; docs
@@ -115,3 +116,4 @@ Every day after venue EOD, a Prefect flow compares journal-derived balances and 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tolerances and 24 h explain window from 16 §2.9 (replaces 0.01 unit / 2-day rule); built on recorded responses; explicit P1 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (recon job in `mt-journal`)

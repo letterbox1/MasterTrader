@@ -15,17 +15,17 @@ requirements: [R2.04, R2.06]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T006-strategy-registry-versions
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,18 +37,18 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Strategies and their immutable versions live in `strategy.registry` / `strategy.versions` / `strategy.runs`, exposed through `mt_api` queries and the `strategy.create|update_params|clone|archive` commands, so bots, the lab and the engine all reference a pinned version.
+Strategies and their immutable versions live in `strategy.registry` / `strategy.versions` / `strategy.runs`, exposed through `mt-api` queries and the `strategy.create|update_params|clone|archive` commands, so bots, the lab and the engine all reference a pinned version.
 
 ## Context & references
 
 - Roadmap: [R2.04, R2.06](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
 - Architecture: [02 §4 M0 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 command catalogue](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - UI: [D03 registry + versions tab](../../../docs/ui/dashboards/D03-strategies.md)
-- Cross-phase (`depends_on`): Alembic baseline + `strategy` schema (P0-T024, R0.03); command bus + `audit.command` (P0-T034, R0.08).
+- Cross-phase (`depends_on`): Supabase migrations baseline + `strategy` schema (P0-T024, R0.03); command bus + `audit.command` (P0-T034, R0.08).
 
 ## Requirements
 
-- Tables (Alembic): `strategy.registry(id uuid7, name unique, template, created_at, archived_at)`, `strategy.versions(id, strategy_id, version int, manifest jsonb, manifest_hash, code_hash, git_sha, created_at, created_by)` (insert-only), `strategy.runs(id, version_id, kind backtest|paper|shadow|live, started_at, ended_at, metrics jsonb)`.
+- Tables (SQL migration in `supabase/migrations/`): `strategy.registry(id uuid7, name unique, template, created_at, archived_at)`, `strategy.versions(id, strategy_id, version int, manifest jsonb, manifest_hash, code_hash, git_sha, created_at, created_by)` (insert-only), `strategy.runs(id, version_id, kind backtest|paper|shadow|live, started_at, ended_at, metrics jsonb)`.
 - A new version is created on any manifest or code change; versions are never mutated.
 - Queries: `/strategies`, `/strategies/{id}` (+`?versions=1`), `/strategies/{id}/runs`, `/strategies/templates` (template catalogue with evidence + priority).
 - Commands: `strategy.create` (C1), `strategy.update_params` (tightening C1; any `risk_increasing` param increase is a loosening = C3, classified by P2-T019 per [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)), `strategy.clone` (C1), `strategy.archive` (C1).
@@ -57,8 +57,8 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 ## ToDo
 
 - [ ] Migrations for the three tables + insert-only grants on `strategy.versions`
-- [ ] `packages/mt_strategy/registry.py` service (create, new_version, get_pinned)
-- [ ] `mt_api` routers for the queries and commands; OpenAPI updated
+- [ ] `crates/mt-api/src/strategies/registry.rs` service (create, new_version, get_pinned); Python templates and the lab read it through `mt-api`
+- [ ] `mt-api` axum routes for the queries and commands; utoipa OpenAPI updated
 - [ ] Hash code by module file contents + git SHA
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -82,7 +82,7 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 - [ ] Tables, queries and commands live and documented in OpenAPI
 - [ ] Versions immutable (grant + test)
 - [ ] Audit rows for every command
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -93,7 +93,7 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 
 - Do NOT mutate a version row; create a new one.
 - Do NOT let a client choose its own confirmation level; the server classifies.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

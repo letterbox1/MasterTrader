@@ -15,17 +15,17 @@ requirements: [R2.31]
 roadmap_todos: [T2.63]
 modules: [M12]
 dashboards: []
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p2/P2-T056-verify-stp-audit
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,6 +64,7 @@ A query over `audit.order` and captured venue payloads proves that every order s
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-api audit_stp`, `supabase test db`.
 - The check itself + induced self-match test.
 
 ### Scenarios
@@ -84,7 +85,7 @@ A query over `audit.order` and captured venue payloads proves that every order s
 ## Cardinal rules (do NOT)
 
 - Do NOT count venue-default STP as explicit.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 
 ## Doc sync on completion

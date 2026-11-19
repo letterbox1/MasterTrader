@@ -15,17 +15,17 @@ requirements: [R1.12]
 roadmap_todos: [T1.29]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T041-recon-framework-crypto-testnets
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A reconciliation framework compares our records with each venue's own: positions and open orders every 60 s, balances every 5 min, and a full reconciliation at end of day (Sydney) (defaults, configurable, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)); mismatches become WORM incidents in `audit.recon` and `recon.{venue}` messages. First adapters: Binance and Bybit testnets via ccxt with read-only keys, built and tested keyless against recorded fixtures (the live run is P1-T074).
+A reconciliation framework compares our records with each venue's own: positions and open orders every 60 s, balances every 5 min, and a full reconciliation at end of day (Sydney) (defaults, configurable, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)); mismatches become WORM incidents in `audit.recon` and `recon.{venue}` messages. First adapters: Binance and Bybit testnets via GET-only Rust venue clients with read-only keys, built and tested keyless against recorded fixtures (the live run is P1-T074).
 
 ## Context & references
 
@@ -50,7 +50,7 @@ A reconciliation framework compares our records with each venue's own: positions
 
 ## Requirements
 
-- `mt_monitor.recon`: `ReconAdapter` (fetch balances, positions, open orders) and a comparator: position quantities must match exactly; balances within 0.01% or dust (dust from instrument precision) (defaults, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation))
+- Crate `mt-monitor`, module `recon` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): `ReconAdapter` trait (fetch balances, positions, open orders) and a comparator: position quantities must match exactly; balances within 0.01% or dust (dust from instrument precision) (defaults, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation))
 - "Ours" in P1 = last confirmed venue snapshot plus `audit.fill`/`audit.position_snapshot` when they exist (empty until P2)
 - Schedule (configurable defaults): positions and open orders every 60 s, balances every 5 min, full reconciliation at end of day Sydney time (00:05 Australia/Sydney, DST-aware); `data.recon.run` (C1) triggers on demand
 - Results appended to `audit.recon` (WORM: run, venue, scope, asset, ours, theirs, diff, status `matched | explained | unexplained | unreachable`) and published on `recon.{venue}`; a mismatch is `explained` only when matched to a known journal event within 24 h (the journal arrives in P3, so every P1 mismatch is `unexplained`); unexplained → `alert.warning.recon`, escalating to `alert.critical.recon` at 24 h (the halt itself is M11's, from P2)
@@ -59,7 +59,7 @@ A reconciliation framework compares our records with each venue's own: positions
 ## ToDo
 
 - [ ] Implement framework, comparator, `audit.recon` (WORM) and publisher
-- [ ] ccxt adapters for Binance and Bybit testnets, tested against recorded/mocked responses (no keys in CI)
+- [ ] Binance and Bybit testnet adapters (Nautilus Rust HTTP clients where available (U), else thin `reqwest` GET-only clients; no ccxt), tested against recorded/mocked responses (no keys in CI)
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -67,6 +67,7 @@ A reconciliation framework compares our records with each venue's own: positions
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor recon`, `cargo clippy`, `supabase test db`
 - Unit: comparator tolerances (exact positions, 0.01% balances); dust ignored; sign conventions
 - Unit: the scheduler runs positions/open orders every 60 s and balances every 5 min (SimClock), and the full run at Sydney end of day across DST
 - Integration: mocked venue with an injected 0.01 BTC difference → mismatch incident; clean → `ok`
@@ -85,7 +86,7 @@ A reconciliation framework compares our records with each venue's own: positions
 ## Acceptance criteria
 
 - [ ] Against fixtures, clean recon runs at the default cadence (60 s / 5 min / EOD) and an injected mismatch raises an `unexplained` incident; the live run is P1-T074
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -114,3 +115,4 @@ A reconciliation framework compares our records with each venue's own: positions
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (16 §2.9 cadence/tolerance/explained rule (P1-B017, P7-B007); keyless build, live run split to P1-T074 (T1.67); deps trimmed; P0 WORM deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (reconciliation framework in Rust `mt-monitor` with GET-only venue clients instead of ccxt; tools cargo/supabase; services supabase-postgres)

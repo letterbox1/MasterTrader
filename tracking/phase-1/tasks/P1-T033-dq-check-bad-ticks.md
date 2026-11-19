@@ -15,17 +15,17 @@ requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T033-dq-check-bad-ticks
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ Outlier prices are caught with a rolling median/MAD robust z-score and a spread 
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor bad_ticks`, `cargo clippy`
 - Fault injection: single spike → flagged, bar unaffected; genuine fast move (many ticks moving together) → not flagged (property test with random walks)
 - Unit: MAD = 0 guard (flat markets) uses a floor
 
@@ -76,7 +77,7 @@ Outlier prices are caught with a rolling median/MAD robust z-score and a spread 
 ## Acceptance criteria
 
 - [ ] Injected bad ticks always flagged; false-positive rate recorded in the PR
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -104,3 +105,4 @@ Outlier prices are caught with a rolling median/MAD robust z-score and a spread 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (thresholds linked to 16 §2.2 defaults)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::bad_ticks`); tools cargo; services supabase-postgres)

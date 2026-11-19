@@ -79,7 +79,7 @@ On the 1st of each month a Prefect flow exports every WORM table's previous-mont
 - [ ] Monthly export flow scheduled and run once on fixture data
 - [ ] Manifest + Parquet locked for 7 years
 - [ ] `verify-export` detects tampering
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

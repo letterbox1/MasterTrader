@@ -18,14 +18,14 @@ dashboards: [D02]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server]
+services: [supabase-postgres, prefect-server]
 branch: p1/P1-T025-macro-sdmx-central-banks-dbnomics
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -79,7 +79,7 @@ One `sdmx1` client loads ECB/IMF/OECD/BIS/Eurostat series, direct fetchers load 
 ## Acceptance criteria
 
 - [ ] Every universe macro series from these providers loaded with history and a daily/weekly update
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -90,7 +90,7 @@ One `sdmx1` client loads ECB/IMF/OECD/BIS/Eurostat series, direct fetchers load 
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -108,3 +108,4 @@ One `sdmx1` client loads ECB/IMF/OECD/BIS/Eurostat series, direct fetchers load 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless providers)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow (sdmx1 is Python-only); services supabase-postgres)

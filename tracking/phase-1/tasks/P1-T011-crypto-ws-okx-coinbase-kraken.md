@@ -15,7 +15,7 @@ requirements: [R1.01]
 roadmap_todos: [T1.20]
 modules: [M1]
 dashboards: [D02, D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ The remaining three crypto venues publish the same normalised `md.*` streams as 
 
 ## Requirements
 
-- OKX (spot + swaps), Coinbase (Advanced Trade public market data), Kraken (spot WS v2) via Nautilus clients where supported, else ccxt pro
+- OKX (spot + swaps), Coinbase (Advanced Trade public market data), Kraken (spot WS v2) in `mt-recorder` (Rust, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) via Nautilus Rust data clients where supported (U, check first), else thin Rust WS clients on the shared `StreamConnector` trait
 - Book integrity inputs: keep venue checksums where offered (OKX `checksum`/`seqId`, Kraken CRC32 book checksum) on each book message for P1-T036
 - Same payload schemas, sequence fields and `feed_status` updates as P1-T010
 
@@ -63,7 +63,7 @@ The remaining three crypto venues publish the same normalised `md.*` streams as 
 
 ### Tests
 
-- Unit: normaliser golden tests per venue; checksum field passed through unchanged
+- `cargo test -p mt-recorder okx coinbase kraken`: normaliser golden tests per venue; checksum field passed through unchanged
 - Integration: golden replay per venue; live 60 s smoke (nightly)
 
 ### Scenarios
@@ -79,7 +79,7 @@ The remaining three crypto venues publish the same normalised `md.*` streams as 
 
 - [ ] Live `md.okx.*`, `md.coinbase.*`, `md.kraken.*` streams for every universe symbol listed on those venues
 - [ ] Each major pair has ≥ 2 independent live sources (checked by a test over the universe)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ The remaining three crypto venues publish the same normalised `md.*` streams as 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless public streams)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (connectors in Rust `mt-recorder` (Nautilus Rust clients where available (U), else thin Rust WS clients; no ccxt); tools cargo)

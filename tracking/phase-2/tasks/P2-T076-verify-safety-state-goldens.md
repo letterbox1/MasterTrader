@@ -15,7 +15,7 @@ requirements: [R2.58, R2.N2]
 roadmap_todos: [T2.71]
 modules: [M11]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/04-plan-of-action.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ Golden tests in the mandatory `risk-golden` CI job prove that an order on data o
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk --test golden safety_state`.
 - The golden suite and property test themselves (CI).
 
 ### Scenarios
@@ -91,7 +92,7 @@ Golden tests in the mandatory `risk-golden` CI job prove that an order on data o
 
 - Do NOT mark any safety-state case skip/xfail.
 - Do NOT change expected values without a PR note explaining why.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

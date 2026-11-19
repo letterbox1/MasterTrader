@@ -80,7 +80,7 @@ review_result: ""
 - [ ] Health + Backups pages implemented per D16
 - [ ] Read-only on Postgres outage
 - [ ] C1 actions work end to end with audit links
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 

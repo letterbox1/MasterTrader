@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,6 +64,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k stats`.
 - Known-answer: DSR reproduces the worked example in Bailey & López de Prado (2014) to 1e-4.
 - Property: on 200 random-signal strategies the permutation p-values are ~uniform (KS test p > 0.01).
 - Unit: DSR decreases monotonically as N (trial count) increases, all else equal.

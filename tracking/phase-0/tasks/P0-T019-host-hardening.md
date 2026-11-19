@@ -86,7 +86,7 @@ The host meets 07 §5 and is reproducible from a script: LUKS verified, deny-inb
 - [ ] LAN nmap from another machine shows 0 open TCP ports
 - [ ] chrony offset < 50 ms and exported
 - [ ] Re-running the playbook changes nothing
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -99,3 +99,4 @@ The residency timeline holds your Australian residency period (from your arrival
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (residency change contract and C3-on-loosening noted (P3-B007); fields filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (kept USER (your residency facts); nothing waits on it)

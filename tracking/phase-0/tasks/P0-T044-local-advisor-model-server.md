@@ -76,7 +76,7 @@ The `llm-local` container (02 §3.2): a local OpenAI-compatible model server (`l
 - [ ] Server healthy, digest-pinned, API key enforced
 - [ ] Model file checksum logged
 - [ ] LiteLLM `local-advisor` smoke passes
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

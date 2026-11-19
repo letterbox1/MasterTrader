@@ -15,17 +15,17 @@ requirements: [R2.53]
 roadmap_todos: [T2.34]
 modules: [M0, M11, M15]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T036-bot-model-scope-lifecycle
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,8 +61,8 @@ A bot = one pinned strategy version × market scope (single instrument, explicit
 ## ToDo
 
 - [ ] Migrations (register `strategy.bot_version` with WORM)
-- [ ] `packages/mt_strategy/bots/` model, resolver, service
-- [ ] mt_api routers + commands
+- [ ] `crates/mt-api/src/bots/` model, resolver, service
+- [ ] `mt-api` axum routes + commands (utoipa OpenAPI)
 - [ ] Engine bot loader
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -88,7 +88,7 @@ A bot = one pinned strategy version × market scope (single instrument, explicit
 - [ ] Bot entities, versions (WORM) and lifecycle commands live
 - [ ] Tighter-only overrides enforced
 - [ ] Bots isolated in the engine
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -99,7 +99,7 @@ A bot = one pinned strategy version × market scope (single instrument, explicit
 
 - Do NOT allow a bot value above any parent layer, or an L4 loosening without C3.
 - Do NOT mutate a bot version row.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

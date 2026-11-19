@@ -81,7 +81,7 @@ The web app talks to mt-api through a generated, typed REST client (TanStack Que
 - [ ] Typed REST + WS clients with tests
 - [ ] Gap → re-sync proven
 - [ ] Command helper handles preview, idempotency, 428/409
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 
@@ -91,7 +91,7 @@ The web app talks to mt-api through a generated, typed REST client (TanStack Que
 
 - Do NOT call brokers or any backend other than mt-api from the browser.
 - Do NOT convert money strings to floats.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 
 ## Doc sync on completion

@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv]
 mcp: []
 env: []
-services: [mlflow, postgres]
+services: [mlflow, supabase-postgres]
 branch: p2/P2-T107-mlflow-tracking-and-repro
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,12 +63,13 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k tracking`.
 - Integration: a truth run appears in MLflow with every required field.
 - Integration: re-run of a fixture backtest → identical trade hash, `reproduced=true`.
 - Unit: dirty git tree → job refused with a clear message.
 
 ### Scenarios
-- Given MLflow is down, when a backtest finishes, then the result is stored in Postgres with `mlflow_sync=pending` and synced after MLflow returns.
+- Given MLflow is down, when a backtest finishes, then the result is stored in Supabase Postgres with `mlflow_sync=pending` and synced after MLflow returns.
 - Given a re-run on a newer engine version, then `reproduced=false` with the version diff shown.
 
 ### Stress / failure injection

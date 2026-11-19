@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-2-strategies-ris
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_models -k calibrate`.
 - Unit: isotonic on a miscalibrated synthetic model reduces ECE; Platt on a sigmoid-shaped one.
 - Unit: calibrator never sees test-split data (asserted by index).
 

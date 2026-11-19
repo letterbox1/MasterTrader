@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T012, P1-T013, P1-T006]
+depends_on: [P1-T012, P1-T013, P1-T006, P1-T076]
 requirements: [R1.03]
 roadmap_todos: [T1.22]
 modules: [M1]
@@ -18,14 +18,14 @@ dashboards: [D07]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server]
+services: [supabase-postgres, prefect-server]
 branch: p1/P1-T015-backfill-binance-vision
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe symbols from data.binance.vision, verifies checksums, writes them into the Parquet catalog and bar tables, and produces a backfill report.
+A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe symbols from data.binance.vision, verifies checksums, writes them into the Parquet catalog, asks the rebuild/rollup job (P1-T076) to build our bars for the backfilled range, and produces a backfill report.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe 
 ## Requirements
 
 - Download monthly then daily ZIPs per (symbol, type), verify the `.CHECKSUM` (SHA-256) before use
-- Write trades/aggTrades to the catalog (`source=binance_vision`) and 1s klines to `market.bar_1s_vendor` (`bar_source=vendor_kline`), never into the live `market.bar_1s` that feeds the aggregates; overlaps are compared in P1-T058
+- Write trades/aggTrades to the catalog (`source=binance_vision`, via the `mt-store` Python binding) and 1s klines to `market.bar_1s_vendor` (`bar_source=vendor_kline`), never into the built bars; then request `mt-recorder rebuild` for the range (P1-T076), which builds 1s/1m from the trades and rolls up 5m … 1W ([18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb)); overlaps are compared in P1-T058
 - Resumable: a manifest table `ops.backfill_job` (job, symbol, type, date, status, sha256) so restarts skip done files
 - Polite download rate through the quota tracker; run as `data.backfill.run` job kind `backfill`
 - Report: per symbol/type, date range covered, missing days, row counts, checksum failures → stored and shown in D07 Storage
@@ -82,7 +82,7 @@ A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe 
 
 - [ ] Backfill report exists for the universe with ≥ 1 year of trades/aggTrades/1s klines (or the full listed history if shorter)
 - [ ] All files checksum-verified
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -93,7 +93,7 @@ A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe 
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -110,3 +110,4 @@ A resumable Prefect flow downloads trades, aggTrades and 1s klines for universe 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (vendor klines in market.bar_1s_vendor so aggregates stay pure; keyless public source)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; built bars for the backfilled range come from the rebuild/rollup job P1-T076 (new dep), vendor klines stay separate; services supabase-postgres)

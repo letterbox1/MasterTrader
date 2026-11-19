@@ -15,17 +15,17 @@ requirements: [R2.56, R2.32]
 roadmap_todos: [T2.36]
 modules: [M12, M11]
 dashboards: [D06, D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T074-restart-flat-bots-paused
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-After any unplanned stop (crash, kill -9, host reboot), the engine starts with **every bot paused**, reconciles each venue (P2-T027), handles any residual position or order per policy so trading resumes from **flat**, and keeps bots paused until you resume them with one tap (C1) on Telegram/web, unless a bot has `auto_resume_after_crash: true`.
+After any unplanned stop (crash, kill -9, workstation reboot), the engine starts with **every bot paused**, reconciles each venue (P2-T027), handles any residual position or order per policy so trading resumes from **flat**, and keeps bots paused until you resume them with one tap (C1) on Telegram/web, unless a bot has `auto_resume_after_crash: true`.
 
 ## Context & references
 
@@ -65,6 +65,7 @@ After any unplanned stop (crash, kill -9, host reboot), the engine starts with *
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine restart`, `cargo clippy -p mt-engine`.
 - Integration (sandbox + venue emulator): kill -9 with open positions and orders → boot → all bots paused, residue handled per policy, summary sent; resume one bot (C1) → only it trades.
 - Unit: planned shutdown → bots keep their previous state (no forced pause).
 
@@ -79,7 +80,7 @@ After any unplanned stop (crash, kill -9, host reboot), the engine starts with *
 
 - [ ] Unplanned restart always starts with bots paused and trades from flat per policy
 - [ ] Resume is C1 per bot, or automatic only where `auto_resume_after_crash: true`
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -90,7 +91,7 @@ After any unplanned stop (crash, kill -9, host reboot), the engine starts with *
 
 - Do NOT auto-resume bots after an unplanned stop unless `auto_resume_after_crash: true` is set for that bot.
 - Do NOT resubmit pre-crash intents.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

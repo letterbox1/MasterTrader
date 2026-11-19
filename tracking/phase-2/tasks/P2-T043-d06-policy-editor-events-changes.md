@@ -18,14 +18,14 @@ dashboards: [D06, D03]
 tools: [pnpm]
 mcp: []
 env: []
-services: []
+services: [supabase-auth]
 branch: p2/P2-T043-d06-policy-editor-events-changes
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md, docs/ui/dashboards/D03-strategies.md, docs/ui/components.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -71,6 +71,7 @@ You edit the risk policy at every layer (L1–L4 in D06; L0 ceilings, bot defaul
 ## Verification
 
 ### Tests
+- Commands: `pnpm test`, `pnpm playwright`.
 - Playwright: tighten applies immediately; loosen shows C3Flow and does not apply until server says applied (D06 acceptance 1, UI side).
 - API-level test (shared with P2-T053): crafted request bypassing the UI still classified server-side.
 - Component: ceiling lock on every field (D06 acceptance 2).
@@ -90,7 +91,7 @@ You edit the risk policy at every layer (L1–L4 in D06; L0 ceilings, bot defaul
 - [ ] Stress tab placeholder present (R2.57)
 - [ ] Classification shown and enforced server-side
 - [ ] Events + Changes + Rollback working
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `pnpm test`, `pnpm playwright` (viewport matrix + axe), type check
 
 ## Exceptions & edge cases
 
@@ -102,7 +103,7 @@ You edit the risk policy at every layer (L1–L4 in D06; L0 ceilings, bot defaul
 - Do NOT apply loosenings client-side or optimistically.
 - Do NOT render ceilings as editable in D06 (they are edited only in the D03 settings Ceilings section, through C1/C3).
 - Do NOT show sample stress results in the placeholder.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,15 +37,16 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `edge` network, reached only through Caddy at `/mcp` on the Tailscale interface (TLS). It has no route to Postgres, NATS or the signer (it reaches only `mt_api`), is pinned by digest, hardened, health-checked and on Grafana. The MCP token pepper lives in the sops file and is mounted (tmpfs) into `mt-api` only. Client tokens live only in your OS keychain or the sops file. Built and tested on the compose test stack with a fixture pepper.
+The `mcp` compose service runs `mt-mcp` over Streamable HTTP on the internal `edge` network, reached only through Caddy at `/mcp` on the Tailscale interface (TLS). It has no route to Postgres, NATS or the signer (it reaches only `mt-api`), is pinned by digest, hardened, health-checked and on Grafana. The MCP token pepper lives in the sops file and is mounted (tmpfs) into `mt-api` only. Client tokens live only in your OS keychain or the sops file. Built and tested on the compose test stack with a fixture pepper.
 
 ## Context & references
 
 - Roadmap: [R8.02](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.40](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
-- Architecture: [02 §3.1 networks](../../../docs/02-v1-architecture.md#31-networks) · [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) (`mcp` / `mt_mcp`, phase 8)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
+- Architecture: [02 §3.1 networks](../../../docs/02-v1-architecture.md#31-networks) · [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) (`mcp` / `mt-mcp`, phase 8)
 - Security: [07 §5](../../../docs/07-security-notes.md#5-network--host) (bind to 127.0.0.1 / Tailscale only, digests, scans) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (sops/age, tmpfs)
 - Cross-phase: P0 R0.02 (compose pinned by digest), R0.N1 (sops), R0.N2 (Tailscale-only), R0.N3 (segmentation), R0.10 (Grafana/Loki).
-- Decisions: [17 §D P8-B011](../../../docs/17-decisions-register.md#d-other-decisions) (`mcp` on the internal network behind Caddy, Tailscale only) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (MCP token pepper in the sops file) · [07 §5](../../../docs/07-security-notes.md#5-network--host) (`mcp` on `edge` behind Caddy, reaches only `mt_api`) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) (Streamable HTTP at `/mcp` on Caddy, Tailscale/TLS only)
+- Decisions: [17 §D P8-B011](../../../docs/17-decisions-register.md#d-other-decisions) (`mcp` on the internal network behind Caddy, Tailscale only) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (MCP token pepper in the sops file) · [07 §5](../../../docs/07-security-notes.md#5-network--host) (`mcp` on `edge` behind Caddy, reaches only `mt-api`) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) (Streamable HTTP at `/mcp` on Caddy, Tailscale/TLS only)
 - Cross-phase (depends_on): P0-T020 (compose + Caddy, digests), P0-T021 (networks/segmentation), P0-T022 (sops/age into tmpfs), P0-T023 (Prometheus/Loki/Grafana).
 
 ## Requirements
@@ -53,7 +54,7 @@ The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `ed
 - Network: `mcp` on `edge` only (02 §3.1: caddy, mt-api, ntfy, mcp); reaches only `mt-api` over HTTP; Caddy proxies `https://<host>.<tailnet>.ts.net/mcp` to it (and the optional legacy HTTP+SSE path from P8-T032 when enabled). Not on `core`, `scrape` or `signer`; no published host ports.
 - Container hardening: non-root user, read-only rootfs, `no-new-privileges`, `cap_drop: [ALL]`, memory limit 256 MB, restart `unless-stopped`.
 - Image built in CI, pinned by digest in compose, scanned with trivy/grype, SBOM produced.
-- Health check `/healthz` (mt_api reachable + registry loaded); Prometheus metrics (calls, errors, latency, sessions); Grafana panel; Loki logs with args redacted.
+- Health check `/healthz` (mt-api reachable + registry loaded); Prometheus metrics (calls, errors, latency, sessions); Grafana panel; Loki logs with args redacted.
 - `/system/services?kind=mcp` reports status, transport, connected clients and the nearest token expiry (for D17 Connection).
 - Feature flag `mcp.enabled` (system setting, default off): when off, the container is stopped and D17 is hidden from nav.
 - Token pepper: sops key `mcp_token_pepper` (you generate it in P8-T018; tests use a fixture), decrypted to tmpfs for `mt-api` only; `mcp` never sees it.
@@ -62,7 +63,7 @@ The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `ed
 ## ToDo
 
 - [ ] Add the `mcp` service to `compose.yaml` (build, digest pin, networks, hardening, health check).
-- [ ] Add the Caddy route `/mcp` on the Tailscale listener with TLS; forward `Mcp-Session-Id` and `Last-Event-ID`; disable response buffering for SSE; keep the `Origin` check in `mt_mcp`.
+- [ ] Add the Caddy route `/mcp` on the Tailscale listener with TLS; forward `Mcp-Session-Id` and `Last-Event-ID`; disable response buffering for SSE; keep the `Origin` check in `mt-mcp`.
 - [ ] Add the sops template entries (key names only: `mcp_token_pepper`, `mcp_client_token_<label>`), the tmpfs mount for `mt-api`, and a gitleaks rule for the MCP token prefix.
 - [ ] Prometheus scrape config, Grafana panel, Loki labels.
 - [ ] Write a port-scan check (nmap from a LAN host and from the Tailscale peer) into the ops checklist.
@@ -81,7 +82,7 @@ The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `ed
 - Given mt-api is down, then `/healthz` fails and D16 shows `mcp` degraded.
 
 ### Stress / failure injection
-- Container restart during an active Streamable HTTP session: the client reconnects; pending approvals are unaffected (they live in mt_api).
+- Container restart during an active Streamable HTTP session: the client reconnects; pending approvals are unaffected (they live in mt-api).
 
 ## Acceptance criteria
 
@@ -94,7 +95,7 @@ The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `ed
 ## Exceptions & edge cases
 
 - Tailscale down: only stdio access on the host remains; that's acceptable.
-- Caddy misroute: `mt_mcp` refuses bad `Origin`, and mt_api still needs a valid token.
+- Caddy misroute: `mt-mcp` refuses bad `Origin`, and mt-api still needs a valid token.
 
 ## Cardinal rules (do NOT)
 
@@ -120,3 +121,4 @@ The `mcp` compose service runs `mt_mcp` over Streamable HTTP on the internal `ed
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (`edge` network behind Caddy at `/mcp`, Tailscale/TLS only, SSE headers forwarded, token pepper in sops mounted into mt-api only; dropped gap dep P8-B011; added R8.08; cross-phase deps P0-T020/T021/T022/T023; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

@@ -86,7 +86,7 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 - [ ] All D16 backend contract queries (incl. `/audit/integrity`) implemented and documented in OpenAPI
 - [ ] No secret value can be returned (tested)
 - [ ] Postgres-down read-only behaviour proven
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -97,7 +97,7 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 - Do NOT mount the Docker socket into mt-api.
 - Do NOT render or log secret values; metadata only.
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 
 ## Doc sync on completion

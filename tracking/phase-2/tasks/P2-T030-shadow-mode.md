@@ -15,7 +15,7 @@ requirements: [R2.07]
 roadmap_todos: [T2.37]
 modules: [M0, M12]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ Any running strategy version can be shadowed by another version (or itself) in p
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine shadow`, `cargo clippy -p mt-engine`.
 - Integration: shadow of v2 next to paper v1 produces runs + divergence metrics; zero venue orders from the shadow.
 
 ### Scenarios
@@ -74,7 +75,7 @@ Any running strategy version can be shadowed by another version (or itself) in p
 
 - [ ] Shadow runs never reach a venue
 - [ ] Divergence report available
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -83,7 +84,7 @@ Any running strategy version can be shadowed by another version (or itself) in p
 ## Cardinal rules (do NOT)
 
 - Do NOT let shadow instances use non-paper accounts.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

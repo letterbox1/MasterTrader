@@ -15,17 +15,17 @@ requirements: [R2.01, R2.40]
 roadmap_todos: [T2.65]
 modules: [M7, M0, M12]
 dashboards: [D04, D03]
-tools: [uv]
+tools: [uv, cargo]
 mcp: []
 env: []
-services: [postgres, mlflow]
+services: [supabase-postgres, mlflow]
 branch: p2/P2-T161-verify-backtest-paper-parity
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,12 +58,13 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 - [ ] Pick the week; confirm recording completeness (no gaps) via D07
 - [ ] Replay the recorded week in truth backtest with the measured cost snapshot
 - [ ] Export paper fills/orders for the week
-- [ ] Write `mt_lab/parity.py` comparison + report
+- [ ] Write `mt_lab/parity.py` comparison + report (paper side from the `mt-engine` node the template runs on: Rust or Python, per P2-T200)
 - [ ] Record result and categorised differences
 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k parity`.
 - Integration: parity comparator unit-tested on synthetic identical/divergent runs.
 - The parity run itself (evidence).
 
@@ -87,7 +88,7 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 ## Cardinal rules (do NOT)
 
 - Do NOT 'fix' parity by tuning the backtest to the paper week (overfitting the fill model); changes go through the cost snapshot process.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

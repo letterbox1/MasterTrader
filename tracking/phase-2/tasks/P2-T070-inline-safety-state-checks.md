@@ -15,7 +15,7 @@ requirements: [R2.58, R2.16]
 roadmap_todos: [T2.39]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,14 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_risk.checks.safety_state` runs **inline on every order** inside the RiskGate and rejects the order (the ladder holds) when: the data it acts on is older than the bot's threshold; the WORM integrity status says so; the egress check is failing; or the decision is past its deadline. No order can act on stale data or an untrusted record whatever the monitors' timing.
+`mt_risk::checks::safety_state` runs **inline on every order** inside the RiskGate and rejects the order (the ladder holds) when: the data it acts on is older than the bot's threshold; the WORM integrity status says so; the egress check is failing; or the decision is past its deadline. No order can act on stale data or an untrusted record whatever the monitors' timing.
 
 ## Context & references
 
 - Roadmap: [R2.58](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.39 · verified by P2-T076 (T2.71)
-- Decisions: [16 §2.2 data freshness](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) (data age = now on the host monotonic clock − our receive time; 2 s fast / 60 s slow; session-aware; inline order-time check) · [16 §2.11 WORM integrity](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity) (`block_new_entries` default; `alert_only`, `halt_all`) · [16 §3.2 egress check](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) · [16 §2.3 decision deadlines](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) · [17 §A P0-B001, P1-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
+- Decisions: [16 §2.2 data freshness](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) (data age = now on the runtime host's monotonic clock − our receive time; 2 s fast / 60 s slow; session-aware; inline order-time check) · [16 §2.11 WORM integrity](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity) (`block_new_entries` default; `alert_only`, `halt_all`) · [16 §3.2 egress check](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) · [16 §2.3 decision deadlines](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) · [17 §A P0-B001, P1-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
 - Spec: [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [02 F2 step 4](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Cross-phase (`depends_on`): DQ monitor publishing per-stream receive times / `feed_status` (P1-T030, R1.10); egress IP/country check publishing `egress.status` (P1-T071, T1.33, R1.16); `audit.verify`, the integrity incident path, KV `audit.integrity` and the `mt_risk.integrity_gate` hook point (P0-T038, T0.23/T0.27, R0.07/R0.12); this task calls that hook inline on every order. Unit tests use a fake KV with the documented values.
+- Cross-phase (`depends_on`): DQ monitor publishing per-stream receive times / `feed_status` (P1-T030, R1.10); egress IP/country check publishing `egress.status` (P1-T071, T1.33, R1.16); `audit.verify`, the integrity incident path, KV `audit.integrity` and the `mt_risk::integrity_gate` hook point (P0-T038, T0.23/T0.27, R0.07/R0.12); this task calls that hook inline on every order. Unit tests use a fake KV with the documented values.
 - Related: P2-T017 (RiskGate wires this check after the venue/mode checks), P2-T018 (a failing check holds the ladder, rung 3 for the scope), P2-T069 (per-bot thresholds from the merged layers), P2-T059 (degraded-mode e2e).
 
 ## Requirements
@@ -60,7 +60,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `packages/mt_risk/checks/safety_state.py` with the four checks and reason codes
+- [ ] `crates/mt-risk/src/checks/safety_state.rs` with the four checks and reason codes
 - [ ] KV watchers/caches for `audit.integrity`, `egress.status` and per-stream receive times (monotonic), with staleness of the status itself tracked
 - [ ] Per-bot thresholds from the merged policy (stale class, decision deadline)
 - [ ] Ladder hook (rung 3 hold for the scope) and `risk.event` publication
@@ -71,6 +71,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk safety_state`, `cargo clippy -p mt-risk`.
 - Unit: data age boundaries per stale class (1.999 s pass / 2.001 s reject for fast); closed session not stale.
 - Unit: integrity states × order kinds (entry, exit, protective) → expected decision for `ok`, `alert_only`, `block_new_entries`, `halt_all`, unknown.
 - Unit: egress `ok` / `mismatch` / stale status; decision deadline per horizon class.
@@ -91,11 +92,11 @@ review_result: ""
 - [ ] All four checks run inline on every order with reason codes and observed vs threshold
 - [ ] A failing check rejects the order and holds the ladder
 - [ ] ≤ 20 µs p99 added to the gate
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
-- Clock: only the host monotonic clock (chrony-synced host) is used for ages; a monotonic jump is impossible, a wall-clock step doesn't affect ages.
+- Clock: only the runtime host's monotonic clock (chrony-synced) is used for ages; a monotonic jump is impossible, a wall-clock step doesn't affect ages.
 - Backtests: integrity and egress are treated as `ok` and recorded so; data age uses the simulated clock (P2-T105).
 - Protective exits under `halt_all`: not sent; resting venue stops and the dead-man layers protect positions.
 
@@ -104,7 +105,7 @@ review_result: ""
 - Do NOT measure data age from the exchange's timestamp.
 - Do NOT let a missing or unknown state pass an entry (default-deny).
 - Do NOT add I/O to the order path.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

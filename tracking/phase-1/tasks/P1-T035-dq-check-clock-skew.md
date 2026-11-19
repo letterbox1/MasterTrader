@@ -15,17 +15,17 @@ requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres, prometheus]
+services: [nats, supabase-postgres, prometheus]
 branch: p1/P1-T035-dq-check-clock-skew
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Per-feed p99 of `recv_ts − exchange_ts` and the host's chrony offset are tracked; skew beyond thresholds degrades the affected feeds and alerts, protecting timestamps that pit and TCA rely on.
+Per-feed p99 of `recv_ts − exchange_ts` and the workstation's chrony offset are tracked; skew beyond thresholds degrades the affected feeds and alerts, protecting timestamps that pit and TCA rely on.
 
 ## Context & references
 
@@ -45,7 +45,7 @@ Per-feed p99 of `recv_ts − exchange_ts` and the host's chrony offset are track
 - Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (DQ checks table) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 5 · subjects [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · degraded modes [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · UI [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Quality tab
 - Host time: chrony set up in P0 (R0.N2, T0.40)
 - Depends on (this phase): P1-T030
-- Cross-phase prerequisites (depends_on): P0-T019 (host hardening: Tailscale, chrony offset metric)
+- Cross-phase prerequisites (depends_on): P0-T019 (workstation baseline: chrony and its offset metric; Tailscale is not needed, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode))
 
 ## Requirements
 
@@ -65,6 +65,7 @@ Per-feed p99 of `recv_ts − exchange_ts` and the host's chrony offset are track
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor clock_skew`, `cargo clippy`
 - Fault injection: +1 s skew → incident; negative skew → `clock` alert
 - Unit: baseline learning ignores reconnect bursts
 
@@ -79,7 +80,7 @@ Per-feed p99 of `recv_ts − exchange_ts` and the host's chrony offset are track
 ## Acceptance criteria
 
 - [ ] Skew charts populated; injected skew detected; chrony offset scraped
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -109,3 +110,4 @@ Per-feed p99 of `recv_ts − exchange_ts` and the host's chrony offset are track
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (reuse P0-T019 chrony metric; skew separate from data age (16 §2.2))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::clock_skew`); tools cargo; services supabase-postgres; P0-T019 kept for chrony only (workstation baseline, no Tailscale precondition))

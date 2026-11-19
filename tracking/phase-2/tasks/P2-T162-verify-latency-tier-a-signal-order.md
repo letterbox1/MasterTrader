@@ -15,7 +15,7 @@ requirements: [R2.N1, R2.47]
 roadmap_todos: [T2.66]
 modules: [M21, M12, M0]
 dashboards: [D01]
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/10-memory-rag-and-models.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Measured evidence on the production host that a tier-A model trained → calibrated → compiled through the P2 pipeline predicts in-process with p99 < 50 µs, and that strategy signal → order submitted (`autonomous`/paper path, excluding venue) is p99 < 5 ms. The pre-trade risk p99 < 1 ms and kill → cancels < 1 s benchmarks are P2-T058's.
+Measured evidence on the workstation that runs the stack (the runtime host until the P7 shift; P7 reruns it on the target) that a tier-A model trained → calibrated → compiled through the P2 pipeline predicts in-process with p99 < 50 µs, and that strategy signal → order submitted (`autonomous`/paper path, excluding venue) is p99 < 5 ms. The pre-trade risk p99 < 1 ms and kill → cancels < 1 s benchmarks are P2-T058's.
 
 ## Context & references
 
@@ -54,14 +54,15 @@ Measured evidence on the production host that a tier-A model trained → calibra
 
 ## ToDo
 
-- [ ] Write `tests/perf/tier_a_bench.py` and `signal_to_order_bench.py`
-- [ ] Run on the host (not a laptop) with the engine up
+- [ ] Write `packages/mt_models/tests/perf/tier_a_bench.py` (Python node), `crates/mt-engine/benches/tier_a.rs` (`ort`) and `crates/mt-engine/benches/signal_to_order.rs` (criterion)
+- [ ] Run on the workstation with the engine up
 - [ ] Capture histograms + Grafana snapshot
 - [ ] File bug items for any SLO miss
 
 ## Verification
 
 ### Tests
+- Commands: `cargo bench -p mt-engine signal_to_order`, `cargo bench -p mt-engine tier_a`, `uv run pytest packages/mt_models -k bench`.
 - Perf benchmarks above; regression thresholds recorded for a nightly perf job.
 
 ### Scenarios
@@ -74,17 +75,17 @@ Measured evidence on the production host that a tier-A model trained → calibra
 
 ## Acceptance criteria
 
-- [ ] Tier A p99 < 50 µs on the host
+- [ ] Tier A p99 < 50 µs on the workstation
 - [ ] Signal → order p99 < 5 ms on paper (excl. venue)
 - [ ] Benchmarks committed and results recorded
 
 ## Exceptions & edge cases
 
-- Clock source: use `time.perf_counter_ns`/span timestamps from one host clock; no cross-host comparisons.
+- Clock source: use `std::time::Instant` / `time.perf_counter_ns` / span timestamps from one machine's clock; no cross-machine comparisons.
 
 ## Cardinal rules (do NOT)
 
-- Do NOT benchmark on a different machine than the production host for the pass/fail result.
+- Do NOT take the pass/fail result from a machine other than the workstation that runs the stack.
 - Do NOT exclude slow samples from percentiles.
 - Do NOT skip, weaken or delete a test to get green.
 

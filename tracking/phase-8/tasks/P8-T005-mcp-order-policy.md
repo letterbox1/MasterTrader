@@ -15,17 +15,17 @@ requirements: [R8.04, R8.05]
 roadmap_todos: [T8.21]
 modules: [M20, M11]
 dashboards: [D17, D06, D05]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p8/P8-T005-mcp-order-policy
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/07-security-notes.md, docs/15-bots-hitl-and-worm-audit.md, docs/ui/dashboards/D17-mcp-console.md, docs/roadmap/phase-8-mcp.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,11 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every MCP-sourced command is routed by a **server-side** policy in `mt_api`, exactly as [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) and [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) decide: C0 reads run directly; C1 runs if the token has the scope; C2 orders **always** create your approval card on Telegram/web (TTL default 5 min, expiry = reject); C3 goes through Telegram + TOTP + cool-down as usual. There is **no** "skip approval" option, MCP can never approve, and MCP can tighten risk but never apply a loosening (that is always C3, completed by you out of band). Every order still passes M11. Built and tested against paper/sandbox venues and a fake Telegram harness.
+Every MCP-sourced command is routed by a **server-side** policy in `mt-api`, exactly as [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) and [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) decide: C0 reads run directly; C1 runs if the token has the scope; C2 orders **always** create your approval card on Telegram/web (TTL default 5 min, expiry = reject); C3 goes through Telegram + TOTP + cool-down as usual. There is **no** "skip approval" option, MCP can never approve, and MCP can tighten risk but never apply a loosening (that is always C3, completed by you out of band). Every order still passes M11. Built and tested against paper/sandbox venues and a fake Telegram harness.
 
 ## Context & references
 
 - Roadmap: [R8.04, R8.05](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (confirmation mapping; limits are P8-T030)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (C0/C1/C2/C3 mapping, TTL 5 min, no skip option; resolves P8-B010) · [17 §A P8-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (MCP can never approve) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) (L0 ceilings in settings, loosening C3)
 - Spec: [03 M20 safeguards](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [SPEC NN2](../../../SPEC.md#non-negotiable-requirements) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [16 §1 layers](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance) · [02 F5](../../../docs/02-v1-architecture.md#8-end-to-end-flows) ("MCP can only tighten")
 - HITL rules: [15 §1.3](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram) (MCP-originated orders always raise this card, TTL 5 min; approvals only from you, bound to your Telegram id or web session)
@@ -50,7 +51,7 @@ Every MCP-sourced command is routed by a **server-side** policy in `mt_api`, exa
 
 ## Requirements
 
-- Mapping for `source = mcp` (implemented before command dispatch, in `mt_api`):
+- Mapping for `source = mcp` (implemented before command dispatch, in `mt-api`):
   - **C0** (queries, `risk.preview`, `models.tierb.ask`) → run directly.
   - **C1** → run immediately if the token has the tool's scope (e.g. `risk_tighten` tightening, `strategy` C1 edits, `curation`, `analyse` runs).
   - **C2** → every order command (`order.place`, `order.modify`, `order.cancel`, `order.cancel_all`, `position.close`, `position.reduce`, `position.set_brackets`; flatten = `position.close` with strategy scope) and any other C2 command → `pending_approval` → your approval card (Telegram + web, P8-T014). Approve within TTL or it's rejected; never executed late.
@@ -66,12 +67,12 @@ Every MCP-sourced command is routed by a **server-side** policy in `mt_api`, exa
 
 ## ToDo
 
-- [ ] Implement `packages/mt_api/mcp/policy.py` hooked into the confirmation engine before command dispatch.
+- [ ] Implement `crates/mt-api/src/mcp/policy.rs` hooked into the confirmation engine before command dispatch.
 - [ ] Migration `ops.mcp_policy`; command `mcp.policy.set` (web/Telegram only) with tighten/loosen classification; schema has no skip-approval field (test).
 - [ ] Pending-approval path: reuse `risk.approval` and `risk.approval.request/result` NATS subjects; add `source = mcp`, `client_label`, `reason` to the payload (P8-T014 renders it).
 - [ ] TTL expiry worker (server UTC, TTL from settings); auto-reject pending MCP approvals on Kill ON.
 - [ ] Route risk-loosening fields and `risk.kill.off` from MCP into the C3 flow (never C1, whatever the scopes).
-- [ ] Golden decision table `tests/golden/mcp_policy.csv` (command × level × scopes × kill state → outcome) as a mandatory-for-merge test.
+- [ ] Golden decision table `crates/mt-api/tests/golden/mcp_policy.csv` (`cargo test -p mt-api`) (command × level × scopes × kill state → outcome) as a mandatory-for-merge test.
 - [ ] Update docs.
 
 ## Verification
@@ -106,7 +107,7 @@ Every MCP-sourced command is routed by a **server-side** policy in `mt_api`, exa
 ## Exceptions & edge cases
 
 - Telegram down: approvals still possible from web (D01/D05/D17); otherwise they expire as rejects.
-- mt_api restart with pending approvals: they persist in `risk.approval`; TTL runs on wall clock; expired ones are rejected on startup.
+- mt-api restart with pending approvals: they persist in `risk.approval`; TTL runs on wall clock; expired ones are rejected on startup.
 - Kill ON: trade commands rejected with `kill_on`; pending MCP approvals auto-rejected.
 - DQ degraded or blackout at release time: M11 rejects; the card shows the reason.
 - Unreconciled position: close/reduce rejected (D05 rule) except flatten via kill.
@@ -117,9 +118,9 @@ Every MCP-sourced command is routed by a **server-side** policy in `mt_api`, exa
 - Do NOT add any "skip approval", auto-execute or auto-rule option for MCP orders.
 - Do NOT let MCP approve anything or change its own policy, tools or tokens.
 - Do NOT let any setting skip M11, the venue registry, STP or DQ checks.
-- Do NOT decide confirmation levels in `mt_mcp`.
+- Do NOT decide confirmation levels in `mt-mcp`.
 - Do NOT hard-code the TTL or cool-down; they are settings with 16 §2.3 defaults.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT make loosening risk, autonomous mode, mandates or kill-switch OFF anything less than C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT update or delete WORM rows; corrections are new rows (15 §2).
@@ -143,3 +144,4 @@ Every MCP-sourced command is routed by a **server-side** policy in `mt_api`, exa
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (C2 orders always create your card, TTL default 5 min, auto rules and skip-approval removed, MCP never applies a loosening (always C3 out of band), L0 tightening allowed, scopes per 16 §2.12; rate limits moved to P8-T030; dropped gap dep P8-B002; cross-phase deps P2-T020/T033/T035/T038/T039; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

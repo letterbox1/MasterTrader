@@ -15,7 +15,7 @@ requirements: [R1.04]
 roadmap_todos: [T1.23]
 modules: [M1]
 dashboards: [D02, D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,25 +37,26 @@ review_result: ""
 
 ## Goal / expected outcome
 
-IG demo streaming prices for the universe's FX, metals and index CFDs publish as `md.ig.{symbol}.quote`, giving a second live FX source for divergence checks.
+IG demo streaming prices (in `mt-recorder`, Rust) for the universe's FX, metals and index CFDs publish as `md.ig.{symbol}.quote`, giving a second live FX source for divergence checks.
 
 ## Context & references
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (IG Lightstreamer demo) · [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (IG REST + Lightstreamer, `trading-ig` BSD-3)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (IG Lightstreamer demo) · [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (IG REST + Lightstreamer, `trading-ig` BSD-3) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built and tested keyless against fixtures in IG's documented REST/Lightstreamer formats; the live demo stream is checked with your credentials in P1-T073 (from P0-T009 / P1-T002). IG's historical price allowance is limited, so history comes from Dukascopy (P1-T018)
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T009
 
 ## Requirements
 
-- Use `trading-ig` (pinned) for session login (demo host) and the Lightstreamer client for `MARKET:{epic}` / `CHART:{epic}:TICK` subscriptions
+- Thin Rust IG REST client for session login (demo host) and a Rust Lightstreamer (TLCP) client for `MARKET:{epic}` / `CHART:{epic}:TICK` subscriptions (U: check for a maintained Rust Lightstreamer crate first; else implement the TLCP subset we need). If neither is viable, record it and fall back to a small Python bridge (`trading-ig` + the official Lightstreamer Python client) that only publishes `md.ig.*` to NATS, per the 18 §2 rule
 - Publish bid/offer/mid with `event_time` from `UPDATE_TIME`/`UTM`; map epics to Nautilus IDs in the instrument master
 - Session token refresh before expiry; reconnect with backoff; respect IG API allowances through the quota tracker
 - Read-only usage: only login, market details and streaming
 
 ## ToDo
 
-- [ ] Implement IG stream connector with session refresh
+- [ ] Check the Rust Lightstreamer option (U) and record the decision in the progress log
+- [ ] Implement the IG stream connector with session refresh
 - [ ] Epic mapping for universe instruments
 - [ ] Golden fixtures in IG's documented formats (P1-T073 replaces them with scrubbed real recordings); tests; docs
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -64,7 +65,7 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 
 ### Tests
 
-- Unit: update parsing incl. partial field updates (Lightstreamer sends only changed fields)
+- `cargo test -p mt-recorder ig`: update parsing incl. partial field updates (Lightstreamer sends only changed fields)
 - Integration: golden replay; forced session expiry → re-login and resubscribe
 
 ### Scenarios
@@ -79,7 +80,7 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 ## Acceptance criteria
 
 - [ ] Golden replay and session-expiry tests pass keyless; the live `md.ig.*.quote` check runs in P1-T073
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -109,3 +110,4 @@ IG demo streaming prices for the universe's FX, metals and index CFDs publish as
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build on fixtures, live stream moved to P1-T073)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (connector in Rust `mt-recorder` with a Rust Lightstreamer client (U, checked first; Python bridge only as a recorded fallback); tools cargo)

@@ -15,17 +15,17 @@ requirements: [R8.01, R8.02, R8.03, R8.04, R8.05, R8.06, R8.07, R8.08, R8.09, R8
 roadmap_todos: []
 modules: [M20, M11, M17]
 dashboards: [D17, D06, D05]
-tools: [uv, pnpm, docker, git, claude-desktop]
+tools: [cargo, pnpm, docker, git, claude-desktop]
 mcp: []
 env: []
-services: [postgres, nats, tailscale, telegram-bot, mt-engine]
+services: [supabase-postgres, nats, tailscale, telegram-bot, mt-engine]
 branch: p8/P8-T029-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md, docs/roadmap/README.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 ## Context & references
 
 - Roadmap: [§6 Exit criteria](../../../docs/roadmap/phase-8-mcp.md#6-exit-criteria-demo) · all of [R8.01–R8.10](../../../docs/roadmap/phase-8-mcp.md#3-requirements)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) · [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)
 - PHASE.md exit-criteria checklist (tracking/phase-8/PHASE.md)
 - Evidence items: P8-T020 (auth + transport), T021/T022 (bypass, C3), T023 (tool list), T024 (injection), T025 (audit), T026 (scenarios), T027 (stress), T033 (response guard), T034 (limits), T035 (live client), T028 (RUN).
@@ -49,6 +50,7 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 ## Requirements
 
 - Demo on paper/practice accounts (or micro-live only if P7 already allows it and you choose to).
+- Before the demo you enable the `risk_tighten` and `trade` tools and create a token with those scopes in D17 (C3, your own action; P8-T019 seeds them off). No build task waits on this.
 - Step 1: Claude reads strategy status (C0, read tools).
 - Step 2: `risk_policy_update` tightening BTC max position to X (C1, `risk_tighten` scope) → `applied` immediately; D06 Changes shows source = mcp.
 - Step 3: `position_reduce(EURUSD, 0.5)` → `pending_approval`; Telegram MCP card (TTL default 5 min); you approve on Telegram; M11 passes; fill on the practice account.
@@ -89,7 +91,7 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 
 - Do NOT fake any step with mocks; this is the real stack.
 - Do NOT show tokens or keys in the recording.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT make loosening risk, autonomous mode, mandates or kill-switch OFF anything less than C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT update or delete WORM rows; corrections are new rows (15 §2).
@@ -111,3 +113,4 @@ The roadmap §6 demo runs live and every exit criterion in PHASE.md is ticked wi
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (demo evidence now includes `audit.mcp_call`; R8.08–R8.10 and new verify tasks P8-T033/T034/T035 added as dependencies and evidence; TTL 5 min; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (exit demo: you enable the write scopes (C3) during the demo)

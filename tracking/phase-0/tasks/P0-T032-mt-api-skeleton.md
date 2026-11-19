@@ -85,7 +85,7 @@ review_result: ""
 - [ ] Container healthy in compose; OpenAPI exported and diff-checked
 - [ ] problem+json everywhere (tested)
 - [ ] Postgres-down read-only mode proven
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -96,7 +96,7 @@ review_result: ""
 - Do NOT enable CORS or bind mt-api to a published port (Caddy only).
 - Do NOT return stack traces or SQL in errors.
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 - Pin every image by digest (no `:latest` or floating tags); no telemetry or referral IDs in vendored code.
 

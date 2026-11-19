@@ -15,7 +15,7 @@ requirements: [R2.18, R2.N1]
 roadmap_todos: [T2.23]
 modules: [M11, M12]
 dashboards: [D06, D01]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,7 +60,7 @@ A global and per-sleeve kill switch lives in NATS KV `kill`; it can be set from 
 
 ## ToDo
 
-- [ ] `packages/mt_risk/kill.py` (KV model, triggers)
+- [ ] `crates/mt-risk/src/kill.rs` (KV model, triggers)
 - [ ] Engine subscriber + parallel cancel/flatten
 - [ ] NATS account permissions for `kill.set`
 - [ ] Commands + WS topic
@@ -90,7 +90,7 @@ A global and per-sleeve kill switch lives in NATS KV `kill`; it can be set from 
 - [ ] Kill ON never blocked; OFF is C3 + cause cleared
 - [ ] Automatic triggers wired (system drawdown stage 2, unexplained recon mismatch)
 - [ ] Per-bot `on_system_failure` applied on kill
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -101,7 +101,7 @@ A global and per-sleeve kill switch lives in NATS KV `kill`; it can be set from 
 
 - Do NOT put any confirmation beyond a single confirm on Kill ON.
 - Do NOT allow kill OFF without C3.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.

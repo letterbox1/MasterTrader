@@ -15,7 +15,7 @@ requirements: [R2.56]
 roadmap_todos: [T2.36]
 modules: [M12, M11]
 dashboards: [D06, D05]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/16-configuration-and-safety-mo
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-When our whole host or its internet is down, the venue protects us: where a venue supports **cancel-on-disconnect / countdown timers**, the engine arms and refreshes them (default refresh every 15 s, 60 s timeout), and **every position carries a resting stop-loss order at the venue, placed at entry**, so a dead system leaves no unprotected exposure.
+When our whole runtime host (the workstation until the P7 shift) or its internet is down, the venue protects us: where a venue supports **cancel-on-disconnect / countdown timers**, the engine arms and refreshes them (default refresh every 15 s, 60 s timeout), and **every position carries a resting stop-loss order at the venue, placed at entry**, so a dead system leaves no unprotected exposure.
 
 ## Context & references
 
@@ -58,7 +58,7 @@ When our whole host or its internet is down, the venue protects us: where a venu
 ## ToDo
 
 - [ ] Verify from official docs each venue's cancel-after/countdown and stop-order support (Binance spot vs USD-M, Alpaca, OANDA, IG, Bybit testnet); record in the registry with sources (U → verified)
-- [ ] `packages/mt_engine/venue_safety.py`: timer arm/refresh loop per supported venue; status metrics
+- [ ] `crates/mt-engine/src/venue_safety.rs`: timer arm/refresh loop per supported venue; status metrics
 - [ ] Resting-stop placement at entry (native/bracket/OTO) in each adapter; immediate close if placement fails
 - [ ] RiskGate rule for `resting_stop: none` accounts; policy flag `allow_no_venue_stop`
 - [ ] Reconcile stops on restart (P2-T027/P2-T074)
@@ -68,12 +68,13 @@ When our whole host or its internet is down, the venue protects us: where a venu
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine venue_safety`, `cargo clippy -p mt-engine`.
 - Unit: refresh scheduler (15 s / 60 s); stop placement request per venue type.
 - Integration (emulator): disconnect the engine from the emulator for 65 s → the emulator's countdown cancels resting orders; positions keep their resting stops.
 - Integration (cassettes): entry on each adapter produces the stop/bracket payload; failed stop placement → immediate close.
 
 ### Scenarios
-- Given an open position on a venue with a native stop, when the host loses internet, then the resting stop remains at the venue and fires if price crosses it.
+- Given an open position on a venue with a native stop, when the workstation loses internet, then the resting stop remains at the venue and fires if price crosses it.
 - Given a venue with `cancel_after: countdown`, when refreshes stop, then open orders are cancelled by the venue after 60 s.
 - Given a venue with `resting_stop: none`, when a hitl bot submits an entry on that account, then it is rejected `no_venue_stop` (default policy).
 
@@ -85,7 +86,7 @@ When our whole host or its internet is down, the venue protects us: where a venu
 - [ ] Capability matrix verified with sources (no unverified (U) entry enabled)
 - [ ] Timers armed and refreshed where supported
 - [ ] Every position opened by the engine has a resting venue stop (or a recorded paper-only exception)
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -98,7 +99,7 @@ When our whole host or its internet is down, the venue protects us: where a venu
 - Do NOT open a position without a resting venue stop where the venue supports one.
 - Do NOT rely on unverified (U) venue features in code paths that protect money.
 - Do NOT hard-code the 15 s / 60 s timer values.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

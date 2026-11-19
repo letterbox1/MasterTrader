@@ -15,17 +15,17 @@ requirements: [R2.56, R2.18]
 roadmap_todos: [T2.70]
 modules: [M11, M12]
 dashboards: [D06]
-tools: [uv, docker]
+tools: [cargo, uv, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T075-verify-kill-the-engine-drill
 pr: ""
 doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,13 +50,13 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 
 - Setup: 3 bots on the emulator (`flatten`, `cancel_orders_only`, `hold`), each with an open position (resting stop at the emulator) and 5 resting orders.
 - Drill A: `docker kill -s KILL engine` → measure engine-heartbeat loss → sidecar cancels (≤ 5 s + 1 s) → `flatten` bot flat (≤ 10 s + 1 s); others per policy.
-- Drill B: kill engine **and** sidecar, and block the host from the emulator → emulator countdown cancels resting orders after the timeout; resting stops remain and fire on a simulated price move.
+- Drill B: kill engine **and** sidecar, and block the workstation from the emulator → emulator countdown cancels resting orders after the timeout; resting stops remain and fire on a simulated price move.
 - Restart: engine boots with all bots paused, reconciles, residue handled per policy, summary sent; resume one bot (C1) and confirm only it trades.
 - Each drill run 3×; p50/max recorded; WORM rows for every action.
 
 ## ToDo
 
-- [ ] Drill script `ops/drills/kill_engine_drill.py` (emulator setup, kill, measure, restart, resume)
+- [ ] Drill script `tests/drills/test_kill_engine_drill.py` (emulator setup, kill, measure, restart, resume)
 - [ ] Run drills A and B 3× each; record timings and audit IDs
 - [ ] Add results to `docs/runbooks/kill-switch-drill.md`
 - [ ] Record results (numbers, run IDs) in the progress log and tick the roadmap ToDo box
@@ -64,11 +64,12 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest tests/drills/test_kill_engine_drill.py` against the compose stack (engine and `deadman` built with `cargo`).
 - Drills A and B × 3 runs with timings; restart flow assertions.
 
 ### Scenarios
 - Given the engine is SIGKILLed with 15 open orders, when 5 s pass, then the sidecar has cancelled all of them; at 10 s the `flatten` bot is flat.
-- Given engine and sidecar are both down and the host is cut off, when the emulator's timer expires, then resting orders are cancelled and positions keep their stops.
+- Given engine and sidecar are both down and the workstation is cut off, when the emulator's timer expires, then resting orders are cancelled and positions keep their stops.
 - Given the engine restarts after drill A, then every bot is paused and trading resumes only for the bot you resume.
 
 ### Stress / failure injection
@@ -88,7 +89,7 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 
 - Do NOT run the drill against live accounts.
 - Do NOT relax the 5 s / 10 s targets to pass; investigate and fix.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

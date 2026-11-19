@@ -15,17 +15,17 @@ requirements: [R2.11, R2.55]
 roadmap_todos: [T2.22, T2.35]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T010-risk-policy-model-store
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,14 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`packages/mt_risk/policy` holds a versioned, typed risk configuration organised in the five layers of [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance): **L0 hard ceilings** → **L1 system** (global limits, system drawdown stages, failure behaviour, WORM response, venue concentration) → **L2 venue/account** (notional, leverage, products, collars, rate limits) → **L3 sleeve** (capital, risk budget, drawdown stages, kill criteria) → **L4 bot** (sizing model, per-trade risk, approval policy, `on_system_failure`, decision deadline), stored in `risk.policy` with immutable versions (WORM) and rollback-as-new-version. Merging (strictest wins) and save-time validation are P2-T069.
+`crates/mt-risk/src/policy` holds a versioned, typed risk configuration organised in the five layers of [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance): **L0 hard ceilings** → **L1 system** (global limits, system drawdown stages, failure behaviour, WORM response, venue concentration) → **L2 venue/account** (notional, leverage, products, collars, rate limits) → **L3 sleeve** (capital, risk budget, drawdown stages, kill criteria) → **L4 bot** (sizing model, per-trade risk, approval policy, `on_system_failure`, decision deadline), stored in `risk.policy` with immutable versions (WORM) and rollback-as-new-version. Merging (strictest wins) and save-time validation are P2-T069.
 
 ## Context & references
 
 - Roadmap: [R2.11](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Spec: [03 M11 policy levels table](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 sleeves + defaults](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
 - UI: [D06 Policy tab tree](../../../docs/ui/dashboards/D06-risk.md) · Flow: [02 F5](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
-- Cross-phase (`depends_on`): `mt_core.RiskPolicy` type (P0-T016, T0.21), `risk` schema + Alembic (P0-T024, R0.03), WORM layer for `risk.change` (P0-T029, R0.07).
+- Cross-phase (`depends_on`): `mt-core` `RiskPolicy` type (P0-T016, T0.21), `risk` schema + Supabase migrations (P0-T024, R0.03), WORM layer for `risk.change` (P0-T029, R0.07).
 - Related: P2-T011 L0 ceilings, P2-T012 defaults + evaluators, P2-T069 layering merge + effective-limits API, P2-T019 change control.
 - Defaults: every value starts at its [16 §2](../../../docs/16-configuration-and-safety-model.md#2-default-values-all-configurable) default and stays editable; nothing is hard-coded.
 
@@ -59,9 +59,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Models per layer (L0–L4) in `packages/mt_risk/policy/model.py`; install defaults from 16 §2 in `defaults.py` (data, with section links)
+- [ ] Models per layer (L0–L4) in `crates/mt-risk/src/policy/model.rs`; install defaults from 16 §2 in `defaults.rs` (data, with section links)
 - [ ] Migrations for `risk.policy`; register `risk.change` with the WORM layer
-- [ ] Policy compiler to flat tables (`compiled.py`) + NATS KV `risk_state.policy_version` publish on change
+- [ ] Policy compiler to flat tables (`compiled.rs`) + NATS KV `risk_state.policy_version` publish on change
 - [ ] CLI import/export
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -69,6 +69,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk policy`, `cargo clippy -p mt-risk`, `supabase test db`.
 - Unit: each layer document validates on its own; a field placed at the wrong layer is rejected.
 - Property: export → import round-trip yields an identical hash.
 - Unit: every field has direction metadata (test enumerates the model).
@@ -86,7 +87,7 @@ review_result: ""
 - [ ] All 03 M11 levels modelled with direction metadata
 - [ ] Versions immutable; rollback creates a new version
 - [ ] Compiled lookups benchmarked
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -97,7 +98,7 @@ review_result: ""
 
 - Do NOT edit an applied policy version in place.
 - Do NOT read limits from anywhere but the compiled policy (all layers incl. L0) in the order path.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows with `supersedes_id` (15 §2).

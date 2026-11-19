@@ -15,17 +15,17 @@ requirements: [R3.N3, R3.01, R3.02]
 roadmap_todos: [T3.67]
 modules: [M18, M17, M11]
 dashboards: [D14, D16]
-tools: [git, uv, docker, nats]
+tools: [git, docker, nats]
 mcp: []
 env: []
-services: [postgres, nats, journal, engine, grafana]
+services: [supabase-postgres, nats, journal, engine, grafana]
 branch: p3/P3-T060-postgres-down-drill-for-the-journal-and-worm-wri
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ A recorded drill on the staging stack with paper trading proves R3.N3: with Post
 ## Context & references
 
 - Roadmap: [R3.N3, T3.67](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Defaults: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (1 GB or 24 h; new entries stop above 80%; exits continue; nothing executes without a record) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes)
 - Under test: P3-T057 (stream, buffer library, M11 hook), P3-T013 (fills → journal), P3-T009 (journal consumers)
 - Related: P3-T052 (general stress; this drill is the bound-specific one)
@@ -56,7 +57,7 @@ A recorded drill on the staging stack with paper trading proves R3.N3: with Post
 
 ## ToDo
 
-- [ ] Script the drill `tests/chaos/journal/postgres_down_drill.py`
+- [ ] Script the drill `tests/chaos/journal/postgres_down_drill.sh` (stops the Supabase Postgres container)
 - [ ] Run it; capture Grafana screenshots, alert receipts and counts
 - [ ] Record results and timings in the progress log; file bugs for deviations
 
@@ -86,7 +87,7 @@ A recorded drill on the staging stack with paper trading proves R3.N3: with Post
 
 - Do NOT run the drill against production data or with real money.
 - Do NOT change production buffer defaults to make the drill faster; use the test profile.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE WORM rows; corrections are new rows ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get green.
 
@@ -103,3 +104,4 @@ A recorded drill on the staging stack with paper trading proves R3.N3: with Post
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for R3.N3/T3.67 (docs/16–17 alignment)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (drill script stops the Supabase Postgres container)

@@ -15,17 +15,17 @@ requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T032-dq-check-gaps
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,14 +48,14 @@ Gaps are detected from exchange sequence IDs, trade-ID continuity and expected b
 ## Requirements
 
 - Stream gaps: `seq != prev_seq + 1` (per venue rules; Binance diff `U == last_u + 1`, trade IDs monotonic +1 where the venue guarantees it)
-- Bar gaps: expected 1m bars per session vs present (crypto 1440/day; equities per `exchange_calendars`; FX per broker session) from Timescale
+- Bar gaps: expected 1m bars per session vs present (crypto 1440/day; equities per the session calendar materialised from `exchange_calendars` by P1-T009; FX per broker session) from `market.bar_1m` in Supabase Postgres
 - Gap severity: book sequence gap → `bad` until resync; trade-ID gap → `degraded` with count
 - Gap report `mt-monitor gaps --from --to` (per instrument: gaps, total missing seconds, longest) used by P1-T065
 
 ## ToDo
 
 - [ ] Implement stream and bar gap checks
-- [ ] Implement the report CLI/flow
+- [ ] Implement the report CLI (`mt-monitor gaps`)
 - [ ] Fault-injection tests via the harness (drop sequence IDs)
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -63,6 +63,7 @@ Gaps are detected from exchange sequence IDs, trade-ID continuity and expected b
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor gaps`, `cargo clippy`
 - Fault injection: drop 1, 10 and 1000 sequence IDs → correct counts, `bad` for book gaps until resync
 - Unit: venues without contiguous trade IDs are exempt (configured), no false positives
 
@@ -77,7 +78,7 @@ Gaps are detected from exchange sequence IDs, trade-ID continuity and expected b
 ## Acceptance criteria
 
 - [ ] Dropped sequence IDs always detected in the fault suite; gap report produced
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -105,3 +106,4 @@ Gaps are detected from exchange sequence IDs, trade-ID continuity and expected b
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::gaps`); tools cargo; services supabase-postgres)

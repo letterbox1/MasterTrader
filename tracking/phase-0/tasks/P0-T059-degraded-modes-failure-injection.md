@@ -78,7 +78,7 @@ A scripted chaos/stress run (`tools/chaos/p0.sh`) injects the P0-relevant failur
 - [ ] Every fault behaves as specified and recovers without manual steps (or a bug is filed)
 - [ ] Load targets met or deviations filed as bugs
 - [ ] Results table committed
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

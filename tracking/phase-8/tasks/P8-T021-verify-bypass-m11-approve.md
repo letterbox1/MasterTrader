@@ -15,17 +15,17 @@ requirements: [R8.04]
 roadmap_todos: [T8.60]
 modules: [M20, M11, M12]
 dashboards: [D17, D05]
-tools: [uv, docker, git]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats, mt-engine]
+services: [supabase-postgres, nats, mt-engine]
 branch: p8/P8-T021-verify-bypass-m11-approve
 pr: ""
 doc_sync: [docs/roadmap/phase-8-mcp.md, docs/07-security-notes.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,20 +37,21 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An adversarial test suite `tests/security/test_mcp_bypass.py`, mandatory for merge, proves T8.60's bypass half: no path from an MCP principal reaches a venue without M11; no MCP order skips your approval card (expiry = reject); MCP can't call `approval.*` or `mcp.*`. Runs on the sandbox paper venue with a fake Telegram harness; no keys.
+An adversarial test suite `crates/mt-mcp/tests/security_bypass.rs`, mandatory for merge, proves T8.60's bypass half: no path from an MCP principal reaches a venue without M11; no MCP order skips your approval card (expiry = reject); MCP can't call `approval.*` or `mcp.*`. Runs on the sandbox paper venue with a fake Telegram harness; no keys.
 
 ## Context & references
 
 - Roadmap: [R8.04](../../../docs/roadmap/phase-8-mcp.md#3-requirements) (verified by: bypass tests) · ToDo [T8.60](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B001/B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8)
 - Spec: [SPEC NN2](../../../SPEC.md#non-negotiable-requirements) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Precedent: P2-T052 (no-bypass tests for every order source).
 
 ## Requirements
 
-- Attack matrix (each is a test): (1) raw mt_api call with an MCP token, skipping `mt_mcp`; (2) forged `source: web` in body/headers; (3) orders via other groups (`strategy.start` live, `bot.create` autonomous, `bot.approval_policy.set` loosen); (4) self-approval: raw `approval.approve` / `approve_partial` / `reject` with an MCP token → 403; (5) self-admin: raw `mcp.policy.set` / `mcp.tool.set` / `mcp.token.create` with an MCP token → 403; (6) idempotency-key replay with changed args → 409; (7) modify a pending order after the card is shown → new card; (8) look for a skip-approval path: every policy field and query parameter fuzzed, none yields `submitted` without approval; (9) M11 rejects at release after approval (limit, DQ stale, blackout, venue not allowed, leverage cap); (10) Kill ON → refused; (11) cancel, bracket widening and protective-stop cancel from MCP → card; (12) approval after TTL (5 min default, injected clock) → rejected; (13) from inside the `mcp` container, publish to `ord.intent.*` on NATS → no route.
+- Attack matrix (each is a test): (1) raw mt-api call with an MCP token, skipping `mt-mcp`; (2) forged `source: web` in body/headers; (3) orders via other groups (`strategy.start` live, `bot.create` autonomous, `bot.approval_policy.set` loosen); (4) self-approval: raw `approval.approve` / `approve_partial` / `reject` with an MCP token → 403; (5) self-admin: raw `mcp.policy.set` / `mcp.tool.set` / `mcp.token.create` with an MCP token → 403; (6) idempotency-key replay with changed args → 409; (7) modify a pending order after the card is shown → new card; (8) look for a skip-approval path: every policy field and query parameter fuzzed, none yields `submitted` without approval; (9) M11 rejects at release after approval (limit, DQ stale, blackout, venue not allowed, leverage cap); (10) Kill ON → refused; (11) cancel, bracket widening and protective-stop cancel from MCP → card; (12) approval after TTL (5 min default, injected clock) → rejected; (13) from inside the `mcp` container, publish to `ord.intent.*` on NATS → no route.
 - Every case asserts: no order at the paper venue without your approval, and the expected `audit.mcp_call` result status.
-- Marked as a required CI check for PRs touching `mt_api`, `mt_risk`, `mt_mcp`.
+- Marked as a required CI check for PRs touching `mt-api`, `mt-risk`, `mt-mcp`.
 
 ## ToDo
 
@@ -84,7 +85,7 @@ An adversarial test suite `tests/security/test_mcp_bypass.py`, mandatory for mer
 
 - Do NOT mark any case xfail/skip to get green.
 - Do NOT run against live accounts.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT use live money before the P7 gates; keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -103,3 +104,4 @@ An adversarial test suite `tests/security/test_mcp_bypass.py`, mandatory for mer
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (auto-rule cases replaced by "no skip-approval path exists" fuzzing; `approval.*` incl. reject and `mcp.*` self-admin cases; TTL 5 min; cancel → card; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

@@ -84,7 +84,7 @@ CI runs Playwright across the full DESIGN §6.8 matrix (33 viewports, portrait +
 - [ ] axe: zero serious/critical
 - [ ] Negative fixture fails as expected
 - [ ] Required in CI for `apps/web/**` changes
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check, Playwright viewport matrix)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
 

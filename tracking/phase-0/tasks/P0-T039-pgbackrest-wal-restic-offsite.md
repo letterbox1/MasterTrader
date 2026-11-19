@@ -89,7 +89,7 @@ Postgres is continuously protected: pgBackRest with WAL archiving to the Object-
 - [ ] restic snapshot present; delete with the host key fails (MinIO lock)
 - [ ] Backup metrics + alerts live
 - [ ] `system.backup.run` works from the API
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

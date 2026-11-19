@@ -15,17 +15,17 @@ requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, docker]
+tools: [git, uv, supabase, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server]
+services: [supabase-postgres, prefect-server]
 branch: p1/P1-T024-macro-fred-alfred-treasury
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,10 +57,10 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 
 ## ToDo
 
-- [ ] Migration for macro tables (if not in P0) with pit-friendly indexes
-- [ ] FRED/ALFRED client (fredapi or thin httpx) with vintage paging
+- [ ] Supabase migration for macro tables (if not in P0) with pit-friendly indexes; pgTAP test
+- [ ] FRED/ALFRED client (fredapi, Python-only SDK per 18 §2.2, or thin httpx) with vintage paging
 - [ ] Treasury curve loader
-- [ ] `pit` query tests proving no look-ahead
+- [ ] `pit` query tests proving no look-ahead (through the `mt-store` Python binding, the one Rust implementation)
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
 ## Verification
@@ -82,7 +82,7 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 ## Acceptance criteria
 
 - [ ] Treasury curve loaded live; FRED/ALFRED vintage loading proven on fixtures (live load in P1-T073); pit look-ahead test passes in CI
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -94,7 +94,7 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -111,3 +111,4 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, FRED live load in P1-T073; P0 dep on pit)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow (fredapi); Supabase migration + pgTAP; pit tests through the Rust `mt-store` binding; tools uv+supabase; services supabase-postgres)

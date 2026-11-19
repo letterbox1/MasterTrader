@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`docker-compose.yml` gains `engine`, `backtest-worker`, `sandbox` and `deadman` services, pinned by digest, with CPU/memory limits, correct networks and secret scoping; the host has the gVisor `runsc` runtime and `sandbox` runs with `--network none`, no secrets and a read-only root filesystem. Part B builds the sandbox runner that uses it.
+`docker-compose.yml` gains `engine`, `backtest-worker`, `sandbox` and `deadman` services, pinned by digest, with CPU/memory limits, correct networks and secret scoping; the workstation has the gVisor `runsc` runtime and `sandbox` runs with `--network none`, no secrets and a read-only root filesystem. Part B builds the sandbox runner that uses it.
 
 ## Context & references
 
@@ -50,15 +50,15 @@ review_result: ""
 
 ## Requirements
 
-- `engine`: network `core`, egress allow-list to testnet/practice venue hosts only; secrets = venue trade keys for its modes; limits e.g. 4 CPU / 8 GB (tune); `restart: unless-stopped`; healthcheck on heartbeat freshness.
-- `deadman`: separate container on `core`, its **own** trade-only keys (`venues.<venue>.deadman`, used only to cancel and flatten) and its own venue connections; 0.5 CPU / 256 MB; `restart: always`; healthcheck on its own heartbeat.
-- `backtest-worker`: `core` (Postgres read via `pit`, MLflow), **no venue keys**, limits e.g. 6 CPU / 16 GB, scalable replicas.
+- `engine`: built from `crates/mt-engine` (multi-stage `cargo` build; the Python-node image adds the uv environment for venues on the Python node), network `core`, egress allow-list to testnet/practice venue hosts only; secrets = venue trade keys for its modes; limits e.g. 4 CPU / 8 GB (tune); `restart: unless-stopped`; healthcheck on heartbeat freshness.
+- `deadman`: `mt-deadman` static binary, separate container on `core`, its **own** trade-only keys (`venues.<venue>.deadman`, used only to cancel and flatten) and its own venue connections; 0.5 CPU / 256 MB; `restart: always`; healthcheck on its own heartbeat.
+- `backtest-worker`: `core` (Supabase Postgres read via the `pit` Python binding, MLflow), **no venue keys**, limits e.g. 6 CPU / 16 GB, scalable replicas.
 - `sandbox`: `runtime: runsc`, `network_mode: none`, no secrets, `read_only: true`, tmpfs `/tmp` 512 MB, `pids_limit`, CPU/mem/time limits (e.g. 2 CPU / 4 GB / 10 min wall), non-root user, seccomp default; code + data passed via a mounted job dir; results written back to that dir only.
 - All images pinned by digest; trivy/grype scan in CI.
 
 ## ToDo
 
-- [ ] Install gVisor on the host (`runsc install`, Docker daemon runtime config) — Ansible/script in `ops/host/`
+- [ ] Install gVisor on the workstation (`runsc install`, Docker daemon runtime config): script in `infra/host/`
 - [ ] Compose service definitions + resource limits
 - [ ] Egress allow-list for `engine` (firewall/nftables or proxy)
 - [ ] Secret scoping per service
@@ -68,6 +68,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `docker compose config` on the compose files in `infra/`, then the smoke tests below.
 - Escape smoke: inside `sandbox`, `curl`/DNS fail, `/run/secrets` absent, writing outside job dir fails, `dmesg` shows gVisor kernel.
 - Engine egress: connection to a non-allow-listed host fails.
 - Compose config test: every image has `@sha256:`.
@@ -84,7 +85,7 @@ review_result: ""
 - [ ] Four services running with limits and pinned digests
 - [ ] Sandbox isolation smoke passes
 - [ ] Secrets only where needed
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: compose config check, image digests pinned, smoke tests
 
 ## Exceptions & edge cases
 

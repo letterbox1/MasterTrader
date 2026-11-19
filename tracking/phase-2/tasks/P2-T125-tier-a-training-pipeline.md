@@ -18,14 +18,14 @@ dashboards: [D04]
 tools: [uv]
 mcp: []
 env: []
-services: [mlflow, postgres]
+services: [mlflow, supabase-postgres]
 branch: p2/P2-T125-tier-a-training-pipeline
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,6 +66,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_models -k tier_a`.
 - Unit: purged split never lets a label horizon cross into the holdout.
 - Unit: a dataset containing one `train_ok=false` row → training refused.
 - Integration: LightGBM trains on a fixture and logs to MLflow with all fields.
@@ -93,7 +94,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 - Do NOT train on rows with `train_ok = false` (incl. any Telegram-derived feature).
 - Do NOT use GPU-only models for tier A.
 - Do NOT put Telegram text (or any `model_input_ok = false` / `train_ok = false` row) into a model, prompt, RAG index or training set (12 §4–5).
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

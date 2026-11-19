@@ -1,7 +1,7 @@
 ---
 id: P2-T020
 kind: task
-title: mt_api risk, venue and order command surface
+title: mt-api risk, venue and order command surface
 phase: 2
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R2.10, R2.11, R2.16]
 roadmap_todos: [T2.22, T2.24]
 modules: [M11, M12]
 dashboards: [D06, D05]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats, supabase-auth]
 branch: p2/P2-T020-mt-api-risk-order-surface
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,18 +33,18 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P2-T020 · mt_api risk, venue and order command surface
+# P2-T020 · mt-api risk, venue and order command surface
 
 ## Goal / expected outcome
 
-`mt_api` exposes the risk queries, risk/venue commands, order/position commands (all routed as `OrderIntent`s through M11) and WebSocket topics that D06, D05 (Part B UI), D01 and Telegram use.
+`mt-api` exposes the risk queries, risk/venue commands, order/position commands (all routed as `OrderIntent`s through M11) and WebSocket topics that D06, D05 (Part B UI), D01 and Telegram use.
 
 ## Context & references
 
 - Roadmap: [R2.10, R2.11, R2.16](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDos T2.22, T2.24
 - API: [02 §7.1 queries](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · WS topics in 02 §7.3
 - UI: [D06 backend contract](../../../docs/ui/dashboards/D06-risk.md) · [D05 manual ticket = manual sleeve](../../../docs/ui/dashboards/D05-execution.md)
-- Cross-phase (`depends_on`): mt_api command bus, idempotency, `audit.command` (P0-T034), confirmation levels (P0-T035), WS hub (P0-T036), all T0.24.
+- Cross-phase (`depends_on`): mt-api command bus, idempotency, `audit.command` (P0-T034), confirmation levels (P0-T035), WS hub (P0-T036), all T0.24.
 - Related: P2-T069 (effective-limits API `/risk/policy` with layer per value), P2-T070 (safety state in `/risk/state`).
 
 ## Requirements
@@ -57,8 +57,8 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Routers under `packages/mt_api/routers/risk.py`, `orders.py`, `venues.py`
-- [ ] Command handlers delegating to `mt_risk` / NATS
+- [ ] Routers under `crates/mt-api/src/routes/risk.rs`, `orders.rs`, `venues.rs`
+- [ ] Command handlers delegating to `mt-risk` / NATS
 - [ ] WS topic publishers
 - [ ] OpenAPI + typed client regen for the web app
 - [ ] Tests
@@ -67,7 +67,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- API tests for every endpoint (auth, levels, problem+json).
+- API tests for every endpoint (Supabase JWT verified, `aal2` required for commands per 18 §4.6, levels, problem+json).
 - Integration: `order.place` produces exactly one `ord.intent.manual` and one decision; with M11 reject the response carries reasons.
 - Unit: flatten-and-halt without `reason` → 422.
 
@@ -82,7 +82,7 @@ review_result: ""
 
 - [ ] All listed endpoints/commands/topics live in OpenAPI
 - [ ] No order command reaches a venue without an M11 decision
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -90,9 +90,9 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT call venue APIs from mt_api.
+- Do NOT call venue APIs from mt-api.
 - Do NOT expose withdrawals or key management.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram approve + TOTP + cool-down); protective exits never wait for approval.
@@ -105,7 +105,7 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p2/P2-T020-mt-api-risk-order-surface`
-- PR title: `P2-T020: mt_api risk, venue and order command surface`
+- PR title: `P2-T020: mt-api risk, venue and order command surface`
 - PR checklist: tests added and green · docs synced · task file ticked · no secrets (gitleaks) · `./kanban done P2-T020` run
 
 ## Progress log

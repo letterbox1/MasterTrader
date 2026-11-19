@@ -15,17 +15,17 @@ requirements: [R2.21]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06, D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T034-health-check-decay-alerts
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ Decay and health signals with **one meaning each** ([16 §2.6](../../../docs/16-
 
 ## Requirements
 
-- Prefect flow `risk_health_daily` at 00:15 Sydney time (schedule configurable) **per bot**: compute paper 30-day Sharpe and drawdown from `audit.fill` + marks.
+- Daily job `risk_health_daily` (logic in `mt-risk`, scheduled by `mt-monitor`) at 00:15 Sydney time (schedule configurable) **per bot**: compute paper 30-day Sharpe and drawdown from `audit.fill` + marks.
 - Health fail → bot `halted_review`, cancel its entries, alert warning, `risk.event{type: health_halt}`; resume via `bot.resume` after your review (C1, audited, with a reason).
 - Decay (per bot, evaluated on every closed trade): rolling 60-trade Sharpe and hit rate vs the 5th percentile of the backtest bootstrap distribution (bots below the low-frequency threshold use a 26-week window); CUSUM (k, h from policy; default k = 0.5σ, h = 5σ) on P&L residuals vs expected; **5 consecutive losing trades**. Each → `alert.warning.decay` + `risk.event{type: decay, signal}` → P2-T037 downgrades autonomous → HITL. One action per signal; never a halt from a decay signal.
 - Not enough trades (< 60, outside the low-frequency window) → decay check reports 'insufficient' (no alert).
@@ -57,8 +57,8 @@ Decay and health signals with **one meaning each** ([16 §2.6](../../../docs/16-
 
 ## ToDo
 
-- [ ] `packages/mt_risk/health.py` (metrics, CUSUM)
-- [ ] Prefect flow + schedule
+- [ ] `crates/mt-risk/src/health.rs` (metrics, CUSUM)
+- [ ] Daily job + configurable schedule in `mt-monitor`
 - [ ] Event + alert wiring
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -66,6 +66,7 @@ Decay and health signals with **one meaning each** ([16 §2.6](../../../docs/16-
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk health`, `cargo clippy -p mt-risk`.
 - Unit: CUSUM detects a mean shift injected at trade 100 within expected ARL.
 - Unit: halt thresholds at boundary values.
 - Integration: flow run over a synthetic paper history writes events and halts.
@@ -82,7 +83,7 @@ Decay and health signals with **one meaning each** ([16 §2.6](../../../docs/16-
 
 - [ ] Health rule (halt the bot) and decay signals (downgrade to HITL) implemented per 16 §2.6, one meaning each
 - [ ] Events feed bot auto-downgrade
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -93,7 +94,7 @@ Decay and health signals with **one meaning each** ([16 §2.6](../../../docs/16-
 
 - Do NOT auto-resume a bot halted for review.
 - Do NOT give a decay signal any action other than alert + downgrade to HITL (16 §2.6).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

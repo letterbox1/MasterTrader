@@ -1,7 +1,7 @@
 ---
 id: P2-T117
 kind: task
-title: Lab REST queries, WebSocket topic and commands in mt_api
+title: Lab REST queries, WebSocket topic and commands in mt-api
 phase: 2
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R2.40, R2.44, R2.50]
 roadmap_todos: [T2.27, T2.32]
 modules: [M7, M15]
 dashboards: [D04, D03]
-tools: [uv, pnpm]
+tools: [cargo, pnpm]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T117-lab-api-endpoints
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P2-T117 · Lab REST queries, WebSocket topic and commands in mt_api
+# P2-T117 · Lab REST queries, WebSocket topic and commands in mt-api
 
 ## Goal / expected outcome
 
-`mt_api` serves every lab query, the `lab.job` WebSocket topic and the lab commands that D03/D04 need, with OpenAPI types generated for the web app.
+`mt-api` serves every lab query, the `lab.job` WebSocket topic and the lab commands that D03/D04 need, with OpenAPI types generated for the web app.
 
 ## Context & references
 
@@ -57,7 +57,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Add routers in `packages/mt_api/routers/lab.py` and gates/metrics params on strategies router
+- [ ] Add axum routes in `crates/mt-api/src/routes/lab.rs` (utoipa OpenAPI, so `openapi-typescript` regenerates the web client) and gates/metrics params on the strategies routes
 - [ ] Register command handlers that enqueue jobs (P2-T101) and the waiver handler (P2-T113)
 - [ ] WS fan-out for `lab.job`
 - [ ] Regenerate OpenAPI + `openapi-typescript` client for `apps/web`
@@ -91,7 +91,7 @@ review_result: ""
 ## Cardinal rules (do NOT)
 
 - Do NOT expose lab endpoints that write orders or touch venues.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -102,7 +102,7 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p2/P2-T117-lab-api-endpoints`
-- PR title: `P2-T117: Lab REST queries, WebSocket topic and commands in mt_api`
+- PR title: `P2-T117: Lab REST queries, WebSocket topic and commands in mt-api`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P2-T117` run
 
 ## Progress log

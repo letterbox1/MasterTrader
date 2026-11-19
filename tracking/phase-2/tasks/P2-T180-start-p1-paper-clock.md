@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-7-prove-and-go-live.md, docs/roadmap/phase-2-strat
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -87,7 +87,7 @@ The validated P1 candidates (trend on majors; funding carry only if the venue re
 
 - Do NOT start any sleeve with live keys.
 - Do NOT reset the paper clock to hide a halt.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT touch live money; keys are trade-only, IP-locked, withdrawals disabled; live waits for the P7 gates.
 
 ## Doc sync on completion

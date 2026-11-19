@@ -15,7 +15,7 @@ requirements: [R3.06, R3.N2, R3.15]
 roadmap_todos: [T3.60]
 modules: [M18]
 dashboards: []
-tools: [git, uv, gh]
+tools: [git, cargo, gh]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,19 +42,20 @@ A curated golden suite of ATO-style worked examples (discount boundary, loss ord
 ## Context & references
 
 - Roadmap: [R3.06, R3.N2, T3.60](../../../docs/roadmap/phase-3-journal-and-tax.md) · standing rule [04 standing rules](../../../docs/04-plan-of-action.md#standing-rules) (tax golden tests mandatory)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 quality](../../../docs/09-journal-and-tax.md#quality) (golden files from ATO worked examples) · [D15 acceptance 3](../../../docs/ui/dashboards/D15-tax.md) (rule-check panel) · valuation hierarchy [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) (R3.15 is verified by golden tests) · wash-sale default [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags)
 - Cross-phase prerequisite (depends_on): P0-T015 (CI pipeline, required checks)
 
 ## Requirements
 
-- Golden cases in `tests/golden/au_2026/*.yaml` (input events + expected outputs), each with a `source` field citing the ATO page/example used (URL + retrieval date) or `synthetic` with derivation.
+- Golden cases in `crates/mt-journal/tests/golden/au_2026/*.yaml` (input events + expected outputs), each with a `source` field citing the ATO page/example used (URL + retrieval date) or `synthetic` with derivation.
 - Minimum set: (1) bought 2 Feb 2018 → eligible from 3 Feb 2019, not on 2 Feb 2019; (2) leap-year boundary; (3) loss ordering non-discount first; (4) carry-forward; (5) brokerage in cost base; (6) crypto↔crypto; (7) staking/established airdrop income cost base; (8) initial-allocation $0 cost base; (9) CFD revenue + financing; (10) Div 775 FX-cash realisation; (11) PAYG excludes capital gains; (12) trader regime removes the discount for trading-tagged lots; (13) FY boundary at 30 June/1 July local; (14) wash-sale flag at 30 days either side (flag only, loss unchanged) and not at 31; (15) valuation hierarchy: fill price for a trade, AUD-venue VWAP for a staking reward, USD VWAP × RBA when no AUD trades, pool price for a long-tail token; (16) PAYG both ATO methods side by side.
-- CI job `tax-golden` is a required status check on `main` (branch protection) and runs on every PR touching `packages/mt_journal/**`, `config/journal/**` or `tests/golden/**`.
+- CI job `tax-golden` is a required status check on `main` (branch protection) and runs `cargo test -p mt-journal --test golden_au` on every PR touching `crates/mt-journal/**`, `config/journal/**` or `crates/mt-journal/tests/golden/**`.
 - Golden files change only with a reviewer note explaining the rule change and a rule-version bump.
 
 ## ToDo
 
-- [ ] Write the golden cases + runner `tests/golden/test_au_golden.py`
+- [ ] Write the golden cases + runner `crates/mt-journal/tests/golden_au.rs`
 - [ ] Add CI job and mark it required (document the branch-protection step for you to click if the token lacks admin)
 - [ ] Expose case (1) result to `/tax/summary` rule-check field for D15
 - [ ] Docs
@@ -91,7 +92,7 @@ A curated golden suite of ATO-style worked examples (discount boundary, loss ord
 - Do NOT fetch ATO pages during tests.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 
@@ -110,3 +111,4 @@ A curated golden suite of ATO-style worked examples (discount boundary, loss ord
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added golden cases for wash-sale 30 days (16 §4.4), valuation hierarchy (R3.15, 16 §4.1) and PAYG both methods (P3-B005); explicit P0-T015 depends_on; tools filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (golden tests in the `mt-journal` crate (`cargo test -p mt-journal --test golden_au`))

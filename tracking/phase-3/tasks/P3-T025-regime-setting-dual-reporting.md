@@ -15,17 +15,17 @@ requirements: [R3.07]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, mt-api]
+services: [supabase-postgres, mt-api]
 branch: p3/P3-T025-regime-setting-dual-reporting
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 ## Context & references
 
 - Roadmap: [R3.07, T3.24](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 2
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 key findings: carrying on a business](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) · D15 regime toggle [D15](../../../docs/ui/dashboards/D15-tax.md) · command `tax.regime.set` (C1, after an agent answer) in [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - Answer comes from P3-T001; P7 entry needs it ([P7 T7.01](../../../docs/roadmap/phase-7-prove-and-go-live.md))
 
@@ -55,7 +56,7 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 
 ## ToDo
 
-- [ ] Implement `rules/au_2026/regime.py` (dual runner over the same inputs)
+- [ ] Implement `rules/au_2026/regime.rs` (dual runner over the same inputs)
 - [ ] `tax.regime.set` command handler + validation against TAX_QUESTION answers
 - [ ] Report model with paired columns; tests; docs
 
@@ -94,9 +95,9 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 - Do NOT let the UI alone enforce the answer link; the server validates.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -113,3 +114,4 @@ The tax regime is an effective-dated setting per FY and activity (`investment`/`
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (answer link via `task.answer` C1 (P3-T038 added to depends_on); locked FY via P3-T055; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust rules)

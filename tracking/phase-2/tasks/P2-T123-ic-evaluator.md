@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ An evaluator that reports, per feature version and instrument set, the informati
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_features -k evaluate`.
 - Unit: synthetic feature = future return + noise yields positive IC decaying with horizon; random feature IC ~ 0.
 
 ### Scenarios
@@ -82,7 +83,7 @@ An evaluator that reports, per feature version and instrument set, the informati
 ## Cardinal rules (do NOT)
 
 - Do NOT use IC results computed on the test period to select features for that same test.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

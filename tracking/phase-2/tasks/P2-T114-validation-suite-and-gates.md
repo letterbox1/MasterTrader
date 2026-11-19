@@ -18,14 +18,14 @@ dashboards: [D03, D04]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres, mlflow]
+services: [supabase-postgres, mlflow]
 branch: p2/P2-T114-validation-suite-and-gates
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,6 +66,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k validation`.
 - Unit: gate evaluator on synthetic section results covers every pass/fail branch and reason text.
 - Integration: full suite on the EMA template fixture produces a report with every section present.
 - Contract test: lifecycle (part A) refuses `validated` when any required gate fails.
@@ -94,7 +95,7 @@ review_result: ""
 
 - Do NOT let any gate default to pass when its section is missing or errored.
 - Do NOT count screener results for gates.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

@@ -85,7 +85,7 @@ An adversarial test suite (`tests/verify/test_restart_refusal.py`, CI + host run
 - [ ] Proxy denies every non-allow-listed Docker API call
 - [ ] `mt-api` has no Docker socket mount (inspect output attached)
 - [ ] Suite in CI and run once on the host
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ An adversarial test suite (`tests/verify/test_restart_refusal.py`, CI + host run
 
 - Do NOT add the Docker socket or the docker SDK to any app container to make a test easier.
 - Do NOT widen the allow-list to make a case pass.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get CI green.
 
 ## Doc sync on completion

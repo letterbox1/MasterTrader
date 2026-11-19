@@ -98,7 +98,7 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
 - [ ] Non-allow-listed restart refused by mt-api (403 + audit) and by the proxy (403)
 - [ ] Allow-list is a setting (loosen C3, tighten C1), not a code constant
 - [ ] Compose lint enforces "no socket outside docker-proxy" and `ctl` membership
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -111,7 +111,7 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
 - Do NOT mount the Docker socket into mt-api or any app container.
 - Do NOT allow any Docker API beyond container list and allow-listed restart (no create, exec, pull, stop, kill, volumes, networks).
 - Do NOT hard-code the allow-list; it's a setting, and loosening it is C3.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Pin every image by digest (no `:latest` or floating tags); no telemetry or referral IDs in vendored code.
 - Do NOT skip, weaken or delete a test to get CI green.

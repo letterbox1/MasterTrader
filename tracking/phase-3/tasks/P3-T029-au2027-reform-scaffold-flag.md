@@ -15,17 +15,17 @@ requirements: [R3.08]
 roadmap_todos: [T3.25]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T029-au2027-reform-scaffold-flag
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ An `AU_2027_REFORM` plugin (valid from FY2027-28) exists behind the `AU_2027_REF
 ## Context & references
 
 - Roadmap: [R3.08, T3.25](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 key findings: 2027 reform](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) · [11 §3 conflict](../../../docs/11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) · [02 F9 step 4](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Cross-phase prerequisite (depends_on): P1-T027 (ABS CPI via `pit`; series All groups, weighted average of eight capital cities, A2325846C (U), [17 §D P1-B016](../../../docs/17-decisions-register.md#d-other-decisions); tax-agent question 9)
 - Snapshot convention: [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change)
@@ -58,7 +59,7 @@ An `AU_2027_REFORM` plugin (valid from FY2027-28) exists behind the `AU_2027_REF
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/rules/au_2027_reform/` (plugin + CPI indexer reading ABS CPI via `pit`)
+- [ ] Implement `crates/mt-journal/src/rules/au_2027_reform/` (plugin + CPI indexer reading ABS CPI via `pit`)
 - [ ] Flag validation + comparison-column wiring in reports
 - [ ] Synthetic golden tests (clearly marked as mechanism (U)); docs
 
@@ -97,9 +98,9 @@ An `AU_2027_REFORM` plugin (valid from FY2027-28) exists behind the `AU_2027_REF
 - Do NOT read CPI outside `pit(as_of)`.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -116,3 +117,4 @@ An `AU_2027_REFORM` plugin (valid from FY2027-28) exists behind the `AU_2027_REF
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (CPI series A2325846C (U) and 16 §4.2 snapshot linked; explicit P1-T027 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust plugin; CPI via `pit`)

@@ -15,7 +15,7 @@ requirements: [R2.01, R2.06, R2.40, R2.42, R2.43, R2.45, R2.47, R2.48, R2.50, R2
 roadmap_todos: []
 modules: [M0, M7, M11, M12, M15, M21]
 dashboards: [D01, D03, D04, D05, D06]
-tools: [pnpm, uv, playwright]
+tools: [pnpm, uv, cargo, playwright]
 mcp: []
 env: []
 services: [telegram, mt-web]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/README.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,6 +64,7 @@ A recorded, end-to-end demonstration of every Phase 2 exit criterion, run from t
 ## Verification
 
 ### Tests
+- Commands: `pnpm playwright`, `cargo test` and `uv run pytest` across the workspace, `supabase test db`.
 - Re-run of the E2E nightly suites immediately before the demo (all green).
 
 ### Scenarios
@@ -87,7 +88,7 @@ A recorded, end-to-end demonstration of every Phase 2 exit criterion, run from t
 ## Cardinal rules (do NOT)
 
 - Do NOT demo with recorded/stubbed services where the criterion requires the real path (M11, Telegram, kill).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT let any UI/API path loosen risk, enable autonomous mode or turn the kill switch off without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT touch live money; keys are trade-only, IP-locked, withdrawals disabled; live waits for the P7 gates.
 - Do NOT skip, weaken or delete a test to get green.

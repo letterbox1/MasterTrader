@@ -92,7 +92,7 @@ Confirmation levels are enforced **in mt_api**, never only in the UI: C0 runs; C
 - [ ] C3 requires approval + TOTP + cool-down; cancellable; survives restart
 - [ ] Kill ON never blocked (DB down, lockout, rate limit tested)
 - [ ] Every transition audited
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -105,7 +105,7 @@ Confirmation levels are enforced **in mt_api**, never only in the UI: C0 runs; C
 - Do NOT let anything delay or block Kill ON.
 - Do NOT allow C3 apply without TOTP, even from the break-glass CLI.
 - Loosening risk, autonomous mode and mandates are C3 (Telegram + TOTP + cool-down); Kill ON and protective exits never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT UPDATE or DELETE WORM rows, ever; corrections are new rows with `supersedes_id` ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get CI green.
 

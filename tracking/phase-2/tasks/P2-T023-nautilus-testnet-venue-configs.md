@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T022, P1-T040]
+depends_on: [P2-T022, P1-T040, P2-T200]
 requirements: [R2.30, R2.N3]
 roadmap_todos: [T2.25]
 modules: [M12]
 dashboards: []
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only research, IBKR paper if keys exist) through Nautilus' built-in adapters, plus a sandbox simulated venue for every instrument without a testnet, all configured per mode sub-account.
+The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only research, IBKR paper if keys exist) through Nautilus' built-in adapters (Rust live node or Python node per venue, from P2-T200), plus a sandbox simulated venue for every instrument without a testnet, all configured per mode sub-account.
 
 ## Context & references
 
@@ -59,13 +59,14 @@ The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only
 
 - [ ] Configs + validator
 - [ ] Sandbox fill model using M16 costs
-- [ ] Smoke scripts `mt engine smoke --venue binance-testnet`
+- [ ] Smoke command `mt engine smoke --venue binance-testnet` (Rust CLI)
 - [ ] Tests
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
 
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine testnet_config`, `uv run pytest -k python_node` (venues on the Python node).
 - Unit: config validator rejects mainnet URLs and `environment: live`.
 - Integration (keyless): place/cancel/fill against a mock Binance testnet server replaying recorded responses; the real testnet run is P2-T071.
 - Unit: sandbox fill price includes measured spread/fee.
@@ -82,7 +83,7 @@ The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only
 - [ ] Binance testnet configs (mock-verified) + sandbox venues working per mode
 - [ ] Live/mainnet impossible in P2 config
 - [ ] Sandbox costs come from M16
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -93,7 +94,7 @@ The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only
 
 - Do NOT point any P2 config at a mainnet/live endpoint.
 - Do NOT share keys across modes.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Keys are trade-only, IP-locked, withdrawals disabled. No live money before the P7 gates; this phase is paper/testnet/practice only.

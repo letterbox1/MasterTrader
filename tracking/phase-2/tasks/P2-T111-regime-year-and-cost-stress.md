@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -68,6 +68,7 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k breakdown`.
 - Unit: regime labeller on a synthetic up/down/flat series labels each segment correctly.
 - Integration: a strategy profitable at 2× but losing at 3× passes the cost gate and shows the 3× loss in the report; one losing at 2× fails.
 - Golden: per-year table for a fixture.
@@ -94,7 +95,7 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 ## Cardinal rules (do NOT)
 
 - Do NOT tune the regime definition per strategy to make it pass; it is a versioned global feature.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)`; the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

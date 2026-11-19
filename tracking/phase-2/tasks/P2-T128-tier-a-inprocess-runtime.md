@@ -15,7 +15,7 @@ requirements: [R2.47, R2.N1]
 roadmap_todos: [T2.30]
 modules: [M21, M0]
 dashboards: [D03, D01]
-tools: [uv]
+tools: [uv, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,8 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `mt_models/tier_a/runtime.py` with the three back-end loaders
+- [ ] Implement `mt_models/tier_a/runtime.py` with the three back-end loaders (Python node and strategies)
+- [ ] Rust loader for ONNX models via `ort` in `crates/mt-engine/src/tier_a.rs` for Rust strategies and the Rust node (18 §2.2: inference moves to Rust when a model joins the engine path)
 - [ ] Feature-vector assembler bound to model signature; KV `tierb_scores` reader with staleness check
 - [ ] Prometheus histogram + OpenTelemetry span attributes
 - [ ] Integration into the ML-signal template hook (coordinate with part A T2.21)
@@ -65,6 +66,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_models -k runtime`, `cargo test -p mt-engine tier_a`, `cargo bench -p mt-engine tier_a`.
 - Unit: column-order mismatch detected at load.
 - Integration: truth backtest and a paper replay produce identical predictions for the same events.
 - Benchmark harness reused by P2-T162.
@@ -78,7 +80,7 @@ review_result: ""
 
 ## Acceptance criteria
 
-- [ ] Model loads in-process and predicts with p99 < 50 µs on the reference host
+- [ ] Model loads in-process and predicts with p99 < 50 µs on the workstation
 - [ ] Histogram exported
 - [ ] Failure maps to `model_down`
 - [ ] CI green (lint, types, tests, `pit` check)
@@ -92,7 +94,7 @@ review_result: ""
 
 - Do NOT add a network call (gateway, decision-svc, HTTP) to the tier-A predict path.
 - Do NOT let a model error open new positions.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion

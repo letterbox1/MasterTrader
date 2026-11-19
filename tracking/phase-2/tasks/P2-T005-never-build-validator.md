@@ -15,7 +15,7 @@ requirements: [R2.05]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 
 ## Requirements
 
-- Rule set in `packages/mt_strategy/never_build.yaml` (versioned): each rule has `id`, `label` (X or Never), `reason`, `evidence` link.
+- Rule set in `config/strategy/never_build.yaml` (versioned): each rule has `id`, `label` (X or Never), `reason`, `evidence` link.
 - Manifest checks: template/tags in the deny list; venue `POLYMARKET`/`KALSHI` with any order capability; decision deadline < 1 s combined with taker-only execution; subscriptions to mempool/new-pool/new-listing streams for entry timing; `copy_wallet`/`follow_trader` signal sources (wallets allowed only as **features**).
 - Code checks (AST scan of the strategy module): bundles that include or reference other users' pending transactions (backruns, sandwiches); private submission of your own swap (Flashbots Protect / Jito, 13 §7) stays allowed; sub-second order loops keyed on listing events.
 - Result: `NeverBuildViolation(rule_id, label, reason, evidence_line)`; `Never` cannot be waived; `X` cannot be waived in P2 either (no waiver path).
@@ -56,7 +56,7 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 ## ToDo
 
 - [ ] Write the rule file and loader
-- [ ] Implement manifest + AST checks in `packages/mt_strategy/never_build.py`
+- [ ] Implement manifest rules in `crates/mt-core/src/never_build.rs` (shared by `mt-api` and Python through the binding), the Python AST checks in `packages/mt_strategy/never_build.py` and the Rust source checks (`syn`) for Rust strategies
 - [ ] Hook into `mt strategy validate`, `strategy.create` and the generator path
 - [ ] Fixtures: one manifest per prohibited pattern + near-miss allowed cases (wallet flows as features; memecoin momentum entering 5–60 min after launch)
 - [ ] Update the docs listed under *Doc sync on completion* and tick the roadmap ToDo box(es) once every task mapped to them is done
@@ -64,9 +64,10 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-core never_build`, `uv run pytest packages/mt_strategy -k never_build`.
 - Unit: each prohibited fixture rejected with the right rule id.
 - Unit: allowed near-misses pass (memecoin momentum with `entry_delay_min ≥ 5`; wallet-flow feature).
-- Integration: `strategy.create` via `mt_api` returns problem+json with the rule reason.
+- Integration: `strategy.create` via `mt-api` returns problem+json with the rule reason.
 
 ### Scenarios
 - Given a 'memecoin sniper' manifest entering in the first slot, when saved in D03, then save is refused and the reason cites 14 §3 X.
@@ -79,8 +80,8 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 
 - [ ] All 14 §3 X/Never patterns covered by a rule and a failing fixture
 - [ ] Allowed near-misses pass
-- [ ] Rejection reasons surface through `mt_api`
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] Rejection reasons surface through `mt-api`
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -91,7 +92,7 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 
 - Do NOT add a waiver or override flag for Never rules.
 - Do NOT treat wallets as signal sources for copy-trading; features only.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

@@ -15,17 +15,17 @@ requirements: [R3.N1]
 roadmap_todos: [T3.41]
 modules: [M18]
 dashboards: []
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T007-column-encryption-prompt-exclusion
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,23 +42,24 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 ## Context & references
 
 - Roadmap: [R3.N1, T3.41](../../../docs/roadmap/phase-3-journal-and-tax.md) · verified by P3-T050 (prompt audit)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · provenance mechanism [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
-- Cross-phase prerequisites (depends_on): P0-T025 (provenance columns), P0-T018 (`mt_obs` logging for the redaction processor); P6 agents will read journal summaries only through allowed views
+- Cross-phase prerequisites (depends_on): P0-T025 (provenance columns), P0-T018 (`mt-obs` logging for the redaction layer); P6 agents will read journal summaries only through allowed views
 - Decision: [17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions) (envelope encryption, rotation re-wraps keys only)
 
 ## Requirements
 
 - Encrypted columns: `journal.taxpayer_profile.tfn`, `.address`, `journal.raw_payload.blob`, `journal.residency_period.evidence_notes`, `journal.event.counterparty_name` (if present); stored as `bytea` via `pgp_sym_encrypt(text, data_key)` with a `key_id` column naming the FY data key in `ops.journal_data_key`.
 - New table `journal.taxpayer_profile` (append-only; latest row wins) for TFN/address used only by the accountant pack and myTax worksheet.
-- Python helper `mt_journal.crypto.encrypt/decrypt` that unwraps the FY data key with the master key from tmpfs (P3-T006) and caches it in memory only; decrypt only inside the `journal` service.
+- Rust module `mt_journal::crypto` (`encrypt`/`decrypt`) that unwraps the FY data key with the master key from tmpfs (P3-T006) and caches it in memory only; decrypt only inside the `journal` service.
 - Provenance: every `journal.*` row sets `model_input_ok = false`, `train_ok = false`; a DB view `journal.llm_safe_summary` (aggregates only: P&L by strategy/period, no identifiers) is the only object `agents`' role may read.
-- Logging: structlog processor redacts any field named in a deny-list (`tfn`, `address`, `raw_payload`, `evidence_notes`).
+- Logging: a `tracing` redaction layer in `mt-obs` redacts any field named in a deny-list (`tfn`, `address`, `raw_payload`, `evidence_notes`).
 
 ## ToDo
 
 - [ ] Migration `journal_0003_taxpayer_profile` + encrypted column types
-- [ ] Implement `packages/mt_journal/crypto.py` (encrypt/decrypt, key-id lookup, constant-time compare not needed)
-- [ ] Add the structlog redaction processor to `mt_obs` config for the `journal` service
+- [ ] Implement `crates/mt-journal/src/crypto.rs` (encrypt/decrypt, key-id lookup, constant-time compare not needed)
+- [ ] Add the `tracing` redaction layer to `mt-obs` for the `journal` service
 - [ ] Create `journal.llm_safe_summary` view and grant it to the agents role (only object granted)
 - [ ] Unit + integration tests; docs
 
@@ -116,3 +117,4 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (encryption helpers use FY data keys wrapped by the master key (P3-B009); explicit P0 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt_journal::crypto`; `tracing` redaction in `mt-obs`)

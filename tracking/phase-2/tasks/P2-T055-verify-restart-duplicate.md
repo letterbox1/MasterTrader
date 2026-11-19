@@ -15,17 +15,17 @@ requirements: [R2.32]
 roadmap_todos: [T2.62]
 modules: [M12]
 dashboards: []
-tools: [uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p2/P2-T055-verify-restart-duplicate
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ A chaos test crashes the engine at each point of the order lifecycle on the sand
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine --test restart_duplicate -- --ignored` against the compose stack.
 - As above.
 
 ### Scenarios
@@ -82,7 +83,7 @@ A chaos test crashes the engine at each point of the order lifecycle on the sand
 ## Cardinal rules (do NOT)
 
 - Do NOT leave fault-injection hooks enabled outside test builds.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 
 ## Doc sync on completion

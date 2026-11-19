@@ -15,17 +15,17 @@ requirements: [R3.06]
 roadmap_todos: [T3.24]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T026-wash-sale-flags
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Every loss disposal followed by reacquisition of the same (or substantially iden
 ## Context & references
 
 - Roadmap: [R3.06, T3.24](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 key findings: wash sales (TR 2008/1, Part IVA)](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) · D15 rules (wash-sale warnings inline) [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Default: [16 §4.4](../../../docs/16-configuration-and-safety-model.md#44-tax-flags) (30 days either side, flag only) · decision [17 §C P3-B004](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) · tax-agent question 12 (window and near-identical assets)
 
@@ -54,7 +55,7 @@ Every loss disposal followed by reacquisition of the same (or substantially iden
 
 ## ToDo
 
-- [ ] Implement `rules/au_2026/wash_sale.py` + config
+- [ ] Implement `rules/au_2026/wash_sale.rs` + config
 - [ ] Identical-asset mapping file
 - [ ] Tests; docs
 
@@ -90,7 +91,7 @@ Every loss disposal followed by reacquisition of the same (or substantially iden
 - Do NOT implement or suggest tax-loss harvesting with reacquisition anywhere (09).
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -108,3 +109,4 @@ Every loss disposal followed by reacquisition of the same (or substantially iden
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (30-day window and flag-only from 16 §4.4 (P3-B004 closed); same asset = same instrument, near-identical is agent Q12; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust rules)

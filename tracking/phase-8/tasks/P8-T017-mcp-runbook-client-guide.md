@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/mcp-incident.md, docs/runbooks/mcp-client-setup.md, doc
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Two short docs exist and have been dry-run: `docs/runbooks/mcp-incident.md` (tok
 ## Context & references
 
 - Roadmap: [R8.02, R8.06](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.02](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (you configure the client using this guide)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Security: [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [07 §9 runbooks](../../../docs/07-security-notes.md#9-monitoring--incident-response)
 - UI: [D17](../../../docs/ui/dashboards/D17-mcp-console.md) (revoke token, disable tools) · [D16](../../../docs/ui/dashboards/D16-system.md)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes, expiry options, never-exposed list, limits) · [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (tokens, OAuth 2.1, transports)
@@ -101,3 +102,4 @@ Two short docs exist and have been dry-run: `docs/runbooks/mcp-incident.md` (tok
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (guide covers 16 §2.12 expiry options and scope levels, OAuth 2.1, Streamable HTTP/stdio/legacy HTTP+SSE; runbook adds indefinite-token and pepper-rotation steps; deps P8-T031/T032; added R8.08; tools/env/services)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-mcp`/`mt-api` paths and `cargo` tools; services supabase-postgres)

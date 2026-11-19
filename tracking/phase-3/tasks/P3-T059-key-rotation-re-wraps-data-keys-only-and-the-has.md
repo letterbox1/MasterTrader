@@ -15,17 +15,17 @@ requirements: [R3.N1, R3.02]
 roadmap_todos: [T3.66]
 modules: [M18, M17]
 dashboards: [D16]
-tools: [git, uv, docker, sops, age]
+tools: [git, cargo, supabase, docker, sops, age]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T059-key-rotation-re-wraps-data-keys-only-and-the-has
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ A drill on a scratch database proves envelope-encryption rotation is WORM-safe: 
 ## Context & references
 
 - Roadmap: [R3.N1, T3.66](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Decision: [17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) (key rotation without breaking WORM) · [15 §2 Encryption row](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - Under test: P3-T006 (master key + `ops.journal_data_key`), P3-T007 (encrypt/decrypt helpers), P3-T047 (WORM suite)
 - Cross-phase prerequisite (depends_on): P0-T038 (`audit.verify` and the incident path)
@@ -58,7 +59,7 @@ A drill on a scratch database proves envelope-encryption rotation is WORM-safe: 
 
 ## ToDo
 
-- [ ] Write `tests/security/test_key_rotation_worm.py` and the scratch seed
+- [ ] Write `crates/mt-journal/tests/key_rotation_worm.rs` plus a pgTAP hash-chain check in `supabase/tests/`, and the scratch seed
 - [ ] Run the drill; record hashes before/after and the verify result in the progress log
 - [ ] File bugs for any deviation
 
@@ -104,3 +105,4 @@ A drill on a scratch database proves envelope-encryption rotation is WORM-safe: 
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for R3.N1/T3.66 (docs/16–17 alignment; verifies the P3-B009 decision)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust test + pgTAP hash-chain check)

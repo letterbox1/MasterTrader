@@ -84,7 +84,7 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 - [ ] LAN nmap: 0 open ports; tailnet: only 22/443
 - [ ] Netprobe and checklist re-run PASS
 - [ ] Results recorded for D16 posture
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 

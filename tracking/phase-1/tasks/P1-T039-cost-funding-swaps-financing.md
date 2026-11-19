@@ -15,17 +15,17 @@ requirements: [R1.11]
 roadmap_todos: [T1.28]
 modules: [M16]
 dashboards: [D07, D02]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T039-cost-funding-swaps-financing
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,6 +63,7 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor funding`, `cargo clippy`
 - Unit: rate normalisation to per-interval and annualised
 - Integration: fixtures → tables; snapshot message contains predicted + last realised
 
@@ -77,7 +78,7 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 ## Acceptance criteria
 
 - [ ] Funding series populate D07/D02 Costs live; financing proven on fixtures here and populated live in P1-T073
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -106,3 +107,4 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, live financing in P1-T073)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (funding/swap/financing collectors in Rust `mt-monitor`; tools cargo; services supabase-postgres)

@@ -15,17 +15,17 @@ requirements: [R1.10]
 roadmap_todos: [T1.27]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p1/P1-T036-dq-check-book-integrity
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ Local L2 books are verified against venue checksums where offered and against pe
 
 ### Tests
 
+- Run: `cargo test -p mt-monitor book_integrity`, `cargo clippy`
 - Fault injection: corrupted level → checksum mismatch detected on next update; dropped diff → snapshot mismatch within one interval
 - Unit: CRC32 implementation vs venue reference examples
 
@@ -75,7 +76,7 @@ Local L2 books are verified against venue checksums where offered and against pe
 ## Acceptance criteria
 
 - [ ] Injected book corruption always detected; resync recovers the book
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -103,3 +104,4 @@ Local L2 books are verified against venue checksums where offered and against pe
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::book_integrity`); tools cargo; services supabase-postgres)

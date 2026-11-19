@@ -18,14 +18,14 @@ dashboards: []
 tools: [docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p0/P0-T021-docker-network-segmentation
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,25 +50,25 @@ The six networks of 02 §3.1 exist with the right members: `edge`, `core`, `scra
 
 ## Requirements
 
-- `edge` (caddy, mt-api); `core` (mt-api, postgres, nats, prefect-*, mlflow, litellm, tei-embed, tei-rerank, llm-local); `scrape` (only a probe in P0; egress yes); `signer` (`internal: true`, empty in P0); `ctl` (`internal: true`; only mt-api and `docker-proxy`, which P0-T065 deploys; R0.14, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012); `obs` (grafana, loki, prometheus, vector, alertmanager, exporters).
-- Postgres attached to `core` only; NATS to `core` and `scrape`, with the `SCRAPE` account publish-limited — the only cross-network path.
+- `edge` (caddy, mt-api); `core` (mt-api, the Supabase services (db, auth, storage, kong, meta, studio; P0-T070), nats, prefect-*, mlflow, litellm, tei-embed, tei-rerank, llm-local); `scrape` (only a probe in P0; egress yes); `signer` (`internal: true`, empty in P0); `ctl` (`internal: true`; only mt-api and `docker-proxy`, which P0-T065 deploys; R0.14, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012); `obs` (grafana, loki, prometheus, vector, alertmanager, exporters).
+- The Supabase stack (P0-T070; its compose project joins the external `core` network) attached to `core` only; NATS to `core` and `scrape`, with the `SCRAPE` account publish-limited — the only cross-network path.
 - Egress allow-list for `core` documented (venues/LLM APIs); P0 either enforces it with a host nftables egress set or documents it for P2 (log decision).
 - Exporters join `core` + `obs`; no obs container joins `scrape`.
 
 ## ToDo
 
 - [ ] Declare networks and memberships in compose.
-- [ ] Add `infra/probes/netprobe` (busybox) on `scrape` trying TCP to `postgres:5432`, `mt-api:8000`, `signer`, `docker-proxy:2375`, `nats:4222`.
+- [ ] Add `infra/probes/netprobe` (busybox) on `scrape` trying TCP to the Supabase `db:5432`, `kong:8000`, `mt-api:8000`, `signer`, `docker-proxy:2375`, `nats:4222`.
 - [ ] Expected: all fail except NATS, where the SCRAPE account can only publish `text.raw.>`.
 - [ ] Add the probe to CI and to P0-T056.
 
 ## Verification
 
 ### Tests
-- Integration: netprobe on `scrape` → postgres/mt-api/signer unreachable; NATS reachable but `SUB >` and `PUB risk.event` denied.
+- Integration: netprobe on `scrape` → Supabase db/kong, mt-api, signer unreachable; NATS reachable but `SUB >` and `PUB risk.event` denied.
 
 ### Scenarios
-- Given a future scraper container is compromised, when it tries to reach Postgres, then there is no route; when it publishes to `kill.set`, then NATS denies it.
+- Given a future scraper container is compromised, when it tries to reach Postgres or the Supabase API gateway, then there is no route; when it publishes to `kill.set`, then NATS denies it.
 
 ### Stress / failure injection
 - n/a: static segmentation; the fault case is the probe.
@@ -78,7 +78,7 @@ The six networks of 02 §3.1 exist with the right members: `edge`, `core`, `scra
 - [ ] Six networks with memberships as listed (compose config dump attached)
 - [ ] Netprobe results match expectations in CI
 - [ ] NATS SCRAPE permissions tested
-- [ ] CI green (ruff, mypy, pytest, gitleaks, `pit` check)
+- [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
@@ -86,7 +86,7 @@ The six networks of 02 §3.1 exist with the right members: `edge`, `core`, `scra
 
 ## Cardinal rules (do NOT)
 
-- Do NOT attach Postgres or the signer to `scrape` or `edge`.
+- Do NOT attach the Supabase services or the signer to `scrape` or `edge`.
 - Do NOT give the SCRAPE NATS account subscribe rights.
 - Do NOT attach anything but mt-api and `docker-proxy` to `ctl`.
 - Pin every image by digest (no `:latest` or floating tags); no telemetry or referral IDs in vendored code.
@@ -107,3 +107,4 @@ The six networks of 02 §3.1 exist with the right members: `edge`, `core`, `scra
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (six networks incl. ctl for docker-proxy (02 §3.1, R0.14); llm-local/tei-embed/tei-rerank names; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the Supabase stack (P0-T070) replaces the postgres container on `core`; probe targets updated)

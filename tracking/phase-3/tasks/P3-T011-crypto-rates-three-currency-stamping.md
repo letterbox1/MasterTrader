@@ -15,17 +15,17 @@ requirements: [R3.03, R3.15]
 roadmap_todos: [T3.21, T3.31]
 modules: [M18]
 dashboards: []
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p3/P3-T011-crypto-rates-three-currency-stamping
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Every journal event is stored with native, USD and AUD amounts plus rate source 
 ## Context & references
 
 - Roadmap: [R3.03, R3.15, T3.21, T3.31](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1 (native/USD/AUD)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Rules: [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) · [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) · [09 FX and valuation rules](../../../docs/09-journal-and-tax.md#fx-and-valuation-rules) · decisions [17 §A P3-B001, P3-B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
 - CoinGecko terms (cache ≤ 24 h, display and cross-check only): [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · wallet view uses the same hierarchy [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view)
 - Cross-phase prerequisites (depends_on): P1-T012 (Parquet recorder of public trades), P0-T027 (`pit(as_of)`); recorded trades come from P1-T010/T011 streams
@@ -61,10 +62,10 @@ Every journal event is stored with native, USD and AUD amounts plus rate source 
 
 ## ToDo
 
-- [ ] Implement `packages/mt_journal/valuation/service.py` with tiers 1–4 and `snapshot_price`
+- [ ] Implement `crates/mt-journal/src/valuation/service.rs` with tiers 1–4 and `snapshot_price`
 - [ ] VWAP reader over recorded trades (`pit`), pool-price reader (RPC client behind an interface, fixture-backed in tests)
 - [ ] `journal.valuation` writes + `config/journal/valuation.yaml` (venues, snapshot conventions)
-- [ ] Stamp step `mt_journal/stamp.py` used by the writer: native → USD → AUD with sources and valuation id
+- [ ] Stamp step `crates/mt-journal/src/stamp.rs` used by the writer: native → USD → AUD with sources and valuation id
 - [ ] Pending-price queue + retry flow (Prefect `journal-valuation-retry`)
 - [ ] Golden tests with recorded trade and pool fixtures; docs
 
@@ -104,7 +105,7 @@ Every journal event is stored with native, USD and AUD amounts plus rate source 
 - Do NOT insert an event without all three currency amounts.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -123,3 +124,4 @@ Every journal event is stored with native, USD and AUD amounts plus rate source 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (rewritten as the 16 §4.1 valuation service (R3.15/T3.31) + 16 §4.2 snapshot prices; replaces bar-close/venue-preference default (P3-B001/P3-B002 closed); explicit P1/P0 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (valuation/stamping in `mt-journal` (Rust))

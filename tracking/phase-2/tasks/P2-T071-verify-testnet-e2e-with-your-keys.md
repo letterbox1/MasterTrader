@@ -15,17 +15,17 @@ requirements: [R2.30, R2.N3, R2.31]
 roadmap_todos: [T2.72]
 modules: [M12, M11]
 dashboards: [D05, D06]
-tools: [uv, docker, sops]
+tools: [cargo, docker, sops]
 mcp: []
 env: [BINANCE_TESTNET_TRADE_KEY, BINANCE_TESTNET_TRADE_SECRET, BINANCE_TESTNET_DEADMAN_KEY, BINANCE_TESTNET_DEADMAN_SECRET, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY, OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
-services: [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, postgres]
+services: [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, supabase-postgres]
 branch: p2/P2-T071-verify-testnet-e2e-with-your-keys
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 
 ## Requirements
 
-- Runs on the host runner only (never a hosted CI runner); secrets are decrypted from the sops file into tmpfs for the engine/deadman containers; the `env` names above are what the run reads; values never appear in logs or this file.
+- Runs on the workstation only (never a hosted CI runner); secrets are decrypted from the sops file into tmpfs for the engine/deadman containers; the `env` names above are what the run reads; values never appear in logs or this file.
 - Key audit (`mt keys audit`) on every P2 key incl. the separate `deadman` keys: trade-only, withdrawals disabled, IP-restricted, one key per mode/account, age recorded.
 - Per venue (Binance spot/USD-M testnet, Alpaca paper, OANDA practice, IG demo): one limit order rests then cancels, one small marketable order fills; each passes M11 (decision recorded), carries an explicit STP field or `n/a_netting`, a `{bot}-{engine_epoch}-{seq}` client ID, lands in `audit.order`/`audit.fill`, and the P1 reconciliation matches (positions exact, balances within tolerance, 16 §2.9).
 - Conformance suite `--live` green on all four venues (or documented venue limitation).
@@ -60,7 +60,7 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 - [ ] Confirm P2-T001 is done and the keys are in the sops file (names only in this log)
 - [ ] Run `mt keys audit` on all P2 keys; record the masked results
 - [ ] Run the per-venue order round trip and reconciliation; record audit IDs
-- [ ] Run the conformance suite with `--live` on the host runner
+- [ ] Run the conformance suite with `--live` on the workstation
 - [ ] Run `mt audit stp --since <window>` incl. one induced self-match on Binance testnet
 - [ ] Run the kill + dead-man drill once per venue; record timings
 - [ ] Replace cassettes/fixtures where the live behaviour differs (no secrets in fixtures)
@@ -69,6 +69,7 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-engine --test conformance -- --live`, `mt keys audit`, `mt audit stp`.
 - The live runs above (evidence: audit IDs, recon report IDs, drill timings, masked key-audit table).
 
 ### Scenarios
@@ -77,7 +78,7 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 - Given the engine is stopped with an open testnet position, when 10 s pass, then the `deadman` sidecar has cancelled orders at 5 s and flattened at 10 s (default `flatten`).
 
 ### Stress / failure injection
-- Disconnect the host network for 30 s mid-order on Binance testnet: orders become `unknown`, the venue cancel-after timer (if supported) cancels resting orders, and reconciliation on reconnect shows no duplicate.
+- Disconnect the workstation network for 30 s mid-order on Binance testnet: orders become `unknown`, the venue cancel-after timer (if supported) cancels resting orders, and reconciliation on reconnect shows no duplicate.
 
 ## Acceptance criteria
 
@@ -90,14 +91,14 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 
 - A venue's testnet is down or reset: record it, retry later; don't mark this done on partial venues without a written limitation.
 - IG demo has no sub-accounts: separate demo logins per mode (P2-T001 exception).
-- No exit node yet (P7): keys are locked to the host's current public IP; the egress check (P1-T071) verifies that IP/country.
+- No exit node yet (P7): keys are locked to the workstation's current public IP; the egress check (P1-T071) verifies that IP/country.
 
 ## Cardinal rules (do NOT)
 
 - Do NOT use live (real-money) accounts or keys.
 - Do NOT run this on a hosted CI runner or store keys in CI secrets.
 - Do NOT print key material; masked metadata only.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file outside the repo (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `risk.change`, `risk.approval`, `strategy.bot_version`); corrections are new rows (15 §2).

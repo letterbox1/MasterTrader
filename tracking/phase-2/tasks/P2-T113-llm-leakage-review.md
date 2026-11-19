@@ -15,17 +15,17 @@ requirements: [R2.43]
 roadmap_todos: [T2.27]
 modules: [M7, M21]
 dashboards: [D04, D03]
-tools: [uv]
+tools: [uv, cargo, supabase]
 mcp: []
 env: []
-services: [litellm, postgres]
+services: [litellm, supabase-postgres]
 branch: p2/P2-T113-llm-leakage-review
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,13 +60,14 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 - [ ] Write `leakage_checklist_v1` prompt + JSON schema in `mt_lab/review/`
 - [ ] Implement gateway client (OpenAI-compatible) using the role virtual key from secrets; budget-exhausted fallback to local model
 - [ ] Implement quote verification against the source file
-- [ ] Implement `lab.leakage.waive` command handler in `mt_api` and the `audit.leakage_waiver` migration (insert-only)
+- [ ] Implement the `lab.leakage.waive` command handler in `mt-api` (Rust) and the `audit.leakage_waiver` SQL migration in `supabase/migrations/` (insert-only, pgTAP WORM test)
 - [ ] Register as a validation section; store review + waivers for D03/D04
 - [ ] Tests with recorded model responses (no live calls in CI)
 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_lab -k leakage`, `cargo test -p mt-api leakage`, `supabase test db`.
 - Unit: quote verification marks a mismatched quote `unsure`.
 - Unit: JSON schema violations → retry once, then `unsure` for all items.
 - Integration (recorded responses): seeded look-ahead fixture → 'look-ahead: present' quoting the `shift(-1)` line.

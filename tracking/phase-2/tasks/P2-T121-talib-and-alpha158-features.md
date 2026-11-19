@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-2-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,6 +62,7 @@ The core market feature library: TA-Lib indicators and the Qlib Alpha158 factor 
 ## Verification
 
 ### Tests
+- Commands: `uv run pytest packages/mt_features -k alpha158`.
 - Golden: each Alpha158 feature equals the Qlib reference implementation on a fixture to 1e-8.
 - Parity: incremental vs batch for every TA-Lib feature marked incremental.
 

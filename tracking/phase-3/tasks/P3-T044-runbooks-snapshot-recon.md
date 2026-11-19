@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/journal-snapshot-2027-06-30.md, docs/runbooks/journal-r
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 ## Context & references
 
 - Roadmap: [R3.08, R3.11, T3.25, T3.28](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Runbook convention: [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) · related jobs P3-T030, P3-T034 · diary P3-T004
 
 ## Requirements
@@ -101,3 +102,4 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (recon explain window 24 h (16 §2.9), WORM mismatch → `block_new_entries` + C3 ack (16 §2.11), snapshot convention 16 §4.2; fields filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change beyond paths)

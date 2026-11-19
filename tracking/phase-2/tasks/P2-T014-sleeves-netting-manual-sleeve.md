@@ -15,17 +15,17 @@ requirements: [R2.13]
 roadmap_todos: [T2.22]
 modules: [M11]
 dashboards: [D06]
-tools: [uv]
+tools: [cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p2/P2-T014-sleeves-netting-manual-sleeve
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ Capital is split into sleeves, each with its own capital, risk budget, limits an
 
 ## ToDo
 
-- [ ] `packages/mt_risk/sleeves.py` + netting module `netting.py`
+- [ ] `crates/mt-risk/src/sleeves.rs` + netting module `netting.rs`
 - [ ] Migration: `risk.sleeve` config in policy doc + seed `manual`
 - [ ] Per-sleeve kill hooks into P2-T031
 - [ ] Golden tests incl. multi-venue netting
@@ -68,6 +68,7 @@ Capital is split into sleeves, each with its own capital, risk budget, limits an
 ## Verification
 
 ### Tests
+- Commands: `cargo test -p mt-risk sleeves`, `cargo clippy -p mt-risk`, `supabase test db`.
 - Golden: two sleeves long/short same asset → net within cap passes; a third trade pushing net over the cap rejected.
 - Unit: sleeve-A halt doesn't block sleeve-B.
 - Unit: manual sleeve orders carry the tag and obey manual limits.
@@ -84,7 +85,7 @@ Capital is split into sleeves, each with its own capital, risk budget, limits an
 - [ ] Sleeves with independent limits + kill
 - [ ] Per-asset netting across sleeves enforced
 - [ ] `manual` sleeve seeded and tested
-- [ ] CI green: ruff, mypy, pytest (and the `mt_risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, `supabase test db` where relevant)
 
 ## Exceptions & edge cases
 
@@ -95,7 +96,7 @@ Capital is split into sleeves, each with its own capital, risk budget, limits an
 
 - Do NOT let one sleeve's capital fund another's breach.
 - Do NOT treat manual orders as exempt from M11.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, whatever its source.
 - Do NOT commit secrets or paste them into chats/issues/logs; secrets live in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; risk-manager golden tests are mandatory for merge.
 

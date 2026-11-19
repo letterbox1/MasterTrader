@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/07-security-notes.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -111,3 +111,4 @@ Read-only API keys exist on the Binance and Bybit testnets (IP-allow-listed); th
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (T1.02 reworded: read-only keys on Binance/Bybit testnets, normal credentials for practice/paper (P1-B008); sops file outside repo with key names; live use moved to P1-T073/P1-T074; dep P0-T009)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER (keys). Only live VERIFY tasks P1-T073/P1-T074 and the exit demo (via them) depend on it; testnet keys are IP-allow-listed to the workstation's broadband IP until the P7 egress exit node)

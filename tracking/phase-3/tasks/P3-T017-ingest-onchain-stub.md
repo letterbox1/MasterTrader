@@ -15,17 +15,17 @@ requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18, M22]
 dashboards: []
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p3/P3-T017-ingest-onchain-stub
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,22 +42,23 @@ The journal consumes on-chain transfers via a defined `wallet.{chain}.{address}.
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · scope note: on-chain decoding at scale is P5 (wallet-indexer)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Subjects in [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view) · Rotki sidecar in [09 tools vetted](../../../docs/09-journal-and-tax.md#tools-vetted)
 - Boundary: P5 T5.22 (wallet-indexer publishes transfers and extends `ops.wallets` additively, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)), P5 T5.29 (airdrop income linking)
-- Cross-phase prerequisite (depends_on): P0-T016 (`mt_core` versioned message schemas)
+- Cross-phase prerequisite (depends_on): P0-T016 (`mt-core` versioned message schemas)
 - Values: non-trade transfers and airdrops are valued by P3-T011 per [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal) (long-tail tokens via pool price)
 
 ## Requirements
 
-- Message schema `mt_core.schemas.WalletTransfer` v1: chain, tx_hash, log_index, block_time, from, to, asset (contract/mint), amount (string decimal), fee_native, classification hint (`transfer|swap|airdrop|staking|approval`), campaign_id (optional).
+- Message schema `mt_core::schemas::WalletTransfer` v1: chain, tx_hash, log_index, block_time, from, to, asset (contract/mint), amount (string decimal), fee_native, classification hint (`transfer|swap|airdrop|staking|approval`), campaign_id (optional).
 - `source = chain`, `source_ref = chain:tx_hash:log_index`; gas → `fee_only` with `fee_type = gas`.
 - Rotki CSV import (manual, inbox `rotki/`) mapping decoded events; Rotki P&L ignored (09).
 - Airdrop/staking classification left as `airdrop_initial` vs `airdrop_established` **pending** evidence (P5 campaign records); default `needs_classification` flag, never silently income or zero.
 
 ## ToDo
 
-- [ ] Define the schema in `packages/mt_core/schemas/wallet.py` (shared with P5)
-- [ ] Implement `packages/mt_journal/ingest/onchain.py` consumer + Rotki CSV importer
+- [ ] Define the schema in `crates/mt-core/src/schemas/wallet.rs` (shared with P5)
+- [ ] Implement `crates/mt-journal/src/ingest/onchain.rs` consumer + Rotki CSV importer
 - [ ] Fixture-based tests; docs (contract described in 13 §3)
 
 ## Verification
@@ -93,7 +94,7 @@ The journal consumes on-chain transfers via a defined `wallet.{chain}.{address}.
 - Do NOT decode contracts or index chains from the journal (P5 owns that); the only RPC read in the journal is P3-T011's pool-price valuation.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `Decimal` in Python and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -112,3 +113,4 @@ The journal consumes on-chain transfers via a defined `wallet.{chain}.{address}.
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (valuation via 16 §4.1 service; `ops.wallets` boundary per 17 §B; RPC rule aligned with pool-price tier; explicit P0-T016 depends_on; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust consumer/importer; wallet schema in `mt-core`)

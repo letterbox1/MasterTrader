@@ -15,17 +15,17 @@ requirements: [R3.01, R3.03, R3.06, R3.07, R3.12, R3.14, R3.15, R3.16, R3.N3]
 roadmap_todos: []
 modules: [M18]
 dashboards: [D14, D15]
-tools: [git, uv, node>=20, pnpm]
+tools: [git, cargo, node>=20, pnpm]
 mcp: []
 env: []
-services: [postgres, journal, mt-api, engine]
+services: [supabase-postgres, journal, mt-api, engine]
 branch: p3/P3-T054-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md, docs/04-plan-of-action.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,6 +42,7 @@ A recorded demo proves all three roadmap exit criteria on the production stack a
 ## Context & references
 
 - Roadmap: [§6 exit criteria](../../../docs/roadmap/phase-3-journal-and-tax.md#6-exit-criteria-demo)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - PHASE.md exit criteria list
 - Evidence items: P3-T045…P3-T053
 
@@ -109,3 +110,4 @@ A recorded demo proves all three roadmap exit criteria on the production stack a
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on the new R3.16/R3.17/R3.N3 tasks and verifies (P3-T055–T060); gaps P3-B001/B002 closed; tools/services filled)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (exit demo keeps P3-T001 (exit criterion 3))
