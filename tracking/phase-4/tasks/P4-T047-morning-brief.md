@@ -50,6 +50,7 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 
 ## Requirements
 
+- Per-instrument section layout borrowed from daily_stock_analysis (idea only, MIT): conclusion, score, trend, entry/exit levels, risk alerts, catalysts, action checklist ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)). No code or referral settings copied.
 - Built from `mt_api` queries only; no LLM summarisation in P4 (template + numbers) so no text flows to a model and the brief is reproducible.
 - Sections, in the canonical mob §3 order (item counts are configurable defaults): 1 News (≤ 8 items, each 'title — source — link'), 2 Sentiment movers (top 5 Δ24h z), 3 Events (≤ 5 with mapped instruments + score), 4 Calendar today (high/med importance, consensus/previous, blackout windows from the M11 API), 5 Telegram postures (top 5 subjects by velocity; numbers only), 6 Positions and P&L (paper and live labelled separately), 7 Data and cost health (stale/bad feeds, cost blow-outs, quota headroom, LLM spend), 8 New vetted airdrops (hidden until P5 provides it; the template has the slot so P5 adds no P4 change). Deep links to D08, D01, D07, D12.
 - Telegram limits: ≤ 4,096 chars per message, split into ≤ 3 messages; Bot API ≤ 30 msg/s respected.
@@ -115,3 +116,4 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (contents follow the canonical mob §3 list (17 §D P4-B011), incl. paper/live labels and P5 airdrop slot; time set in D13; explicit depends_on P2-T035)
+- 2026-11-19 00:00 · coordinator · morning brief layout idea from daily_stock_analysis (17 §F)

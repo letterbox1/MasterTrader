@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069]
+depends_on: [P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071]
 requirements: [R4.14, R4.10, R4.03]
 roadmap_todos: []
 modules: [M2, M3, M5, M6, M9, M21, M11]
@@ -106,3 +106,4 @@ A recorded demo runs every Phase 4 exit criterion: (1) a morning Telegram brief 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout demo uses an event_sensitive paper bot (16 §2.8); depends on the new tasks P4-T063–T069; phase-completion doc sync added)
+- 2026-11-19 00:00 · coordinator · depends on P4-T071 (vetted additions, 17 §F)

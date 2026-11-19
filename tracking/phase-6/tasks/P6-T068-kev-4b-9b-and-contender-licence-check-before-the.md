@@ -49,6 +49,7 @@ The unverified (U) fact behind R6.12 is settled by an agent before any weights a
 
 ## Requirements
 
+- Also check **Trading-R1** (TauricResearch, early access 2026-11) under the same rule: a public, licence-compatible release that runs locally; record the answer and drop it if not ([17 §F](../../../docs/17-decisions-register.md#f-vetted-additions-2026-11-19)).
 - For Kev-4B/9B: publisher, repository/weights URL, licence text, size/context length, serving method; or a dated "no public release found" with the places searched.
 - "Licence-compatible" = free to download and self-host for private, non-distributed use with no paid tier, no telemetry and no use restriction that conflicts with trading (03 §1).
 - Same record for Laya (`NandhaKishorM/laya`), Clef-flash weights, SemIf and the Qwen3-0.6B/1.7B backbones (pinned HF revisions).
@@ -109,3 +110,4 @@ The unverified (U) fact behind R6.12 is settled by an agent before any weights a
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T6.72 (Kev (U) check moved from the USER item P6-T002 to an agent check per 17 §E; owns P6-B003)
+- 2026-11-19 00:00 · coordinator · Trading-R1 added to the contender licence check (17 §F)

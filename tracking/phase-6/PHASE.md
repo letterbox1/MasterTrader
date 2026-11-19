@@ -92,6 +92,7 @@ The settlement step (P6-T013) needs elapsed time: a Signal must reach its horizo
 | R6.05 | P6-T014, P6-T015, P6-T054, P6-T061, P6-T066 |
 | R6.06 | P6-T016, P6-T017, P6-T063, P6-T065 |
 | R6.07 | P6-T001, P6-T009, P6-T010, P6-T042, P6-T053, P6-T064, P6-T070 |
+| R6.08 | P6-T071, P6-T072, P6-T073, P6-T066 |
 | R6.10 | P6-T020, P6-T021, P6-T022, P6-T024, P6-T059, P6-T066 |
 | R6.11 | P6-T023, P6-T024, P6-T057, P6-T058, P6-T064 |
 | R6.12 | P6-T002, P6-T027, P6-T028, P6-T029, P6-T030, P6-T042, P6-T059, P6-T066, P6-T068 |
@@ -130,6 +131,8 @@ The settlement step (P6-T013) needs elapsed time: a Signal must reach its horizo
 | T6.30 | P6-T046, P6-T047, P6-T048, P6-T050, P6-T051 |
 | T6.31 | P6-T005 |
 | T6.32 | P6-T009 |
+| T6.33 | P6-T071 |
+| T6.34 | P6-T072 |
 | T6.40 | P6-T011, P6-T023, P6-T027 |
 | T6.41 | P6-T010 |
 | T6.60 | P6-T059 |
@@ -146,6 +149,7 @@ The settlement step (P6-T013) needs elapsed time: a Signal must reach its horizo
 | T6.71 | P6-T058 |
 | T6.72 | P6-T068 |
 | T6.73 | P6-T069 |
+| T6.74 | P6-T073 |
 | T6.80 | P6-T065 |
 
 Supporting items without a roadmap ToDo:

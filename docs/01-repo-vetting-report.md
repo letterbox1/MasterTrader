@@ -131,6 +131,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
   - Vendor-fallback data router.
   - Broker/MT5-style symbol normalisation covering FX, metals, energy and crypto (`dataflows/symbols.py`).
 - **Limits:** no execution, no fees or sizing in `backtest.py`, and LLM training-data contamination is unaddressed.
+- **Pin ≥ 0.7.1** (checked 2026-11-19): 0.7.1 fixed model dates that could read filings made after the run date (a look-ahead leak), settles decisions only on final closes across long holidays, and takes memory lessons by decision date. Its team's own model, **Trading-R1** (early access, 2026-11), is a bake-off contender only under the Kev rule: a public, licence-compatible release that runs locally (§8).
 - **Disputed claims:**
   - One recomputation finds the paper's AAPL buy-and-hold baseline wrong: −5.23% in the paper vs +9.12% recomputed ([dev.to](https://dev.to/trow126/the-most-starred-llm-trading-paper-claims-buy-and-hold-lost-523-it-actually-gained-912-1jj6)).
   - "The Alpha Illusion" (arXiv 2605.16895) reportedly finds it underperforms buy-and-hold after costs **(U)**.
@@ -224,7 +225,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 ## 5. Supporting ecosystem — recommended free/open picks
 
 **Market data**
-- **Multi-provider normaliser:** **OpenBB Platform**. Its license is now Apache-2.0 per its LICENSE file and PyPI 5.0.0. ⚠️ The repo currently resolves under an unusual org (`openbq-org/OpenBB`); verify provenance before pinning.
+- **Multi-provider normaliser:** **OpenBB Platform**. Its license is now Apache-2.0 per its LICENSE file and PyPI 5.0.0. Provenance checked 2026-11-19: `OpenBB-finance/OpenBB` and `openbq-org/OpenBB` serve the same repository (identical commit history and HEAD), so the new org is the project's own home; pin by commit as usual (§8).
 - **Crypto:** **ccxt** (MIT).
 - **Macro:** **FRED/ALFRED**; its vintages give point-in-time data with no look-ahead.
 - **Filings / 13F / Form 4:** **SEC EDGAR via edgartools** (MIT).
@@ -349,5 +350,25 @@ See [`02-v1-architecture.md`](02-v1-architecture.md) for the full build scope.
   - https://databento.com/docs/faqs/usage-pricing-and-data-credits
   - https://acleddata.com/myacled-faqs
   - https://github.com/pydata/pandas-datareader/issues/1012
+
+## 8. Addendum (2026-11-19): eleven more repositories
+
+Vetted by cloning each repository and reading its licence, recent history and code (no code was run). Activity is the last commit as of 2026-11-19.
+
+| Repo | Licence · activity | Verdict | Where it lands |
+|---|---|---|---|
+| [HKUDS/Vibe-Trading](https://github.com/HKUDS/Vibe-Trading) | MIT · 2026-11-18 | **Borrow components** (unchanged, §3.4) | M7 lab, strategy generation |
+| [TauricResearch/TradingAgents](https://github.com/TauricResearch/TradingAgents) | Apache-2.0 · 2026-11-04 | **Borrow pattern + components** (unchanged, §3.6); **pin ≥ 0.7.1** | P6-T007 debate graph |
+| [OpenBB](https://github.com/openbq-org/OpenBB) (`OpenBB-finance/OpenBB` serves the same repository) | Apache-2.0 · 2026-11-18 | **Use** as the multi-provider normaliser (unchanged, §5); provenance resolved | M1 data |
+| [anthropics/financial-services](https://github.com/anthropics/financial-services) | Apache-2.0 · 2026-11-12 | **Borrow skills** (adapt, keep NOTICE): equity-research (earnings preview and analysis, catalyst calendar, thesis tracker, morning note) and financial-analysis (DCF, comps, 3-statement) as research-agent workflows. Not used: investment-banking, private-equity, fund-admin, KYC skills; the paid LSEG/S&P connectors | R6.08 · P6-T071 |
+| [Jakeschincariol/day-trader-skill](https://github.com/Jakeschincariol/day-trader-skill) | MIT · 2026-10-20 (new) | **Ideas**: the "Time Machine" setup-odds replay (bootstrapped continuations from the instrument's own recent bars plus past occurrences of the same setup) and the congressional-trade tracker (official House disclosures). Not used: its risk/budget/broker skills (would bypass M11) and Yahoo intraday scanning at scale (terms and rate limits) | R2.59 · P2-T077/T078; R4.17 · P4-T070/T071 |
+| [virattt/ai-hedge-fund](https://github.com/virattt/ai-hedge-fund) | MIT · 2026-11-09 | **Ideas**: investor-persona signal lenses (Buffett, Munger, Graham, Lynch, Druckenmiller) as optional, off-by-default debate viewpoints. Not used: paid Financial Datasets data (free-data rule); x402 pay-per-call from a wallet private key in an environment variable (never) | R6.08 · P6-T072 |
+| [alpacahq/alpaca-mcp-server](https://github.com/alpacahq/alpaca-mcp-server) | MIT · 2026-11-13 | **Not in the system.** It places orders directly, bypassing M11. Allowed only as a developer tool against the paper account with `ALPACA_PAPER_TRADE=true` and `ALPACA_TOOLSETS` limited to data; its server-side toolset filtering is a reference for P8 token scopes. Alpaca stays a venue via our own adapter (alpaca-py) | P8-T002 (reference) |
+| [luckyone7777/llm-trading-lab](https://github.com/luckyone7777/llm-trading-lab) | **No licence** (all rights reserved) · 2026-06-22 | **Reading only**: a forward-only record of ChatGPT running a real-money micro-cap portfolio, with an evaluation paper. Useful for judging LLM decisions; no code may be copied | P7-T015 (reference) |
+| [ZhuLinsen/daily_stock_analysis](https://github.com/ZhuLinsen/daily_stock_analysis) | MIT · 2026-11-18 | **Ideas**: the per-instrument daily report layout (conclusion, score, trend, entry/exit levels, risk alerts, catalysts, action checklist). Not used: its markets (A-shares, HK, JP, KR, TW) and Chinese data sources are out of scope; its config ships sponsor referral codes (forbidden in vendored code) | P4-T047 morning brief |
+| [Fincept-Corporation/FinceptTerminal](https://github.com/Fincept-Corporation/FinceptTerminal) | **AGPL-3.0** · 2026-11-18 | **Skip.** C++/Qt desktop terminal with paid tiers, account login and a signed auto-updater; overlaps our dashboards; AGPL conflicts with the permissive-core posture (§2) | — |
+| [tradesdontlie/tradingview-mcp](https://github.com/tradesdontlie/tradingview-mcp) | MIT · 2026-07-28 | **Reject.** Drives TradingView Desktop through its Chromium debug port and undocumented internal APIs: against our "official interfaces, within terms" rule ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)), needs a paid subscription, breaks on updates | — |
+
+**Licence handling** (as §2): copy only MIT/Apache code, keeping copyright and NOTICE files; nothing from llm-trading-lab (no licence) or FinceptTerminal (AGPL). Decisions recorded in [17 §F](17-decisions-register.md#f-vetted-additions-2026-11-19).
 
 > **Disclaimer:** no published result for any of these systems shows durable, cost-adjusted, out-of-sample profitability. Treat every LLM trading claim as unproven until it survives walk-forward testing on post-training-cutoff data with realistic costs, followed by paper trading.

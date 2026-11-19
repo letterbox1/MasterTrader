@@ -51,6 +51,7 @@ review_result: ""
 
 ## Requirements
 
+- **Pin TradingAgents ≥ 0.7.1** (fixes a filing look-ahead leak; memory lessons by decision date) ([01 §3.6](../../../docs/01-repo-vetting-report.md#36-tradingagents--ai-decision-layer-pattern)). The optional research workflows (P6-T071) and persona lenses (P6-T072) plug in as extra debate inputs.
 - Stages: analysts (technical, sentiment, news, fundamentals, macro/events) → bull/bear debate (configurable rounds, default 2) → research manager → trader → risk debate (aggressive / conservative / neutral) → PM → Signal.
 - Depth presets quick/standard/deep map to model routes: analysts on `local-advisor` or `research-primary` (quick tier), managers/PM on `research-primary` (deep tier); local-only option.
 - Each `AgentTurn` stored with role, stance, confidence, text, cited provenance ids, tool calls; turns are part of `decision_run.stages`.
@@ -123,3 +124,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Signal = 03 M8 fields; keyless build on local-advisor/recorded responses, live check in P6-T070; cross-phase deps P0-T042/P0-T044; run fields)
+- 2026-11-19 00:00 · coordinator · TradingAgents pin ≥ 0.7.1; links to P6-T071/T072 (17 §F)

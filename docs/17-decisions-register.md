@@ -146,3 +146,18 @@ You reviewed and ratified this register: every decision in sections A–D stands
 - **Unverified (U) facts** are verified by agents in research tasks before the build that relies on them; tax-law questions go to your tax agent as a USER task.
 - **Alignment before build:** doc alignment, then task alignment per phase, then a short change summary for your approval, then kickoff.
 
+## F. Vetted additions (2026-11-19)
+
+Eleven repositories were vetted ([01 §8](01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)); you approved adding what fits:
+
+| Decision | Plan |
+|---|---|
+| **Setup odds ("time machine")**: before an entry, replay thousands of continuations from the instrument's own recent bars plus every past occurrence of the same setup, using point-in-time data only; show the odds in the lab and on HITL approval cards. Informational: never overrides the risk manager | R2.59 · P2-T077, P2-T078 |
+| **Congressional trading disclosures** as a free official event source (House Clerk periodic transaction reports; the Senate eFD only if its terms allow automated personal access (U)). Delayed by law (up to 45 days), so context only, never a sole trigger | R4.17 · P4-T070, P4-T071 |
+| **Research workflows** adapted from Anthropic's financial-services skills (Apache-2.0): earnings preview and analysis, catalyst calendar, thesis tracker, morning note, DCF/comps through the valuation desk | R6.08 · P6-T071, P6-T073 |
+| **Investor-persona lenses** (idea from ai-hedge-fund, MIT) as optional debate viewpoints, off by default, enabled only if they improve shadow results | R6.08 · P6-T072, P6-T073 |
+| **TradingAgents ≥ 0.7.1** (fixes a filing look-ahead leak); **Trading-R1** joins the bake-off only under the Kev rule (public, licence-compatible, runs locally) | P6-T007, P6-T068 · R6.12 |
+| **OpenBB provenance resolved**: `openbq-org/OpenBB` is the project's own home | 01 §5 |
+| Morning brief per-instrument layout borrows daily_stock_analysis's structure | P4-T047 |
+| Not adopted: alpaca-mcp-server in the trading path (bypasses M11; dev/paper tool only), FinceptTerminal (AGPL, overlap), tradingview-mcp (undocumented interfaces), llm-trading-lab code (no licence; reading only) | 01 §8 |
+

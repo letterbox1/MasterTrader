@@ -42,6 +42,7 @@
 | R4.N1 | Scraped text marked untrusted; LLMs never see secrets; RSS-Bridge has no DB route | [07 §5](../07-security-notes.md#5-network--host), [02 §9.1](../02-v1-architecture.md#91-security) | Network test |
 | R4.15 | **Regulatory & jurisdiction watch:** official sources (ATO, Treasury, AUSTRAC, ASIC, RBA; plus UAE/CY/EG authorities when a move is planned) fetched on schedule (RSS where offered, else low-frequency page fetch/headless browser within terms), diffed, turned into `REG_CHANGE` review tasks; venue status pages feed venue health; **rules are never auto-applied** | [16 §4.3](../16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants) | Diff + task test |
 | R4.16 | Minimal **labelling tool** (D08 label mode) + `models.label.add` command, so your labels (T4.04) calibrate the SemIf gate; D10's full labelling queue lands in P6 | [D08](../ui/dashboards/D08-intel.md), [17 §D](../17-decisions-register.md#d-other-decisions) | Label flow test |
+| R4.17 | **Congressional trading disclosures**: House Clerk periodic transaction reports (official, free) parsed into `events` (member, asset/ticker, transaction type, amount range, transaction and filing dates); the Senate eFD only if its terms allow automated personal access (U). Filings lag trades by up to 45 days, so they are context for D08 and agents, never a sole trigger | Idea from day-trader-skill ([01 §8](../01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)), [17 §F](../17-decisions-register.md#f-vetted-additions-2026-11-19) | Parser golden files |
 | R4.N2 | Tier B stage-1 relevance gate latency p95 ≤ 300 ms on GPU, ≤ 3 s on CPU; queued, never on the order path | [10 §4.3](../10-memory-rag-and-models.md#43-design), [17 §A](../17-decisions-register.md#a-s2-items-all-resolved) | Benchmark |
 
 ## 4. ToDo sets
@@ -68,6 +69,7 @@
 - [ ] **T4.30** `BUILD` Regulatory & venue watch: source list, fetch + diff, `REG_CHANGE` tasks, venue-status inputs to venue health. → R4.15
 - [ ] **T4.31** `BUILD` Minimal labelling tool (D08 label mode) + `models.label.add` command. → R4.16
 - [ ] **T4.32** `BUILD` Positioning and nowcast ingestion (Myfxbook, IG sentiment, OANDA order/position books, nowcasts, prediction-market probabilities) so the P1 "arrives in P4" D02 widgets go live. → R4.11, R4.09
+- [ ] **T4.33** `BUILD` Congressional disclosures connector: House Clerk PTR index + PDF/XML parsing, polite polling, provenance tags; Senate eFD behind a terms check (U). → R4.17
 
 ### C. Ops & config (`OPS`)
 - [ ] **T4.40** `OPS` RSS-Bridge container (whitelist, auth, scrapers network only). → R4.01, R4.N1
@@ -83,6 +85,7 @@
 - [ ] **T4.65** `VERIFY` YouTube check: channel RSS reachable, Data API v3 quota, yt-dlp subtitle use for the chosen channels; record pass/fail in 06. → R4.05
 - [ ] **T4.66** `VERIFY` Live check of keyed sources with your keys (after T0.10, T4.06): FIRMS, ACLED, Finnhub, CryptoPanic and the positioning inputs Myfxbook, IG sentiment and OANDA books (practice credentials) deliver and carry provenance tags. The YouTube Data API key is optional (T4.65). → R4.01, R4.08, R4.11
 - [ ] **T4.67** `VERIFY` Stage-1 latency benchmark: p95 ≤ 300 ms GPU / ≤ 3 s CPU, queued, with no call on the order path. → R4.N2
+- [ ] **T4.68** `VERIFY` Congressional disclosures: parser golden files on real filings, filing-vs-transaction dates kept, no duplicate events on re-poll. → R4.17
 
 ### E. Run / soak (`RUN`)
 - [ ] **T4.80** `RUN` Two weeks of morning briefs; tune sources by relevance hit-rate. → R4.14

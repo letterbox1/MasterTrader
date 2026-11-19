@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070]
+depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073]
 requirements: [R6.01, R6.05, R6.10, R6.12, R6.20, R6.21, R6.22, R6.24, R6.40]
 roadmap_todos: []
 modules: [M8, M9, M10, M21, M22]
@@ -105,3 +105,4 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo now also depends on P6-T034, P6-T067, P6-T069, P6-T070 (new T6.66/T6.73 and the live check); run fields)
+- 2026-11-19 00:00 · coordinator · depends on P6-T073 (vetted additions, 17 §F)

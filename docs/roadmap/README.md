@@ -23,11 +23,11 @@ Calendar dates are indicative; halve the durations if you work full-time.
 |---|---|---|---|---|
 | P0 Foundations & security baseline | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-0/BOARD.md) |
 | P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/74 | [BOARD](../../tracking/phase-1/BOARD.md) |
-| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/128 | [BOARD](../../tracking/phase-2/BOARD.md) |
+| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/130 | [BOARD](../../tracking/phase-2/BOARD.md) |
 | P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-3/BOARD.md) |
-| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-4/BOARD.md) |
+| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/71 | [BOARD](../../tracking/phase-4/BOARD.md) |
 | P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-5/BOARD.md) |
-| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/70 | [BOARD](../../tracking/phase-6/BOARD.md) |
+| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-6/BOARD.md) |
 | P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/68 | [BOARD](../../tracking/phase-7/BOARD.md) |
 | P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/35 | [BOARD](../../tracking/phase-8/BOARD.md) |
 <!-- kanban:phase-status:end -->
@@ -59,14 +59,14 @@ Calendar dates are indicative; halve the durations if you work full-time.
 |---|---|---|---|---|---|---|---|
 | [P0 Foundations & Security Baseline](phase-0-foundations.md) | 21 | 13 | 10 | 8 | 10 | 1 | 42 |
 | [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 6 | 15 | 5 | 8 | 1 | 35 |
-| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 45 | 9 | 21 | 3 | 13 | 2 | 48 |
+| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 46 | 9 | 22 | 3 | 14 | 2 | 50 |
 | [P3 Journal & Tax](phase-3-journal-and-tax.md) | 21 | 6 | 14 | 3 | 8 | 1 | 32 |
-| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 18 | 6 | 13 | 3 | 8 | 1 | 31 |
+| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 19 | 6 | 14 | 3 | 9 | 1 | 33 |
 | [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 24 | 9 | 14 | 3 | 8 | 1 | 35 |
-| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 24 | 5 | 13 | 2 | 14 | 1 | 35 |
+| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 25 | 5 | 15 | 2 | 15 | 1 | 38 |
 | [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 16 | 11 | 8 | 4 | 7 | 3 | 33 |
 | [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 10 | 3 | 5 | 1 | 6 | 1 | 16 |
-| **Total** | | **68** | **113** | **32** | **82** | **12** | **307** |
+| **Total** | | **68** | **117** | **32** | **85** | **12** | **314** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies

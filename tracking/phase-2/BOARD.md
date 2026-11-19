@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 127 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/6 |
+| 129 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-2-strategies-risk-lab.md](../../docs/roadmap/phase-2-strategies-risk-lab.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -30,7 +30,7 @@ _None._
 |---|---|---|---|---|---|---|
 | [P2-T002](tasks/P2-T002-mastertradingbot-golden-inputs.md) | Provide MasterTradingBot rules and historical outputs for golden files | USER | high | M | user | — |
 
-## Backlog (127)
+## Backlog (129)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -109,6 +109,8 @@ _None._
 | [P2-T074](tasks/P2-T074-restart-flat-bots-paused.md) | Clean restart after an unplanned stop: reconcile, flat, bots paused until you resume | BUILD | high | S | agent | P2-T027, P2-T036, P2-T032 |
 | [P2-T075](tasks/P2-T075-verify-kill-the-engine-drill.md) | Kill-the-engine drill: sidecar cancels in 5 s, flattens in 10 s, restart flat with bots paused | VERIFY | high | S | agent | P2-T072, P2-T073, P2-T074, P2-T054 |
 | [P2-T076](tasks/P2-T076-verify-safety-state-goldens.md) | Safety-state golden tests: stale data, integrity block, bad egress and late decisions rejected | VERIFY | high | S | agent | P2-T070, P2-T017, P2-T018, P2-T051 |
+| [P2-T077](tasks/P2-T077-setup-odds-simulator.md) | Setup-odds simulator ('time machine') in mt_lab and on approval cards | BUILD | medium | L | agent | P2-T101, P0-T027, P2-T038, P1-T009 |
+| [P2-T078](tasks/P2-T078-verify-setup-odds.md) | Verify setup odds: reproducible, leak-free, never changes M11 | VERIFY | medium | S | agent | P2-T077 |
 | [P2-T101](tasks/P2-T101-lab-job-model-and-worker.md) | mt_lab job model, tables and backtest-worker queue | BUILD | critical | M | agent | P0-T024, P0-T027, P0-T020 |
 | [P2-T102](tasks/P2-T102-measured-cost-model.md) | Measured cost model loader from M16 snapshots | BUILD | critical | M | agent | P2-T101, P1-T038, P1-T039, P1-T040 |
 | [P2-T103](tasks/P2-T103-pit-dataset-and-universe.md) | Point-in-time dataset builder and survivorship-free universes | BUILD | critical | M | agent | P2-T101, P0-T027, P1-T009, P1-T012, P1-T013 |
@@ -160,7 +162,7 @@ _None._
 | [P2-T168](tasks/P2-T168-verify-ui-degraded-and-realtime.md) | Verify UI real-time and degraded modes on D01/D03/D04/D05 | VERIFY | high | S | agent | P2-T142, P2-T147, P2-T149 |
 | [P2-T180](tasks/P2-T180-start-p1-paper-clock.md) | Start the P1-sleeve paper clock | RUN | critical | S | agent | P2-T114, P2-T161, P2-T143, P2-T150, P2-T067 |
 | [P2-T182](tasks/P2-T182-start-weekly-review-cadence.md) | Start the weekly worst-five-trades and cost review | RUN | medium | XS | agent | P2-T150, P2-T180 |
-| [P2-T199](tasks/P2-T199-phase-2-exit-demo.md) | Phase 2 exit demo | VERIFY | critical | M | agent | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076 |
+| [P2-T199](tasks/P2-T199-phase-2-exit-demo.md) | Phase 2 exit demo | VERIFY | critical | M | agent | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078 |
 
 ## Done (0)
 

@@ -85,6 +85,7 @@ P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T02
 | R4.14 | Morning brief per mobile-and-telegram §3 | P4-T047, P4-T060, P4-T061 |
 | R4.15 | Regulatory & jurisdiction watch → `REG_CHANGE`; venue status → venue health; never auto-applied | P4-T063, P4-T064 |
 | R4.16 | Minimal labelling tool (D08 Label mode) + `models.label.add` | P4-T049, P4-T062 |
+| R4.17 | Congressional trading disclosures (House Clerk PTRs; Senate eFD if terms allow) | P4-T070, P4-T071 |
 | R4.N1 | Scraped text untrusted; LLMs never see secrets; RSS-Bridge has no DB route | P4-T007, P4-T008, P4-T012, P4-T055 |
 | R4.N2 | Stage-1 gate p95 ≤ 300 ms GPU / ≤ 3 s CPU; queued, never on the order path | P4-T029, P4-T030, P4-T069 |
 
@@ -111,6 +112,7 @@ P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T02
 | T4.30 | BUILD | Regulatory & venue watch, `REG_CHANGE` | P4-T063, P4-T064 |
 | T4.31 | BUILD | Minimal labelling tool + `models.label.add` | P4-T062 |
 | T4.32 | BUILD | Positioning and nowcast ingestion; D02 widgets live | P4-T036, P4-T039, P4-T065 |
+| T4.33 | BUILD | Congressional disclosures connector | P4-T070 |
 | T4.40 | OPS | RSS-Bridge container | P4-T007, P4-T008 |
 | T4.41 | OPS | Qwen3.5-4B serving | P4-T009 |
 | T4.42 | OPS | Telethon session encrypted; Discord token in secrets | P4-T006 |
@@ -122,6 +124,7 @@ P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T02
 | T4.65 | VERIFY | YouTube check | P4-T066 |
 | T4.66 | VERIFY | Live check of keyed sources | P4-T067 |
 | T4.67 | VERIFY | Stage-1 latency benchmark | P4-T069 |
+| T4.68 | VERIFY | Congressional disclosures golden files, dates, no duplicates | P4-T071 |
 | T4.80 | RUN | Two weeks of morning briefs | P4-T060 |
 
 P4-T068 (live Telegram/Discord check) also completes T4.21/T4.22 on your real accounts; P4-T055–T059 and P4-T061 verify requirements without their own ToDo.

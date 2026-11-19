@@ -41,6 +41,7 @@ review_result: ""
 
 ## Context & references
 
+- Reference: alpaca-mcp-server's server-side toolset filtering (`ALPACA_TOOLSETS`) is a model for per-token scopes ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)); that server itself is never in the trading path.
 - Roadmap: [R8.02, R8.07, R8.08](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.24](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (token lifecycle part)
 - Decisions: [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (token model) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes, expiry options, creation levels) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)
 - Architecture: [02 §7 auth](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 MCP commands row](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`mcp.token.create` C1, C3 for indefinite or `trade`/`strategy`/`risk_tighten`; `mcp.token.revoke` C1; web/Telegram only) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp)
@@ -143,3 +144,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (HMAC-SHA-256 + pepper, 16 §2.12 scopes and expiry options incl. indefinite = warning + C3 + monthly reminder, C1/C3 creation levels, client identity; mapped to T8.24/R8.08; dropped gap dep P8-B004; cross-phase deps P0-T032/T033/T034/T035; tools/env/services)
+- 2026-11-19 00:00 · coordinator · alpaca-mcp-server toolsets noted as a scopes reference (17 §F)

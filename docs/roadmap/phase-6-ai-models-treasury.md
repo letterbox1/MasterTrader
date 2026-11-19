@@ -34,13 +34,14 @@
 | R6.05 | Anomaly detectors (robust z, IsolationForest, change points, correlation breaks) + explain agent → Telegram | [03 M10](../03-build-spec.md#m10-anomaly-monitor--mt_anomaly) | Seeded anomaly |
 | R6.06 | LLM-signal template (M0) consuming M8 signals; LLM strategies evaluated on **post-training-cutoff data** | [03 §8 item 4](../03-build-spec.md#8-promotion-gates-per-strategy-configurable) | Gate check |
 | R6.07 | LLM spend: monthly cap (default US$40) and daily per-role budgets (defaults: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30; configurable, [16 §2.10](../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); local model fallback when exhausted; spend panel | [03 §7](../03-build-spec.md#7-llm-cost-control), [10 §5](../10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) | Budget test |
+| R6.08 | **Research workflows** adapted from Anthropic's financial-services skills (Apache-2.0, NOTICE kept): earnings preview and analysis, catalyst calendar, thesis tracker (per strategy/position, with invalidation conditions), morning note; DCF/comps via the FinRobot valuation desk. Plus optional **investor-persona lenses** (idea from ai-hedge-fund) as debate viewpoints, off by default and enabled only if they improve shadow results. All through the gateway and `pit` tools | [01 §8](../01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories), [17 §F](../17-decisions-register.md#f-vetted-additions-2026-11-19) | Workflow tests + shadow comparison |
 
 ### Decision One tier B stage 2 (M21)
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
 | R6.10 | Own **Qwen3-0.6B/1.7B + LoRA + classification head** (or joint schema head); distilled from M8 decisions and **corrected against outcomes**; CE + λ·Brier; temperature/isotonic calibration; abstention thresholds | [10 §4.3](../10-memory-rag-and-models.md#43-design) | Calibration report |
 | R6.11 | Serving via vLLM `/classify` or ONNX; ~2–12 ms per decision on GPU (0.6B), **p95 SLO < 50 ms**; CPU 100–400 ms; CPU ONNX FP32 for reproducible backtests; determinism controls | [10 §4.3](../10-memory-rag-and-models.md#43-design), [02 §9.2](../02-v1-architecture.md#92-observability--slos) | Benchmark |
-| R6.12 | **Bake-off:** own head vs fine-tuned Laya vs Clef-flash vs **Kev-4B/9B** (only if a public, licence-compatible release exists; otherwise dropped (U)) vs SemIf vs JSON generation, on our data + FinMMEval; Brier/ECE per regime, coverage at target precision, latency, flip rate | [10 §4.3](../10-memory-rag-and-models.md#43-design) | Bake-off report |
+| R6.12 | **Bake-off:** own head vs fine-tuned Laya vs Clef-flash vs **Kev-4B/9B** and **Trading-R1** (each only if a public, licence-compatible release exists that runs locally; otherwise dropped (U)) vs SemIf vs JSON generation, on our data + FinMMEval; Brier/ECE per regime, coverage at target precision, latency, flip rate | [10 §4.3](../10-memory-rag-and-models.md#43-design) | Bake-off report |
 | R6.13 | **Operating rules:** no Telegram text; ~320-token state budget; per-question thresholds (defaults: auto-decide coverage at ≥ 0.75 precision, ECE ≤ 0.05, flip rate ≤ 0.1%, [16 §2.10](../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); **5% shadow checks**; labels from outcomes or you (`models.label.add`), never shadow outputs; monthly fine-tune; social battery questions | [10 §4.3 operating rules](../10-memory-rag-and-models.md#43-design) | Rule tests |
 | R6.14 | Distillation loop (nightly): teacher log + outcomes → tier A / tier B candidates → calibration → **gated promotion** (default ≥ 14 days in shadow meeting the thresholds), teacher in shadow; direct veto only at ≥ 0.90 precision (default, configurable) | [02 F4](../02-v1-architecture.md#8-end-to-end-flows), [03 M21](../03-build-spec.md#m21-decision-one--model-serving--mt_models) | Promotion audit |
 
@@ -95,6 +96,8 @@
 - [ ] **T6.30** `BUILD` Optional: Hummingbot adapter (D11), `mt_social` drafts, crowd-sim (local memory backend only), LightRAG. → R6.30–R6.32
 - [ ] **T6.31** `BUILD` Prompt and model versioning for agents; confirm every LLM call lands in `audit.llm_call` (writer exists from P0) with model, hashes, tokens, cost, latency. → R6.03
 - [ ] **T6.32** `BUILD` LLM budget enforcement in the gateway: monthly cap + daily per-role budgets (incl. shadow), local fallback when exhausted, spend events. → R6.07
+- [ ] **T6.33** `BUILD` Research workflows (earnings preview/analysis, catalyst calendar, thesis tracker, morning note) as agent workflows feeding the debate and the morning brief. → R6.08
+- [ ] **T6.34** `BUILD` Optional investor-persona lenses as debate viewpoints, off by default, evaluated in shadow before use. → R6.08
 
 ### C. Ops & config (`OPS`)
 - [ ] **T6.40** `OPS` GPU serving for tier B (vLLM pooling runner or ONNX), Hindsight slim container, Laya/Kev/Clef bake-off containers bound to `127.0.0.1` with API keys. → R6.11, R6.12, R6.N2 · [07 §5](../07-security-notes.md#5-network--host)
@@ -113,8 +116,9 @@
 - [ ] **T6.69** `VERIFY` LLM-signal gate check: strategies are evaluated only on post-training-cutoff data. → R6.06
 - [ ] **T6.70** `VERIFY` Budget test: exhausting a role's daily budget (and the monthly cap) falls back to the local model instead of failing; every call still lands in `audit.llm_call`. → R6.07, R6.03
 - [ ] **T6.71** `VERIFY` Tier B latency benchmark: p95 < 50 ms on GPU; CPU figures recorded. → R6.11, R6.N3
-- [ ] **T6.72** `VERIFY` Kev-4B/9B check (U): does a public, licence-compatible release exist? Record the answer before the bake-off; drop Kev if not. → R6.12
+- [ ] **T6.72** `VERIFY` Kev-4B/9B and Trading-R1 check (U): does a public, licence-compatible, locally runnable release exist? Record the answer before the bake-off; drop either if not. → R6.12
 - [ ] **T6.73** `VERIFY` Local inference port check: tier B, Hindsight and bake-off servers listen on `127.0.0.1` only and refuse calls without the API key. → R6.N2
+- [ ] **T6.74** `VERIFY` Research workflows: PIT-only inputs, outputs carry sources; persona lenses compared in shadow against the debate without them. → R6.08
 
 ### E. Run / soak (`RUN`)
 - [ ] **T6.80** `RUN` Four weeks of nightly distillation with the teacher in shadow; LLM-signal strategies on paper. → R6.14, R6.06

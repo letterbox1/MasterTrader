@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 67 | 2 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/5 |
+| 69 | 2 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/5 |
 
 Roadmap: [phase-4-intel.md](../../docs/roadmap/phase-4-intel.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -31,7 +31,7 @@ _None._
 | [P4-T003](tasks/P4-T003-watch-keywords-and-feeds.md) | Provide watch keywords, cashtags and trusted feeds/sites | USER | high | S | user | — |
 | [P4-T005](tasks/P4-T005-event-keys-and-terms.md) | Register free event-source keys and read news API terms | USER | high | S | user | — |
 
-## Backlog (67)
+## Backlog (69)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -93,7 +93,7 @@ _None._
 | [P4-T058](tasks/P4-T058-verify-stress-failure-injection.md) | Stress and failure injection for the intel pipeline | VERIFY | high | M | agent | P4-T057, P4-T019, P4-T018 |
 | [P4-T059](tasks/P4-T059-verify-d08-viewport-axe.md) | D08 and tier-B overlays: Playwright viewport matrix and axe | VERIFY | medium | S | agent | P4-T044, P4-T045, P4-T046, P4-T062, P4-T065 |
 | [P4-T060](tasks/P4-T060-run-two-weeks-briefs.md) | Run two weeks of morning briefs and tune sources by relevance hit-rate | RUN | high | M | agent | P4-T047, P4-T030, P4-T044, P4-T053, P4-T003, P4-T067, P4-T068 |
-| [P4-T061](tasks/P4-T061-phase-exit-demo.md) | Phase 4 exit demo | VERIFY | critical | S | agent | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069 |
+| [P4-T061](tasks/P4-T061-phase-exit-demo.md) | Phase 4 exit demo | VERIFY | critical | S | agent | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071 |
 | [P4-T062](tasks/P4-T062-minimal-labelling-tool-d08-label-mode-and-models.md) | Minimal labelling tool (D08 Label mode) and models.label.add command | BUILD | high | M | agent | P4-T028, P4-T030, P4-T043, P4-T044 |
 | [P4-T063](tasks/P4-T063-regulatory-and-jurisdiction-watch-fetch-diff-and.md) | Regulatory and jurisdiction watch: fetch, diff and REG_CHANGE review tasks | BUILD | medium | M | agent | P4-T011, P4-T008, P3-T038, P3-T031, P1-T045 |
 | [P4-T064](tasks/P4-T064-venue-status-incident-and-proof-of-reserve-watch.md) | Venue status, incident and proof-of-reserve watch feeding venue health | BUILD | medium | S | agent | P4-T063, P1-T043 |
@@ -102,6 +102,8 @@ _None._
 | [P4-T067](tasks/P4-T067-live-check-of-keyed-sources-with-your-keys-firms.md) | Live check of keyed sources with your keys (FIRMS, ACLED, Finnhub, CryptoPanic, Myfxbook) | VERIFY | high | S | agent | P4-T005, P0-T010, P4-T016, P4-T017, P4-T033, P4-T034, P4-T039 |
 | [P4-T068](tasks/P4-T068-live-check-of-telegram-postures-and-discord-inge.md) | Live check of Telegram postures and Discord ingest on your accounts | VERIFY | high | S | agent | P4-T001, P4-T002, P4-T006, P4-T018, P4-T019, P4-T020 |
 | [P4-T069](tasks/P4-T069-stage-1-relevance-gate-latency-benchmark-p95-300.md) | Stage-1 relevance-gate latency benchmark (p95 300 ms GPU / 3 s CPU, off the order path) | VERIFY | high | S | agent | P4-T029, P4-T030, P4-T009 |
+| [P4-T070](tasks/P4-T070-congressional-disclosures.md) | Congressional trading disclosures connector (House Clerk PTRs) | BUILD | low | M | agent | P4-T010, P1-T009 |
+| [P4-T071](tasks/P4-T071-verify-congressional-disclosures.md) | Verify congressional disclosures: golden files, dates, no duplicates | VERIFY | low | S | agent | P4-T070 |
 
 ## Done (0)
 

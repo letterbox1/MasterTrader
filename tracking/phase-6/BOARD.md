@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 67 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/1/0 | 0/6 |
+| 70 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/1/0 | 0/6 |
 
 Roadmap: [phase-6-ai-models-treasury.md](../../docs/roadmap/phase-6-ai-models-treasury.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -32,7 +32,7 @@ _None._
 | [P6-T003](tasks/P6-T003-decide-optional-modules.md) | Decide on Hummingbot, social drafts, crowd-sim and LightRAG | USER | low | XS | user | — |
 | [P6-T068](tasks/P6-T068-kev-4b-9b-and-contender-licence-check-before-the.md) | Kev-4B/9B and contender licence check before the bake-off | VERIFY | high | XS | agent | — |
 
-## Backlog (67)
+## Backlog (70)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -99,10 +99,13 @@ _None._
 | [P6-T063](tasks/P6-T063-verify-llm-signal-post-cutoff-gate.md) | LLM-signal strategy gate check on post-cutoff data | VERIFY | high | S | agent | P6-T017, P6-T016 |
 | [P6-T064](tasks/P6-T064-verify-degraded-modes-drill.md) | Degraded-mode drill for the AI layer and treasury | VERIFY | high | M | agent | P6-T024, P6-T009, P6-T012, P6-T038, P6-T015 |
 | [P6-T065](tasks/P6-T065-run-start-distillation-paper-soak.md) | Start the 4-week nightly distillation soak and LLM-signal paper trading | RUN | high | S | agent | P6-T031, P6-T016, P6-T017, P6-T025, P6-T063 |
-| [P6-T066](tasks/P6-T066-phase-exit-demo.md) | Phase 6 exit demo | VERIFY | critical | S | agent | P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070 |
+| [P6-T066](tasks/P6-T066-phase-exit-demo.md) | Phase 6 exit demo | VERIFY | critical | S | agent | P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073 |
 | [P6-T067](tasks/P6-T067-sample-debate-runs-on-three-instruments-return-c.md) | Sample debate runs on three instruments return complete Signals | VERIFY | high | S | agent | P6-T004, P6-T007, P6-T008, P6-T012 |
 | [P6-T069](tasks/P6-T069-local-inference-port-check-127-0-0-1-only-and-ap.md) | Local inference port check: 127.0.0.1 only and API key required | VERIFY | high | S | agent | P6-T011, P6-T023, P6-T027, P0-T056 |
 | [P6-T070](tasks/P6-T070-live-check-with-your-keys-gateway-roles-on-anthr.md) | Live check with your keys: gateway roles on Anthropic/custom endpoint and the Tally feed | VERIFY | medium | S | agent | P0-T007, P0-T068, P6-T001, P6-T002, P6-T067, P6-T053, P6-T015, P6-T025, P6-T040 |
+| [P6-T071](tasks/P6-T071-research-workflows.md) | Research workflows: earnings preview/analysis, catalyst calendar, thesis tracker, morning note | BUILD | medium | L | agent | P6-T006, P6-T007, P4-T014, P4-T037 |
+| [P6-T072](tasks/P6-T072-investor-persona-lenses.md) | Optional investor-persona lenses as debate viewpoints (off by default) | BUILD | low | S | agent | P6-T007 |
+| [P6-T073](tasks/P6-T073-verify-research-workflows.md) | Verify research workflows and persona lenses (PIT, sources, shadow comparison) | VERIFY | low | S | agent | P6-T071, P6-T072 |
 
 ## Done (0)
 

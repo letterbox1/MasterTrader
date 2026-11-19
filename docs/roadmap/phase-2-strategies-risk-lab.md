@@ -72,6 +72,7 @@
 | R2.46 | Core features: TA-Lib, Alpha158, microstructure; IC/rank-IC/decay evaluator; versioned | [03 M6](../03-build-spec.md#m6-features--mt_features) | Feature tests |
 | R2.47 | Tier A: train → calibrate (isotonic/Platt, Brier/ECE) → compile (ONNX/Treelite/lleaves) → in-process runtime; MLflow registry. Until the P6 teacher exists, tier A trains on forward-return / triple-barrier labels from market data; training runs via `models.tiera.train` (C1) | [10 §4.3](../10-memory-rag-and-models.md#43-design), [03 M21](../03-build-spec.md#m21-decision-one--model-serving--mt_models) | Benchmark |
 | R2.48 | **MasterTradingBot shared libraries**: pure indicator/signal library + sizing/risk library with **golden files** against its historical outputs | [14 §8](../14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) | Golden tests |
+| R2.59 | **Setup odds ("time machine")**: for a proposed entry, replay N continuations (default 10,000, configurable) bootstrapped from the instrument's own recent bars plus every past occurrence of the same setup, all through `pit(as_of)`; report win rate, R-multiple distribution, MAE/MFE and time to target/stop; shown in the lab (D04) and on HITL approval cards (D05/Telegram). Informational only: never overrides M11 | Idea from day-trader-skill ([01 §8](../01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)), [17 §F](../17-decisions-register.md#f-vetted-additions-2026-11-19) | Seeded odds test + PIT leak test |
 
 ### UI & Telegram (M15)
 | ID | Requirement | Source | Verified by |
@@ -127,6 +128,7 @@
 - [ ] **T2.35** `BUILD` Config layering service in `mt_risk`: layer store, merge (strictest wins), validation, effective-limits API for D06/D03. → R2.55
 - [ ] **T2.36** `BUILD` `deadman` sidecar + venue cancel-after timers + resting venue stops at entry + restart-flat/paused-resume flow. → R2.56
 - [ ] **T2.39** `BUILD` Inline pre-trade safety-state checks in `mt_risk`: data age vs the bot's threshold, `audit.integrity` status, `egress.status`, decision deadline. → R2.58
+- [ ] **T2.43** `BUILD` Setup-odds simulator in `mt_lab` (seeded bootstrap of session continuations + historical analogues of the same setup, PIT-only) and its odds block on the ApprovalCard and Telegram approval cards. → R2.59
 
 ### C. Ops & config (`OPS`)
 - [ ] **T2.40** `OPS` `engine`, `backtest-worker`, `sandbox` containers; gVisor runtime; resource limits. → R2.45
@@ -147,6 +149,7 @@
 - [ ] **T2.70** `VERIFY` Kill-the-engine drill: SIGKILL the engine with paper positions → sidecar cancels in ≤ 5 s and flattens in ≤ 10 s; restart starts flat with bots paused. → R2.56
 - [ ] **T2.71** `VERIFY` Safety-state golden tests: an order on data older than the bot's threshold, an entry while `audit.integrity` = `block_new_entries` (an exit still passes), and an order with a bad egress status are all rejected and the ladder holds. → R2.58
 - [ ] **T2.72** `VERIFY` Testnet/practice end-to-end with your trade-only keys (after T2.03): one order per venue passes M11, fills, lands in `audit.order`/`audit.fill` and reconciles. → R2.30, R2.N3
+- [ ] **T2.73** `VERIFY` Setup odds: same seed → same odds; no bar after `as_of` is ever used (leak test); odds appear on approval cards and never change what M11 allows. → R2.59
 
 ### E. Run / soak (`RUN`)
 - [ ] **T2.80** `RUN` **Paper clock (starts now, runs through P3–P6):** P1 sleeves on paper for ≥ 8 weeks through the real policy/risk/execution path. → gates P7 · [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7)

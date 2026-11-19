@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076]
+depends_on: [P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078]
 requirements: [R2.01, R2.06, R2.40, R2.42, R2.43, R2.45, R2.47, R2.48, R2.50, R2.51, R2.N1, R2.18, R2.19, R2.20, R2.56, R2.58]
 roadmap_todos: []
 modules: [M0, M7, M11, M12, M15, M21]
@@ -107,3 +107,4 @@ A recorded, end-to-end demonstration of every Phase 2 exit criterion, run from t
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo depends on Part A evidence and the new safety-state and dead-man tasks; HITL bot wording)
+- 2026-11-19 00:00 · coordinator · depends on P2-T078 (vetted additions, 17 §F)

@@ -135,6 +135,7 @@ _Evidence: [research/decision-models-system-one.md](research/decision-models-sys
 | **Clef / Clef-flash** (Cloudflare) | Apache-2.0 weights; Qwen3.5-9B / Qwen3.8-27B + LoRA + joint schema head | ✅ **Reference architecture** and benchmark baseline. Self-hosted Clef-flash is ~0.4 s on a 3090 (8–24 GB VRAM), so it's a "rich context" option, not the fast path. |
 | **SemIf** (formerly OpenJev) | MIT; no training, reads option-token logits on stock Qwen3.5-4B | ✅ **Use where it logically applies:** zero-shot boolean/categorical checks over text when no labels exist yet. ~5× faster than JSON generation. 4B is good (0.81 balanced accuracy); 0.6B is worse than chance. Uncalibrated. |
 | **Kev-4B/9B** (challenger from the CryptoTrader review, [11](11-cryptotrader-crossover-review.md)) | Publisher, licence and weights location unknown (U) | ⚠️ In the bake-off **only if a public, licence-compatible release exists** (checked in P6); otherwise dropped, like Jev |
+| **Trading-R1** (TauricResearch's trading reasoning model, early access 2026-11, [01 §3.6](01-repo-vetting-report.md#36-tradingagents--ai-decision-layer-pattern)) | Licence and public weights not yet confirmed (U) | ⚠️ In the bake-off **only if a public, licence-compatible release runs locally** (same rule as Kev; P6-T068) |
 | Liquid d1 (~8 ms on a 4090), Vela (ONNX), H2O-Lightning-4B, Intern-Decision (U) | Mostly Apache | Optional extra benchmark candidates |
 
 **Evidence gaps:**
@@ -193,7 +194,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
     - ~15–40 ms for 4B;
     - 0.6B ONNX int8 on CPU ~100–400 ms (est.; benchmark it).
 - **Benchmark bake-off before adopting anything:**
-  - **Contenders:** our Qwen-LoRA head vs fine-tuned Laya vs self-hosted Clef-flash vs **Kev-4B/9B** (challenger, only if a public, licence-compatible release exists, §4.1) vs SemIf zero-shot vs the old JSON-generation baseline.
+  - **Contenders:** our Qwen-LoRA head vs fine-tuned Laya vs self-hosted Clef-flash vs **Trading-R1** (same rule) vs **Kev-4B/9B** (challenger, only if a public, licence-compatible release exists, §4.1) vs SemIf zero-shot vs the old JSON-generation baseline.
   - **Data:** our own data, plus the **CLEF-2026 FinMMEval Buy/Hold/Sell** task as an external check.
   - **Metrics:** accuracy, log-loss, **Brier, ECE per regime**, coverage at target precision, latency p50/p95, determinism (flip rate).
   - **Promotion:** only via the [03 §8](03-build-spec.md#8-promotion-gates-per-strategy-configurable) gates, with the teacher in shadow, and only if the model meets the tier-B defaults in [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets): coverage at ≥ 0.75 precision, ECE ≤ 0.05, flip rate ≤ 0.1%, and no worse than the frozen baseline on the worst fold. Shadow period ≥ 14 days before promotion (default, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); the `shadow` role has its own LLM budget.
