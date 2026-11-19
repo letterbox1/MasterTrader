@@ -8,7 +8,7 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-11-19
 ---
 
 # Phase 5 · Airdrops, launches, wallets & curation
@@ -159,14 +159,16 @@ The exit demo P5-T064 covers every requirement and is omitted from the table bel
   - Simulation: Anvil and `simulateTransaction` only; Tenderly is not used (P5-T016; P5-B013).
   - Curation defaults: Discord re-prompt after 7 days, ≤ 3 new servers per week (16 §2.13); Telegram buttons include Details (P5-B011, P5-B014).
   - Airdrop income is a `journal.event` row linked to the campaign record (no separate income table; P5-T046).
-- **Build first, keys last:** every BUILD/OPS task runs keyless against Anvil, `solana-test-validator`, Sepolia/devnet faucets and recorded fixtures. Live keys (P0-T010, P5-T003) are first used by P5-T068, then by the live windows P5-T059/P5-T063 and the live run of P5-T060. Testnet keys for P5-T056/P5-T058 are created in those tasks' setup (faucet funds, C3 approved by you), so they don't wait on real-funds steps (P5-T004, P5-T006).
+- **Build first, keys last:** every BUILD/OPS task runs keyless against Anvil, `solana-test-validator`, Sepolia/devnet faucets and recorded fixtures. Live keys (P0-T010, P5-T003) are first used by P5-T068, then by the recon week P5-T059 (your registered wallets) and the live run of the P5-T060 suite in the exit demo; the P5-T063 digest run starts keyless and keyed sources join when P5-T068 passes. Testnet keys for P5-T056/P5-T058 are created in those tasks' setup (faucet funds, C3 approved by you), so they don't wait on real-funds steps (P5-T004, P5-T006).
 - **Simulation is only a sanity check:** adversarial tokens can behave differently on execution. The backstops are caps, burner-first, hard blocks and the drainer suite (P5-T052), which is a required CI check.
 - **Free RPC limits:** use one account per provider with fallbacks (P5-T018); wallet-cluster tracing has a per-token credit budget (P5-T038). Upgrade only when logs prove losses.
 - **Airdrop tax classification** is marked (U). Campaign records attach the "activity done to earn it", and uncertain cases become `TAX_QUESTION` tasks for your tax agent (P5-T046).
 - **Telegram:** only postures enter M4, and never as model features (P5-T033/T037). The P4 provenance gate is reused.
 - **WORM:** mandates, the exec log and the signer ledger (`audit.signer_ledger`) are append-only (P5-T010); income rows are WORM `journal.event` rows. Revocations, expiries and corrections are new rows.
-- **Long-running items:** P5-T059 (7 clean days) and P5-T063 (2 weeks) need elapsed time. Start them as soon as P5-T068 passes.
-- **Open gaps:** P5-B013 (research note still cites Tenderly) and P5-B017 (02 §2 diagram label "hot-wallet claims only") wait for a doc fix; both S3/S4, implementation already aligned.
+- **Long-running items:** P5-T059 (7 clean days) and P5-T063 (2 weeks) need elapsed time. Start P5-T063 as soon as the digests (P5-T030) land and P5-T059 as soon as P5-T068 passes.
+- **Stack (2026-11-19, [18](../../docs/18-platform-and-deployment.md), 17 §G):** Rust crates `mt-signer`, `mt-onchain` (RPC pools, cost gate), `mt-treasury` (custody, registry, proof of control, indexer, recon, monitors, sweeps), `mt-airdrop-exec` (mandates, eligibility, claims, flows), `mt-core` (types, never-automated policy) and `mt-api`; Python stays for `mt_airdrop` discovery/scoring/decision and `mt_curation`. Supabase Postgres with SQL migrations in `supabase/migrations/` and pgTAP tests; `ops.wallet_balance_snapshot` uses monthly partitions (no TimescaleDB).
+- **USER inputs (17 §G):** the limits (P5-T065) and the disposal rule/EV inputs (P5-T007) are seeded by the agent; enabling mainnet signing is your C3 confirmation in P5-T004; money items (P5-T001, T002, T004, T006) stay yours and testnet/Anvil work never waits on them.
+- **Open gaps:** P5-B013 (research note still cites Tenderly) and P5-B017 (02 §2 diagram label "hot-wallet claims only") wait for a doc fix; both S3/S4, implementation already aligned. P5-B018 (S4, 2026-11-19): 16 §2.7 has no default EV time value or haircut; P5-T007 drafts conservative values.
 - **Out of scope:** hold-and-earn and treasury allocation (P6), the automated depeg reduce (P6), social drafts (P6), DEX trading strategies, the memecoin template and automated disposal sales (P7). The wallet-drained runbook drill is P7 (T7.60).
 
 ## Cross-phase prerequisites

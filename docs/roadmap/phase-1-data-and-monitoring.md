@@ -50,10 +50,10 @@
 ## 4. ToDo sets
 
 ### A. Your actions (`USER`)
-- [ ] **T1.01** `USER` Pick the starting **universe/watchlist**: ~10 crypto pairs, FX/metal pairs, ~30 US ETFs/stocks (Alpaca IEX limit), macro series you care about. → R1.01–R1.06
+- [ ] **T1.01** `BUILD` Seed the starting **universe/watchlist** from the docs' default lists (P1-T001): ~10 crypto pairs, FX/metal pairs, ≤ 30 US ETFs/stocks (Alpaca IEX limit), daily futures and the core macro series ([16 §2.2](../16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)); you edit it any time and review it in the go-live pack. → R1.01–R1.06
 - [ ] **T1.02** `USER` Create **read-only** API keys where the testnet offers them (Binance/Bybit testnets, IP-allow-listed) for reconciliation and fee-tier reads; OANDA practice, IG demo, Alpaca paper and IBKR paper use their normal credentials (no money at risk). All go in the secrets file. → R1.12 · [07 §3](../07-security-notes.md#3-broker--exchange-keys)
-- [ ] **T1.03** `USER` Install the ntfy app on your phone and subscribe to the private topic; confirm the email alert address (or turn email off). → R1.14
-- [ ] **T1.04** `USER` Review the first week's DQ alerts and tell us which thresholds are too noisy. → R1.10
+- [ ] **T1.03** `USER` Before go-live: install the ntfy app on your phone and subscribe to the private topic (needs Tailscale, P0-T003). The email address and SMTP password are P1-T068; ntfy itself is checked on the workstation during the build. → R1.14
+- [ ] **T1.04** `BUILD` Tune the DQ thresholds from the soak week's alert stats (P1-T066): tightening is applied, anything that would loosen goes into the go-live pack as a proposal. → R1.10
 - [ ] **T1.05** `USER` Create an SMTP app password at your own mail provider and put it in the secrets file, or turn email alerts off (Telegram + ntfy remain). → R1.14
 - [ ] **T1.06** `USER` Each quarter, when the reminder arrives, check every venue you use on the AUSTRAC register and record the result (recurring). → R1.13 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry)
 

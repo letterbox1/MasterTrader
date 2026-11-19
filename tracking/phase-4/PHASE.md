@@ -8,7 +8,7 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-11-19
 ---
 
 # Phase 4 · News, social, events & calendars

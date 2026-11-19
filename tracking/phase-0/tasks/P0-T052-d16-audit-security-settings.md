@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D16-system.md, docs/ui/README.md, docs/roadmap/pha
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ review_result: ""
 - Audit table columns: time, source (web/telegram/mcp/system), command, level, args (redacted), status, hash (short, copyable), chain status (✓ verified up to last run / ✗ mismatch / … pending); filters source, command, date; CSV export of the visible page (C0).
 - 'Verify now' → `audit.verify` (C1) → progress via WS → result toast; mismatch → critical red banner (D16 acceptance 3) persisting until acknowledged.
 - Integrity panel (D16 Audit, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)): last hourly incremental check and last daily full verify, the configured action, the open incident, and **Acknowledge** (`audit.integrity.ack`, C3 via `C3Flow`). The ack is a new row; nothing is marked acked in place.
-- Security: key metadata table (service, name, age, rotate due) from `/system/keys`; sessions (current + others, logout others); TOTP status; posture checklist fed by `infra/host/checklist.sh` results + last scan date (P0-T056).
+- Security: key metadata table (service, name, age, rotate due) from `/system/keys`; Supabase Auth sessions (current + others, sign out others via `signOut({scope: 'others'})`); TOTP factors enrolled and `aal`; posture checklist fed by the workstation baseline `infra/host/checklist.sh` results (P0-T019; LUKS shows WARN before P7) + last scan date (P0-T056).
 - Settings: Preferences (theme, density, timezone default Australia/Sydney, base currency AUD, number formats) as C0; Notifications/Budgets edits via `system.settings.update` with server-classified level — raising budgets = C3 via `C3Flow` (default monthly cap US$40, [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); Integrations list with status (Telegram bot, LiteLLM, TEI, backups) and 'test' buttons that call read-only health checks.
 - Settings → Failure behaviour: audit-integrity action (default `block_new_entries`; loosening towards `alert_only` = C3) and the WORM buffer bound (default 1 GB or 24 h; new entries stop above 80 %, [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)) as `SettingField`s showing effective value, layer, default and history (ui §3.7).
 - Licence & data tags section lists `ops.data_source` with licence/cost; paid sources can't be enabled (button disabled with reason).
@@ -114,3 +114,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity panel + C3 Acknowledge (16 §2.11, R0.12), failure-behaviour settings (16 §3.3), budget default, P0-B014 closed; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (sessions and TOTP status come from Supabase Auth; posture checklist uses the workstation profile)

@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-0-foundations.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`/system` shows the service grid (status, image digest, uptime, restarts, heartbeat, health), host panel (CPU, RAM, disk per volume, GPU, temps, NTP offset), SLO panel, Loki-backed log search with `trace_id` jump and Grafana deep links; `/system/backups` shows last backup, restore test, WAL lag, schedule, seal/verify status and the run-backup / run-restore-test actions (C1).
+`/system` shows the service grid (status, image digest, uptime, restarts, heartbeat, health), workstation panel (CPU, RAM, disk per volume, GPU if present, temps, NTP offset), SLO panel, Loki-backed log search with `trace_id` jump and Grafana deep links; `/system/backups` shows last backup, restore test, WAL lag, schedule, seal/verify status and the run-backup / run-restore-test actions (C1).
 
 ## Context & references
 
@@ -50,7 +50,7 @@ review_result: ""
 
 ## Requirements
 
-- Layout ≥ xl: service grid + host panel + SLO panel; ≤ ph: host summary card → service cards → SLOs (D16 table).
+- Layout ≥ xl: service grid (including the Supabase services) + workstation panel + SLO panel; ≤ ph: workstation summary card → service cards → SLOs (D16 table).
 - Live via WS `system`/`heartbeat`; every tile implements all data states; stale after 15 s without updates.
 - Logs: filters service, level, text, time range; virtualised `LogStream`; clicking a `trace_id` filters by it.
 - Backups: KPIs (backup age, size, WAL lag, last restore test pass/fail + date), seal/verify last status, schedule (defaults: nightly incremental, weekly full, monthly restore test, monthly WORM export, 17 §B P0-B011); actions `system.backup.run` (C1), `system.restore.test` (C1) via `ConfirmSheet`; results toast with audit link.
@@ -67,7 +67,7 @@ review_result: ""
 
 ### Tests
 - Unit: each tile in loading/live/stale/error states; restart button disabled for a non-allow-listed container.
-- Integration (Playwright): with Postgres paused, `/system` renders with read-only banner and live host data.
+- Integration (Playwright): with Postgres paused, `/system` renders with read-only banner and live workstation data.
 
 ### Scenarios
 - Given the last backup is 30 h old, then the backup KPI shows Warn styling + text 'overdue' and Grafana alert fired (cross-check).
@@ -108,3 +108,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (restart via docker-proxy allow-list (17 §D P0-B012, R0.14); backup schedule per P0-B011; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (service grid includes the Supabase services; host panel → workstation panel; GPU optional)

@@ -1,7 +1,7 @@
 ---
 id: P0-T056
 kind: task
-title: Scan images (trivy/grype) and verify nothing is exposed outside Tailscale
+title: Scan images (trivy/grype) and verify nothing is exposed beyond localhost (or Tailscale, if on)
 phase: 0
 type: VERIFY
 status: backlog
@@ -18,14 +18,14 @@ dashboards: []
 tools: [docker, trivy, grype, syft, nmap]
 mcp: []
 env: []
-services: [tailscale]
+services: []
 branch: p0/P0-T056-image-scan-and-external-port-scan
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T056 · Scan images (trivy/grype) and verify nothing is exposed outside Tailscale
+# P0-T056 · Scan images (trivy/grype) and verify nothing is exposed beyond localhost (or Tailscale, if on)
 
 ## Goal / expected outcome
 
-CI scans every image in `images.lock` with trivy and grype (fail on fixable CRITICAL/HIGH) and produces an SBOM; a host-side check shows no TCP/UDP port reachable from the LAN or internet, everything reachable only over Tailscale, and the scrape-network probe still cannot reach Postgres/signer.
+CI scans every image in `images.lock` with trivy and grype (fail on fixable CRITICAL/HIGH) and produces an SBOM; a workstation-side check shows no TCP/UDP port reachable from the LAN or internet: every service (the Supabase stack included) is bound to localhost, and over Tailscale only if it is on (optional before P7, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)); the scrape-network probe still cannot reach the Supabase Postgres/API gateway or the signer.
 
 ## Context & references
 
@@ -53,10 +53,10 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 
 - CI `images` job: for each digest in `images.lock` run `trivy image --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1` and `grype --fail-on high --only-fixed`; generate CycloneDX SBOM (`syft`) as artifact; allow-list file with CVE id, reason and expiry only.
 - Vendored-code check: `third_party/` grep for telemetry/referral/`eval`/`exec`/network calls (07 §7) — empty in P0 but the job exists.
-- External scan: from a machine on the LAN, `nmap -Pn -p- <LAN IP>` and `nmap -sU --top-ports 100` → nothing open; from a tailnet device, only 22 and 443 open.
-- Internet exposure: confirm no router port-forward / UPnP mapping (router UI) and `tailscale funnel status` off.
+- External scan: from another machine on the LAN, `nmap -Pn -p- <LAN IP>` and `nmap -sU --top-ports 100` → nothing open; locally `ss -tlnp` shows every listener on `127.0.0.1`/`::1` (or the Tailscale IP); if Tailscale is on, from a tailnet device only 443 (and 22 if SSH is on) are open.
+- Internet exposure: confirm no router port-forward / UPnP mapping (router UI); if Tailscale is on, `tailscale funnel status` off.
 - `docker-proxy` is reachable only on `ctl` (netprobe from `core`/`scrape` fails) and mt-api has no Docker socket mounted.
-- Re-run `infra/host/checklist.sh` and the `scrape` netprobe; record results and scan date for D16 Security posture.
+- Re-run the workstation baseline `infra/host/checklist.sh` (P0-T019) and the `scrape` netprobe; record results and scan date for D16 Security posture.
 
 ## ToDo
 
@@ -73,7 +73,7 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 
 ### Scenarios
 - Given a new image digest introduces a fixable CRITICAL CVE, when the PR runs, then CI fails naming the CVE.
-- Given someone enables Tailscale Funnel, then the checklist marks FAIL.
+- Given Tailscale is on and someone enables Funnel, then the checklist marks FAIL.
 
 ### Stress / failure injection
 - n/a: scanning; runtime ≤ 6 min in CI with caching.
@@ -105,10 +105,11 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 ## Branch & PR
 
 - Branch: `p0/P0-T056-image-scan-and-external-port-scan`
-- PR title: `P0-T056: Scan images (trivy/grype) and verify nothing is exposed outside Tailscale`
+- PR title: `P0-T056: Scan images (trivy/grype) and verify nothing is exposed beyond localhost`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P0-T056` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (docker-proxy exposure check (R0.14 context); deps trimmed; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (exposure check is localhost-first on the workstation, Tailscale optional (18 §8); Supabase services included; no tailscale service precondition)

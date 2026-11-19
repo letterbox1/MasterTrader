@@ -15,17 +15,17 @@ requirements: [R0.07, R0.12, R0.N7]
 roadmap_todos: [T0.61]
 modules: [M17]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker, just]
 mcp: []
 env: []
-services: [postgres, nats, minio]
+services: [supabase-postgres, nats, minio]
 branch: p0/P0-T055-worm-test-suite
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for every table in `audit.worm_registry`: app-role UPDATE/DELETE/TRUNCATE fail; a direct edit as `worm_owner` or superuser is caught by `audit.verify`; a seal mismatch triggers the incident path and the integrity response (`audit.integrity` = `block_new_entries` by default); a restore from immutable backup re-verifies cleanly; insert throughput with hashing stays within target. Later phases re-run it automatically for their new WORM tables.
+A reusable WORM test suite (`supabase/tests/worm/` pgTAP + `crates/mt-obs/tests/worm_suite.rs`) proves every 15 §2.4 property for every table in `audit.worm_registry`: app-role UPDATE/DELETE/TRUNCATE fail; a direct edit as `worm_owner` or superuser is caught by `audit.verify`; a seal mismatch triggers the incident path and the integrity response (`audit.integrity` = `block_new_entries` by default); a restore from immutable backup re-verifies cleanly; insert throughput with hashing stays within target. Later phases re-run it automatically for their new WORM tables.
 
 ## Context & references
 
@@ -51,21 +51,21 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 
 ## Requirements
 
-- Parametrised over `audit.worm_registry` so new tables are covered without new code.
+- Parametrised over `audit.worm_registry` so new tables are covered without new code: pgTAP for the SQL invariants (`supabase test db`) and Rust integration tests (`cargo test -p mt-obs --test worm_suite`) for tamper, verify and restore paths.
 - Privilege tests per table and per app role: UPDATE, DELETE, TRUNCATE, `ALTER TABLE DISABLE TRIGGER`, `DROP`, `DETACH PARTITION` → all fail; `SET ROLE worm_owner` from app roles fails.
 - Owner tests: as `worm_owner`, UPDATE/DELETE → `MT001` (trigger).
-- Tamper detection: as superuser with triggers disabled, (a) modify a payload field, (b) delete a middle row, (c) insert a forged row with recomputed chain, (d) rewrite a whole day consistently and the `audit.seal` row → `audit.verify` reports mismatch for each; (d) is caught **only** via the external anchor.
-- Seal mismatch → `audit.integrity_incident` critical row, `alert.critical.audit_verify` published, KV `audit.integrity` = the configured action (default `block_new_entries`), `mt_risk.integrity_gate` rejects an entry and passes an exit, and only a C3 `audit.integrity.ack` clears it, as a new row (15 §2.4, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)); D16 banner data via `/audit/integrity`.
+- Tamper detection: as a superuser (`supabase_admin` on the local stack) with triggers disabled, (a) modify a payload field, (b) delete a middle row, (c) insert a forged row with recomputed chain, (d) rewrite a whole day consistently and the `audit.seal` row → `audit.verify` reports mismatch for each; (d) is caught **only** via the external anchor.
+- Seal mismatch → `audit.integrity_incident` critical row, `alert.critical.audit_verify` published, KV `audit.integrity` = the configured action (default `block_new_entries`), `mt_risk::integrity_gate` rejects an entry and passes an exit, and only a C3 `audit.integrity.ack` clears it, as a new row (15 §2.4, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)); D16 banner data via `/audit/integrity`.
 - Ack rows: an integrity ack adds a row and never updates the incident (15 §2.4).
 - Restore re-verify: restore the latest pgBackRest backup to a scratch DB (P0-T041) and run `audit.verify` full → ok; also `verify-export` on the latest monthly export.
-- No `ON DELETE CASCADE` reaches a WORM table (lint).
+- No `ON DELETE CASCADE` reaches a WORM table (pgTAP).
 - Throughput: `audit.command` insert ≥ 1,000 rows/s, p99 < 5 ms while a seal runs (SLO, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B004; the gated benchmark is P0-T066).
 
 ## ToDo
 
 - [ ] Write the parametrised suite and fixtures (MinIO object-lock for anchors in CI).
-- [ ] Add a `make wormtest` target and CI job (nightly + on changes to `migrations/**`, `packages/mt_store/**`, `packages/mt_obs/**`).
-- [ ] Run on the host against a scratch DB and log results.
+- [ ] Add a `just wormtest` recipe and CI job (nightly + on changes to `supabase/migrations/**`, `crates/mt-store/**`, `crates/mt-obs/**`).
+- [ ] Run on the workstation against a scratch DB and log results.
 - [ ] File bugs for any failure.
 
 ## Verification
@@ -75,7 +75,7 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 
 ### Scenarios
 - Given an app bug issues `DELETE FROM audit.command WHERE ...`, then it fails and the error is logged with SQLSTATE.
-- Given OS-root tampering rewrites a day and its DB seal, then verify detects it against the Object-Locked anchor.
+- Given OS-root (or, on Supabase cloud, platform-operator) tampering rewrites a day and its DB seal ([18 §4.4](../../../docs/18-platform-and-deployment.md#44-point-in-time-and-worm)), then verify detects it against the Object-Locked anchor.
 
 ### Stress / failure injection
 - Throughput under concurrent seal + verify on 5 M rows (logged against the p99 < 5 ms SLO).
@@ -101,7 +101,7 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 
 ## Doc sync on completion
 
-- `docs/15-bots-hitl-and-worm-audit.md` §2.4: link `tests/worm/` and the `make wormtest` target.
+- `docs/15-bots-hitl-and-worm-audit.md` §2.4: link the suite and the `just wormtest` recipe.
 - `docs/roadmap/phase-0-foundations.md`: tick T0.61 when every item mapped to it is done.
 
 ## Branch & PR
@@ -114,3 +114,4 @@ A reusable WORM test suite (`tests/worm/`) proves every 15 §2.4 property for ev
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response (16 §2.11) replaces trading_halt; ack-as-new-row test; insert SLO (R0.N7); deps trimmed to true preconditions; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (suite split into pgTAP + Rust integration tests; make → just; paths moved to `supabase/` and `crates/`; cloud-operator tamper case per 18 §4.4)

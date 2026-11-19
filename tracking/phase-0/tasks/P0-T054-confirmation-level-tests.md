@@ -15,17 +15,17 @@ requirements: [R0.08, R0.12]
 roadmap_todos: [T0.62]
 modules: [mt_api]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, supabase-auth, nats]
 branch: p0/P0-T054-confirmation-level-tests
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,16 +51,16 @@ An adversarial test suite proves that confirmation levels are enforced server-si
 
 ## Requirements
 
-- C3 negative cases (each must leave state unchanged and audit a rejection): no approval; approval without TOTP; TOTP before approval; replayed TOTP; wrong TOTP; approval after 10 min TTL; apply attempt at cool-down − 1 s (SimClock); session expired at apply time; cancel during cool-down; args changed between preview and execute; approval for a different pending id.
+- C3 negative cases (each must leave state unchanged and audit a rejection): no approval; approval without TOTP; TOTP before approval; replayed TOTP; wrong TOTP; approval after 10 min TTL; apply attempt at cool-down − 1 s (SimClock); JWT expired or downgraded to `aal1` at apply time; cancel during cool-down; args changed between preview and execute; approval for a different pending id.
 - C3 positive: `mtctl approve` → TOTP → wait the configured cool-down (default 900 s, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) → applied exactly once; restart mt-api mid cool-down → still applies at the original `apply_at`.
-- C1/C2: missing `confirm_token` → 428; expired token (TTL + 1 s) → 428; token reused → 428; token for other args → 428; C2 with a mismatched risk-preview hash → 428; C2 with a session re-authenticated more than 12 h ago (default) → 428 `reauth_required` ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B003).
-- Kill ON: succeeds with Postgres paused, with the user locked out of login (uses existing session), under 200 req/s load, with the idempotency store down; p99 < 200 ms; KV `kill` set; audit row appears once DB returns.
+- C1/C2: missing `confirm_token` → 428; expired token (TTL + 1 s) → 428; token reused → 428; token for other args → 428; C2 with a mismatched risk-preview hash → 428; C2 with a token whose latest TOTP `amr` entry is older than 12 h (default) → 428 `reauth_required`; any command with an `aal1` token → 403 ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B003).
+- Kill ON: succeeds with Postgres paused, with the user locked out of login (uses an existing `aal2` token), under 200 req/s load, with the idempotency store down; p99 < 200 ms; KV `kill` set; audit row appears once DB returns.
 - Kill OFF is C3 (all C3 negatives apply).
 - Direct API calls (no UI) cannot skip any level.
 
 ## ToDo
 
-- [ ] Write `tests/verify/test_confirmation_levels.py` (pytest, SimClock, real Postgres/NATS containers).
+- [ ] Write `crates/mt-api/tests/confirmation_levels.rs` (`cargo test -p mt-api --test confirmation_levels`, `SimClock`, the Supabase CLI stack + NATS container, tokens minted for the seeded test user).
 - [ ] Add a load harness for the Kill latency case.
 - [ ] Wire into CI (marked `verify`), runtime ≤ 5 min.
 - [ ] Log results in this task.
@@ -71,7 +71,7 @@ An adversarial test suite proves that confirmation levels are enforced server-si
 - The suite above (≥ 25 cases).
 
 ### Scenarios
-- Given an attacker with a stolen session cookie, when they post `risk.kill.off`, then it stays pending forever without your break-glass/Telegram approval and TOTP.
+- Given an attacker with a stolen access token, when they post `risk.kill.off`, then it stays pending forever without your break-glass/Telegram approval and TOTP.
 - Given mt-api is restarted 10 times during a cool-down, then the change still applies exactly once at `apply_at`.
 
 ### Stress / failure injection
@@ -111,3 +111,4 @@ An adversarial test suite proves that confirmation levels are enforced server-si
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (C1 confirm_token, C2 preview hash + 12 h re-auth cases (17 §D P0-B003), break-glass mtctl, cool-down from settings; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust integration tests against the Supabase CLI stack; session cookie → Supabase JWT (`aal2`, `amr` freshness))

@@ -606,7 +606,7 @@ Full design: [10](10-memory-rag-and-models.md).
 
 **Costs, always measured from free APIs:**
 - **Fees:**
-  - commissions per fill and current fee tiers (ccxt `fetchTradingFees`, Binance commission endpoint, IBKR `commissionAndFeesReport`, Alpaca);
+  - commissions per fill and current fee tiers (each venue's fee/commission endpoint through the `mt-engine` adapters, e.g. Binance commission endpoint, IBKR `commissionAndFeesReport`, Alpaca);
   - borrow rates.
 - **Funding and swaps:**
   - funding rates (predicted + realised);

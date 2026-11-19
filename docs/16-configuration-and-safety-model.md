@@ -58,6 +58,8 @@ This doc also covers the **failure-safety design** (what happens when the engine
 
 | Setting | Default |
 |---|---|
+| Starting universe | `config/defaults/universe.yaml`, seeded by P1-T001: ~10 liquid crypto pairs (BTC/ETH/SOL… across the free venues, native L2 on ≤ 3), FX majors and metals (EURUSD, AUDUSD, USDJPY, XAUUSD, XAGUSD), ≤ 30 US ETFs/stocks incl. the benchmark ETFs, daily futures (`GC=F`, `CL=F`) and the core macro series (FRED/ALFRED, US Treasury curve, RBA/BoE/ECB rates, RBA F11, ABS CPI). Edit any time |
+| DQ threshold tuning | The agent may tighten any threshold in this table after the soak (P1-T066); loosening is proposed in the go-live pack and needs C3 |
 | Stale threshold, fast bots (scalping/intraday) | 2 s |
 | Stale threshold, slow bots (swing/position) | 60 s |
 | Session awareness | Closed sessions (weekend FX, exchange holidays) are not stale; they're `closed` |
