@@ -56,7 +56,7 @@ _None._
 | [P4-T021](tasks/P4-T021-bluesky-jetstream.md) | Bluesky Jetstream client filtered on cashtags and keywords | BUILD | high | S | agent | P4-T010 |
 | [P4-T022](tasks/P4-T022-mastodon-client.md) | Mastodon/fediverse client (hashtags and followed accounts) | BUILD | medium | S | agent | P4-T010, P4-T012 |
 | [P4-T023](tasks/P4-T023-farcaster-hubble.md) | Farcaster ingestion via a self-hosted Hubble node | BUILD | medium | M | agent | P4-T010, P4-T008 |
-| [P4-T024](tasks/P4-T024-stocktwits-youtube-conditional.md) | Conditional StockTwits and YouTube connectors (behind reachability checks) | BUILD | low | M | agent | P4-T010, P1-T056 |
+| [P4-T024](tasks/P4-T024-stocktwits-youtube-conditional.md) | Conditional StockTwits and YouTube connectors (behind reachability checks) | BUILD | low | M | agent | P4-T010 |
 | [P4-T025](tasks/P4-T025-provenance-gate.md) | Provenance gate library and nlp entry point | BUILD | critical | M | agent | P4-T010, P4-T008, P1-T030 |
 | [P4-T026](tasks/P4-T026-nlp-dedupe-entity-linking.md) | nlp stages: dedupe and entity/ticker linking | BUILD | high | M | agent | P4-T025, P1-T009 |
 | [P4-T027](tasks/P4-T027-nlp-finbert-embeddings-store.md) | nlp stages: FinBERT sentiment, TEI embeddings, store and publish | BUILD | high | M | agent | P4-T026, P0-T043 |
@@ -71,7 +71,7 @@ _None._
 | [P4-T036](tasks/P4-T036-prediction-markets-readonly.md) | Polymarket and Kalshi read-only probability clients (lawful reach only) | BUILD | medium | S | agent | P4-T010, P2-T120 |
 | [P4-T037](tasks/P4-T037-calendar-sources.md) | Calendar sources: FRED/ALFRED releases, ForexFactory, central banks, COT/EIA/WASDE/Baker Hughes, earnings/IPOs, holidays | BUILD | critical | L | agent | P4-T010, P4-T014, P1-T024, P1-T026, P1-T009 |
 | [P4-T038](tasks/P4-T038-blackout-api-m11.md) | Blackout query API ("event within N minutes") wired into M11 | BUILD | critical | M | agent | P4-T037, P2-T010, P2-T017, P2-T019, P2-T036 |
-| [P4-T039](tasks/P4-T039-positioning-macro-inputs.md) | Positioning, nowcast and macro inputs: Myfxbook, IG, OANDA books, nowcasts, Fed SEP, VIX, ZQ | BUILD | high | M | agent | P1-T005, P1-T024, P1-T056 |
+| [P4-T039](tasks/P4-T039-positioning-macro-inputs.md) | Positioning, nowcast and macro inputs: Myfxbook, IG, OANDA books, nowcasts, Fed SEP, VIX, ZQ | BUILD | high | M | agent | P1-T005, P1-T024 |
 | [P4-T040](tasks/P4-T040-sentiment-regime-per-market.md) | Sentiment and regime pipelines per market type plus the macro layer | BUILD | high | L | agent | P4-T027, P4-T039, P2-T120 |
 | [P4-T041](tasks/P4-T041-fedpath-vix-nowcast-features.md) | Fed-path from ZQ, VIX regime, nowcast, positioning and prediction-market features | BUILD | high | M | agent | P4-T039, P4-T036, P4-T037, P2-T120 |
 | [P4-T042](tasks/P4-T042-vol-forecast-models.md) | Volatility and volume forecasts with Chronos, TimesFM and Kronos | BUILD | medium | M | agent | P2-T120, P2-T046, P1-T013 |

@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T024, P1-T056]
+depends_on: [P1-T005, P1-T024]
 requirements: [R4.11]
 roadmap_todos: [T4.32]
 modules: [M1, M6]
@@ -43,7 +43,7 @@ Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Co
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.32](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) (positioning and nowcast ingestion so the P1 "arrives in P4" D02 widgets go live, 17 §D P1-B003/B004/B012; the widgets themselves are P4-T065)
 - Providers: [06 §3 retail sentiment, reports & nowcasts](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · research [forex-macro](../../../docs/research/forex-macro-market-providers.md)
-- Cross-phase (`depends_on`): P1-T056 (T1.60 OANDA books / IG sentiment path checks), P1-T024 (FRED/macro storage), P1-T005 (connector framework + quota hooks).
+- Cross-phase (`depends_on`): P1-T024 (FRED/macro storage), P1-T005 (connector framework + quota hooks). Reads the P1-T056 (T1.60) OANDA books / IG sentiment check results at runtime: each source is behind a flag that turns on only when its check passed; built and tested against recorded fixtures.
 - **Build first, keys last:** Myfxbook (login), IG and OANDA are built and tested on recorded fixtures; the live run with your credentials is P4-T067.
 
 ## Requirements
@@ -107,3 +107,4 @@ Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Co
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (remapped to new roadmap ToDo T4.32 (ingestion); build first, keys last (Myfxbook/IG/OANDA live in P4-T067); explicit P1 depends_on)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-19 00:00 · main · no longer waits on P1-T056 (which needs your practice accounts): built behind feature flags that read the P1-T056 result at runtime; until that check passes the source shows disabled with the reason. Build first, keys last.

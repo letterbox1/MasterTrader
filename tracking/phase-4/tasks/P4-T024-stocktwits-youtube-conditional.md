@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P1-T056]
+depends_on: [P4-T010]
 requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
@@ -43,7 +43,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 - Roadmap: [R4.05](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.22](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Sources: [06 §2 conditional rows](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · [06 §3 open checks](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
-- Cross-phase: P1-T056 (T1.60 StockTwits reachability) is a `depends_on` entry.
+- Cross-phase: reads the P1-T056 (T1.60) StockTwits reachability result at runtime (not a `depends_on`: the flag stays off until that check passes).
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B005): the YouTube check moved to Phase 4 as its own VERIFY task, P4-T066 ([R4.05](../../../docs/roadmap/phase-4-intel.md#3-requirements), [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack)).
 
 ## Requirements
@@ -110,3 +110,4 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (YouTube check moved to new VERIFY P4-T066 (17 §D P4-B005, T4.65); depends on P1-T056 for StockTwits)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-19 00:00 · main · no longer waits on P1-T056 (which needs your practice accounts): built behind feature flags that read the P1-T056 result at runtime; until that check passes the source shows disabled with the reason. Build first, keys last.
