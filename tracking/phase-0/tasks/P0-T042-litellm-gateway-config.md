@@ -64,7 +64,7 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 
 - [ ] Add the service, config, DB and secrets mounts.
 - [ ] Implement `mt_models.gateway.audit_callback` (via the `mt_store` binding) and a derived LiteLLM image (pinned base digest) that installs it.
-- [ ] Create the six virtual keys (script `infra/litellm/bootstrap_keys.py`, keys stored in tmpfs secrets for consumers).
+- [ ] Create the six virtual keys (script `infra/litellm/bootstrap_keys` via the LiteLLM admin API, keys stored in tmpfs secrets for consumers).
 - [ ] Add the version guard to CI.
 - [ ] Mock-provider smoke tests below (live calls are P0-T068).
 

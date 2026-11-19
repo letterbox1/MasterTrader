@@ -4,7 +4,7 @@ kind: task
 title: Check Nautilus Rust adapter traits for the custom Alpaca, OANDA and IG adapters
 phase: 2
 type: RESEARCH
-status: backlog
+status: ready
 priority: high
 size: S
 severity: ""

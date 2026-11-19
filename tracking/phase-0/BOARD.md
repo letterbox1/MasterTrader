@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 56 | 12 | 0 | 0 | 1 | 0 | 0 | 0/0/0/0 | 0/6 |
+| 60 | 12 | 0 | 0 | 1 | 0 | 0 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-0-foundations.md](../../docs/roadmap/phase-0-foundations.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -39,43 +39,43 @@ _None._
 | [P0-T008](tasks/P0-T008-discord-server-and-bot.md) | Create the private Discord feeds server and bot application | USER | medium | S | user | — |
 | [P0-T009](tasks/P0-T009-demo-practice-accounts.md) | Open free demo, paper and testnet accounts | USER | medium | M | user | — |
 | [P0-T010](tasks/P0-T010-free-data-api-keys.md) | Register the free data API keys | USER | medium | M | user | — |
-| [P0-T011](tasks/P0-T011-venue-austrac-checks.md) | Check AU venues on the AUSTRAC register and send results for the registry seed | USER | medium | M | user | — |
+| [P0-T011](tasks/P0-T011-venue-austrac-checks.md) | Check AU venues on the AUSTRAC register and send results to refine the registry seed | USER | medium | M | user | — |
 | [P0-T012](tasks/P0-T012-ups-and-4g-failover.md) | Order a UPS and a 4G failover router | USER | low | S | user | — |
-| [P0-T014](tasks/P0-T014-monorepo-skeleton.md) | Create the uv workspace monorepo skeleton with quality tooling | BUILD | high | M | agent | — |
+| [P0-T014](tasks/P0-T014-monorepo-skeleton.md) | Create the Cargo + uv workspace monorepo skeleton with quality tooling and a just entry point | BUILD | high | M | agent | — |
 
-## Backlog (56)
+## Backlog (60)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P0-T013](tasks/P0-T013-worm-owner-offline-credential.md) | Generate the offline worm_owner credential (before live money; the build uses a throwaway one) | USER | high | XS | user | P0-T022, P0-T031, P0-T061 |
-| [P0-T015](tasks/P0-T015-ci-pipeline.md) | Set up the CI pipeline (lint, types, tests, audit, secrets) | OPS | high | M | agent | P0-T014 |
-| [P0-T016](tasks/P0-T016-mt-core-domain-types.md) | Implement mt_core domain types and versioned message schemas | BUILD | high | M | agent | P0-T014 |
-| [P0-T017](tasks/P0-T017-mt-core-config-clock.md) | Implement mt_core config, clock and ID helpers | BUILD | high | S | agent | P0-T014 |
-| [P0-T018](tasks/P0-T018-mt-obs-logging-metrics-tracing.md) | Implement mt_obs structured logging, metrics and tracing | BUILD | high | M | agent | P0-T017 |
+| [P0-T015](tasks/P0-T015-ci-pipeline.md) | Set up the CI pipeline (lint, types, tests, audit, secrets) | OPS | high | M | agent | P0-T014, P0-T070 |
+| [P0-T016](tasks/P0-T016-mt-core-domain-types.md) | Implement mt-core domain types and versioned message schemas (Rust) | BUILD | high | M | agent | P0-T014 |
+| [P0-T017](tasks/P0-T017-mt-core-config-clock.md) | Implement mt-core config, clock and ID helpers (Rust) | BUILD | high | S | agent | P0-T014 |
+| [P0-T018](tasks/P0-T018-mt-obs-logging-metrics-tracing.md) | Implement mt-obs structured logging, metrics and tracing (Rust, with the Python logging setup) | BUILD | high | M | agent | P0-T017 |
 | [P0-T019](tasks/P0-T019-host-hardening.md) | Harden the workstation baseline (firewall, Docker, updates, chrony; live profile at the shift) | OPS | high | M | agent | P0-T005 |
-| [P0-T020](tasks/P0-T020-compose-core-services-digest-pinned.md) | Build the Compose stack for core services pinned by digest | OPS | critical | L | agent | P0-T014 |
+| [P0-T020](tasks/P0-T020-compose-core-services-digest-pinned.md) | Build the Compose stack for core services pinned by digest | OPS | critical | L | agent | P0-T014, P0-T070 |
 | [P0-T021](tasks/P0-T021-docker-network-segmentation.md) | Define the Docker networks and segmentation | OPS | high | S | agent | P0-T020 |
 | [P0-T022](tasks/P0-T022-sops-age-secrets-tmpfs.md) | Wire sops + age secrets into tmpfs with per-service scoping | OPS | critical | M | agent | P0-T020, P0-T017 |
 | [P0-T023](tasks/P0-T023-observability-containers.md) | Add the observability containers (Prometheus, Loki, Vector, Alertmanager, Grafana, exporters) | OPS | high | M | agent | P0-T020, P0-T021 |
-| [P0-T024](tasks/P0-T024-mt-store-schemas-roles-alembic.md) | Create the Postgres schemas, DB roles and Alembic baseline | BUILD | critical | M | agent | P0-T016, P0-T017, P0-T020 |
+| [P0-T024](tasks/P0-T024-mt-store-schemas-roles-alembic.md) | Create the schemas, DB roles and RLS deny-all as Supabase SQL migrations with pgTAP | BUILD | critical | M | agent | P0-T016, P0-T017, P0-T070 |
 | [P0-T025](tasks/P0-T025-provenance-columns-venue-registry.md) | Add provenance columns and the ops.venue_registry table | BUILD | high | M | agent | P0-T024 |
-| [P0-T026](tasks/P0-T026-seed-venue-registry.md) | Seed ops.venue_registry from your venue checks | OPS | medium | XS | agent | P0-T025, P0-T011 |
-| [P0-T027](tasks/P0-T027-pit-as-of-api.md) | Implement the mt_store.pit(as_of) API and Parquet catalog helpers | BUILD | critical | M | agent | P0-T024 |
-| [P0-T028](tasks/P0-T028-pit-bypass-ci-test.md) | Add the pit bypass test to CI | VERIFY | critical | S | agent | P0-T027, P0-T015 |
+| [P0-T026](tasks/P0-T026-seed-venue-registry.md) | Seed ops.venue_registry from the 12 §2 starting classifications (your checks refine it) | OPS | medium | XS | agent | P0-T025 |
+| [P0-T027](tasks/P0-T027-pit-as-of-api.md) | Implement pit(as_of) in the mt-store crate and the Parquet catalog helpers | BUILD | critical | M | agent | P0-T024, P0-T016 |
+| [P0-T028](tasks/P0-T028-pit-bypass-ci-test.md) | Add the pit bypass guard to CI (Rust and Python) | VERIFY | critical | S | agent | P0-T027, P0-T071, P0-T015 |
 | [P0-T029](tasks/P0-T029-worm-privileges-blocking-triggers.md) | Implement WORM privileges and blocking triggers | BUILD | critical | M | agent | P0-T024 |
 | [P0-T030](tasks/P0-T030-worm-row-hash-chain.md) | Implement the per-row hash chain trigger and canonical JSON | BUILD | critical | M | agent | P0-T029 |
 | [P0-T031](tasks/P0-T031-p0-worm-audit-tables.md) | Create the P0 WORM audit tables and correction views | BUILD | high | M | agent | P0-T030, P0-T018 |
-| [P0-T032](tasks/P0-T032-mt-api-skeleton.md) | Build the mt_api FastAPI skeleton (OpenAPI, problem+json, health) | BUILD | critical | M | agent | P0-T018, P0-T024 |
-| [P0-T033](tasks/P0-T033-mt-api-auth-argon2-totp.md) | Implement single-user auth: Argon2 password, TOTP and sessions | BUILD | critical | L | agent | P0-T032, P0-T031 |
+| [P0-T032](tasks/P0-T032-mt-api-skeleton.md) | Build the mt-api axum skeleton (utoipa OpenAPI, problem+json, health) | BUILD | critical | M | agent | P0-T018, P0-T024 |
+| [P0-T033](tasks/P0-T033-mt-api-auth-argon2-totp.md) | Wire Supabase Auth into mt-api: JWT (JWKS) verification, aal2 for commands, TOTP re-auth | BUILD | critical | L | agent | P0-T032, P0-T031, P0-T070 |
 | [P0-T034](tasks/P0-T034-mt-api-command-bus.md) | Implement the command bus with idempotency and audit.command | BUILD | critical | M | agent | P0-T032, P0-T031 |
 | [P0-T035](tasks/P0-T035-confirmation-level-engine.md) | Implement the server-side confirmation-level engine (C0–C3, Kill) | BUILD | critical | L | agent | P0-T034, P0-T033 |
 | [P0-T036](tasks/P0-T036-websocket-hub.md) | Implement the WebSocket hub with seq gap detection | BUILD | high | M | agent | P0-T032, P0-T033 |
 | [P0-T037](tasks/P0-T037-daily-merkle-seal-external-anchor.md) | Implement the daily Merkle seal with external anchoring | BUILD | critical | L | agent | P0-T031 |
 | [P0-T038](tasks/P0-T038-audit-verify-incident-path.md) | Implement audit.verify, the daily verify flow and the incident path | BUILD | critical | M | agent | P0-T037, P0-T035 |
-| [P0-T039](tasks/P0-T039-pgbackrest-wal-restic-offsite.md) | Set up pgBackRest, WAL archiving and restic off-site backups | OPS | critical | L | agent | P0-T020, P0-T022 |
+| [P0-T039](tasks/P0-T039-pgbackrest-wal-restic-offsite.md) | Set up pgBackRest, WAL archiving and restic off-site backups | OPS | critical | L | agent | P0-T020, P0-T022, P0-T070 |
 | [P0-T040](tasks/P0-T040-monthly-immutable-worm-export.md) | Implement the monthly immutable export of WORM tables | BUILD | medium | M | agent | P0-T031, P0-T037 |
 | [P0-T041](tasks/P0-T041-restore-test-flow-and-backup-commands.md) | Build the monthly restore-test Prefect flow | OPS | high | M | agent | P0-T039, P0-T034, P0-T038 |
-| [P0-T042](tasks/P0-T042-litellm-gateway-config.md) | Deploy the LiteLLM gateway with routes, per-role keys and budgets | OPS | high | M | agent | P0-T020, P0-T022, P0-T031 |
+| [P0-T042](tasks/P0-T042-litellm-gateway-config.md) | Deploy the LiteLLM gateway with routes, per-role keys and budgets | OPS | high | M | agent | P0-T020, P0-T022, P0-T031, P0-T071 |
 | [P0-T043](tasks/P0-T043-tei-embed-and-rerank.md) | Deploy TEI for bge-small-en-v1.5 embeddings and bge-reranker-v2-m3 | OPS | medium | S | agent | P0-T020 |
 | [P0-T044](tasks/P0-T044-local-advisor-model-server.md) | Deploy a CPU local-advisor model server for the gateway fallback | OPS | medium | S | agent | P0-T020, P0-T022 |
 | [P0-T045](tasks/P0-T045-grafana-dashboards-alert-rules.md) | Provision Grafana dashboards and baseline alert rules | OPS | high | M | agent | P0-T023, P0-T018 |
@@ -89,20 +89,24 @@ _None._
 | [P0-T053](tasks/P0-T053-playwright-viewport-matrix-axe.md) | Run the Playwright viewport matrix and axe on the shell and D16 | VERIFY | critical | M | agent | P0-T050, P0-T051, P0-T052, P0-T015 |
 | [P0-T054](tasks/P0-T054-confirmation-level-tests.md) | Verify confirmation levels: C3 needs approval + TOTP + cool-down, Kill ON never blocked | VERIFY | critical | M | agent | P0-T035, P0-T036 |
 | [P0-T055](tasks/P0-T055-worm-test-suite.md) | Run the full WORM test suite | VERIFY | critical | L | agent | P0-T038, P0-T040, P0-T041 |
-| [P0-T056](tasks/P0-T056-image-scan-and-external-port-scan.md) | Scan images (trivy/grype) and verify nothing is exposed outside Tailscale | VERIFY | high | S | agent | P0-T019, P0-T021, P0-T023, P0-T015 |
+| [P0-T056](tasks/P0-T056-image-scan-and-external-port-scan.md) | Scan images (trivy/grype) and verify nothing is exposed beyond localhost (or Tailscale, if on) | VERIFY | high | S | agent | P0-T019, P0-T021, P0-T023, P0-T015 |
 | [P0-T057](tasks/P0-T057-first-offsite-restore-test.md) | Run the first restore test from the off-site backup | VERIFY | critical | M | agent | P0-T041, P0-T006, P0-T019, P0-T022 |
 | [P0-T058](tasks/P0-T058-scenario-login-command-audit-chain.md) | Scenario: login with TOTP, run a command, see it chained and verified | VERIFY | high | S | agent | P0-T050, P0-T052 |
 | [P0-T059](tasks/P0-T059-degraded-modes-failure-injection.md) | Failure-inject degraded modes and stress the P0 stack | VERIFY | high | M | agent | P0-T051, P0-T042, P0-T043, P0-T044, P0-T039, P0-T038, P0-T045 |
-| [P0-T060](tasks/P0-T060-runbooks-backup-restore-host-rebuild.md) | Write runbooks: backup & restore, host rebuild | DOC | medium | S | agent | P0-T041, P0-T019 |
+| [P0-T060](tasks/P0-T060-runbooks-backup-restore-host-rebuild.md) | Write runbooks: backup & restore, workstation/host rebuild | DOC | medium | S | agent | P0-T041, P0-T019 |
 | [P0-T061](tasks/P0-T061-runbooks-secret-rotation-worm-incident.md) | Write runbooks: secret rotation, WORM incident and worm_owner ceremony | DOC | medium | S | agent | P0-T022, P0-T038 |
 | [P0-T062](tasks/P0-T062-set-password-enrol-totp.md) | Create your login and enrol TOTP when you first open the app | USER | high | XS | user | P0-T050 |
-| [P0-T063](tasks/P0-T063-72h-idle-soak.md) | Run the 72-hour idle soak | RUN | high | S | agent | P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T065, P0-T006, P0-T002 |
-| [P0-T064](tasks/P0-T064-phase-exit-demo.md) | Phase 0 exit demo: run every exit criterion | VERIFY | critical | S | agent | P0-T063, P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069 |
+| [P0-T063](tasks/P0-T063-72h-idle-soak.md) | Run the 72-hour idle soak | RUN | high | S | agent | P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T065, P0-T072 |
+| [P0-T064](tasks/P0-T064-phase-exit-demo.md) | Phase 0 exit demo: run every exit criterion | VERIFY | critical | S | agent | P0-T063, P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069, P0-T070, P0-T071, P0-T072, P0-T073, P0-T062 |
 | [P0-T065](tasks/P0-T065-docker-proxy-restart-allow-list.md) | Deploy the restricted docker-proxy for allow-listed service restarts | OPS | medium | M | agent | P0-T021, P0-T034 |
 | [P0-T066](tasks/P0-T066-worm-insert-benchmark.md) | Benchmark WORM inserts: p99 under 5 ms, order path never waits on seals | VERIFY | high | S | agent | P0-T031, P0-T037 |
 | [P0-T067](tasks/P0-T067-restart-refusal-test.md) | Verify restart refusal outside the docker-proxy allow-list | VERIFY | medium | S | agent | P0-T065 |
 | [P0-T068](tasks/P0-T068-live-gateway-smoke.md) | Run the live gateway smoke with your LLM keys | VERIFY | medium | S | agent | P0-T007, P0-T042, P0-T043, P0-T044, P0-T022 |
 | [P0-T069](tasks/P0-T069-worm-integrity-drill.md) | Run the WORM integrity drill | VERIFY | high | S | agent | P0-T038, P0-T052, P0-T061 |
+| [P0-T070](tasks/P0-T070-stand-up-the-local-supabase-stack-cli-for-tests-.md) | Stand up the local Supabase stack (CLI for tests, self-hosted on the workstation) | OPS | critical | M | agent | P0-T014 |
+| [P0-T071](tasks/P0-T071-build-the-mt-store-python-module-pyo3-mt-core-ty.md) | Build the mt_store Python module (PyO3): mt-core types and pit bindings | BUILD | high | M | agent | P0-T016, P0-T027 |
+| [P0-T072](tasks/P0-T072-monthly-bar-partitions-and-the-mt-store-partitio.md) | Monthly bar partitions and the mt-store partition job | BUILD | high | M | agent | P0-T024, P0-T070 |
+| [P0-T073](tasks/P0-T073-live-check-of-the-real-seal-target-and-telegram-.md) | Live check of the real seal target and Telegram bot (keys last) | VERIFY | medium | S | agent | P0-T006, P0-T002, P0-T037, P0-T040, P0-T045, P0-T022 |
 
 ## Done (0)
 

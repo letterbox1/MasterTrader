@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 129 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/6 |
+| 130 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-2-strategies-risk-lab.md](../../docs/roadmap/phase-2-strategies-risk-lab.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -24,18 +24,20 @@ _None._
 
 _None._
 
-## Ready (1)
+## Ready (3)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P2-T002](tasks/P2-T002-mastertradingbot-golden-inputs.md) | Provide MasterTradingBot rules and historical outputs for golden files | USER | high | M | user | — |
+| [P2-T200](tasks/P2-T200-check-nautilus-rust-live-node-adapter-readiness-.md) | Check Nautilus Rust live-node adapter readiness per venue (Binance, Bybit, IBKR) | RESEARCH | high | S | agent | — |
+| [P2-T201](tasks/P2-T201-check-nautilus-rust-adapter-traits-for-the-custo.md) | Check Nautilus Rust adapter traits for the custom Alpaca, OANDA and IG adapters | RESEARCH | high | S | agent | — |
 
-## Backlog (129)
+## Backlog (130)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P2-T001](tasks/P2-T001-testnet-trade-only-keys.md) | Create trade-only, IP-locked testnet/practice keys per mode | USER | critical | S | user | P0-T009, P0-T022 |
-| [P2-T003](tasks/P2-T003-mt-strategy-base-classes.md) | mt_strategy base classes and multi-timeframe helpers | BUILD | critical | L | agent | P0-T016, P1-T009 |
+| [P2-T003](tasks/P2-T003-mt-strategy-base-classes.md) | mt_strategy base classes and multi-timeframe helpers | BUILD | critical | L | agent | P0-T016, P1-T009, P0-T071 |
 | [P2-T004](tasks/P2-T004-strategy-manifest-schema.md) | Strategy manifest schema and validator CLI | BUILD | critical | M | agent | P0-T014 |
 | [P2-T005](tasks/P2-T005-never-build-validator.md) | Never-build validator for X/Never strategy patterns | BUILD | high | S | agent | P2-T004 |
 | [P2-T006](tasks/P2-T006-strategy-registry-versions.md) | Strategy registry, versions and strategy commands | BUILD | critical | M | agent | P2-T004, P0-T024, P0-T034 |
@@ -52,13 +54,13 @@ _None._
 | [P2-T017](tasks/P2-T017-pre-trade-risk-gate.md) | Default-deny pre-trade RiskGate in front of Nautilus RiskEngine | BUILD | critical | L | agent | P2-T011, P2-T012, P2-T013, P2-T014, P2-T015, P2-T016, P2-T069, P2-T070, P1-T030, P1-T040 |
 | [P2-T018](tasks/P2-T018-fallback-ladder.md) | Six-rung fallback ladder state machine | BUILD | high | M | agent | P2-T017 |
 | [P2-T019](tasks/P2-T019-change-control-service.md) | Change-control service: tighten/loosen classifier and C3 flow | BUILD | critical | M | agent | P2-T010, P2-T011, P0-T035 |
-| [P2-T020](tasks/P2-T020-mt-api-risk-order-surface.md) | mt_api risk, venue and order command surface | BUILD | critical | M | agent | P2-T017, P2-T019, P0-T034, P0-T035, P0-T036 |
-| [P2-T021](tasks/P2-T021-engine-tradingnode-wrapper.md) | mt_engine TradingNode wrapper, intent actor and order audit | BUILD | critical | L | agent | P2-T003, P2-T017, P0-T031, P1-T004 |
+| [P2-T020](tasks/P2-T020-mt-api-risk-order-surface.md) | mt-api risk, venue and order command surface | BUILD | critical | M | agent | P2-T017, P2-T019, P0-T034, P0-T035, P0-T036 |
+| [P2-T021](tasks/P2-T021-engine-tradingnode-wrapper.md) | mt-engine TradingNode wrapper, intent actor and order audit | BUILD | critical | L | agent | P2-T003, P2-T017, P0-T031, P1-T004, P2-T200, P2-T202 |
 | [P2-T022](tasks/P2-T022-explicit-stp-per-venue.md) | Explicit self-trade prevention on every order | BUILD | critical | M | agent | P2-T021, P2-T016 |
-| [P2-T023](tasks/P2-T023-nautilus-testnet-venue-configs.md) | Testnet configs for Nautilus built-in venues and sandbox paper venue | BUILD | critical | M | agent | P2-T022, P1-T040 |
-| [P2-T024](tasks/P2-T024-alpaca-adapter.md) | Alpaca paper adapter | BUILD | high | M | agent | P2-T022, P1-T021 |
-| [P2-T025](tasks/P2-T025-oanda-v20-adapter.md) | OANDA v20 practice adapter | BUILD | high | L | agent | P2-T022, P1-T016 |
-| [P2-T026](tasks/P2-T026-ig-adapter.md) | IG demo adapter | BUILD | high | L | agent | P2-T022, P1-T017 |
+| [P2-T023](tasks/P2-T023-nautilus-testnet-venue-configs.md) | Testnet configs for Nautilus built-in venues and sandbox paper venue | BUILD | critical | M | agent | P2-T022, P1-T040, P2-T200 |
+| [P2-T024](tasks/P2-T024-alpaca-adapter.md) | Alpaca paper adapter | BUILD | high | M | agent | P2-T022, P1-T021, P2-T201 |
+| [P2-T025](tasks/P2-T025-oanda-v20-adapter.md) | OANDA v20 practice adapter | BUILD | high | L | agent | P2-T022, P1-T016, P2-T201 |
+| [P2-T026](tasks/P2-T026-ig-adapter.md) | IG demo adapter | BUILD | high | L | agent | P2-T022, P1-T017, P2-T201 |
 | [P2-T027](tasks/P2-T027-epoch-client-ids-reconcile.md) | Epoch-based idempotent client order IDs and restart reconciliation | BUILD | critical | M | agent | P2-T021, P1-T041, P1-T042 |
 | [P2-T028](tasks/P2-T028-execution-algos-maker-twap.md) | Execution methods: maker-first, TWAP slicing and fixed exit plan | BUILD | high | M | agent | P2-T021 |
 | [P2-T029](tasks/P2-T029-tca-paper-fills.md) | TCA on paper fills and measured-cost feedback to the lab | BUILD | high | M | agent | P2-T021, P1-T038, P1-T039, P1-T040 |
@@ -83,8 +85,8 @@ _None._
 | [P2-T048](tasks/P2-T048-user-risk-policy-ceilings.md) | Seed the initial risk policy (L1–L3) and L0 ceilings from the 16 §2 defaults | BUILD | critical | S | agent | P2-T011, P2-T012, P2-T043 |
 | [P2-T049](tasks/P2-T049-user-decide-sleeves.md) | Seed the sleeves and risk budgets from the 14 §3 allocation table | BUILD | high | XS | agent | P2-T014, P2-T043 |
 | [P2-T050](tasks/P2-T050-user-first-manifests.md) | Draft the first strategy manifests for the P1 candidates | BUILD | high | S | agent | P2-T004, P2-T005, P2-T008 |
-| [P2-T051](tasks/P2-T051-verify-risk-golden-property.md) | Risk golden and property test suite as a mandatory merge gate | VERIFY | critical | M | agent | P2-T017, P2-T018, P2-T069 |
-| [P2-T052](tasks/P2-T052-verify-no-bypass-all-sources.md) | No-bypass tests: every order source passes M11 | VERIFY | critical | S | agent | P2-T021, P2-T035, P2-T020, P2-T038 |
+| [P2-T051](tasks/P2-T051-verify-risk-golden-property.md) | Risk golden and property test suite as a mandatory merge gate | VERIFY | critical | M | agent | P2-T017, P2-T018, P2-T069, P2-T202 |
+| [P2-T052](tasks/P2-T052-verify-no-bypass-all-sources.md) | No-bypass tests: every order source passes M11 | VERIFY | critical | S | agent | P2-T021, P2-T035, P2-T020, P2-T038, P2-T202 |
 | [P2-T053](tasks/P2-T053-verify-change-control-c3.md) | Change-control C3 and hard-ceilings tests | VERIFY | critical | S | agent | P2-T019, P2-T035, P2-T043, P2-T011, P2-T012, P2-T037 |
 | [P2-T054](tasks/P2-T054-verify-kill-deadman-drills.md) | Kill-switch and dead-man drills with timing | VERIFY | critical | M | agent | P2-T031, P2-T032, P2-T035, P2-T023 |
 | [P2-T055](tasks/P2-T055-verify-restart-duplicate.md) | Restart-duplicate test: crash mid-order, no duplicates, reconcile | VERIFY | critical | S | agent | P2-T027, P2-T023, P2-T074 |
@@ -111,11 +113,11 @@ _None._
 | [P2-T076](tasks/P2-T076-verify-safety-state-goldens.md) | Safety-state golden tests: stale data, integrity block, bad egress and late decisions rejected | VERIFY | high | S | agent | P2-T070, P2-T017, P2-T018, P2-T051 |
 | [P2-T077](tasks/P2-T077-setup-odds-simulator.md) | Setup-odds simulator ('time machine') in mt_lab and on approval cards | BUILD | medium | L | agent | P2-T101, P0-T027, P2-T038, P1-T009 |
 | [P2-T078](tasks/P2-T078-verify-setup-odds.md) | Verify setup odds: reproducible, leak-free, never changes M11 | VERIFY | medium | S | agent | P2-T077 |
-| [P2-T101](tasks/P2-T101-lab-job-model-and-worker.md) | mt_lab job model, tables and backtest-worker queue | BUILD | critical | M | agent | P0-T024, P0-T027, P0-T020 |
+| [P2-T101](tasks/P2-T101-lab-job-model-and-worker.md) | mt_lab job model, tables and backtest-worker queue | BUILD | critical | M | agent | P0-T024, P0-T027, P0-T020, P0-T071 |
 | [P2-T102](tasks/P2-T102-measured-cost-model.md) | Measured cost model loader from M16 snapshots | BUILD | critical | M | agent | P2-T101, P1-T038, P1-T039, P1-T040 |
-| [P2-T103](tasks/P2-T103-pit-dataset-and-universe.md) | Point-in-time dataset builder and survivorship-free universes | BUILD | critical | M | agent | P2-T101, P0-T027, P1-T009, P1-T012, P1-T013 |
+| [P2-T103](tasks/P2-T103-pit-dataset-and-universe.md) | Point-in-time dataset builder and survivorship-free universes | BUILD | critical | M | agent | P2-T101, P0-T027, P1-T009, P1-T012, P1-T013, P0-T071 |
 | [P2-T104](tasks/P2-T104-screening-engine.md) | Vectorised screening backtest engine | BUILD | high | M | agent | P2-T102, P2-T103 |
-| [P2-T105](tasks/P2-T105-nautilus-truth-backtests.md) | Nautilus truth backtest runner with L1/L2 replay and measured fills | BUILD | critical | L | agent | P2-T102, P2-T103, P2-T003, P2-T017 |
+| [P2-T105](tasks/P2-T105-nautilus-truth-backtests.md) | Nautilus truth backtest runner with L1/L2 replay and measured fills | BUILD | critical | L | agent | P2-T102, P2-T103, P2-T003, P2-T017, P2-T202 |
 | [P2-T106](tasks/P2-T106-metrics-and-benchmarks.md) | Backtest metrics, cost breakdown and asset-class benchmarks | BUILD | high | M | agent | P2-T104, P2-T105 |
 | [P2-T107](tasks/P2-T107-mlflow-tracking-and-repro.md) | MLflow experiment tracking and reproducible re-runs | BUILD | high | M | agent | P2-T101, P2-T106, P2-T046 |
 | [P2-T108](tasks/P2-T108-automatic-trial-counter.md) | Automatic, append-only trial counter per strategy family | BUILD | high | S | agent | P2-T101, P2-T107 |
@@ -127,7 +129,7 @@ _None._
 | [P2-T114](tasks/P2-T114-validation-suite-and-gates.md) | Validation suite orchestrator, report and gate evaluator | BUILD | critical | M | agent | P2-T109, P2-T110, P2-T111, P2-T112, P2-T113, P2-T007 |
 | [P2-T115](tasks/P2-T115-optuna-sweeps-and-ab.md) | Optuna sweeps with complexity penalty and A/B on identical data | BUILD | high | M | agent | P2-T104, P2-T105, P2-T108 |
 | [P2-T116](tasks/P2-T116-sandbox-runner-and-generator.md) | Sandbox runner and LLM strategy generator | BUILD | high | L | agent | P2-T101, P2-T104, P2-T113, P2-T044, P2-T005, P0-T042 |
-| [P2-T117](tasks/P2-T117-lab-api-endpoints.md) | Lab REST queries, WebSocket topic and commands in mt_api | BUILD | high | M | agent | P2-T101, P2-T107, P2-T114, P0-T034, P0-T035, P0-T036 |
+| [P2-T117](tasks/P2-T117-lab-api-endpoints.md) | Lab REST queries, WebSocket topic and commands in mt-api | BUILD | high | M | agent | P2-T101, P2-T107, P2-T114, P0-T034, P0-T035, P0-T036 |
 | [P2-T120](tasks/P2-T120-feature-registry-and-store.md) | mt_features registry, versioning and batch/incremental parity | BUILD | high | M | agent | P2-T103 |
 | [P2-T121](tasks/P2-T121-talib-and-alpha158-features.md) | TA-Lib and Alpha158 core feature sets | BUILD | medium | M | agent | P2-T120 |
 | [P2-T122](tasks/P2-T122-microstructure-features.md) | Microstructure features from ticks and L2 | BUILD | medium | M | agent | P2-T120 |
@@ -163,6 +165,7 @@ _None._
 | [P2-T180](tasks/P2-T180-start-p1-paper-clock.md) | Start the P1-sleeve paper clock | RUN | critical | S | agent | P2-T114, P2-T161, P2-T143, P2-T150, P2-T067 |
 | [P2-T182](tasks/P2-T182-start-weekly-review-cadence.md) | Start the weekly worst-five-trades and cost review | RUN | medium | XS | agent | P2-T150, P2-T180 |
 | [P2-T199](tasks/P2-T199-phase-2-exit-demo.md) | Phase 2 exit demo | VERIFY | critical | M | agent | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078 |
+| [P2-T202](tasks/P2-T202-mt-risk-pyo3-binding-for-the-python-node-python-.md) | mt-risk PyO3 binding for the Python node, Python strategies and lab backtests | BUILD | critical | M | agent | P2-T017, P0-T071 |
 
 ## Done (0)
 

@@ -1,7 +1,7 @@
 ---
 id: P0-T011
 kind: task
-title: Check AU venues on the AUSTRAC register and send results for the registry seed
+title: Check AU venues on the AUSTRAC register and send results to refine the registry seed
 phase: 0
 type: USER
 status: ready
@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-0-foundations.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T011 · Check AU venues on the AUSTRAC register and send results for the registry seed
+# P0-T011 · Check AU venues on the AUSTRAC register and send results to refine the registry seed
 
 ## Goal / expected outcome
 
-For every venue you may use, you've looked up the AUSTRAC register entry by ABN, noted the products available to you as a **retail** client and the key model, and written the results into `infra/seed/venue_registry.yaml` (non-secret) so P0-T026 can seed `ops.venue_registry`.
+For every venue you may use, you've looked up the AUSTRAC register entry by ABN, noted the products available to you as a **retail** client and the key model, and written the results into `infra/seed/venue_registry.user.yaml` (non-secret), loaded with source `user` on top of the agent's seed from 12 §2 (P0-T026). Until then the seeded venues stay `read_only` for live (paper works); nothing in the build waits on this.
 
 ## Context & references
 
@@ -46,7 +46,7 @@ For every venue you may use, you've looked up the AUSTRAC register entry by ABN,
 - [12 §1 AU boundary](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption)
 - [12 §6 advice triggers](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15)
 - Related: P0-T025 table + loader, P0-T026 seed
-- Unblocks: P0-T026 registry seed (R0.06); P2 registry check in M11
+- Refines: P0-T026's seed (R0.06); needed before any venue is `allowed` for live money (reviewed in the P7 go-live pack, P7-T070). No P0 task depends on it
 
 ## Requirements
 
@@ -60,13 +60,13 @@ For every venue you may use, you've looked up the AUSTRAC register entry by ABN,
 
 - [ ] Search the AUSTRAC register by ABN for each venue; log status and date.
 - [ ] Read each venue's AU retail product page and client agreement; note products, leverage, STP parameter, rate limits if visible.
-- [ ] Fill `venue_registry.yaml` and hand it to P0-T026.
+- [ ] Fill `venue_registry.user.yaml` and hand it over; the agent loads it with `--source user` (P0-T026 loader).
 - [ ] Create a reminder for the quarterly re-check (P1 T1.30 automates it).
 
 ## Verification
 
 ### Tests
-- Confirmation: P0-T026's loader validates the YAML and the registry query lists every venue with a `checked_at` date.
+- Confirmation: P0-T026's loader validates the YAML (`--source user`) and the registry query lists every venue with a `checked_at` date.
 
 ### Scenarios
 - Given a venue's AUSTRAC registration is cancelled (e.g. GetCoins, Sep 2026), then it is seeded `blocked` with the reason and date.
@@ -79,7 +79,7 @@ For every venue you may use, you've looked up the AUSTRAC register entry by ABN,
 
 - [ ] Every listed venue has an AUSTRAC/status row with a checked date
 - [ ] Products and leverage per venue recorded, (U) where unverified
-- [ ] YAML handed to P0-T026
+- [ ] YAML handed over and loaded with source `user`
 
 ## Exceptions & edge cases
 
@@ -106,3 +106,4 @@ For every venue you may use, you've looked up the AUSTRAC register entry by ABN,
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (L0 leverage ceiling as a 16 §2.1 default; netting STP n/a and paper_ok per 17 §D; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (your own retail eligibility checks); P0-T026 no longer depends on it per 17 §G: the agent seeds from 12 §2 and your results load on top as source `user`)

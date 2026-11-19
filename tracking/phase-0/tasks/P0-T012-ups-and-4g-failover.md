@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A UPS covering the host and router, and a 4G failover router (or failover-capable router + SIM), are ordered and ideally installed; the UPS is USB-connected so the host sees battery state (NUT) for a clean shutdown. Needed before live (P7), cheap to set up early.
+A UPS covering the machine that will run live (the workstation now, or the runtime host chosen in P7-T071) and the router, and a 4G failover router (or failover-capable router + SIM), are ordered and ideally installed; the UPS is USB-connected so that machine sees battery state (NUT) for a clean shutdown. Needed before live (P7), cheap to set up early.
 
 ## Context & references
 
@@ -48,8 +48,8 @@ A UPS covering the host and router, and a 4G failover router (or failover-capabl
 
 ## Requirements
 
-- UPS: line-interactive or online, ≥ 15 min runtime at host + router load (log estimated W), USB HID for NUT.
-- 4G failover: router with automatic WAN failover and a prepaid/data SIM; Tailscale must keep working over it.
+- UPS: line-interactive or online, ≥ 15 min runtime at machine + router load (log estimated W), USB HID for NUT.
+- 4G failover: router with automatic WAN failover and a prepaid/data SIM; from P7 the Tailscale/WireGuard tunnel to the egress exit node must keep working over it.
 - Policy reminder: on lost power/link the system fails **flat**: venue cancel-after timers and resting venue stops protect positions ([16 §3.1–3.2](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)); the three-layer dead-man arrives in P2.
 - From P7, broadband and 4G both tunnel to one fixed-IP Sydney exit node, so the exchanges always see the allow-listed IP ([16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)); the router must allow that WireGuard/Tailscale tunnel over 4G.
 
@@ -57,8 +57,8 @@ A UPS covering the host and router, and a 4G failover router (or failover-capabl
 
 - [ ] Estimate load and pick a UPS; order it.
 - [ ] Pick a failover router/SIM; order it.
-- [ ] When delivered: connect, plug the UPS USB into the host, tell P0-T019 so NUT is configured.
-- [ ] Pull the WAN cable once and confirm Tailscale reconnects over 4G; log the result.
+- [ ] When delivered: connect, plug the UPS USB into the workstation (or runtime host), tell the agent so P0-T019's NUT client is configured.
+- [ ] Pull the WAN cable once and confirm the connection fails over to 4G (and Tailscale reconnects, if in use); log the result.
 
 ## Verification
 
@@ -99,3 +99,4 @@ A UPS covering the host and router, and a 4G failover router (or failover-capabl
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (fail-flat via venue timers + resting stops and fixed-IP exit node over 4G (16 §3.1–3.2) replaces the 'no VPN on failover' rule; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (money); nothing depends on it before P7; host → the machine that will run live; Tailscale only if in use)

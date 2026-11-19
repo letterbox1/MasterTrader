@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - [12 §4 platform rules](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Telegram witness of the daily seal)
 - [P1 roadmap](../../../docs/roadmap/phase-1-data-and-monitoring.md) (T1.31 alerts bot)
-- Unblocks: the live seal witness and real alert receipt checked in the soak (P0-T063); P0-T037 and P0-T045 are built against a mocked Bot API, so they don't wait for this task; P1 alerts (T1.31); P4 Telethon ingest
+- Unblocks: the live seal witness and real alert receipt checked in P0-T073 (the soak, P0-T063, runs against a mocked Bot API); P0-T037 and P0-T045 are built against a mocked Bot API, so they don't wait for this task; P1 alerts (T1.31); P4 Telethon ingest
 
 ## Requirements
 
@@ -55,8 +55,8 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - Account hardening: 2-step verification password (unique, ≥ 16 chars), recovery email set, phone number visible to nobody.
 - `api_id` / `api_hash` from my.telegram.org → *API development tools* (app title `MasterTrader`, platform Desktop).
 - Bot via @BotFather: name `MasterTrader Alerts`, username ending `_bot`; `/setjoingroups` → Disable; `/setprivacy` → Enable. Store the bot token.
-- Find your personal chat id with the bot (send `/start`, then call `getUpdates` from the host) and record it as `telegram.owner_chat_id`.
-- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `telegram:` (`api_id`, `api_hash`, `bot_token`, `owner_chat_id`). The late live checks (P0-T063) use the env names `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_CHAT_ID` (names only; values stay in the secrets file). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Find your personal chat id with the bot (send `/start`, then call `getUpdates` from the workstation) and record it as `telegram.owner_chat_id`.
+- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `telegram:` (`api_id`, `api_hash`, `bot_token`, `owner_chat_id`). The late live check (P0-T073) uses the env names `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_CHAT_ID` (names only; values stay in the secrets file). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 
@@ -71,7 +71,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 ## Verification
 
 ### Tests
-- Confirmation: `getMe` against the Bot API (run on the host via `sops exec-env`, so the token never hits shell history) returns `ok: true`.
+- Confirmation: `getMe` against the Bot API (run on the workstation via `sops exec-env`, so the token never hits shell history) returns `ok: true`.
 
 ### Scenarios
 - Given the bot token is in the secrets file, when the seal flow (P0-T037) sends the daily witness, then it arrives in your personal chat.
@@ -84,7 +84,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 
 - [ ] Dedicated account exists with 2-step password and recovery email
 - [ ] `api_id`, `api_hash`, `bot_token`, `owner_chat_id` stored in the secrets file (or password manager until P0-T022)
-- [ ] `getMe` returns ok from the host
+- [ ] `getMe` returns ok from the workstation
 - [ ] No value pasted into chat, git or an issue
 
 ## Exceptions & edge cases
@@ -116,3 +116,4 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); keys-last: P0-T037/P0-T045 no longer wait for this, live check in P0-T063; env names named; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (account + keys); only the late VERIFY P0-T073 and the exit demo depend on it, the soak no longer does; host → workstation)

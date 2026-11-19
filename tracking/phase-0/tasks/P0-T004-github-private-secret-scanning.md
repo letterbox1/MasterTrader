@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -107,3 +107,4 @@ The MasterTrader repository is private, GitHub secret scanning and push protecti
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER (account/decision); no agent task in P0 depends on it)

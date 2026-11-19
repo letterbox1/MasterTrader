@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 72 | 0 | 0 | 0 | 0 | 0 | 1 | 0/0/0/0 | 0/6 |
+| 73 | 0 | 0 | 0 | 0 | 0 | 1 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-7-prove-and-go-live.md](../../docs/roadmap/phase-7-prove-and-go-live.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -28,7 +28,7 @@ _None._
 
 _None._
 
-## Backlog (72)
+## Backlog (73)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -38,7 +38,7 @@ _None._
 | [P7-T004](tasks/P7-T004-fp-markets-terms-and-route.md) | FP Markets: read algo/scalping/hedging clauses and choose MT5 or cTrader | USER | high | XS | user | — |
 | [P7-T005](tasks/P7-T005-windows-vps-for-mt5.md) | Provision the Windows VPS near the FP Markets MT5 server | USER | medium | S | user | P7-T004 |
 | [P7-T006](tasks/P7-T006-live-accounts-and-sub-accounts.md) | Open or verify live accounts and create sub-accounts per mandate | USER | critical | S | user | P7-T003 |
-| [P7-T007](tasks/P7-T007-live-trade-only-keys.md) | Create live trade-only, IP-locked, no-withdrawal keys per sub-account | USER | critical | S | user | P7-T006, P7-T065 |
+| [P7-T007](tasks/P7-T007-live-trade-only-keys.md) | Create live trade-only, IP-locked, no-withdrawal keys per sub-account | USER | critical | S | user | P7-T006, P7-T065, P7-T071, P7-T072 |
 | [P7-T008](tasks/P7-T008-travel-rule-addresses.md) | Pre-register withdrawal addresses with proof of control (Travel Rule) | USER | high | XS | user | P7-T006, P3-T012 |
 | [P7-T009](tasks/P7-T009-ups-and-4g-failover.md) | Install the UPS and 4G failover for the host and router | USER | high | S | user | P0-T012 |
 | [P7-T010](tasks/P7-T010-pro-advice-register.md) | Professional-advice register linked to venue-registry blocks | BUILD | high | S | agent | P0-T025, P2-T016, P3-T038 |
@@ -67,7 +67,7 @@ _None._
 | [P7-T033](tasks/P7-T033-dead-man-fail-flat-4g.md) | Dead-man fail-flat configuration with UPS and 4G signals | OPS | critical | S | agent | P7-T009, P7-T030, P2-T032, P2-T072, P2-T073 |
 | [P7-T034](tasks/P7-T034-mt5-bridge-service.md) | MT5 bridge service for the Windows VPS | BUILD | medium | L | agent | P7-T004 |
 | [P7-T035](tasks/P7-T035-mt5-vps-deploy-and-harden.md) | Deploy and harden the MT5 bridge on the Windows VPS | OPS | medium | S | agent | P7-T005, P7-T034 |
-| [P7-T036](tasks/P7-T036-mt5-engine-adapter.md) | mt_engine MT5 execution and data adapter via the bridge | BUILD | medium | L | agent | P7-T034, P7-T035, P2-T021, P2-T027 |
+| [P7-T036](tasks/P7-T036-mt5-engine-adapter.md) | mt-engine MT5 execution and data adapter via the bridge | BUILD | medium | L | agent | P7-T034, P7-T035, P2-T021, P2-T027 |
 | [P7-T037](tasks/P7-T037-ctrader-open-api-adapter.md) | cTrader Open API adapter (Linux route) | BUILD | medium | L | agent | P7-T004, P2-T021, P2-T027 |
 | [P7-T038](tasks/P7-T038-mastertradingbot-strategy-port.md) | Port MasterTradingBot strategies as M0 deterministic rule-based strategies | BUILD | medium | M | agent | P2-T132, P2-T133 |
 | [P7-T039](tasks/P7-T039-approvals-polish.md) | Approvals polish: ≤ 3-tap approve, hold-to-confirm, batching, Telegram cards | BUILD | high | M | agent | P2-T149, P2-T039 |
@@ -78,7 +78,7 @@ _None._
 | [P7-T044](tasks/P7-T044-drill-kill-baddata-serverdown.md) | Drill runbooks: kill, bad data, server down with open positions | VERIFY | critical | M | agent | P7-T043, P7-T011 |
 | [P7-T045](tasks/P7-T045-drill-keys-leaked-wallet-drained.md) | Drill runbooks: keys leaked and wallet drained | VERIFY | critical | S | agent | P7-T043, P7-T011 |
 | [P7-T046](tasks/P7-T046-verify-registry-recheck-before-funding.md) | Verify venue-registry re-check (< 90 days) gates every funding | VERIFY | critical | S | agent | P7-T011, P7-T003 |
-| [P7-T047](tasks/P7-T047-verify-live-key-and-subaccount-audit.md) | Live key audit: trade-only, no withdrawals, IP-locked to the egress IP, one key per sub-account | VERIFY | critical | S | agent | P7-T032, P7-T007, P7-T008, P7-T031, P7-T066 |
+| [P7-T047](tasks/P7-T047-verify-live-key-and-subaccount-audit.md) | Live key audit: trade-only, no withdrawals, IP-locked to the egress IP, one key per sub-account | VERIFY | critical | S | agent | P7-T032, P7-T007, P7-T008, P7-T031, P7-T066, P7-T073 |
 | [P7-T048](tasks/P7-T048-verify-kill-criteria-simulated-breaches.md) | Simulated kill-criteria breaches halt the right sleeve or everything | VERIFY | critical | M | agent | P7-T020, P7-T022, P7-T027 |
 | [P7-T049](tasks/P7-T049-verify-decay-and-downgrade-simulated.md) | Simulated decay, health-check and auto-downgrade breaches | VERIFY | critical | M | agent | P7-T023, P7-T024, P7-T029 |
 | [P7-T050](tasks/P7-T050-verify-recon-fault-injection.md) | Reconciliation fault injection: disconnects, partial fills, phantom positions | VERIFY | high | M | agent | P7-T025, P7-T026, P7-T027 |
@@ -100,10 +100,11 @@ _None._
 | [P7-T067](tasks/P7-T067-phase-7-api-surface-and-d06-live-and-d03-go-live.md) | Phase 7 API surface and D06 Live and D03 Go-live views | BUILD | high | M | agent | P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022 |
 | [P7-T068](tasks/P7-T068-d06-stress-tab-and-risk-stress-run-historical-sh.md) | D06 Stress tab and risk.stress.run historical shock replay | BUILD | high | L | agent | P2-T043, P2-T015, P2-T103 |
 | [P7-T069](tasks/P7-T069-stress-replay-of-the-four-historical-shocks-befo.md) | Stress replay of the four historical shocks before the first funding | VERIFY | critical | S | agent | P7-T068, P7-T014 |
-| [P7-T070](tasks/P7-T070-approve-the-go-live-pack-risk-values-ceilings-sl.md) | Approve the go-live pack: risk values, ceilings, sleeves and manifests | USER | critical | S | user | P7-T011, P2-T048, P2-T049, P2-T050, P2-T066 |
+| [P7-T070](tasks/P7-T070-approve-the-go-live-pack-risk-values-ceilings-sl.md) | Approve the go-live pack: risk values, ceilings, sleeves and manifests | USER | critical | S | user | P7-T011, P2-T048, P2-T049, P2-T050, P2-T066, P1-T001, P1-T066 |
 | [P7-T071](tasks/P7-T071-choose-the-go-live-runtime-host-and-cloud-option.md) | Choose the go-live runtime host and cloud options (default: stay on the workstation) | USER | high | XS | user | — |
 | [P7-T072](tasks/P7-T072-move-the-age-identities-onto-a-yubikey-before-li.md) | Move the age identities onto a YubiKey before live money | USER | high | XS | user | — |
-| [P7-T073](tasks/P7-T073-shift-to-the-go-live-runtime-host-harden-migrate.md) | Shift to the go-live runtime host: harden, migrate, deploy, re-verify | OPS | critical | L | agent | P7-T071, P7-T072, P0-T003 |
+| [P7-T073](tasks/P7-T073-shift-to-the-go-live-runtime-host-harden-migrate.md) | Shift to the go-live runtime host: harden, migrate, deploy, re-verify | OPS | critical | L | agent | P7-T071, P7-T072, P0-T003, P7-T066 |
+| [P7-T074](tasks/P7-T074-measure-latency-attributable-slippage-per-venue-.md) | Measure latency-attributable slippage per venue (input to regional engines) | RESEARCH | low | M | agent | P7-T059 |
 
 ## Done (0)
 

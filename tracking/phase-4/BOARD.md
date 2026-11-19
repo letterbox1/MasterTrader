@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 69 | 2 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/5 |
+| 70 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/5 |
 
 Roadmap: [phase-4-intel.md](../../docs/roadmap/phase-4-intel.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -24,19 +24,19 @@ _None._
 
 _None._
 
-## Ready (2)
+## Ready (1)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
-| [P4-T003](tasks/P4-T003-watch-keywords-and-feeds.md) | Provide watch keywords, cashtags and trusted feeds/sites | USER | high | S | user | — |
 | [P4-T005](tasks/P4-T005-event-keys-and-terms.md) | Register free event-source keys and read news API terms | USER | high | S | user | — |
 
-## Backlog (69)
+## Backlog (70)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P4-T001](tasks/P4-T001-telegram-channel-list.md) | List the Telegram channels to monitor (postures only) | USER | high | S | user | P0-T002, P4-T006 |
 | [P4-T002](tasks/P4-T002-discord-follows.md) | Follow Discord announcement channels into the feeds server | USER | high | S | user | P0-T008 |
+| [P4-T003](tasks/P4-T003-watch-keywords-and-feeds.md) | Seed the watch keywords, cashtags and trusted feeds from the 06/12 defaults | BUILD | high | S | agent | P4-T010, P4-T043, P1-T001 |
 | [P4-T004](tasks/P4-T004-reddit-decision.md) | Confirm whether Reddit API access was granted | USER | low | XS | user | P0-T001 |
 | [P4-T006](tasks/P4-T006-telethon-discord-secrets.md) | Encrypt the Telethon session and store the Discord bot token | OPS | critical | S | agent | P0-T022 |
 | [P4-T007](tasks/P4-T007-rss-bridge-container.md) | Harden the RSS-Bridge sidecar (whitelist, auth, scrape network) | OPS | critical | S | agent | P0-T020, P0-T021, P0-T022 |
@@ -75,24 +75,24 @@ _None._
 | [P4-T040](tasks/P4-T040-sentiment-regime-per-market.md) | Sentiment and regime pipelines per market type plus the macro layer | BUILD | high | L | agent | P4-T027, P4-T039, P2-T120 |
 | [P4-T041](tasks/P4-T041-fedpath-vix-nowcast-features.md) | Fed-path from ZQ, VIX regime, nowcast, positioning and prediction-market features | BUILD | high | M | agent | P4-T039, P4-T036, P4-T037, P2-T120 |
 | [P4-T042](tasks/P4-T042-vol-forecast-models.md) | Volatility and volume forecasts with Chronos, TimesFM and Kronos | BUILD | medium | M | agent | P2-T120, P2-T046, P1-T013 |
-| [P4-T043](tasks/P4-T043-mt-api-intel-endpoints.md) | mt_api intel queries, commands and WebSocket topics | BUILD | high | M | agent | P4-T027, P4-T035, P4-T038, P4-T032, P4-T029, P4-T019, P0-T034, P0-T036 |
+| [P4-T043](tasks/P4-T043-mt-api-intel-endpoints.md) | mt-api intel queries, commands and WebSocket topics | BUILD | high | M | agent | P4-T027, P4-T035, P4-T038, P4-T032, P4-T029, P4-T019, P0-T034, P0-T036 |
 | [P4-T044](tasks/P4-T044-d08-feed-detail-sources.md) | D08 Intel: Feed, Document detail and Sources tabs | BUILD | high | L | agent | P4-T043, P0-T049 |
 | [P4-T045](tasks/P4-T045-d08-events-calendar-sentiment.md) | D08 Intel: Events, Calendar (blackout markers) and Sentiment tabs | BUILD | high | M | agent | P4-T043, P4-T040 |
 | [P4-T046](tasks/P4-T046-tierb-chips-d01-d02.md) | Tier B chips on D01/D02 and calendar/event overlays on D02 charts | BUILD | medium | M | agent | P4-T043, P4-T029, P2-T142, P1-T050 |
 | [P4-T047](tasks/P4-T047-morning-brief.md) | Morning brief job on Telegram (and /brief) | BUILD | high | M | agent | P4-T043, P4-T035, P4-T038, P4-T040, P2-T035 |
-| [P4-T048](tasks/P4-T048-labelling-tool-threshold-calibration.md) | SemIf relevance-gate threshold calibration from your labels | BUILD | high | M | agent | P4-T062, P4-T030, P2-T046 |
-| [P4-T049](tasks/P4-T049-label-200-docs.md) | Label ~200 sampled documents for the SemIf relevance gate | USER | high | S | user | P4-T062, P4-T030 |
+| [P4-T048](tasks/P4-T048-labelling-tool-threshold-calibration.md) | SemIf relevance-gate silver labels and threshold calibration (your labels optional) | BUILD | high | M | agent | P4-T062, P4-T030, P2-T046 |
+| [P4-T049](tasks/P4-T049-label-200-docs.md) | Optional - label ~200 sampled documents to refine the SemIf relevance gate | USER | low | S | user | P4-T062, P4-T030 |
 | [P4-T050](tasks/P4-T050-verify-telegram-text-gate.md) | Telegram-text gate test (never reaches FinBERT, tier B, RAG, agents or training) | VERIFY | critical | M | agent | P4-T019, P4-T025, P4-T027, P4-T029, P4-T030, P4-T032 |
 | [P4-T051](tasks/P4-T051-verify-rag-benchmark-asof.md) | RAG retrieval benchmark and as_of leakage test | VERIFY | high | M | agent | P4-T032 |
 | [P4-T052](tasks/P4-T052-verify-blackout-nfp.md) | Blackout test: an event-sensitive scalper bot pauses around a seeded NFP event | VERIFY | critical | S | agent | P4-T038, P4-T045, P2-T008, P2-T021, P2-T036, P2-T042 |
-| [P4-T053](tasks/P4-T053-verify-semif-precision-flip.md) | SemIf gate precision/recall on your labels and flip rate (determinism) | VERIFY | high | S | agent | P4-T049, P4-T048 |
+| [P4-T053](tasks/P4-T053-verify-semif-precision-flip.md) | SemIf gate precision/recall on silver labels (and yours if given) and flip rate (determinism) | VERIFY | high | S | agent | P4-T048 |
 | [P4-T054](tasks/P4-T054-verify-feature-ic-report.md) | Feature IC report for the new sentiment, regime, positioning and macro features | VERIFY | medium | S | agent | P4-T040, P4-T041, P4-T042, P4-T035, P2-T123 |
 | [P4-T055](tasks/P4-T055-verify-network-untrusted-content.md) | Network and untrusted-content test (RSS-Bridge/scrapers isolated, LLMs see no secrets) | VERIFY | critical | S | agent | P4-T007, P4-T008, P4-T011, P4-T029 |
 | [P4-T056](tasks/P4-T056-verify-source-terms-config-review.md) | Config review: prediction markets read-only and per-source terms/provenance | VERIFY | high | XS | agent | P4-T036, P4-T016, P4-T017, P4-T024, P4-T005 |
 | [P4-T057](tasks/P4-T057-verify-f3-e2e-scenarios.md) | End-to-end F3 scenarios: feed → document → tier B → KV → D08 per source | VERIFY | high | M | agent | P4-T030, P4-T031, P4-T044, P4-T046, P4-T020, P4-T021, P4-T022, P4-T023, P4-T012, P4-T013, P4-T014, P4-T015 |
 | [P4-T058](tasks/P4-T058-verify-stress-failure-injection.md) | Stress and failure injection for the intel pipeline | VERIFY | high | M | agent | P4-T057, P4-T019, P4-T018 |
 | [P4-T059](tasks/P4-T059-verify-d08-viewport-axe.md) | D08 and tier-B overlays: Playwright viewport matrix and axe | VERIFY | medium | S | agent | P4-T044, P4-T045, P4-T046, P4-T062, P4-T065 |
-| [P4-T060](tasks/P4-T060-run-two-weeks-briefs.md) | Run two weeks of morning briefs and tune sources by relevance hit-rate | RUN | high | M | agent | P4-T047, P4-T030, P4-T044, P4-T053, P4-T003, P4-T067, P4-T068 |
+| [P4-T060](tasks/P4-T060-run-two-weeks-briefs.md) | Run two weeks of morning briefs and tune sources by relevance hit-rate | RUN | high | M | agent | P4-T047, P4-T030, P4-T044, P4-T053, P4-T003 |
 | [P4-T061](tasks/P4-T061-phase-exit-demo.md) | Phase 4 exit demo | VERIFY | critical | S | agent | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071 |
 | [P4-T062](tasks/P4-T062-minimal-labelling-tool-d08-label-mode-and-models.md) | Minimal labelling tool (D08 Label mode) and models.label.add command | BUILD | high | M | agent | P4-T028, P4-T030, P4-T043, P4-T044 |
 | [P4-T063](tasks/P4-T063-regulatory-and-jurisdiction-watch-fetch-diff-and.md) | Regulatory and jurisdiction watch: fetch, diff and REG_CHANGE review tasks | BUILD | medium | M | agent | P4-T011, P4-T008, P3-T038, P3-T031, P1-T045 |

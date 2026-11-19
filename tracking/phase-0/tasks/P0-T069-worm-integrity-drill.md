@@ -13,7 +13,7 @@ claimed_by: ""
 depends_on: [P0-T038, P0-T052, P0-T061]
 requirements: [R0.12, R0.07]
 roadmap_todos: [T0.66]
-modules: [M17, M11, mt_risk, mt_api]
+modules: [M17, M11, mt-risk, mt-api]
 dashboards: [D16]
 tools: [git, cargo, supabase, docker, psql]
 mcp: []
@@ -65,7 +65,7 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
 
 ## ToDo
 
-- [ ] Write `tests/verify/test_integrity_drill.py` (steps 1–7, SimClock) and wire it into CI (`verify` marker, nightly).
+- [ ] Write `crates/mt-obs/tests/integrity_drill.rs` (steps 1–7, `SimClock`, Supabase CLI stack) and wire it into CI (`verify` job, nightly).
 - [ ] Run the drill once on a scratch copy of the production stack following the WORM incident runbook (P0-T061) literally; note any step that needed improvising and fix the runbook.
 - [ ] Capture evidence: verify output, incident/ack rows (ids + hashes), KV values, gate decisions, D16 screenshots.
 - [ ] File a bug for any deviation.

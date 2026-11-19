@@ -29,14 +29,14 @@ _None._
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P6-T002](tasks/P6-T002-external-access-tally-finmmeval-weights.md) | Get the Tally key and FinMMEval data access | USER | medium | XS | user | — |
-| [P6-T003](tasks/P6-T003-decide-optional-modules.md) | Decide on Hummingbot, social drafts, crowd-sim and LightRAG | USER | low | XS | user | — |
+| [P6-T003](tasks/P6-T003-decide-optional-modules.md) | Record the optional-module defaults (all off) in settings | BUILD | medium | XS | agent | — |
 | [P6-T068](tasks/P6-T068-kev-4b-9b-and-contender-licence-check-before-the.md) | Kev-4B/9B and contender licence check before the bake-off | VERIFY | high | XS | agent | — |
 
 ## Backlog (70)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
-| [P6-T001](tasks/P6-T001-set-llm-budgets.md) | Set LLM budgets and confirm the custom endpoint | USER | high | XS | user | P0-T007, P0-T042 |
+| [P6-T001](tasks/P6-T001-set-llm-budgets.md) | Seed the LLM budgets from the 16 §2.10 defaults | BUILD | high | XS | agent | P0-T042 |
 | [P6-T004](tasks/P6-T004-signal-schema-decision-tables.md) | Signal v2 schema with provenance and decision-run WORM tables | BUILD | critical | S | agent | P0-T016, P0-T030, P0-T031 |
 | [P6-T005](tasks/P6-T005-llm-call-audit-prompt-registry.md) | Prompt and model versioning on top of the P0 LLM-call audit | BUILD | critical | M | agent | P0-T042, P0-T031, P4-T028 |
 | [P6-T006](tasks/P6-T006-agent-tools-pit-finrobot-cache.md) | Agent tools: pit data tools, FinRobot operators, untrusted wrapping and the (instrument, as_of) cache | BUILD | high | M | agent | P6-T004, P0-T027, P4-T025, P4-T032 |
@@ -77,7 +77,7 @@ _None._
 | [P6-T041](tasks/P6-T041-d09-agents-ui.md) | D09 Agents & Decisions UI | BUILD | high | L | agent | P6-T008, P6-T013, P6-T015, P0-T048, P0-T049 |
 | [P6-T042](tasks/P6-T042-d10-registry-questions-bakeoff-gateway.md) | D10 Registry, Decision questions, Bake-off and Gateway tabs | BUILD | high | M | agent | P6-T009, P6-T018, P6-T026, P6-T029, P6-T030, P0-T049 |
 | [P6-T043](tasks/P6-T043-d10-memory-rag-labelling-shadow.md) | D10 Memory, RAG, Labelling queue and Shadow-disagreement views | BUILD | high | M | agent | P6-T012, P6-T019, P6-T025, P4-T032, P0-T049 |
-| [P6-T044](tasks/P6-T044-work-labelling-queue.md) | Work the D10 labelling queue (~15 min/day while it's new) | USER | medium | S | user | P6-T043 |
+| [P6-T044](tasks/P6-T044-work-labelling-queue.md) | Work the D10 labelling queue (~15 min/day while it's new) | USER | low | S | user | P6-T043 |
 | [P6-T045](tasks/P6-T045-d18-earn-treasury-ui.md) | D18 treasury and hold-and-earn UI | BUILD | high | M | agent | P6-T038, P5-T050 |
 | [P6-T046](tasks/P6-T046-hummingbot-adapter-d11.md) | Optional: Hummingbot market-making sidecar behind M11 with D11 | BUILD | low | L | agent | P6-T003, P2-T017, P2-T031 |
 | [P6-T047](tasks/P6-T047-social-drafts-web-intent.md) | Optional: M23 social drafts → your approval → web intent | BUILD | low | M | agent | P6-T003, P5-T029, P0-T044 |
@@ -92,14 +92,14 @@ _None._
 | [P6-T056](tasks/P6-T056-verify-label-provenance.md) | Label-provenance test: shadow outputs never become labels; Telegram excluded | VERIFY | critical | S | agent | P6-T019, P6-T020, P6-T025 |
 | [P6-T057](tasks/P6-T057-verify-determinism-flip-rate.md) | Determinism: flip rate on repeated inputs and CPU ONNX FP32 reproducibility | VERIFY | high | S | agent | P6-T024 |
 | [P6-T058](tasks/P6-T058-verify-tierb-latency-slo.md) | Stress: tier B p95 < 50 ms on GPU and degraded CPU behaviour | VERIFY | high | S | agent | P6-T024, P6-T023, P0-T005 |
-| [P6-T059](tasks/P6-T059-verify-bakeoff-review-gates.md) | Bake-off report reviewed; promotion only via gates | VERIFY | critical | S | agent | P6-T029, P6-T030, P6-T031, P6-T002, P6-T068 |
+| [P6-T059](tasks/P6-T059-verify-bakeoff-review-gates.md) | Bake-off report reviewed; promotion only via gates | VERIFY | critical | S | agent | P6-T029, P6-T030, P6-T031, P6-T068 |
 | [P6-T060](tasks/P6-T060-verify-treasury-gates-depeg-caps.md) | Treasury: cost gate blocks uneconomic moves; depeg auto-reduce; caps and reserve hold | VERIFY | critical | M | agent | P6-T038, P6-T036, P6-T037, P6-T039, P6-T040 |
 | [P6-T061](tasks/P6-T061-verify-seeded-anomaly-telegram.md) | Seeded anomaly is detected and explained on Telegram | VERIFY | high | S | agent | P6-T015, P1-T060 |
 | [P6-T062](tasks/P6-T062-verify-e2e-f4-analysis-to-distillation.md) | End-to-end F4: analysis → Signal → D09 → settlement → teacher log → candidate | VERIFY | critical | M | agent | P6-T041, P6-T042, P6-T013, P6-T031 |
 | [P6-T063](tasks/P6-T063-verify-llm-signal-post-cutoff-gate.md) | LLM-signal strategy gate check on post-cutoff data | VERIFY | high | S | agent | P6-T017, P6-T016 |
 | [P6-T064](tasks/P6-T064-verify-degraded-modes-drill.md) | Degraded-mode drill for the AI layer and treasury | VERIFY | high | M | agent | P6-T024, P6-T009, P6-T012, P6-T038, P6-T015 |
 | [P6-T065](tasks/P6-T065-run-start-distillation-paper-soak.md) | Start the 4-week nightly distillation soak and LLM-signal paper trading | RUN | high | S | agent | P6-T031, P6-T016, P6-T017, P6-T025, P6-T063 |
-| [P6-T066](tasks/P6-T066-phase-exit-demo.md) | Phase 6 exit demo | VERIFY | critical | S | agent | P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073 |
+| [P6-T066](tasks/P6-T066-phase-exit-demo.md) | Phase 6 exit demo | VERIFY | critical | S | agent | P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073 |
 | [P6-T067](tasks/P6-T067-sample-debate-runs-on-three-instruments-return-c.md) | Sample debate runs on three instruments return complete Signals | VERIFY | high | S | agent | P6-T004, P6-T007, P6-T008, P6-T012 |
 | [P6-T069](tasks/P6-T069-local-inference-port-check-127-0-0-1-only-and-ap.md) | Local inference port check: 127.0.0.1 only and API key required | VERIFY | high | S | agent | P6-T011, P6-T023, P6-T027, P0-T056 |
 | [P6-T070](tasks/P6-T070-live-check-with-your-keys-gateway-roles-on-anthr.md) | Live check with your keys: gateway roles on Anthropic/custom endpoint and the Tally feed | VERIFY | medium | S | agent | P0-T007, P0-T068, P6-T001, P6-T002, P6-T067, P6-T053, P6-T015, P6-T025, P6-T040 |

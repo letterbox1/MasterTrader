@@ -23,14 +23,14 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:phase-status:start -->
 | Phase | Status | Progress | Tasks done/total | Board |
 |---|---|---|---|---|
-| P0 Foundations & security baseline | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-0/BOARD.md) |
-| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/74 | [BOARD](../../tracking/phase-1/BOARD.md) |
-| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/130 | [BOARD](../../tracking/phase-2/BOARD.md) |
+| P0 Foundations & security baseline | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-0/BOARD.md) |
+| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/76 | [BOARD](../../tracking/phase-1/BOARD.md) |
+| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/133 | [BOARD](../../tracking/phase-2/BOARD.md) |
 | P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-3/BOARD.md) |
 | P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/71 | [BOARD](../../tracking/phase-4/BOARD.md) |
 | P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-5/BOARD.md) |
 | P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-6/BOARD.md) |
-| P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/72 | [BOARD](../../tracking/phase-7/BOARD.md) |
+| P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-7/BOARD.md) |
 | P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/35 | [BOARD](../../tracking/phase-8/BOARD.md) |
 <!-- kanban:phase-status:end -->
 
@@ -59,16 +59,16 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:roadmap-counts:start -->
 | Phase | Requirements | `USER` | `BUILD` | `OPS` | `VERIFY` | `RUN` | ToDos |
 |---|---|---|---|---|---|---|---|
-| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 21 | 13 | 10 | 8 | 10 | 1 | 42 |
-| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 6 | 15 | 5 | 8 | 1 | 35 |
-| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 46 | 9 | 22 | 3 | 14 | 2 | 50 |
+| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 21 | 12 | 10 | 9 | 10 | 1 | 42 |
+| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 4 | 17 | 5 | 8 | 1 | 35 |
+| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 46 | 5 | 25 | 4 | 14 | 2 | 50 |
 | [P3 Journal & Tax](phase-3-journal-and-tax.md) | 21 | 6 | 14 | 3 | 8 | 1 | 32 |
-| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 19 | 6 | 14 | 3 | 9 | 1 | 33 |
-| [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 24 | 9 | 14 | 3 | 8 | 1 | 35 |
-| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 25 | 5 | 15 | 2 | 15 | 1 | 38 |
-| [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 16 | 11 | 8 | 4 | 7 | 3 | 33 |
-| [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 10 | 3 | 5 | 1 | 6 | 1 | 16 |
-| **Total** | | **68** | **117** | **32** | **85** | **12** | **314** |
+| [P4 News, Social, Events & Calendars](phase-4-intel.md) | 19 | 5 | 15 | 3 | 9 | 1 | 33 |
+| [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 24 | 7 | 16 | 3 | 8 | 1 | 35 |
+| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 25 | 3 | 16 | 3 | 15 | 1 | 38 |
+| [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 19 | 14 | 8 | 5 | 7 | 3 | 37 |
+| [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 10 | 2 | 6 | 1 | 6 | 1 | 16 |
+| **Total** | | **58** | **127** | **36** | **85** | **12** | **318** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies
@@ -166,9 +166,8 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 <!-- kanban:user-register:start -->
 | ID | Phase | Action | Feeds / blocks |
 |---|---|---|---|
-| T0.01 | P0 | Provision the host: 8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + HDD; decide on a **16–24 GB GPU** now (it shapes P4/P6 speed). | R0.02 · [03 §2](../03-build-spec.md#2-target-environment) |
 | T0.02 | P0 | Order a **UPS** and a **4G failover** router (needed before live, cheap to set up early). | [07 §5](../07-security-notes.md#5-network--host) |
-| T0.03 | P0 | Create the Tailscale account with MFA on the identity provider; buy/assign a YubiKey (or OS keychain) for the age key. | R0.N1, R0.N2 |
+| T0.03 | P0 | Optional now: create the Tailscale tailnet with MFA on the identity provider (phone access; required at go-live). The YubiKey moved to Phase 7 (T7.14); until then the age key stays in the OS keychain. | R0.N2 · [18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode) |
 | T0.04 | P0 | Open the off-site backup target with **Object Lock** (e.g. Backblaze B2 compliance mode) or a second box running restic `rest-server --append-only`; store credentials in the secrets file. | R0.N4, R0.07 |
 | T0.05 | P0 | Keep the GitHub repo **private**; turn on secret scanning. | [SPEC NN8](../../SPEC.md#non-negotiable-requirements) |
 | T0.06 | P0 | **Telegram:** dedicated number (landline voice code or prepaid SIM), `api_id`/`api_hash`, 2-step password, bot via @BotFather. | gates P1 alerts, P4 ingest · [07 §10](../07-security-notes.md#10-social--scraping-accounts) |
@@ -177,23 +176,17 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | T0.09 | P0 | Free demo/practice accounts: OANDA practice, IG demo, Alpaca paper, IBKR paper, Binance + Bybit testnets. | gates P1/P2 |
 | T0.10 | P0 | Free API keys: FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic. | gates P1/P4/P5 · [06](../06-aggregators-and-market-providers.md) |
 | T0.11 | P0 | **Venue checks:** look up each AU venue you may use on the AUSTRAC register by ABN; note products available to you as a retail client; send the results for the registry seed. | R0.06 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |
-| T0.12 | P0 | Set your login password and enrol TOTP on first boot. | R0.08 |
+| T0.12 | P0 | Create your login (Supabase Auth: password) and enrol TOTP when you first open the app. | R0.08 |
 | T0.13 | P0 | Obtain Anthropic and custom-endpoint API keys and put them in the secrets file (never chat/git). | R0.09, R0.13 |
-| T1.01 | P1 | Pick the starting **universe/watchlist**: ~10 crypto pairs, FX/metal pairs, ~30 US ETFs/stocks (Alpaca IEX limit), macro series you care about. | R1.01–R1.06 |
 | T1.02 | P1 | Create **read-only** API keys where the testnet offers them (Binance/Bybit testnets, IP-allow-listed) for reconciliation and fee-tier reads; OANDA practice, IG demo, Alpaca paper and IBKR paper use their normal credentials (no money at risk). All go in the secrets file. | R1.12 · [07 §3](../07-security-notes.md#3-broker--exchange-keys) |
-| T1.03 | P1 | Install the ntfy app on your phone and subscribe to the private topic; confirm the email alert address (or turn email off). | R1.14 |
-| T1.04 | P1 | Review the first week's DQ alerts and tell us which thresholds are too noisy. | R1.10 |
+| T1.03 | P1 | Before go-live: install the ntfy app on your phone and subscribe to the private topic (needs Tailscale, P0-T003). The email address and SMTP password are P1-T068; ntfy itself is checked on the workstation during the build. | R1.14 |
 | T1.05 | P1 | Create an SMTP app password at your own mail provider and put it in the secrets file, or turn email alerts off (Telegram + ntfy remain). | R1.14 |
 | T1.06 | P1 | Each quarter, when the reminder arrives, check every venue you use on the AUSTRAC register and record the result (recurring). | R1.13 · [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |
-| T2.01 | P2 | Review the prefilled defaults ([16 §2](../16-configuration-and-safety-model.md#2-default-values-all-configurable)) and set the **initial risk policy values** and the **L0 hard ceilings** in the agent/bot strategy settings (the ceilings section applies to every bot). Every value stays a setting you can change; loosening is C3. | R2.14, R2.19 |
-| T2.02 | P2 | Decide **sleeves** and their risk budgets (14 §3 allocation table is the suggested start). | R2.13 |
 | T2.03 | P2 | Create **trade-only, IP-locked, no-withdrawal** keys on testnets/practice accounts, one sub-account per mode. | R2.N3 |
 | T2.04 | P2 | Provide **MasterTradingBot** rule descriptions + historical signal/trade outputs for golden files. | R2.48 |
-| T2.05 | P2 | Write your first strategy manifests (counterparty sentence, kill criteria, benchmark) for the P1 candidates: trend on majors, funding carry if access permits. | R2.04 · [14 §3](../14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) |
-| T2.06 | P2 | Take part in the **kill-switch drill** from your phone (Telegram `/kill`, then C3 to turn off). | R2.18 |
-| T2.07 | P2 | Approve a test C3 loosening to prove the TOTP + cool-down path. | R2.19 |
-| T2.09 | P2 | Create your first bots (scope + mode) and do one HITL approval from Telegram end to end. | R2.53, R2.54 |
-| T2.08 | P2 | Start the **paper clock**: switch the validated P1 candidates to paper at the end of this phase. | unlocks P7 |
+| T2.06 | P2 | Take part in the **kill-switch drill** from your phone (Telegram `/kill`, then C3 to turn off), any time before go-live; no build task waits on it. | R2.18 |
+| T2.07 | P2 | Approve a test C3 loosening to prove the TOTP + cool-down path, any time before go-live; no build task waits on it. | R2.19 |
+| T2.09 | P2 | Walk through your first bot (scope + mode) and do one HITL approval from Telegram end to end, any time before go-live; no build task waits on it. | R2.53, R2.54 |
 | T3.01 | P3 | **Engage a tax agent.** Send the question list (09); the key one is **investor vs trader-in-business, answered before any live trade**; include the PAYG method, wash-sale window and perps treatment. | R3.07 · [09 questions](../09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) |
 | T3.02 | P3 | Ask the agent to confirm the **2027 CGT reform status** and the 30 June 2027 transitional mechanism. | R3.08 |
 | T3.03 | P3 | Export historical statements you already have (IBKR Flex, OANDA, IG, exchanges) for opening balances/lots. | R3.01, R3.05 |
@@ -202,8 +195,7 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | T3.06 | P3 | Diary hard date: **30 June 2027** snapshot must run (end of day AEST). | R3.08 |
 | T4.01 | P4 | List the Telegram channels you want monitored (joined from your dedicated account, slowly). | R4.02 · [07 §10](../07-security-notes.md#10-social--scraping-accounts) |
 | T4.02 | P4 | Follow the Discord announcement channels into `#mt-inbox`/category channels (≈10–15 follows per receiving channel). | R4.04 |
-| T4.03 | P4 | Give watch keywords/cashtags and the RSS feeds/sites you trust. | R4.01, R4.05 |
-| T4.04 | P4 | Label ~200 sampled documents relevant/irrelevant to calibrate the SemIf gate threshold, using the labelling tool. | R4.12, R4.16 |
+| T4.04 | P4 | *Optional:* label ~200 sampled documents relevant/irrelevant with the labelling tool. Agent silver labels calibrate the SemIf gate by default ([10 §4.3](../10-memory-rag-and-models.md#43-design)); yours improve it and nothing waits on them. | R4.12, R4.16 |
 | T4.05 | P4 | Confirm whether Reddit access was granted (if yes it joins as optional; if it wasn't granted by the 2026-10-31 deadline, Reddit stays out and needs no build ToDo). | [06 §2](../06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) |
 | T4.06 | P4 | Get the free NASA FIRMS / ACLED keys and confirm the OpenSanctions licence terms for personal use. | R4.08 |
 | T5.01 | P5 | Set up the **vault** (air-gapped hardware) and **warm** hardware wallet yourself; the system only gets public addresses. | R5.01 |
@@ -211,14 +203,10 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | T5.03 | P5 | Approve creation of the hot, identity (one per chain) and burner keys in the signer; fund them with minimal floats. | R5.01, R5.07 |
 | T5.04 | P5 | Register every address/account you own, with role and investment/trading tag; prove control by signing a one-time challenge in **your own wallet app** or making a tiny self-transfer (the system never signs). | R5.05, R5.25 |
 | T5.05 | P5 | Sign the first **mandates** (C3): wallet, chain, allowed contracts/functions, caps, expiry. | R5.15 |
-| T5.06 | P5 | Review the disposal rule (default sell 50% on claim) and EV hurdle (default 5% p.a.); both are settings. | R5.14, R5.17 |
 | T5.07 | P5 | Work the task queue: join/follow communities, do social tasks yourself, ICO reviews. | R5.20, R5.21 |
-| T5.08 | P5 | Review and confirm the wallet/signer/gas limits (prefilled defaults) to enable signing. | R5.24 |
 | T5.09 | P5 | Until the P7 live gates pass, sell claimed airdrop tokens yourself when the disposal task arrives, then mark it done. | R5.17 |
-| T6.01 | P6 | Review the LLM budgets (defaults: US$40/month cap and per-role daily budgets, 16 §2.10; all settings) and confirm your custom endpoint details for the gateway (keys from T0.13). | R6.07 |
-| T6.02 | P6 | Work the **D10 labelling queue** (~15 min/day while it's new). | R6.13 |
+| T6.02 | P6 | *Optional:* work the **D10 labelling queue** (~15 min/day while it's new). Agent silver labels are the default; yours improve them and nothing waits on them. | R6.13 |
 | T6.03 | P6 | Approve the **treasury policy** and protocol allow-list (C3); decide on HLP (only if Hyperliquid is approved; default cap ≤ 10% of stables and ≤ 5% of portfolio). | R6.20–R6.22 |
-| T6.04 | P6 | Decide whether to run Hummingbot, social drafts, crowd-sim (all optional). | R6.30–R6.32 |
 | T6.05 | P6 | Approve/edit/skip social drafts and click Post yourself (if M23 is on). | R6.31 |
 | T7.01 | P7 | **Tax agent decision recorded** (investor vs trader) and set in D15 for the FY. | entry criterion · R7.13 |
 | T7.02 | P7 | Open/verify **live accounts** (KYC) at the venues the registry allows; create live **sub-accounts per mandate**. | R7.04 |
@@ -231,9 +219,11 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | T7.09 | P7 | Install the UPS and 4G failover; do the pull-the-plug drill with paper positions. | R7.11 |
 | T7.10 | P7 | Put the 12-month review in your calendar as a recurring review (not a phase item; [README §10](README.md#10-standing-operations-recurring-outside-the-phases)): keep only sleeves with positive live net P&L, live Sharpe > 0.5 and beating the benchmark. | R7.05 |
 | T7.11 | P7 | Provision the egress VM (free tier where available, else a small paid VM in Sydney) and allow-list its IP on every live key. | R7.14 |
+| T7.12 | P7 | Approve the **go-live pack** (D16 → Go-live preflight → Settings pack): the risk values, L0 ceilings, sleeves and manifests the agents seeded (T2.01, T2.02, T2.05), in one C3 approval before the first funding. | R7.17 |
+| T7.13 | P7 | Choose the go-live **runtime host** (workstation, home server or Sydney cloud VM) and the cloud options (Vercel for the web app, Supabase cloud for the database); default: stay on the workstation. The agent prepares a one-page comparison first. | R7.18 · [18 §5](../18-platform-and-deployment.md#5-deployment-modes) |
+| T7.14 | P7 | Move the age identities onto a **YubiKey** before live keys exist (moved here from T0.03), following the agent's step-by-step instructions. | R7.19 · [18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode) |
 | T8.01 | P8 | **Decide whether to build MCP** (decision gate above). | — |
 | T8.02 | P8 | Configure your MCP client (Claude Desktop/Code) with the server and a scoped token. | R8.02 |
-| T8.03 | P8 | Choose MCP token scopes and expiry per client (1d/7d/30d/1y/custom/indefinite with warning); MCP orders always need your approval. | R8.04, R8.08 |
 <!-- kanban:user-register:end -->
 
 ## 7. Traceability

@@ -64,7 +64,7 @@ With your real keys from P0-T007 in the secrets file, the LiteLLM gateway built 
 ## ToDo
 
 - [ ] Confirm P0-T007 is done and the values are in the secrets file (`./kanban preflight P0-T068` inside `sops exec-env`).
-- [ ] Write `tools/smoke/llm_live.py` (calls via LiteLLM only, fixed prompts, prints status + cost + model, never keys).
+- [ ] Write the live smoke as an ignored-by-default Rust test (`cargo test -p mt-obs --test llm_live -- --ignored`, calls via LiteLLM only, fixed prompts, prints status + cost + model, never keys).
 - [ ] Run it; collect the `audit.llm_call` rows (hashes/ids only) and the spend metric delta.
 - [ ] Run the budget-fallback case with the throwaway test role, then delete that virtual key.
 - [ ] Log results here (no values) and file a bug for any failure.

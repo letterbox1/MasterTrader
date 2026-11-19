@@ -4,7 +4,7 @@ kind: task
 title: Check Nautilus Rust live-node adapter readiness per venue (Binance, Bybit, IBKR)
 phase: 2
 type: RESEARCH
-status: backlog
+status: ready
 priority: high
 size: S
 severity: ""

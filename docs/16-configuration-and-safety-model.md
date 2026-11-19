@@ -254,6 +254,7 @@ See [18](18-platform-and-deployment.md). Changing the mode is an OPS task; loose
 | `db.region` | `ap-southeast-2` (Sydney) | Must match the primary engine region |
 | `db.read_replica_regions` | `[]` | Cloud only; dashboards and reports, never the order path |
 | `db.bars_hot_months` | Workstation: unlimited; cloud: 24 (1m bars) | Older bars move to Parquet; `pit` reads both |
+| `db.partitions_ahead_months` | 3 | Monthly bar partitions created this far ahead (P0-T072) |
 | `db.bars_1s_hot_days` | 90 | 1s bars older than this live only in the Parquet catalog (same as the hot NVMe window) |
 | `supabase.data_api` / `supabase.realtime` | `off` / `off` | The browser reads only through `mt-api` |
 | `web.host` | `local` | `local` (Caddy) \| `vercel` |

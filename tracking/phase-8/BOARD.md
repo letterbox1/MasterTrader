@@ -33,11 +33,11 @@ _None._
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P8-T001](tasks/P8-T001-decision-gate.md) | Decide whether to build MCP (decision gate) | USER | critical | XS | user | — |
-| [P8-T002](tasks/P8-T002-scoped-mcp-tokens.md) | Scoped, revocable MCP tokens and the `mcp` principal in mt_api | BUILD | critical | M | agent | P8-T001, P0-T032, P0-T033, P0-T034, P0-T035 |
-| [P8-T003](tasks/P8-T003-mt-mcp-server-skeleton.md) | `mt_mcp` server: transports, mt_api client and OpenAPI-generated tool schemas | BUILD | critical | L | agent | P8-T002, P0-T014, P0-T032 |
-| [P8-T004](tasks/P8-T004-tool-registry-never-exposed.md) | Tool registry and never-exposed filter in mt_api (`/mcp/tools`, `mcp.tool.set`) | BUILD | critical | M | agent | P8-T002, P0-T035 |
+| [P8-T002](tasks/P8-T002-scoped-mcp-tokens.md) | Scoped, revocable MCP tokens and the `mcp` principal in mt-api | BUILD | critical | M | agent | P8-T001, P0-T032, P0-T033, P0-T034, P0-T035 |
+| [P8-T003](tasks/P8-T003-mt-mcp-server-skeleton.md) | `mt-mcp` server: transports, mt-api client and OpenAPI-generated tool schemas | BUILD | critical | L | agent | P8-T002, P0-T014, P0-T032 |
+| [P8-T004](tasks/P8-T004-tool-registry-never-exposed.md) | Tool registry and never-exposed filter in mt-api (`/mcp/tools`, `mcp.tool.set`) | BUILD | critical | M | agent | P8-T002, P0-T035 |
 | [P8-T005](tasks/P8-T005-mcp-order-policy.md) | MCP order policy: every order creates your approval card, confirmation mapping (`mcp.policy.set`) | BUILD | critical | L | agent | P8-T004, P2-T020, P2-T033, P2-T035, P2-T038, P2-T039 |
-| [P8-T006](tasks/P8-T006-mcp-response-guard.md) | MCP response guard in mt_api: provenance filter, PII redaction, secret scrub and untrusted-text wrapping | BUILD | critical | M | agent | P8-T002, P0-T025, P4-T019, P4-T025 |
+| [P8-T006](tasks/P8-T006-mcp-response-guard.md) | MCP response guard in mt-api: provenance filter, PII redaction, secret scrub and untrusted-text wrapping | BUILD | critical | M | agent | P8-T002, P0-T025, P4-T019, P4-T025 |
 | [P8-T007](tasks/P8-T007-mcp-call-audit.md) | MCP call audit: `audit.command` source=mcp and WORM `audit.mcp_call` for every call | BUILD | critical | M | agent | P8-T002, P0-T029, P0-T030, P0-T031, P0-T037, P0-T046 |
 | [P8-T008](tasks/P8-T008-tools-read-analyse.md) | Read & analyse tool group | BUILD | high | M | agent | P8-T003, P8-T004, P8-T006, P8-T007, P2-T020, P2-T036, P2-T117, P4-T043 |
 | [P8-T009](tasks/P8-T009-tools-agents.md) | Talk-to-agents tool group (M8 analysis, M9 memory, M10 `anomaly.explain`) | BUILD | high | M | agent | P8-T003, P8-T004, P8-T006, P8-T007, P6-T007, P6-T012, P6-T015, P4-T032, P0-T042 |
@@ -50,7 +50,7 @@ _None._
 | [P8-T016](tasks/P8-T016-d17-mcp-console.md) | D17 MCP Console | BUILD | high | L | agent | P8-T002, P8-T004, P8-T005, P8-T007, P8-T014, P8-T015, P0-T049, P0-T050 |
 | [P8-T017](tasks/P8-T017-mcp-runbook-client-guide.md) | MCP incident runbook and client setup guide | DOC | medium | S | agent | P8-T015, P8-T016, P8-T031, P8-T032 |
 | [P8-T018](tasks/P8-T018-configure-mcp-client.md) | Generate the token pepper and configure your MCP client with the server and a scoped token | USER | high | XS | user | P8-T015, P8-T016, P8-T017 |
-| [P8-T019](tasks/P8-T019-choose-mcp-policy.md) | Choose token scopes and expiry per client and enable the write tool groups you want | USER | high | XS | user | P8-T016, P8-T018 |
+| [P8-T019](tasks/P8-T019-choose-mcp-policy.md) | Seed the MCP token and tool defaults: read-only scopes, write tool groups off, expiry rules per 16 §2.12 | BUILD | high | S | agent | P8-T002, P8-T004, P8-T016 |
 | [P8-T020](tasks/P8-T020-verify-auth-transport.md) | Auth + transport tests: tokens hashed and shown once, instant revocation, expiry, transports, every call audited | VERIFY | high | M | agent | P8-T002, P8-T003, P8-T007, P8-T015, P8-T031, P8-T032 |
 | [P8-T021](tasks/P8-T021-verify-bypass-m11-approve.md) | Bypass tests: no MCP order can skip M11 or its approval card; MCP can't call `approval.*` or `mcp.*` | VERIFY | critical | M | agent | P8-T005, P8-T010, P8-T011, P8-T012, P8-T014 |
 | [P8-T022](tasks/P8-T022-verify-c3-loosening.md) | C3 tests: every loosening reachable from MCP needs Telegram + TOTP + cool-down; MCP tightening (L0 included) is instant | VERIFY | critical | S | agent | P8-T005, P8-T011, P8-T012 |

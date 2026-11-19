@@ -36,16 +36,16 @@ _None._
 |---|---|---|---|---|---|---|
 | [P5-T002](tasks/P5-T002-shamir-seed-backup-estate-letter.md) | Back up the vault seed with Shamir (SLIP-39) and write the sealed estate letter | USER | high | S | user | P5-T001 |
 | [P5-T003](tasks/P5-T003-rpc-provider-accounts.md) | Add the fallback RPC provider accounts and restrict the RPC keys in sops | USER | high | XS | user | P0-T010 |
-| [P5-T004](tasks/P5-T004-approve-hot-identity-burner-keys.md) | Approve creation of hot, identity and burner keys in the signer and fund minimal floats | USER | critical | S | user | P5-T065, P5-T013, P5-T014, P5-T015, P5-T017, P5-T021 |
+| [P5-T004](tasks/P5-T004-approve-hot-identity-burner-keys.md) | Confirm the signer limits, approve creation of hot, identity and burner keys and fund minimal floats | USER | critical | S | user | P5-T065, P5-T050, P2-T035, P5-T013, P5-T014, P5-T015, P5-T017, P5-T021 |
 | [P5-T005](tasks/P5-T005-register-all-addresses.md) | Register every address and account you own with role and investment/trading tag | USER | high | S | user | P5-T001, P5-T021, P5-T050, P5-T067, P3-T042 |
 | [P5-T006](tasks/P5-T006-sign-first-mandates.md) | Sign the first claim mandates (C3) | USER | high | XS | user | P5-T043, P5-T048, P5-T004 |
-| [P5-T007](tasks/P5-T007-set-disposal-rule-ev-hurdle.md) | Set the disposal rule and EV hurdle | USER | medium | XS | user | P5-T040, P5-T045 |
+| [P5-T007](tasks/P5-T007-set-disposal-rule-ev-hurdle.md) | Seed the disposal rule and EV hurdle from the 08/16 defaults | BUILD | medium | XS | agent | P5-T040, P5-T045 |
 | [P5-T008](tasks/P5-T008-work-task-queue.md) | Work the task queue: follow communities, do social tasks yourself, review ICOs | USER | medium | S | user | P5-T029, P5-T030, P5-T047, P5-T049 |
-| [P5-T009](tasks/P5-T009-p5-schemas-migrations.md) | Phase 5 schemas and Alembic migrations (curation, M4, wallets) | BUILD | critical | M | agent | P0-T024, P0-T025, P3-T012, P3-T038 |
+| [P5-T009](tasks/P5-T009-p5-schemas-migrations.md) | Phase 5 schemas and Supabase SQL migrations (curation, M4, wallets) | BUILD | critical | M | agent | P0-T024, P0-T025, P3-T012, P3-T038 |
 | [P5-T010](tasks/P5-T010-worm-mandate-execlog-ledger-income.md) | WORM tables: mandates, exec log and signer ledger | BUILD | critical | M | agent | P5-T009, P0-T029, P0-T030, P0-T037 |
-| [P5-T011](tasks/P5-T011-p5-contracts-nats-api.md) | Phase 5 contracts: NATS subjects, mt_api commands/queries and WebSocket topics | BUILD | high | M | agent | P5-T009, P0-T034, P0-T035, P0-T036, P1-T004 |
+| [P5-T011](tasks/P5-T011-p5-contracts-nats-api.md) | Phase 5 contracts: NATS subjects, mt-api commands/queries and WebSocket topics | BUILD | high | M | agent | P5-T009, P0-T034, P0-T035, P0-T036, P1-T004 |
 | [P5-T012](tasks/P5-T012-custody-tier-config.md) | Custody tiers and wallet/signer/gas limits config (signing disabled until you confirm) | BUILD | critical | M | agent | P5-T009, P2-T010, P2-T019 |
-| [P5-T013](tasks/P5-T013-mt-signer-core-intent-api.md) | mt_signer core: intent API, caller auth, key loading, allow-lists, caps and ledger | BUILD | critical | L | agent | P5-T010, P5-T012, P2-T031 |
+| [P5-T013](tasks/P5-T013-mt-signer-core-intent-api.md) | mt-signer core (Rust): intent API, caller auth, key loading, allow-lists, caps and ledger | BUILD | critical | L | agent | P5-T010, P5-T012, P2-T031 |
 | [P5-T014](tasks/P5-T014-signer-evm-builders-hard-blocks.md) | Signer EVM plug-in: builders, decoders and hard blocks | BUILD | critical | L | agent | P5-T013 |
 | [P5-T015](tasks/P5-T015-signer-solana-builders-durable-nonce.md) | Signer Solana plug-in: builders, decoders, hard blocks and durable-nonce rules | BUILD | critical | L | agent | P5-T013 |
 | [P5-T016](tasks/P5-T016-signer-simulation-hooks.md) | Simulation hooks: Anvil fork and simulateTransaction with balance-diff analysis | BUILD | critical | M | agent | P5-T014, P5-T015 |
@@ -54,7 +54,7 @@ _None._
 | [P5-T019](tasks/P5-T019-costgate-fee-samplers-formulas.md) | On-chain cost gate: fee samplers and cost formulas | BUILD | high | M | agent | P5-T018, P3-T010 |
 | [P5-T020](tasks/P5-T020-costgate-policies-budgets.md) | On-chain cost gate: gas windows, budgets and allow/wait/reject verdicts | BUILD | high | M | agent | P5-T019, P5-T012 |
 | [P5-T021](tasks/P5-T021-wallet-registry-proof-of-control.md) | Wallet registry with proof of control, register/tag commands | BUILD | high | M | agent | P5-T009, P5-T011, P5-T012, P5-T067, P3-T012 |
-| [P5-T022](tasks/P5-T022-wallet-indexer-aggregators.md) | wallet-indexer: read-only balance and position aggregators | BUILD | high | L | agent | P5-T021, P5-T018, P3-T011 |
+| [P5-T022](tasks/P5-T022-wallet-indexer-aggregators.md) | wallet-indexer (mt-treasury): read-only balance and position aggregators | BUILD | high | L | agent | P5-T021, P5-T018, P3-T011 |
 | [P5-T023](tasks/P5-T023-transfer-classifier-journal-tagging.md) | Transfer classifier: internal tagging, airdrop receipts and approval events into M18 | BUILD | high | M | agent | P5-T022, P3-T017, P3-T018 |
 | [P5-T024](tasks/P5-T024-wallet-reconciliation-rotki.md) | Wallet reconciliation: daily vs journal, monthly vs rotki | BUILD | high | M | agent | P5-T023, P3-T034 |
 | [P5-T025](tasks/P5-T025-monitors-approvals-nonce-authority.md) | Monitors: token approvals and nonce authority | BUILD | critical | M | agent | P5-T023, P5-T013, P1-T045 |
@@ -76,7 +76,7 @@ _None._
 | [P5-T041](tasks/P5-T041-decision-engine-fresh-launch-reject.md) | Decision engine: reject / task / watch / auto-claim with fresh-launch default-reject | BUILD | critical | M | agent | P5-T040, P5-T038, P5-T029 |
 | [P5-T042](tasks/P5-T042-never-automated-policy-guard.md) | Never-automated policy guard enforced server-side at every layer | BUILD | critical | M | agent | P5-T011, P5-T014, P5-T015 |
 | [P5-T043](tasks/P5-T043-mandates-eligibility-checker.md) | Mandates (C3 create, C1 revoke, expiry) and public-address eligibility checker | BUILD | critical | M | agent | P5-T010, P5-T011, P5-T012, P5-T042, P2-T035 |
-| [P5-T044](tasks/P5-T044-claim-executor-airdrop-exec.md) | Claim executor (airdrop-exec): mandate → cost gate → simulation → signer → journal | BUILD | critical | L | agent | P5-T043, P5-T016, P5-T020, P5-T041, P5-T042, P5-T017 |
+| [P5-T044](tasks/P5-T044-claim-executor-airdrop-exec.md) | Claim executor (airdrop-exec, mt-airdrop-exec): mandate → cost gate → simulation → signer → journal | BUILD | critical | L | agent | P5-T043, P5-T016, P5-T020, P5-T041, P5-T042, P5-T017 |
 | [P5-T045](tasks/P5-T045-burner-first-identity-disposal-rule.md) | Burner-first and identity flow, genuine-use tasks and disposal rule (manual-sale task until P7) | BUILD | high | M | agent | P5-T044, P5-T029, P5-T020 |
 | [P5-T046](tasks/P5-T046-campaign-records-dossiers-income-journal.md) | Campaign records, project dossiers and airdrop/staking income journal links | BUILD | high | M | agent | P5-T010, P5-T023, P5-T044, P3-T008, P3-T011 |
 | [P5-T047](tasks/P5-T047-community-curation-discord-delivery.md) | Community curation: official invites, follow channel, leave-when and Discord delivery verification | BUILD | high | M | agent | P5-T029, P5-T034, P5-T031, P4-T020 |
@@ -92,12 +92,12 @@ _None._
 | [P5-T057](tasks/P5-T057-verify-depeg-exploit-simulations.md) | Depeg and exploit simulations raise alerts and urgent tasks (no automated reduce before P6) | VERIFY | high | S | agent | P5-T025, P5-T026, P5-T027 |
 | [P5-T058](tasks/P5-T058-verify-kill-switch-freeze-sweep.md) | Kill switch drill: auto-claims frozen and hot balances swept | VERIFY | critical | S | agent | P5-T028, P5-T044, P5-T065 |
 | [P5-T059](tasks/P5-T059-verify-wallet-view-journal-recon-week.md) | Wallet view reconciles with the journal for a test week | VERIFY | high | S | agent | P5-T024, P5-T005, P5-T050, P5-T068 |
-| [P5-T060](tasks/P5-T060-verify-e2e-f8-airdrop-pipeline.md) | End-to-end F8 scenarios: scam rejected with reasons, task, watch and auto-claim | VERIFY | high | M | agent | P5-T033, P5-T041, P5-T044, P5-T045, P5-T046, P5-T048, P5-T068 |
+| [P5-T060](tasks/P5-T060-verify-e2e-f8-airdrop-pipeline.md) | End-to-end F8 scenarios: scam rejected with reasons, task, watch and auto-claim | VERIFY | high | M | agent | P5-T033, P5-T041, P5-T044, P5-T045, P5-T046, P5-T048 |
 | [P5-T061](tasks/P5-T061-verify-e2e-f10-curation-delivery.md) | End-to-end F10 curation loop and Discord delivery test | VERIFY | high | S | agent | P5-T030, P5-T047, P5-T049, P0-T002, P0-T008 |
 | [P5-T062](tasks/P5-T062-verify-stress-failure-injection.md) | Stress and failure injection: RPC quotas, signer/Anvil/Postgres down, restarts mid-claim | VERIFY | high | M | agent | P5-T018, P5-T022, P5-T028, P5-T044, P5-T030 |
-| [P5-T063](tasks/P5-T063-run-two-weekly-digests-fp-review.md) | Run two weekly digests and review rejected-with-reasons for false positives | RUN | medium | S | agent | P5-T030, P5-T041, P5-T047, P5-T068 |
+| [P5-T063](tasks/P5-T063-run-two-weekly-digests-fp-review.md) | Run two weekly digests and review rejected-with-reasons for false positives | RUN | medium | S | agent | P5-T030, P5-T041, P5-T047 |
 | [P5-T064](tasks/P5-T064-phase-5-exit-demo.md) | Phase 5 exit demo | VERIFY | critical | M | agent | P5-T001, P5-T002, P5-T003, P5-T004, P5-T005, P5-T006, P5-T007, P5-T008, P5-T051, P5-T052, P5-T053, P5-T054, P5-T055, P5-T056, P5-T057, P5-T058, P5-T059, P5-T060, P5-T061, P5-T062, P5-T063, P5-T065, P5-T066, P5-T068, P5-T069 |
-| [P5-T065](tasks/P5-T065-review-and-confirm-the-wallet-signer-and-gas-lim.md) | Review and confirm the wallet, signer and gas limits to enable signing | USER | critical | S | user | P5-T012, P5-T050, P2-T035 |
+| [P5-T065](tasks/P5-T065-review-and-confirm-the-wallet-signer-and-gas-lim.md) | Seed the wallet, signer and gas limits from 16 §2.7 (mainnet signing stays off until P5-T004) | BUILD | critical | XS | agent | P5-T012, P5-T011 |
 | [P5-T066](tasks/P5-T066-sell-claimed-airdrop-tokens-yourself-when-the-di.md) | Sell claimed airdrop tokens yourself when the disposal task arrives (until the P7 gates) | USER | medium | S | user | P5-T045, P5-T049, P5-T030 |
 | [P5-T067](tasks/P5-T067-proof-of-control-challenge-issue-one-time-challe.md) | Proof-of-control challenge: issue one-time challenges and verify wallet-app signatures or self-transfers | BUILD | high | M | agent | P5-T009, P5-T011 |
 | [P5-T068](tasks/P5-T068-live-read-only-check-with-your-keys-helius-alche.md) | Live read-only check with your keys: Helius, Alchemy, GoPlus and CryptoRank on registered addresses | VERIFY | high | S | agent | P0-T010, P5-T003, P5-T005, P5-T018, P5-T022, P5-T032, P5-T035, P5-T036 |
@@ -107,7 +107,7 @@ _None._
 
 _None._
 
-## Bugs & gaps (0 open / 17 total)
+## Bugs & gaps (0 open / 18 total)
 
 | ID | Severity | Title | Status | Found in |
 |---|---|---|---|---|
@@ -128,3 +128,4 @@ _None._
 | [P5-B012](bugs/P5-B012-ev-hurdle-default-undefined.md) | S4 | EV hurdle default refers to a treasury yield that 13 §5 does not define | done | docs/08-airdrops-and-token-launches.md §Expected value gate |
 | [P5-B013](bugs/P5-B013-tenderly-free-tier-contradiction.md) | S4 | Tenderly free tier: "120K simulations/month" (research) vs "no simulation API" (06, 13) | done | docs/research/airdrops-rugpull-discord.md §Safety sources |
 | [P5-B014](bugs/P5-B014-telegram-buttons-missing-details.md) | S4 | Telegram task buttons in mobile-and-telegram.md omit Details | done | docs/ui/mobile-and-telegram.md §3 (Tasks row) |
+| [P5-B018](bugs/P5-B018-ev-time-value-and-haircut-defaults-unspecified.md) | S4 | EV time value and default haircut have no documented default | done | P5-T007 |

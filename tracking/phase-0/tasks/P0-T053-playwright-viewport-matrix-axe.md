@@ -25,7 +25,7 @@ doc_sync: [DESIGN.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -112,3 +112,4 @@ CI runs Playwright across the full DESIGN §6.8 matrix (33 viewports, portrait +
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; matrix runs against the Supabase CLI stack + compose with the seeded test user)

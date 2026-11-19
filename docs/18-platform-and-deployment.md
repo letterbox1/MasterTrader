@@ -63,7 +63,7 @@ This doc is canonical for **which language each service is written in, where eac
 | MT5 bridge (optional, Windows VPS) and the Hummingbot adapter (M13) | The `MetaTrader5` package and Hummingbot are Python-only. Both reach venues only through `mt-api` / `mt-risk` like every other client |
 | `mt_airdrop` (discovery and scoring), `mt_curation`, `mt_social` | Python data and LLM tooling; anything that signs goes through the Rust signer |
 
-**Rule:** Python services never place orders or sign. They publish to NATS or call `mt-api`, so every order still passes `mt-risk`, and research still reads only through `pit(as_of)` (the Python binding of the Rust implementation).
+**Rule:** Python services never place orders or sign. They publish to NATS or call `mt-api`, so every order still passes `mt-risk`, and research still reads only through `pit(as_of)` (the Python binding of the Rust implementation). Python services log and write audit rows through `mt_store.obs`, the same PyO3 module's binding of `mt-obs`, so the hash chain has one implementation.
 
 ### 2.3 Third-party services (any language, run as pinned containers)
 
@@ -114,6 +114,7 @@ pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U). **
 
 - `pit(as_of)` stays the only research read path; the CI guard (no direct table reads in research code) covers Rust and Python.
 - WORM is unchanged ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)): an offline `worm_owner` role owns the WORM tables, app roles are INSERT/SELECT only, blocking triggers, per-row hash chain, daily externally anchored seal.
+- WORM DDL (migrations tagged `-- mt:worm`) is applied by a separate step that connects as `worm_owner` with the offline credential, not by the routine `supabase migration up` (U: whether the CLI can run a migration subset as another role; otherwise `mt worm migrate` runs them with `psql`).
 - **Cloud caveat:** on Supabase cloud the platform operator holds the real superuser. That can't stop a privileged operator from altering rows, so the external seal is what proves tampering; it's unchanged and runs in every mode.
 
 ### 4.5 Access rules
@@ -126,14 +127,15 @@ pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U). **
 
 - **Supabase Auth** replaces the hand-built login: your one account, password plus **TOTP MFA** (enrolment required; sign-ups disabled). Passkeys if Supabase supports them as MFA by then (U).
 - `mt-api` verifies the Supabase JWT (asymmetric signing keys, JWKS) and requires the MFA level `aal2` for every command.
-- **Telegram (bot and Mini App):** Telegram can't carry a Supabase session. `mt-api` verifies the Telegram `initData` signature for your one linked Telegram user, and asks for a TOTP code (checked against the same Supabase MFA factor) before C3 actions, then issues a short-lived command session at `aal2` strength (default 15 min). Same C0–C3 rules as the web.
+- **Telegram (bot and Mini App):** Telegram can't carry a Supabase session. `mt-api` verifies the Telegram `initData` signature for your one linked Telegram user, and asks for a TOTP code (checked against the same Supabase MFA factor (U); if Supabase can't verify a code server-side outside a browser session, `mt-api` verifies it against a separate Telegram TOTP factor you enrol once) before C3 actions, then issues a short-lived command session at `aal2` strength (default 15 min). Same C0–C3 rules as the web.
+- **No recovery codes:** Supabase Auth has none. Enrol a second TOTP factor on another device as your backup; if both are lost, the break-glass `mtctl auth reset-mfa` on the workstation (local shell, offline `worm_owner`-style credential) resets them and is audited.
 - C0–C3 confirmations, preview tokens, the session limits in [16 §2.14](16-configuration-and-safety-model.md#214-platform--operations) and the break-glass `mtctl` CLI are unchanged.
 
 ### 4.7 Backups
 
 | Mode | Backups |
 |---|---|
-| Workstation | pgBackRest against the Supabase Postgres container (WAL archive, nightly incremental, weekly full) + restic off-site, as before |
+| Workstation | pgBackRest (or WAL-G) in a sidecar container sharing the Postgres data volume, fed by `archive_command`: the Supabase Postgres image doesn't ship pgBackRest (U: confirm the sidecar setup). WAL archive, nightly incremental, weekly full, + restic off-site, as before |
 | Supabase cloud | Supabase's managed daily backups; point-in-time recovery is a paid add-on (USER decision). Our own nightly logical dump to restic still runs, so recovery never depends on one provider |
 | Every mode | Monthly restore test and the monthly immutable WORM export, unchanged |
 

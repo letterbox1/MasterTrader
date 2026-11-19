@@ -13,7 +13,7 @@ claimed_by: ""
 depends_on: [P0-T031, P0-T037]
 requirements: [R0.N7, R0.07]
 roadmap_todos: [T0.67]
-modules: [M17, mt_obs, mt_store]
+modules: [M17, mt-obs, mt-store]
 dashboards: []
 tools: [git, cargo, supabase, docker, just]
 mcp: []
@@ -63,7 +63,7 @@ A repeatable benchmark (`just wormbench`) proves the WORM write-path SLO on the 
 ## ToDo
 
 - [ ] Write the Rust benchmark `crates/mt-obs/benches/worm_insert.rs` (tokio writers, `hdrhistogram`, phase orchestration) and `just wormbench`.
-- [ ] Add the static check (`tests/worm/test_no_seal_locks.py`) for seal/verify lock usage and the writer API.
+- [ ] Add the static check (`crates/mt-obs/tests/no_seal_locks.rs`, a source scan) for seal/verify lock usage and the writer API.
 - [ ] Run phases (a)–(d) on the workstation against a scratch DB; capture histograms and Grafana screenshots.
 - [ ] Add the CI smoke variant (2 min, logged, not gated).
 - [ ] File a bug for any phase over the SLO (do not relax the target).

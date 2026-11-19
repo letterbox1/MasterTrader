@@ -13,7 +13,7 @@ claimed_by: ""
 depends_on: [P0-T035, P0-T036]
 requirements: [R0.08, R0.12]
 roadmap_todos: [T0.62]
-modules: [mt_api]
+modules: [mt-api]
 dashboards: []
 tools: [git, cargo, supabase, docker]
 mcp: []

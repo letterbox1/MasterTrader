@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-0-fou
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-29
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: waiting on Reddit's decision on the 2026-10-29 Data API access request
@@ -114,3 +114,4 @@ A recorded yes/no decision on Reddit as an optional source, made **before 2026-1
 - 2026-10-29 02:06 · cloud:vm:be04b6ae61f8 · checkpoint: Data API access request submitted 2026-10-29; waiting on Reddit's decision, which decides Reddit in or out (P4-T004)
 - 2026-10-29 00:00 · user · decision: yes (apply). Data API access request submitted 2026-10-29 via the Reddit Help Center bot/app form: personal, non-commercial, read-only; aggregates only, raw text ≤ 24 h, no training, local model only, no third-party AI (commitments recorded in docs/12 §4). Outcome pending; execution of code is on hold until Reddit replies and Reddit is ruled in or out.
 - 2026-10-29 02:06 · cloud:vm:be04b6ae61f8 · blocked: waiting on Reddit's decision on the 2026-10-29 Data API access request
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER (account/decision); no agent task in P0 depends on it)

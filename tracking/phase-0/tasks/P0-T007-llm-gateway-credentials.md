@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-0-foundations.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ LiteLLM has what it needs for its routes: an Anthropic API key with a monthly sp
 ## Requirements
 
 - Anthropic Console: workspace `mastertrader`, API key scoped to it, **monthly spend limit** set at or slightly above the gateway's monthly cap (log the number).
-- Custom endpoint: base URL + key, OpenAI-compatible, reachable from the host (log the hostname only).
+- Custom endpoint: base URL + key, OpenAI-compatible, reachable from the workstation (log the hostname only).
 - Budgets are configurable defaults from [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets), not numbers you have to invent: monthly cap **US$40**; daily per-role budgets debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30; over budget → `local-advisor` fallback. Changing one later is a setting (`system.settings.update`; raising it is C3).
 - Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `litellm:` (`anthropic_api_key`, `custom_endpoint_url`, `custom_endpoint_key`). P0-T068 uses the env names `ANTHROPIC_API_KEY`, `MT_CUSTOM_LLM_BASE_URL`, `MT_CUSTOM_LLM_API_KEY` (names only). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
@@ -105,3 +105,4 @@ LiteLLM has what it needs for its routes: an Anthropic API key with a monthly sp
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (now roadmap T0.13 (R0.09, R0.13); budgets = 16 §2.10 defaults (US$40/month, six roles incl. shadow); unblocks live smoke P0-T068 instead of P0-T042; secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (keys); only the late VERIFY P0-T068 depends on it; host → workstation)

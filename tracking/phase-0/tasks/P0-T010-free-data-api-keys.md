@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-0-fou
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,7 +64,7 @@ Free-tier API keys exist for FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGeck
 ## Verification
 
 ### Tests
-- Confirmation: one manual call per key from the host via `sops exec-env` (so keys never hit shell history) returns 200.
+- Confirmation: one manual call per key from the workstation via `sops exec-env` (so keys never hit shell history) returns 200.
 
 ### Scenarios
 - Given a provider changes its free tier, then log it; P1's monthly ToS check (04 standing rules) picks it up.
@@ -104,3 +104,4 @@ Free-tier API keys exist for FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGeck
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (free keys); no P0 task depends on it; host → workstation)
