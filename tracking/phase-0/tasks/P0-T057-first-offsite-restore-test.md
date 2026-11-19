@@ -15,17 +15,17 @@ requirements: [R0.N4, R0.07]
 roadmap_todos: [T0.63]
 modules: [M17]
 dashboards: []
-tools: [docker, pgbackrest, restic, sops]
+tools: [docker, supabase, pgbackrest, restic, sops]
 mcp: []
 env: [PGBACKREST_REPO1_S3_KEY, PGBACKREST_REPO1_S3_KEY_SECRET, PGBACKREST_REPO1_CIPHER_PASS, RESTIC_PASSWORD, B2_ACCOUNT_ID, B2_ACCOUNT_KEY]
-services: [backblaze-b2, postgres, prefect-server]
+services: [backblaze-b2, supabase-postgres, prefect-server]
 branch: p0/P0-T057-first-offsite-restore-test
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-On the real host, the backups are pointed at the real Object-Locked target from P0-T006 for the first time (first full + incremental + WAL; delete probe fails), and then the restore-test flow restores the latest **off-site** backup into a scratch DB, all checks pass (including `audit.verify` against external seals), and the result is visible in D16 Backups — the evidence for exit criterion 3.
+On the always-on workstation stack (self-hosted Supabase, [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path)), the backups are pointed at the real Object-Locked target from P0-T006 for the first time (first full + incremental + WAL; delete probe fails), and then the restore-test flow restores the latest **off-site** backup into a scratch DB, all checks pass (including `audit.verify` against external seals), and the result is visible in D16 Backups — the evidence for exit criterion 3.
 
 ## Context & references
 
@@ -47,11 +47,11 @@ On the real host, the backups are pointed at the real Object-Locked target from 
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
 - Flow: P0-T041; backup config: P0-T039 (built keyless on MinIO)
 - This is the late live check for the backup target (build first, keys last): it carries the env names (values only in the secrets file) and depends on the USER task that provides them.
-- Depends on: P0-T041, P0-T006 (real target + keys), P0-T019 (production host), P0-T022 (secrets on the host)
+- Depends on: P0-T041, P0-T006 (real target + keys, USER), P0-T019 (workstation baseline), P0-T022 (secrets on the workstation). Re-run on the runtime host at the shift (P7-T073).
 
 ## Requirements
 
-- Real target: the production stanza and restic repo point at the P0-T006 buckets (or the append-only rest-server); credentials come from the secrets file, never from the task or logs; the Object Lock delete probe from P0-T006 runs here and must fail.
+- Real target: the workstation stanza and restic repo point at the P0-T006 buckets (or the append-only rest-server); credentials come from the secrets file, never from the task or logs; the Object Lock delete probe from P0-T006 runs here and must fail.
 - Source: off-site repo only (temporarily rename the local spool to prove it's not used).
 - At least one full + one diff + WAL since; target time = now − 5 min.
 - Checks all pass; duration and backup label recorded in `ops.restore_test`; screenshot of D16 Backups.
@@ -59,7 +59,7 @@ On the real host, the backups are pointed at the real Object-Locked target from 
 
 ## ToDo
 
-- [ ] Point the production stanza/restic repo at the real target; run the first full + incremental; run the delete probe (must fail).
+- [ ] Point the workstation stanza/restic repo at the real target; run the first full + incremental; run the delete probe (must fail).
 - [ ] Trigger `system.restore.test` from D16 (C1).
 - [ ] Watch the Prefect run; collect logs (no secrets).
 - [ ] Record results here and attach the D16 screenshot.
@@ -68,10 +68,10 @@ On the real host, the backups are pointed at the real Object-Locked target from 
 ## Verification
 
 ### Tests
-- The restore-test flow checks (row counts, alembic head, pit sample, audit.verify full).
+- The restore-test flow checks (row counts, `supabase_migrations` version, pgTAP invariants, `pit` sample, `audit.verify` full).
 
 ### Scenarios
-- Given the local disk is lost, when restoring from B2 only, then the scratch DB matches production as of the target time.
+- Given the local disk is lost, when restoring from B2 only, then the scratch DB matches the workstation database as of the target time.
 
 ### Stress / failure injection
 - Second run after write burst (above).
@@ -110,3 +110,4 @@ On the real host, the backups are pointed at the real Object-Locked target from 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys-last: now the late live check for the real backup target (after P0-T006) with env names; size S→M; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (runs on the workstation's self-hosted Supabase Postgres (production host → workstation; repeated at the shift, P7-T073); Alembic head → `supabase_migrations` version; keeps USER P0-T006 as the late live check)

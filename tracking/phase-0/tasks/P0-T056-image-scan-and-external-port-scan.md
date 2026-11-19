@@ -69,7 +69,7 @@ CI scans every image in `images.lock` with trivy and grype (fail on fixable CRIT
 
 ### Tests
 - CI job fails on a fixture image with a known fixable CRITICAL (e.g. an old pinned alpine digest).
-- Host scans as above.
+- Workstation scans as above.
 
 ### Scenarios
 - Given a new image digest introduces a fixable CRITICAL CVE, when the PR runs, then CI fails naming the CVE.

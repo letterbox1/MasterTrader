@@ -15,17 +15,17 @@ requirements: [R0.02, R0.07, R0.08, R0.09, R0.10, R0.N7]
 roadmap_todos: [T0.41, T0.24, T0.45]
 modules: [ops, mt_api, M17, M21]
 dashboards: [D16]
-tools: [docker, uv, tc]
+tools: [docker, cargo, supabase, tc, just]
 mcp: []
 env: []
-services: [postgres, nats, loki, litellm, tei-embed, llm-local, minio]
+services: [supabase-postgres, supabase-auth, nats, loki, litellm, tei-embed, llm-local, minio]
 branch: p0/P0-T059-degraded-modes-failure-injection
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,15 +49,15 @@ A scripted chaos/stress run (`tools/chaos/p0.sh`) injects the P0-relevant failur
 
 ## Requirements
 
-- Faults (each: inject → observe → recover → assert): Postgres stopped 5 min (mt-api read-only, 503 on non-Kill writes, D16 loads, Kill ON still works and its record buffers in JetStream `WORM_BUFFER` then drains in order, alert fires, recovery automatic); WORM buffer filled past 80 % of a small test bound (new entries refused, Kill still recorded, alert); NATS stopped 2 min (heartbeats stale, WS snapshot on recovery, KV `kill` preserved); Loki stopped 10 min (no log loss via Vector buffer); LiteLLM budget exhausted + (mock) Anthropic unreachable (fallback to `local-advisor`, marked `fallback_used`); TEI killed (embedding calls fail fast with 503, recover); B2 unreachable 1 h (WAL queues, lag alert, catch-up); clock step +2 s via chrony test (TOTP still valid, alerts on offset); disk 85 % on NVMe (alert).
+- Faults (each: inject → observe → recover → assert): Supabase Postgres (`db` container) stopped 5 min (mt-api read-only, 503 on non-Kill writes, D16 loads, Kill ON still works and its record buffers in JetStream `WORM_BUFFER` then drains in order, alert fires, recovery automatic); WORM buffer filled past 80 % of a small test bound (new entries refused, Kill still recorded, alert); NATS stopped 2 min (heartbeats stale, WS snapshot on recovery, KV `kill` preserved); Loki stopped 10 min (no log loss via Vector buffer); LiteLLM budget exhausted + (mock) Anthropic unreachable (fallback to `local-advisor`, marked `fallback_used`); TEI killed (embedding calls fail fast with 503, recover); B2 unreachable 1 h (WAL queues, lag alert, catch-up); clock step +2 s via chrony test (TOTP and JWT checks still valid, alerts on offset); Supabase Auth stopped 5 min (existing `aal2` tokens keep working until expiry, new logins fail cleanly, `auth: down` on `/system/ready`); disk 85 % on NVMe (alert).
 - Load: 200 commands/s for 10 min → `audit.command` chain valid, p99 command latency < 50 ms (SLO); WS fan-out 50 clients; seal + verify running concurrently.
-- Container restart storm: restart every service once in random order → `docker compose ps` all healthy within 180 s.
+- Container restart storm: restart every service (Supabase stack included) once in random order → `just health` all healthy within 180 s.
 - Results table (fault, expected, observed, recovery time) committed under `docs/runbooks/evidence/p0-chaos-<date>.md`.
 
 ## ToDo
 
 - [ ] Write `tools/chaos/p0.sh` (bash + `docker compose pause/stop`, `tc` for latency where useful).
-- [ ] Run on the host; capture Grafana screenshots and the results table.
+- [ ] Run on the workstation; capture Grafana screenshots and the results table.
 - [ ] File bugs for any deviation.
 - [ ] Update 02 §9.3 with observed P0 behaviour.
 
@@ -106,3 +106,4 @@ A scripted chaos/stress run (`tools/chaos/p0.sh`) injects the P0-relevant failur
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Postgres-down WORM buffer behaviour (16 §3.3), SLOs from 02 §9.2 (17 §D P0-B004) replace provisional targets; deps trimmed; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (faults target the Supabase stack (db and Auth); load/chaos driver in Rust or shell instead of uv; host → workstation)
