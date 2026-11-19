@@ -6,14 +6,14 @@
 | **Duration** | Months 7–10+ (the paper clock started at the end of P2, so P1 sleeves can be ready on entry) |
 | **Depends on** | P2 (gates, risk, engine), P3 (journal/tax + **tax agent's answer**), P5/P6 for strategies that use on-chain or model signals. **Hard-gated** ([17 §E](../17-decisions-register.md#e-ratification-2026-10-22)): the phase opens only after P3 exits (P2 transitively); items that need P5/P6 deliverables carry their own task dependencies |
 | **Unlocks** | P8 (only once the platform is in daily use) |
-| **Modules** | M11 (capital steps, decay monitoring, health checks), M12 (live adapters incl. MT5/cTrader), M16 (live TCA + reconciliation hardening), M18, MasterTradingBot merge |
-| **Containers** | `engine` (live sub-accounts), optional Windows VPS for the MT5 bridge |
+| **Modules** | M11 (capital steps, decay monitoring, health checks), M12 (live adapters incl. MT5/cTrader), M16 (live TCA + reconciliation hardening), M18, MasterTradingBot merge; the go-live pack and the shift to the runtime host ([18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)) |
+| **Containers** | `engine` (live sub-accounts) on the runtime host you choose (default: the workstation); optional Vercel (web app) and Supabase cloud (database); optional Windows VPS for the MT5 bridge |
 | **Dashboards** | All; approvals and mobile polish ([mob](../ui/mobile-and-telegram.md)) |
-| **Primary docs** | [03 §8](../03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [14 §1](../14-strategy-evidence-and-validation.md#1-viability-verdict-set-expectations-before-building) · [14 §6](../14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) · [14 §8](../14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · [12](../12-policy-and-compliance.md) · [07](../07-security-notes.md) |
+| **Primary docs** | [18 §5–9](../18-platform-and-deployment.md#5-deployment-modes) · [03 §8](../03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [14 §1](../14-strategy-evidence-and-validation.md#1-viability-verdict-set-expectations-before-building) · [14 §6](../14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) · [14 §8](../14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · [12](../12-policy-and-compliance.md) · [07](../07-security-notes.md) |
 
 ## 1. Scope
 
-**In:** the paper/HITL period and weekly reviews; gate evaluation per strategy; live sub-accounts and keys; capital steps and kill criteria; live decay monitoring; reconciliation hardening; MT5/cTrader adapters and the MasterTradingBot merge; continuity (UPS, 4G, fail-flat); professional-advice items that must be closed before live; approvals/mobile polish; the D06 Stress tab; scheduling the 12-month review (a recurring calendar review after P7 closes, not a phase item).
+**In:** the paper/HITL period and weekly reviews; gate evaluation per strategy; live sub-accounts and keys; capital steps and kill criteria; live decay monitoring; reconciliation hardening; MT5/cTrader adapters and the MasterTradingBot merge; continuity (UPS, 4G, fail-flat); professional-advice items that must be closed before live; the go-live pack (one approval of the values agents seeded during the build); the runtime host and cloud choice, the hardware key and **the shift** (harden, migrate, deploy, re-verify on the target); approvals/mobile polish; the D06 Stress tab; scheduling the 12-month review (a recurring calendar review after P7 closes, not a phase item).
 
 **Out:** anything that weakens a gate to "get live sooner".
 
@@ -24,6 +24,8 @@
 - **Tax agent has answered investor vs trader-in-business** (T3.01).
 - The venue registry marks each target venue/product `allowed` for you (AUSTRAC re-check < 90 days).
 - Runbooks drilled at least once (kill, keys leaked, server down with open positions, bad data; wallet drained only if a hot/burner wallet exists by then).
+
+**Before the first funding** (inside the phase, not entry criteria): the go-live pack is approved (T7.12), the age identities are on the YubiKey (T7.14), and the shift is done with the full verification suite passing on the target (T7.44). Workstation first, test, then shift.
 
 ## 3. Requirements
 
@@ -43,8 +45,11 @@
 | R7.12 | Approvals and mobile polish: phone flows ≤ 3 taps from cold open; PWA installed | [mob §2](../ui/mobile-and-telegram.md#2-phone-flows-must-be--3-taps-from-a-cold-open) | Phone test |
 | R7.13 | Professional-advice items closed or explicitly deferred (venue products blocked until then) | [12 §6](../12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) | Task log |
 | R7.14 | **Static AU egress:** WireGuard/Tailscale exit node with a fixed IP in Sydney; only that IP allow-listed on every key; broadband and 4G both tunnel to it; tunnel down → fail-flat via venue timers + resting stops | [16 §3.2](../16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) | Failover drill |
-| R7.15 | **Phase 7 state in the API and UI:** capital steps, kill-criteria state, gate reports and weekly reviews exposed through `mt_api` queries/commands and shown in D06/D03 | [02 §7](../02-v1-architecture.md#7-api-contract-mt_api), [D06](../ui/dashboards/D06-risk.md), [D03](../ui/dashboards/D03-strategies.md), [17 §D](../17-decisions-register.md#d-other-decisions) | API tests + Playwright |
+| R7.15 | **Phase 7 state in the API and UI:** capital steps, kill-criteria state, gate reports and weekly reviews exposed through `mt-api` queries/commands and shown in D06/D03 | [02 §7](../02-v1-architecture.md#7-api-contract-mt_api), [D06](../ui/dashboards/D06-risk.md), [D03](../ui/dashboards/D03-strategies.md), [17 §D](../17-decisions-register.md#d-other-decisions) | API tests + Playwright |
 | R7.16 | **D06 Stress tab** (replaces the P2 placeholder, R2.57): replay historical shocks (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) against current positions and policy via `risk.stress.run` (C1), run before live capital | [D06](../ui/dashboards/D06-risk.md), [17 §D](../17-decisions-register.md#d-other-decisions) | Scenario test |
+| R7.17 | **Go-live pack:** the values agents seeded during the build (L0 ceilings and L1–L3 risk policy, sleeves and budgets, first manifests; T2.01, T2.02, T2.05) are shown on one page (D16 → Go-live preflight → Settings pack), each with its default and any change since, and you approve them once (C3) before the first funding. The approval is a WORM row naming the policy and manifest versions; the preflight refuses live mode while the pack is unapproved. Everything stays editable afterwards; loosening is C3 as usual | [17 §G](../17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19), [16 §2](../16-configuration-and-safety-model.md#2-default-values-all-configurable), [D16](../ui/dashboards/D16-system.md) | Preflight refusal test + approval row |
+| R7.18 | **Runtime host and the shift:** you choose where the always-on services run for live money (default: stay on the workstation, `deploy.mode: workstation`) and whether to use the paid options: web app on Vercel (`web.host: vercel`), database on Supabase cloud in Sydney (`db.target: supabase_cloud`). The shift then applies the live hardening profile (LUKS required; SSH keys only, over Tailscale; firewall inbound only on Tailscale; automatic security updates; chrony), migrates the database if it moves (row counts and hash chains checked on every WORM table, seal re-anchored, backups set up), deploys `apps/web` if it moves (`api.exposure: tailnet` by default; `public` is C3), points the egress check at the static IP, and reruns the full verification suite on the target (risk, `pit`, WORM and tax golden tests, dead-man drill, restore test, egress check). Live money starts only after it passes. Engine, dead-man, recorder, NATS, workers and signer never run on Vercel | [18 §5–6](../18-platform-and-deployment.md#5-deployment-modes), [18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path), [16 §2.15](../16-configuration-and-safety-model.md#215-platform-deployment-and-regions), [07 §5](../07-security-notes.md#5-network--host) | Suite run on the target |
+| R7.19 | **Hardware key:** before live keys exist, the host and offline age identities move from the OS keychain onto a YubiKey (`secrets.age_identity_store: yubikey`) and the sops file is re-encrypted to the new recipients; a spare key is recommended | [18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode), [07 §2](../07-security-notes.md#2-secrets) | Decrypt test with the key; keychain identity removed |
 
 ## 4. ToDo sets
 
@@ -60,6 +65,9 @@
 - [ ] **T7.09** `USER` Install the UPS and 4G failover; do the pull-the-plug drill with paper positions. → R7.11
 - [ ] **T7.10** `USER` Put the 12-month review in your calendar as a recurring review (not a phase item; [README §10](README.md#10-standing-operations-recurring-outside-the-phases)): keep only sleeves with positive live net P&L, live Sharpe > 0.5 and beating the benchmark. → R7.05
 - [ ] **T7.11** `USER` Provision the egress VM (free tier where available, else a small paid VM in Sydney) and allow-list its IP on every live key. → R7.14
+- [ ] **T7.12** `USER` Approve the **go-live pack** (D16 → Go-live preflight → Settings pack): the risk values, L0 ceilings, sleeves and manifests the agents seeded (T2.01, T2.02, T2.05), in one C3 approval before the first funding. → R7.17
+- [ ] **T7.13** `USER` Choose the go-live **runtime host** (workstation, home server or Sydney cloud VM) and the cloud options (Vercel for the web app, Supabase cloud for the database); default: stay on the workstation. The agent prepares a one-page comparison first. → R7.18 · [18 §5](../18-platform-and-deployment.md#5-deployment-modes)
+- [ ] **T7.14** `USER` Move the age identities onto a **YubiKey** before live keys exist (moved here from T0.03), following the agent's step-by-step instructions. → R7.19 · [18 §8](../18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)
 
 ### B. Build (`BUILD`, code)
 - [ ] **T7.20** `BUILD` Gate report generator per strategy (all §8 + harness sections, safety drills, paper tracking). → R7.01, R7.02
@@ -68,7 +76,7 @@
 - [ ] **T7.23** `BUILD` Reconciliation hardening (three-way venue/engine/journal at the 16 §2.9 defaults; 24 h "explained" rule; unconfirmed state). → R7.09
 - [ ] **T7.24** `BUILD` MT5 bridge and/or cTrader Open API adapter; MasterTradingBot strategy port. → R7.10
 - [ ] **T7.25** `BUILD` Approvals/mobile polish; PWA install prompts; Telegram Mini App (optional). → R7.12
-- [ ] **T7.26** `BUILD` Phase 7 API and UI: capital-step, kill-state, gate-report and weekly-review queries/commands in `mt_api`; D06/D03 views. → R7.15
+- [ ] **T7.26** `BUILD` Phase 7 API and UI: capital-step, kill-state, gate-report and weekly-review queries/commands in `mt-api`; D06/D03 views. → R7.15
 - [ ] **T7.27** `BUILD` D06 Stress tab + `risk.stress.run` (historical shock replay against current positions and policy). → R7.16
 
 ### C. Ops & config (`OPS`)
@@ -76,6 +84,7 @@
 - [ ] **T7.41** `OPS` Dead-man fail-flat config verified with the 4G link. → R7.11
 - [ ] **T7.42** `OPS` Exit-node tunnel config for broadband and 4G; egress check points at the static IP. → R7.14
 - [ ] **T7.43** `OPS` Windows VPS hardening for the MT5 bridge (if MT5 route): Tailscale-only, MT5 trade-only login, no other secrets. → R7.10
+- [ ] **T7.44** `OPS` **The shift** to the runtime host chosen in T7.13 (after T7.14): live hardening profile, database migration if it moves, web deploy if it moves, egress IP, then the full verification suite on the target; live money only after it passes. → R7.18, R7.04 · [18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)
 
 ### D. Verify & test (`VERIFY`)
 - [ ] **T7.60** `VERIFY` All runbooks drilled (kill, keys leaked, server down with open positions, bad data; wallet drained only if a hot/burner wallet exists). → entry criterion
@@ -93,7 +102,7 @@
 
 ## 5. Deliverables
 
-Gate reports · live sub-accounts · capital-step + kill-criteria automation · decay monitoring · hardened reconciliation · MT5/cTrader adapters · drilled runbooks · weekly review log.
+Approved go-live pack · runtime host shifted, hardened and re-verified · gate reports · live sub-accounts · capital-step + kill-criteria automation · decay monitoring · hardened reconciliation · MT5/cTrader adapters · drilled runbooks · weekly review log.
 
 ## 6. Exit criteria
 
@@ -108,4 +117,6 @@ Gate reports · live sub-accounts · capital-step + kill-criteria automation · 
 |---|---|
 | Live diverges from paper | Kill on shortfall > 2× modelled; small steps; worst-fold validation |
 | Temptation to override | No discretionary overrides; only flatten-and-halt with a reason (14 §4) |
+| Cloud costs grow | Default stays on the workstation (free); Vercel, Supabase cloud and a VM are your choice at T7.13, with costs shown first |
+| The shift breaks something | The full verification suite reruns on the target (T7.44); no live funding until it passes; the workstation setup stays as the fallback |
 | Venue status changes (AUSTRAC, DAF from 9 Apr 2027, ASIC 2:1 order to 23 May 2027) | Quarterly registry re-check; products blocked until reconciled |

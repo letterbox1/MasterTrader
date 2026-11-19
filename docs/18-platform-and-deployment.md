@@ -47,7 +47,8 @@ This doc is canonical for **which language each service is written in, where eac
 | `mt-events` | M3 | `mt_data.events` | Simple REST/feed pollers (USGS, GDACS, NOAA, FIRMS, ReliefWeb, UCDP, Kalshi, Polymarket) |
 | `mt-telegram-bot` | M15 alerts, approvals, `/kill` | python-telegram-bot | teloxide (Bot API). Reading channels is different: see Telethon below |
 | `mt-mcp` | M20 (Phase 8) | `mt_mcp` | Official Rust MCP SDK (`rmcp`); still a thin adapter over `mt-api` |
-| `mt-onchain`, `mt-treasury` (indexer, cost gate), `mt-airdrop-exec` | M4 exec, M22 | Python packages | Chain reads, simulation calls to Anvil, mandates, revokes, sweeps |
+| `mt-onchain` (incl. the cost gate `mt_onchain::costgate`), `mt-treasury` (indexer, hold-and-earn), `mt-airdrop-exec` | M4 exec, M22 | Python packages | Chain reads, simulation calls to Anvil, mandates, revokes, sweeps |
+| `mt-intel-writer` | M2/M3 core-side writer | `mt_data` writer worker | INSERT-only writer for `posture.telegram.*`, `raw.evt.*`, `raw.reg.*`; no model clients, so no Python needed |
 
 ### 2.2 Python (uv workspace, `packages/`): only where necessary
 
@@ -57,7 +58,8 @@ This doc is canonical for **which language each service is written in, where eac
 | `mt_features` (research side), `mt_models` (training), `mt_anomaly` | PyTorch, LightGBM, scikit-learn, Qlib, FinBERT. **Inference** can move to Rust (ONNX via `ort`) when a model is promoted to the engine path (tier A) |
 | `mt_agents`, `mt_memory` | LangGraph, TradingAgents, FinRobot, Hindsight client, RAG tooling |
 | `mt_data` batch flows (Prefect) | Python-only SDKs: OpenBB, edgartools, yfinance, fredapi, sdmx1, Dukascopy/ccxt helpers |
-| `mt_data.text` (`ingest-text`, `nlp`) | Telethon (MTProto, Python-only), trafilatura, crawl4ai, spaCy/FinBERT |
+| `mt_data.text` (`ingest-text`) and `mt_features.text` (`nlp`) | Telethon (MTProto, Python-only), trafilatura, crawl4ai, spaCy/FinBERT |
+| MT5 bridge (optional, Windows VPS) and the Hummingbot adapter (M13) | The `MetaTrader5` package and Hummingbot are Python-only. Both reach venues only through `mt-api` / `mt-risk` like every other client |
 | `mt_airdrop` (discovery and scoring), `mt_curation`, `mt_social` | Python data and LLM tooling; anything that signs goes through the Rust signer |
 
 **Rule:** Python services never place orders or sign. They publish to NATS or call `mt-api`, so every order still passes `mt-risk`, and research still reads only through `pit(as_of)` (the Python binding of the Rust implementation).
@@ -103,9 +105,9 @@ pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U). **
 | Was (TimescaleDB) | Now |
 |---|---|
 | Hypertables | Native range partitioning by month on `market.bar_*`; partitions created ahead by pg_partman where available, otherwise by an `mt-store` partition job scheduled with pg_cron (U: check pg_partman on the target Postgres 17) |
-| Continuous aggregates 1m, 5m, 15m, 1h, 4h, 1D, 1W | `mt-recorder` writes every standard size directly as it builds bars from ticks. Backfills and corrections re-run a rollup job that rebuilds the affected higher sizes from 1m (idempotent, upsert by key) |
+| 1s bars + continuous aggregates 1m, 5m, 15m, 1h, 4h, 1D, 1W | `mt-recorder` writes 1s bars and every standard size directly as it builds bars from ticks. Backfills and corrections re-run a rollup job that rebuilds the affected higher sizes from 1m (idempotent, upsert by key) |
 | `time_bucket` for other sizes | `date_bin()` at read time, inside `pit(as_of)` |
-| Native compression | Raw ticks and L2 already live in the Parquet catalog. Bars older than `db.bars_hot_months` (16 §2.15) are exported to Parquet and dropped from Postgres partitions; `pit(as_of)` reads both transparently. Default: keep all bars in Postgres on the workstation; 24 months of 1m bars in the cloud |
+| Native compression | Raw ticks and L2 already live in the Parquet catalog. Bars older than `db.bars_hot_months` (16 §2.15) are exported to Parquet and dropped from Postgres partitions; `pit(as_of)` reads both transparently. Defaults: 1s bars stay in Postgres for `db.bars_1s_hot_days` (90 days) and then live only in Parquet; 1m and larger stay in Postgres for good on the workstation, 24 months of 1m bars in the cloud |
 
 ### 4.4 Point-in-time and WORM
 

@@ -128,7 +128,7 @@ Each service names its crate (Rust, `crates/`) or package (Python, `packages/`) 
 | `journal` | `mt-journal` (Rust: lot engine, tax, reports) + `mt_journal` (Python, only statement parsers that need a Python-only library) | Journal ingestion, lot engine, tax rules, reports | 3 |
 | `ingest-text` | `mt_data.text` (Python: Telethon is Python-only) | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT, on `scrape` with no DB route: publishes `raw.*` and `posture.telegram.*` only. **Telegram: postures only** (regex extractor → `posture.telegram.*`; never to nlp, RAG or models, F3b) | 4 |
 | `crawl4ai` | crawl4ai | Fallback extractor for JS-rendered pages (trafilatura first); on `scrape`, publishes `raw.text.*` only | 4 |
-| `intel-writer` | `mt_data` writer worker (Python (U): 18 §2 doesn't place it yet) | Core-side writer for scrape outputs: `posture.telegram.*` → `text.telegram_mention` / `text.telegram_posture`, `raw.evt.*` → `text.geo_event`, `raw.reg.*` → regulatory-watch snapshots. No model clients; INSERT-only on its tables | 4 |
+| `intel-writer` | `mt-intel-writer` (Rust, [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) | Core-side writer for scrape outputs: `posture.telegram.*` → `text.telegram_mention` / `text.telegram_posture`, `raw.evt.*` → `text.geo_event`, `raw.reg.*` → regulatory-watch snapshots. No model clients; INSERT-only on its tables | 4 |
 | `rss-bridge` | rss-bridge | Feeds for sites without RSS | 4 |
 | `nlp` | `mt_features.text` (Python) | Relevance gate, entity linking, FinBERT, embeddings → `text.document` | 4 |
 | `ingest-events` | `mt-events` (Rust) | USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP/Kalshi/Polymarket | 4 |
@@ -236,7 +236,7 @@ Table names follow the §4 naming rules (singular, schema-qualified).
 
 ## 6. Messaging (NATS)
 
-**Subject taxonomy** (all payloads are versioned JSON schemas, defined once with the shared Rust types (`mt-core`, (U): crate name not yet in 18 §2.1) and generated as models for the Python services):
+**Subject taxonomy** (all payloads are versioned JSON schemas, defined once with the shared types in the `mt-core` crate, which Python reads through the same PyO3 module as `pit` ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates))):
 
 | Subject | Payload | Producers → consumers |
 |---|---|---|

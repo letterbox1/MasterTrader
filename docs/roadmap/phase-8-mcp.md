@@ -2,18 +2,18 @@
 
 | | |
 |---|---|
-| **Goal** | Talk to and control MasterTrader from Claude (or another MCP client): read and analyse, ask the agents, **trade and adjust positions**, manage strategies, risk and curation, with every action going through `mt_api`, the risk manager and the audit log. |
-| **Duration** | 1–2 weeks (mostly wiring, because the UI and Telegram already use `mt_api`) |
+| **Goal** | Talk to and control MasterTrader from Claude (or another MCP client): read and analyse, ask the agents, **trade and adjust positions**, manage strategies, risk and curation, with every action going through `mt-api`, the risk manager and the audit log. |
+| **Duration** | 1–2 weeks (mostly wiring, because the UI and Telegram already use `mt-api`) |
 | **Depends on** | P2 (commands, risk), P6 (agents, memory); the platform in daily use. **Hard-gated** ([17 §E](../17-decisions-register.md#e-ratification-2026-10-22)): the phase opens only after its prerequisite phases exit and the T8.01 decision |
 | **Unlocks** | — |
-| **Modules** | M20 `mt_mcp` |
+| **Modules** | M20 `mt-mcp` |
 | **Containers** | `mcp` |
 | **Dashboards** | [D17](../ui/dashboards/D17-mcp-console.md) MCP Console |
 | **Primary docs** | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4](../02-v1-architecture.md#74-telegram--mcp) · [07 §6](../07-security-notes.md#6-application-controls) |
 
 ## 1. Scope
 
-**In:** the MCP server over `mt_api` (stdio locally, or Streamable HTTP via the `mcp` container behind Caddy, Tailscale only, with token auth); tools for read & analyse, agents, trade & adjust, strategies, risk, curation; safeguards; D17.
+**In:** the MCP server over `mt-api` (stdio locally, or Streamable HTTP via the `mcp` container behind Caddy, Tailscale only, with token auth); tools for read & analyse, agents, trade & adjust, strategies, risk, curation; safeguards; D17.
 
 **Out:** everything on the never-exposed list ([16 §2.12](../16-configuration-and-safety-model.md#212-mcp-phase-8)): withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key/token management, `approval.*`, `mcp.*`, restore/delete, audit writes.
 
@@ -25,7 +25,7 @@
 
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
-| R8.01 | Thin adapter over `mt_api` (official `mcp` SDK or FastMCP); no new business logic | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) | Code review |
+| R8.01 | Thin adapter (`mt-mcp`, Rust) over `mt-api`, built on the official Rust MCP SDK (`rmcp`); no new business logic | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) | Code review |
 | R8.02 | Transport stdio locally, or Streamable HTTP via the `mcp` container on the internal network behind Caddy, Tailscale only; scoped token auth; tokens revocable (details in R8.08) | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted), [02 §7](../02-v1-architecture.md#7-api-contract-mt_api) | Auth tests |
 | R8.03 | Tool groups: read & analyse; talk to agents (M8/M9/M10, incl. `anomaly.explain`); trade & adjust (place/modify/cancel, adjust/close, stops/targets, scale, flatten); strategies; risk (view, tighten, loosen out-of-band, kill); curation; queries include `/bots`, `/approvals` and `source=` filters | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) | Tool tests |
 | R8.04 | **Every MCP order goes through M11**; MCP orders **always** need your approval card (Telegram/web, TTL 5 min, expiry = reject; no skip-approval option); C0 reads, C1 per token scope, C3 via Telegram + TOTP as usual; MCP can never approve | [03 M20](../03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted), [SPEC NN2](../../SPEC.md#non-negotiable-requirements) | Bypass tests |
@@ -44,10 +44,10 @@
 - [ ] **T8.03** `USER` Choose MCP token scopes and expiry per client (1d/7d/30d/1y/custom/indefinite with warning); MCP orders always need your approval. → R8.04, R8.08
 
 ### B. Build (`BUILD`, code)
-- [ ] **T8.20** `BUILD` `mt_mcp` server, tool schemas generated from `mt_api` OpenAPI (incl. `anomaly.explain`, `/bots`, `/approvals`, `source=` filters), token auth. → R8.01–R8.03
+- [ ] **T8.20** `BUILD` `mt-mcp` server, tool schemas generated from `mt-api` OpenAPI (incl. `anomaly.explain`, `/bots`, `/approvals`, `source=` filters), token auth. → R8.01–R8.03
 - [ ] **T8.21** `BUILD` MCP policy layer: confirmation mapping (C0 reads, C1 by scope, every order → approval card with TTL 5 min, C3 out of band), never-exposed filter (16 §2.12), rate limits and response cap. → R8.04–R8.06, R8.10
 - [ ] **T8.22** `BUILD` D17 MCP Console (sessions, calls, approvals, tokens). → R8.07
-- [ ] **T8.23** `BUILD` Response guard in `mt_api` for `source = mcp`: provenance filter, PII redaction, secret scrub, untrusted-text wrapping. → R8.09
+- [ ] **T8.23** `BUILD` Response guard in `mt-api` for `source = mcp`: provenance filter, PII redaction, secret scrub, untrusted-text wrapping. → R8.09
 - [ ] **T8.24** `BUILD` Token lifecycle and transports: `mcp.token.create`/revoke (HMAC-SHA-256 + pepper, shown once, expiry options, monthly reminder for indefinite), OAuth 2.1 (PKCE, resource indicators), Streamable HTTP + stdio + optional legacy HTTP+SSE, resource subscriptions (fills, approvals, alerts); `audit.mcp_call` logging. → R8.08, R8.07
 
 ### C. Ops & config (`OPS`)
@@ -66,7 +66,7 @@
 
 ## 5. Deliverables
 
-`mt_mcp` · policy layer · D17 · tests.
+`mt-mcp` · policy layer · D17 · tests.
 
 ## 6. Exit criteria (demo)
 

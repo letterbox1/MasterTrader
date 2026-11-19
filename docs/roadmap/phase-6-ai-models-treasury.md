@@ -7,7 +7,7 @@
 | **Depends on** | P2 (lab, tier A, gates), P4 (text, RAG, SemIf), P5 (signer, cost gate, wallet view) |
 | **Unlocks** | P7 (LLM-signal strategies can enter the paper → live path), P8 (agents callable from MCP) |
 | **Modules** | M8 agents, M9 Hindsight memory, M21 tier B stage 2 + bake-off + distillation, M10 anomaly, M22 hold-and-earn + treasury, M0 LLM-signal template; optional M13 Hummingbot, M14 crowd-sim, M23 social drafts, LightRAG |
-| **Containers** | `agents`, `hindsight`, `decision-svc`, `anomaly`, `treasury`, optional `hummingbot`, `social` |
+| **Containers** | `agents`, `hindsight`, `decision-svc`, `anomaly` (Python), `treasury` (`mt-treasury`, Rust), optional `hummingbot`, `social` (Python) ([18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
 | **Dashboards** | [D09](../ui/dashboards/D09-agents.md) Agents & Decisions, [D10](../ui/dashboards/D10-models-memory.md) Models & Memory, [D11](../ui/dashboards/D11-market-making.md) Market Making (optional), [D18](../ui/dashboards/D18-wallets-treasury.md) Wallets & Treasury (earn), [D13](../ui/dashboards/D13-tasks-curation.md) social drafts |
 | **Primary docs** | [03 M8](../03-build-spec.md#m8-ai-decision-layer--mt_agents) · [03 M9](../03-build-spec.md#m9-memory--rag--mt_memory) · [03 M21](../03-build-spec.md#m21-decision-one--model-serving--mt_models) · [03 M10](../03-build-spec.md#m10-anomaly-monitor--mt_anomaly) · [03 M22](../03-build-spec.md#m22-wallets-treasury--hold-and-earn--mt_treasury) · [03 M23](../03-build-spec.md#m23-social-participation--mt_social) · [10](../10-memory-rag-and-models.md) · [13 §4](../13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) · [13 §5](../13-wallets-treasury-and-onchain.md#5-treasury) · [13 §8](../13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social) · [03 §7](../03-build-spec.md#7-llm-cost-control) · [02 F4](../02-v1-architecture.md#8-end-to-end-flows) |
 
@@ -52,7 +52,7 @@
 | R6.21 | Yield allocator on net `apyBase` minus amortised gas and risk haircut; ≤ 20% per protocol, per-chain/per-stablecoin caps; DefiLlama yields from the official free API (`yields.llama.fi`; no site scraping) cached hourly | [13 §4](../13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) | Allocator tests |
 | R6.22 | Treasury: floats per sleeve, daily profit sweep to vault, stablecoin concentration limits, **20–40% reserve** (default, configurable) | [13 §5](../13-wallets-treasury-and-onchain.md#5-treasury) | Sweep test |
 | R6.23 | Node/validator net-earnings model (start only if positive; retire after two negative months); DAO proposal monitoring with drafted votes | [13 §4](../13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) | Model review |
-| R6.24 | Every treasury move passes the **on-chain cost gate** (`mt_onchain.costgate`) and M11 and signs only via the policy service; treasury loosening is C3 | [13 §7](../13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16), [D18](../ui/dashboards/D18-wallets-treasury.md) | Gate tests |
+| R6.24 | Every treasury move passes the **on-chain cost gate** (in the `mt-onchain` crate) and M11 and signs only via the policy service; treasury loosening is C3 | [13 §7](../13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16), [D18](../ui/dashboards/D18-wallets-treasury.md) | Gate tests |
 
 ### Optional
 | ID | Requirement | Source | Verified by |
@@ -91,7 +91,7 @@
 - [ ] **T6.25** `BUILD` Bake-off harness (all contenders, FinMMEval) and report. → R6.12
 - [ ] **T6.26** `BUILD` Operating rules: state budgets, per-question thresholds (16 §2.10 defaults), 5% shadow sampler, labelling queue API, label provenance, monthly fine-tune flow. → R6.13
 - [ ] **T6.27** `BUILD` Nightly distillation flow + promotion via gates + veto threshold. → R6.14
-- [ ] **T6.28** `BUILD` `mt_treasury`: allow-list, allocator (DefiLlama official API, `mt_onchain.costgate`, signing via the policy service), treasury split/sweeps, node/validator model, DAO monitor, earn positions. → R6.20–R6.24
+- [ ] **T6.28** `BUILD` `mt-treasury` (Rust): allow-list, allocator (DefiLlama official API, the `mt-onchain` cost gate, signing via the policy service), treasury split/sweeps, node/validator model, DAO monitor, earn positions. → R6.20–R6.24
 - [ ] **T6.29** `BUILD` UI: D09, D10 (incl. labelling queue), D18 earn/treasury. → R6.40
 - [ ] **T6.30** `BUILD` Optional: Hummingbot adapter (D11), `mt_social` drafts, crowd-sim (local memory backend only), LightRAG. → R6.30–R6.32
 - [ ] **T6.31** `BUILD` Prompt and model versioning for agents; confirm every LLM call lands in `audit.llm_call` (writer exists from P0) with model, hashes, tokens, cost, latency. → R6.03
@@ -100,7 +100,7 @@
 - [ ] **T6.34** `BUILD` Optional investor-persona lenses as debate viewpoints, off by default, evaluated in shadow before use. → R6.08
 
 ### C. Ops & config (`OPS`)
-- [ ] **T6.40** `OPS` GPU serving for tier B (vLLM pooling runner or ONNX), Hindsight slim container, Laya/Kev/Clef bake-off containers bound to `127.0.0.1` with API keys. → R6.11, R6.12, R6.N2 · [07 §5](../07-security-notes.md#5-network--host)
+- [ ] **T6.40** `OPS` Tier B serving per `models.gpu_profile: auto` (vLLM pooling runner when a GPU is present, otherwise ONNX on CPU), Hindsight slim container, Laya/Kev/Clef bake-off containers bound to `127.0.0.1` with API keys. → R6.11, R6.12, R6.N2 · [07 §5](../07-security-notes.md#5-network--host)
 - [ ] **T6.41** `OPS` Spend panel + budget alerts in Grafana. → R6.07
 
 ### D. Verify & test (`VERIFY`)
@@ -115,7 +115,7 @@
 - [ ] **T6.68** `VERIFY` Seeded anomaly → detector fires → explanation arrives on Telegram. → R6.05
 - [ ] **T6.69** `VERIFY` LLM-signal gate check: strategies are evaluated only on post-training-cutoff data. → R6.06
 - [ ] **T6.70** `VERIFY` Budget test: exhausting a role's daily budget (and the monthly cap) falls back to the local model instead of failing; every call still lands in `audit.llm_call`. → R6.07, R6.03
-- [ ] **T6.71** `VERIFY` Tier B latency benchmark: p95 < 50 ms on GPU; CPU figures recorded. → R6.11, R6.N3
+- [ ] **T6.71** `VERIFY` Tier B latency benchmark: p95 < 50 ms on GPU (runs when a GPU is present); CPU figures always recorded. → R6.11, R6.N3
 - [ ] **T6.72** `VERIFY` Kev-4B/9B and Trading-R1 check (U): does a public, licence-compatible, locally runnable release exist? Record the answer before the bake-off; drop either if not. → R6.12
 - [ ] **T6.73** `VERIFY` Local inference port check: tier B, Hindsight and bake-off servers listen on `127.0.0.1` only and refuse calls without the API key. → R6.N2
 - [ ] **T6.74** `VERIFY` Research workflows: PIT-only inputs, outputs carry sources; persona lenses compared in shadow against the debate without them. → R6.08

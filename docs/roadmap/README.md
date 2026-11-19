@@ -11,10 +11,12 @@ This folder breaks the [plan of action](../04-plan-of-action.md) into **one scop
 | 4 | [News, social, events & calendars](phase-4-intel.md) | 16–19 | 8 Feb – 7 Mar 2027 |
 | 5 | [Airdrops, launches, wallets & curation](phase-5-airdrops-wallets-curation.md) | 20–23 | 8 Mar – 4 Apr 2027 |
 | 6 | [AI decision layer, memory, models, anomalies & treasury](phase-6-ai-models-treasury.md) | 24–28 | 5 Apr – 9 May 2027 |
-| 7 | [Prove it, then go small-live](phase-7-prove-and-go-live.md) | Month 7–10+ | Hard-gated: opens after P3; first funding once the paper clock (started ~10 Jan 2027) has run ≥ 8 weeks, so ~Mar 2027 at the earliest |
+| 7 | [Prove it, then go small-live](phase-7-prove-and-go-live.md) | Month 7–10+ | Hard-gated: opens after P3; first funding once the paper clock (started ~10 Jan 2027) has run ≥ 8 weeks and the go-live pack and the shift are done, so ~Mar 2027 at the earliest |
 | 8 | [MCP control plane (last, optional)](phase-8-mcp.md) | 1–2 weeks | Hard-gated: after P6, and only once the platform is in daily use |
 
 Calendar dates are indicative; halve the durations if you work full-time.
+
+**Workstation first, test, then shift** ([18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)): Phases 0–6 build, test and paper-trade on your workstation (Supabase CLI stack, Docker Compose, keyless fixtures). Nothing before Phase 7 needs a dedicated host, LUKS, Tailscale, a YubiKey or a GPU. In Phase 7, before any live money, you approve the go-live pack (T7.12), choose the runtime host (T7.13; default: stay on the workstation), move the age keys onto a YubiKey (T7.14), and the agent does the shift and reruns the full verification suite on the target (T7.44).
 
 **Live status** (auto-updated from the phase kanbans by `./kanban build`; open [`kanban.html`](../../kanban.html) or [`KANBAN.md`](../../KANBAN.md) for the boards):
 
@@ -44,8 +46,8 @@ Calendar dates are indicative; halve the durations if you work full-time.
 
 | Tag | Who / what | Examples |
 |---|---|---|
-| `USER` | **You.** Only you can do these: accounts, KYC, money, hardware, keys and wallets, decisions, approvals (C3), labelling, professional advice, weekly reviews | Open a practice account; sign a mandate; engage the tax agent |
-| `BUILD` | Code execution (you + Claude Code): packages, services, UI, tests-as-code, runbooks | `mt_risk` policy model; D06 Risk |
+| `USER` | **You.** Only you can do these: keys and accounts, KYC, money, wallets, legal or tax answers, facts only you know, approvals (C3), drills you take part in, weekly reviews. Configurable values (limits, sleeves, lists, schedules) are **not** `USER` items: agents seed them from the defaults and you approve them once in the go-live pack (T7.12) | Open a practice account; sign a mandate; engage the tax agent |
+| `BUILD` | Code execution (you + Claude Code): crates, packages, services, UI, tests-as-code, runbooks | `mt-risk` policy model; D06 Risk |
 | `OPS` | Infrastructure and configuration: containers, networks, secrets, schedules, dashboards | Compose services; sops secrets; Grafana boards |
 | `VERIFY` | Checks that prove a requirement: tests, drills, benchmarks, reports, provider checks | Kill-switch drill; drainer test suite; bake-off report |
 | `RUN` | Elapsed-time work: soaks, paper periods, observation windows | 7-day recording soak; ≥ 8-week paper clock |
@@ -89,6 +91,7 @@ gantt
     Tax agent engaged → answer        :ta, after p2, 120d
     section Money
     P7 Prove → micro-live     :p7, after p3 pc, 120d
+    Go-live pack + shift      :sh, after p3 pc, 14d
     section Optional
     P8 MCP                    :p8, after p6, 14d
 ```
@@ -112,13 +115,14 @@ flowchart LR
     P7 -. daily use .-> P8
 ```
 
-**Critical path to live money:** P0 → P1 → P2 → (paper clock ≥ 8 weeks) + (tax agent's answer) → P7. Phases 3–6 add capability while the paper clock runs; **they don't block a P1 sleeve (e.g. trend on majors) from going micro-live** once P3 is done and the gates pass.
+**Critical path to live money:** P0 → P1 → P2 → (paper clock ≥ 8 weeks) + (tax agent's answer) → P7 → go-live pack (T7.12) + the shift, re-verified on the target (T7.44) → first funding. Phases 3–6 add capability while the paper clock runs; **they don't block a P1 sleeve (e.g. trend on majors) from going micro-live** once P3 is done and the gates pass.
 
 **How work runs** ([17 §E](../17-decisions-register.md#e-ratification-2026-10-22)):
 - **Parallel by dependency:** a task starts as soon as its own `depends_on` are done, in any phase (`phase_gating: "dependencies"`). P3 and P4 share no code; the `RUN` items (soaks, paper clock, digests) overlap other `BUILD` work. The Gantt chart above is one indicative sequence, not a gate.
 - **Hard gates:** Phase 7 (go small-live) opens only after P3 exits (P2 transitively); its items that need P5/P6 deliverables carry their own task dependencies. Phase 8 (MCP) opens only after P6 and the T8.01 decision.
 - **Build first, keys last:** integrations are built and tested against mocks, recorded fixtures, emulators, testnets and paper accounts without secrets. Live checks that need your keys, accounts or money are separate, late `VERIFY` ToDos that depend on the `USER` ToDo providing them.
-- **Configurable values are settings, not decisions:** every number in the phase docs that comes from [16](../16-configuration-and-safety-model.md) is a default you change in settings.
+- **Configurable values are settings, not decisions:** every number in the phase docs that comes from [16](../16-configuration-and-safety-model.md) is a default you change in settings. Agents seed the values a task needs (risk values, ceilings, sleeves, manifests) from the documented defaults; you approve them once in the go-live pack (T7.12, [17 §G](../17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)). No build task waits on you for a value.
+- **Workstation first:** everything runs on your workstation until the Phase 7 shift ([18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)). Host hardening for live, the YubiKey and Tailscale for the egress node are Phase 7 items; GPU checks run only when a GPU is present.
 
 ## 4. Fixed external dates
 
@@ -137,15 +141,27 @@ flowchart LR
 
 | Track | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 | P8 |
 |---|---|---|---|---|---|---|---|---|---|
-| **Security** ([07](../07-security-notes.md)) | Host, secrets, backups, segmentation | Read-only keys, alert channels | Trade-only keys, C3, hard ceilings, sandbox | Column encryption | Untrusted text, RSS-Bridge isolation | Signer, hard blocks, seed backup | Prompt injection, local model auth | Live keys, fail-flat, drills | MCP never-exposed list |
+| **Security** ([07](../07-security-notes.md)) | Workstation baseline, secrets (age key in the OS keychain), backups, segmentation, Supabase Auth + RLS deny-all | Read-only keys, alert channels | Trade-only keys, C3, hard ceilings, sandbox | Column encryption | Untrusted text, RSS-Bridge isolation | Signer, hard blocks, seed backup | Prompt injection, local model auth | Live hardening at the shift, YubiKey, live keys, fail-flat, drills | MCP never-exposed list |
 | **Compliance & data terms** ([12](../12-policy-and-compliance.md)) | Venue registry table + seed | Provenance tags + retention, venue health | Registry check, 2× cap, STP | Tax agent engaged | Telegram postures only, Polymarket read-only | Never-automated list, no sybil | Label provenance | Advice items closed, quarterly re-check | Audit source = mcp |
-| **UI** ([ui](../ui/README.md)) | Shell, D16 | D07, D02 | D01, D03–D06 | D14, D15 | D08 | D12, D13, D18 view | D09, D10, D11, D18 earn | Mobile/approvals polish | D17 |
-| **Testing** | `pit`, hash chain, viewport matrix | DQ fault injection | Risk golden, kill drill, latency | Tax golden, property | Telegram gate, RAG `as_of` | Drainer suite | Determinism, bake-off | Kill-criteria sims | Bypass + injection |
+| **UI** ([ui](../ui/README.md)) | Shell, D16 | D07, D02 | D01, D03–D06 | D14, D15 | D08 | D12, D13, D18 view | D09, D10, D11, D18 earn | Mobile/approvals polish, go-live pack (D16) | D17 |
+| **Testing** | `pit` (Rust + Python binding), hash chain, pgTAP, viewport matrix | DQ fault injection | Risk golden, kill drill, latency | Tax golden, property | Telegram gate, RAG `as_of` | Drainer suite | Determinism, bake-off | Kill-criteria sims, full suite on the shift target | Bypass + injection |
 | **Runbooks** (`docs/runbooks/`) | Backup/restore, host rebuild, secret rotation | Bad data | Keys leaked, server down with positions, kill drill | — | — | Wallet drained | — | All drilled | — |
 
 ## 6. `USER` action register (all phases)
 
-Everything only you can do, in order. The phase documents hold the detail.
+Everything only you can do, in order. The phase documents hold the detail. This table is generated from the `USER` ToDos in the phase documents (`./kanban build`).
+
+**Changes in the re-platform (2026-11-19, [17 §G](../17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)):**
+
+| Was | Now |
+|---|---|
+| T0.01 provision the host, decide on a GPU | Agent work (`OPS`, P0-T005): profile the workstation and pick CPU/GPU profiles. Nothing to buy |
+| T0.03 Tailscale account + YubiKey | Tailscale optional until go-live (P0-T003); the YubiKey moved to **T7.14** (P7-T072) |
+| T0.12 set the login password and TOTP | Same action, now on Supabase Auth (P0-T062) |
+| T2.01 risk values and L0 ceilings · T2.02 sleeves · T2.05 first manifests | Agent seeds (`BUILD`, P2-T048 / P2-T049 / P2-T050), approved once in the go-live pack **T7.12** (P7-T070) |
+| T2.08 start the paper clock | Automatic once validation passes (`OPS`, P2-T067) |
+| T2.06 kill drill · T2.07 test C3 · T2.09 first bot walkthrough | Still yours, any time before go-live; no build task waits on them |
+| — | New: **T7.12** go-live pack (P7-T070) · **T7.13** runtime host and cloud choice, default stay on the workstation (P7-T071) · **T7.14** YubiKey (P7-T072). The shift itself is agent work (**T7.44**, P7-T073) |
 
 <!-- kanban:user-register:start -->
 | ID | Phase | Action | Feeds / blocks |
@@ -310,14 +326,16 @@ Everything only you can do, in order. The phase documents hold the detail.
 | [12 Policy & compliance](../12-policy-and-compliance.md) | P0 (registry), P1 (provenance), P2 (registry, STP), P4 (Telegram), P7 (advice) |
 | [13 Wallets & on-chain](../13-wallets-treasury-and-onchain.md) | P5, P6 |
 | [14 Strategy evidence](../14-strategy-evidence-and-validation.md) | P2 (templates, risk defaults, harness), P7 (capital steps) |
+| [16 Configuration](../16-configuration-and-safety-model.md), [17 Decisions](../17-decisions-register.md) | All (defaults and decisions; 17 §G the re-platform) |
+| [18 Platform & deployment](../18-platform-and-deployment.md) | All (stack, repository layout, database, auth); P0 (workstation stack), P1 (bars without TimescaleDB), P7 (the shift) |
 | [DESIGN](../../DESIGN.md), [UI scope](../ui/README.md) | Every phase with UI work |
 
 ## 8. Definition of done (every phase)
 
 1. All requirements of the phase verified (the "Verified by" column), and the exit demo runs.
-2. CI green: lint, types, unit + golden tests, `pit` test, Playwright viewport matrix + axe for new screens.
+2. CI green: lint (`cargo clippy`, ruff), types, unit + golden tests (`cargo test`, `uv run pytest`, `supabase test db`), `pit` test (Rust and the Python binding), Playwright viewport matrix + axe for new screens.
 3. New services pinned by digest, on the right network, with health checks and Grafana panels.
-4. Every new user action is an `mt_api` command with the right confirmation level, audited.
+4. Every new user action is an `mt-api` command with the right confirmation level, audited.
 5. Runbooks updated for any new failure mode; docs updated where behaviour changed.
 6. The phase's `USER` items are done or explicitly deferred with a reason.
 7. Every task passed an independent review (`require_review`) before it was marked done.
