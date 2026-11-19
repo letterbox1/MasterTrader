@@ -125,6 +125,7 @@ pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U). **
 
 - **Supabase Auth** replaces the hand-built login: your one account, password plus **TOTP MFA** (enrolment required; sign-ups disabled). Passkeys if Supabase supports them as MFA by then (U).
 - `mt-api` verifies the Supabase JWT (asymmetric signing keys, JWKS) and requires the MFA level `aal2` for every command.
+- **Telegram (bot and Mini App):** Telegram can't carry a Supabase session. `mt-api` verifies the Telegram `initData` signature for your one linked Telegram user, and asks for a TOTP code (checked against the same Supabase MFA factor) before C3 actions, then issues a short-lived command session at `aal2` strength (default 15 min). Same C0–C3 rules as the web.
 - C0–C3 confirmations, preview tokens, the session limits in [16 §2.14](16-configuration-and-safety-model.md#214-platform--operations) and the break-glass `mtctl` CLI are unchanged.
 
 ### 4.7 Backups

@@ -30,7 +30,7 @@ Prove that the data feeding decisions is fresh, correct and within free-tier lim
 | **Costs** | Spread (bps) by instrument × hour-of-week heatmap; current fee tiers per venue; funding rates (predicted/realised) and swap/financing rates; borrow rates; alerts when spread > 3× normal (default, configurable); cost blow-out (realised ÷ modelled > 1.5× over the last 20 fills → bot paused; default) | `/data/costs`, WS `cost` |
 | **Quotas** | Per free API: limit, used (rolling), headroom %, throttle state, next reset; history chart; warnings at 80% (default) | `/data/quotas` |
 | **Reconciliation** | Positions and balances vs each venue: last run, mismatches (instrument, ours, venue's, difference), status, explanation (matched journal event) or "unexplained" with the time left before it halts everything (24 h). Defaults ([16 §2.9](../../16-configuration-and-safety-model.md#29-reconciliation), configurable): positions and open orders every 60 s, balances every 5 min, full reconciliation at end of day (Sydney); quantities must match exactly, balances within 0.01% or dust | `/data/recon`, WS `recon` |
-| **Storage** | Parquet catalog size by venue/type, hot/cold tiers, Timescale compression stats, backfill jobs and their progress | `/data/feeds?storage=1`, `/lab/jobs?kind=backfill` |
+| **Storage** | Parquet catalog size by venue/type, hot/cold tiers, bar partitions in Postgres (size per month, retention vs `db.bars_1s_hot_days` / `db.bars_hot_months`, last export to Parquet; [18 §4.3](../../18-platform-and-deployment.md#43-bars-without-timescaledb)), rollup-job runs after backfills and corrections, backfill jobs and their progress | `/data/feeds?storage=1`, `/lab/jobs?kind=backfill` |
 
 ## Actions
 

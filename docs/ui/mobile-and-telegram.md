@@ -5,6 +5,8 @@ Phones are a first-class client for supervision and approvals. Deep research and
 ## 1. PWA
 
 - **Install:** installable (manifest + service worker) with the Signal M app icon (`brand/app-icon.svg`).
+- **Where it's served:** from the workstation (Caddy) or from Vercel, per `web.host` ([18 §5](../18-platform-and-deployment.md#5-deployment-modes)). Away from home, the phone reaches `mt-api` over Tailscale (default `api.exposure: tailnet`).
+- **Login:** Supabase Auth, password + TOTP, the same as on desktop ([README §3.6](README.md#36-permissions--sessions)).
 - **Offline:**
   - the shell loads offline and shows the last known state with a clear **"Offline: data may be stale"** banner;
   - **no actions are queued offline**, except Kill, which tries every channel (see §3).
@@ -26,7 +28,7 @@ Phones are a first-class client for supervision and approvals. Deep research and
 
 ## 3. Telegram bot
 
-The bot covers the C3 channel and phone-friendly control, using the **same commands** as the web via `mt_api`.
+The bot (`mt-telegram-bot`, Rust, teloxide; [18 §2.1](../18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) covers the C3 channel and phone-friendly control, using the **same commands** as the web via `mt-api`. It runs on the workstation or runtime host, never on Vercel.
 
 | Feature | Detail |
 |---|---|
@@ -51,7 +53,7 @@ The bot covers the C3 channel and phone-friendly control, using the **same comma
 
 Each item deep-links to the matching dashboard (D08, D01, D07, D12).
 
-**Optional Telegram Mini App:** this reuses the web routes for Cockpit, Approvals and Tasks inside Telegram, with the same auth via a signed init-data → session exchange.
+**Optional Telegram Mini App:** this reuses the web routes for Cockpit, Approvals and Tasks inside Telegram, with the same auth via a signed init-data → session exchange that `mt-api` maps to your Supabase Auth account; commands still need `aal2` (U: how the exchange reaches `aal2` is settled when the Mini App is built, P7-T041).
 
 ## 4. Acceptance criteria
 

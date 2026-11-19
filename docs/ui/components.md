@@ -24,6 +24,7 @@ Props are TypeScript-style. `?` means optional.
 | `CommandPalette` | ⌘K | `sources[]` (instruments, strategies, commands, routes) | Full-screen < md |
 | `Breadcrumbs` | Sub-routes | `items[]` | Collapses middle items < md |
 | `WorkspaceGrid` | Tile layout with saved layouts | `layouts{tier: Layout}`, `editable` | Per-tier layouts; drag/resize ≥ xl only |
+| `SignInScreen` | Supabase Auth login: email + password, then `TotpChallenge`; on first sign-in, TOTP enrolment (QR + verify). No sign-up link ([README §3.6](README.md#36-permissions--sessions)) | `stage: password\|totp\|enrol`, `error?` | Single centred card at every tier; full screen < ph; code input uses `inputmode="numeric"` and one-time-code autofill |
 
 ## 2. Tiles & data display
 
@@ -73,6 +74,7 @@ Props are TypeScript-style. `?` means optional.
 | `DiffView` | Before/after for risk policy and strategy params; marks tighten (mint) vs loosen (flare) |
 | `ParamForm` | Generated from a strategy manifest param schema (types, ranges, defaults). Manifest values are **proposals**: each field shows the proposal next to your sleeve/system limits; looser than a parent layer is rejected |
 | `SettingField` | One configurable value ([README §3.7](README.md#37-settings-show-configurable-defaults-and-their-layer)): effective value, the layer that set it (`LayerBadge`: L0–L4), the 16 default with a link, inherited value, override toggle, tighten/loosen tag on edit |
+| `SettingsPack` | Phase 7 go-live pack (D16 Go-live preflight): one row per seeded value (setting, layer, default with its 16/14 link, current value, changed since seed), grouped L0 ceilings · L1–L3 policy · sleeves · manifests; **Approve** opens `C3Flow`. States: not seeded · ready · approval pending · approved · changed since approval. Read-only: edits happen in D03/D06 |
 | `LayerBadge` | Small chip naming the configuration layer (L0 ceiling · L1 system · L2 venue · L3 sleeve · L4 bot) that sets an effective value; tooltip shows the value at each layer |
 
 ## 5. Intel, agents & records components

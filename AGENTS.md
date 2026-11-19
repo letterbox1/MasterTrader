@@ -83,7 +83,7 @@ Agents that don't load skills automatically can read the same `SKILL.md` files a
 ## Cardinal rules (apply to all work)
 
 - **Secrets:** never commit secrets or paste them into chats, issues or logs. Secrets live in the sops/age file ([07 §2](docs/07-security-notes.md#2-secrets)).
-- **No bypasses:** every order goes through the risk manager (M11) via `mt_api`; research reads data only through `pit(as_of)`.
+- **No bypasses:** every order goes through the risk manager (M11) via `mt-api`; research reads data only through `pit(as_of)`.
 - **WORM:** audit/journal records are write-once ([15 §2](docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)). Never UPDATE or DELETE them; corrections are new rows.
 - **Data terms:**
   - free data only;

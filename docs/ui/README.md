@@ -13,7 +13,10 @@ This is the complete frontend scope, ready for implementation. It defines what e
 - [../../DESIGN.md](../../DESIGN.md): visuals and responsive rules.
 - [../02-v1-architecture.md §7](../02-v1-architecture.md#7-api-contract-mt_api): API, WebSocket topics and confirmation levels.
 - [../03-build-spec.md](../03-build-spec.md): module behaviour.
+- [../18-platform-and-deployment.md](../18-platform-and-deployment.md): stack, hosting (local or Vercel), Supabase Auth and deployment modes.
 - [../16-configuration-and-safety-model.md](../16-configuration-and-safety-model.md): every limit, threshold, timer and allocation the UI shows or edits. These are **defaults you change in settings**, never fixed values in the UI (§3.7).
+
+**Where it runs:** one React + TypeScript SPA (`apps/web`), built once. It's served locally by Caddy on your workstation, or deployed to Vercel if you choose that at the Phase 7 shift (`web.host`, [16 §2.15](../16-configuration-and-safety-model.md#215-platform-deployment-and-regions); [18 §5](../18-platform-and-deployment.md#5-deployment-modes)). Either way the browser talks only to `mt-api` (REST + WebSocket), never to the database. When the page is on Vercel and `api.exposure` is `tailnet` (default), your device needs Tailscale on to reach `mt-api`.
 
 Visual references are in [../../ui-examples/](../../ui-examples/README.md). Where those references conflict with these docs, these docs win.
 
@@ -38,7 +41,7 @@ Visual references are in [../../ui-examples/](../../ui-examples/README.md). Wher
 | D13 | [Tasks & Curation](dashboards/D13-tasks-curation.md) | `/tasks` | M19 | 5 | Launch Radar (manual queue) |
 | D14 | [Journal](dashboards/D14-journal.md) | `/journal`, `/journal/trades/:id` | M18 | 3 | — (new) |
 | D15 | [Tax & Reports](dashboards/D15-tax.md) | `/tax` | M18 | 3 | AU EOFY Tax Ledger |
-| D16 | [System](dashboards/D16-system.md) | `/system` (+ `/system/audit`, `/system/settings`, `/system/security`, `/system/backups`) | M17, ops | 0 (Accounts settings in 3) | — (new) |
+| D16 | [System](dashboards/D16-system.md) | `/system` (+ `/system/audit`, `/system/settings`, `/system/security`, `/system/backups`) | M17, ops | 0 (Accounts settings in 3; go-live preflight and Settings pack in 7) | — (new) |
 | D17 | [MCP Console](dashboards/D17-mcp-console.md) | `/mcp` | M20 | 8 (optional) | Claude MCP Control |
 | D18 | [Wallets & Treasury](dashboards/D18-wallets-treasury.md) | `/wallets`, `/wallets/:walletId`, `/wallets/treasury`, `/wallets/earn` | M22, M4, M12, M16 | 5 / 6 | — (new) |
 
@@ -140,7 +143,7 @@ These map to the API confirmation levels ([architecture §7.2](../02-v1-architec
 
 **Large orders:** above the bot's large-order threshold (default > 2% of sleeve or > A$5,000 notional, configurable, [16 §2.3](../16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)), an order or approval also needs hold-to-confirm on the web, or a TOTP reply on Telegram.
 
-**Before Telegram C3 exists (Phase 0–1):** a C3 change waits for the host-only break-glass CLI (`mtctl approve <id>` + TOTP over SSH/Tailscale), audited. The C3 state reads "Waiting for break-glass approval". This path is retired once Telegram C3 works (Phase 2).
+**Before Telegram C3 exists (Phase 0–1):** a C3 change waits for the break-glass CLI on the workstation (`mtctl approve <id>` + TOTP, at the machine or over SSH), audited. The C3 state reads "Waiting for break-glass approval". This path is retired once Telegram C3 works (Phase 2).
 
 **Rules:**
 - **Destructive buttons:** never adjacent to safe ones without at least 8px spacing. They use Flare styling and specific labels ("Cancel 3 orders", not "OK").
@@ -165,6 +168,7 @@ These map to the API confirmation levels ([architecture §7.2](../02-v1-architec
 
 ### 3.6 Permissions & sessions
 
+- **Login:** Supabase Auth with your one account: password, then a TOTP code (enrolment required on first sign-in; sign-ups are off). Passkeys only if Supabase supports them as MFA by then (U). `mt-api` verifies the Supabase JWT and needs the MFA level `aal2` for every command ([18 §4.6](../18-platform-and-deployment.md#46-auth)). The login screen is the same whether the app is served locally or from Vercel.
 - **Single user.** The session times out after 12 h of inactivity (configurable), and re-login needs TOTP.
 - **Re-auth:** any C3 action re-checks the session even if Telegram approves. C2 actions need a session re-authenticated within 12 h (default, configurable).
 
@@ -182,4 +186,4 @@ Each dashboard spec ends with a **Backend contract** section:
 - the REST queries and WebSocket topics it needs;
 - the commands it issues.
 
-Together these sections are the backlog for `mt_api`. The union of all of them must equal the catalogue in architecture §7 (CI check: an OpenAPI diff against `docs/ui/contract-index.json`, generated later).
+Together these sections are the backlog for `mt-api` (Rust; its OpenAPI is generated with utoipa, and `openapi-typescript` turns it into the web client). The union of all of them must equal the catalogue in architecture §7 (CI check: an OpenAPI diff against `docs/ui/contract-index.json`, generated later).

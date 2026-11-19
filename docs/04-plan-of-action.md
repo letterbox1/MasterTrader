@@ -54,7 +54,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - Caddy (serves the web app locally; the same build can go to Vercel at the shift);
   - a restricted Docker-socket proxy that lets `system.service.restart` restart only allow-listed containers.
 - [ ] **Core code:**
-  - core types (Rust, with Python bindings where Python needs them);
+  - `mt-core` types (Rust; exposed to Python through the same PyO3 module as `pit`);
   - all 13 canonical schemas (`market`, `text`, `features`, `strategy`, `risk`, `audit`, `journal`, `curation`, `ops`, `rag`, `models`, `treasury`, `hindsight`, [03 §4](03-build-spec.md#4-data-model-overview)) as SQL migrations in `supabase/migrations/`, with pgTAP tests (`supabase test db`); row-level security deny-all, Data API and Realtime off;
   - `pit(as_of)` in the `mt-store` crate with Python bindings (one implementation) + CI test.
 - [ ] **WORM audit and logging** ([15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)):

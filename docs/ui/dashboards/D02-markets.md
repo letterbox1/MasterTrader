@@ -10,7 +10,7 @@
 ## Purpose
 
 See every tradable market at a glance, then drill into one instrument with:
-- charts at any timeframe (tick → 1W; fixed sizes 1m, 5m, 15m, 1h, 4h, 1D, 1W come from continuous aggregates, any other size is a `time_bucket` query at read time);
+- charts at any timeframe (tick → 1W; the standard sizes 1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W are written by the recorder into monthly partitions, any other size is a `date_bin` query at read time; [18 §4.3](../../18-platform-and-deployment.md#43-bars-without-timescaledb));
 - book and costs;
 - features, decision-model scores and news;
 - a manual order ticket.
@@ -61,7 +61,7 @@ See every tradable market at a glance, then drill into one instrument with:
 
 | Widget | Shows | Source |
 |---|---|---|
-| `PriceChart` | Candles at any spec from tick/1s to 1W (incl. tick/volume bars; 1m–1W from continuous aggregates, other sizes bucketed at read time); overlays: indicators (user-selectable), own fills, strategy signals, Decision One nodes, calendar/event markers, blackout windows (shaded) | `/markets/{id}/bars`, WS `md.bar`/`md.trade`, `fills`, `signals`, `cal`, `evt` |
+| `PriceChart` | Candles at any spec from tick/1s to 1W (incl. tick/volume bars; 1s–1W are stored bars written by the recorder, other sizes bucketed with `date_bin` at read time, [18 §4.3](../../18-platform-and-deployment.md#43-bars-without-timescaledb)); overlays: indicators (user-selectable), own fills, strategy signals, Decision One nodes, calendar/event markers, blackout windows (shaded) | `/markets/{id}/bars`, WS `md.bar`/`md.trade`, `fills`, `signals`, `cal`, `evt` |
 | Timeframe picker | Unsupported resolutions disabled with a reason (e.g. "US stocks: IEX only; no tick L2") | `/markets/instruments/{id}` (min resolution) |
 | `OrderBook` | L2 where available (crypto); top of book for FX/stocks | WS `md.book` |
 | `TradesTape` | Last trades | WS `md.trade` |

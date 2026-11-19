@@ -6,7 +6,7 @@
 | **Duration** | Weeks 1–2 (plus the "do now" account actions, which run in parallel and gate later phases) |
 | **Depends on** | Nothing |
 | **Unlocks** | Every other phase |
-| **Modules** | Core types, `mt-store` (`pit` with Python bindings), `mt-api`, M17 observability & audit (`mt-obs`), M21 gateway pieces (LiteLLM, TEI, local model), M15 shell |
+| **Modules** | `mt-core`, `mt-store` (`pit` with Python bindings), `mt-api`, M17 observability & audit (`mt-obs`), M21 gateway pieces (LiteLLM, TEI, local model), M15 shell |
 | **Containers** | Supabase stack (Supabase CLI for development and tests; self-hosted Supabase on the workstation), `caddy`, `mt-api`, `nats`, `prefect-*`, `grafana`/`loki`/`prometheus`/`vector`/`alertmanager`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `docker-proxy` ([02 §3.2](../02-v1-architecture.md#32-containers)) |
 | **Dashboards** | App shell + [D16](../ui/dashboards/D16-system.md) System |
 | **Primary docs** | [18 §3–4](../18-platform-and-deployment.md#3-repository-layout) · [03 §3](../03-build-spec.md#3-repository-layout) · [03 §4](../03-build-spec.md#4-data-model-overview) · [03 M17](../03-build-spec.md#m17-observability--audit--mt_obs) · [02 §7](../02-v1-architecture.md#7-api-contract-mt_api) · [07](../07-security-notes.md) · [DESIGN §6](../../DESIGN.md#6-responsive-system-1920px--240px-portrait--landscape) · [ui §2](../ui/README.md#2-app-shell-all-routes) |
@@ -65,7 +65,7 @@
 
 ### B. Build (`BUILD`, code)
 - [ ] **T0.20** `BUILD` Monorepo skeleton per 18 §3: Cargo workspace with the crates of 18 §2.1 as stubs, `uv` workspace with the packages of 18 §2.2, `apps/web`, `supabase/`, `third_party/LICENSES.md`; clippy/cargo test, ruff/mypy/pytest, pre-commit (gitleaks). → R0.01, R0.N5
-- [ ] **T0.21** `BUILD` Core types (Rust, shared by the crates; Python bindings for the types Python packages need): Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent; config, clock, logging. → R0.01
+- [ ] **T0.21** `BUILD` `mt-core` types (Rust; exposed to Python through the same PyO3 module as `pit`): Instrument, BarSpec, Tick, Event, Signal, OrderIntent, RiskPolicy, JournalEvent; config, clock, logging. → R0.01
 - [ ] **T0.22** `BUILD` Schemas as SQL migrations in `supabase/migrations/` incl. provenance columns, `ops.venue_registry`, monthly bar partitions and RLS deny-all, with pgTAP tests; `mt-store` crate: `pit(as_of)` with Python bindings (PyO3), partition job, Parquet catalog helpers. → R0.03–R0.06
 - [ ] **T0.23** `BUILD` WORM layer: `worm_owner` role + grants, blocking triggers, per-row hash-chain trigger, correction rows, daily Merkle seal + external anchoring, `audit.verify` command and incident path. → R0.07 · [15 §2](../15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - [ ] **T0.24** `BUILD` `mt-api` skeleton (Rust, axum, utoipa OpenAPI): Supabase Auth JWT verification (JWKS, `aal2` required for commands), command bus with idempotency + `audit.command`, confirmation-level engine (C0–C3, Kill; C1 preview confirm token, C2 risk-preview hash + 12 h re-auth, C3 = C2 + approve + TOTP + cool-down), problem+json errors, OpenAPI, WebSocket hub with `seq` gap detection. → R0.08 · [02 §7.2](../02-v1-architecture.md#72-commands-rest-write)

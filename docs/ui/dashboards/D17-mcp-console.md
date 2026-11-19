@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Route** | `/mcp` |
-| **Modules** | M20 MCP control plane (a thin adapter over `mt_api`) |
+| **Modules** | M20 MCP control plane (`mt-mcp`, Rust: a thin adapter over `mt-api`) |
 | **Phase** | 8 (optional, built last; hidden from nav until enabled) |
 | **Mock-up reference** | `claude-mcp-sovereign-autonomous-node-control.png` (fix: current Claude model naming; execution tools default to approval-required; no "autonomous" order tools) |
 
