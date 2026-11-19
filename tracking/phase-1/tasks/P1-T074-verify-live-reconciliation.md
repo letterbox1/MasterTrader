@@ -18,14 +18,14 @@ dashboards: [D07]
 tools: [git, uv, docker, sops]
 mcp: []
 env: [BINANCE_TESTNET_READ_KEY, BINANCE_TESTNET_READ_SECRET, BYBIT_TESTNET_READ_KEY, BYBIT_TESTNET_READ_SECRET, OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY]
-services: [nats, postgres, binance-testnet, bybit-testnet, oanda-practice, ig-demo, alpaca-paper]
+services: [nats, supabase-postgres, binance-testnet, bybit-testnet, oanda-practice, ig-demo, alpaca-paper]
 branch: p1/P1-T074-verify-live-reconciliation
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -69,7 +69,7 @@ With your keys loaded, reconciliation runs against every practice/testnet venue 
 
 ### Tests
 
-- `make verify-live-recon` (pytest marker `live`, outside normal CI) asserts cadence, statuses and WORM rows (`audit.recon` passes its hash-chain check after the run)
+- `make verify-live-recon` (`cargo test -p mt-monitor --features live recon`, outside normal CI) asserts cadence, statuses and WORM rows (`audit.recon` passes its hash-chain check after the run)
 
 ### Scenarios
 
@@ -114,3 +114,4 @@ With your keys loaded, reconciliation runs against every practice/testnet venue 
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T1.67 (docs/16–17 alignment: live reconciliation split from T1.29)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (live recon via the Rust `mt-monitor` (`--features live`); still depends on P0-T009/P1-T002 (allowed: live VERIFY); services supabase-postgres)

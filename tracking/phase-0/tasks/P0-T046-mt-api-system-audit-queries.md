@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T032, P0-T036, P0-T023, P0-T038]
 requirements: [R0.08, R0.11, R0.12]
 roadmap_todos: [T0.24, T0.26]
-modules: [mt_api, M17]
+modules: [mt-api, M17]
 dashboards: [D16]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, nats, prometheus, loki]
+services: [supabase-postgres, nats, prometheus, loki]
 branch: p0/P0-T046-mt-api-system-audit-queries
 pr: ""
 doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings`, `/audit/log` with chain-verification status, `/audit/integrity`, and the `system` WS topic — all working read-only when Postgres is down.
+`mt-api` (Rust, axum) serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/services`, `/system/logs` (Loki proxy), `/system/backups`, `/system/keys` (masked metadata only), `/system/settings`, `/audit/log` with chain-verification status, `/audit/integrity`, and the `system` WS topic — all working read-only when Postgres is down.
 
 ## Context & references
 
@@ -50,7 +50,7 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 
 ## Requirements
 
-- `/system/health`: host CPU/RAM/disk/GPU/temps/chrony offset via Prometheus HTTP API queries (no Docker socket); `slo=1` returns each 02 §9.2 SLO with `value|null` + status (`n/a` until its phase).
+- `/system/health`: workstation CPU/RAM/disk/temps/chrony offset (GPU only when one is present) via Prometheus HTTP API queries (no Docker socket); `slo=1` returns each 02 §9.2 SLO with `value|null` + status (`n/a` until its phase).
 - `/system/services`: one row per container from 02 §3.2 present in P0: status/health, image digest, uptime, restarts (cAdvisor/Prometheus), heartbeat age (NATS KV `heartbeat`).
 - `/system/logs`: Loki proxy with server-side allow-listed LogQL (service, level, text contains, time range ≤ 24 h, limit ≤ 1,000), never raw LogQL from the client; responses pass through the secret redactor again.
 - `/system/backups`: last backup per kind, WAL lag, last restore test, last seal + verify status (from `ops.backup_run`, `ops.restore_test`, `audit.seal`, `audit.verify_run`).
@@ -58,7 +58,7 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 - `/system/settings`: read `ops.setting`/`ops.user_pref`; each setting returns its effective value, the layer that set it, its 16 default and change history (ui §3.7); writes go through `system.settings.update`.
 - `/audit/integrity`: KV `audit.integrity` status, the configured action, open incident and ack history from `audit.integrity_incident`, and the last hourly incremental + daily full verify ([16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity), D16 Integrity).
 - `/audit/log`: filters source/command/date, cursor paging, columns per D16 incl. `hash` and per-row chain status from the latest `audit.verify_run`.
-- Postgres down: `/system/health` and `/system/services` still answer from Prometheus/NATS with a `db: down` flag (D16 acceptance 1).
+- Postgres down: `/system/health` and `/system/services` (which include the Supabase Auth/Storage services) still answer from Prometheus/NATS with a `db: down` flag (D16 acceptance 1).
 
 ## ToDo
 
@@ -70,7 +70,7 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 ## Verification
 
 ### Tests
-- Integration: each endpoint returns schema-valid data on the running stack.
+- Integration (`cargo test -p mt-api --test system`): each endpoint returns data valid against the utoipa OpenAPI schema on the running stack.
 - Security: `/system/keys` response contains no secret values (scan against the real tmpfs values in a test fixture).
 - Degraded: with Postgres paused, health/services still 200 with `db: down`.
 
@@ -115,3 +115,4 @@ mt-api serves the D16 backend contract: `/system/health` (+ `?slo=1`), `/system/
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (/audit/integrity (R0.12), settings show effective value/layer/default, restartable flag for the docker-proxy allow-list (17 §D P0-B012); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-api` handlers validated against the utoipa schema; GPU metrics only when present; Supabase services listed)

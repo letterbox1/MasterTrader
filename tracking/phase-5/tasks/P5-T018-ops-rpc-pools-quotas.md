@@ -15,7 +15,7 @@ requirements: [R5.05, R5.04, R5.12]
 roadmap_todos: [T5.41]
 modules: [M22, M4, M16]
 dashboards: [D07]
-tools: [uv, docker]
+tools: [cargo, docker, git]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrop
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_core.rpc` exposes per-chain RPC pools (Solana: Helius → Chainstack/QuickNode → PublicNode; EVM: Alchemy → Infura/PublicNode; own Blockscout API) with per-provider quota tracking that throttles before free limits, health probes and failover, used by indexer, enrichment, cost gate and simulation.
+The `mt-onchain` crate (rpc module) exposes per-chain RPC pools (Solana: Helius → Chainstack/QuickNode → PublicNode; EVM: Alchemy → Infura/PublicNode; own Blockscout API) with per-provider quota tracking that throttles before free limits, health probes and failover, used by indexer, enrichment, cost gate and simulation.
 
 ## Context & references
 
@@ -55,9 +55,9 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `packages/mt_core/rpc/pool.py` with provider adapters, credit-cost tables per method, circuit breaker.
+- [ ] Implement `crates/mt-onchain/src/rpc/pool.rs` with provider adapters, credit-cost tables per method, circuit breaker.
 - [ ] Register budgets in the P1 quota tracker; Grafana panel + alerts.
-- [ ] Health probe Prefect flow every 5 min (block height freshness).
+- [ ] Health probe job in `mt-onchain` every 5 min (block height freshness; interval in `config/rpc/pools.yaml`). Python callers (`mt_airdrop` enrichment) read the same pool config and quota counters (P1-T006) through a thin client.
 - [ ] Tests with mocked providers; doc sync.
 
 ## Verification
@@ -106,3 +106,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build: no dependency on P5-T003 keys, live probe moved to P5-T068; RPC error pause per 16 §2.1; P1 quota tracker dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (RPC pools in Rust `mt-onchain`; tools +cargo +git −uv)

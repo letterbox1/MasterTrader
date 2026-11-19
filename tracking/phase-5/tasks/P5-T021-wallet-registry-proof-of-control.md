@@ -15,17 +15,17 @@ requirements: [R5.05, R5.01, R5.25]
 roadmap_todos: [T5.22]
 modules: [M22, M18]
 dashboards: [D18]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T021-wallet-registry-proof-of-control
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/09-journal-and-tax.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement command handlers in `packages/mt_treasury/registry/` and queries `/wallets`, `/wallets/{id}`.
+- [ ] Implement command handlers in `crates/mt-treasury` (registry module, called from `mt-api`) and queries `/wallets`, `/wallets/{id}`.
 - [ ] Call the P5-T067 proof verifier from `wallet.register` (preview → challenge; confirm → verify) and feed it `wallet.*.transfer` events for self-transfers.
 - [ ] Hook signer `key_create` → auto-register.
 - [ ] Emit `journal` registry-changed event so M18 re-tags internal transfers going forward.
@@ -88,7 +88,7 @@ review_result: ""
 ## Cardinal rules (do NOT)
 
 - Do NOT ask the user to connect a wallet to the web UI or sign typed data; message signing happens on the user's own device only.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT UPDATE or DELETE WORM rows (`curation.mandate`, `curation.exec_log`, the signer ledger, `journal.*`, `audit.*`); corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -108,3 +108,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (proof of control per R5.25/P5-B016 via P5-T067, manual_attested dropped; extends P3 `ops.wallets` per P5-B015)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

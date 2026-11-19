@@ -15,7 +15,7 @@ requirements: [R5.02, R5.15, R5.16]
 roadmap_todos: [T5.20]
 modules: [M22, M4]
 dashboards: [D12]
-tools: [uv, docker, anvil, solana-test-validator]
+tools: [cargo, docker, anvil, solana-test-validator, git]
 mcp: []
 env: []
 services: [anvil]
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrop
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,8 +56,8 @@ Before every signature the signer simulates the exact transaction (EVM: local **
 
 ## ToDo
 
-- [ ] Implement `mt_signer/simulate/evm_anvil.py` (Anvil process manager talking to the `anvil` container) and `solana_sim.py`.
-- [ ] Implement `diff.py` normaliser and per-intent pass rules.
+- [ ] Implement `crates/mt-signer/src/simulate/evm_anvil.rs` (Anvil client talking to the `anvil` container) and `solana_sim.rs`.
+- [ ] Implement the `diff` normaliser module and per-intent pass rules.
 - [ ] Add golden fixtures: clean Merkle claim; claim that also transfers another token out; claim that sets approval; Solana claim that changes delegate.
 - [ ] Expose digest to exec log and D12.
 
@@ -73,7 +73,7 @@ Before every signature the signer simulates the exact transaction (EVM: local **
 - Given Anvil is down, when a claim is requested, then it is refused `simulation_unavailable` and becomes a `CLAIM_MANUAL` task.
 
 ### Stress / failure injection
-- 20 parallel simulations: p95 < 5 s on the target host; Anvil memory bounded (restart if > 2 GB).
+- 20 parallel simulations: p95 < 5 s on the workstation; Anvil memory bounded (restart if > 2 GB).
 
 ## Acceptance criteria
 
@@ -110,3 +110,4 @@ Before every signature the signer simulates the exact transaction (EVM: local **
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Anvil/simulateTransaction only, Tenderly not used per P5-B013; keyless CI fork)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (simulation hooks in the Rust `mt-signer` crate; tools +cargo +git −uv)

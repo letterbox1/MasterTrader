@@ -15,17 +15,17 @@ requirements: [R4.06, R4.01, R4.04, R4.05, R4.13]
 roadmap_todos: []
 modules: [M2, M9, M21]
 dashboards: [D08, D01, D02]
-tools: [uv, git, docker, pnpm]
+tools: [uv, cargo, git, docker, pnpm]
 mcp: []
 env: []
-services: [postgres, nats, rss-bridge, decision-svc, tei-embed]
+services: [supabase-postgres, nats, rss-bridge, decision-svc, tei-embed]
 branch: p4/P4-T057-verify-f3-e2e-scenarios
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -72,7 +72,7 @@ A scenario suite runs flow F3 end to end on the Compose stack for each source fa
 ## Acceptance criteria
 
 - [ ] All source families pass; p95 ≤ 5 s ingest → D08
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-intel-writer`, `cargo test -p mt-events`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -99,3 +99,4 @@ A scenario suite runs flow F3 end to end on the Compose stack for each source fa
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3/F3b split (17 §A P4-B001); fixtures only, live checks in P4-T067/T068)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

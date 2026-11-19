@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D12-airdrops.md, docs/roadmap/phase-5-airdrops-wal
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with f
 
 ## ToDo
 
-- [ ] Build routes/components in `packages/mt_ui/web/` (or the P0 frontend app) using the DESIGN v2 preset.
+- [ ] Build routes/components in `apps/web/` (the P0 React SPA, [18 §3](../../../docs/18-platform-and-deployment.md#3-repository-layout)) using the DESIGN v2 preset.
 - [ ] Wire queries, WS topics and command sheets with C-level UX (C2 hold-to-confirm on touch; C3 shows Telegram pending state).
 - [ ] Playwright tests: flows + viewport matrix + axe; never-offered controls absent.
 - [ ] Update D12 doc if any field/route changed.
@@ -92,7 +92,7 @@ D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with f
 
 - Do NOT render connect-wallet, sign-permit, approve-unknown-contract, seed/key entry, multi-wallet or automated-social controls anywhere (D12/D18 never-offered lists).
 - Do NOT enforce confirmation levels only in the UI; the server enforces C0–C3 (02 §7.2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -110,3 +110,4 @@ D12 is live at `/airdrops`, `/airdrops/:id` and `/airdrops/wallet`: radar with f
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (identity wallets not hot per P5-B017; limits from 16 §2.7; disposal tasks in history; P0 app shell dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (web app path `apps/web/` (18 §3); cardinal rule names `mt-api`/`mt-risk`/`mt-store`)

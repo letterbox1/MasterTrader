@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ At least one active, expiring **mandate** per identity wallet you want automated
 ## Requirements
 
 - Mainnet mandates only, and only for specific vetted claim contracts on the chain's **airdrop identity wallet** (never the hot trading wallet; decision P5-B017, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)). The testnet mandate for the exit scenario is approved inside P5-T056, so this real-funds step doesn't block it.
-- Each mandate: one wallet, one chain, explicit contract address(es) + function selector(s), `msg.value = 0`, max gas per tx, max claims/day, expiry (suggest ≤ 30 days); caps never above the limits you confirmed in P5-T065 ([16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)).
+- Each mandate: one wallet, one chain, explicit contract address(es) + function selector(s), `msg.value = 0`, max gas per tx, max claims/day, expiry (suggest ≤ 30 days); caps never above the limits you confirmed in P5-T004 (seeded by P5-T065) ([16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)).
 - Approve in Telegram with TOTP; it takes effect after the cool-down (default 15 min).
 
 ## ToDo
@@ -102,3 +102,4 @@ At least one active, expiring **mandate** per identity wallet you want automated
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mainnet mandates only, identity wallet per P5-B017; testnet mandate moved into P5-T056 so keys-last holds; caps within 16 §2.7 confirmed limits)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (mandate caps within the limits you confirm in P5-T004 (seeded by P5-T065, now an agent task); cardinal rule names `mt-api`)

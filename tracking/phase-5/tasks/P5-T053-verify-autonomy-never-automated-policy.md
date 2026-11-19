@@ -15,17 +15,17 @@ requirements: [R5.15, R5.16]
 roadmap_todos: []
 modules: [M4, M19, M15]
 dashboards: [D12, D13]
-tools: [uv, pnpm]
+tools: [cargo, uv, pnpm, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T053-verify-autonomy-never-automated-policy
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,7 +46,7 @@ An integration suite proves the autonomy boundary: only read-only work, mandated
 
 ## Requirements
 
-- Matrix: each NA item × {mt_api direct call, decision engine input, executor queue injection, UI presence} → refused/absent.
+- Matrix: each NA item × {`mt-api` direct call, decision engine input, executor queue injection, UI presence} → refused/absent.
 - Positive cases: read-only discovery runs unattended; mandated claim executes; revoke of a flagged hot-wallet approval runs with kill ON.
 - Negative cases: disposal after a claim → manual-sale task, never an order, swap or signer intent (P5-B010); a claim from the hot trading wallet → refused (identity wallet only, P5-B017); depeg → alert + task, no automated reduce (P5-B009); claim without mandate → CLAIM_MANUAL; mandate expired → CLAIM_MANUAL; ICO → ICO_REVIEW; social task → user task; second wallet in a campaign → refused.
 - Report: matrix table in the PR and the progress log.
@@ -98,3 +98,4 @@ An integration suite proves the autonomy boundary: only read-only work, mandated
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (matrix adds manual disposal P5-B010, identity-only claims P5-B017, depeg alert-only P5-B009)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git; `mt_api` → `mt-api`)

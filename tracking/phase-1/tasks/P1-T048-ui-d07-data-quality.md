@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D07-d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ review_result: ""
 - Quotas tab: limit, used, headroom %, throttle state, next reset, history chart, warnings at 80%
 - Reconciliation tab: last run per scope (positions/open orders 60 s, balances 5 min, EOD), mismatches (ours, venue's, diff), status, explanation or "unexplained" with time left before the 24 h halt rule; "Run now" (C1). Venue health panel with measured withdrawal times, flags, notes and AUSTRAC check age (`VenueStatusChip`)
 - Threshold adjust: link to `system.settings.update` (tighten C1; loosen C3, via the break-glass CLI in P1)
-- Storage tab: catalog size by venue/type, hot/cold tiers, Timescale compression, backfill jobs with progress; "Run backfill" (C1)
+- Storage tab: catalog size by venue/type, hot/cold tiers, bar partitions ahead and the Parquet hot-window export (P1-T075), backfill and rollup jobs with progress; "Run backfill" (C1)
 - Data states on every tile (loading, live, stale, degraded, error, empty); `DataTable` priority columns and card renderer ≤ ph; nav badge for open DQ incidents; "Data degraded" global banner when any feed is stale/bad ([ui §2.2 banners](../../../docs/ui/README.md#22-global-banners-stacked-under-the-top-bar-highest-severity-first))
 - D07 acceptance: the monitor publishes `stale` ≤ 250 ms p99 after the threshold and the UI shows it within the live-update lag (p95 < 500 ms); paid feed cannot be enabled (UI blocks, server rejects); quota warnings before throttling
 
@@ -97,7 +97,7 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT let any path loosen DQ thresholds, risk or alert routing without C3 (Telegram + TOTP + cool-down; in P1 via the break-glass CLI `mtctl approve` + TOTP); tightening is C1.
@@ -118,3 +118,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (data age vs threshold, closed state, ack via data.incident.ack, recon 16 §2.9 view, D07 acceptance at 250 ms + UI lag; P0 UI deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Storage tab shows bar partitions and the Parquet export instead of Timescale compression; web CI via pnpm)

@@ -15,7 +15,7 @@ requirements: [R1.N2, R1.15]
 roadmap_todos: [T1.32]
 modules: [M15]
 dashboards: [D07, D02]
-tools: [git, uv, docker, pnpm, node>=20]
+tools: [git, cargo, pnpm, node>=20, docker]
 mcp: []
 env: []
 services: [mt-api, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `notifications` topics with server-side throttling (≤ 4 Hz per symbol for charts, ≤ 1 Hz for tables, 0.2 Hz for background tabs) and the web app reports local server→screen lag so p95 < 500 ms can be proven.
+The `mt-api` (Rust) WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `notifications` topics with server-side throttling (≤ 4 Hz per symbol for charts, ≤ 1 Hz for tables, 0.2 Hz for background tabs) and the web app reports local server→screen lag so p95 < 500 ms can be proven.
 
 ## Context & references
 
@@ -55,7 +55,7 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 
 ## ToDo
 
-- [ ] Implement coalescing throttler in the WS hub
+- [ ] Implement the coalescing throttler in the `mt-api` WS hub (tokio)
 - [ ] Implement client lag measurement in `apps/web/src/lib/ws` and the telemetry endpoint
 - [ ] Grafana panel for UI lag p95
 - [ ] Write the tests listed under Verification
@@ -65,8 +65,8 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 
 ### Tests
 
-- Unit: throttler emits ≤ 4 msgs/s per symbol under a 100 Hz input and always the latest value
-- Integration: Playwright test subscribes to a synthetic 50 Hz feed; measured lag p95 < 500 ms and update rate ≤ 4 Hz
+- `cargo test -p mt-api ws_throttle`: throttler emits ≤ 4 msgs/s per symbol under a 100 Hz input and always the latest value
+- Integration (`pnpm playwright`): a test subscribes to a synthetic 50 Hz feed; measured lag p95 < 500 ms and update rate ≤ 4 Hz
 
 ### Scenarios
 
@@ -80,15 +80,15 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 ## Acceptance criteria
 
 - [ ] Throttle limits enforced in tests; UI lag histogram exported; p95 < 500 ms in the Playwright test
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`pnpm test`, `pnpm playwright`, `cargo test -p mt-api`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
-- Client clock skew: offset estimation keeps lag measurement honest; telemetry never leaves the host
+- Client clock skew: offset estimation keeps lag measurement honest; telemetry never leaves the workstation
 
 ## Cardinal rules (do NOT)
 
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 
@@ -108,3 +108,4 @@ The `mt_api` WebSocket hub fans out `md.*`, `dq.status`, `cost`, `recon` and `no
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; P0 WS hub and client deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (throttler in Rust `mt-api`; web tests via pnpm; tools cargo/pnpm)

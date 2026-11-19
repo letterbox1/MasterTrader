@@ -15,7 +15,7 @@ requirements: [R5.N2, R5.07]
 roadmap_todos: [T5.64]
 modules: [M22, M4, M11]
 dashboards: [D12, D18]
-tools: [uv, anvil, solana-test-validator]
+tools: [cargo, anvil, solana-test-validator, git]
 mcp: []
 env: []
 services: [telegram, anvil, sepolia-rpc]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,13 +46,13 @@ A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes
 
 ## Requirements
 
-- Setup: testnet keys created in the drill's own setup (faucet funds, C3 approved by you; no real money), signing enabled with the limits confirmed in P5-T065; 5 queued claims, 1 in simulation, balances on the hot, identity and burner test wallets.
+- Setup: testnet keys created in the drill's own setup (faucet funds, C3 approved by you; no real money), testnet signing within the limits seeded in P5-T065; 5 queued claims, 1 in simulation, balances on the hot, identity and burner test wallets.
 - Assertions: freeze latency < 1 s (ledger/exec_log timestamps); 0 signatures for claims after kill; hot-wallet sweep txs confirmed to the vault (identity/burner frozen, not kill-swept); D12/D18 red banners; Telegram summary.
 - Kill OFF via C3; claims remain paused until re-armed explicitly.
 
 ## ToDo
 
-- [ ] Write the drill script `tests/drills/kill_freeze_sweep.py` (also runnable on Anvil in CI).
+- [ ] Write the drill script `crates/mt-treasury/tests/kill_freeze_sweep.rs` (also runnable on Anvil in CI).
 - [ ] Run once on testnet with you triggering `/kill` from your phone; record timings.
 - [ ] File bugs for any miss.
 
@@ -100,3 +100,4 @@ A drill (testnet or Anvil with real signer) shows: `/kill` from Telegram freezes
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill sweeps hot trading balances to the vault per P5-B007, configurable; testnet keys in setup instead of P5-T004 real funds; needs P5-T065)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (drill script in the Rust `mt-treasury` test suite; signing uses seeded limits (P5-T065, now an agent task); tools +cargo +git −uv)

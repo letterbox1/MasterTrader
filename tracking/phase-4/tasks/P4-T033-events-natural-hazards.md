@@ -15,17 +15,17 @@ requirements: [R4.08]
 roadmap_todos: [T4.25]
 modules: [M3]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p4/P4-T033-events-natural-hazards
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.events` ingests natural-hazard events from USGS (earthquake GeoJSON feeds), GDACS (RSS/GeoJSON alerts), NOAA/NHC (active storms, advisories) and NASA FIRMS (active fires, MAP_KEY), normalised into `text.geo_event` with location, severity (0–1), start/update time and source ids. FIRMS is built and tested on recorded fixtures without a key; the live FIRMS run with your `MAP_KEY` is P4-T067 (keys last).
+The Rust `mt-events` crate (`ingest-events` container, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) ingests natural-hazard events from USGS (earthquake GeoJSON feeds), GDACS (RSS/GeoJSON alerts), NOAA/NHC (active storms, advisories) and NASA FIRMS (active fires, MAP_KEY), normalised into `text.geo_event` with location, severity (0–1), start/update time and source ids. FIRMS is built and tested on recorded fixtures without a key; the live FIRMS run with your `MAP_KEY` is P4-T067 (keys last).
 
 ## Context & references
 
@@ -75,7 +75,7 @@ review_result: ""
 ## Acceptance criteria
 
 - [ ] USGS, GDACS and NHC ingesting live (keyless); FIRMS proven on fixtures; severity mapping documented and tested
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-events`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: FIRMS on fixtures, live in P4-T067; dropped P4-T005 dependency; added P4-T008 (raw.evt account))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (pollers in the Rust `mt-events` crate; services postgres → supabase-postgres; tools +cargo −uv; CI commands per 18 (cargo/uv/supabase/pnpm))

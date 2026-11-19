@@ -15,17 +15,17 @@ requirements: [R1.16]
 roadmap_todos: [T1.65]
 modules: [M16, M17]
 dashboards: [D16]
-tools: [git, uv, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
-services: [nats, postgres, ntfy]
+services: [nats, supabase-postgres, ntfy]
 branch: p1/P1-T072-verify-egress-fault-test
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -43,12 +43,12 @@ On the running stack, a wrong egress IP and a wrong egress country each flip `eg
 
 - Roadmap: requirement [R1.16](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.65](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Design: [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) · degraded modes [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · alert list [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) ("egress IP/country mismatch or tunnel down")
-- M11 is built in P2: the real order rejection is proven by P2's safety-state golden tests (R2.58, T2.71). Here the gate is the shared `mt_risk.safety.egress_allows(entry|exit)` contract function that P2 calls, tested against live `egress.status`
+- M11 is built in P2: the real order rejection is proven by P2's safety-state golden tests (R2.58, T2.71). Here the gate is the shared `mt_risk::safety::egress_allows(entry|exit)` contract function in the `mt-risk` crate (one implementation, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) that P2 calls, tested against live `egress.status`
 - Depends on (this phase): P1-T071 (check), P1-T045 (alert fan-out)
 
 ## Requirements
 
-- E2E suite `tests/e2e/egress_fault.py` (`make e2e-egress`) against the dev stack, keyless: the probe's observers are pointed at a local fake that returns a chosen IP; GeoIP uses a fixture MMDB mapping that IP to a chosen country
+- E2E suite `tests/e2e/egress_fault.py` (`uv run pytest tests/e2e/egress_fault.py`, `make e2e-egress`) against the dev stack, keyless: the probe's observers are pointed at a local fake that returns a chosen IP; GeoIP uses a fixture MMDB mapping that IP to a chosen country
 - Cases: (1) IP not in `expected_ips`; (2) expected IP but country ≠ `residency_country`; (3) observers disagree; (4) observers unreachable; (5) `expected_ips` empty (`unconfigured`); (6) recovery to `ok`
 - For each: assert `egress.status` and KV `egress`, time to state (≤ 2 intervals at a test interval of 5 s), `alert.critical.egress` delivered to the notifier with dedupe, D16 tile state (Playwright), and `egress_allows("entry") == False` / `egress_allows("exit") == True` for blocking states
 - Also assert a stale KV value (older than 3 intervals) is treated as blocking by `egress_allows`
@@ -109,3 +109,4 @@ On the running stack, a wrong egress IP and a wrong egress country each flip `eg
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T1.65 / R1.16 (docs/16–17 alignment)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (gate contract in the Rust `mt-risk` crate; Python e2e harness; tools cargo+uv; services supabase-postgres)

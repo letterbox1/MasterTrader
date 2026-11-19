@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P7-T009 · Install the UPS and 4G failover for the runtime host and router
+# P7-T009 · Install the UPS and 4G failover for the host and router
 
 ## Goal / expected outcome
 
@@ -98,7 +98,7 @@ The runtime host and router run on a UPS with enough runtime to fail flat cleanl
 ## Branch & PR
 
 - Branch: `p7/P7-T009-ups-and-4g-failover`
-- PR title: `P7-T009: Install the UPS and 4G failover for the runtime host and router`
+- PR title: `P7-T009: Install the UPS and 4G failover for the host and router`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P7-T009` run · evidence (redacted, no secrets) linked in the progress log
 
 ## Progress log

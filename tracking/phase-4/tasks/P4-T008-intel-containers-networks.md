@@ -15,17 +15,17 @@ requirements: [R4.N1, R4.06]
 roadmap_todos: [T4.40]
 modules: [M2, M3, M21]
 dashboards: [D16]
-tools: [docker, git, nats]
+tools: [docker, git, nats, cargo]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p4/P4-T008-intel-containers-networks
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`ingest-text`, `crawl4ai`, `nlp`, `ingest-events` and `decision-svc` run under Compose with digest-pinned images, the right networks (`scrape` for fetchers, `core` for processing) and a **narrow NATS account** for scrape-side publishers, so untrusted fetching can only publish raw items to NATS and never reach Postgres or the signer.
+`ingest-text`, `crawl4ai`, `nlp`, `ingest-events` and `decision-svc` run under Compose with digest-pinned images, the right networks (`scrape` for fetchers, `core` for processing) and a **narrow NATS account** for scrape-side publishers, so untrusted fetching can only publish raw items to NATS and never reach Supabase Postgres or the signer. The core-side writer is the Rust `mt-intel-writer` and the event pollers are the Rust `mt-events` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); `ingest-text`, `crawl4ai`, `nlp` and `decision-svc` stay Python ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)).
 
 ## Context & references
 
@@ -49,21 +49,21 @@ review_result: ""
 ## Requirements
 
 - `ingest-text` + `crawl4ai` on `scrape` only; they publish to `raw.text.{source}` with a NATS account allowed **publish-only** on `raw.>` (`raw.text.>`, `raw.evt.>`, `raw.reg.>`), `posture.telegram.>` (structured postures and mentions, no text; F3b) and `sys.heartbeat.*`.
-- An `intel-writer` worker on `core` (no model clients; DB role limited to INSERT on its tables) persists scrape-side outputs: `raw.evt.>` → `text.geo_event`, `posture.telegram.>` → `text.telegram_mention` / `text.telegram_posture`. `nlp` never subscribes to `posture.telegram.>` or `raw.text.telegram*` ([02 F3b](../../../docs/02-v1-architecture.md#8-end-to-end-flows)).
-- `nlp` on `core`: subscribes `raw.text.>`, writes Postgres, publishes `text.doc.new`.
-- `ingest-events` on `scrape` publishing `raw.evt.>`; the `intel-writer` on `core` normalises into `text.geo_event` and publishes `evt.{kind}` (same pattern).
+- An `intel-writer` worker (Rust crate `mt-intel-writer`) on `core` (no model clients; DB role limited to INSERT on its tables) persists scrape-side outputs: `raw.evt.>` → `text.geo_event`, `posture.telegram.>` → `text.telegram_mention` / `text.telegram_posture`. `nlp` never subscribes to `posture.telegram.>` or `raw.text.telegram*` ([02 F3b](../../../docs/02-v1-architecture.md#8-end-to-end-flows)).
+- `nlp` on `core`: subscribes `raw.text.>`, writes Supabase Postgres, publishes `text.doc.new`.
+- `ingest-events` (Rust crate `mt-events`) on `scrape` publishing `raw.evt.>`; the `intel-writer` on `core` normalises into `text.geo_event` and publishes `evt.{kind}` (same pattern).
 - `decision-svc` on `core`, bound to the internal network, API-key protected.
 - JetStream stream `RAW_TEXT` (limits: 7 d, 5 GB), `RAW_EVT` (7 d, 1 GB), `RAW_REG` (30 d, 1 GB), `POSTURE_TG` (7 d, 1 GB); `TEXT_DOC` 24 h. Limits are configurable defaults in `ops/nats/streams/*.json`.
 - Every service emits `sys.heartbeat.{service}`; resource limits set (nlp 4 GB RAM; crawl4ai 2 GB).
 
 ## ToDo
 
-- [ ] Add the services to `docker-compose.yml` (digest-pinned; read-only FS where possible).
+- [ ] Add the services to the workstation compose file under `infra/` ([18 §3](../../../docs/18-platform-and-deployment.md#3-repository-layout); digest-pinned; read-only FS where possible); `mt-intel-writer` and `mt-events` images built from `crates/`.
 - [ ] Create NATS accounts/users in `ops/nats/accounts.conf`: `scrape` (publish `raw.>` only), `core` (normal).
 - [ ] Define JetStream streams in `ops/nats/streams/*.json` and the KV bucket `tierb_scores`; reuse `feed_status` (exists from P1).
-- [ ] Add the `intel-writer` service on `core` with its narrow DB role.
+- [ ] Add the `intel-writer` service (`mt-intel-writer`) on `core` with its narrow DB role (a Supabase Postgres role, INSERT-only on its tables, no `anon`/`authenticated` access).
 - [ ] Add Grafana panels for the new services' heartbeats and stream lag.
-- [ ] Network test: from `ingest-text`, Postgres/signer unreachable; publishing outside `raw.>` denied.
+- [ ] Network test: from `ingest-text`, Supabase Postgres/signer unreachable; publishing outside `raw.>` denied.
 
 ## Verification
 
@@ -83,8 +83,8 @@ review_result: ""
 
 - [ ] All five services healthy on `docker compose up`
 - [ ] Scrape-side publish permissions restricted to `raw.>` (test proves it)
-- [ ] No scrape-side container can reach Postgres or the signer
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] No scrape-side container can reach Supabase Postgres or the signer
+- [ ] CI green (`cargo test -p mt-intel-writer`, `cargo test -p mt-events`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -92,7 +92,7 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT give scrape-side services a Postgres DSN or core NATS credentials.
+- Do NOT give scrape-side services a Supabase Postgres DSN or core NATS credentials.
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT use unpinned images (`:latest`) or vendored code with telemetry/referral IDs; pin by digest.
 
@@ -111,3 +111,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3/F3b split (17 §A P4-B001): scrape account may publish posture.telegram.> and raw.reg.>, core intel-writer persists postures; dropped P4-T007 dep; explicit P0/P1 depends_on)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`intel-writer` = Rust `mt-intel-writer`, `ingest-events` = Rust `mt-events`; Supabase Postgres; compose under `infra/`; services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

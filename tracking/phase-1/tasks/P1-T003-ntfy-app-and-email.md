@@ -43,7 +43,7 @@ Your phone receives pushes from the self-hosted ntfy server on a private topic o
 
 - Roadmap: requirements [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.03](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Alerts: [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) (Telegram + email + ntfy as the second independent channel)
-- ntfy server is deployed by P1-T044 (auth on, Tailscale only); iOS push goes via ntfy's upstream relay, which carries only a message ID ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B006)
+- ntfy server is deployed by P1-T044 (auth on; localhost on the workstation, plus a Tailscale listener once your tailnet exists); iOS push goes via ntfy's upstream relay, which carries only a message ID ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B006)
 - Email: the destination address, the SMTP app password (or turning email off) are all in P1-T068
 - Schedule: any time before go-live; nothing in Phases 1–6 depends on it. Workstation-first: ntfy is reachable on localhost until Tailscale exists ([18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode), [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path))
 - Depends on (this phase): P1-T044

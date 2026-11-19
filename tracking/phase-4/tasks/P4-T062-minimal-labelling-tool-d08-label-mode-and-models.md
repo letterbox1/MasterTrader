@@ -15,17 +15,17 @@ requirements: [R4.16, R4.12]
 roadmap_todos: [T4.31]
 modules: [M21, M2]
 dashboards: [D08, D10]
-tools: [uv, pnpm, node>=20, git]
+tools: [uv, cargo, supabase, pnpm, node>=20, git]
 mcp: []
 env: []
-services: [postgres, mt-api]
+services: [supabase-postgres, mt-api]
 branch: p4/P4-T062-minimal-labelling-tool-d08-label-mode-and-models
 pr: ""
 doc_sync: [docs/ui/dashboards/D08-intel.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-You can label a stratified sample of ~200 documents relevant/irrelevant (plus optional direction/event type) in a **Label mode** on the D08 Feed, each label stored through the `models.label.add` command (C0) as an insert-only `models.label` row. Your labels (P4-T049) then calibrate the SemIf gate (P4-T048) and measure it (P4-T053). D10's full labelling queue reuses the same table and command in P6.
+You can label a stratified sample of ~200 documents relevant/irrelevant (plus optional direction/event type) in a **Label mode** on the D08 Feed, each label stored through the `models.label.add` command (C0) as an insert-only `models.label` row. Agent silver labels (P4-T048, `source = agent`) calibrate the SemIf gate and measure it (P4-T053); your labels (P4-T049, optional) take precedence where present. D10's full labelling queue reuses the same table and command in P6.
 
 ## Context & references
 
@@ -50,17 +50,17 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 
 ## Requirements
 
-- `models.label` (insert-only): id, subject (doc id), question id + version, label, optional direction/event type, `source` (`user` | `outcome`), batch id, labelled_at; the latest row per (subject, question) wins, older rows stay.
+- `models.label` (insert-only): id, subject (doc id), question id + version, label, optional direction/event type, `source` (`user` | `agent` | `outcome`), batch id, labelled_at; the latest row per (subject, question) wins, older rows stay.
 - Sampler: a batch of ~200 docs (configurable) stratified by source kind and by SemIf P(yes) decile; excludes Telegram (never sampled) and every `model_input_ok = false` row via the P4-T025 guard; the model score is hidden in Label mode.
-- Command `models.label.add` (C0) through the `mt_api` command bus, audited in `audit.command`; query `/models/labels` (by batch, question, source) and `/models/labels/batches`.
+- Command `models.label.add` (C0) through the `mt-api` command bus, audited in `audit.command`; query `/models/labels` (by batch, question, source) and `/models/labels/batches`.
 - Label mode at `/intel?label=batch-<id>`: keyboard 1 / 0 / s (skip) on desktop, large buttons on phones; progress counter; resumable across sessions.
-- Non-functional: label submit p95 < 200 ms; works at every DESIGN §6.8 tier; no shadow/teacher output can be written as a label (`source` limited to `user` from this UI).
+- Non-functional: label submit p95 < 200 ms; works at every DESIGN §6.8 tier; no shadow/teacher output can be written as a label (`source` limited to `user` from this UI; agent silver labels arrive only through the CLI path with `source = agent`).
 
 ## ToDo
 
-- [ ] Migration for `models.label` (table only; schema from P0) + insert-only privileges
+- [ ] SQL migration in `supabase/migrations/` for `models.label` (table only; schema from P0) + insert-only privileges; pgTAP test
 - [ ] Sampler + batch creation command/CLI (`mt_models.labels.sample`), guard applied
-- [ ] `models.label.add` handler (C0) + `/models/labels` queries in `mt_api` (OpenAPI updated)
+- [ ] `models.label.add` handler (C0) + `/models/labels` queries in `mt-api` (Rust; utoipa OpenAPI updated)
 - [ ] D08 Label mode UI (keyboard + phone buttons, hidden scores, progress, resume)
 - [ ] Post the batch link to your Telegram when a batch is ready (via the alert path)
 - [ ] Tests (below), including the label flow test for R4.16
@@ -92,7 +92,7 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 ## Exceptions & edge cases
 
 - Paywalled/headline-only documents: label on the headline or skip.
-- Postgres down: Label mode shows read-only with a banner; nothing is queued client-side.
+- Supabase Postgres down: Label mode shows read-only with a banner; nothing is queued client-side.
 
 ## Cardinal rules (do NOT)
 
@@ -100,7 +100,7 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 - Do NOT show the model's score in Label mode.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); corrections are new rows ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -118,3 +118,4 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.16 / T4.31 per 17 §D P4-B007; split out of P4-T048)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (labels gain `source = agent` (silver); Rust `mt-api` handler; Supabase migration; services postgres → supabase-postgres; tools +cargo +supabase; `mt_api` → `mt-api`)

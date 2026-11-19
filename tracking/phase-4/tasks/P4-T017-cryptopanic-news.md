@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -73,7 +73,7 @@ review_result: ""
 ## Acceptance criteria
 
 - [ ] Fixture replay ingests items + votes with attribution on every item (the live 24-h run is P4-T067)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: fixtures only, live run moved to P4-T067; dropped P4-T005 dependency)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

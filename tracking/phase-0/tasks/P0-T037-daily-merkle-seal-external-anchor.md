@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T031]
 requirements: [R0.07, R0.N7]
 roadmap_todos: [T0.23]
-modules: [M17]
+modules: [M17, mt-obs]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server, minio]
+services: [supabase-postgres, prefect-server, minio]
 branch: p0/P0-T037-daily-merkle-seal-external-anchor
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a Merkle root over that day's `row_hash`es into `audit.seal`, then anchors the seal outside the database: (1) an object in the Object-Locked `mt-worm-seal` bucket (or append-only rest-server), (2) an optional OpenTimestamps proof, (3) a Telegram witness message to you.
+The `mt-obs seal` job (Rust, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), scheduled daily (00:15 UTC) by Prefect (a flow that runs the binary) or pg_cron, writes, per WORM table per UTC day, a Merkle root over that day's `row_hash`es into `audit.seal`, then anchors the seal outside the database: (1) an object in the Object-Locked `mt-worm-seal` bucket (or append-only rest-server), (2) an optional OpenTimestamps proof, (3) a Telegram witness message to you.
 
 ## Context & references
 
@@ -60,19 +60,19 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 
 ## ToDo
 
-- [ ] Implement `mt_obs.worm.merkle` (pure Python, tested) and the Prefect flow `seal_daily`.
-- [ ] Implement S3 (boto3, B2 endpoint) and rest-server uploaders behind one `AnchorStore` interface.
-- [ ] Implement the OTS step (opentimestamps-client pinned) behind a flag.
-- [ ] Implement the Telegram witness via Bot API `sendMessage` (httpx, no bot framework yet).
+- [ ] Implement `mt_obs::worm::merkle` (pure Rust, tested) and the `mt-obs seal --day` command; a thin Prefect flow `seal_daily` runs it on schedule.
+- [ ] Implement S3 (`aws-sdk-s3` or `object_store`, B2 endpoint) and rest-server uploaders behind one `AnchorStore` trait.
+- [ ] Implement the OTS step (the pinned `opentimestamps-client` CLI in the job image, called as a subprocess) behind a flag.
+- [ ] Implement the Telegram witness via Bot API `sendMessage` (`reqwest`, no bot framework yet; `mt-telegram-bot` comes in P1).
 - [ ] Schedule in Prefect; expose last seal status to `/system/backups` and D16 Audit.
 - [ ] Tests below.
 
 ## Verification
 
 ### Tests
-- Unit: Merkle root golden vectors (1, 2, 3, 1000 leaves); empty-day root.
+- `cargo test -p mt-obs merkle`: Merkle root golden vectors (1, 2, 3, 1000 leaves); empty-day root.
 - Integration (MinIO with object lock in CI as B2 stand-in): seal object written with retention; delete attempt fails; version id stored.
-- Integration: Telegram call mocked (respx) → message id stored; failure → `partial` + alert.
+- Integration: Telegram call mocked (`wiremock`) → message id stored; failure → `partial` + alert.
 
 ### Scenarios
 - Given B2 is unreachable at 00:15, then the seal row is `partial`, an alert fires, and the hourly retry anchors it later the same day.
@@ -119,3 +119,4 @@ A Prefect flow runs daily (00:15 UTC) and writes, per WORM table per UTC day, a 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: MinIO + mocked Bot API, live anchors/witness move to P0-T063; seals never block inserts (R0.N7); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Merkle seal is Rust in `mt-obs` (Prefect only schedules it); boto3/httpx/respx → aws-sdk-s3/reqwest/wiremock)

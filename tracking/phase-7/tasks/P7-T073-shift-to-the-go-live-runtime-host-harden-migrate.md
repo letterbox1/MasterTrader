@@ -55,7 +55,7 @@ The system that was built and paper-traded on the workstation runs on the runtim
 
 ## ToDo
 
-- [ ] Apply the runtime host playbook in `live` profile; checklist PASS
+- [ ] Apply the host playbook to the runtime host in `live` profile; checklist PASS
 - [ ] Database migration path for the chosen `db.target`, with WORM chain verification
 - [ ] Web deploy for the chosen `web.host`
 - [ ] Run the full verification suite on the target; attach results

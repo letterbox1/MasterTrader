@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ You own an air-gapped **vault** (cold) wallet and a **warm** hardware wallet, in
 
 ## Requirements
 
-- Vault: an air-gapped device (e.g. Ellipal Titan) never connected to the host or the internet; signs only via QR.
+- Vault: an air-gapped device (e.g. Ellipal Titan) never connected to the workstation, a runtime host or the internet; signs only via QR.
 - Warm: a hardware wallet with on-device confirmation (Ledger Flex/Nano X or Trezor Safe 5); used manually for staking/governance later (P6).
 - Both initialised by you from a fresh seed generated **on the device**; no pre-seeded or second-hand devices.
 - Output: one public address per chain you will use (EVM and Solana at minimum) per wallet, kept in a plain note (public data only) for P5-T005.
@@ -113,3 +113,4 @@ You own an air-gapped **vault** (cold) wallet and a **warm** hardware wallet, in
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (watch-only wording per P5-B008: system may prepare unsigned transactions only; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9))

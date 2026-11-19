@@ -18,14 +18,14 @@ dashboards: [D12, D13]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T041-decision-engine-fresh-launch-reject
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -89,7 +89,7 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 
 - Do NOT auto-claim anything the never-automated list covers (P5-T042).
 - Do NOT apply loosening (new mandate, higher caps, autonomous claims) without C3 (Telegram approve + TOTP + cool-down); protective actions (revoke, sweep, kill) never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT add paid data/APIs or scraping that breaks terms; no self-bots or user tokens; no sybil, multi-wallet or fake-engagement patterns.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -109,3 +109,4 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (auto-claims from the identity wallet per P5-B017; canonical task types)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

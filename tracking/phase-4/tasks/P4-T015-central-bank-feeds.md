@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,7 +76,7 @@ Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SN
 ## Acceptance criteria
 
 - [ ] All 8 banks ingesting; statements tagged correctly in a 1-week run
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -107,3 +107,4 @@ Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SN
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

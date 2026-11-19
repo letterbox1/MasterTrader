@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T015, P1-T018, P1-T019, P1-T020, P1-T022, P1-T023, P1-T024, P1-T025, P1-T026, P1-T027, P1-T028, P1-T029, P1-T008, P1-T037]
+depends_on: [P1-T015, P1-T018, P1-T019, P1-T020, P1-T022, P1-T023, P1-T024, P1-T025, P1-T026, P1-T027, P1-T028, P1-T029, P1-T008, P1-T037, P1-T075]
 requirements: [R1.06, R1.08]
 roadmap_todos: [T1.41]
 modules: [M1]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -75,7 +75,7 @@ Every P1 batch flow has a Prefect deployment with a schedule aligned to its sour
 ## Acceptance criteria
 
 - [ ] Every batch source scheduled; DST tests pass; failures alert
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,4 @@ Every P1 batch flow has a Prefect deployment with a schedule aligned to its sour
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python Prefect; also schedules the Rust jobs it triggers (`mt-recorder compact`/`tier`, `mt-store retention run`, `mt-store bars export-cold` from P1-T075, new dep))

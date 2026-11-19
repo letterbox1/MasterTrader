@@ -18,14 +18,14 @@ dashboards: [D12]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p5/P5-T040-viability-ev-gate-au-geo
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -86,7 +86,7 @@ Each risk-passed opportunity gets a viability score (opportunity strength, cost 
 ## Cardinal rules (do NOT)
 
 - Do NOT create tasks that require VPNs or misrepresenting residency (SPEC NN11).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -104,3 +104,4 @@ Each risk-passed opportunity gets a viability score (opportunity strength, cost 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (EV hurdle default 5% p.a. from settings per 16 §2.7/P5-B012)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

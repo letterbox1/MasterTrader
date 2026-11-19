@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T020, P0-T022, P0-T031]
+depends_on: [P0-T020, P0-T022, P0-T031, P0-T071]
 requirements: [R0.09, R0.13]
 roadmap_todos: [T0.45, T0.41, T0.28]
-modules: [M21]
+modules: [M21, mt_models, mt-obs]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, docker, uv, python>=3.12, supabase]
 mcp: []
 env: []
-services: [litellm, postgres, tei-embed]
+services: [litellm, supabase-postgres, tei-embed]
 branch: p0/P0-T042-litellm-gateway-config
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,14 +56,14 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 - Image `ghcr.io/berriai/litellm` at a ≥ 1.83 tag resolved to digest; CI check rejects versions < 1.83 and exactly 1.82.7/1.82.8.
 - `infra/litellm/config.yaml`: `research-primary` (Anthropic Claude, prompt caching on), `research-custom` (OpenAI-compatible base URL from secrets; disabled if absent), `local-advisor` (`llm-local`, P0-T044), `local-embed` (`tei-embed`, bge-small, P0-T043); `router_settings.routing_strategy: latency-based-routing`; `fallbacks: [{research-primary: [research-custom, local-advisor]}]`; `context_window_fallbacks: [{local-advisor: [research-primary]}]`.
 - Virtual keys per role with the [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) defaults read from settings (never literals): debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30 per day (`budget_duration: 1d`) and a monthly cap of US$40. Whichever runs out first routes the call to `local-advisor`, marked `fallback_used`, instead of failing (10 §5; custom router hook or per-key `model` fallback, document the mechanism). Raising a budget is C3 (`system.settings.update`).
-- LiteLLM DB: Postgres database `litellm` with its own role; master key from tmpfs; UI disabled or bound internal only; `telemetry: false`.
-- Callbacks: success/failure → `mt_obs` callback writing `audit.llm_call` (hashes + text + tokens + cost + latency + `trace_id`); Prometheus callback for spend (`litellm_spend_metric`).
+- LiteLLM DB: database `litellm` on the Supabase Postgres (P0-T020/P0-T070) with its own role, outside the MasterTrader schemas; master key from tmpfs; UI disabled or bound internal only; `telemetry: false`.
+- Callbacks (LiteLLM is Python, so the callback is Python by necessity, 18 §2.2): success/failure → `mt_models.gateway.audit_callback` calling the one Rust audit writer through the `mt_store` binding (P0-T031, P0-T071) to write `audit.llm_call` (hashes + text + tokens + cost + latency + `trace_id`); Prometheus callback for spend (`litellm_spend_metric`).
 - Only LLM keys are mounted (07 §2); no broker keys; `core` network only; outbound to `api.anthropic.com` and the custom endpoint host.
 
 ## ToDo
 
 - [ ] Add the service, config, DB and secrets mounts.
-- [ ] Implement the `mt_obs` LiteLLM callback module.
+- [ ] Implement `mt_models.gateway.audit_callback` (via the `mt_store` binding) and a derived LiteLLM image (pinned base digest) that installs it.
 - [ ] Create the six virtual keys (script `infra/litellm/bootstrap_keys.py`, keys stored in tmpfs secrets for consumers).
 - [ ] Add the version guard to CI.
 - [ ] Mock-provider smoke tests below (live calls are P0-T068).
@@ -80,7 +80,7 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 - Given an engine/hot-path container tries to reach LiteLLM, then there is no dependency (10 §5): the gateway is never on the hot path (documented; enforced in P2).
 
 ### Stress / failure injection
-- 20 concurrent `local-advisor` calls → queueing, no crashes; p95 latency logged for the CPU model.
+- 20 concurrent `local-advisor` calls → queueing, no crashes; p95 latency logged for the model profile in use (CPU by default, `models.gpu_profile: auto`).
 
 ## Acceptance criteria
 
@@ -120,3 +120,4 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build vs a mock provider, live smoke split to P0-T068 (T0.69); budgets = 16 §2.10 defaults incl. shadow + US$40 cap; audit.llm_call from P0 (R0.13, T0.28); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (callback lives in `mt_models` and writes through the Rust audit writer via the `mt_store` binding (depends on P0-T071); LiteLLM DB on the Supabase Postgres)

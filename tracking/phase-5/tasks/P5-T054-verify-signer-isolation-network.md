@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An automated network test proves the signer and Anvil sit on the isolated `signer` network, reachable only from the policy service (`airdrop-exec` in P5; P5-B003), with egress limited to RPC hosts, and that no LLM/agent/MCP/scraper container or the LiteLLM gateway can reach the signer socket, OpenBao or key files.
+An automated network test proves the signer and Anvil sit on the isolated `signer` network, reachable only from the policy service (`airdrop-exec`, Rust `mt-airdrop-exec`, in P5; P5-B003), with egress limited to RPC hosts, and that no LLM/agent/MCP/scraper container or the LiteLLM gateway can reach the signer socket, OpenBao or key files.
 
 ## Context & references
 
@@ -50,13 +50,13 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 - From `airdrop-exec`: signer reachable with a valid client cert; without cert → refused.
 - From signer: only allow-listed RPC hosts reachable.
 - Filesystem: no container other than signer mounts the secrets tmpfs/key volume (compose inspection).
-- Runs in CI (compose up in CI runner) and weekly on the host.
+- Runs in CI (compose up in CI runner) and weekly on the workstation.
 
 ## ToDo
 
 - [ ] Write `tests/network/test_signer_isolation.py` driving `docker compose exec` probes.
 - [ ] Compose-inspection check for volumes/networks.
-- [ ] Schedule the weekly host run (Prefect) with alert on failure.
+- [ ] Schedule the weekly run on the workstation (Prefect) with alert on failure.
 
 ## Verification
 
@@ -71,8 +71,8 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 
 ## Acceptance criteria
 
-- [ ] Probe matrix passes in CI and on the host
-- [ ] Weekly host run scheduled with alerting
+- [ ] Probe matrix passes in CI and on the workstation
+- [ ] Weekly workstation run scheduled with alerting
 
 ## Exceptions & edge cases
 
@@ -99,3 +99,4 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (policy service as the signer's only caller per P5-B003; P0 networks dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9))

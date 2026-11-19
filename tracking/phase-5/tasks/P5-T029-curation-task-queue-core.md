@@ -18,14 +18,14 @@ dashboards: [D13]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T029-curation-task-queue-core
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -92,7 +92,7 @@ review_result: ""
 - Do NOT render an unverified link as clickable.
 - Do NOT create tasks that ask the user to sign permits/approvals for unknown contracts.
 - Do NOT add paid data/APIs or scraping that breaks terms; no self-bots or user tokens; no sybil, multi-wallet or fake-engagement patterns.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -111,3 +111,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical 03 M19 task types incl. REG_CHANGE, no TAX_RECORD alias; rows in P3 `curation.task`)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

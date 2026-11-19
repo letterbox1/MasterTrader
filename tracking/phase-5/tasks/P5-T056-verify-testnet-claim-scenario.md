@@ -15,7 +15,7 @@ requirements: [R5.15, R5.18, R5.02]
 roadmap_todos: [T5.61]
 modules: [M4, M22, M18]
 dashboards: [D12]
-tools: [uv, forge, anvil, solana, solana-test-validator]
+tools: [cargo, uv, forge, anvil, solana, solana-test-validator, git]
 mcp: []
 env: []
 services: [sepolia-rpc, solana-devnet, telegram]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,7 +46,7 @@ On a public testnet (Sepolia for EVM, Solana devnet), a test Merkle distributor 
 
 ## Requirements
 
-- Setup: the signer's testnet profile creates the testnet identity wallets (Sepolia, Solana devnet) via `key_create` (C3, you approve in Telegram), funded from public faucets only; signing uses the limits you confirmed in P5-T065; you approve the testnet mandate (`airdrop.mandate.create`, C3) for the test distributor. Claims run from the identity wallet, never the hot trading wallet (P5-B017).
+- Setup: the signer's testnet profile creates the testnet identity wallets (Sepolia, Solana devnet) via `key_create` (C3, you approve in Telegram), funded from public faucets only; signing uses the limits seeded in P5-T065 (testnet chains need no mainnet confirmation, P5-T012); you approve the testnet mandate (`airdrop.mandate.create`, C3) for the test distributor. Claims run from the identity wallet, never the hot trading wallet (P5-B017).
 - Deploy test fixtures: an OpenZeppelin MerkleDistributor (EVM) and an SPL Merkle distributor (Solana) with your identity wallets in the tree; host the proof JSON on a test domain registered as "official" in the fixture project.
 - Run the full pipeline; assert the decision is auto-claim, simulation digest shows only token inflow + gas, mandate id recorded, journal event with classification and AUD value (testnet tokens priced at a fixture price, flagged test), and a manual-sale disposal task (never an automated sale; P5-B010).
 - Negative variant: a second distributor that also pulls a test token → refused, CLAIM_MANUAL task.
@@ -102,3 +102,4 @@ On a public testnet (Sepolia for EVM, Solana devnet), a test Merkle distributor 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys last: testnet keys and mandate created here instead of depending on P5-T006/real funds; signing needs P5-T065; manual disposal task asserted)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (signing uses seeded limits (P5-T065, now an agent task); tools +cargo +git)

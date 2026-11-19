@@ -15,17 +15,17 @@ requirements: [R4.01, R4.03, R4.06]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git, docker]
+tools: [uv, git, docker, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p4/P4-T010-text-store-and-ingest-framework
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text` has the shared pieces every connector uses: Alembic migrations (tables only; the `text` schema exists from P0) for `text.source`, `text.document`, `text.document_dup`, `text.telegram_mention`, `text.telegram_posture`; a source registry with per-source provenance defaults (from `source_terms.yaml`); a text `Connector` base built on the P1 connector framework (P1-T005) with quota tracking, polite fetch, retries and `feed_status` reporting to D07; and the normalised `RawTextItem` schema published on `raw.text.{source}`.
+`mt_data.text` has the shared pieces every connector uses: SQL migrations in `supabase/migrations/` (tables only; the `text` schema exists from P0) for `text.source`, `text.document`, `text.document_dup`, `text.telegram_mention`, `text.telegram_posture`; a source registry with per-source provenance defaults (from `source_terms.yaml`); a text `Connector` base built on the P1 connector framework (P1-T005) with quota tracking, polite fetch, retries and `feed_status` reporting to D07; and the normalised `RawTextItem` schema published on `raw.text.{source}`.
 
 ## Context & references
 
@@ -55,12 +55,12 @@ review_result: ""
 - Telegram sources: the CHECK constraint makes `model_input_ok=true` impossible for `source.kind='telegram'`.
 - `Connector` base (extends P1-T005): async httpx client with declared User-Agent, robots.txt respect, ETag/If-Modified-Since, exponential backoff, quota tracker hook (throttle before the free limit), heartbeat, `feed_status` KV update (ok/degraded/stale/bad).
 - Approximate timestamps: parser sets `published_approx=true` for date-only feed values or relative times ('2h ago').
-- All writes via `mt_store`; research reads via `pit(as_of)` on `ingested_at`.
+- All writes via the `mt_store` Python binding of the Rust `mt-store` crate; research reads via `pit(as_of)` on `ingested_at`. RLS on with no policies for `anon`/`authenticated` ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)).
 
 ## ToDo
 
-- [ ] Alembic migrations for the tables above, incl. CHECK constraints and indexes (`canonical_url`, `content_hash`, `(published_at)`, GIN on `tickers`).
-- [ ] `mt_core.schemas.text`: `RawTextItem`, `TextDocNew`, `TelegramMention`, `TelegramPosture` (msgspec, versioned).
+- [ ] SQL migrations in `supabase/migrations/` for the tables above, incl. CHECK constraints and indexes (`canonical_url`, `content_hash`, `(published_at)`, GIN on `tickers`).
+- [ ] `mt-core` text types `RawTextItem`, `TextDocNew`, `TelegramMention`, `TelegramPosture` (Rust, serde, versioned), exposed to Python through the `mt_store` PyO3 module so `mt-intel-writer` and the Python connectors share one definition ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
 - [ ] `mt_data.text.registry`: load `feeds.yaml`, `watchlist.yaml`, `source_terms.yaml`; seed `text.source`.
 - [ ] `mt_data.text.connector.Connector` base + timestamp normaliser + `feed_status` reporter.
 - [ ] Register text sources in `/data/feeds?kind=text` so D07 shows them.
@@ -72,7 +72,7 @@ review_result: ""
 ### Tests
 - Unit: timestamp normaliser (RFC 822, ISO, date-only → approx, '2h ago' → approx, future dates clamped + flagged).
 - Unit: provenance defaults applied per source; missing terms entry → source refuses to enable.
-- Migration test: inserting a telegram-kind row with `model_input_ok=true` fails on the CHECK constraint.
+- pgTAP test (`supabase test db`): inserting a telegram-kind row with `model_input_ok=true` fails on the CHECK constraint.
 - Property: canonical URL normalisation is idempotent (utm_* stripped, host lower-cased, fragment dropped).
 
 ### Scenarios
@@ -81,14 +81,14 @@ review_result: ""
 - Given Postgres is down (02 §9.3), then raw items stay in JetStream and are written on recovery without duplicates.
 
 ### Stress / failure injection
-- Replay 100k synthetic raw items: insert throughput ≥ 200 docs/s on the host, no duplicate `content_hash` rows.
+- Replay 100k synthetic raw items: insert throughput ≥ 200 docs/s on the workstation (Supabase CLI stack), no duplicate `content_hash` rows.
 
 ## Acceptance criteria
 
-- [ ] Migrations apply/rollback cleanly; CHECK constraints proven by tests
+- [ ] Migrations apply cleanly with `supabase db reset`; CHECK constraints proven by pgTAP tests
 - [ ] Connector base used by at least one real connector in a follow-up PR without changes
 - [ ] Text sources visible in D07 with status and quota
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -98,7 +98,7 @@ review_result: ""
 
 - Do NOT store HTML; store extracted text only and mark it untrusted.
 - Do NOT let any table path allow `model_input_ok=true` for Telegram rows.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
@@ -119,3 +119,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical names text.telegram_posture / posture.telegram.* (17 §D P4-B003); schemas exist from P0 (17 §B); extends the P1 connector framework; explicit P0/P1 depends_on)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Alembic → `supabase/migrations/` + pgTAP; `mt-core` text types with PyO3 binding; RLS deny-all; services postgres → supabase-postgres; tools +supabase; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))

@@ -15,17 +15,17 @@ requirements: [R5.06, R5.03]
 roadmap_todos: [T5.23]
 modules: [M22, M16, M11, M19]
 dashboards: [D18, D12]
-tools: [uv, anvil, solana-test-validator]
+tools: [cargo, anvil, solana-test-validator, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T025-monitors-approvals-nonce-authority
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,9 +55,9 @@ Every new token approval on any registered wallet raises an alert within one pol
 
 ## ToDo
 
-- [ ] Implement `packages/mt_treasury/monitors/approvals.py` and `nonce_authority.py`, consuming `wallet.*.approval|nonce_authority`.
+- [ ] Implement `crates/mt-treasury/src/monitors/approvals.rs` and `nonce_authority.rs`, consuming `wallet.*.approval|nonce_authority`.
 - [ ] Signer freeze flag API (per wallet) and auto-revoke intent producer.
-- [ ] Weekly audit Prefect flow + report; D18/D12 approvals widgets data.
+- [ ] Weekly audit job + report; D18/D12 approvals widgets data.
 - [ ] Tests; doc sync.
 
 ## Verification
@@ -109,3 +109,4 @@ Every new token approval on any registered wallet raises an alert within one pol
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless GoPlus fixtures, live in P5-T068; signer freeze API and P1 alert fan-out as deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

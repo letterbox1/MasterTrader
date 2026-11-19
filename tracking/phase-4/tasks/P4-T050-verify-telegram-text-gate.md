@@ -15,17 +15,17 @@ requirements: [R4.03, R4.02]
 roadmap_todos: [T4.60]
 modules: [M2, M9, M21]
 dashboards: [D08]
-tools: [uv, git, docker]
+tools: [uv, cargo, git, docker]
 mcp: []
 env: []
-services: [postgres, nats, loki]
+services: [supabase-postgres, nats, loki]
 branch: p4/P4-T050-verify-telegram-text-gate
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -80,7 +80,7 @@ An automated end-to-end test suite, run in CI and as part of the exit demo, prov
 - [ ] Suite green in CI with zero canary hits outside allowed tables
 - [ ] Mutation check proves the suite catches a removed guard
 - [ ] Report saved for the exit demo
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-intel-writer`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ An automated end-to-end test suite, run in CI and as part of the exit demo, prov
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical posture names and consumer allow-list probe (17 §A P4-B001, §D P4-B003))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

@@ -18,14 +18,14 @@ dashboards: [D12]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p5/P5-T038-wallet-cluster-graph-blacklist
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -107,3 +107,4 @@ Our own wallet-cluster detection builds a funding graph of early buyers/holders 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless recorded traces)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

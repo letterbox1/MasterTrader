@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T037, P0-T035]
 requirements: [R0.07, R0.12]
 roadmap_todos: [T0.23, T0.27]
-modules: [M17, M11, mt_risk]
+modules: [M17, M11, mt-obs, mt-risk]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, nats, prefect-server, minio]
+services: [supabase-postgres, nats, prefect-server, minio]
 branch: p0/P0-T038-audit-verify-incident-path
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`audit.verify` (command, C1) and a daily Prefect flow recompute every WORM chain and compare each day's Merkle root against the **externally anchored** seal (fetched from the Object-Locked store, not from `audit.seal`). Any mismatch is a critical incident and triggers the **integrity response** (R0.12, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)): an `audit.integrity_incident` row, the NATS KV status `audit.integrity` set to the configured action (default `block_new_entries`; options `alert_only` / `halt_all`), alerts on every available channel and a red D16 banner. M11 reads the status before every trade through the `mt_risk.integrity_gate` hook point built here; it clears only with `audit.integrity.ack` (C3), itself a new WORM row.
+`audit.verify` (command, C1) and a daily scheduled `mt-obs verify` job (Rust; Prefect or pg_cron only schedules it) recompute every WORM chain and compare each day's Merkle root against the **externally anchored** seal (fetched from the Object-Locked store, not from `audit.seal`). Any mismatch is a critical incident and triggers the **integrity response** (R0.12, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)): an `audit.integrity_incident` row, the NATS KV status `audit.integrity` set to the configured action (default `block_new_entries`; options `alert_only` / `halt_all`), alerts on every available channel and a red D16 banner. M11 reads the status before every trade through the `mt_risk::integrity_gate` hook point built here in the `mt-risk` crate (one implementation, linked into `mt-api`, the engine and `mt-deadman`); it clears only with `audit.integrity.ack` (C3), itself a new WORM row.
 
 ## Context & references
 
@@ -52,19 +52,19 @@ review_result: ""
 
 ## Requirements
 
-- Verify steps per table: (1) recompute chain with `recompute_chain` (P0-T030): contiguous `seq`, `prev_hash` links, `row_hash` recomputation; (2) for each sealed day, rebuild the Merkle root and compare with the anchor object's root (download + verify object hash); (3) compare `audit.seal` row with the anchor (DB tamper of the seal itself).
+- Verify steps per table: (1) recompute chain with `mt_store::worm::recompute_chain` (P0-T030): contiguous `seq`, `prev_hash` links, `row_hash` recomputation; (2) for each sealed day, rebuild the Merkle root and compare with the anchor object's root (download + verify object hash); (3) compare `audit.seal` row with the anchor (DB tamper of the seal itself).
 - Result: `audit.verify_run` row (WORM) with mode (`incremental|full`), per-table status, first bad `seq`, duration.
 - On mismatch: `audit.integrity_incident` row (severity critical, kind `chain_mismatch` / `seal_mismatch` / `anchor_missing`), NATS `alert.critical.audit_verify`, Alertmanager route (Telegram now; email/ntfy when P1 adds them), and KV `audit.integrity = {status: <action>, incident_id, since}` where `<action>` is the setting `audit_integrity_action` (default `block_new_entries`). mt-api exposes it at `/audit/integrity` and on the WS `system` topic (banner).
-- **Hook point** `mt_risk.integrity_gate(intent, status) -> Allow | Reject(reason)`: `ok` / `alert_only` → allow; `block_new_entries` → reject entries and risk-increasing orders, allow exits and protective orders (reduce-only, stops); `halt_all` → reject everything except Kill. A pure function + KV reader with a golden test table; P2's M11 calls it inline.
+- **Hook point** `mt_risk::integrity_gate(intent, status) -> Decision::{Allow, Reject(reason)}`: `ok` / `alert_only` → allow; `block_new_entries` → reject entries and risk-increasing orders, allow exits and protective orders (reduce-only, stops); `halt_all` → reject everything except Kill. A pure function + KV reader with a golden test table; P2's M11 calls it inline.
 - The action is a setting: tightening (towards `halt_all`) is immediate; loosening (towards `alert_only`) is C3. While an incident is open, no other risk loosening is accepted (C3 changes other than the ack are refused).
 - Clearing: `audit.integrity.ack` (C3; via the break-glass `mtctl approve` + TOTP until Telegram C3, P0-T035) writes a new `audit.integrity_incident` row (kind `ack`, referencing the incident; nothing is updated in place) and resets the KV status to `ok`.
 - Schedule (defaults, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity), configurable): an **hourly incremental** chain check from the last good checkpoint per chain (stored in `audit.verify_run`), plus the **daily full verify** against the external seals (01:00 UTC, after the seal); also on demand from D16 ('verify now'); full verify of 10 M rows < 10 min.
 
 ## ToDo
 
-- [ ] Implement verifier library + Prefect flow + `audit.verify` handler.
+- [ ] Implement the verifier in `mt-obs` + the scheduled job + the `audit.verify` handler in `mt-api`.
 - [ ] Implement incident creation, alert publishing and the `audit.integrity` KV write per the configured action.
-- [ ] Implement `mt_risk.integrity_gate` (hook point) with golden tests.
+- [ ] Implement `mt_risk::integrity_gate` (hook point) in the `mt-risk` crate with golden tests (`cargo test -p mt-risk integrity_gate`).
 - [ ] Implement the `audit.integrity.ack` handler (C3; appends an ack row, resets KV) and expose the status at `/audit/integrity` + WS `system`; refuse other loosening while an incident is open.
 - [ ] Add a Prometheus metric `mt_audit_verify_status{table}` (1 ok / 0 fail) and last-success timestamp for Grafana alerts.
 - [ ] Write the incident runbook stub (filled in P0-T061).
@@ -124,3 +124,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response per 17 §A P0-B001 / 16 §2.11 (KV audit.integrity, block_new_entries default, M11 hook point, audit.integrity.ack C3) replaces trading_halt/risk.halt.clear; hourly incremental + daily full verify; roadmap T0.27; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (verifier in Rust `mt-obs`, scheduled by Prefect/pg_cron; `integrity_gate` lives in the `mt-risk` crate (one implementation for `mt-api`, engine and dead-man))

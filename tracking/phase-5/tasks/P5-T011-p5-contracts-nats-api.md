@@ -1,7 +1,7 @@
 ---
 id: P5-T011
 kind: task
-title: Phase 5 contracts: NATS subjects, mt_api commands/queries and WebSocket topics
+title: Phase 5 contracts: NATS subjects, mt-api commands/queries and WebSocket topics
 phase: 5
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R5.20, R5.23, R5.15, R5.05]
 roadmap_todos: [T5.28, T5.30, T5.31]
 modules: [M4, M19, M22, M15]
 dashboards: [D12, D13, D18]
-tools: [uv]
+tools: [cargo, uv, git]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p5/P5-T011-p5-contracts-nats-api
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T011 · Phase 5 contracts: NATS subjects, mt_api commands/queries and WebSocket topics
+# P5-T011 · Phase 5 contracts: NATS subjects, mt-api commands/queries and WebSocket topics
 
 ## Goal / expected outcome
 
-Versioned msgspec schemas for every P5 subject and typed `mt_api` commands/queries with their confirmation levels are registered (handlers may be stubs), so the services and the UI can be built in parallel against one contract.
+Versioned `mt-core` types (Rust, serde; exposed to Python through the PyO3 module) for every P5 subject and typed `mt-api` commands/queries with their confirmation levels are registered (handlers may be stubs), so the services and the UI can be built in parallel against one contract.
 
 ## Context & references
 
@@ -51,7 +51,7 @@ Versioned msgspec schemas for every P5 subject and typed `mt_api` commands/queri
 
 ## Requirements
 
-- Schemas in `packages/mt_core/schemas/` for: `airdrop.opportunity.updated`, `airdrop.decision`, `airdrop.claim.result`, `task.new`, `task.updated`, `wallet.*` events, `signer.intent` (internal), `costgate.quote`, `sweep.result`, `monitor.event` (depeg/exploit/venue/bridge/concentration).
+- Types in `crates/mt-core` (schema module) for: `airdrop.opportunity.updated`, `airdrop.decision`, `airdrop.claim.result`, `task.new`, `task.updated`, `wallet.*` events, `signer.intent` (internal), `costgate.quote`, `sweep.result`, `monitor.event` (depeg/exploit/venue/bridge/concentration).
 - Command registry entries with C-level, idempotency, `audit.command` writes and problem+json errors (P0 framework).
 - Never-offered commands (connect wallet, sign permit, approve unknown contract, social automation) are **absent** from the registry and rejected with a specific problem type if called by name.
 - WS topics `airdrop`, `tasks`, `wallet` and `alert` (02 §7.3) fanned out with ≤ 1 Hz throttling in tables; envelope `{topic, seq, ts, data}`.
@@ -60,8 +60,8 @@ Versioned msgspec schemas for every P5 subject and typed `mt_api` commands/queri
 
 ## ToDo
 
-- [ ] Define msgspec structs and subject constants; add schema version fields.
-- [ ] Register commands and queries in `mt_api` with stub handlers returning 501 until the owning task lands.
+- [ ] Define `mt-core` structs and subject constants (Rust, serde) with schema version fields; expose them to Python (`mt_airdrop`, `mt_curation`) through the PyO3 module.
+- [ ] Register commands and queries in `mt-api` with stub handlers returning 501 until the owning task lands (axum; utoipa OpenAPI regenerated for the web client).
 - [ ] Add a `NeverAutomated` problem type and a denylist of command names (shared with P5-T042).
 - [ ] Add WS topics with throttling (`wallet`, `alert` as listed in 02 §7.3).
 - [ ] Contract tests: schema round-trip; each command's C-level enforced; OpenAPI snapshot.
@@ -70,7 +70,7 @@ Versioned msgspec schemas for every P5 subject and typed `mt_api` commands/queri
 ## Verification
 
 ### Tests
-- Unit: msgspec encode/decode round-trip for every schema; backward-compat test (v1 payload accepted by v1.1 decoder).
+- Unit: serde encode/decode round-trip for every type (`cargo test -p mt-core`) and the same payloads through the Python binding (`uv run pytest`); backward-compat test (v1 payload accepted by v1.1 decoder).
 - Integration: calling `airdrop.mandate.create` without Telegram approve + TOTP never applies (C3), reusing the P0 confirmation tests.
 - Snapshot: OpenAPI diff reviewed.
 
@@ -93,7 +93,7 @@ Versioned msgspec schemas for every P5 subject and typed `mt_api` commands/queri
 ## Cardinal rules (do NOT)
 
 - Do NOT expose mandates, keys or withdrawals to the future MCP surface (02 §7.4).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT apply loosening (new mandate, higher caps, autonomous claims) without C3 (Telegram approve + TOTP + cool-down); protective actions (revoke, sweep, kill) never wait for approval.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -105,10 +105,11 @@ Versioned msgspec schemas for every P5 subject and typed `mt_api` commands/queri
 ## Branch & PR
 
 - Branch: `p5/P5-T011-p5-contracts-nats-api`
-- PR title: `P5-T011: Phase 5 contracts: NATS subjects, mt_api commands/queries and WebSocket topics`
+- PR title: `P5-T011: Phase 5 contracts: NATS subjects, mt-api commands/queries and WebSocket topics`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T011` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (WS topics per 02 §7.3/P5-B005; canonical task types per P5-B004; limits via risk.policy.update; P0/P1 contract deps added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (serde round-trip tests + Python binding; `mt-core` Rust types with PyO3 binding; Rust `mt-api`; services postgres → supabase-postgres; tools +cargo +git; `mt_api` → `mt-api`)

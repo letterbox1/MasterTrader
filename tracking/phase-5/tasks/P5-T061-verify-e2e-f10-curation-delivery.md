@@ -18,14 +18,14 @@ dashboards: [D13]
 tools: [uv, pnpm]
 mcp: []
 env: [TELEGRAM_BOT_TOKEN, DISCORD_BOT_TOKEN]
-services: [discord, telegram, postgres, nats]
+services: [discord, telegram, supabase-postgres, nats]
 branch: p5/P5-T061-verify-e2e-f10-curation-delivery
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -100,3 +100,4 @@ The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day re-prompt default per 16 §2.13; Details button; live part needs the P0 Telegram/Discord bots)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

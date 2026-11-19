@@ -18,14 +18,14 @@ dashboards: [D07, D06]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres, nats, prefect-server]
+services: [supabase-postgres, nats, prefect-server]
 branch: p4/P4-T064-venue-status-incident-and-proof-of-reserve-watch
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -91,7 +91,7 @@ Each venue's official status page / incident feed, announcements page and proof-
 - Do NOT loosen a venue's status or limits automatically.
 - Do NOT scrape third-party status aggregators.
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -108,3 +108,4 @@ Each venue's official status page / incident feed, announcements page and proof-
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.15 / T4.30 venue-status inputs per 16 §4.3 and 17 §D P1-B014)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

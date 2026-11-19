@@ -15,17 +15,17 @@ requirements: [R4.06, R4.02, R4.12, R4.13]
 roadmap_todos: []
 modules: [M2, M21, M9]
 dashboards: [D07, D08]
-tools: [docker, uv, git]
+tools: [docker, uv, cargo, git]
 mcp: []
 env: []
-services: [postgres, nats, rss-bridge, decision-svc, tei-embed]
+services: [supabase-postgres, nats, rss-bridge, decision-svc, tei-embed]
 branch: p4/P4-T058-verify-stress-failure-injection
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood vs relevance gate, decision-svc/GPU down, TEI down, RSS-Bridge down, Postgres down, NATS restart, Telegram FLOOD_WAIT storm — each with the expected behaviour and recovery, and no data loss or Telegram leakage.
+Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood vs relevance gate, decision-svc/GPU down (GPU checks only when a GPU is present, `models.gpu_profile: auto`), TEI down, RSS-Bridge down, Postgres down, NATS restart, Telegram FLOOD_WAIT storm — each with the expected behaviour and recovery, and no data loss or Telegram leakage.
 
 ## Context & references
 
@@ -75,7 +75,7 @@ Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood v
 
 - [ ] All chaos scenarios pass with documented recovery times
 - [ ] No loss, no duplicates, no Telegram leakage
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-intel-writer`, `cargo test -p mt-events`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood v
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (decision-svc outage asserts nothing on the order path waits (R4.N2, 17 §A P4-B010))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

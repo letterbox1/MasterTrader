@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -79,7 +79,7 @@ review_result: ""
 
 - [ ] 15-min updates ingested continuously for 24 h with zero missed available files
 - [ ] Tone/volume series queryable via `pit(as_of)`
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

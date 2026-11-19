@@ -49,7 +49,7 @@ Read-only API keys exist on the Binance and Bybit testnets (IP-allow-listed); th
 
 ## Requirements
 
-- Binance testnet and Bybit testnet: create API keys with **read only** permission, IP-allow-listed to the host's current public IP (the static exit node replaces it in P7, [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)), no trading, no withdrawals; that IP also becomes `expected_ips` for the egress check (P1-T071)
+- Binance testnet and Bybit testnet: create API keys with **read only** permission, IP-allow-listed to the workstation's current public IP (the static exit node replaces it in P7, [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)), no trading, no withdrawals; that IP also becomes `expected_ips` for the egress check (P1-T071)
 - OANDA practice: generate a personal access token on the practice account (fxTrade Practice → Manage API Access); normal credentials, no money at risk
 - IG demo: API key + demo username/password (normal credentials)
 - Alpaca paper: paper key ID/secret; IBKR paper (only if you use IBKR): paper username/password for the `ib-gateway` login (P1-T070); no live-account credentials

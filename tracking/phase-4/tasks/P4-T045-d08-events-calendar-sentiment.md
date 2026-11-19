@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -77,7 +77,7 @@ The Events tab (map ≥ md with MapLibre, list < md; severity, location, exposur
 
 - [ ] Events/Calendar/Sentiment tabs per spec
 - [ ] Blackout markers match M11 (test)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, viewport matrix + axe)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, `pnpm test`, `pnpm playwright` viewport matrix + axe)
 
 ## Exceptions & edge cases
 
@@ -87,7 +87,7 @@ The Events tab (map ≥ md with MapLibre, list < md; severity, location, exposur
 
 - Do NOT compute blackouts client-side.
 - Do NOT use paid map tile keys.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT skip, weaken or delete a test to get green.
 
@@ -106,3 +106,4 @@ The Events tab (map ≥ md with MapLibre, list < md; severity, location, exposur
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout markers follow 16 §2.8 defaults via the API (no client-side rule))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

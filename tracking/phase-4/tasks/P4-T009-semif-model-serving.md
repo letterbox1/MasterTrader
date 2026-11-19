@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,7 +45,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (SemIf on Qwen3.5-4B; determinism controls; AMD → llama.cpp Vulkan) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
 - Evidence: [decision-models research](../../../docs/research/decision-models-system-one.md) (4B balanced accuracy 0.81; 0.6B worse than chance)
 - Security: [07 §5](../../../docs/07-security-notes.md#5-network--host) (inference servers bind to 127.0.0.1 and require an API key)
-- Cross-phase: P0-T005 (T0.01 GPU decision), P0-T020 (Compose) and P2-T046 (MLflow, for the benchmark record) are `depends_on` entries; P4-T028 provides `models.registry`.
+- Cross-phase: P0-T005 (T0.01 CPU/GPU profile; `models.gpu_profile: auto`, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)), P0-T020 (Compose) and P2-T046 (MLflow, for the benchmark record) are `depends_on` entries; P4-T028 provides `models.registry`.
 - Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B010): decision path = prefix caching **off**, fixed batch; shared-prefix mode only for offline/backfill scoring, marked non-deterministic, never used for decisions or backtests. Stage-1 relevance gate p95 ≤ 300 ms GPU / ≤ 3 s CPU, queued, never on the order path ([10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design)).
 
 ## Requirements
@@ -61,7 +61,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - [ ] Add the SemIf model backend for `decision-svc` to Compose (vLLM GPU profile or llama-server CPU/Vulkan profile), digest-pinned image.
 - [ ] Download weights to the models volume via a script that verifies the pinned revision + sha256.
 - [ ] Configure determinism flags and API key; document GPU vs CPU profiles.
-- [ ] Benchmark: latency p50/p95 for one document × 5 binary questions, and relevance-only p95 against the stage-1 target (≤ 300 ms GPU / ≤ 3 s CPU), on this host; record in MLflow (the formal check is P4-T069).
+- [ ] Benchmark: latency p50/p95 for one document × 5 binary questions, and relevance-only p95 against the stage-1 target (≤ 300 ms GPU / ≤ 3 s CPU), on the workstation; record in MLflow (the formal check is P4-T069).
 - [ ] Register the model in `models.registry` (tier B stage 1, revision, backend, benchmark).
 
 ## Verification
@@ -71,7 +71,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - Security: request without API key → 401; from scrape network → unreachable.
 
 ### Scenarios
-- Given no GPU (T0.01 = CPU fallback), when started with the CPU profile, then it serves at reduced speed and `decision-svc` restricts to the relevance gate (Risk mitigation).
+- Given no GPU (`models.gpu_profile: auto` resolves to CPU, the default), when started with the CPU profile, then it serves at reduced speed and `decision-svc` restricts to the relevance gate (Risk mitigation).
 - Given the weights' checksum mismatches the pinned revision, then the service refuses to start.
 
 ### Stress / failure injection
@@ -82,7 +82,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - [ ] Model served at the pinned revision with determinism flags on
 - [ ] Benchmark recorded (p50/p95 per document × 5 questions) and registered
 - [ ] API key + internal binding verified
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -112,3 +112,4 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (determinism + shared-prefix rule and stage-1 latency target per 17 §A P4-B010 / 10 §4.3; backend named as the decision-svc backend (02 §3.2); depends on P0-T005, P0-T020, P2-T046, P4-T028)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))

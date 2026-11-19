@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -80,7 +80,7 @@ review_result: ""
 - [ ] Every RSS source in `feeds.example.yaml` (and in your `feeds.yaml` if P4-T003 is done) ingests in a 24-h run; your full list is exercised in P4-T060
 - [ ] Paywall + robots rules covered by tests
 - [ ] D07 shows each feed's status
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -112,3 +112,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no longer waits for your feed list (P4-T003): built on fixtures + example feeds, your list runs in P4-T060)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

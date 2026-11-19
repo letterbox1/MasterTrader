@@ -111,3 +111,4 @@ The LLM budgets start populated without asking you anything: the monthly cap (US
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (budgets are 16 §2.10 defaults to review (incl. shadow $0.30), settings not secrets; sops file outside the repo; deps P0-T007/P0-T042; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (converted from USER to an agent seed task (17 §G): budgets seeded from 16 §2.10 through `mt-api` with source `seed`, reviewed in the go-live pack P7-T070; removed USER dep P0-T007 (endpoint URL and key stay there, not needed to seed values))

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`signer` and `anvil` run in Compose on the `signer` network (egress: chain RPC allow-list only), reachable only from the policy service (`airdrop-exec` in P5; treasury and DEX execution go through it later, decision P5-B003), with keys supplied from OpenBao or the sops tmpfs; no LLM/agent/MCP/scraper container can route to them.
+`signer` (Rust `mt-signer`) and `anvil` run in Compose (workstation compose file under `infra/`, [18 §3](../../../docs/18-platform-and-deployment.md#3-repository-layout)) on the `signer` network (egress: chain RPC allow-list only), reachable only from the policy service (`airdrop-exec`, Rust `mt-airdrop-exec`, in P5; treasury and DEX execution go through it later, decision P5-B003), with keys supplied from OpenBao or the sops tmpfs; no LLM/agent/MCP/scraper container can route to them.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Add `signer`, `anvil` (and optional `openbao`) services to `docker-compose.yml` with digests.
+- [ ] Add `signer`, `anvil` (and optional `openbao`) services to the workstation compose file under `infra/` with digests.
 - [ ] Create the egress allow-list (Squid/Envoy or nftables) for RPC hosts from P5-T018.
 - [ ] Wire secrets: sops → tmpfs mount for signer only; or OpenBao AppRole with response wrapping.
 - [ ] Add CI image scan and a compose lint that fails if any other service joins `signer`.
@@ -112,3 +112,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (signer reachable only from the policy service per P5-B003; fixed-IP egress per 16 §3.2; P0 deps added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`signer` = Rust `mt-signer`, `airdrop-exec` = Rust `mt-airdrop-exec`; compose under `infra/`)

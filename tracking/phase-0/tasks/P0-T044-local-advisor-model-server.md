@@ -15,7 +15,7 @@ requirements: [R0.09, R0.13]
 roadmap_todos: [T0.45, T0.41, T0.28]
 modules: [M21]
 dashboards: []
-tools: [docker, curl, sha256sum]
+tools: [docker, curl, sha256sum, just]
 mcp: []
 env: []
 services: [llm-local]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/10-memory-rag-and-models.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,10 +49,10 @@ The `llm-local` container (02 §3.2): a local OpenAI-compatible model server (`l
 
 ## Requirements
 
-- Image: `ghcr.io/ggml-org/llama.cpp:server` by digest; model: a Qwen instruct GGUF Q4_K_M sized to RAM (≈ 4B params; log exact file + sha256); context 8k.
+- Image: `ghcr.io/ggml-org/llama.cpp:server` by digest; model: a Qwen instruct GGUF Q4_K_M sized to the RAM recorded in `infra/profile.yaml` (P0-T005) (≈ 4B params; log exact file + sha256); context 8k.
 - `--api-key` from tmpfs secret; `--host 0.0.0.0` inside the container but only on `core` network; no published port.
 - Health `/health`; `mem_limit` sized to model (~4–6 GB); threads = physical cores − 2.
-- GPU later: swap to vLLM when P0-T005's GPU decision lands (P4/P6); config change only.
+- GPU: with `models.gpu_profile: auto` ([16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)) and a GPU found by P0-T005's profile, a compose profile switches `llm-local` to vLLM (or llama-server with GPU offload); config change only, CPU stays the default and the GPU checks run only when a GPU is present.
 
 ## ToDo
 
@@ -106,3 +106,4 @@ The `llm-local` container (02 §3.2): a local OpenAI-compatible model server (`l
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (container name llm-local per 17 §D P0-B008 (closed); R0.13/T0.28; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU switch is the automatic `models.gpu_profile: auto` compose profile; model size from the workstation profile)

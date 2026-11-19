@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -74,11 +74,11 @@ A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub 
 
 - [ ] Hubble synced; filtered casts ingesting for 24 h
 - [ ] Disk alert tested
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
-- If Hubble's disk need is too high for the host, switch to a free hub endpoint (config flag) and document it.
+- If Hubble's disk need is too high for the workstation, switch to a free hub endpoint (config flag) and document it.
 - Postgres down (02 §9.3): raw items stay in `RAW_TEXT` and are processed on recovery; the connector itself never needs the DB.
 
 ## Cardinal rules (do NOT)
@@ -104,3 +104,4 @@ A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T008 dependency (Hubble container on the scrape network))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))

@@ -18,14 +18,14 @@ dashboards: [D08]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres, tei-embed, tei-rerank]
+services: [supabase-postgres, tei-embed, tei-rerank]
 branch: p4/P4-T032-rag-hybrid-retrieval
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -84,7 +84,7 @@ review_result: ""
 - [ ] PIT property test green
 - [ ] Latency recorded vs target
 - [ ] `/rag/search` used by D08 related docs
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ review_result: ""
 - Do NOT add an `as_of`-less code path.
 - Do NOT bypass `pit(as_of)` conventions for research callers.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -114,3 +114,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P0-T043 (tei-rerank))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

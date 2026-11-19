@@ -18,14 +18,14 @@ dashboards: [D08, D06]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres, nats, prefect-server]
+services: [supabase-postgres, nats, prefect-server]
 branch: p4/P4-T037-calendar-sources
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -80,7 +80,7 @@ review_result: ""
 
 - [ ] Next 14 days of high-importance events present for USD, EUR, GBP, JPY, CHF, AUD, CAD, NZD
 - [ ] DST tests green
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -91,7 +91,7 @@ review_result: ""
 - Do NOT scrape Investing.com, Trading Economics or Myfxbook calendar.
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT skip, weaken or delete a test to get green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 
 ## Doc sync on completion
 
@@ -108,3 +108,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T024/T026/T009; importance feeds 16 §2.8 blackouts)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

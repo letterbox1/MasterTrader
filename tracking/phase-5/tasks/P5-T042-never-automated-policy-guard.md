@@ -15,7 +15,7 @@ requirements: [R5.16, R5.15]
 roadmap_todos: [T5.27, T5.28]
 modules: [M4, M19, M22, M15]
 dashboards: [D12, D13, D18]
-tools: [uv]
+tools: [cargo, uv, git]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/07-security-notes.md, do
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-One shared policy module (`mt_core.policy.never_automated`) encodes the **never automated** list and is enforced in four places — `mt_api` command layer, decision engine/task generator, claim executor and signer — so permits, SIWE on unknown domains, approvals, buying/bridging into launches, connecting wallets, sybil patterns, social actions, captchas, KYC and drainer patterns can never execute automatically, whatever the caller.
+One shared policy module (`never_automated` in the Rust `mt-core` crate, exposed to the Python decision engine through the PyO3 module) encodes the **never automated** list and is enforced in four places — `mt-api` command layer, decision engine/task generator, claim executor and signer — so permits, SIWE on unknown domains, approvals, buying/bridging into launches, connecting wallets, sybil patterns, social actions, captchas, KYC and drainer patterns can never execute automatically, whatever the caller.
 
 ## Context & references
 
@@ -55,7 +55,7 @@ One shared policy module (`mt_core.policy.never_automated`) encodes the **never 
 ## ToDo
 
 - [ ] Implement the policy module with IDs and a `check(action) → allow | refuse(NA-xx)` API.
-- [ ] Wire into mt_api middleware, decision engine, executor and signer.
+- [ ] Wire into `mt-api` middleware (Rust), the decision engine (Python, via the binding), `mt-airdrop-exec` and `mt-signer`.
 - [ ] Campaign-wallet uniqueness constraint in `campaign_record`.
 - [ ] Tests per NA ID at every enforcement point; doc sync.
 
@@ -63,7 +63,7 @@ One shared policy module (`mt_core.policy.never_automated`) encodes the **never 
 
 ### Tests
 - Unit: one test per NA ID per enforcement point (matrix ≥ 14 × 4).
-- Integration: a crafted mt_api call bypassing the UI to request a permit signature → refused with NA ID and audited.
+- Integration: a crafted `mt-api` call bypassing the UI to request a permit signature → refused with NA ID and audited.
 - Integration: assigning a second wallet to an existing campaign → refused NA-09.
 
 ### Scenarios
@@ -109,3 +109,4 @@ One shared policy module (`mt_core.policy.never_automated`) encodes the **never 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; proof-of-control is verify-only, consistent with NA-03)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (policy module in Rust `mt-core` with PyO3 binding; tools +cargo +git; `mt_api` → `mt-api`)

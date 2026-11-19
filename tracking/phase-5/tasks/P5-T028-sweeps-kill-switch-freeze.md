@@ -15,17 +15,17 @@ requirements: [R5.07, R5.N2]
 roadmap_todos: [T5.24]
 modules: [M22, M11, M4]
 dashboards: [D18, D12]
-tools: [uv, anvil, solana-test-validator]
+tools: [cargo, anvil, solana-test-validator, git]
 mcp: []
 env: []
-services: [nats, postgres, anvil]
+services: [nats, supabase-postgres, anvil]
 branch: p5/P5-T028-sweeps-kill-switch-freeze
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 
 ## ToDo
 
-- [ ] Implement `packages/mt_treasury/sweeps/` scheduler, planner (amounts, gas reserve), intent producer.
+- [ ] Implement `crates/mt-treasury/src/sweeps/` scheduler, planner (amounts, gas reserve), intent producer.
 - [ ] Kill subscriber in airdrop-exec and sweeps; freeze flag consulted by executor and signer.
 - [ ] `wallet.sweep` command handler; `ops.sweep_run` writes; Telegram summary.
 - [ ] Tests on Anvil + local validator; doc sync.
@@ -86,7 +86,7 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 ## Exceptions & edge cases
 
 - Vault address not registered/verified → sweeps refuse and alert (never fall back to another address).
-- Signing not yet enabled (limits unconfirmed, P5-T065): no sweep can sign; the kill sweep raises an urgent task with manual sweep steps and alerts.
+- Mainnet signing not yet enabled (limits unconfirmed, P5-T004): no sweep can sign; the kill sweep raises an urgent task with manual sweep steps and alerts.
 - Token with transfer tax/frozen account: sweep fails → task, no retry storm.
 
 ## Cardinal rules (do NOT)
@@ -94,7 +94,7 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 - Do NOT allow any outflow from the vault (manual, offline-signed, outside the system).
 - Do NOT make kill OFF resume claims automatically.
 - Do NOT apply loosening (new mandate, higher caps, autonomous claims) without C3 (Telegram approve + TOTP + cool-down); protective actions (revoke, sweep, kill) never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT move value outside the configured caps/floats; exchange keys stay read-only or trade-only, IP-locked, withdrawals disabled; no live trading before the P7 gates.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -114,3 +114,4 @@ A scheduler sweeps hot/burner/identity balances above their float to the **vault
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill sweeps hot trading balances to the vault from P5, default on, protective moves exempt from the freeze per P5-B007; floats from 16 §2.7)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

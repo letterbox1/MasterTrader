@@ -15,17 +15,17 @@ requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D08]
-tools: [uv, git]
+tools: [uv, git, supabase]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p4/P4-T024-stocktwits-youtube-conditional
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 ## ToDo
 
-- [ ] `ops.source_check` migration + flag resolver (the YouTube check script itself is P4-T066).
+- [ ] `ops.source_check` SQL migration (`supabase/migrations/`) + flag resolver (the YouTube check script itself is P4-T066).
 - [ ] StockTwits connector (flagged).
 - [ ] YouTube RSS + metadata + subtitle connector (flagged).
 - [ ] D08 Sources disabled-reason field.
@@ -79,7 +79,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 - [ ] StockTwits flag set from the P1-T056 result; YouTube stays off until P4-T066 records a pass; connectors enabled only if checks pass
 - [ ] Disabled reasons visible in D08 Sources
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (YouTube check moved to new VERIFY P4-T066 (17 §D P4-B005, T4.65); depends on P1-T056 for StockTwits)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))

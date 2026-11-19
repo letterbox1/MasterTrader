@@ -15,17 +15,17 @@ requirements: [R5.25, R5.05]
 roadmap_todos: [T5.32]
 modules: [M22]
 dashboards: [D18]
-tools: [uv, docker]
+tools: [cargo, supabase, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T067-proof-of-control-challenge-issue-one-time-challe
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_treasury.registry.proof` issues a one-time, expiring challenge for an address being registered and verifies the proof you produce **in your own wallet app**: an EIP-4361-style text signature (EVM `personal_sign`), a Solana `signMessage` signature, or a tiny self-transfer carrying the challenge amount/memo. The system only verifies; it never signs or requests a signature through a website. Valid proof sets `proof_status = verified` on the `ops.wallets` row; forged, replayed or expired proofs are rejected.
+The `mt-treasury` crate (registry proof module) issues a one-time, expiring challenge for an address being registered and verifies the proof you produce **in your own wallet app**: an EIP-4361-style text signature (EVM `personal_sign`), a Solana `signMessage` signature, or a tiny self-transfer carrying the challenge amount/memo. The system only verifies; it never signs or requests a signature through a website. Valid proof sets `proof_status = verified` on the `ops.wallets` row; forged, replayed or expired proofs are rejected.
 
 ## Context & references
 
@@ -58,8 +58,8 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `packages/mt_treasury/registry/proof/` (`challenge.py`, `verify_evm.py`, `verify_solana.py`, `verify_self_transfer.py`).
-- [ ] Add challenge rows (`ops.wallet_proof_challenge`, append-only) via an additive migration on top of P5-T009.
+- [ ] Implement `crates/mt-treasury/src/registry/proof/` (`challenge`, `verify_evm` (alloy), `verify_solana`, `verify_self_transfer`).
+- [ ] Add challenge rows (`ops.wallet_proof_challenge`, append-only) via an additive SQL migration in `supabase/migrations/` on top of P5-T009 (pgTAP test).
 - [ ] Wire the preview step of `wallet.register` to return the challenge text and expiry (handler shared with P5-T021).
 - [ ] Unit tests with published EIP-191/ed25519 test vectors and generated test keys; replay/expiry/mismatch cases.
 - [ ] Update the docs listed under Doc sync.
@@ -117,3 +117,4 @@ review_result: ""
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R5.25 / T5.32: proof of control, system verifies only, P5-B016)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-treasury` proof module; Supabase migration; services postgres → supabase-postgres; tools +cargo +git +supabase −uv)

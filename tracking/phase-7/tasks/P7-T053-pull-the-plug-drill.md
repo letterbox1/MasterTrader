@@ -77,7 +77,7 @@ You physically cut mains power and the fixed line with paper positions open, and
 
 ## Exceptions & edge cases
 
-- Host fails to boot after power restore: follow the runtime host-rebuild runbook; record as a failed drill and re-run.
+- Host fails to boot after power restore: follow the host-rebuild runbook; record as a failed drill and re-run.
 - **Conditional:** This drill tests UPS and 4G for a runtime host at your premises (workstation or home server). If P7-T071 picks a cloud VM as the runtime host, cancel this item then with reason "runtime host is a cloud VM (P7-T071)". Until that choice, keep it.
 
 ## Cardinal rules (do NOT)

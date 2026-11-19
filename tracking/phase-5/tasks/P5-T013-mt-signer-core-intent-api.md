@@ -1,7 +1,7 @@
 ---
 id: P5-T013
 kind: task
-title: mt_signer core: intent API, caller auth, key loading, allow-lists, caps and ledger
+title: mt-signer core (Rust): intent API, caller auth, key loading, allow-lists, caps and ledger
 phase: 5
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R5.02, R5.N2]
 roadmap_todos: [T5.20]
 modules: [M22, M4]
 dashboards: []
-tools: [uv, docker]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T013-mt-signer-core-intent-api
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/03-build-spec.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T013 · mt_signer core: intent API, caller auth, key loading, allow-lists, caps and ledger
+# P5-T013 · mt-signer core (Rust): intent API, caller auth, key loading, allow-lists, caps and ledger
 
 ## Goal / expected outcome
 
-`packages/mt_signer` runs as the only process holding hot/identity/burner keys. It accepts typed **intents** over a Unix socket or mTLS from the policy service only, checks custody tier, per-wallet allow-lists, per-tx and rolling-24h caps and the kill switch, hands building to chain plug-ins (P5-T014/T015), requires simulation (P5-T016) and records every signature or refusal in the WORM signer ledger.
+`mt-signer` (Rust crate `crates/mt-signer`, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) runs as the only process holding hot/identity/burner keys. It accepts typed **intents** over a Unix socket or mTLS from the policy service only, checks custody tier, per-wallet allow-lists, per-tx and rolling-24h caps and the kill switch, hands building to chain plug-ins (P5-T014/T015), requires simulation (P5-T016) and records every signature or refusal in the WORM signer ledger.
 
 ## Context & references
 
@@ -51,14 +51,14 @@ review_result: ""
 
 - Intent types v1: `claim` (contract, selector, args, chain, wallet), `revoke_approval` (token, spender), `sweep` (asset, amount|all-above-float, destination id), `refill_burner`, `genuine_use` (pre-approved protocol action), `nonce_close` (Solana), `key_create` (C3-approved).
 - Transport: Unix socket in a shared volume or mTLS on the `signer` network; client cert pinned to the policy-service identity (`airdrop-exec` in P5); anything else refused and alerted.
-- Checks in order: `signing_enabled` (limits confirmed in P5-T065, else `limits_unconfirmed`) → kill switch (refuse all except `sweep` to vault and `revoke_approval`) → custody tier allows op → per-wallet allow-list (program/contract + selector) → caps (per-transaction default A$250 and rolling 24 h default A$1,000 per wallet, read from the limits store of P5-T012, never hard-coded; Decimal, AUD valuation per [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal)) → cost-gate verdict (`mt_onchain.costgate`) attached and `allow` → build (plug-in) → hard blocks (plug-in) → simulation pass → sign → ledger append → return signed tx (broadcast by caller or signer per config).
+- Checks in order: `signing_enabled` for mainnet chains (limits confirmed by you in P5-T004, else `limits_unconfirmed`; testnet/Anvil chains use the limits seeded by P5-T065) → kill switch (refuse all except `sweep` to vault and `revoke_approval`) → custody tier allows op → per-wallet allow-list (program/contract + selector) → caps (per-transaction default A$250 and rolling 24 h default A$1,000 per wallet, read from the limits store of P5-T012, never hard-coded; Decimal, AUD valuation per [16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal)) → cost-gate verdict (`mt_onchain.costgate`) attached and `allow` → build (plug-in) → hard blocks (plug-in) → simulation pass → sign → ledger append → return signed tx (broadcast by caller or signer per config).
 - Keys loaded at start from OpenBao (preferred) or sops tmpfs into memory; zeroised on shutdown; never logged (log redaction test).
 - Every refusal has a machine-readable reason code and is ledgered.
 - Latency budget: decision (excluding simulation/RPC) p99 < 50 ms; kill switch checked from KV on every intent (no cache > 100 ms).
 
 ## ToDo
 
-- [ ] Create `packages/mt_signer` (service entry, intent schemas, policy pipeline, plug-in interface `ChainPlugin.build/decode/hard_block/simulate`).
+- [ ] Create `crates/mt-signer` (service entry, intent types, policy pipeline, plug-in trait `ChainPlugin::build/decode/hard_block/simulate`).
 - [ ] Implement transport (Unix socket + optional mTLS) with caller authentication and rate limiting.
 - [ ] Implement key store adapters: OpenBao KV v2 and sops-tmpfs; in-memory keyring with zeroisation.
 - [ ] Implement allow-list store (per wallet, versioned, tighten C1 / loosen C3) and cap accounting (rolling 24h window persisted so restarts don't reset it).
@@ -71,7 +71,7 @@ review_result: ""
 ### Tests
 - Unit: each pipeline stage refuses with the right reason code (table-driven).
 - Unit: rolling-24h cap survives a restart (persisted usage).
-- Unit: with `signing_enabled = false` every intent is refused `limits_unconfirmed` and ledgered.
+- Unit: with `signing_enabled = false` every mainnet intent is refused `limits_unconfirmed` and ledgered; an Anvil intent within the caps passes this check.
 - Unit: log-redaction test — run the full pipeline with a known test key; grep logs/NATS captures for any key bytes → none.
 - Integration: an uncertified client on the socket is refused and an `alert.critical.signer_auth` is published.
 
@@ -91,7 +91,7 @@ review_result: ""
 - [ ] Ledger row for every signature and refusal
 - [ ] No key material in logs (test)
 - [ ] Fails closed on missing config/keys
-- [ ] Refuses everything until the limits are confirmed (`limits_unconfirmed`)
+- [ ] Refuses every mainnet intent until the limits are confirmed in P5-T004 (`limits_unconfirmed`)
 
 ## Exceptions & edge cases
 
@@ -112,16 +112,17 @@ review_result: ""
 ## Doc sync on completion
 
 - `docs/13-wallets-treasury-and-onchain.md` §2: list intent types and refusal codes.
-- `docs/03-build-spec.md` M22: add `mt_signer` package and intent interface.
+- `docs/03-build-spec.md` M22: add the `mt-signer` crate and intent interface.
 - `docs/roadmap/phase-5-airdrops-wallets-curation.md`: tick T5.20 when this lands (with the other tasks sharing that ToDo).
 
 ## Branch & PR
 
 - Branch: `p5/P5-T013-mt-signer-core-intent-api`
-- PR title: `P5-T013: mt_signer core: intent API, caller auth, key loading, allow-lists, caps and ledger`
+- PR title: `P5-T013: mt-signer core (Rust): intent API, caller auth, key loading, allow-lists, caps and ledger`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T013` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (intents only from the policy service per P5-B003; caps from the 16 §2.7 limits store; signing disabled until confirmed; P2 kill dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-signer`; `limits_unconfirmed` gate applies to mainnet (P5-T004), testnet/Anvil use seeded limits; services postgres → supabase-postgres; tools +cargo +git −uv)

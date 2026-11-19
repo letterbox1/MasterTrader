@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D07-d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ A single Playwright run covers D07, D02 (matrix and detail) and the notification
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (D07 stale acceptance per 16 §2.2; P0 viewport matrix dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change beyond `mt-api` (Rust) as the backend; web CI via `pnpm test` / `pnpm playwright`)

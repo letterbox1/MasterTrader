@@ -1,7 +1,7 @@
 ---
 id: P4-T053
 kind: task
-title: SemIf gate precision/recall on your labels and flip rate (determinism)
+title: SemIf gate precision/recall on silver labels (and yours if given) and flip rate (determinism)
 phase: 4
 type: VERIFY
 status: backlog
@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T049, P4-T048]
+depends_on: [P4-T048]
 requirements: [R4.12]
 roadmap_todos: [T4.63]
 modules: [M21]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P4-T053 · SemIf gate precision/recall on your labels and flip rate (determinism)
+# P4-T053 · SemIf gate precision/recall on silver labels (and yours if given) and flip rate (determinism)
 
 ## Goal / expected outcome
 
-A report gives the relevance gate's precision, recall, F1 and balanced accuracy at the calibrated threshold on your ~200 labels (with bootstrap CIs), per source kind, plus the **flip rate** of argmax decisions across 3 repeated runs and across a restart, on the deployed backend.
+A report gives the relevance gate's precision, recall, F1 and balanced accuracy at the calibrated threshold on the ~200 silver labels (P4-T048), and on your labels too if you gave any (P4-T049, optional), with bootstrap CIs, per source kind, plus the **flip rate** of argmax decisions across 3 repeated runs and across a restart, on the deployed backend.
 
 ## Context & references
 
@@ -53,7 +53,7 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 
 ## ToDo
 
-- [ ] Run the P4-T048 calibration on your labels (P4-T049) and activate the chosen threshold via `models.question.update` (C1).
+- [ ] Run the P4-T048 calibration on the silver labels (your P4-T049 labels take precedence where present) and activate the chosen threshold via `models.question.update` (C1).
 - [ ] Evaluation script `tools/bench/semif_eval.py`.
 - [ ] Run on labelled batch; bootstrap CIs.
 - [ ] Determinism runs (3× + restart).
@@ -76,11 +76,12 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 
 - [ ] Report with P/R/F1/balanced accuracy + CIs, flip rate and latency published
 - [ ] Results meet targets or bugs filed with decisions
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
 - Small label set: report CIs; don't over-claim.
+- If you add labels later (P4-T049), re-run the report with your-label figures next to the silver-label ones; this task does not wait for them.
 
 ## Cardinal rules (do NOT)
 
@@ -96,7 +97,7 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 ## Branch & PR
 
 - Branch: `p4/P4-T053-verify-semif-precision-flip`
-- PR title: `P4-T053: SemIf gate precision/recall on your labels and flip rate (determinism)`
+- PR title: `P4-T053: SemIf gate precision/recall on silver labels (and yours if given) and flip rate (determinism)`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P4-T053` run
 
 ## Progress log
@@ -104,3 +105,4 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (flip-rate ≤ 0.1%, precision/ECE targets from 16 §2.10; decision-path settings per 17 §A P4-B010; depends on P4-T048 too)
 - 2026-10-22 00:00 · aligner · calibration run on your labels moved here from P4-T048 (threshold activated before the report)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dependency P4-T049 (silver labels by default, 17 §G); depends_on removed P4-T049; CI commands per 18 (cargo/uv/supabase/pnpm))

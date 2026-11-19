@@ -15,7 +15,7 @@ requirements: [R5.02, R5.03]
 roadmap_todos: [T5.20]
 modules: [M22]
 dashboards: []
-tools: [uv, solana-test-validator]
+tools: [cargo, solana-test-validator, git]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrop
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ The Solana plug-in builds claim, revoke, sweep and nonce-housekeeping transactio
 
 ## ToDo
 
-- [ ] Implement `packages/mt_signer/chains/solana/` with `solders`/`solana-py` (pinned).
+- [ ] Implement `crates/mt-signer/src/chains/solana/` with the Solana Rust SDK (pinned).
 - [ ] Program allow-list + IDL loader; instruction decoder producing a normalised call summary for the ledger.
 - [ ] Hard-block rules with IDs; Token-2022 extension inspection on the mint.
 - [ ] Nonce manager: create/advance/close, authority check, record in `ops.nonce_account`.
@@ -110,3 +110,4 @@ The Solana plug-in builds claim, revoke, sweep and nonce-housekeeping transactio
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; content already matches 13 §2 durable-nonce rules)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tools +cargo +git −uv)

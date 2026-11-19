@@ -15,17 +15,17 @@ requirements: [R5.15]
 roadmap_todos: [T5.28]
 modules: [M4, M22]
 dashboards: [D12]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T043-mandates-eligibility-checker
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,8 +54,8 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/mandates/` (model, validation, commands, expiry job, allow-list sync to signer).
-- [ ] Implement `packages/mt_airdrop/eligibility/` (merkle.py with keccak/sha256 tree variants, claim_contract.py).
+- [ ] Implement mandates in `crates/mt-airdrop-exec` (model, validation, commands via `mt-api`, expiry job, allow-list sync to signer; [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
+- [ ] Implement the eligibility checker in `crates/mt-airdrop-exec` (merkle module with keccak/sha256 tree variants, claim-contract reads via the `mt-onchain` RPC pool).
 - [ ] Tests incl. C3 flow (reusing P0 confirmation tests) and WORM behaviour; doc sync.
 
 ## Verification
@@ -105,3 +105,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mandate caps bounded by the 16 §2.7 limits store; Telegram C3 dep P2-T035)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (mandates and eligibility in Rust `mt-airdrop-exec`; services postgres → supabase-postgres; tools +cargo +git −uv)

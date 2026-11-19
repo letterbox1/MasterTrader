@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D02-m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -89,7 +89,7 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data or APIs, exceed a free tier, or scrape against a site's terms; no self-bots or user tokens ([03 §1](../../../docs/03-build-spec.md#1-ground-rules)).
@@ -109,3 +109,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 ("Arrives in Phase 4" states for P4-fed widgets (P1-B012); P0 UI deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change beyond `mt-api` (Rust) as the backend; web CI via `pnpm test` / `pnpm playwright`)

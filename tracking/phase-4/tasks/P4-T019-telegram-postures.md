@@ -15,17 +15,17 @@ requirements: [R4.02, R4.03]
 roadmap_todos: [T4.21]
 modules: [M2]
 dashboards: [D08]
-tools: [uv, git]
+tools: [uv, cargo, git]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p4/P4-T019-telegram-postures
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,15 +53,15 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 - Stored per mention: hashed channel id, message id, ts, extracted value, chain. **No text, no sender, no usernames.**
 - Postures per subject over windows 15 m / 1 h / 24 h: `mention_velocity` (mentions/h), `channel_count`, `new_channel_share` (channels first seen < 7 d ago / total), `time_since_first_call`.
 - Posture rows carry `source=telegram`, `model_input_ok=false`, `train_ok=false`, `retention_days` = 90 for mentions.
-- `ingest-text` (scrape) publishes structured mentions and posture snapshots on `posture.telegram.{subject}` (no text); the core `intel-writer` (P4-T008) persists them to `text.telegram_mention` / `text.telegram_posture`. No extra KV bucket: consumers read the last message per subject from the stream. Consumers: M4 airdrop rules, M11 rules, and the display paths (`/intel/postures` → D08, morning brief). **Never** M6 features, tier A/B, agents, RAG or MCP.
+- `ingest-text` (scrape) publishes structured mentions and posture snapshots on `posture.telegram.{subject}` (no text); the core `intel-writer` (Rust `mt-intel-writer`, P4-T008) persists them to `text.telegram_mention` / `text.telegram_posture`. No extra KV bucket: consumers read the last message per subject from the stream. Consumers: M4 airdrop rules, M11 rules, and the display paths (`/intel/postures` → D08, morning brief). **Never** M6 features, tier A/B, agents, RAG or MCP.
 - Bot API path: bot updates from admin channels → same extractor; RSS-Bridge `TelegramBridge` for public channels the account can't join (context-only cadence).
 
 ## ToDo
 
 - [ ] `extractors.py` with validators + golden test corpus (synthetic messages, no real Telegram text in the repo).
 - [ ] `postures.py` sliding-window calculators (pure functions, deterministic).
-- [ ] Publisher for `posture.telegram.{subject}` and the `intel-writer` handlers for `text.telegram_mention`/`text.telegram_posture`.
-- [ ] Bot API listener (python-telegram-bot or aiogram, pinned) limited to channel posts.
+- [ ] Publisher for `posture.telegram.{subject}` (Python, `ingest-text`) and the `mt-intel-writer` handlers (Rust) for `text.telegram_mention`/`text.telegram_posture`.
+- [ ] Bot API listener limited to channel posts: a reading path, so it stays Python in `ingest-text` next to Telethon and the extractor (pinned client, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); the alert/command bot is the Rust `mt-telegram-bot` (teloxide) and never receives channel text.
 - [ ] RSS-Bridge Telegram fallback via P4-T012 client.
 - [ ] Consumer allow-list: `posture.telegram.>` subscribers declared in `config/provenance/consumers.yaml` (M4 rules, M11 rules, intel-writer, mt-api display); CI fails if any other service subscribes.
 - [ ] Retention job entry for `text.telegram_mention` (90 d default, configurable).
@@ -86,7 +86,7 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 - [ ] Postures computed and visible via KV/NATS; rows carry `model_input_ok=false`, `train_ok=false`
 - [ ] No Telegram text or usernames in any table, log or NATS message (grep/spy test)
 - [ ] Consumer allow-list enforced in CI
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-intel-writer`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -118,3 +118,4 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical table/subject/consumers per 17 §D (P4-B002/B003) and F3b (17 §A P4-B001); no posture KV bucket; core intel-writer persists)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (posture writer handlers in Rust `mt-intel-writer`; Bot API reader stays Python, alerts bot is Rust `mt-telegram-bot`; services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

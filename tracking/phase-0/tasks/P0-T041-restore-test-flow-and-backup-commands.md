@@ -15,17 +15,17 @@ requirements: [R0.N4, R0.07]
 roadmap_todos: [T0.44]
 modules: [M17, ops]
 dashboards: []
-tools: [git, uv, python>=3.12, docker, pgbackrest]
+tools: [git, docker, supabase, pgbackrest, cargo]
 mcp: []
 env: []
-services: [postgres, minio, prefect-server]
+services: [supabase-postgres, minio, prefect-server]
 branch: p0/P0-T041-restore-test-flow-and-backup-commands
 pr: ""
 doc_sync: [docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target time) into a throwaway `postgres-restore` container, runs integrity checks including `audit.verify` against the external seals, records the result in `ops.restore_test`, tears down, and alerts on failure. It runs monthly and on demand via `system.restore.test` (C1).
+A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target time) into a throwaway `postgres-restore` container (the same Supabase Postgres image digest), runs integrity checks including `audit.verify` against the external seals, records the result in `ops.restore_test`, tears down, and alerts on failure. It runs monthly and on demand via `system.restore.test` (C1).
 
 ## Context & references
 
@@ -51,8 +51,8 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 ## Requirements
 
 - Restore source: the off-site repo only (never the local spool), `--type=time` to now − 5 min or latest.
-- Scratch target: `postgres-restore` service (same digest as `postgres`), on `core` network, data in a temp volume, destroyed after.
-- Checks: Postgres starts; `alembic current` == expected head; row counts per schema within tolerance of prod snapshot taken at backup time; `audit.verify` (full mode) on the restored DB against external seals = ok; a sample `pit()` query returns.
+- Scratch target: `postgres-restore` service (same digest as the Supabase Postgres image, P0-T070), on `core` network, data in a temp volume, destroyed after.
+- Checks: Postgres starts; the latest version in `supabase_migrations.schema_migrations` == the newest file in `supabase/migrations/`; `supabase test db`-equivalent pgTAP invariants pass against the restored DB; row counts per schema within tolerance of prod snapshot taken at backup time; `audit.verify` (full mode) on the restored DB against external seals = ok; a sample `pit(as_of)` query (`mt-store`) returns.
 - Result in `ops.restore_test` (started, finished, duration, backup label, checks, status) and metric `mt_restore_test_last_success_timestamp`; alert if > 35 days since last pass.
 - Schedule: 1st Sunday of the month 04:00 Australia/Sydney; on-demand via `system.restore.test`.
 
@@ -73,7 +73,7 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 - Given the restored DB's audit chain differs from the anchored seal, then the restore test fails and raises a critical incident with the integrity response ([16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)).
 
 ### Stress / failure injection
-- Restore of a 50 GB fixture completes within 60 min on the host (log actual).
+- Restore of a 50 GB fixture completes within 60 min on the workstation (log actual).
 
 ## Acceptance criteria
 
@@ -110,3 +110,4 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response wording (16 §2.11); keyless on MinIO, real target in P0-T057; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (restore target uses the Supabase Postgres image; Alembic head check → `supabase_migrations` version + pgTAP invariants)

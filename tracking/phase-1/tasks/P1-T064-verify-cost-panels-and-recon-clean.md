@@ -18,14 +18,14 @@ dashboards: [D07, D02]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [nats, postgres, mt-api, grafana]
+services: [nats, supabase-postgres, mt-api, grafana]
 branch: p1/P1-T064-verify-cost-panels-and-recon-clean
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,7 +76,7 @@ Exit criterion 2 is evidenced: spread, funding and swap panels in D07/D02/Grafan
 ## Acceptance criteria
 
 - [ ] All panels populated; recon clean for 24 h; report stored
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ Exit criterion 2 is evidenced: spread, funding and swap panels in D07/D02/Grafan
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (recon cadence per 16 §2.9; depends on live checks P1-T073/P1-T074 instead of the USER key task)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no dependency change (live VERIFY on P1-T073/P1-T074); services supabase-postgres)

@@ -15,17 +15,17 @@ requirements: [R5.01, R5.07, R5.24]
 roadmap_todos: [T5.20, T5.24]
 modules: [M22]
 dashboards: [D18]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T012-custody-tier-config
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_treasury.custody` defines the six custody tiers with their allowed operations, and holds the wallet, signer and gas limits of [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) as **configurable defaults** in a versioned limits store (seeded from `config/custody.yaml`). Vault and warm are watch-only. `signing_enabled` starts **false**; only your first confirmation (P5-T065, C3) turns it on; later tightening is immediate and loosening is C3. Signer, sweeps, cost gate and UI read limits only from here.
+The `mt-treasury` crate (custody module) defines the six custody tiers with their allowed operations, and holds the wallet, signer and gas limits of [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) as **configurable defaults** in a versioned limits store (seeded from `config/custody.yaml`). Vault and warm are watch-only. mainnet `signing_enabled` starts **false**; only your confirmation in P5-T004 (C3) turns it on; testnet and Anvil chains sign within the seeded caps (seed run by P5-T065; no real money); later tightening is immediate and loosening is C3. Signer, sweeps, cost gate and UI read limits only from here.
 
 ## Context & references
 
@@ -54,11 +54,11 @@ review_result: ""
 - Vault/warm/HL master: `signing=none` in the system; any intent naming them is refused.
 - Identity: max one per chain (enforced); burner: refill-to-float only, never receives sweeps-in except refills.
 - Limits versioned as new rows (WORM history) through `risk.policy.update`; tighten = C1 immediate, loosen = C3; L0 hard ceilings (e.g. max per-transaction signer value) come from the hard-ceilings section of the bot strategy settings and can't be exceeded ([16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance), [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)); save-time validation rejects inconsistent sets (per-tx cap > 24 h cap, negative floats).
-- Defaults ship as the 16 §2.7 values and only prefill the D18 form; `signing_enabled = false` until you confirm them (P5-T065). While false the signer refuses every intent with `limits_unconfirmed` (protective sweeps/revokes are offered as manual steps).
+- Defaults ship as the 16 §2.7 values, seeded through `mt-api` with source `seed` (P5-T065); mainnet `signing_enabled = false` until you confirm them in P5-T004 (C3). While false the signer refuses every mainnet intent with `limits_unconfirmed`; testnet/Anvil chain ids are exempt from this gate only, never from caps, allow-lists or hard blocks (protective sweeps/revokes are offered as manual steps).
 
 ## ToDo
 
-- [ ] Write `packages/mt_treasury/custody/model.py` (msgspec) and the seed loader for `config/custody.yaml` (16 §2.7 defaults, no secrets).
+- [ ] Write the custody model in `crates/mt-treasury` (Rust, serde) and the seed loader for `config/custody.yaml` (16 §2.7 defaults, no secrets).
 - [ ] Implement tighten/loosen diff classification and the first-confirmation (C3) flow that sets `signing_enabled`, wired to the P2 change-control service.
 - [ ] Expose `GET /wallets/custody` for D18 (tiers, limits, usage).
 - [ ] Unit + property tests; update 13 §1 with the config file reference.
@@ -71,7 +71,7 @@ review_result: ""
 - Unit: two identity wallets on one chain → validation error.
 
 ### Scenarios
-- Given the limits are unconfirmed (`signing_enabled = false`), when the signer is asked to sign, then it refuses with `limits_unconfirmed`.
+- Given the limits are unconfirmed (`signing_enabled = false`), when the signer is asked to sign on a mainnet chain, then it refuses with `limits_unconfirmed`.
 - Given a hard ceiling of A$X per tx, when a C3 change asks for more, then it is rejected outright.
 
 ### Stress / failure injection
@@ -82,7 +82,7 @@ review_result: ""
 - [ ] Six tiers modelled with limits and allowed ops
 - [ ] Loosen = C3 enforced
 - [ ] Watch-only tiers cannot sign
-- [ ] Signing blocked until you confirm the limits (P5-T065)
+- [ ] Mainnet signing blocked until you confirm the limits (P5-T004); testnet/Anvil signing works with the seeded limits
 - [ ] No limit hard-coded: every number comes from the limits store with its 16 §2.7 default
 
 ## Exceptions & edge cases
@@ -94,7 +94,7 @@ review_result: ""
 
 - Do NOT hard-code caps in signer or executor code; read them from custody config.
 - Do NOT apply loosening (new mandate, higher caps, autonomous claims) without C3 (Telegram approve + TOTP + cool-down); protective actions (revoke, sweep, kill) never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -112,3 +112,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (16 §2.7 defaults as configuration; signing disabled until P5-T065 confirms; L0 from strategy settings per 17 §E; kill sweep default on; P2 change-control deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt-treasury`; mainnet signing enabled by your confirmation in P5-T004, testnet/Anvil sign with seeded limits (P5-T065); services postgres → supabase-postgres; tools +cargo +git −uv)

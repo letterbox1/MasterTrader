@@ -18,14 +18,14 @@ dashboards: [D12]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p5/P5-T035-enrichment-blockscout-helius-dex
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/12-policy-and-compliance.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ Each opportunity is enriched with contract facts from **Blockscout/own RPC** (ve
 ## ToDo
 
 - [ ] Implement `packages/mt_airdrop/enrich/` adapters and the `EnrichmentReport` model.
-- [ ] Add CI source-audit check (no `api.etherscan.io` or Birdeye in `mt_airdrop`/`mt_treasury`).
+- [ ] Add CI source-audit check (no `api.etherscan.io` or Birdeye in `packages/mt_airdrop` or `crates/mt-treasury`).
 - [ ] Fixture tests; doc sync.
 
 ## Verification
@@ -106,3 +106,4 @@ Each opportunity is enriched with contract facts from **Blockscout/own RPC** (ve
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live run in P5-T068)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

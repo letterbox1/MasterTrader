@@ -1,7 +1,7 @@
 ---
 id: P5-T022
 kind: task
-title: wallet-indexer: read-only balance and position aggregators
+title: wallet-indexer (mt-treasury): read-only balance and position aggregators
 phase: 5
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R5.05]
 roadmap_todos: [T5.22]
 modules: [M22]
 dashboards: [D18]
-tools: [uv, docker]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T022-wallet-indexer-aggregators
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T022 · wallet-indexer: read-only balance and position aggregators
+# P5-T022 · wallet-indexer (mt-treasury): read-only balance and position aggregators
 
 ## Goal / expected outcome
 
-The `wallet-indexer` service (`mt_treasury.indexer`) reads every registered wallet with read-only sources — Helius DAS `getAssetsByOwner` (Solana), Blockscout/own RPC (EVM tokens and DefiLlama-adapter-style positions), Hyperliquid `/info` (if approved), ccxt read-only for exchanges — values them from our own recorded prices per the valuation hierarchy ([16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal); CoinGecko, cached ≤ 24 h, is a display cross-check only) and publishes snapshots and `wallet.*` events.
+The `wallet-indexer` service (Rust `mt-treasury` crate, indexer module; [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) reads every registered wallet with read-only sources — Helius DAS `getAssetsByOwner` (Solana), Blockscout/own RPC (EVM tokens and DefiLlama-adapter-style positions), Hyperliquid `/info` (if approved), ccxt read-only for exchanges — values them from our own recorded prices per the valuation hierarchy ([16 §4.1](../../../docs/16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal); CoinGecko, cached ≤ 24 h, is a display cross-check only) and publishes snapshots and `wallet.*` events.
 
 ## Context & references
 
@@ -57,7 +57,7 @@ The `wallet-indexer` service (`mt_treasury.indexer`) reads every registered wall
 
 ## ToDo
 
-- [ ] Create service `packages/mt_treasury/indexer/` with adapters: helius_das.py, evm_blockscout.py, evm_positions.py (adapter pattern inspired by DefiLlama logic for core Aave/Spark/Kamino/LST reads), hyperliquid_info.py, ccxt_readonly.py.
+- [ ] Create the indexer in `crates/mt-treasury/src/indexer/` with adapters: helius_das, evm_blockscout, evm_positions (adapter pattern inspired by DefiLlama logic for core Aave/Spark/Kamino/LST reads), hyperliquid_info, exchange_readonly (venue read-only REST in Rust; where only a Python ccxt client exists, a small Python reader publishes balances to NATS (U)).
 - [ ] Pricing per 16 §4.1: our recorded trades/VWAP (M1) → on-chain pool price at the block via our RPC for long-tail tokens; CoinGecko (≤ 24 h cache) only as a display cross-check, never the stored value.
 - [ ] Rollup query endpoints `/wallets?group=` and `/wallets/{id}`.
 - [ ] Compose service `wallet-indexer` on `core` with digest; heartbeat.
@@ -105,10 +105,11 @@ The `wallet-indexer` service (`mt_treasury.indexer`) reads every registered wall
 ## Branch & PR
 
 - Branch: `p5/P5-T022-wallet-indexer-aggregators`
-- PR title: `P5-T022: wallet-indexer: read-only balance and position aggregators`
+- PR title: `P5-T022: wallet-indexer (mt-treasury): read-only balance and position aggregators`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T022` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (valuation per 16 §4.1, CoinGecko cross-check only; keyless fixtures, live run in P5-T068; P3 crypto-rate dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`wallet-indexer` = Rust `mt-treasury`; services postgres → supabase-postgres; tools +cargo +git −uv)

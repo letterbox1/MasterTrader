@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ Provisioned Grafana dashboards show live prices by timeframe, spreads/funding/sw
 
 ## Requirements
 
-- Dashboards as code in `infra/grafana/dashboards/`: Markets (price by timeframe 1s … 1W from Timescale bars via the Postgres datasource), Costs (spread heatmap, funding, financing), DQ (status counts, incidents, data age and the stale reaction SLO, divergence, skew), Quotas, Storage, UI lag
+- Dashboards as code in `infra/grafana/dashboards/`: Markets (price by timeframe 1s … 1W from the partitioned `market.bar_*` tables via the Postgres datasource on Supabase Postgres (read-only role)), Costs (spread heatmap, funding, financing), DQ (status counts, incidents, data age and the stale reaction SLO, divergence, skew), Quotas, Storage, UI lag
 - Alert rules (thresholds are configurable defaults): stale reaction SLO breach (> 250 ms p99), quota ≥ 80%, disk thresholds, recon unexplained mismatch, channel down, chrony offset, batch failure, egress mismatch; contact point = Alertmanager webhook → the `alert.*` consumer (P1-T045), the only route
 - Dashboards load in < 3 s for 24 h ranges
 
@@ -75,7 +75,7 @@ Provisioned Grafana dashboards show live prices by timeframe, spreads/funding/sw
 ## Acceptance criteria
 
 - [ ] All boards provisioned from code; alert rules reach the notifier
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (dashboard JSON lint, Grafana provisioning check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,4 @@ Provisioned Grafana dashboards show live prices by timeframe, spreads/funding/sw
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (1W boards, data-age SLO rule, single webhook route (P1-B007); P0 provisioning dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Grafana reads the partitioned bar tables on Supabase Postgres via a read-only role)

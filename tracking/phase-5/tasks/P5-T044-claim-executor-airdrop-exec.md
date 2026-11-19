@@ -1,7 +1,7 @@
 ---
 id: P5-T044
 kind: task
-title: Claim executor (airdrop-exec): mandate → cost gate → simulation → signer → journal
+title: Claim executor (airdrop-exec, mt-airdrop-exec): mandate → cost gate → simulation → signer → journal
 phase: 5
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R5.15, R5.N2, R5.18]
 roadmap_todos: [T5.28]
 modules: [M4, M22, M18]
 dashboards: [D12]
-tools: [uv, docker, anvil, solana-test-validator]
+tools: [cargo, docker, anvil, solana-test-validator, git]
 mcp: []
 env: []
-services: [postgres, nats, anvil]
+services: [supabase-postgres, nats, anvil]
 branch: p5/P5-T044-claim-executor-airdrop-exec
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T044 · Claim executor (airdrop-exec): mandate → cost gate → simulation → signer → journal
+# P5-T044 · Claim executor (airdrop-exec, mt-airdrop-exec): mandate → cost gate → simulation → signer → journal
 
 ## Goal / expected outcome
 
-The `airdrop-exec` service (the policy service in P5 and the signer's only caller; P5-B003) executes queued auto-claims from the chain's airdrop identity wallet (never the hot trading wallet; P5-B017) end to end: re-check mandate, kill switch, never-automated policy and eligibility → cost-gate verdict → signer intent (which simulates) → broadcast (Flashbots Protect on Ethereum L1 where applicable) → confirmation → `exec_log` row and a claim-result event that the records task (P5-T046) journals; anything that fails a check becomes a `CLAIM_MANUAL` task with the reason. Manual `airdrop.claim.execute` (C2) uses the same path.
+The `airdrop-exec` service (Rust `mt-airdrop-exec` crate; the policy service in P5 and the signer's only caller; P5-B003) executes queued auto-claims from the chain's airdrop identity wallet (never the hot trading wallet; P5-B017) end to end: re-check mandate, kill switch, never-automated policy and eligibility → cost-gate verdict → signer intent (which simulates) → broadcast (Flashbots Protect on Ethereum L1 where applicable) → confirmation → `exec_log` row and a claim-result event that the records task (P5-T046) journals; anything that fails a check becomes a `CLAIM_MANUAL` task with the reason. Manual `airdrop.claim.execute` (C2) uses the same path.
 
 ## Context & references
 
@@ -46,7 +46,7 @@ The `airdrop-exec` service (the policy service in P5 and the signer's only calle
 
 ## Requirements
 
-- Pre-checks at execution time (not just at decision time): mandate active and covering (contract, selector); kill OFF; signing enabled (limits confirmed, P5-T065); wallet not frozen; NA policy pass; eligibility still true (`isClaimed` false); risk report < 24 h old and no hard fail.
+- Pre-checks at execution time (not just at decision time): mandate active and covering (contract, selector); kill OFF; signing enabled (mainnet: limits confirmed by you in P5-T004; testnet/Anvil: seeded limits, P5-T065); wallet not frozen; NA policy pass; eligibility still true (`isClaimed` false); risk report < 24 h old and no hard fail.
 - Cost gate `allow` (≤ 60 s old); signer returns simulation digest and signed tx; broadcast via RPC pool (Flashbots Protect for Ethereum L1, no fee on reverts); wait for finality (EVM 12 blocks / Solana finalized).
 - Records: `exec_log` (WORM) with mandate id, quote id, simulation digest, ledger ref, tx hash; publish `airdrop.claim.result` (consumed by P5-T046, which writes the `journal.event` income row); Telegram instant notice "auto-claim executed" with links.
 - Idempotency: one claim per (opportunity, wallet); restart-safe (resume from exec_log state; never double-broadcast).
@@ -55,7 +55,7 @@ The `airdrop-exec` service (the policy service in P5 and the signer's only calle
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/exec/` service: queue consumer, pre-check pipeline, signer client (mTLS/socket), broadcaster, confirmation tracker.
+- [ ] Implement `crates/mt-airdrop-exec` service: queue consumer, pre-check pipeline, signer client (mTLS/socket), broadcaster, confirmation tracker.
 - [ ] `airdrop.claim.execute` (C2) handler with simulation preview shown before confirm.
 - [ ] Compose service `airdrop-exec` on `core` + `signer` networks with digest.
 - [ ] Integration tests on Anvil and local Solana validator; doc sync.
@@ -104,10 +104,11 @@ The `airdrop-exec` service (the policy service in P5 and the signer's only calle
 ## Branch & PR
 
 - Branch: `p5/P5-T044-claim-executor-airdrop-exec`
-- PR title: `P5-T044: Claim executor (airdrop-exec): mandate → cost gate → simulation → signer → journal`
+- PR title: `P5-T044: Claim executor (airdrop-exec, mt-airdrop-exec): mandate → cost gate → simulation → signer → journal`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T044` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (policy service per P5-B003; identity wallet per P5-B017; signing-enabled pre-check; signer container dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`airdrop-exec` = Rust `mt-airdrop-exec`; services postgres → supabase-postgres; tools +cargo +git −uv)

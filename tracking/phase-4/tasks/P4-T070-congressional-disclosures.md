@@ -79,7 +79,7 @@ review_result: ""
 
 - [ ] Golden-file tests pass
 - [ ] Events carry filing-date timestamps and provenance
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -90,7 +90,7 @@ review_result: ""
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt_api`.
+- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 (`mt-risk`) via `mt-api`.
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT copy code from repositories without a compatible licence; keep copyright and NOTICE files for MIT/Apache code ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)).
 - Do NOT treat a disclosure as a trade trigger on its own; it's delayed context.
@@ -109,3 +109,4 @@ review_result: ""
 ## Progress log
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

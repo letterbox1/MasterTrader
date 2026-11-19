@@ -15,17 +15,17 @@ requirements: [R4.14]
 roadmap_todos: [T4.29]
 modules: [M15, M2, M3, M5, M6, M16]
 dashboards: [D08]
-tools: [uv, git]
+tools: [uv, cargo, git]
 mcp: []
 env: []
-services: [postgres, nats, telegram-bot, prefect-server]
+services: [supabase-postgres, nats, telegram-bot, prefect-server]
 branch: p4/P4-T047-morning-brief
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/runbooks/morning-brief.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 ## Requirements
 
 - Per-instrument section layout borrowed from daily_stock_analysis (idea only, MIT): conclusion, score, trend, entry/exit levels, risk alerts, catalysts, action checklist ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)). No code or referral settings copied.
-- Built from `mt_api` queries only; no LLM summarisation in P4 (template + numbers) so no text flows to a model and the brief is reproducible.
+- Built from `mt-api` queries only; no LLM summarisation in P4 (template + numbers) so no text flows to a model and the brief is reproducible.
 - Sections, in the canonical mob §3 order (item counts are configurable defaults): 1 News (≤ 8 items, each 'title — source — link'), 2 Sentiment movers (top 5 Δ24h z), 3 Events (≤ 5 with mapped instruments + score), 4 Calendar today (high/med importance, consensus/previous, blackout windows from the M11 API), 5 Telegram postures (top 5 subjects by velocity; numbers only), 6 Positions and P&L (paper and live labelled separately), 7 Data and cost health (stale/bad feeds, cost blow-outs, quota headroom, LLM spend), 8 New vetted airdrops (hidden until P5 provides it; the template has the slot so P5 adds no P4 change). Deep links to D08, D01, D07, D12.
 - Telegram limits: ≤ 4,096 chars per message, split into ≤ 3 messages; Bot API ≤ 30 msg/s respected.
 - Brief record stored in `ops.notification` with content hash; idempotent per day (no double send on retry).
@@ -60,7 +60,7 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 ## ToDo
 
 - [ ] Brief builder (pure function over a snapshot) + Telegram renderer (MarkdownV2 escaping).
-- [ ] Prefect schedule + `/brief` handler.
+- [ ] Prefect schedule (Python brief builder) + `/brief` handler in the Rust `mt-telegram-bot` (teloxide, P2-T035), which asks `mt-api` for the latest brief.
 - [ ] Feedback buttons → `intel.feedback` (C0) → `text.source` counters.
 - [ ] Golden tests on fixed snapshots.
 - [ ] Runbook entry.
@@ -85,7 +85,7 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 
 - [ ] Brief arrives at the configured time with all sections and deep links
 - [ ] Golden tests green; no LLM call in the path
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-telegram-bot`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -97,7 +97,7 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 - Do NOT send to any chat id other than your user id.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -117,3 +117,4 @@ A Prefect flow composes and sends a **deterministic, template-based** morning br
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (contents follow the canonical mob §3 list (17 §D P4-B011), incl. paper/live labels and P5 airdrop slot; time set in D13; explicit depends_on P2-T035)
 - 2026-11-19 00:00 · coordinator · morning brief layout idea from daily_stock_analysis (17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`/brief` handler in Rust `mt-telegram-bot`; brief builder stays Python/Prefect; services postgres → supabase-postgres; tools +cargo; `mt_api` → `mt-api`; CI commands per 18 (cargo/uv/supabase/pnpm))

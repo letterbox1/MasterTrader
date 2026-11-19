@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ Helius Free (Solana) and Alchemy Free (EVM) keys already exist from P0-T010. Thi
 ## ToDo
 
 - [ ] Sign up at each provider with your normal email and MFA on the provider account.
-- [ ] Restrict each key where the provider allows it (allowed origins/IP to your host's egress IP; read methods only).
+- [ ] Restrict each key where the provider allows it (allowed origins/IP to your workstation's egress IP, re-set to the fixed egress IP at the P7 shift (18 §8); read methods only).
 - [ ] Open the sops secrets file (outside the repo; path from P0-T022) and add the fallback keys + creation dates; save (re-encrypts).
 - [ ] Run the P0 secret check (`gitleaks` pre-commit) to confirm nothing leaked into the working tree.
 - [ ] Tell the agent which providers exist (names only) so the RPC pool config (P5-T018) lists them for production and the live check (P5-T068).
@@ -108,3 +108,4 @@ Helius Free (Solana) and Alchemy Free (EVM) keys already exist from P0-T010. Thi
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Helius/Alchemy keys come from P0-T010; fallbacks + restrictions only; keys-last: unblocks P5-T068, not the builds; sops file outside the repo)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (key restriction to the workstation egress IP until the P7 shift (18 §8))

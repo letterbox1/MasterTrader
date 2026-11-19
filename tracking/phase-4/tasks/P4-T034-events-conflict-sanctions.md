@@ -15,17 +15,17 @@ requirements: [R4.08]
 roadmap_todos: [T4.25]
 modules: [M3]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p4/P4-T034-events-conflict-sanctions
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP (candidate events API), GDELT events export (from P4-T013), OpenSanctions (daily delta of sanctioned entities/vessels) and ACLED (research account, if granted) are normalised into `text.geo_event` with severity, country and novelty inputs.
+Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP (candidate events API), GDELT events export (from P4-T013), OpenSanctions (daily delta of sanctioned entities/vessels) and ACLED (research account, if granted) are normalised into `text.geo_event` with severity, country and novelty inputs. The pollers are part of the Rust `mt-events` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); the GDELT events consumer reads P4-T013's stream.
 
 ## Context & references
 
@@ -73,7 +73,7 @@ Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP
 ## Acceptance criteria
 
 - [ ] ReliefWeb, UCDP and GDELT events ingesting live (keyless); ACLED and OpenSanctions proven on fixtures (disabled with reason until P4-T067); severity mapping tested
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-events`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -101,3 +101,4 @@ Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: ACLED/OpenSanctions on fixtures, live in P4-T067; dropped P4-T005 dependency)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (pollers in the Rust `mt-events` crate; services postgres → supabase-postgres; tools +cargo −uv; CI commands per 18 (cargo/uv/supabase/pnpm))

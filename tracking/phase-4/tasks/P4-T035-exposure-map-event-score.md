@@ -15,17 +15,17 @@ requirements: [R4.08]
 roadmap_todos: [T4.25]
 modules: [M3, M6]
 dashboards: [D08, D02]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p4/P4-T035-exposure-map-event-score
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`text.exposure_map` links locations to assets (country → FX pair/equity index/bond ETF; region → commodity, e.g. Gulf of Mexico → crude/natgas, Brazil → coffee/sugar/soy, Chile/Peru → copper) and every geo event gets an **event score = severity × exposure × novelty** per affected instrument, published on `evt.{kind}` and stored as a feature series.
+`text.exposure_map` links locations to assets (country → FX pair/equity index/bond ETF; region → commodity, e.g. Gulf of Mexico → crude/natgas, Brazil → coffee/sugar/soy, Chile/Peru → copper) and every geo event gets an **event score = severity × exposure × novelty** per affected instrument, published on `evt.{kind}` and stored as a feature series. Built in the Rust `mt-events` crate ([roadmap T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets), [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); the feature series is written through `mt-store` so Python research reads it with `pit(as_of)`.
 
 ## Context & references
 
@@ -79,7 +79,7 @@ review_result: ""
 
 - [ ] Exposure map seeded and versioned
 - [ ] Event scores visible in `/intel/events` and as features
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-events`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -89,7 +89,7 @@ review_result: ""
 
 - Do NOT hard-code exposures in code; YAML only.
 - Do NOT skip, weaken or delete a test to get green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 
 ## Doc sync on completion
 
@@ -106,3 +106,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P2-T120 (feature registry))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (exposure map and event score in the Rust `mt-events` crate; services postgres → supabase-postgres; tools +cargo −uv; CI commands per 18 (cargo/uv/supabase/pnpm))

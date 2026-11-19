@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -70,7 +70,7 @@ D08 (all tabs + document sheet + label mode) and the new D01/D02 tier-B/overlay 
 
 - [ ] Viewport matrix green; axe 0 serious/critical
 - [ ] Feed performance budget met
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, viewport matrix + axe)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, `pnpm test`, `pnpm playwright` viewport matrix + axe)
 
 ## Exceptions & edge cases
 
@@ -96,3 +96,4 @@ D08 (all tabs + document sheet + label mode) and the new D01/D02 tier-B/overlay 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (label mode now P4-T062; added D02 widgets P4-T065)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

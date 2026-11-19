@@ -15,17 +15,17 @@ requirements: [R5.25, R5.05]
 roadmap_todos: [T5.67]
 modules: [M22]
 dashboards: [D18]
-tools: [uv, docker, anvil, solana-test-validator, pnpm]
+tools: [cargo, docker, anvil, solana-test-validator, pnpm, git]
 mcp: []
 env: []
-services: [postgres, nats, anvil]
+services: [supabase-postgres, nats, anvil]
 branch: p5/P5-T069-proof-of-control-test-forged-or-replayed-challen
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An end-to-end suite (`tests/registry/test_proof_of_control.py` plus a Playwright flow) proves R5.25 through `mt_api` → `wallet.register` → proof verifier → `ops.wallets`: a valid wallet-app signature (EVM and Solana) or a valid self-transfer registers the address as `verified`; a forged, replayed, expired, mismatched or modified-text proof is rejected with its reason code and leaves the address unverified; and the system never produces a signature itself.
+An end-to-end suite (`crates/mt-treasury/tests/proof_of_control.rs` plus a Playwright flow) proves R5.25 through `mt-api` → `wallet.register` → proof verifier → `ops.wallets`: a valid wallet-app signature (EVM and Solana) or a valid self-transfer registers the address as `verified`; a forged, replayed, expired, mismatched or modified-text proof is rejected with its reason code and leaves the address unverified; and the system never produces a signature itself.
 
 ## Context & references
 
@@ -58,7 +58,7 @@ An end-to-end suite (`tests/registry/test_proof_of_control.py` plus a Playwright
 - [ ] Write the API-level suite with positive and negative cases (≥ 12 cases).
 - [ ] Write the Anvil/local-validator self-transfer cases.
 - [ ] Write the Playwright registration-wizard flow (phone and desktop profiles).
-- [ ] Add the suite to CI as a required check for `mt_treasury.registry`; record results in the progress log.
+- [ ] Add the suite to CI as a required check for the `mt-treasury` registry module; record results in the progress log.
 
 ## Verification
 
@@ -105,3 +105,4 @@ An end-to-end suite (`tests/registry/test_proof_of_control.py` plus a Playwright
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T5.67: proof-of-control test, P5-B016)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv; `mt_api` → `mt-api`)

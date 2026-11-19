@@ -15,17 +15,17 @@ requirements: [R5.05, R5.12, R5.13]
 roadmap_todos: [T5.66]
 modules: [M22, M4]
 dashboards: [D18, D07]
-tools: [uv, docker, sops]
+tools: [cargo, uv, docker, sops, git]
 mcp: []
 env: [HELIUS_API_KEY, ALCHEMY_API_KEY, GOPLUS_API_KEY, CRYPTORANK_API_KEY]
-services: [helius, alchemy, goplus, cryptorank, postgres, nats]
+services: [helius, alchemy, goplus, cryptorank, supabase-postgres, nats]
 branch: p5/P5-T068-live-read-only-check-with-your-keys-helius-alche
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ The keyless builds (RPC pools, wallet indexer, discovery, enrichment and risk cl
 
 ## ToDo
 
-- [ ] Run `./kanban preflight P5-T068` and confirm the env names resolve on the host (values never printed).
+- [ ] Run `./kanban preflight P5-T068` and confirm the env names resolve on the workstation (values never printed).
 - [ ] Run the live smoke suite `tests/live/p5_providers/` (manual-trigger job; skipped in normal CI).
 - [ ] Check D18: every registered address shows a live balance; D07 quota panel shows the usage.
 - [ ] Diff live payload shapes against the recorded fixtures; refresh fixtures or file bugs.
@@ -73,7 +73,7 @@ The keyless builds (RPC pools, wallet indexer, discovery, enrichment and risk cl
 ### Scenarios
 - Given your registered vault and identity addresses, when the indexer polls live, then D18 shows balances from Helius/Alchemy with timestamps, and internal transfers classify as before.
 - Given Helius returns 429 during the run, then the pool fails over to the fallback provider and the run still passes with the source recorded.
-- Given a key is missing on the host, then `./kanban start` preflight refuses and the task is blocked on P0-T010/P5-T003 (no partial run).
+- Given a key is missing on the workstation, then `./kanban start` preflight refuses and the task is blocked on P0-T010/P5-T003 (no partial run).
 
 ### Stress / failure injection
 - n/a: a short live smoke run within free quotas (load and chaos are covered against mocks in P5-T018 and P5-T062)
@@ -112,3 +112,4 @@ The keyless builds (RPC pools, wallet indexer, discovery, enrichment and risk cl
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T5.66: keys-last live check after P0-T010 and P5-T005)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git; "host" → workstation (18 §9))

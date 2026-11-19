@@ -15,17 +15,17 @@ requirements: [R4.09, R4.11]
 roadmap_todos: [T4.25, T4.32]
 modules: [M3, M6]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p4/P4-T036-prediction-markets-readonly
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,19 +37,19 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Read-only httpx clients pull public market probabilities from Kalshi (`api.elections.kalshi.com/trade-api/v2`, no auth) and, **only if lawfully reachable without VPN/proxy**, Polymarket (Gamma + CLOB public reads), for macro/event markets (Fed decision, CPI, NFP, GDP, recession), storing probability series for M3 events and M6 features. There is no trading code path at all.
+Read-only HTTP clients in the Rust `mt-events` crate (reqwest) pull public market probabilities from Kalshi (`api.elections.kalshi.com/trade-api/v2`, no auth) and, **only if lawfully reachable without VPN/proxy**, Polymarket (Gamma + CLOB public reads), for macro/event markets (Fed decision, CPI, NFP, GDP, recession), storing probability series for M3 events and M6 features. There is no trading code path at all.
 
 ## Context & references
 
 - Roadmap: [R4.09, R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Policy: [12 §1 Polymarket](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) (ACMA warning 2 Jul 2025, ISP block 13 Aug 2025; never via VPN/proxy; Kalshi read-only)
-- Providers: [06 §3 prediction markets](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (official Kalshi library has a proprietary licence → httpx)
+- Providers: [06 §3 prediction markets](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (official Kalshi library has a proprietary licence → own reqwest client)
 - Verified by P4-T056 (config review). Also feeds the D02 positioning widget (P4-T065, roadmap T4.32).
 - Cross-phase: P2-T120 (feature registry) is a `depends_on` entry; the venue registry rows (`read_only`) come from P0-T025/P0-T026.
 
 ## Requirements
 
-- Config `config/intel/prediction_markets.yaml`: `polymarket.enabled` default **false** while residency = AU; reachability check is a direct request from the host's normal route; any proxy/VPN env var present → refuse to start.
+- Config `config/intel/prediction_markets.yaml`: `polymarket.enabled` default **false** while residency = AU; reachability check is a direct request from the workstation's normal route; any proxy/VPN env var present → refuse to start.
 - No order, wallet, signing or auth code; CI grep check forbids `order`, `sign`, `private_key` symbols in the module.
 - Markets list per series (ticker/slug), poll every 5 min; store mid/last probability, volume, open interest as `features.value` `pm.{market}`.
 - Large moves (> 10 pp in 1 h) create `geo_event` kind `pm_move`.
@@ -81,7 +81,7 @@ Read-only httpx clients pull public market probabilities from Kalshi (`api.elect
 
 - [ ] Kalshi probabilities flowing; Polymarket disabled for AU unless lawfully reachable
 - [ ] No trading code path (CI check)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-events`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -111,3 +111,4 @@ Read-only httpx clients pull public market probabilities from Kalshi (`api.elect
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (also mapped to new roadmap ToDo T4.32 (prediction-market probabilities for D02); explicit depends_on P2-T120)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (reqwest instead of httpx; Polymarket/Kalshi clients in the Rust `mt-events` crate (18 §2.1); services postgres → supabase-postgres; tools +cargo −uv; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))

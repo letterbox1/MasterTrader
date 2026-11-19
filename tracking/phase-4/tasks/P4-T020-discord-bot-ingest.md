@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -81,7 +81,7 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 - [ ] Recorded gateway fixtures replay end to end (live 48-h ingest is P4-T068)
 - [ ] Guild allow-list guard proven by test
 - [ ] No user token anywhere in the code path
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -113,3 +113,4 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day delivery default per 16 §2.13; build first, keys last: live 48-h ingest moved to P4-T068; dropped P4-T006/P4-T002 dependencies)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

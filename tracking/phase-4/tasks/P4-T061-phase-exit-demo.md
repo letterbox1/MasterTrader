@@ -15,17 +15,17 @@ requirements: [R4.14, R4.10, R4.03]
 roadmap_todos: []
 modules: [M2, M3, M5, M6, M9, M21, M11]
 dashboards: [D08, D06, D01, D02]
-tools: [uv, git, pnpm]
+tools: [uv, cargo, git, pnpm]
 mcp: []
 env: []
-services: [postgres, nats, telegram-bot, engine, decision-svc]
+services: [supabase-postgres, nats, telegram-bot, engine, decision-svc]
 branch: p4/P4-T061-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md, docs/roadmap/README.md, docs/04-plan-of-action.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,11 +76,11 @@ A recorded demo runs every Phase 4 exit criterion: (1) a morning Telegram brief 
 - [ ] Exit criterion 2 shown (paper `event_sensitive` bot paused by blackout)
 - [ ] Exit criterion 3 shown (gate suite green)
 - [ ] All P4 tasks done/cancelled; no open S1/S2 bugs
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-risk`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
-- If the GPU isn't available, demo on CPU mode and note it (SemIf relevance-only).
+- If no GPU is present (`models.gpu_profile: auto` resolved to CPU, the default), demo on CPU mode and note it (SemIf relevance-only).
 
 ## Cardinal rules (do NOT)
 
@@ -107,3 +107,4 @@ A recorded demo runs every Phase 4 exit criterion: (1) a morning Telegram brief 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout demo uses an event_sensitive paper bot (16 §2.8); depends on the new tasks P4-T063–T069; phase-completion doc sync added)
 - 2026-11-19 00:00 · coordinator · depends on P4-T071 (vetted additions, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

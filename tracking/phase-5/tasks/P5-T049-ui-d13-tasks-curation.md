@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D13-tasks-curation.md, docs/roadmap/phase-5-airdro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -87,7 +87,7 @@ D13 is live at `/tasks` with Inbox (TaskCards sorted by urgency and value, detai
 - Do NOT render connect-wallet, sign-permit, approve-unknown-contract, seed/key entry, multi-wallet or automated-social controls anywhere (D12/D18 never-offered lists).
 - Do NOT enforce confirmation levels only in the UI; the server enforces C0–C3 (02 §7.2).
 - Do NOT let Telegram text reach any model, RAG index or training set; Telegram contributes deterministic postures only (12 §4–5).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -105,3 +105,4 @@ D13 is live at `/tasks` with Inbox (TaskCards sorted by urgency and value, detai
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical task types incl. REG_CHANGE; Details; curation defaults per 16 §2.13; P0 app shell dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (cardinal rule names `mt-api`/`mt-risk`/`mt-store`)

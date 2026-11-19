@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T001, P1-T052, P1-T053, P1-T054, P1-T057, P1-T061]
+depends_on: [P1-T001, P1-T011, P1-T016, P1-T017, P1-T021, P1-T052, P1-T053, P1-T054, P1-T057, P1-T075, P1-T076]
 requirements: [R1.N3, R1.02, R1.10]
 roadmap_todos: [T1.80]
 modules: [M1, M16]
@@ -18,14 +18,14 @@ dashboards: [D07]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [nats, postgres, prefect-server, grafana]
+services: [nats, supabase-postgres, prefect-server, grafana]
 branch: p1/P1-T065-run-7-day-recording-soak
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,8 @@ The full P1 stack records the agreed universe for 7 consecutive days without man
 
 ## Requirements
 
-- Start only after the universe (P1-T001) is merged and all connectors run; freeze config for the 7 days (no deploys except emergency fixes, logged)
+- Start only after the seeded universe (P1-T001) exists and all connectors run (keyed feeds whose credentials aren't in the secrets file yet run as `credentials_missing` and are listed in the report; the soak does not wait for your keys); freeze config for the 7 days (no deploys except emergency fixes, logged)
+- Runs on the workstation (Mode 1, [18 §5](../../../docs/18-platform-and-deployment.md#5-deployment-modes)); the bar partition job and the rollup job (P1-T075/P1-T076) run during the soak
 - Recording policy: native L2 diffs only for the `l2: true` symbols (≤ 3 by default), 1 s book snapshots for the rest; the end report recalculates the storage budget for R1.N3 and 03 M1
 - Daily check (2 min): D07 KPI strip screenshot and any incidents noted in the progress log
 - End report: per instrument gaps (count, total seconds, longest, cause), recorder loss (expected 0), restarts, incidents by type, alert counts per channel, bytes/day per venue/type and projected yearly growth vs ~0.3–1 TB, CPU/RAM peaks
@@ -105,3 +106,4 @@ The full P1 stack records the agreed universe for 7 consecutive days without man
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 recording policy and budget recalculation (P1-B002))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (depends on the seeded universe (P1-T001, now an agent task) and the built connectors instead of the live F1 check P1-T061, so the soak never waits on your keys; added P1-T075/P1-T076; runs on the workstation; services supabase-postgres)

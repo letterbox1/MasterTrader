@@ -18,14 +18,14 @@ dashboards: [D02, D07]
 tools: [git, uv, docker, pnpm, node>=20]
 mcp: []
 env: []
-services: [nats, postgres, mt-api, grafana]
+services: [nats, supabase-postgres, mt-api, grafana]
 branch: p1/P1-T061-verify-f1-end-to-end-all-asset-classes
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A scripted walk-through proves F1 for every asset class: venue → `md.*` → Parquet → bars → CAGGs → `dq.status` → D02/Grafana at every timeframe from ticks to 1W (crypto, FX/metals, ETFs live; futures and macro daily).
+A scripted walk-through proves F1 for every asset class: venue → `md.*` → Parquet → bars at every standard size (monthly partitions) → `dq.status` → D02/Grafana at every timeframe from ticks to 1W (crypto, FX/metals, ETFs live; futures and macro daily).
 
 ## Context & references
 
@@ -48,7 +48,7 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 
 ## Requirements
 
-- Script `tests/e2e/f1_flow.py` that, per asset class instrument, asserts: live `md.*` within the last minute (in session), recorder file for today, 1s bars, every CAGG level (1m … 1W), `dq.status ok` (or `closed` out of session), `/markets/{id}/bars` for each spec, D02 chart renders (Playwright)
+- Script `tests/e2e/f1_flow.py` (`uv run pytest tests/e2e/f1_flow.py` + `pnpm playwright` captures) that, per asset class instrument, asserts: live `md.*` within the last minute (in session), recorder file for today, 1s bars, every stored size (1m … 1W) in `market.bar_*`, a `date_bin` size (e.g. 7m), `dq.status ok` (or `closed` out of session), `/markets/{id}/bars` for each spec, D02 chart renders (Playwright)
 - Futures and macro: daily bars/obs present and shown on D02 at 1D
 - Grafana Markets board shows the same last price (± one bar) as D02
 - Report with screenshots per class under `reports/verify/P1-T061/`
@@ -76,7 +76,7 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 ## Acceptance criteria
 
 - [ ] All classes pass every F1 step; report stored
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -85,7 +85,7 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 ## Cardinal rules (do NOT)
 
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 
 ## Doc sync on completion
 
@@ -102,3 +102,4 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tick → 1W; depends on live connector check P1-T073 instead of the keyless builds)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (bars from the partitioned tables written by `mt-recorder` (no CAGGs); stays a live VERIFY (needs P1-T073); services supabase-postgres)

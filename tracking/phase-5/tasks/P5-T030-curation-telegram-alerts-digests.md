@@ -15,17 +15,17 @@ requirements: [R5.20, R5.22]
 roadmap_todos: [T5.30]
 modules: [M19, M15]
 dashboards: [D13]
-tools: [uv]
+tools: [uv, cargo, git]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p5/P5-T030-curation-telegram-alerts-digests
 pr: ""
 doc_sync: [docs/ui/mobile-and-telegram.md, docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · 🔍 Details · 🚫 Never` buttons mapped to the same `mt_api` commands as the UI; instant alerts fire for eligible claims live, deadlines < 48 h and phishing warnings; a morning daily digest and a weekly curation/review digest are composed and sent in Australian time with quiet hours.
+Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · 🔍 Details · 🚫 Never` buttons (Rust `mt-telegram-bot`, teloxide) mapped to the same `mt-api` commands as the UI; digests are composed by the Python `mt_curation` package; instant alerts fire for eligible claims live, deadlines < 48 h and phishing warnings; a morning daily digest and a weekly curation/review digest are composed and sent in Australian time with quiet hours.
 
 ## Context & references
 
@@ -90,7 +90,7 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 - Do NOT include Telegram channel text in digests or any model input; postures/counts only.
 - Do NOT send unsolicited messages to anyone but the user.
 - Do NOT let Telegram text reach any model, RAG index or training set; Telegram contributes deterministic postures only (12 §4–5).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -109,3 +109,4 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Details button per P5-B014; mocked Telegram in CI; P2 bot and P1 alerts as deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git; `mt_api` → `mt-api`)

@@ -15,17 +15,17 @@ requirements: [R4.03, R4.06]
 roadmap_todos: [T4.23]
 modules: [M2, M9, M21]
 dashboards: [D08]
-tools: [uv, git, docker]
+tools: [cargo, uv, git, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres]
 branch: p4/P4-T025-provenance-gate
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-One shared guard, `mt_store.provenance.require_model_input(rows)` (and `require_train_ok`), is the **first** step of the `nlp` service and is called at every model boundary (FinBERT, TEI embeddings, SemIf/tier B question boundary, RAG indexer and retriever, agent context builder). Rows with `model_input_ok = false`, and every row whose source kind is `telegram`, are refused and audited as a WORM `audit.dq_event` row of kind `provenance_refusal` (canonical audit names, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
+One shared guard, implemented once in the Rust `mt-store` crate and called from Python as `mt_store.provenance.require_model_input(rows)` (and `require_train_ok`) through the PyO3 binding, is the **first** step of the `nlp` service and is called at every model boundary (FinBERT, TEI embeddings, SemIf/tier B question boundary, RAG indexer and retriever, agent context builder). Rows with `model_input_ok = false`, and every row whose source kind is `telegram`, are refused and audited as a WORM `audit.dq_event` row of kind `provenance_refusal` (canonical audit names, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
 
 ## Context & references
 
@@ -58,10 +58,10 @@ One shared guard, `mt_store.provenance.require_model_input(rows)` (and `require_
 
 ## ToDo
 
-- [ ] Implement `mt_store.provenance` guard, decorator and refusal audit writer (`audit.dq_event`, kind `provenance_refusal`).
+- [ ] Implement the provenance guard in `crates/mt-store` (Rust), its `mt_store.provenance` Python binding and decorator, and the refusal audit writer (`audit.dq_event`, kind `provenance_refusal`).
 - [ ] AST lint rule + CI wiring.
 - [ ] `nlp` service skeleton (`mt_features.text.service`): durable consumer on `raw.text.>` excluding Telegram, guard first, then stage pipeline hooks (P4-T026/T027/T030).
-- [ ] Document the boundaries list in `packages/mt_store/provenance/README.md`.
+- [ ] Document the boundaries list in `crates/mt-store/README.md` (provenance section).
 
 ## Verification
 
@@ -82,7 +82,7 @@ One shared guard, `mt_store.provenance.require_model_input(rows)` (and `require_
 - [ ] Guard + lint in CI; all known model boundaries decorated
 - [ ] Telegram never consumed by `nlp` (test)
 - [ ] Refusals audited in `audit.dq_event` (WORM)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-store`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ One shared guard, `mt_store.provenance.require_model_input(rows)` (and `require_
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); corrections are new rows ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 
 ## Doc sync on completion
 
@@ -113,3 +113,4 @@ One shared guard, `mt_store.provenance.require_model_input(rows)` (and `require_
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (refusals audited in canonical audit.dq_event (17 §B); F3 provenance-first per 17 §A P4-B001; added P4-T008 and P1-T030 dependencies)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (provenance guard implemented once in Rust `mt-store`, called from Python via the `mt_store` binding; services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

@@ -18,14 +18,14 @@ dashboards: [D13]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T047-community-curation-discord-delivery
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -108,3 +108,4 @@ The curation queue proposes at most 3 new servers a week (default, configurable)
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Discord 7 days / ≤ 3 servers per week defaults per 16 §2.13/P5-B011; `curation.community`; P4 Discord dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

@@ -15,7 +15,7 @@ requirements: [R5.02, R5.03, R5.16]
 roadmap_todos: [T5.20]
 modules: [M22]
 dashboards: []
-tools: [uv, anvil]
+tools: [cargo, anvil, git]
 mcp: []
 env: []
 services: [anvil]
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrop
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ The EVM chain plug-in builds every allowed transaction itself from the intent (M
 
 ## ToDo
 
-- [ ] Implement `packages/mt_signer/chains/evm/` builder, decoder, hard-block rules (one rule per module with an ID used in refusal codes).
+- [ ] Implement `crates/mt-signer/src/chains/evm/` (alloy) builder, decoder, hard-block rules (one rule per module with an ID used in refusal codes).
 - [ ] ABI resolver from Blockscout verified source (cached; unverified → refuse for autonomous paths); tests use recorded Blockscout responses, no API key.
 - [ ] Approval lifecycle: sized approve → action → revoke intent scheduled; unrevoked after 10 min → alert + `REVOKE_APPROVAL` task.
 - [ ] Table-driven tests with real calldata fixtures for each blocked pattern.
@@ -110,3 +110,4 @@ The EVM chain plug-in builds every allowed transaction itself from the intent (M
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless fixtures for the ABI resolver)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tools +cargo +git −uv)

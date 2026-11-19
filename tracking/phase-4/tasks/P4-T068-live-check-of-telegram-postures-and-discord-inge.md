@@ -15,17 +15,17 @@ requirements: [R4.02, R4.03, R4.04]
 roadmap_todos: [T4.21, T4.22]
 modules: [M2]
 dashboards: [D08, D07]
-tools: [uv, sops, git]
+tools: [uv, cargo, sops, git]
 mcp: []
 env: [TELEGRAM_API_ID, TELEGRAM_API_HASH, DISCORD_BOT_TOKEN]
-services: [telegram-account, discord-feeds-server, nats, postgres]
+services: [telegram-account, discord-feeds-server, nats, supabase-postgres]
 branch: p4/P4-T068-live-check-of-telegram-postures-and-discord-inge
 pr: ""
 doc_sync: [docs/runbooks/social-accounts.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -110,3 +110,4 @@ On your dedicated Telegram account and your Discord feeds server, the account-bo
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (keys-last live check for account-bound Telegram/Discord sources (17 §E); postures per 17 §A/§D)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo)

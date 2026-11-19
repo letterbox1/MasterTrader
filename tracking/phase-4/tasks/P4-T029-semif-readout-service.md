@@ -18,14 +18,14 @@ dashboards: [D01, D02, D08]
 tools: [uv, git, docker]
 mcp: []
 env: []
-services: [decision-svc, nats, postgres]
+services: [decision-svc, nats, supabase-postgres]
 branch: p4/P4-T029-semif-readout-service
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -79,14 +79,14 @@ review_result: ""
 - Integration: `text.doc.new` → `dec.tierb.relevance.{doc}` + KV entry + audit row.
 - Guard: Telegram subject refused.
 - Unit: a score tagged `deterministic=false` is never published to `dec.tierb.*`/KV and is refused by the tier A feature reader.
-- Static check: no import of the decision-svc client from `mt_risk`/`mt_engine` order-path modules (latency isolation).
+- Static check: no dependency on the decision-svc client from the `mt-risk`/`mt-engine` crates or the Python engine node's order-path modules (latency isolation).
 
 ### Scenarios
 - Given the LLM server is down, then decisions queue (bounded), D08 shows 'Scoring…' then 'Tier B unavailable', tier A unaffected.
 - Given a burst of 5,000 docs, then relevance runs for watchlist docs first and other questions are shed with a metric.
 
 ### Stress / failure injection
-- Latency/throughput run: record docs/min and p95 for relevance-only (target ≤ 300 ms GPU / ≤ 3 s CPU) and the full v1 set on this host; results into MLflow (formal benchmark P4-T069).
+- Latency/throughput run: record docs/min and p95 for relevance-only (target ≤ 300 ms GPU / ≤ 3 s CPU) and the full v1 set on the workstation; results into MLflow (formal benchmark P4-T069).
 
 ## Acceptance criteria
 
@@ -94,7 +94,7 @@ review_result: ""
 - [ ] Determinism logging present on 100% of decisions
 - [ ] Flip-rate probe reported in metrics (target ≤ 0.1%, 16 §2.10)
 - [ ] Offline shared-prefix scores never reach decisions, KV or backtests (test)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,7 +109,7 @@ review_result: ""
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); corrections are new rows ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 
 ## Doc sync on completion
 
@@ -127,3 +127,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (P4-B010 decision: prefix caching off, shared-prefix offline-only + non-deterministic tag; R4.N2 latency target and queueing; 16 §2.10 thresholds)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))

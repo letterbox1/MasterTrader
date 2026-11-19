@@ -1,7 +1,7 @@
 ---
 id: P4-T043
 kind: task
-title: mt_api intel queries, commands and WebSocket topics
+title: mt-api intel queries, commands and WebSocket topics
 phase: 4
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R4.13]
 roadmap_todos: [T4.29]
 modules: [M2, M3, M5, M9, M21]
 dashboards: [D08, D01, D02]
-tools: [uv, git, pnpm]
+tools: [cargo, git, pnpm]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p4/P4-T043-mt-api-intel-endpoints
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P4-T043 · mt_api intel queries, commands and WebSocket topics
+# P4-T043 · mt-api intel queries, commands and WebSocket topics
 
 ## Goal / expected outcome
 
-`mt_api` exposes `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment`, `/intel/postures`, `/rag/search`, `/models/questions`, `/models/tierb/decisions`, `/data/feeds?kind=text`; commands `intel.source.add` (C1), `intel.source.mute` (C0), `intel.watchlist.update` (C0), `models.tierb.ask` (C0), `models.question.update` (C1); and WS topics `text.doc`, `evt`, `cal`, `tierb`, `posture` — the single backend contract for D08, the D01/D02 chips and the morning brief.
+`mt-api` (Rust, axum; OpenAPI via utoipa so `openapi-typescript` regenerates the web client) exposes `/intel/documents` (+ `/{id}`), `/intel/events`, `/intel/calendar`, `/intel/sentiment`, `/intel/postures`, `/rag/search`, `/models/questions`, `/models/tierb/decisions`, `/data/feeds?kind=text`; commands `intel.source.add` (C1), `intel.source.mute` (C0), `intel.watchlist.update` (C0), `models.tierb.ask` (C0), `models.question.update` (C1); and WS topics `text.doc`, `evt`, `cal`, `tierb`, `posture` — the single backend contract for D08, the D01/D02 chips and the morning brief.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Routers + pydantic models + OpenAPI.
+- [ ] axum routers + serde types + utoipa OpenAPI (regenerate the web client with `openapi-typescript`).
 - [ ] Command handlers with confirmation levels.
 - [ ] WS fan-out from NATS subjects (`text.doc.new`, `evt.*`, `cal.*`, `dec.tierb.*`, `posture.telegram.*`).
 - [ ] Contract tests consumed by the web client types.
@@ -81,7 +81,7 @@ review_result: ""
 
 - [ ] All endpoints/commands/topics in OpenAPI and tested
 - [ ] Deny-list enforced server-side
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-api`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -91,7 +91,7 @@ review_result: ""
 
 - Do NOT enforce confirmation levels only in the UI.
 - Do NOT return Telegram text from any endpoint.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); corrections are new rows ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
 - Do NOT skip, weaken or delete a test to get green.
@@ -105,10 +105,11 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p4/P4-T043-mt-api-intel-endpoints`
-- PR title: `P4-T043: mt_api intel queries, commands and WebSocket topics`
+- PR title: `P4-T043: mt-api intel queries, commands and WebSocket topics`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P4-T043` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (/intel/postures + posture.telegram.* per 17 §D (P4-B002/B003); label command moved to P4-T062; explicit P0 depends_on and P4-T019)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (axum/serde/utoipa instead of pydantic; Rust `mt-api` (axum, utoipa); services postgres → supabase-postgres; tools +cargo −uv; `mt_api` → `mt-api`; CI commands per 18 (cargo/uv/supabase/pnpm))

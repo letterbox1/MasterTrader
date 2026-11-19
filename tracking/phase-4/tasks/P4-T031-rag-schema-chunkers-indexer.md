@@ -15,17 +15,17 @@ requirements: [R4.07]
 roadmap_todos: [T4.24]
 modules: [M9]
 dashboards: [D08]
-tools: [uv, git]
+tools: [uv, git, supabase]
 mcp: []
 env: []
-services: [postgres, tei-embed]
+services: [supabase-postgres, tei-embed]
 branch: p4/P4-T031-rag-schema-chunkers-indexer
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 
 ## ToDo
 
-- [ ] Migrations (`rag.doc_chunk` table and indexes in the P0 `rag` schema; extension checks for pgvector/pg_trgm).
+- [ ] SQL migrations in `supabase/migrations/` (`rag.doc_chunk` table and indexes in the P0 `rag` schema; extension checks for pgvector/pg_trgm).
 - [ ] Chunkers (`mt_memory.rag.chunk_filing`, `chunk_news`).
 - [ ] Indexer consumer on `text.doc.new` (relevant only) + backfill command.
 - [ ] Tests.
@@ -79,7 +79,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 
 - [ ] Indexes created as specified; chunkers pass golden tests
 - [ ] Guard enforced at indexer boundary
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -91,7 +91,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 - Do NOT use VectorChord or pg_textsearch (licence/PG17).
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 - Do NOT skip, weaken or delete a test to get green.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 
 ## Doc sync on completion
 
@@ -108,3 +108,4 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (rag schema from P0 per 17 §B (P4-B006); explicit depends_on P0-T024)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))

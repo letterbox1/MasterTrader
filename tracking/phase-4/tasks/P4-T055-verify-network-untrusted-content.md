@@ -18,14 +18,14 @@ dashboards: [D16]
 tools: [docker, uv, git]
 mcp: []
 env: []
-services: [postgres, nats, rss-bridge, crawl4ai, decision-svc]
+services: [supabase-postgres, nats, rss-bridge, crawl4ai, decision-svc]
 branch: p4/P4-T055-verify-network-untrusted-content
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Postgres, the signer or core NATS subjects; scraped text is stored with `untrusted=true` and rendered inert; and no secret can appear in any prompt sent to SemIf/LiteLLM (prompt scanner on the decision path).
+A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Supabase Postgres, the signer or core NATS subjects; scraped text is stored with `untrusted=true` and rendered inert; and no secret can appear in any prompt sent to SemIf/LiteLLM (prompt scanner on the decision path).
 
 ## Context & references
 
@@ -76,7 +76,7 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Postgre
 ## Acceptance criteria
 
 - [ ] All probes fail as expected; scanner tests green; injection fixture inert
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Postgre
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (scrape NATS permissions match P4-T008 (posture.telegram.> for F3b); added P4-T029 (prompt scanner on the decision path))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/runbooks/social-accounts.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ review_result: ""
 
 ## Requirements
 
-- Join queue persisted in a local SQLite state file on the `ingest-text` volume (`/data/ingest-text/telegram_join_queue.db`: handle, priority, state, attempts, next_attempt_at, last_error), because the scrape network has no route to Postgres ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); queue state (joined count, paused-until) is published in the Telegram `feed_status` entry for D08 Sources.
+- Join queue persisted in a local SQLite state file on the `ingest-text` volume (`/data/ingest-text/telegram_join_queue.db`: handle, priority, state, attempts, next_attempt_at, last_error), because the scrape network has no route to Supabase Postgres ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); queue state (joined count, paused-until) is published in the Telegram `feed_status` entry for D08 Sources.
 - Join pacing (configurable defaults in `config/intel/telegram.yaml`): at most 1 join per 10–20 min (jittered) and ≤ 20 per day; on `FloodWaitError(seconds)` sleep **exactly** `seconds` + jitter and pause the whole queue.
 - Hard cap: refuse to join when joined count ≥ 500; leaving a channel is manual (or on ban/private).
 - Read-only: no sending, forwarding, reacting, read-receipt manipulation or member-list calls; client wrapper exposes only the allowed methods.
@@ -86,7 +86,7 @@ review_result: ""
 - [ ] Join queue honours FLOOD_WAIT exactly and never exceeds 500 (tests)
 - [ ] Allow-list wrapper prevents any write action (tests)
 - [ ] No Telegram text persisted anywhere (spy test)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -120,3 +120,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3b postures-only per 17 §A P4-B001; built on a fake client, live joins moved to P4-T068; dropped P4-T006/P4-T001 dependencies)
 - 2026-10-22 00:00 · aligner · join-queue state moved from `ops.tg_join_queue` to a local state file (scrape side has no DB route, 02 §3.1)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))

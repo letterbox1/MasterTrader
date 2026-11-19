@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T031, P0-T037]
 requirements: [R0.07, R0.N4]
 roadmap_todos: [T0.23, T0.44]
-modules: [M17]
+modules: [M17, mt-obs]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, minio, prefect-server]
+services: [supabase-postgres, minio, prefect-server]
 branch: p0/P0-T040-monthly-immutable-worm-export
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-On the 1st of each month a Prefect flow exports every WORM table's previous-month rows to Parquet with a manifest (row counts, first/last seq, per-file SHA-256, the month's seal roots) and uploads both to the Object-Locked `mt-worm-seal` bucket with ≥ 7-year retention.
+On the 1st of each month the `mt-obs export` job (Rust, `arrow-rs`/`parquet`; scheduled by Prefect or pg_cron) exports every WORM table's previous-month rows to Parquet with a manifest (row counts, first/last seq, per-file SHA-256, the month's seal roots) and uploads both to the Object-Locked `mt-worm-seal` bucket with ≥ 7-year retention.
 
 ## Context & references
 
@@ -57,8 +57,8 @@ On the 1st of each month a Prefect flow exports every WORM table's previous-mont
 
 ## ToDo
 
-- [ ] Implement the export flow + manifest + upload.
-- [ ] Implement `verify-export`.
+- [ ] Implement `mt-obs export` + manifest + upload (reusing the `AnchorStore` trait from P0-T037).
+- [ ] Implement `mt-obs verify-export`.
 - [ ] Schedule monthly at 01:30 UTC on the 1st.
 - [ ] Tests below.
 
@@ -108,3 +108,4 @@ On the 1st of each month a Prefect flow exports every WORM table's previous-mont
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: MinIO in CI/dev, real anchoring checked in the soak P0-T063; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (export is a Rust `mt-obs` job writing Parquet with arrow-rs; Prefect/pg_cron only schedule it)

@@ -18,14 +18,14 @@ dashboards: [D08]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p4/P4-T056-verify-source-terms-config-review
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -70,7 +70,7 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 ## Acceptance criteria
 
 - [ ] Review saved with zero open findings (or bugs filed and fixed)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -98,3 +98,4 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (reviews your P4-T005 terms decisions (added dependency); Reddit optional per 17 §D P4-B009)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

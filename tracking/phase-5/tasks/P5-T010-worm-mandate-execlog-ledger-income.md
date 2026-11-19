@@ -15,17 +15,17 @@ requirements: [R5.02, R5.15]
 roadmap_todos: [T5.20, T5.28]
 modules: [M4, M22, M18, M17]
 dashboards: []
-tools: [uv, docker]
+tools: [supabase, docker, cargo, git]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p5/P5-T010-worm-mandate-execlog-ledger-income
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,10 +55,10 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Alembic migrations (run as `worm_owner` from the offline secret) creating the three tables, registering them with the hash-chain trigger and daily seal job.
+- [ ] SQL migrations in `supabase/migrations/` (applied as `worm_owner` from the offline secret) creating the three tables, registering them with the hash-chain trigger and daily seal job.
 - [ ] Grant app roles INSERT/SELECT only; add BEFORE UPDATE/DELETE/TRUNCATE exception triggers.
 - [ ] Create `*_current` views (latest row per key) used by APIs.
-- [ ] Write repository functions in `mt_store` that only expose `append()`/`query()` (no update API).
+- [ ] Write repository functions in the Rust `mt-store` crate (WORM writes through `mt-obs`) that only expose `append()`/`query()` (no update API); extend the pgTAP WORM tests (`supabase test db`).
 - [ ] Extend the WORM test suite with these three tables.
 - [ ] Update 15 §2.1 table names if they changed.
 
@@ -81,7 +81,7 @@ review_result: ""
 
 - [ ] Three WORM tables live with chain + seal
 - [ ] 15 §2.4 tests pass for all three
-- [ ] No update API exposed in `mt_store`
+- [ ] No update API exposed in `mt-store` (or its Python binding)
 
 ## Exceptions & edge cases
 
@@ -111,3 +111,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no separate airdrop income table: income is `journal.event` per 08 data model, owned by P5-T046; P0 WORM deps added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (WORM tables via Supabase SQL migrations + pgTAP; `mt-store`/`mt-obs` crates; services postgres → supabase-postgres; tools +cargo +git +supabase −uv)

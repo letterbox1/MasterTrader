@@ -15,7 +15,7 @@ requirements: [R5.23, R5.05, R5.01, R5.24, R5.25]
 roadmap_todos: [T5.31]
 modules: [M15, M22, M16, M18]
 dashboards: [D18]
-tools: [pnpm, node>=20]
+tools: [pnpm, node>=20, git]
 mcp: []
 env: []
 services: [mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D18-wallets-treasury.md, docs/roadmap/phase-5-aird
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ D18 `/wallets` and `/wallets/:walletId` show net worth (AUD and USD, 24h/7d/FY c
 
 - [ ] Build `/wallets` and `/wallets/:walletId` with grouping (`?group=`), wallet table/cards, transfers, alerts side column.
 - [ ] Registration wizard: shows the one-time challenge (copy button) and accepts the pasted wallet-app signature, or shows the self-transfer amount/memo and waits for it (P5-T067); never connects a wallet.
-- [ ] Limits form and "signing disabled" banner (P5-T012/P5-T065).
+- [ ] Limits form and "mainnet signing disabled" banner (P5-T012; limits seeded by P5-T065, confirmed by you in P5-T004).
 - [ ] Playwright flows + viewport matrix + axe; doc sync.
 
 ## Verification
@@ -91,7 +91,7 @@ D18 `/wallets` and `/wallets/:walletId` show net worth (AUD and USD, 24h/7d/FY c
 
 - Do NOT render connect-wallet, sign-permit, approve-unknown-contract, seed/key entry, multi-wallet or automated-social controls anywhere (D12/D18 never-offered lists).
 - Do NOT enforce confirmation levels only in the UI; the server enforces C0–C3 (02 §7.2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -109,3 +109,4 @@ D18 `/wallets` and `/wallets/:walletId` show net worth (AUD and USD, 24h/7d/FY c
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (limits form + signing-disabled banner per R5.24; proof-of-control wizard per R5.25; watch-only per P5-B008; depeg = alert + task)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tools +git)

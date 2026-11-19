@@ -15,17 +15,17 @@ requirements: [R4.15]
 roadmap_todos: [T4.30]
 modules: [M5, M16, M19]
 dashboards: [D13, D07]
-tools: [uv, git, docker]
+tools: [uv, cargo, supabase, git, docker]
 mcp: []
 env: []
-services: [postgres, nats, crawl4ai, prefect-server]
+services: [supabase-postgres, nats, crawl4ai, prefect-server]
 branch: p4/P4-T063-regulatory-and-jurisdiction-watch-fetch-diff-and
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,7 +60,7 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 
 - [ ] `regwatch.yaml` with the AU sources and the dormant UAE/CY/EG entries
 - [ ] Prefect flow + fetcher (reusing P4-T011 extraction) publishing `raw.reg.{source}`
-- [ ] `ops.reg_watch_source` / `ops.reg_watch_snapshot` migrations and the `intel-writer` handler
+- [ ] `ops.reg_watch_source` / `ops.reg_watch_snapshot` SQL migrations (`supabase/migrations/`) and the `mt-intel-writer` handler (Rust)
 - [ ] Differ + materiality filter + `REG_CHANGE` task writer (`curation.task`) + `task.new` / alert
 - [ ] Residency-aware activation of foreign sources (reads the P3 residency timeline)
 - [ ] Fixtures (two snapshots per source with a real-looking change) and tests
@@ -119,3 +119,4 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.15 / T4.30; REG_CHANGE watch per 16 §4.3)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +supabase)

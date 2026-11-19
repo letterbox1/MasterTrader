@@ -15,17 +15,17 @@ requirements: [R4.12]
 roadmap_todos: [T4.28]
 modules: [M21]
 dashboards: [D10]
-tools: [uv, git]
+tools: [uv, git, supabase]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p4/P4-T028-question-registry-v1
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Alembic migrations for `models.registry`, `models.question` and `audit.tierb_decision` (tables only; schemas exist from P0; WORM triggers from P0-T029/T030). `models.label` is added by P4-T062.
+- [ ] SQL migrations in `supabase/migrations/` for `models.registry`, `models.question` and `audit.tierb_decision` (tables only; schemas exist from P0; WORM triggers from P0-T029/T030). `models.label` is added by P4-T062.
 - [ ] Question YAMLs in `config/models/questions/*.yaml` + loader.
 - [ ] State builders + token-budget enforcer (tokenizer of the pinned model).
 - [ ] Tests.
@@ -79,11 +79,11 @@ review_result: ""
 
 - [ ] v1 questions registered and loadable
 - [ ] WORM + budget tests pass
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
-- The `models` schema exists from P0 (17 §B); migrations only add tables and fail loudly if the schema is missing.
+- The `models` schema exists from P0 (17 §B); migrations (`supabase/migrations/`) only add tables and fail loudly if the schema is missing; pgTAP tests (`supabase test db`) cover the WORM triggers on `audit.tierb_decision`.
 
 ## Cardinal rules (do NOT)
 
@@ -108,3 +108,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (schemas created in P0 per 17 §B (P4-B006); tier-B threshold defaults linked to 16 §2.10; explicit P0 depends_on)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))

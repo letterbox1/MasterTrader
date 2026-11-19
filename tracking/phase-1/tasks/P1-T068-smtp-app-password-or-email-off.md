@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/07-security-notes.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,7 +45,7 @@ Either the email alert channel has working SMTP credentials from **your own mail
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B005 (your mail provider's SMTP with an app password, or email off)
 - Security: [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) (email via your provider's SMTP over TLS; app password in the secrets file) · [07 §2](../../../docs/07-security-notes.md#2-secrets) (sops file lives outside the repo, e.g. `~/.config/mastertrader/`)
 - Consumer: the `alert.*` fan-out (P1-T045) and the alert path test (P1-T060)
-- Related: P1-T003 (ntfy app + confirm the destination address)
+- Related: this task also holds the destination address (`ALERT_EMAIL_TO`); P1-T003 is now only the phone ntfy subscription before go-live
 
 ## Requirements
 
@@ -62,7 +62,7 @@ Either the email alert channel has working SMTP credentials from **your own mail
 - [ ] Decide email on or off and tell the agent (no values)
 - [ ] If on: create the app password at your mail provider and note SMTP host/port and sender
 - [ ] If on: add the six `SMTP_*` / `ALERT_EMAIL_*` entries to the sops file
-- [ ] If on: run `uv run mt-alerts test --channel email` (after P1-T045) and confirm the message arrived (check spam once and allow the sender)
+- [ ] If on: run `mt-alerts test --channel email` (after P1-T045) and confirm the message arrived (check spam once and allow the sender)
 - [ ] Record "email on, delivered" or "email off" in the progress log
 
 ## Verification
@@ -112,3 +112,4 @@ Either the email alert channel has working SMTP credentials from **your own mail
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T1.05 (docs/16–17 alignment)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (credential); `mt-alerts` is now a subcommand of the Rust `mt-telegram-bot`; destination address confirmed here instead of in P1-T003)

@@ -15,17 +15,17 @@ requirements: [R4.10]
 roadmap_todos: [T4.26]
 modules: [M5, M11]
 dashboards: [D06, D08, D02]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p4/P4-T038-blackout-api-m11
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D06-risk.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.calendar.blackouts.active(instrument, at)` and `upcoming(instrument, within_min)` answer "is there an event within N minutes affecting this instrument?" from one source of truth; the P2 M11 event-blackout hook calls it (in-process cache refreshed by `cal.*`), so new entries are blocked inside blackout windows for bots marked `event_sensitive`, while exits and protective orders are never blocked. Defaults come from [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts), configurable per bot and per event type.
+`blackouts::active(instrument, at)` and `upcoming(instrument, within_min)` in the Rust `mt-risk` crate answer "is there an event within N minutes affecting this instrument?" from one source of truth; the P2 M11 event-blackout hook calls it (in-process cache refreshed by `cal.*`), so new entries are blocked inside blackout windows for bots marked `event_sensitive`, while exits and protective orders are never blocked. Defaults come from [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts), configurable per bot and per event type.
 
 ## Context & references
 
@@ -58,7 +58,7 @@ review_result: ""
 ## ToDo
 
 - [ ] Blackout rule evaluator + interval index.
-- [ ] M11 hook adapter (calls into `mt_risk` P2 interface).
+- [ ] M11 hook adapter in `mt-risk` (the one risk crate linked into `mt-api`, the engine and `mt-deadman`; the calendar rows come from P4-T037 via `mt-store` and `cal.*`).
 - [ ] Stale-calendar fail-safe.
 - [ ] Seed the 16 §2.8 default rule as a C1 tightening change via `risk.policy.update` (recorded as a WORM version row).
 - [ ] Tests + latency micro-benchmark.
@@ -84,7 +84,7 @@ review_result: ""
 - [ ] M11 rejects new entries inside windows and allows protective exits (tests)
 - [ ] Latency budget met
 - [ ] Blackout set identical in D06, D08 and M11
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-risk`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ review_result: ""
 
 - Do NOT block protective exits during blackouts.
 - Do NOT duplicate blackout logic in the UI; read the API.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT make loosening risk anything but C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`); corrections are new rows ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
@@ -116,3 +116,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout defaults from 16 §2.8 (17 §C P4-B004): ±15 min, event_sensitive bots, exits continue, per bot/event type; explicit P2 depends_on)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (blackout evaluator in the Rust `mt-risk` crate; services postgres → supabase-postgres; tools +cargo −uv; CI commands per 18 (cargo/uv/supabase/pnpm))

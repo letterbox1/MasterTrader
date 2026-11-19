@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/06-aggregators-and-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -87,7 +87,7 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 - [ ] All eight checks (incl. the ABS CPI series ID) have a pass/fail line with date in 06 §3
 - [ ] Sources that failed are disabled in `config/sources.yaml` with the reason
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -114,3 +114,4 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (adds the ABS CPI series ID check (P1-B016, T1.60); credential env names; dep P0-T009)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; live VERIFY with practice credentials (P0-T009) stays separate and late)

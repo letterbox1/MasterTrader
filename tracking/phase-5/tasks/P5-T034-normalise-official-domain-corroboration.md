@@ -18,14 +18,14 @@ dashboards: [D12]
 tools: [uv]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p5/P5-T034-normalise-official-domain-corroboration
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -104,3 +104,4 @@ Observations collapse into `airdrop_opportunity` keyed by (chain, contract) else
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; content already matches 08 normalise/corroboration)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)

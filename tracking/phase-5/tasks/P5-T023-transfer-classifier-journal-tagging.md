@@ -15,17 +15,17 @@ requirements: [R5.05, R5.18]
 roadmap_todos: [T5.22]
 modules: [M22, M18]
 dashboards: [D18, D14]
-tools: [uv, anvil, solana-test-validator]
+tools: [cargo, anvil, solana-test-validator, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T023-transfer-classifier-journal-tagging
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 
 ## ToDo
 
-- [ ] Implement `packages/mt_treasury/indexer/classifier.py` and rule table.
+- [ ] Implement `crates/mt-treasury/src/indexer/classifier.rs` and rule table (journal events written through `mt-journal`).
 - [ ] Emit `wallet.{chain}.{address}.transfer` and journal events through the P3 ingestion API.
 - [ ] Address-poisoning detection (lookalike addresses sending zero-value transfers) → warning badge.
 - [ ] Tests with fixtures; doc sync.
@@ -89,7 +89,7 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 
 - Do NOT rewrite journal events on reclassification; append corrections.
 - Do NOT UPDATE or DELETE WORM rows (`curation.mandate`, `curation.exec_log`, the signer ledger, `journal.*`, `audit.*`); corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -108,3 +108,4 @@ Every on-chain transfer touching a registered wallet is classified (internal bet
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (valuation per 16 §4.1; P3 on-chain adapter and internal-transfer matcher as explicit deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

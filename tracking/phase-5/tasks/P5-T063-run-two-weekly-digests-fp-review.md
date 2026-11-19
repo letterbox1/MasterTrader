@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T030, P5-T041, P5-T047, P5-T068]
+depends_on: [P5-T030, P5-T041, P5-T047]
 requirements: [R5.22, R5.13]
 roadmap_todos: [T5.80]
 modules: [M4, M19]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,17 +37,17 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Two consecutive weekly digests (with the daily digests between them) go out on schedule; at each, the rejected-with-reasons list is reviewed with you for false positives, and thresholds/weights are tuned (tightening freely; loosening only with your C3 approval, 16 §1). The second digest is the artefact for exit criterion 1.
+Two consecutive weekly digests (with the daily digests between them) go out on schedule; at each, the rejected-with-reasons list is reviewed for false positives (the agent labels each sampled reject; your review is optional), and thresholds/weights are tuned (tightening freely; loosening only with your C3 approval, 16 §1). The second digest is the artefact for exit criterion 1.
 
 ## Context & references
 
 - Roadmap: ToDo T5.80 → R5.22 · exit criterion 1 ([§6](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md))
-- Runs alongside USER P5-T008 · digests P5-T030
+- Runs alongside USER P5-T008 · digests P5-T030 · starts on the keyless/free discovery sources; keyed sources join as soon as the live check P5-T068 passes, so the run never waits for your keys
 
 ## Requirements
 
 - Both weekly digests contain: vetted opportunities with EV, numbered steps, verified links; curation queue; tasks expiring; approvals audit; income summary.
-- False-positive review: sample ≥ 20 rejects per week; label each FP/TP with you; record FP rate; propose changes.
+- False-positive review: sample ≥ 20 rejects per week; the agent labels each FP/TP against the stage reasons and the sources (you can review the sheet); record FP rate; propose changes.
 - Changes go through config PRs with the score version bumped.
 
 ## ToDo
@@ -98,3 +98,4 @@ Two consecutive weekly digests (with the daily digests between them) go out on s
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (live digests after the keys-last check P5-T068; loosening is C3)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed P5-T068 dep (keyed sources join when it passes); FP/TP labelled by the agent, your review optional; depends_on removed P5-T068)

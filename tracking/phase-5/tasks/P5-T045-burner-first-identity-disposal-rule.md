@@ -15,17 +15,17 @@ requirements: [R5.17, R5.15]
 roadmap_todos: [T5.28]
 modules: [M4, M19, M22]
 dashboards: [D12, D13]
-tools: [uv, anvil]
+tools: [cargo, anvil, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T045-burner-first-identity-disposal-rule
 pr: ""
 doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,8 +55,8 @@ New or untrusted dApp interactions always run first from a **burner** with minim
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/flows/burner.py`, `identity.py`, `disposal.py`.
-- [ ] Disposal task generator: quantity from the setting, cost-gate estimate from `mt_onchain.costgate` (P5-T020), task via the `TaskFactory` (P5-T029); journal link when you mark it Done (tx hash/order id).
+- [ ] Implement `crates/mt-airdrop-exec/src/flows/` (burner, identity, disposal).
+- [ ] Disposal task generator: quantity from the setting, cost-gate estimate from `mt_onchain::costgate` (P5-T020), task via the `TaskFactory` (P5-T029); journal link when you mark it Done (tx hash/order id).
 - [ ] Task templates for GENUINE_USE and manual sell; tests; doc sync.
 
 ## Verification
@@ -87,7 +87,7 @@ New or untrusted dApp interactions always run first from a **burner** with minim
 
 - Do NOT create an automated sale (M11 order, DEX swap or signer intent) for disposal before the P7 gates pass (P5-B010).
 - Do NOT propose dust loops or volume farming as genuine use.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT add paid data/APIs or scraping that breaks terms; no self-bots or user tokens; no sybil, multi-wallet or fake-engagement patterns.
 - Do NOT move value outside the configured caps/floats; exchange keys stay read-only or trade-only, IP-locked, withdrawals disabled; no live trading before the P7 gates.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -107,3 +107,4 @@ New or untrusted dApp interactions always run first from a **burner** with minim
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (disposal = manual-sale USER task until the P7 gates per P5-B010; M11 order path removed from P5)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (flows in Rust `mt-airdrop-exec`; services postgres → supabase-postgres; tools +cargo +git −uv)

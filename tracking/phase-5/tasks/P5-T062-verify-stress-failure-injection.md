@@ -15,17 +15,17 @@ requirements: [R5.02, R5.04, R5.05, R5.N2]
 roadmap_todos: []
 modules: [M22, M4, M19]
 dashboards: [D07, D18]
-tools: [uv, docker, toxiproxy]
+tools: [cargo, uv, docker, toxiproxy, git]
 mcp: []
 env: []
-services: [postgres, nats, anvil]
+services: [supabase-postgres, nats, anvil]
 branch: p5/P5-T062-verify-stress-failure-injection
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -87,7 +87,7 @@ A chaos suite proves P5 degrades safely: every on-chain path fails **closed** (n
 
 ## Doc sync on completion
 
-- `docs/02-v1-architecture.md` §9.3: add rows for signer/indexer/airdrop-exec degraded modes.
+- `docs/02-v1-architecture.md` §9.3: add rows for signer (`mt-signer`)/indexer (`mt-treasury`)/airdrop-exec (`mt-airdrop-exec`) degraded modes.
 - `docs/roadmap/phase-5-airdrops-wallets-curation.md`: tick the related exit criterion when this lands (with the other tasks sharing that ToDo).
 
 ## Branch & PR
@@ -100,3 +100,4 @@ A chaos suite proves P5 degrades safely: every on-chain path fails **closed** (n
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (signing-disabled state added to the fail-closed expectations)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git)

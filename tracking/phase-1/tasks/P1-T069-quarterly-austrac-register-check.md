@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compl
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ When the quarterly reminder arrives, you look up every venue you use on the AUST
 
 ## Requirements
 
-- Trigger: the reminder (Telegram + notification centre) listing the venues due, or `uv run mt-monitor venue-health remind --now` to force the first cycle
+- Trigger: the reminder (Telegram + notification centre) listing the venues due, or `mt-monitor venue-health remind --now` to force the first cycle
 - For each venue you use: search the AUSTRAC register by ABN or name (https://www.austrac.gov.au, "Digital currency exchange register"), note status (registered / cancelled / suspended / not found) and the date checked
 - Record each result yourself with `venue.registry.update` (D07 venue health panel or `/venues/registry`); a result that tightens access (e.g. registration cancelled → `blocked`) is C1 and immediate; anything that would loosen access is C3 (break-glass CLI `mtctl approve` + TOTP until Telegram C3 lands in P2)
 - No scraping: the system never fetches the register for you
@@ -107,3 +107,4 @@ When the quarterly reminder arrives, you look up every venue you use on the AUST
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T1.06 (docs/16–17 alignment)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (legal check on your venues); `mt-monitor` is now Rust)

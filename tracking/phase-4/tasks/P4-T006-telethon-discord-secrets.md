@@ -18,14 +18,14 @@ dashboards: [D16]
 tools: [docker, sops, age, uv, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p4/P4-T006-telethon-discord-secrets
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/runbooks/social-accounts.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 ## Requirements
 
-- Session bootstrap script `ops/scripts/telethon_login.py` runs once on the host (phone code + 2FA password typed by you), writes the session to tmpfs, then `sops --encrypt` to `/etc/mastertrader/telethon.session.sops` (outside the repo, next to the main secrets file, backed up by restic).
+- Session bootstrap script `ops/scripts/telethon_login.py` runs once on your workstation (phone code + 2FA password typed by you), writes the session to tmpfs, then `sops --encrypt` to `/etc/mastertrader/telethon.session.sops` (outside the repo, next to the main secrets file, backed up by restic).
 - At stack start `infra/scripts/secrets-up.sh` (P0-T022) decrypts it to `/run/secrets/ingest-text/telethon.session` (tmpfs, mode 0400, uid of the service).
 - Secrets scoped per service: only `ingest-text` gets `telegram.*` and `discord.bot_token`; `telegram-bot` keeps its own alerts token.
 - Session file never leaves tmpfs unencrypted; on shutdown the tmpfs copy is gone.
@@ -80,7 +80,7 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 - [ ] Encrypted-session path proven end to end with a fake session (the real session is created by you in P4-T001 and never committed); plaintext never written to persistent disk
 - [ ] Only `ingest-text` can read Telegram/Discord secrets (per-service scope test)
 - [ ] Runbook written
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -88,7 +88,7 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 ## Cardinal rules (do NOT)
 
-- Do NOT run the login script in CI or on any machine other than the host.
+- Do NOT run the login script in CI or on any machine other than the workstation (or, after the P7 shift, the runtime host).
 - Do NOT log phone numbers or codes.
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT use unpinned images (`:latest`) or vendored code with telemetry/referral IDs; pin by digest.
@@ -109,3 +109,4 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets outside the repo per 17 §D (P0-B018) and P0-T022 paths; keys last: built with fake session/tokens, real login in P4-T001; depends on P0-T022)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))

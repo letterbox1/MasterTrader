@@ -15,7 +15,7 @@ requirements: [R5.03, R5.16, R5.02]
 roadmap_todos: [T5.60]
 modules: [M22, M4]
 dashboards: []
-tools: [uv, forge, anvil, solana-test-validator]
+tools: [cargo, forge, anvil, solana-test-validator, git]
 mcp: []
 env: []
 services: [anvil]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-5-airdrops-wallets-cura
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A dedicated CI suite (`tests/drainer/`) proves end to end — through `mt_api`/executor → signer → simulation — that permit, Permit2, `setApprovalForAll`, unlimited approval, unknown router, "claim fee" to an EOA, foreign durable nonce (plus SetAuthority/SPL Approve, EIP-712/`personal_sign`, non-gas outflow in simulation) are all refused, ledgered and surfaced. This is exit criterion 3.
+A dedicated CI suite (`tests/drainer/`) proves end to end — through `mt-api`/executor (`mt-airdrop-exec`) → signer (`mt-signer`) → simulation — that permit, Permit2, `setApprovalForAll`, unlimited approval, unknown router, "claim fee" to an EOA, foreign durable nonce (plus SetAuthority/SPL Approve, EIP-712/`personal_sign`, non-gas outflow in simulation) are all refused, ledgered and surfaced. This is exit criterion 3.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ A dedicated CI suite (`tests/drainer/`) proves end to end — through `mt_api`/e
 - Each case runs as a full-path integration test on Anvil fork / `solana-test-validator` with malicious mock contracts/programs.
 - Cases: EIP-2612 permit; Permit2 permit/permitTransferFrom/permitBatch; `setApprovalForAll`; `approve(max)`; `increaseAllowance` large; unknown router swap; claim requiring `msg.value` fee; claim that transfers a fee to an EOA; claim whose simulation shows USDC outflow; EIP-712 typed-data request; `personal_sign` arbitrary payload; SIWE on unknown domain; Solana foreign `SetAuthority`; SPL `Approve` not built by us; foreign `AdvanceNonceAccount`; `AuthorizeNonceAccount`; unknown program ID.
 - Assertions: refused with the expected rule/NA ID; no signature produced (ledger shows refusal); no broadcast; a task/alert surfaced where specified.
-- Suite runs on every PR touching `mt_signer`, `mt_airdrop.exec` or `mt_core.policy` and nightly.
+- Suite runs on every PR touching `crates/mt-signer`, `crates/mt-airdrop-exec` or the `mt-core` policy module and nightly.
 
 ## ToDo
 
@@ -102,3 +102,4 @@ A dedicated CI suite (`tests/drainer/`) proves end to end — through `mt_api`/e
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; Anvil/local validator only, keyless)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tools +cargo +git −uv; `mt_api` → `mt-api`)

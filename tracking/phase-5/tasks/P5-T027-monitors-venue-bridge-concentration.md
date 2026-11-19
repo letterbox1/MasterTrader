@@ -15,17 +15,17 @@ requirements: [R5.06]
 roadmap_todos: [T5.23]
 modules: [M22, M16, M11]
 dashboards: [D18]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p5/P5-T027-monitors-venue-bridge-concentration
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Venue health (withdrawal delays, proof-of-reserve changes, AUSTRAC registration 
 
 ## ToDo
 
-- [ ] Implement `monitors/venue_health.py`, `bridge_policy.py`, `concentration.py`.
+- [ ] Implement `crates/mt-treasury/src/monitors/venue_health.rs`, `bridge_policy.rs`, `concentration.rs`.
 - [ ] M11 integration for concentration blocks (via risk events/limit state).
 - [ ] D18 data endpoints; tests; doc sync.
 
@@ -86,7 +86,7 @@ Venue health (withdrawal delays, proof-of-reserve changes, AUSTRAC registration 
 ## Cardinal rules (do NOT)
 
 - Do NOT automate any bridging in P5.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -104,3 +104,4 @@ Venue health (withdrawal delays, proof-of-reserve changes, AUSTRAC registration 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (venue cap one default 25% from the L1 policy per P5-B006; P1/P2 deps added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

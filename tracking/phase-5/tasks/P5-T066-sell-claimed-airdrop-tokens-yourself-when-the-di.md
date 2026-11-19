@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -90,7 +90,7 @@ Until live execution passes the Phase 7 gates, the disposal rule never sells any
 
 - Do NOT import a signer-held key into any wallet app or exchange; move tokens out only via `wallet.sweep` to the allow-listed vault.
 - Do NOT sign Permit/Permit2 or unlimited approvals to sell; do NOT connect your vault to a website.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every system order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every system order goes through M11, and until the P7 live gates pass, disposal sales are manual USER tasks (never automated).
 - Do NOT commit secrets or paste them into chats, issues or logs; secrets live only in the sops/age file or OpenBao (07 §2).
 
 ## Doc sync on completion
@@ -107,3 +107,4 @@ Until live execution passes the Phase 7 gates, the disposal rule never sells any
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T5.09: disposal manual until the P7 gates, P5-B010)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (cardinal rule names `mt-api`/`mt-risk`/`mt-store`)

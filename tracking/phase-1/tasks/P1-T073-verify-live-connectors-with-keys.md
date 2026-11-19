@@ -18,14 +18,14 @@ dashboards: [D07, D02]
 tools: [git, uv, docker, sops]
 mcp: []
 env: [OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY, FRED_API_KEY, EIA_API_KEY, COINGECKO_DEMO_API_KEY, FINNHUB_API_KEY, BINANCE_TESTNET_READ_KEY, BINANCE_TESTNET_READ_SECRET, BYBIT_TESTNET_READ_KEY, BYBIT_TESTNET_READ_SECRET, USDA_QUICKSTATS_API_KEY]
-services: [nats, postgres, prefect-server, oanda-practice, ig-demo, alpaca-paper, binance-testnet, bybit-testnet]
+services: [nats, supabase-postgres, prefect-server, oanda-practice, ig-demo, alpaca-paper, binance-testnet, bybit-testnet]
 branch: p1/P1-T073-verify-live-connectors-with-keys
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 
 - Streams (during market hours): OANDA practice pricing stream, IG Lightstreamer demo and Alpaca IEX each deliver quotes/trades for every universe instrument on that venue for ≥ 30 min; `feed_status` live; DQ status `ok`; heartbeats observed
 - Batch (keyed): FRED/ALFRED universe series with vintages; EIA series; CoinGecko Demo enrichment cached with `retention_days=1` and encrypted; Alpaca IEX history for universe stocks (the full load from P1-T022) with a backfill report; Finnhub low-frequency quotes feeding the stocks cross-source check
-- Costs (keyed, read-only): Binance/Bybit testnet fee tiers via ccxt `fetchTradingFees`; OANDA `InstrumentFinancing` rates; IG funding where the demo account exposes it
+- Costs (keyed, read-only): Binance/Bybit testnet fee tiers via the `mt-monitor` GET-only venue clients (P1-T038); OANDA `InstrumentFinancing` rates; IG funding where the demo account exposes it
 - Quota tracker: live headers parsed for each keyed source that sends them (Alpaca/Finnhub `X-RateLimit-*`, Binance `X-MBX-USED-WEIGHT-1M`, OANDA limits); recorded budgets in `config/quotas.yaml` checked against observed limits (unknowns marked `verify: true` resolved or left with a note)
 - Record a sanitised fixture set from the live sessions (tokens, account IDs and balances scrubbed) and replace any documented-format fixture that differs; golden tests stay green
 - Report under `reports/verify/P1-T073/`: per connector pass/fail, message counts, first/last timestamps, quota headers seen, fixture diffs; never any credential or account number
@@ -72,7 +72,7 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 
 ### Tests
 
-- `make verify-live-connectors` (pytest marker `live`, excluded from normal CI) exits 0 only if every connector passes
+- `make verify-live-connectors` (`cargo test --features live` for the Rust connectors and `uv run pytest -m live` for the Python flows, both excluded from normal CI) exits 0 only if every connector passes
 - Fixture scrubber test: no token, account ID or balance pattern survives in recorded fixtures (gitleaks + a regex test)
 
 ### Scenarios
@@ -119,3 +119,4 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T1.66 (docs/16–17 alignment: live checks split from the keyless builds)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (live checks run `cargo test --features live` (Rust connectors) and `uv run pytest -m live` (Python flows); still depends on your key tasks P0-T009, P0-T010, P1-T002 (allowed: live VERIFY); services supabase-postgres)

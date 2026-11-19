@@ -15,17 +15,17 @@ requirements: [R5.05]
 roadmap_todos: [T5.22]
 modules: [M22, M18, M16]
 dashboards: [D18, D07]
-tools: [uv, docker]
+tools: [cargo, docker, git]
 mcp: []
 env: []
-services: [postgres, rotki]
+services: [supabase-postgres, rotki]
 branch: p5/P5-T024-wallet-reconciliation-rotki
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/09-journal-and-tax.md, docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A daily Prefect flow reconciles every registered wallet's indexed balance with the journal-implied balance and writes `ops.recon_wallet_result`; a monthly flow exports addresses to a self-hosted **rotki** and compares its decoded events/balances; any unexplained break is an incident and shows in D18/D07.
+A daily `mt-treasury` job reconciles every registered wallet's indexed balance with the journal-implied balance and writes `ops.recon_wallet_result`; a monthly flow exports addresses to a self-hosted **rotki** and compares its decoded events/balances; any unexplained break is an incident and shows in D18/D07.
 
 ## Context & references
 
@@ -54,7 +54,7 @@ A daily Prefect flow reconciles every registered wallet's indexed balance with t
 
 ## ToDo
 
-- [ ] Implement `packages/mt_treasury/recon/daily.py` and `monthly_rotki.py` Prefect flows.
+- [ ] Implement `crates/mt-treasury/src/recon/daily.rs` and `monthly_rotki.rs` as scheduled jobs (schedule in config).
 - [ ] Add rotki service to `services/` compose profile with digest; disable any telemetry/update checks.
 - [ ] Write results table and `/data/recon?kind=wallet` endpoint.
 - [ ] Tests; doc sync.
@@ -105,3 +105,4 @@ A daily Prefect flow reconciles every registered wallet's indexed balance with t
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (recon tolerance and 24 h explained rule per 16 §2.9; P3 recon dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

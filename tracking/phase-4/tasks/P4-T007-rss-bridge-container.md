@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/runbooks/rss-bridge.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 
 ## ToDo
 
-- [ ] Add the `rss-bridge` service to `docker-compose.yml` with a digest-pinned image and the hardening flags.
+- [ ] Add the `rss-bridge` service to the workstation compose file under `infra/` ([18 §3](../../../docs/18-platform-and-deployment.md#3-repository-layout)) with a digest-pinned image and the hardening flags.
 - [ ] Write `services/rss-bridge/config.ini.php` (whitelist, auth, cache) and `services/rss-bridge/whitelist.txt`.
 - [ ] Add a health check hitting `/?action=list` with auth.
 - [ ] Add a Compose-level network test script `ops/tests/rss_bridge_isolation.sh` (no TCP to postgres:5432, nats:4222 core account, signer).
@@ -80,7 +80,7 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 - [ ] Image pinned by digest; trivy/grype clean of criticals
 - [ ] Isolation test passes (no DB/signer route)
 - [ ] Whitelist + auth + cache verified by integration tests
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on (P0-T020/T021/T022); TelegramBridge output limited to the posture extractor (17 §A P4-B001))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (rss-bridge added to the workstation compose file under `infra/`; CI commands per 18 (cargo/uv/supabase/pnpm))

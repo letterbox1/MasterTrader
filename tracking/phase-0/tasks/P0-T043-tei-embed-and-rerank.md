@@ -15,7 +15,7 @@ requirements: [R0.09, R0.13]
 roadmap_todos: [T0.41, T0.45, T0.28]
 modules: [M21, M9]
 dashboards: []
-tools: [docker, curl]
+tools: [docker, curl, just]
 mcp: []
 env: []
 services: [tei-embed, tei-rerank]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 
 ## Requirements
 
-- Image `ghcr.io/huggingface/text-embeddings-inference:cpu-<ver>` by digest (GPU variant later if P0-T005 adds a GPU).
+- Image `ghcr.io/huggingface/text-embeddings-inference:cpu-<ver>` by digest ; the GPU variant is selected automatically when P0-T005's profile finds a GPU (`models.gpu_profile: auto`, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)), as a compose profile.
 - `--model-id BAAI/bge-small-en-v1.5 --revision <sha>` (384 dims, 512 tokens) and `--model-id BAAI/bge-reranker-v2-m3 --revision <sha>`; weights in `/srv/mastertrader/models/hf` volume; `HF_HUB_OFFLINE=1` after first download.
 - Health: `/health`; bound to `core` only; API key not supported by TEI → access restricted by network (no `edge`/`scrape` membership).
 - Licences recorded in `third_party/LICENSES.md` (bge models MIT (U); TEI Apache-2.0).
@@ -106,3 +106,4 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (two TEI containers per 17 §D P0-B007 (closed); R0.13/T0.28; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CPU image by default, GPU compose profile chosen by `models.gpu_profile: auto` from the workstation profile (P0-T005); no GPU precondition)

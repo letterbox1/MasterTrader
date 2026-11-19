@@ -15,17 +15,17 @@ requirements: [R5.05]
 roadmap_todos: [T5.65]
 modules: [M22, M18]
 dashboards: [D18]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: [HELIUS_API_KEY, ALCHEMY_API_KEY]
-services: [postgres, helius, alchemy]
+services: [supabase-postgres, helius, alchemy]
 branch: p5/P5-T059-verify-wallet-view-journal-recon-week
 pr: ""
 doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -97,3 +97,4 @@ For seven consecutive days after you register every wallet, the daily recon show
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (live window after the keys-last check P5-T068; recon tolerance per 16 §2.9)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git −uv)

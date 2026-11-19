@@ -18,14 +18,14 @@ dashboards: [D08, D02]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres]
+services: [supabase-postgres]
 branch: p4/P4-T041-fedpath-vix-nowcast-features
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -77,7 +77,7 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 ## Acceptance criteria
 
 - [ ] Features registered and populated daily; golden Fed-path test green
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -89,7 +89,7 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 - Do NOT use Telegram-derived inputs.
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -107,3 +107,4 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T037 (meeting calendar) and P2-T120 dependencies)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

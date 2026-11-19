@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres, tei-embed, tei-rerank, mlflow]
+services: [supabase-postgres, tei-embed, tei-rerank, mlflow]
 branch: p4/P4-T051-verify-rag-benchmark-asof
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -75,7 +75,7 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 
 - [ ] Benchmark table published (recall@10, nDCG@10, MRR, p50/p95) for all variants
 - [ ] Leakage test: 0 violations
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -84,7 +84,7 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 ## Cardinal rules (do NOT)
 
 - Do NOT tune on the test queries without a held-out split.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -102,3 +102,4 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

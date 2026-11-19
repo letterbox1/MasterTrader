@@ -18,14 +18,14 @@ dashboards: [D02]
 tools: [uv, git]
 mcp: []
 env: []
-services: [postgres, mlflow, prefect-server]
+services: [supabase-postgres, mlflow, prefect-server]
 branch: p4/P4-T042-vol-forecast-models
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,7 +76,7 @@ A nightly (and optional intraday hourly) batch produces realised-volatility and 
 ## Acceptance criteria
 
 - [ ] Three models + two baselines produce features nightly; QLIKE comparison in MLflow
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -86,7 +86,7 @@ A nightly (and optional intraday hourly) batch produces realised-volatility and 
 
 - Do NOT read bars outside `pit(as_of)`.
 - Do NOT auto-download unpinned model revisions.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT use unpinned images (`:latest`) or vendored code with telemetry/referral IDs; pin by digest.
 
@@ -105,3 +105,4 @@ A nightly (and optional intraday hourly) batch produces realised-volatility and 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T013, P2-T046, P2-T120)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))

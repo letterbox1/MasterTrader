@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D02-m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`/markets/:instrumentId` shows a lightweight-charts `PriceChart` from tick/1s to 1W (fixed sizes from continuous aggregates, other sizes bucketed at read time), a timeframe picker that disables unsupported resolutions with a reason, L2 `OrderBook` where available, `TradesTape`, Costs and Info tabs, with the order ticket present but disabled until P2.
+`/markets/:instrumentId` shows a lightweight-charts `PriceChart` from tick/1s to 1W (standard sizes written by `mt-recorder` into monthly partitions, other sizes via `date_bin` at read time), a timeframe picker that disables unsupported resolutions with a reason, L2 `OrderBook` where available, `TradesTape`, Costs and Info tabs, with the order ticket present but disabled until P2.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ review_result: ""
 ## Requirements
 
 - Header: symbol, venue, last, Δ, feed chip, min resolution (from instrument metadata), "IEX only" badge for US stocks
-- `PriceChart` (TradingView lightweight-charts, Apache-2.0): specs tick, 1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W (continuous aggregates), custom sizes (`time_bucket`), info bars (`t500`, `v…`); live updates via `md.bar`/`md.trade` at ≤ 4 Hz
+- `PriceChart` (TradingView lightweight-charts, Apache-2.0): specs tick, 1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W (stored bar tables, [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb)), custom sizes (`date_bin`), info bars (`t500`, `v…`); live updates via `md.bar`/`md.trade` at ≤ 4 Hz
 - `TimeframePicker`: unsupported resolutions disabled with reason (e.g. "US stocks: IEX only; no tick L2"; "Futures: daily only")
 - `OrderBook` L2 for crypto (levels 25/15/10/5 by tier, spread row pinned), top-of-book for FX/stocks; `TradesTape`
 - Tabs: Costs (spread hour-of-week heatmap, fee tier, funding/swap now + history), Info (venues, tick size, lot, trading hours, data sources and licence flags); Features/News tabs show the "Arrives in Phase 4" state
@@ -93,7 +93,7 @@ review_result: ""
 ## Cardinal rules (do NOT)
 
 - Do NOT enable order submission in P1; the ticket stays disabled until P2 wires M11 risk preview
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; research and backtest reads go through `pit` only.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)` (`mt-store`, also through its Python binding); research and backtest reads go through `pit` only.
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green.
 - Do NOT commit secrets or paste them into chats, issues, logs or test fixtures; credentials come only from the sops/age secrets file (kept outside the repo) mounted on tmpfs ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT place, modify or cancel orders from this code; P1 is read-only toward venues (orders arrive in P2 through M11).
@@ -113,3 +113,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (1W from the bar_1w aggregate (P1-B011); "Arrives in Phase 4" wording)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (bar sizes from the partitioned bar tables and `date_bin` instead of continuous aggregates / `time_bucket`; web CI via pnpm)

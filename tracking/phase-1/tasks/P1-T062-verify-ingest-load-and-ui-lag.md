@@ -15,17 +15,17 @@ requirements: [R1.N2, R1.02, R1.N1, R1.17]
 roadmap_todos: []
 modules: [M1, M16, M15]
 dashboards: [D02, D07]
-tools: [git, uv, docker, pnpm, node>=20]
+tools: [git, cargo, uv, docker, pnpm, node>=20]
 mcp: []
 env: []
-services: [nats, postgres, mt-api]
+services: [nats, supabase-postgres, mt-api]
 branch: p1/P1-T062-verify-ingest-load-and-ui-lag
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 
 ## Requirements
 
-- Replay tool `tools/replay/md_replay.py` publishing recorded `md.*` at N× speed into a staging NATS account
+- Replay tool `mt-recorder replay` (Rust) publishing recorded `md.*` at N× speed into a staging NATS account
 - Measure: recorder consumer lag, bar builder lag, DQ evaluation p99, stale detection with a feed killed mid-burst, WS fan-out rates, UI lag p95 via telemetry (3 browser clients incl. a phone profile)
 - Pass thresholds: no dropped messages, consumer lag < 30 s, stale reaction ≤ 250 ms p99 after the threshold, UI lag p95 < 500 ms, chart ≤ 4 Hz, tables ≤ 1 Hz
 - Report under `reports/verify/P1-T062/`
@@ -75,11 +75,11 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 ## Acceptance criteria
 
 - [ ] All thresholds met at 10× (or the highest multiple that meets them recorded with the bottleneck named)
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
-- Run on the target host, not a laptop; record hardware in the report
+- Run on the workstation that runs the stack (18 §9); record its hardware in the report; the P7 shift reruns it on the target runtime host
 
 ## Cardinal rules (do NOT)
 
@@ -100,3 +100,4 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (stale SLO ≤ 250 ms p99 after the data-age threshold (P1-B001))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (replay tool in Rust `mt-recorder`; runs on the workstation (rerun on the runtime host at the P7 shift); services supabase-postgres)

@@ -15,17 +15,17 @@ requirements: [R4.10]
 roadmap_todos: [T4.62]
 modules: [M5, M11]
 dashboards: [D06, D08]
-tools: [uv, git, pnpm]
+tools: [uv, cargo, git, pnpm]
 mcp: []
 env: []
-services: [postgres, nats, engine]
+services: [supabase-postgres, nats, engine]
 branch: p4/P4-T052-verify-blackout-nfp
 pr: ""
 doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,7 +76,7 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 
 - [ ] Integration test green
 - [ ] Demo script runs on paper and shows the pause in D06/D08
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-risk`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -86,7 +86,7 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 
 - Do NOT run this against live accounts.
 - Do NOT relax the window to make the test pass; the test reads the window from the policy.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT touch live money (P7 gates); keys stay trade-only, IP-locked, withdrawals disabled.
 - Do NOT skip, weaken or delete a test to get green.
 
@@ -104,3 +104,4 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (bots marked event_sensitive and 16 §2.8 defaults (17 §C P4-B004); modes are per bot (paper); explicit P2 depends_on and P4-T045)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))

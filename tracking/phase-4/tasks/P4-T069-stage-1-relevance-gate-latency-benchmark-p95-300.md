@@ -18,14 +18,14 @@ dashboards: [D10, D07]
 tools: [uv, git]
 mcp: []
 env: []
-services: [decision-svc, nats, postgres, mlflow]
+services: [decision-svc, nats, supabase-postgres, mlflow]
 branch: p4/P4-T069-stage-1-relevance-gate-latency-benchmark-p95-300
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 300 ms per document on GPU and ≤ 3 s on CPU** on this host with the decision-path settings (prefix caching off, fixed batch), that documents are queued, and that no order-path code calls it, so a slow or dead gate can never delay an order.
+A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 300 ms per document on GPU and ≤ 3 s on CPU** on the workstation with the decision-path settings (prefix caching off, fixed batch), that documents are queued, and that no order-path code calls it, so a slow or dead gate can never delay an order.
 
 ## Context & references
 
@@ -50,7 +50,7 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 - Workload: 1,000 documents sampled from the corpus (fixed seed), realistic length mix; relevance question only; decision-path settings (prefix caching off, fixed batch, pinned revision).
 - Measure per-document latency from enqueue to `dec.tierb.relevance.*` publish: p50/p95/p99 on GPU (if present) and CPU profiles; targets are configurable defaults (300 ms / 3 s).
 - Queueing: at 2× the observed daily peak arrival rate, the queue stays bounded and drains; `nlp` never blocks on the gate.
-- Order-path isolation: a static import check plus a runtime test prove that `mt_risk`/`mt_engine` order handling never calls decision-svc synchronously; killing decision-svc changes no pre-trade latency (P2 p99 budget holds).
+- Order-path isolation: a static import check plus a runtime test prove that `mt-risk`/`mt-engine` order handling (Rust crates, and the Python engine node where used) never calls decision-svc synchronously; killing decision-svc changes no pre-trade latency (P2 p99 budget holds).
 - Results in MLflow and summarised in 10 §4.3; a miss on GPU files a bug and keeps stage-1 relevance-only until fixed.
 
 ## ToDo
@@ -77,14 +77,14 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 
 ## Acceptance criteria
 
-- [ ] p95 ≤ 300 ms (GPU) and/or ≤ 3 s (CPU) recorded on this host with decision-path settings
+- [ ] p95 ≤ 300 ms (GPU) and/or ≤ 3 s (CPU) recorded on the workstation with decision-path settings
 - [ ] Queue bounded and drained under 2× peak
 - [ ] Order-path isolation proven (static + runtime)
 - [ ] CI green (lint, types, tests, `pit` check)
 
 ## Exceptions & edge cases
 
-- No GPU yet (P0 T0.01): run CPU now; re-run the GPU profile when the GPU arrives.
+- No GPU present (`models.gpu_profile: auto` resolves to CPU, the default): run CPU now; the GPU profile runs only when a GPU is detected.
 - Backend upgrade: re-run this benchmark in the upgrade PR.
 
 ## Cardinal rules (do NOT)
@@ -92,12 +92,12 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 - Do NOT enable prefix caching or shared-prefix mode to hit the target.
 - Do NOT put any tier-B call on the order path.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `mt_store.pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11, `mt-risk`) or `pit(as_of)` (`mt-store`); every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
 
-- `docs/10-memory-rag-and-models.md`: §4.3: measured stage-1 latency on this host
+- `docs/10-memory-rag-and-models.md`: §4.3: measured stage-1 latency on the workstation
 - `docs/02-v1-architecture.md`: §9.2: confirm the stage-1 gate SLO row with the measured value
 - `docs/roadmap/phase-4-intel.md`: tick T4.67
 
@@ -110,3 +110,4 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.N2 / T4.67 per 17 §A P4-B010)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; "host" → workstation (18 §9))

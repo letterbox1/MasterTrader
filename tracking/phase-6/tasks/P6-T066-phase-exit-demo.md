@@ -59,8 +59,8 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - [ ] Demo 3: open the signed-off bake-off report (P6-T059) and the registry entry.
 - [ ] Demo 4: allocate idle test stables on fork under your approved policy (P6-T034) → gate allow → position within caps; reserve ≥ min.
 - [ ] Link the evidence of P6-T067 (sample runs), P6-T069 (port check) and P6-T070 (live key check).
-- [ ] Confirm no open S1/S2 bugs; tick PHASE.md exit boxes.
 - [ ] Cancel each optional item (P6-T046–P6-T051) whose module is still off in settings, with reason "optional module off by default (P6-T003)"; offer to cancel P6-T044 if you didn't label (optional; silver labels were used).
+- [ ] Confirm no open S1/S2 bugs; tick PHASE.md exit boxes.
 
 ## Verification
 

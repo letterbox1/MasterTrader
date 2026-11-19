@@ -15,7 +15,7 @@ requirements: [R1.12]
 roadmap_todos: [T1.44]
 modules: [M16]
 dashboards: [D07, D16]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ An `ib-gateway` service (IB Gateway run by IBC, digest-pinned) exists in Compose
 - Image: a maintained IB Gateway + IBC image (e.g. `ghcr.io/gnzsnz/ib-gateway` stable), pinned by `@sha256:` in `infra/images.lock`; reviewed for telemetry (IBC/IB Gateway send none beyond the IBKR session itself)
 - Compose profile `ibkr` (off by default); `config/venues.yaml` `ibkr.enabled: false` until you opt in; when disabled, recon shows IBKR as `disabled (not used)`, never `unreachable`
 - IBC settings (`infra/ib-gateway/config.ini`, no secrets): `TradingMode=paper`, `ReadOnlyApi=yes`, `AcceptIncomingConnectionAction=reject` except from the `monitor` container, `AutoRestartTime` / daily re-login at the configured time (default 23:45 America/New_York, configurable), `ExistingSessionDetectedAction=primary`
-- API port reachable only on `core` from `monitor` (no host port; VNC disabled, or bound to localhost behind Tailscale if you enable it for 2FA troubleshooting)
+- API port reachable only on `core` from `monitor` (no published port; VNC disabled, or bound to 127.0.0.1 on the workstation if you enable it for 2FA troubleshooting)
 - Credentials: `IBKR_PAPER_USERNAME` and `IBKR_PAPER_PASSWORD` from the sops file mounted on tmpfs for this container only
 - Health: TCP check on the API port plus an `ib_async` `reqCurrentTime` probe from `monitor`; heartbeat `sys.heartbeat.ib-gateway` and `/metrics` via a sidecar exporter; login failure → `alert.warning.ibkr_login`
 - Restart via `system.service.restart` (allow-listed in `docker-proxy`)
@@ -63,7 +63,7 @@ An `ib-gateway` service (IB Gateway run by IBC, digest-pinned) exists in Compose
 
 - [ ] Add the `ib-gateway` service, profile, network and tmpfs secret mount to `infra/docker-compose.yml`; pin the image digest
 - [ ] Write the IBC `config.ini` template and the re-login schedule (values in config, not code)
-- [ ] Add the health probe and heartbeat in `mt_monitor.recon.ibkr` (probe only; positions are P1-T042)
+- [ ] Add the health probe and heartbeat in `mt-monitor` (`recon::ibkr`, Rust; probe only; positions are P1-T042)
 - [ ] Add `ib-gateway` to the `docker-proxy` restart allow-list and the image scan job
 - [ ] Write the tests listed under Verification (keyless: config and wiring only)
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box
@@ -90,7 +90,7 @@ An `ib-gateway` service (IB Gateway run by IBC, digest-pinned) exists in Compose
 
 - [ ] `ib-gateway` defined, digest-pinned, opt-in, read-only API, paper mode, reachable only from `monitor` on `core`
 - [ ] Keyless tests pass in CI; the live login is left to P1-T074
-- [ ] CI green (ruff, mypy, pytest, image scan, gitleaks)
+- [ ] CI green (`cargo test -p mt-monitor ibkr_probe`, compose config check, image scan, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -102,7 +102,7 @@ An `ib-gateway` service (IB Gateway run by IBC, digest-pinned) exists in Compose
 
 - Do NOT log in with a live (real-money) IBKR account; paper only in P1; no live money before the P7 gates
 - Do NOT enable order placement: `ReadOnlyApi=yes` stays on in P1 (orders arrive in P2 through M11)
-- Do NOT publish the API or VNC port outside the `core` network / Tailscale
+- Do NOT publish the API or VNC port outside the `core` network / the workstation's localhost
 - Do NOT commit credentials or paste them into chats, issues, logs or test fixtures; they live only in the sops file ([07 §2](../../../docs/07-security-notes.md#2-secrets))
 - Do NOT add an image without pinning it by digest, or vendored code that carries telemetry or referral IDs
 - Do NOT skip, weaken or delete a test (or widen a tolerance) to get CI green
@@ -122,3 +122,4 @@ An `ib-gateway` service (IB Gateway run by IBC, digest-pinned) exists in Compose
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T1.44 (docs/16–17 alignment, P1-B013 decision)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (probe in Rust `mt-monitor`; no Tailscale precondition (localhost only on the workstation); tools cargo)
