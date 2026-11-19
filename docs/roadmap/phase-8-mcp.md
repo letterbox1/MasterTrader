@@ -41,7 +41,7 @@
 ### A. Your actions (`USER`)
 - [ ] **T8.01** `USER` **Decide whether to build MCP** (decision gate above).
 - [ ] **T8.02** `USER` Configure your MCP client (Claude Desktop/Code) with the server and a scoped token. → R8.02
-- [ ] **T8.03** `USER` Choose MCP token scopes and expiry per client (1d/7d/30d/1y/custom/indefinite with warning); MCP orders always need your approval. → R8.04, R8.08
+- [ ] **T8.03** `BUILD` Seed the MCP token defaults (P8-T019): new tokens get `read` + `analyse` scopes and 30-day expiry ([16 §2.12](../16-configuration-and-safety-model.md#212-mcp-phase-8)); you change scopes and expiry per client any time (C3 for `trade`/`strategy`/`risk_tighten` and indefinite expiry); MCP orders always need your approval. → R8.04, R8.08
 
 ### B. Build (`BUILD`, code)
 - [ ] **T8.20** `BUILD` `mt-mcp` server, tool schemas generated from `mt-api` OpenAPI (incl. `anomaly.explain`, `/bots`, `/approvals`, `source=` filters), token auth. → R8.01–R8.03

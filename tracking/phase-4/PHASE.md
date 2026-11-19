@@ -25,7 +25,7 @@ With `phase_gating: "dependencies"` these are enforced per task through explicit
 
 - [ ] M11 event-blackout hook (P2-T017), risk policy (P2-T010), C3 change control (P2-T019), bot model (P2-T036), feature framework (P2-T120) and IC evaluator (P2-T123)
 - [ ] Telegram dedicated account + `api_id`/`api_hash` (P0-T002) and Discord feeds server + bot (P0-T008); needed only by your USER steps and the live check P4-T068
-- [ ] GPU decision made (P0-T005) or CPU fallback for SemIf accepted
+- [ ] CPU/GPU profile selected on the workstation (P0-T005; `models.gpu_profile: auto`, CPU by default, 16 §2.15); GPU-only checks run only when a GPU is present
 - [ ] Finnhub, CryptoPanic and Myfxbook free keys (P0-T010); needed only by the live check P4-T067
 - [ ] TEI `tei-embed` + `tei-rerank` (P0-T043); all 13 schemas incl. `rag`/`models` (P0-T024); provenance columns (P0-T025); networks (P0-T021); sops → tmpfs (P0-T022)
 - [ ] P1 connector framework (P1-T005), quota tracker (P1-T006), provenance tagging (P1-T007), DQ/`audit.dq_event` (P1-T030), EDGAR client (P1-T028), FRED/COT/EIA/USDA flows (P1-T024, P1-T026), symbol master (P1-T009), D02 (P1-T049, P1-T050), open provider checks (P1-T056)
@@ -42,9 +42,9 @@ With `phase_gating: "dependencies"` these are enforced per task through explicit
 
 | Workstream | Tasks |
 |---|---|
-| Your actions (USER) | P4-T001, P4-T002, P4-T003, P4-T004, P4-T005, P4-T049 |
+| Your actions (USER) | P4-T001, P4-T002, P4-T004, P4-T005, P4-T049 (optional) |
 | Ops & config | P4-T006, P4-T007, P4-T008, P4-T009 |
-| Build: text framework & news sources (R4.01) | P4-T010, P4-T011, P4-T012, P4-T013, P4-T014, P4-T015, P4-T016, P4-T017 |
+| Build: text framework & news sources (R4.01) | P4-T003 (seed lists), P4-T010, P4-T011, P4-T012, P4-T013, P4-T014, P4-T015, P4-T016, P4-T017 |
 | Build: Telegram postures (R4.02–R4.03) | P4-T018, P4-T019 |
 | Build: other social (R4.04–R4.05) | P4-T020, P4-T021, P4-T022, P4-T023, P4-T024 |
 | Build: nlp chain + provenance gate (R4.06) | P4-T025, P4-T026, P4-T027, P4-T030 |
@@ -61,7 +61,7 @@ With `phase_gating: "dependencies"` these are enforced per task through explicit
 
 ## Critical path
 
-P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T029 and P4-T009) → P4-T043 → P4-T044 → P4-T062 → P4-T049 (you label) → P4-T053 (calibrate on your labels with the P4-T048 script, built in parallel, then measure) → P4-T060; in parallel P4-T037 → P4-T038 → P4-T047, and the live checks P4-T067 (after your keys, P4-T005/P0-T010) and P4-T068 (after your channel list, login and follows, P4-T001/T002) → P4-T060 (14-day run) → P4-T061. Connector builds no longer wait for your inputs (fixtures first), so up to six agents can work the source families, the nlp/decision chain, RAG, events/calendars, features and the UI in parallel. The 14-day brief run (P4-T060) is the longest elapsed item: get your labels (P4-T049 → P4-T053) and the live checks done early so it can start as soon as P4-T047 lands.
+P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T029 and P4-T009) → P4-T043 → P4-T044 → P4-T062 → P4-T048 (agent silver labels + calibration) → P4-T053 (measure) → P4-T060; in parallel P4-T037 → P4-T038 → P4-T047 → P4-T060 (14-day run) → P4-T061. The live checks P4-T067 (after your keys, P4-T005/P0-T010) and P4-T068 (after your channel list, login and follows, P4-T001/T002) feed only the exit demo; their sources join the brief run when they pass. Connector builds no longer wait for your inputs (fixtures first), so up to six agents can work the source families, the nlp/decision chain, RAG, events/calendars, features and the UI in parallel. The 14-day brief run (P4-T060) is the longest elapsed item: it starts as soon as P4-T047, P4-T053 and the P4-T003 seed land; your optional labels (P4-T049) and the live checks can arrive during the run.
 
 ## Traceability
 
@@ -95,8 +95,8 @@ P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T02
 |---|---|---|---|
 | T4.01 | USER | Telegram channel list (+ your Telethon login) | P4-T001 |
 | T4.02 | USER | Discord follows | P4-T002 |
-| T4.03 | USER | Watch keywords/cashtags and trusted feeds | P4-T003 |
-| T4.04 | USER | Label ~200 documents with the labelling tool | P4-T049 |
+| T4.03 | USER → agent seed (17 §G) | Watch keywords/cashtags and trusted feeds, seeded from 06/12 defaults | P4-T003 |
+| T4.04 | USER (optional; agent silver labels by default, 17 §G) | Label ~200 documents with the labelling tool | P4-T049 |
 | T4.05 | USER | Reddit access yes/no (optional) | P4-T004 |
 | T4.06 | USER | FIRMS / ACLED keys, OpenSanctions licence | P4-T005 |
 | T4.20 | BUILD | `mt_data.text` news sources | P4-T010, P4-T011, P4-T012, P4-T013, P4-T014, P4-T015, P4-T016, P4-T017 |
@@ -151,7 +151,7 @@ These are explicit `depends_on` entries on the tasks that need them (they replac
 
 | Phase | Tasks relied on | Used by |
 |---|---|---|
-| P0 | P0-T001 (Reddit application), P0-T002 (Telegram account), P0-T005 (GPU decision), P0-T008 (Discord server/bot), P0-T010 (free keys), P0-T020 (Compose), P0-T021 (networks), P0-T022 (sops → tmpfs), P0-T024 (13 schemas), P0-T025 (provenance columns), P0-T027 (`pit`), P0-T029/T030 (WORM triggers, hash chain), P0-T034 (command bus), P0-T036 (WS hub), P0-T043 (TEI embed/rerank), P0-T049 (component library) | P4-T001, T002, T004, T006–T010, T027, T028, T031, T032, T043, T044, T067 |
+| P0 | P0-T001 (Reddit application), P0-T002 (Telegram account), P0-T005 (CPU/GPU profile), P0-T008 (Discord server/bot), P0-T010 (free keys), P0-T020 (Compose), P0-T021 (networks), P0-T022 (sops → tmpfs), P0-T024 (13 schemas), P0-T025 (provenance columns), P0-T027 (`pit`), P0-T029/T030 (WORM triggers, hash chain), P0-T034 (command bus), P0-T036 (WS hub), P0-T043 (TEI embed/rerank), P0-T049 (component library) | P4-T001, T002, T004, T006–T010, T027, T028, T031, T032, T043, T044, T067 |
 | P1 | P1-T004 (streams/KV), P1-T005 (connector framework), P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T009 (symbol master), P1-T013 (bars), P1-T024 (FRED/macro), P1-T026 (EIA/USDA/COT/BH), P1-T028 (EDGAR), P1-T030 (DQ, `audit.dq_event`), P1-T043 (venue health), P1-T045 (alert fan-out), P1-T046 (`/data/feeds`), P1-T049/T050 (D02), P1-T056 (open checks T1.60) | P4-T008, T010, T014, T024, T025, T026, T037, T039, T042, T046, T063, T064, T065 |
 | P2 | P2-T008 (scalping template), P2-T010 (risk policy), P2-T017 (RiskGate blackout check), P2-T019 (C3 change control), P2-T021 (paper engine), P2-T035 (Telegram commands), P2-T036 (bots, `event_sensitive`), P2-T042 (D06), P2-T046 (MLflow), P2-T120 (feature registry), P2-T123 (IC evaluator), P2-T142 (D01) | P4-T009, T035, T036, T038, T040–T042, T046–T048, T052, T054 |
 | P3 | P3-T031 (residency timeline), P3-T038 (minimal `curation.task`) | P4-T063 |
@@ -171,6 +171,8 @@ These are explicit `depends_on` entries on the tasks that need them (they replac
 - **Regulatory & venue watch** (R4.15): fetch + diff → `REG_CHANGE` review tasks in the P3 `curation.task`; rules and venue status are never auto-applied or loosened (P4-T063, P4-T064).
 - **Polymarket** stays disabled while residency is AU (never via VPN/proxy); Kalshi read-only (P4-T036).
 - **Reddit** is optional (17 §D P4-B009; P4-T004). X stays deferred.
-- **Schemas** are all created in P0 (17 §B); P4 adds tables only.
+- **Schemas** are all created in P0 (17 §B); P4 adds tables only, as SQL migrations in `supabase/migrations/` with pgTAP tests (`supabase test db`).
+- **Stack (2026-11-19, [18](../../docs/18-platform-and-deployment.md), 17 §G):** Rust crates `mt-intel-writer` (INSERT-only writer for postures, geo events and reg snapshots), `mt-events` (event pollers, exposure map, Polymarket/Kalshi), `mt-risk` (blackout evaluator) and `mt-api`; Python stays for `ingest-text` (Telethon, trafilatura, crawl4ai), `nlp`, `decision-svc`, calendars, features and RAG. Supabase Postgres replaces Postgres; everything builds and runs on the workstation (no host, LUKS, Tailscale or YubiKey preconditions before P7).
+- **USER inputs (17 §G):** keywords/feeds are seeded by the agent (P4-T003); relevance labels are agent silver labels (P4-T048) with your labels optional (P4-T049); your channel list, follows and keys (P4-T001, T002, T005) gate only the live checks and the exit demo; P4-T004 stays tied to the Reddit reply (P0-T001).
 - Sizes: no XL items; the largest (L) are the text framework, SemIf readout, RAG retrieval, calendar sources, sentiment/regime and D08 feed.
 - The 14-day brief run (P4-T060) now also waits for the live checks; if they slip, the exit demo slips rather than shortening the run.

@@ -18,8 +18,8 @@ updated: 2026-10-22
 Phase 5 makes on-chain activity safe and visible. Vetted airdrops and launches reach you as a weekly digest with step-by-step tasks. Safe, eligible claims execute automatically from capped identity wallets under signed, expiring mandates, with simulation proof and the on-chain cost gate. Scams are rejected with reasons, and every wallet you own is visible and reconciled in one place (D18).
 
 The 69 tasks are organised in these workstreams (aligned 2026-10-22 with the decisions in docs/16–17; build first, keys last):
-- **Custody & signer (M22 part 1):** custody tiers; wallet/signer/gas limits as configurable 16 §2.7 defaults with signing disabled until you confirm them; the intents-only `mt_signer` (callers: the policy service only) with EVM and Solana builders/decoders, allow-lists, caps, hard blocks and durable-nonce rules; Anvil / `simulateTransaction` simulation; isolated containers.
-- **Cost gate:** the `mt_onchain.costgate` library: fee samplers, formulas, gas windows and budgets.
+- **Custody & signer (M22 part 1):** custody tiers; wallet/signer/gas limits as configurable 16 §2.7 defaults seeded by the agent (P5-T065), with mainnet signing disabled until you confirm them in P5-T004 (testnet/Anvil sign within the seeded caps); the intents-only Rust `mt-signer` (callers: the policy service only) with EVM and Solana builders/decoders, allow-lists, caps, hard blocks and durable-nonce rules; Anvil / `simulateTransaction` simulation; isolated containers.
+- **Cost gate:** the `mt_onchain::costgate` module of the Rust `mt-onchain` crate: fee samplers, formulas, gas windows and budgets.
 - **Wallet view:** the P3 `ops.wallets` registry extended additively, proof of control (you sign a one-time challenge in your own wallet app or self-transfer; the system only verifies), aggregators, transfer classifier into M18, daily journal and monthly rotki reconciliation.
 - **Monitors & sweeps:** approvals, nonce authority, depeg (alert + task until P6), exploit/TVL, venue health, bridge policy and concentration; scheduled sweeps plus the kill-switch freeze and the hot-wallet sweep to the vault (default on).
 - **M4 pipeline:** discovery, normalisation + corroboration, enrichment, risk (providers, heuristics, wallet clusters, blacklist, calibration), viability + EV + AU geo/KYC, decision engine, the never-automated guard, mandates, claim executor (identity wallet only), burner-first/identity, disposal rule (manual-sale USER task until the P7 gates), records and the income journal.
@@ -31,7 +31,7 @@ The 69 tasks are organised in these workstreams (aligned 2026-10-22 with the dec
 
 - [ ] Phase 3 done: journal (M18) live with FX service and account/wallet registry (P3 R3.01–R3.04, R3.11)
 - [ ] Phase 4 done: Discord inbox (R4.04) and Telegram postures (R4.02, R4.03) flowing; text pipeline (R4.06) available
-- [ ] P0 foundations in place: WORM layer (R0.07), `mt_api` confirmation levels C0–C3 (R0.08), networks incl. the isolated `signer` network (R0.N3), sops secrets (R0.N1)
+- [ ] P0 foundations in place: WORM layer (R0.07), `mt-api` confirmation levels C0–C3 (R0.08), networks incl. the isolated `signer` network (R0.N3), sops secrets (R0.N1)
 - [ ] P2 kill switch/dead-man (R2.18), M11 pre-trade layer (R2.10) and Telegram C3 approvals (R2.51) working
 - [ ] Vault and warm wallets created by you (P5-T001; roadmap T5.01–T5.03 are tracked as P5 USER items)
 - [ ] With `phase_gating: "dependencies"`, each task waits only for its own `depends_on`, including the explicit P0–P4 task IDs listed under Cross-phase prerequisites
@@ -48,10 +48,10 @@ The 69 tasks are organised in these workstreams (aligned 2026-10-22 with the dec
 
 | Workstream | Tasks |
 |---|---|
-| Your actions (USER) | P5-T001, P5-T002, P5-T003, P5-T004, P5-T005, P5-T006, P5-T007, P5-T008, P5-T065, P5-T066 |
-| Data model & contracts | P5-T009, P5-T010, P5-T011, P5-T012 |
+| Your actions (USER) | P5-T001, P5-T002, P5-T003, P5-T004, P5-T005, P5-T006, P5-T008, P5-T066 |
+| Data model & contracts | P5-T009, P5-T010, P5-T011, P5-T012, P5-T065 (seed limits), P5-T007 (seed disposal/EV) |
 | Signer & simulation | P5-T013, P5-T014, P5-T015, P5-T016 |
-| Cost gate (`mt_onchain.costgate`) | P5-T019, P5-T020 |
+| Cost gate (`mt_onchain::costgate`) | P5-T019, P5-T020 |
 | Wallet registry, proof of control, indexer & recon | P5-T021, P5-T067, P5-T022, P5-T023, P5-T024 |
 | Monitors & sweeps | P5-T025, P5-T026, P5-T027, P5-T028 |
 | M19 curation | P5-T029, P5-T030, P5-T047 |
@@ -62,13 +62,13 @@ The 69 tasks are organised in these workstreams (aligned 2026-10-22 with the dec
 | Ops | P5-T017, P5-T018, P5-T031 |
 | Docs | P5-T051 |
 | Verify (keyless: Anvil, devnets, fixtures) | P5-T052, P5-T053, P5-T054, P5-T055, P5-T056, P5-T057, P5-T058, P5-T060, P5-T061, P5-T062, P5-T069 |
-| Verify (live keys, last) | P5-T068 → P5-T059, P5-T063 (and the live part of P5-T060) |
+| Verify (live keys, last) | P5-T068 → P5-T059 and the exit demo (live run of the P5-T060 suite); keyed sources join the P5-T063 run when P5-T068 passes |
 | Run | P5-T063 |
 | Exit | P5-T064 |
 
 ## Critical path
 
-P5-T009 → P5-T010 → P5-T013 → P5-T014 / P5-T015 → P5-T016 → P5-T044 → P5-T046 → P5-T056 → P5-T064, with P5-T012 → P5-T050 → P5-T065 (you confirm the limits; signing stays off until then) gating every signing VERIFY item (P5-T056, P5-T058).
+P5-T009 → P5-T010 → P5-T013 → P5-T014 / P5-T015 → P5-T016 → P5-T044 → P5-T046 → P5-T056 → P5-T064, with P5-T012 → P5-T065 (agent seeds the limits) gating the testnet signing VERIFY items (P5-T056, P5-T058); mainnet signing stays off until you confirm the limits in P5-T004 (C3, after P5-T050).
 
 Parallel tracks that need no keys: cost gate (P5-T018 → P5-T019 → P5-T020), M4 (P5-T032 → P5-T034 → P5-T035 → P5-T036 → P5-T037 → P5-T040 → P5-T041, meeting the executor at P5-T044), curation (P5-T029 → P5-T030 / P5-T047 → P5-T049), and the wallet track (P5-T067 → P5-T021 → P5-T022 → P5-T023 → P5-T024).
 
@@ -146,8 +146,8 @@ The exit demo P5-T064 covers every requirement and is omitted from the table bel
 ## Planning notes & risks
 
 - **Decisions applied (docs/16–17, 2026-10-22):**
-  - Wallet floats, signer caps, gas budgets, cost-gate margin, gas window and EV hurdle are configuration with 16 §2.7 defaults; signing stays disabled until you confirm them (P5-T012, P5-T065; P5-B001).
-  - The cost gate is the library `mt_onchain.costgate`, used by the signer path from P5 and by the treasury in P6 (P5-B002).
+  - Wallet floats, signer caps, gas budgets, cost-gate margin, gas window and EV hurdle are configuration with 16 §2.7 defaults; the agent seeds them (P5-T065) and mainnet signing stays disabled until you confirm them in P5-T004 (P5-T012; P5-B001); testnet/Anvil sign within the seeded caps (17 §G).
+  - The cost gate is the library `mt_onchain::costgate` (Rust `mt-onchain` crate), used by the signer path from P5 and by the treasury in P6 (P5-B002).
   - The signer accepts intents only from the policy service (`airdrop-exec` in P5; treasury and DEX execution later go through it) (P5-B003).
   - Vault and warm are watch-only; the system may only prepare unsigned transactions for you to sign in your own wallet (P5-B008).
   - Autonomous claims use the chain's airdrop identity wallet, never the hot trading wallet (P5-B017).
@@ -174,6 +174,6 @@ The exit demo P5-T064 covers every requirement and is omitted from the table bel
 These are explicit `depends_on` entries on the tasks that need them (they replace the old phase gate):
 - **P0:** P0-T002 (Telegram bot) and P0-T008 (Discord bot) → P5-T061; P0-T010 (free API keys) → P5-T003, P5-T068; P0-T020/T021/T022 (Compose, networks, sops) → P5-T017, P5-T054; P0-T024/T025 (schemas, provenance columns) → P5-T009; P0-T029/T030/T037 (WORM triggers, hash chain, seal) → P5-T010; P0-T034/T035/T036 (command bus, confirmation levels, WS hub) → P5-T011; P0-T050 (app shell) → P5-T048, P5-T049, P5-T050.
 - **P1:** P1-T004 (NATS streams) → P5-T011; P1-T006 (quota tracker) → P5-T018, P5-T032; P1-T043 (venue health) → P5-T027; P1-T045 (alert fan-out) → P5-T025, P5-T026, P5-T030.
-- **P2:** P2-T010/T019 (policy store, change control C3) → P5-T012; P2-T015 (portfolio concentration) → P5-T027; P2-T031 (kill switch) → P5-T013, P5-T028; P2-T035 (Telegram C3 + TOTP) → P5-T030, P5-T043, P5-T065; P2-T046 (MLflow) → P5-T039; P2-T068 (runbook format) → P5-T051.
+- **P2:** P2-T010/T019 (policy store, change control C3) → P5-T012; P2-T015 (portfolio concentration) → P5-T027; P2-T031 (kill switch) → P5-T013, P5-T028; P2-T035 (Telegram C3 + TOTP) → P5-T030, P5-T043, P5-T004; P2-T046 (MLflow) → P5-T039; P2-T068 (runbook format) → P5-T051.
 - **P3:** P3-T008 (journal writer) → P5-T046; P3-T010 (FX) → P5-T019; P3-T011 (crypto rates) → P5-T022, P5-T046; P3-T012 (`ops.wallets`) → P5-T009, P5-T021; P3-T017/T018 (on-chain adapter, internal-transfer matcher) → P5-T023; P3-T034 (recon) → P5-T024; P3-T038 (`curation.task`) → P5-T009; P3-T042 (your P3 account registration) → P5-T005.
 - **P4:** P4-T019 (Telegram postures), P4-T020 (Discord ingest), P4-T025 (provenance gate), P4-T028 (tier B registry) → P5-T033; P4-T020 → P5-T047.

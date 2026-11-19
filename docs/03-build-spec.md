@@ -87,7 +87,7 @@ MasterTrader/
 │   └── mt-airdrop-exec/  # airdrop policy service: mandated claims, simulation, revokes, sweeps (M4 execution)
 ├── pyproject.toml / uv.lock      # uv workspace (Python only where necessary)
 ├── packages/                     # Python packages (18 §2.2)
-│   ├── mt_strategy/      # Python strategies on Nautilus's strategy API: base classes, templates, registry, parameter schemas, multi-timeframe helpers (M0)
+│   ├── mt_strategy/      # Python strategies on Nautilus's strategy API: base classes, templates, multi-timeframe helpers (M0). The strategy registry, lifecycle and bots live in `mt-api`; the manifest and parameter schemas in `mt-core`
 │   ├── mt_lab/           # backtest/sim orchestration, validation, optimisation, sandboxed LLM strategy generation (M7)
 │   ├── mt_features/      # feature library + evaluator, research side (M6); `mt_features.text` is the nlp service
 │   ├── mt_models/        # model training, Decision One tier B advisor + decision-svc, model registry, distillation, gateway config (M21)

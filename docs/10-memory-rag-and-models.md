@@ -184,7 +184,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
 - **Stage 2 (Phase 6): our own decision models.**
   - **Base:** **Qwen3-0.6B or 1.7B (dense, ONNX-exportable)**.
   - **LoRA and head:** LoRA (rank 8–64) + **classification head** (`Qwen3ForSequenceClassification` + PEFT `SEQ_CLS`) or a Clef-style joint schema head scoring several questions in one pass.
-  - **Training labels:** distilled from M8 debate decisions (the teacher), then **corrected against realised outcomes** (forward returns / barrier hits) so it doesn't just copy the debate's biases. Your labels (`models.label.add`) are a third source.
+  - **Training labels:** distilled from M8 debate decisions (the teacher), then **corrected against realised outcomes** (forward returns / barrier hits) so it doesn't just copy the debate's biases. Your labels (`models.label.add`) are a third, optional source: nothing waits on them. Where a gate needs labelled examples before you've given any (e.g. the SemIf relevance gate, D10), an LLM labeller via the gateway supplies **silver labels** (`source: silver`), checked against outcomes and never taken from the model's own shadow outputs.
   - **Validation:** purged, embargoed walk-forward CV; option shuffle/rename augmentation.
   - **Loss:** CE + λ·Brier.
   - **Calibration:** post-hoc temperature/isotonic on a walk-forward holdout.

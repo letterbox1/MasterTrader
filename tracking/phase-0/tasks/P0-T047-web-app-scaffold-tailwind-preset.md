@@ -13,7 +13,7 @@ claimed_by: ""
 depends_on: [P0-T014]
 requirements: [R0.11]
 roadmap_todos: [T0.26]
-modules: [M15]
+modules: [M15, apps/web]
 dashboards: []
 tools: [git, node>=20, pnpm]
 mcp: []
@@ -25,7 +25,7 @@ doc_sync: [DESIGN.md, docs/02-v1-architecture.md, docs/roadmap/phase-0-foundatio
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`apps/web` is a React 18 + TypeScript + Vite PWA with TanStack Router/Query, Zustand, Radix primitives and a **locally built** Tailwind configured from the DESIGN.md v2 preset (tokens, the ten breakpoints, raw orientation/height queries, container queries, forms), self-hosted fonts, and a CI job running typecheck, lint, Vitest and build; Caddy serves the build.
+`apps/web` is a React 18 + TypeScript + Vite PWA with TanStack Router/Query, Zustand, Radix primitives and a **locally built** Tailwind configured from the DESIGN.md v2 preset (tokens, the ten breakpoints, raw orientation/height queries, container queries, forms), self-hosted fonts, and a CI job running typecheck, lint, Vitest (`pnpm test`) and build. The same bundle is served locally by Caddy (`web.host: local`, default) or deployed to Vercel at the shift (`web.host: vercel`, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions), [18 §5](../../../docs/18-platform-and-deployment.md#5-deployment-modes)); `vercel.json` is ready but nothing deploys in P0.
 
 ## Context & references
 
@@ -59,7 +59,9 @@ review_result: ""
 - Fonts: Space Grotesk, JetBrains Mono, Material Symbols Outlined self-hosted (woff2 in `public/fonts`, OFL/Apache licences recorded); **no CDN** (no `cdn.tailwindcss.com`, no Google Fonts URLs); CSP-compatible.
 - Global CSS: `min-h-dvh` shell, `tabular-nums` utility, reduced-motion overrides, focus ring 2px Cobalt + 2px offset, default theme dark.
 - PWA: manifest (name, icons from `brand/app-icon.svg`), service worker caches the shell only — never API responses.
-- `openapi-typescript` generation from `packages/mt_api/openapi.json` into `src/lib/api/types.ts` (CI fails if stale).
+- `openapi-typescript` generation from `crates/mt-api/openapi.json` (utoipa, P0-T032) into `src/lib/api/types.ts` (CI fails if stale).
+- `@supabase/supabase-js` (pinned) for **Auth only**: an ESLint rule bans `.from(`, `.rpc(`, `.channel(` and `.storage` on the client, so the browser never talks to the database, Realtime or Storage ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)); the Supabase URL and the public anon key come from build-time env (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`), never the `service_role` key.
+- `vercel.json` (static SPA rewrites to `index.html`, security headers matching Caddy's CSP/HSTS, no Vercel Functions, no analytics) and an `API_BASE_URL` build setting so the same bundle can call `mt-api` on the runtime host later.
 
 ## ToDo
 
@@ -68,7 +70,7 @@ review_result: ""
 - [ ] Add fonts and licences; global CSS.
 - [ ] Configure PWA plugin.
 - [ ] Fill the CI `web` job (typecheck, eslint, vitest, build, OpenAPI type freshness).
-- [ ] Caddy route serving `apps/web/dist`.
+- [ ] Caddy route serving `apps/web/dist`; `vercel.json` + a `vercel build`-free check that the headers match Caddy's (no deploy in P0).
 
 ## Verification
 
@@ -118,3 +120,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (P0-B013 closed (tablet-landscape in DESIGN §6.3); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (OpenAPI source is the utoipa file from `crates/mt-api`; supabase-js for Auth only (lint-banned data/realtime/storage calls); `vercel.json` ready for the optional Vercel deploy at the shift)

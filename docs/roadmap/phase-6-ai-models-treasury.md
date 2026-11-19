@@ -42,7 +42,7 @@
 | R6.10 | Own **Qwen3-0.6B/1.7B + LoRA + classification head** (or joint schema head); distilled from M8 decisions and **corrected against outcomes**; CE + λ·Brier; temperature/isotonic calibration; abstention thresholds | [10 §4.3](../10-memory-rag-and-models.md#43-design) | Calibration report |
 | R6.11 | Serving via vLLM `/classify` or ONNX; ~2–12 ms per decision on GPU (0.6B), **p95 SLO < 50 ms**; CPU 100–400 ms; CPU ONNX FP32 for reproducible backtests; determinism controls | [10 §4.3](../10-memory-rag-and-models.md#43-design), [02 §9.2](../02-v1-architecture.md#92-observability--slos) | Benchmark |
 | R6.12 | **Bake-off:** own head vs fine-tuned Laya vs Clef-flash vs **Kev-4B/9B** and **Trading-R1** (each only if a public, licence-compatible release exists that runs locally; otherwise dropped (U)) vs SemIf vs JSON generation, on our data + FinMMEval; Brier/ECE per regime, coverage at target precision, latency, flip rate | [10 §4.3](../10-memory-rag-and-models.md#43-design) | Bake-off report |
-| R6.13 | **Operating rules:** no Telegram text; ~320-token state budget; per-question thresholds (defaults: auto-decide coverage at ≥ 0.75 precision, ECE ≤ 0.05, flip rate ≤ 0.1%, [16 §2.10](../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); **5% shadow checks**; labels from outcomes or you (`models.label.add`), never shadow outputs; monthly fine-tune; social battery questions | [10 §4.3 operating rules](../10-memory-rag-and-models.md#43-design) | Rule tests |
+| R6.13 | **Operating rules:** no Telegram text; ~320-token state budget; per-question thresholds (defaults: auto-decide coverage at ≥ 0.75 precision, ECE ≤ 0.05, flip rate ≤ 0.1%, [16 §2.10](../16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); **5% shadow checks**; labels from outcomes, agent silver labels (`source: silver`) or you (`models.label.add`, optional), never shadow outputs; monthly fine-tune; social battery questions | [10 §4.3 operating rules](../10-memory-rag-and-models.md#43-design) | Rule tests |
 | R6.14 | Distillation loop (nightly): teacher log + outcomes → tier A / tier B candidates → calibration → **gated promotion** (default ≥ 14 days in shadow meeting the thresholds), teacher in shadow; direct veto only at ≥ 0.90 precision (default, configurable) | [02 F4](../02-v1-architecture.md#8-end-to-end-flows), [03 M21](../03-build-spec.md#m21-decision-one--model-serving--mt_models) | Promotion audit |
 
 ### Treasury & hold-and-earn (M22 part 2)
@@ -76,10 +76,10 @@
 ## 4. ToDo sets
 
 ### A. Your actions (`USER`)
-- [ ] **T6.01** `USER` Review the LLM budgets (defaults: US$40/month cap and per-role daily budgets, 16 §2.10; all settings) and confirm your custom endpoint details for the gateway (keys from T0.13). → R6.07
-- [ ] **T6.02** `USER` Work the **D10 labelling queue** (~15 min/day while it's new). → R6.13
+- [ ] **T6.01** `BUILD` Seed the LLM budgets from 16 §2.10 (US$40/month cap, per-role daily budgets); you change them in settings any time and review them in the go-live pack. The custom endpoint URL and key come from T0.13 (P0-T007). → R6.07
+- [ ] **T6.02** `USER` *Optional:* work the **D10 labelling queue** (~15 min/day while it's new). Agent silver labels are the default; yours improve them and nothing waits on them. → R6.13
 - [ ] **T6.03** `USER` Approve the **treasury policy** and protocol allow-list (C3); decide on HLP (only if Hyperliquid is approved; default cap ≤ 10% of stables and ≤ 5% of portfolio). → R6.20–R6.22
-- [ ] **T6.04** `USER` Decide whether to run Hummingbot, social drafts, crowd-sim (all optional). → R6.30–R6.32
+- [ ] **T6.04** `OPS` Record the optional-module defaults (Hummingbot, social drafts, crowd-sim, credibility, LightRAG: all **off**, [16 §2.14a](../16-configuration-and-safety-model.md#214a-optional-modules)); you switch any of them on in settings when you want them. → R6.30–R6.32
 - [ ] **T6.05** `USER` Approve/edit/skip social drafts and click Post yourself (if M23 is on). → R6.31
 
 ### B. Build (`BUILD`, code)

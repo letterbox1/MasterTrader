@@ -15,17 +15,17 @@ requirements: [R0.11, R0.N6, R0.08]
 roadmap_todos: [T0.26]
 modules: [M15]
 dashboards: [D16]
-tools: [git, node>=20, pnpm, playwright]
+tools: [git, node>=20, pnpm, playwright, supabase]
 mcp: []
 env: []
-services: []
+services: [supabase-auth]
 branch: p0/P0-T050-app-shell-login-totp
 pr: ""
 doc_sync: [docs/ui/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette trigger, mode badge, **kill switch**, approvals, notifications, system pulse, profile), sidebar/rail/bottom nav + More sheet per tier, global banners, status bar (≥ md), plus first-boot setup, TOTP enrolment and login screens. Routes for D01–D18 exist as empty states naming their phase.
+Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette trigger, mode badge, **kill switch**, approvals, notifications, system pulse, profile), sidebar/rail/bottom nav + More sheet per tier, global banners, status bar (≥ md), plus the Supabase Auth screens: set password (from the owner link, P0-T033), TOTP enrolment and login (password then TOTP). Routes for D01–D18 exist as empty states naming their phase.
 
 ## Context & references
 
@@ -58,7 +58,7 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 - Banners (ui §2.2) driven by WS: kill ON (red), audit integrity (red: shows the configured action, default `block_new_entries`, until `audit.integrity.ack`; ui §2.2, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity); from P0-T038), read-only mode (grey) when `db: down`.
 - Status bar: engine version (`n/a` in P0), feed summary (`n/a`), risk state `ARMED/HALTED`, backup age, local clock with UTC tooltip; sticky with reserved space (no overlap).
 - Nav groups and order from ui §1; phone bottom nav Cockpit · Markets · Execution · Tasks · More; unbuilt dashboards show `EmptyState` 'Arrives in Phase N'.
-- Auth screens: first-boot setup (setup token + password + QR from provisioning URI rendered client-side + confirm code + recovery codes shown once), login (password + TOTP), session-expired re-login preserving the route.
+- Auth screens on `@supabase/supabase-js` (Auth only, [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth)): set password from the one-time owner link; TOTP enrolment (`mfa.enroll` → QR rendered client-side → `mfa.challenge`/`verify`; prompt to enrol a second TOTP device as backup); login (password → `aal1` → TOTP verify → `aal2`); no sign-up screen; session-expired re-login and C2 step-up preserving the route. Session storage: access token in memory, refresh token in `sessionStorage` via a custom storage adapter; never `localStorage`.
 - Keyboard: `⌘/Ctrl+K` palette (routes + commands list), `Shift+Esc` kill confirm, `?` shortcuts sheet, `g` sequences for built routes.
 - Never `100vh`; `min-h-dvh`; no horizontal page scroll at any width ≥ 240px.
 
@@ -74,7 +74,7 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 
 ### Tests
 - Unit: tier layout switches by viewport (mock matchMedia); kill button present in every layout.
-- Integration (Playwright smoke): setup → enrol → login → land on `/system`; kill ON → banner appears on another tab within 500 ms.
+- Integration (Playwright smoke): (Supabase CLI stack, seeded test user) set password → enrol TOTP → login → land on `/system`; an `aal1` session can't open `/system`; kill ON → banner appears on another tab within 500 ms.
 
 ### Scenarios
 - Given a 240×320 viewport, then the top bar shows the mark, the kill button (with accessible name) and mode; bottom nav shows 4 + More.
@@ -119,3 +119,4 @@ Every route renders inside `AppShell` per DESIGN §6.4: top bar (brand, palette 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (modes paper/hitl/autonomous (17 §B); integrity banner replaces 'trading halt' (16 §2.11); run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (auth screens use Supabase Auth (password + TOTP MFA via supabase-js, no setup token or recovery codes of our own); custom storage keeps tokens out of localStorage)

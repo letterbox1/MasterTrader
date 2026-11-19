@@ -197,6 +197,7 @@ Configurable per bot and per event type.
 
 | Setting | Default |
 |---|---|
+| Defaults for a new token | Scopes `read` + `analyse`; expiry 30 days; the write tool groups (`trade`, `strategy`, `risk_tighten`) off until you enable them (C3) |
 | Token expiry | You choose per token: **1 day · 7 days · 30 days · 1 year · custom · indefinite**. Indefinite shows a red exposure/security warning, needs C3, and reminds you monthly |
 | Scopes | `read`, `analyse`, `trade` (creates approval cards only), `strategy`, `risk_tighten`, `curation`. Loosening risk is never a scope; it's C3 |
 | Never exposed | Withdrawals, `wallet.sweep`, `treasury.*` moves, `airdrop.claim.execute`, mandates, key/token management, `approval.*`, `mcp.*`, restore/delete, audit writes |
@@ -224,6 +225,19 @@ Configurable per bot and per event type.
 | Backups | Per mode ([18 §4.7](18-platform-and-deployment.md#47-backups)). **Workstation:** pgBackRest on the Supabase Postgres container: continuous WAL archive; nightly incremental 02:00 and weekly full Sun 02:00 (Australia/Sydney); keeps 4 full backups; restic off-site. **Supabase cloud:** Supabase's managed daily backups (point-in-time recovery is a paid add-on, your call) plus our own nightly logical dump at 02:00 to restic | Every mode: monthly restore test and WORM export ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) P0-B011) |
 | Service-restart allow-list (`docker-proxy`) | `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | The Supabase services (`supabase-db`, `supabase-auth`, `supabase-storage`, `supabase-kong` and the rest of the stack), `nats`, `mt-api` and `docker-proxy` are never on it by default. Adding a container is C3; removing one is C1 |
 | Intel pipeline | Poll intervals, per-source caps, Telegram join pacing and posture windows live in `config/intel/*.yaml`. Defaults: RSS poll 5 min (min 2 min, [P4-T011](../tracking/phase-4/tasks/P4-T011-rss-trafilatura-crawl4ai.md)); 200 docs/hour per source ([P4-T030](../tracking/phase-4/tasks/P4-T030-nlp-relevance-gate.md)); Telegram ≤ 500 channels ([P4-T001](../tracking/phase-4/tasks/P4-T001-telegram-channel-list.md)), ≤ 1 join per 10–20 min and ≤ 20 per day ([P4-T018](../tracking/phase-4/tasks/P4-T018-telethon-join-queue.md)); posture windows 15 min / 1 h / 24 h ([P4-T019](../tracking/phase-4/tasks/P4-T019-telegram-postures.md)) | Tightening is free; the Telegram caps never exceed the platform rules ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
+
+### 2.14a Optional modules
+
+| Setting | Default | Notes |
+|---|---|---|
+| `modules.hummingbot.enabled` | off | Market-making sidecar (M13), behind M11 |
+| `modules.social_drafts.enabled` | off | M23 drafts → your approval → web intent |
+| `modules.credibility.enabled` | off | Account credibility scoring and shill-burst posture |
+| `modules.crowdsim.enabled` | off | M14 research only |
+| `modules.lightrag.enabled` | off | Offline graph over filings (research path) |
+| `modules.persona_lenses.enabled` | off | Enabled only if they improve shadow results (17 §F) |
+
+Enabling a module is C1 and changes nothing about risk; each still runs behind M11 and the data rules.
 
 ### 2.15 Platform, deployment and regions
 
