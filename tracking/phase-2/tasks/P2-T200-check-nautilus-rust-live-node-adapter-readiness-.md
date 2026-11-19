@@ -105,3 +105,4 @@ A dated, cited answer per venue to the (U) in [18 §2.1](../../../docs/18-platfo
 ## Progress log
 
 - 2026-11-19 00:00 · aligner · created: re-platformed per docs/18 (18 §2.1 makes the Rust-vs-Python node a per-venue (U) answer; nothing checked it)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands)

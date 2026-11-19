@@ -15,17 +15,17 @@ requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M12, M16]
 dashboards: [D05]
-tools: [git, uv, protoc]
+tools: [git, cargo, protoc]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T037-ctrader-open-api-adapter
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) provides execution, market data and recon on Linux without the Windows VPS; cancel this task if P7-T004 chose `mt5` only.
+An `mt-engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) provides execution, market data and recon on Linux without the Windows VPS; cancel this task if P7-T004 chose `mt5` only.
 
 ## Context & references
 
@@ -55,7 +55,7 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 ## ToDo
 
 - [ ] Generate protobuf client from published `.proto` (pinned version).
-- [ ] Exec/data clients in `packages/mt_engine/adapters/ctrader/`.
+- [ ] Exec/data clients in `crates/mt-engine/src/adapters/ctrader/` (Rust, prost-generated protobuf, against Nautilus's adapter traits, 18 §2.1).
 - [ ] Recon side adapter.
 - [ ] Tests (fake server; demo run in P7-T051).
 - [ ] Docs.
@@ -63,6 +63,7 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 ## Verification
 
 ### Tests
+- `cargo test -p mt-engine adapters::ctrader` and `cargo clippy` (recorded protobuf fixtures).
 - Unit: message encode/decode, symbol mapping, token refresh.
 - Integration against a fake Open API server (keyless): order lifecycle through M11 → journal → TCA → recon. The demo-account run happens in P7-T051 with your cTrader app credentials (P7-T004).
 
@@ -85,7 +86,7 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 ## Cardinal rules (do NOT)
 
 - Do NOT use unofficial cTrader endpoints or scraped tokens.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -105,3 +106,4 @@ An `mt_engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first: fake-server tests, demo run moved to P7-T051; deps P2-T021/T027)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (cTrader adapter in Rust `crates/mt-engine/src/adapters/ctrader/` (prost for protobuf); tools cargo)

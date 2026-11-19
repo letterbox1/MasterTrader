@@ -15,17 +15,17 @@ requirements: [R6.01]
 roadmap_todos: [T6.20]
 modules: [M8, M17]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, uv, python>=3.12, docker, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p6/P6-T004-signal-schema-decision-tables
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A versioned `Signal` schema in `mt_core.schemas` (msgspec) with mandatory provenance, plus WORM tables `audit.decision_run` and `audit.signal`, so every agent output is structured, sourced and point-in-time.
+A versioned `Signal` schema in the `mt-core` crate (serde; exposed to Python through the `mt_store` PyO3 module, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) with mandatory provenance, plus WORM tables `audit.decision_run` and `audit.signal`, so every agent output is structured, sourced and point-in-time.
 
 ## Context & references
 
@@ -46,7 +46,7 @@ A versioned `Signal` schema in `mt_core.schemas` (msgspec) with mandatory proven
 - UI fields: [D09](../../../docs/ui/dashboards/D09-agents.md) (direction, conviction, horizon, provenance count, risk outcome) · [ui components](../../../docs/ui/components.md) `ProvenanceList`
 - WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · tests [15 §2.4](../../../docs/15-bots-hitl-and-worm-audit.md#24-tests-part-of-every-phase-that-adds-a-worm-table)
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B014: `Signal` fields defined in 03 M8)
-- Cross-phase: P0-T016 (`mt_core.Signal` v1), P0-T030/P0-T031 (hash-chain trigger, WORM audit helper). `audit.decision_run` and `audit.signal` are new here (canonical names, 02 §5.1, 17 §B)
+- Cross-phase: P0-T016 (`mt-core` `Signal` v1), P0-T030/P0-T031 (hash-chain trigger, WORM audit helper). `audit.decision_run` and `audit.signal` are new here (canonical names, 02 §5.1, 17 §B)
 
 ## Requirements
 
@@ -58,16 +58,17 @@ A versioned `Signal` schema in `mt_core.schemas` (msgspec) with mandatory proven
 
 ## ToDo
 
-- [ ] Add `Signal` v2 + `Provenance` structs in `packages/mt_core/mt_core/schemas/signal.py`, with a v1→v2 adapter.
-- [ ] Alembic migration for `audit.decision_run`, `audit.signal` (+ `audit.decision_settlement` for P6-T013) on the WORM owner role with hash-chain triggers.
-- [ ] Writer helpers in `mt_obs.audit` (`write_decision_run`, `write_signal`).
+- [ ] Add `Signal` v2 + `Provenance` structs in `crates/mt-core/src/schemas/signal.rs` (PyO3-exposed so `mt_agents` uses the same definition), with a v1→v2 adapter.
+- [ ] SQL migration in `supabase/migrations/` for `audit.decision_run`, `audit.signal` (+ `audit.decision_settlement` for P6-T013) on the WORM owner role with hash-chain triggers.
+- [ ] Writer helpers in the `mt-obs` crate (`write_decision_run`, `write_signal`), fed from the `sig.agent.*` subject; Python agents publish and never write the WORM tables directly.
 - [ ] Unsourced-number detector (regex for numbers/percentages in rationale vs provenance values).
-- [ ] Register `sig.agent.*` subject schema in `mt_core.schemas` registry.
+- [ ] Register `sig.agent.*` subject schema in the `mt-core` schema registry.
 - [ ] Tests (below); update docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-core -p mt-obs` and `cargo clippy`; `supabase test db` (WORM grants and hash-chain triggers on the new tables); `uv run pytest` for the PyO3 binding.
 - Unit: schema round-trip, v1→v2 adapter, unsourced-number detector (golden rationale strings).
 - Integration: insert Signal → row hash chained; UPDATE/DELETE/TRUNCATE by app role fails (15 §2.4).
 - Property: any Signal with `direction != flat` requires ≥ 1 `sources[]` entry.
@@ -95,7 +96,7 @@ A versioned `Signal` schema in `mt_core.schemas` (msgspec) with mandatory proven
 
 - Do NOT let a Signal carry an order; agents output Signals only, orders come from strategies via M11.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -115,3 +116,4 @@ A versioned `Signal` schema in `mt_core.schemas` (msgspec) with mandatory proven
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Signal fields = 03 M8 list per 17 §D P6-B014; canonical audit names; cross-phase deps P0-T016/T030/T031; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Signal v2 in the `mt-core` crate exposed to Python via PyO3; WORM writers in `mt-obs`; SQL migrations in `supabase/`; tools cargo/supabase)

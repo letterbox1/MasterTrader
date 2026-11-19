@@ -15,17 +15,17 @@ requirements: [R7.07]
 roadmap_todos: [T7.22]
 modules: [M11, M16]
 dashboards: [D03, D06]
-tools: [git, uv, pnpm]
+tools: [git, cargo, pnpm, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T023-live-decay-rolling-and-cusum
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,14 +57,15 @@ Every live (and paper, in shadow) strategy version is monitored for decay: rolli
 
 ## ToDo
 
-- [ ] `packages/mt_monitor/decay/` (rolling window, CUSUM).
-- [ ] Migration `risk.decay_state` (latest per version; history in `risk.kill_eval`).
+- [ ] `crates/mt-monitor/src/decay/` (rolling window, CUSUM).
+- [ ] SQL migration (`supabase/migrations/`) `risk.decay_state` (latest per version; history in `risk.kill_eval`).
 - [ ] D03 Performance: rolling-stat chart with p5 band, CUSUM chart (ECharts).
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-monitor decay` and `cargo clippy`; `supabase test db`; `pnpm test` (D03 charts).
 - Unit: CUSUM detects a mean shift of 1σ within the expected ARL on synthetic data; no false alarm on 1,000 in-control trades with h = 5σ (ARL0 check).
 - Unit: rolling stats over exactly 60 trades; < 60 → 'warming up'; a low-frequency bot uses the 26-week window instead.
 - Integration: decay alert published and consumed by the auto-downgrade handler (mock).
@@ -93,7 +94,7 @@ Every live (and paper, in shadow) strategy version is monitored for decay: rolli
 - Do NOT reset CUSUM manually to silence an alert; reset only on a new version.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
 - Do NOT add discretionary overrides; the only manual trading action outside HITL approvals is flatten-and-halt with a required reason (14 §4).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -112,3 +113,4 @@ Every live (and paper, in shadow) strategy version is monitored for decay: rolli
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (signals per 16 §2.6: 26-week low-frequency window, 5 consecutive losses, all → downgrade to HITL; dep P2-T034)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (decay jobs in Rust `crates/mt-monitor/src/decay/`; SQL migration in `supabase/`; tools cargo/supabase)

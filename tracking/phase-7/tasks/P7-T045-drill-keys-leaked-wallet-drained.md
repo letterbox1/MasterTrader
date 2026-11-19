@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ The keys-leaked runbook is drilled on testnet/practice keys, and the wallet-drai
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (wallet drained only if a hot/burner wallet exists (17 §D P7-B011); no P5 dependency)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change)

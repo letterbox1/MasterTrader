@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [mlflow, gpu]
+services: [mlflow]
 branch: p6/P6-T028-laya-finetune
 pr: ""
 doc_sync: [docs/research/decision-models-system-one.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,6 +51,7 @@ Laya (ModernBERT 322–421M) is fine-tuned and calibrated on the same outcome-co
 - Same folds, same states (≤ 320 tokens, inside Laya's 512–1024 context) and same calibration procedure (P6-T022).
 - Artefacts in MLflow tagged `contender=laya-ft`.
 - Provenance filters identical to our trainer.
+- `models.gpu_profile: auto`: on the GPU when present; on a CPU-only workstation the fine-tune runs on CPU (ModernBERT ~0.4B, slower) and the run records `profile=cpu`.
 
 ## ToDo
 
@@ -101,3 +102,4 @@ Laya (ModernBERT 322–421M) is fine-tuned and calibrated on the same outcome-co
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; no decision change)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (fine-tune runs on the active profile (`models.gpu_profile: auto`); gpu service removed)

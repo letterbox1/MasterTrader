@@ -18,14 +18,14 @@ dashboards: [D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [postgres, nats, tei-embed, tei-rerank]
+services: [supabase-postgres, nats, tei-embed, tei-rerank]
 branch: p6/P6-T006-agent-tools-pit-finrobot-cache
 pr: ""
 doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 ## Requirements
 
 - Tools (LangGraph tool specs): `get_bars(instrument, spec, as_of, lookback)`, `get_features(...)`, `search_docs(query, tickers, as_of)`, `get_filing_sections(...)`, `get_calendar(window, as_of)`, `get_events(...)`, `get_tierb_scores(subject, as_of)`, `recall_memory(bank, query, as_of)` (bound in P6-T012), FinRobot operators (DCF, WACC, DDM, comps, Monte Carlo, SOTP).
-- Every tool reads only via `mt_store.pit(as_of)`; no tool can write, place orders or call `mt_api` commands.
+- Every tool reads only via `pit(as_of)` (the `mt_store` Python binding of the Rust `mt-store`, 18 §2.1); no tool can write, place orders or call `mt-api` commands.
 - Every tool result returns `sources[]` entries matching the Signal schema (03 M8).
 - Untrusted text (documents, filings, social) is wrapped `<untrusted source=… id=…>…</untrusted>` and stripped of tool-call-like syntax; rows with `model_input_ok=false` are refused.
 - Cache: key `sha256(tool, args, instrument, as_of_bucket)` in Postgres `ops.tool_cache` (or NATS KV) with TTL; hit-rate metric.
@@ -95,8 +95,8 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 
 ## Cardinal rules (do NOT)
 
-- Do NOT give agents any write tool, `mt_api` command or network fetch outside the listed tools.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT give agents any write tool, `mt-api` command or network fetch outside the listed tools.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT let Telegram text (or any `model_input_ok = false` / `train_ok = false` row) reach a model, prompt, RAG index, memory bank or training set (12 §4–5).
 - Do NOT add paid data/APIs or scraping that breaks terms; no self-bots, user tokens, sybil/multi-wallet or fake engagement.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
@@ -118,3 +118,4 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (sources[] per 03 M8; R6.N1 untrusted wrapping; cross-phase deps P0-T027/P4-T025/P4-T032; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`pit(as_of)` via the `mt_store` Python binding of the Rust `mt-store`; services supabase-postgres)

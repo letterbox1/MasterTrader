@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [postgres, prefect]
+services: [supabase-postgres, prefect]
 branch: p6/P6-T026-per-question-threshold-tuner
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (C3 only below the 16 §2.10 default bars (02 §7.2); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change)

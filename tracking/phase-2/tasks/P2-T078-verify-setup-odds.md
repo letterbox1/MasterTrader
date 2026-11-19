@@ -102,3 +102,4 @@ Evidence that setup odds are reproducible from their seed, never use data after 
 ## Progress log
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [postgres] → [supabase-postgres])

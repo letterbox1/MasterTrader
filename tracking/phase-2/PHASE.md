@@ -49,9 +49,9 @@ Evidence for every criterion is collected by the exit demo P2-T199.
 |---|---|
 | Your actions (USER) | P2-T001 keys (keyed check only) · P2-T002 MasterTradingBot inputs · P2-T048 review defaults, set values + L0 ceilings · P2-T049 sleeves · P2-T050 first manifests · P2-T064 kill drill · P2-T065 C3 loosening + retire break-glass · P2-T066 first bots + HITL approval · P2-T067 start paper clock |
 | Build · M0 strategy framework | P2-T003 base classes · P2-T004 manifest (proposals) · P2-T005 never-build · P2-T006 registry · P2-T007 lifecycle, mode ceiling, gate profile · P2-T008, P2-T009 templates · P2-T030 shadow mode |
-| Build · M11 configuration & limits | P2-T010 layered policy store · P2-T011 L0 ceilings · P2-T069 layer merge + effective limits · P2-T012 defaults, two-stage drawdowns · P2-T013 sizing · P2-T014 sleeves/netting · P2-T015 portfolio · P2-T016 venue registry + 2× + `paper_ok` · P2-T019 change control · P2-T020 mt_api surface |
+| Build · M11 configuration & limits | P2-T010 layered policy store · P2-T011 L0 ceilings · P2-T069 layer merge + effective limits · P2-T012 defaults, two-stage drawdowns · P2-T013 sizing · P2-T014 sleeves/netting · P2-T015 portfolio · P2-T016 venue registry + 2× + `paper_ok` · P2-T019 change control · P2-T020 `mt-api` surface · P2-T202 `mt-risk` PyO3 binding |
 | Build · M11 order path & safety | P2-T017 RiskGate · P2-T070 inline safety-state checks · P2-T018 ladder · P2-T031 kill · P2-T032 dead-man layer 1 · P2-T072 `deadman` sidecar (layer 2) · P2-T073 venue timers + resting stops (layer 3) · P2-T074 restart flat, bots paused · P2-T033 modes/approvals · P2-T034 decay/health |
-| Build · M12 execution (keyless) | P2-T021 engine · P2-T022 STP / netting rule · P2-T023 testnet configs + sandbox · P2-T024 Alpaca · P2-T025 OANDA · P2-T026 IG · P2-T027 client IDs + reconcile · P2-T028 maker-first/TWAP · P2-T029 TCA |
+| Build · M12 execution (keyless) | P2-T200, P2-T201 RESEARCH: Nautilus Rust node/adapter readiness · P2-T021 engine (Rust or Python node per venue) · P2-T022 STP / netting rule · P2-T023 testnet configs + sandbox · P2-T024 Alpaca · P2-T025 OANDA · P2-T026 IG · P2-T027 client IDs + reconcile · P2-T028 maker-first/TWAP · P2-T029 TCA |
 | Build · bots, HITL & Telegram | P2-T035 Telegram v1 + C3 · P2-T036 bot model (L4) · P2-T037 bot modes/downgrade · P2-T038 approvals API + `ApprovalCard` · P2-T039 Telegram approval cards · P2-T040 bot commands · P2-T041 D03 Bots tab |
 | Build · UI (D06, D03 settings) | P2-T042 D06 overview · P2-T043 D06 policy/events/changes, D03 settings, Stress placeholder |
 | Ops | P2-T044 containers + gVisor + `deadman` · P2-T045 secrets + key audit tool · P2-T046 MLflow · P2-T047 Grafana |
@@ -152,10 +152,10 @@ Parallel spines:
 | T2.09 | P2-T066 |
 | T2.20 | P2-T003, P2-T004, P2-T005, P2-T006, P2-T007 |
 | T2.21 | P2-T008, P2-T009 |
-| T2.22 | P2-T010, P2-T012, P2-T013, P2-T014, P2-T015, P2-T016, P2-T017, P2-T018, P2-T020, P2-T034, P2-T060 |
+| T2.22 | P2-T010, P2-T012, P2-T013, P2-T014, P2-T015, P2-T016, P2-T017, P2-T018, P2-T020, P2-T034, P2-T060, P2-T202 |
 | T2.23 | P2-T031, P2-T032 |
 | T2.24 | P2-T011, P2-T019, P2-T020, P2-T053 |
-| T2.25 | P2-T021, P2-T022, P2-T023, P2-T024, P2-T025, P2-T026, P2-T027, P2-T028, P2-T033, P2-T057 |
+| T2.25 | P2-T200, P2-T201, P2-T021, P2-T022, P2-T023, P2-T024, P2-T025, P2-T026, P2-T027, P2-T028, P2-T033, P2-T057 |
 | T2.26 | P2-T029 |
 | T2.27 | P2-T101, P2-T102, P2-T103, P2-T104, P2-T105, P2-T106, P2-T107, P2-T108, P2-T109, P2-T110, P2-T111, P2-T112, P2-T113, P2-T114, P2-T115, P2-T117, P2-T164, P2-T166, P2-T167 |
 | T2.28 | P2-T116, P2-T165 |
@@ -215,13 +215,13 @@ Now explicit `depends_on` entries on existing P0/P1 tasks (only real preconditio
 |---|---|---|
 | P0 | P0-T002 Telegram bot + user id (USER) | P2-T064, P2-T066 |
 | P0 | P0-T009 demo/paper/testnet accounts (USER) | P2-T001 |
-| P0 | P0-T014 monorepo · P0-T016 `mt_core` types · P0-T018 `mt_obs` | P2-T004 · P2-T003, P2-T010 · P2-T032 |
+| P0 | P0-T014 monorepo · P0-T016 `mt-core` types · P0-T018 `mt-obs` · P0-T071 `mt_store` PyO3 module (`mt-core` types + `pit` for Python) | P2-T004 · P2-T003, P2-T010 · P2-T032 · P2-T003, P2-T101, P2-T103, P2-T202 |
 | P0 | P0-T020 compose (NATS, MLflow) · P0-T021 networks · P0-T022 sops → tmpfs | P2-T044, P2-T046, P2-T101 · P2-T044 · P2-T001, P2-T044, P2-T045 |
-| P0 | P0-T024 schemas/Alembic · P0-T025 venue registry table · P0-T027 `pit(as_of)` | P2-T006, P2-T010, P2-T101 · P2-T016 · P2-T101, P2-T103 |
+| P0 | P0-T024 schemas/Supabase migrations · P0-T025 venue registry table · P0-T027 `pit(as_of)` | P2-T006, P2-T010, P2-T101 · P2-T016 · P2-T101, P2-T103 |
 | P0 | P0-T029 WORM layer · P0-T031 WORM audit tables · P0-T038 `audit.verify` + `audit.integrity` | P2-T007, P2-T010, P2-T113 · P2-T021 · P2-T070 |
 | P0 | P0-T033 TOTP · P0-T034 command bus · P0-T035 confirmation levels + break-glass · P0-T036 WS hub | P2-T035 · P2-T006, P2-T020, P2-T117 · P2-T007, P2-T019, P2-T020, P2-T031, P2-T117 · P2-T020, P2-T038, P2-T117 |
 | P0 | P0-T039 backups · P0-T042 LiteLLM gateway · P0-T045 Grafana provisioning | P2-T046 · P2-T113, P2-T116 · P2-T047 |
-| P0 | P0-T048 API client · P0-T049 component library · P0-T050 app shell · P0-T053 viewport harness · P0-T062 your TOTP (USER) | P2-T038, P2-T140 · P2-T038, P2-T041, P2-T042, P2-T140, P2-T141 · P2-T041, P2-T042, P2-T142 · P2-T062 · P2-T048, P2-T064, P2-T065 |
+| P0 | P0-T048 API client · P0-T049 component library · P0-T050 app shell · P0-T053 viewport harness · P0-T062 your TOTP (USER) | P2-T038, P2-T140 · P2-T038, P2-T041, P2-T042, P2-T140, P2-T141 · P2-T041, P2-T042, P2-T142 · P2-T062 · P2-T064, P2-T065 |
 | P1 | P1-T004 NATS streams · P1-T009 instrument master · P1-T012/T013 Parquet + bars | P2-T021, P2-T031 · P2-T003, P2-T103 · P2-T103 |
 | P1 | P1-T016 OANDA · P1-T017 IG · P1-T021 Alpaca stream clients | P2-T025 · P2-T026 · P2-T024 |
 | P1 | P1-T030 DQ monitor · P1-T071 egress check · P1-T057 DQ fault tooling | P2-T017, P2-T070 · P2-T070 · P2-T059 |

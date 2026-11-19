@@ -18,7 +18,7 @@ dashboards: [D10]
 tools: [uv, git]
 mcp: []
 env: []
-services: [litellm, llm-local, postgres]
+services: [litellm, llm-local, supabase-postgres]
 branch: p6/P6-T073-verify-research-workflows
 pr: ""
 doc_sync: [docs/roadmap/phase-6-ai-models-treasury.md]
@@ -82,7 +82,7 @@ Evidence that the research workflows use point-in-time inputs and cite their sou
 - Do NOT commit secrets or paste them into chats, issues or logs; they live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT add paid data/APIs, scraping that breaks a site's terms, self-bots/user tokens, or any sybil/fake engagement.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a model, RAG index or training set ([12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
-- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt_api`.
+- Do NOT read research data except through `pit(as_of)`; do NOT route any order around M11 via `mt-api`.
 - Do NOT skip, weaken or delete a test to get green.
 - Do NOT copy code from repositories without a compatible licence; keep copyright and NOTICE files for MIT/Apache code ([01 §8](../../../docs/01-repo-vetting-report.md#8-addendum-2026-11-19-eleven-more-repositories)).
 
@@ -99,3 +99,4 @@ Evidence that the research workflows use point-in-time inputs and cite their sou
 ## Progress log
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)

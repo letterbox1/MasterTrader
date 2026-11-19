@@ -121,3 +121,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps (migrations, pit, NATS); caps as settings)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; Alembic → `supabase/migrations`; msgspec → `mt-core` schemas; dep P0-T071; depends_on + P0-T071; tools [uv, docker] → [uv, docker, supabase]; services [nats, postgres] → [nats, supabase-postgres])

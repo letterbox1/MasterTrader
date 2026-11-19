@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: 2026-10-22
 blocked_reason: ""
@@ -98,3 +98,4 @@ The 12-month live review clock is started per sleeve at its first live funding, 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cancelled: T7.82 is deferred to the recurring 12-month review outside the phases (17 §D P7-B012, roadmap README §10); scheduling moved into P7-T042)
 - 2026-10-22 02:30 · cloud:vm:be04b6ae61f8 · cancelled: T7.82 deferred: the 12-month review is a recurring calendar review outside the phases (docs/17 §D P7-B012, docs/roadmap/README.md §10); the yearly schedule is built in P7-T042 and diaried in P7-T063
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change)

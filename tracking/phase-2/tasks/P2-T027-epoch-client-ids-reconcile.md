@@ -116,3 +116,4 @@ Client order IDs follow the decided format **`{bot}-{engine_epoch}-{seq}`**, wit
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (client order ID {bot}-{engine_epoch}-{seq} + separate signal hash (17 §D P2-B007), recon defaults 16 §2.9, restart-flat handoff to P2-T074)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats])

@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,7 +65,7 @@ You physically cut mains power and the fixed line with paper positions open, and
 - Evidence: alerts timeline, fail-flat timestamps, recon result after boot.
 
 ### Scenarios
-- Given mains is cut, when the UPS reaches low battery, then positions are flat (`flatten`) or protected by resting stops (`cancel_orders_only`) before the host shuts down.
+- Given mains is cut, when the UPS reaches low battery, then positions are flat (`flatten`) or protected by resting stops (`cancel_orders_only`) before the runtime host shuts down.
 
 ### Stress / failure injection
 - This drill is the real-world failure injection.
@@ -77,7 +77,8 @@ You physically cut mains power and the fixed line with paper positions open, and
 
 ## Exceptions & edge cases
 
-- Host fails to boot after power restore: follow the host-rebuild runbook; record as a failed drill and re-run.
+- Host fails to boot after power restore: follow the runtime host-rebuild runbook; record as a failed drill and re-run.
+- **Conditional:** This drill tests UPS and 4G for a runtime host at your premises (workstation or home server). If P7-T071 picks a cloud VM as the runtime host, cancel this item then with reason "runtime host is a cloud VM (P7-T071)". Until that choice, keep it.
 
 ## Cardinal rules (do NOT)
 
@@ -101,3 +102,4 @@ You physically cut mains power and the fixed line with paper positions open, and
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (on_system_failure naming and restart-paused per 16 §3.1; exit-node IP on 4G)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host; conditional on the runtime host being at your premises; stays USER (drill you take part in))

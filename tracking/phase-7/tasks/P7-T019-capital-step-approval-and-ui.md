@@ -15,17 +15,17 @@ requirements: [R7.05, R7.08, R7.15]
 roadmap_todos: [T7.21, T7.06, T7.26]
 modules: [M11, M15]
 dashboards: [D06, D03, D01]
-tools: [git, uv, pnpm, node>=20]
+tools: [git, cargo, pnpm, node>=20]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, telegram bot api]
+services: [supabase-postgres, nats, mt-api, telegram bot api]
 branch: p7/P7-T019-capital-step-approval-and-ui
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D06-risk.md, docs/ui/dashboards/D03-strategies.md, docs/ui/mobile-and-telegram.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,6 +63,7 @@ When a sleeve is step-eligible, a proposal appears in D01 Needs-you and Telegram
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api -p mt-telegram-bot`; `pnpm test` and `pnpm playwright`.
 - Integration: approve without TOTP → rejected; with TOTP → applies only after cool-down; dirty week during cool-down → cancelled.
 - Integration: preflight failing at apply time (registry stale) → not applied, alert raised.
 - Playwright: D06 sleeve card at all §6.8 viewports; axe clean.
@@ -92,7 +93,7 @@ When a sleeve is step-eligible, a proposal appears in D01 Needs-you and Telegram
 - Do NOT move funds or call venue transfer endpoints; funding is manual.
 - Do NOT batch several capital steps into one C3 confirmation.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT use keys that are not trade-only, IP-locked and withdrawal-disabled; no live money before the P7 gates pass.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -114,3 +115,4 @@ When a sleeve is step-eligible, a proposal appears in D01 Needs-you and Telegram
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (+25% of current from the per-bot starting allocation (default A$2,000, 16 §2.5); commands per the 02 §7.2 catalogue; R7.15 share; dep P2-T035)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (approval command in Rust `mt-api`, Telegram message via Rust `mt-telegram-bot`; tools cargo)

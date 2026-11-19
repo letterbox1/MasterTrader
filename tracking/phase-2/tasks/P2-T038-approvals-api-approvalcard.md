@@ -116,3 +116,4 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no bulk approve except batched dynamic card (17 §D), large-order hold-to-confirm per 16 §2.3, cross-phase UI deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; `aal2` for commands; tools [uv, pnpm] → [cargo, pnpm]; services [nats] → [nats, supabase-auth])

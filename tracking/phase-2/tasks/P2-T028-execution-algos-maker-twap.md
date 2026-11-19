@@ -109,3 +109,4 @@ Nautilus exec algorithms provide maker-first (post-only with timeout, then taker
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (decision-deadline and collar defaults from 16, exit-plan stop rests at the venue)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])

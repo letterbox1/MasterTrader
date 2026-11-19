@@ -15,17 +15,17 @@ requirements: [R7.06, R7.09]
 roadmap_todos: [T7.21, T7.23]
 modules: [M11, M16]
 dashboards: [D06, D07]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T027-recon-ageing-24h-halt
 pr: ""
 doc_sync: [docs/16-configuration-and-safety-model.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,6 +61,7 @@ Any reconciliation mismatch left unexplained for 24 hours triggers a system-wide
 ## Verification
 
 ### Tests
+- `cargo test -p mt-monitor recon::ageing` and `cargo clippy`.
 - Unit: 11:59 (ok), 12:00 (warn), 24:00 (breach) with an injected clock.
 - Integration: breach sets kill ON; kill OFF refused while the break is unresolved; allowed (C3) after resolution.
 
@@ -104,3 +105,4 @@ Any reconciliation mismatch left unexplained for 24 hours triggers a system-wide
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (24 h explained rule per 16 §2.9; kill actions per 17 §B; 12 h warn proposed for 16 §2.9)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (recon ageing in Rust `mt-monitor`; tools cargo)

@@ -121,3 +121,4 @@ A global and per-sleeve kill switch lives in NATS KV `kill`; it can be set from 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill triggers and actions per 03 M11/17 §B (on_system_failure per bot, freeze treasury, no sweep in P2), WORM source telegram)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])

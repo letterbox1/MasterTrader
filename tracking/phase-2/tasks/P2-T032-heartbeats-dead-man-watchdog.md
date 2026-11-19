@@ -122,3 +122,4 @@ Critical services (engine, feeds/monitor, risk, postgres probe, nats probe) publ
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (reworked to dead-man layer 1 only (5 s cancel / 10 s on_system_failure per bot); sidecar moved to P2-T072, venue layer to P2-T073)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv, docker] → [cargo, docker]; services [nats, postgres] → [nats, supabase-postgres])

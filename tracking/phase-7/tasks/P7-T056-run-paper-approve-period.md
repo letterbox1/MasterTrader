@@ -18,14 +18,14 @@ dashboards: [D03]
 tools: [git, uv]
 mcp: []
 env: []
-services: [postgres, mt-api]
+services: [supabase-postgres, mt-api]
 branch: p7/P7-T056-run-paper-approve-period
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -83,7 +83,7 @@ Each candidate bot's paper/HITL period is confirmed from the gate report against
 
 - Do NOT shorten any paper period.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 
 ## Doc sync on completion
 
@@ -100,3 +100,4 @@ Each candidate bot's paper/HITL period is confirmed from the gate report against
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper/HITL period per 16 §2.4 (≥ 8 weeks and ≥ 50 trades; 26-week low-frequency); dep P2-T180)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

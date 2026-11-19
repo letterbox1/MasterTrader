@@ -119,3 +119,4 @@ A Nautilus live data + execution client for **IG**, written in Rust against Naut
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (stp n/a (netting) + one strategy per account, resting venue stops, keyless cassettes with live run in P2-T071, cross-phase reuse)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; custom adapter in Rust (skeleton P2-T201); depends_on + P2-T201; tools [uv] → [cargo])

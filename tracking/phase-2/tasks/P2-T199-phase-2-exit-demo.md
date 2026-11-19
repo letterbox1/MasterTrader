@@ -109,3 +109,4 @@ A recorded, end-to-end demonstration of every Phase 2 exit criterion, run from t
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo depends on Part A evidence and the new safety-state and dead-man tasks; HITL bot wording)
 - 2026-11-19 00:00 · coordinator · depends on P2-T078 (vetted additions, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [pnpm, uv, playwright] → [pnpm, uv, cargo, playwright])

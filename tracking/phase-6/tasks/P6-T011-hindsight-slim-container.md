@@ -15,17 +15,17 @@ requirements: [R6.04, R6.N2]
 roadmap_todos: [T6.40]
 modules: [M9]
 dashboards: [D10]
-tools: [git, docker, sops]
+tools: [git, docker, sops, supabase]
 mcp: []
 env: []
-services: [postgres, tei-embed, tei-rerank, litellm]
+services: [supabase-postgres, tei-embed, tei-rerank, litellm]
 branch: p6/P6-T011-hindsight-slim-container
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on the internal network against our Postgres 16 in schema `hindsight`, using TEI for embeddings/rerank and LiteLLM (role `memory`) for retain/consolidate/reflect.
+A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on the internal network against our Supabase Postgres (pgvector) in schema `hindsight`, using TEI for embeddings/rerank and LiteLLM (role `memory`) for retain/consolidate/reflect.
 
 ## Context & references
 
@@ -58,7 +58,7 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 ## ToDo
 
 - [ ] Add the service to `docker-compose.yml` with image digest, healthcheck, resource limits, internal network.
-- [ ] Create the Hindsight DB role and grants on the existing `hindsight` schema (P0-T024) via Alembic (owner role separate from the app role).
+- [ ] Create the Hindsight DB role and grants on the existing `hindsight` schema (P0-T024) via a SQL migration in `supabase/migrations/` (owner role separate from the app role).
 - [ ] Secrets (DB password, LiteLLM `memory` key) via sops → tmpfs.
 - [ ] Outbound-traffic check: no phone-home (tcpdump/egress deny test).
 - [ ] Smoke: create bank, retain one item, recall it.
@@ -68,7 +68,7 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 
 ### Tests
 - Compose health check green; smoke retain/recall script in CI (compose profile).
-- Port scan from the Tailscale side shows 8888/9999 closed.
+- Port scan from another device on the LAN (and from the tailnet, if Tailscale is on) shows 8888/9999 closed.
 - Egress test: container has no route except Postgres, TEI, LiteLLM.
 
 ### Scenarios
@@ -113,3 +113,4 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (hindsight schema exists from P0 (17 §B); R6.N2 127.0.0.1 + API key; cross-phase deps P0-T020/T022/T024/T042/T043; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Hindsight on Supabase Postgres (pgvector) with its role from a SQL migration; port scan from LAN/tailnet instead of Tailscale-only; tools supabase)

@@ -15,17 +15,17 @@ requirements: [R7.11]
 roadmap_todos: [T7.41]
 modules: [M12, M11]
 dashboards: [D05]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T030-resting-broker-side-stops
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Every live position has a resting stop order held **at the venue/broker** (nativ
 
 ## ToDo
 
-- [ ] Stop manager in `packages/mt_engine/protection/` per adapter (ccxt AU spot venues, OANDA/IG, MT5/cTrader).
+- [ ] Stop manager in `crates/mt-engine/src/protection/` per adapter (ccxt AU spot venues, OANDA/IG, MT5/cTrader).
 - [ ] Registry capability flag + M11 check.
 - [ ] Recon rule `missing_resting_stop`.
 - [ ] Tests; docs.
@@ -63,12 +63,13 @@ Every live position has a resting stop order held **at the venue/broker** (nativ
 ## Verification
 
 ### Tests
+- `cargo test -p mt-engine protection` and `cargo clippy`.
 - Integration (testnet/practice): entry → resting stop visible via venue REST; partial fill → stop quantity matches position.
 - Integration: simulated stop placement failure → position flattened within 5 s + alert.
 - Unit: trailing amend respects venue rate limits.
 
 ### Scenarios
-- Given the host loses power with an open BTC position, then the venue still holds the stop and the position is protected.
+- Given the runtime host loses power with an open BTC position, then the venue still holds the stop and the position is protected.
 - Given a venue without native stops, then live entries there are rejected with `no_native_stops`.
 
 ### Stress / failure injection
@@ -89,7 +90,7 @@ Every live position has a resting stop order held **at the venue/broker** (nativ
 
 - Do NOT hold stops only in the engine for live positions.
 - Do NOT cancel a resting stop before its replacement is acknowledged.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 - Do NOT use keys that are not trade-only, IP-locked and withdrawal-disabled; no live money before the P7 gates pass.
 
@@ -109,3 +110,4 @@ Every live position has a resting stop order held **at the venue/broker** (nativ
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (layer-3 resting stops per 16 §3.1, extending P2 R2.56 to live adapters; dep P2-T021)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stop manager in Rust `crates/mt-engine/src/protection/`; the host → the runtime host; tools cargo)

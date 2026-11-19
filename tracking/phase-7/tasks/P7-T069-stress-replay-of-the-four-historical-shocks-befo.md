@@ -18,14 +18,14 @@ dashboards: [D06, D03]
 tools: [git, uv]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, backtest-worker]
+services: [supabase-postgres, nats, mt-api, backtest-worker]
 branch: p7/P7-T069-stress-replay-of-the-four-historical-shocks-befo
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ Before any money is funded (P7-T057), each bot going live is replayed through th
 
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.16/T7.66: stress replay before the first funding at the per-bot starting allocation, results attached to the gate report)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

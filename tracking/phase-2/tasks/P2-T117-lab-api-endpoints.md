@@ -109,3 +109,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (lab.leakage.waive C2 and models.tiera.train C1 per 17 §D; cross-phase API deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; axum/utoipa routes; tools [uv, pnpm] → [cargo, pnpm]; services [nats, postgres] → [nats, supabase-postgres])

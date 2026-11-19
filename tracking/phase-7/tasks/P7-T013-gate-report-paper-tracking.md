@@ -18,14 +18,14 @@ dashboards: [D03]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, prefect-server, backtest-worker]
+services: [supabase-postgres, prefect-server, backtest-worker]
 branch: p7/P7-T013-gate-report-paper-tracking
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -92,7 +92,7 @@ The gate report includes a paper/HITL section per strategy version: elapsed peri
 
 - Do NOT count days where the strategy was paused, halted or the feed was stale toward the paper period.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -110,3 +110,4 @@ The gate report includes a paper/HITL section per strategy version: elapsed peri
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper/HITL period per 16 §2.4 incl. ≥ 50 trades and the 26-week low-frequency window; cost ratio from 16 §2.1; deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; paper tracking stays Python (`mt_lab`))

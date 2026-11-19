@@ -122,3 +122,4 @@ The `telegram-bot` service (`mt-telegram-bot`, Rust, teloxide; alerts-only since
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (/kill NATS creds limited to kill.set with engine-side WORM write (17 §D P2-B012), Telegram C3 replaces break-glass, keyless build)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; Rust `mt-telegram-bot` (teloxide); C3 via Telegram `initData` + TOTP → short `aal2` command session (18 §4.6); tools [uv] → [cargo]; services [nats] → [nats, supabase-auth])

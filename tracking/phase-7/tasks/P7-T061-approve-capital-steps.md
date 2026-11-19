@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -100,3 +100,4 @@ When a sleeve shows 'step eligible' after 4 clean weeks, you approve (C3) or dec
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (+25% of current up to the sleeve cap per 16 §2.5)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER)

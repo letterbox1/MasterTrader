@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [prefect, mlflow, gpu]
+services: [prefect, mlflow]
 branch: p6/P6-T032-monthly-finetune-flow
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -97,3 +97,4 @@ On the first weekend of each month a full fine-tune (not warm-start) of each pro
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; promotion stays gated per 16 §2.10)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (gpu service removed (`models.gpu_profile: auto`))

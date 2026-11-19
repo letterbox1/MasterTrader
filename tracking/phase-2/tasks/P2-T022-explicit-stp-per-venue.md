@@ -112,3 +112,4 @@ Every order to a venue with an STP field leaves the engine with an explicit, ven
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (netting brokers stp: n/a (netting) + one strategy per account (17 §D P2-B006) replaces the engine guard; keyless fixtures)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])

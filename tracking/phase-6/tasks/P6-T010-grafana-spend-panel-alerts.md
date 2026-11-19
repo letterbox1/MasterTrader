@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -102,3 +102,4 @@ A provisioned Grafana dashboard shows LLM spend by role vs budget, month-to-date
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P0-T045/P1-T045; budgets from 16 §2.10 settings; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change beyond the date)

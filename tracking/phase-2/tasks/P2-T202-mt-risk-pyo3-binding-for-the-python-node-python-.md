@@ -107,3 +107,4 @@ The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 bindi
 ## Progress log
 
 - 2026-11-19 00:00 · aligner · created: re-platformed per docs/18 (`mt-risk` is one Rust crate; the Python node, strategies and lab need a binding no task built)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands)

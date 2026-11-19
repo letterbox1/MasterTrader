@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [postgres, mlflow]
+services: [supabase-postgres, mlflow]
 branch: p6/P6-T020-distillation-dataset-builder
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,6 +55,7 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 - Splits: purged K-fold walk-forward with embargo ≥ max horizon; fold boundaries recorded.
 - Augmentation: option order shuffle and option rename on train folds only.
 - Output: Parquet dataset + manifest (row counts, hash, time range, exclusions) logged to MLflow; deterministic given the same inputs.
+- Labels: `outcome` and `silver` (the teacher label corrected against the outcome, written to `models.label` with `label_source=silver`) are the default; `user` labels are used when present and outrank both. The builder never waits for user labels (P6-T044 is optional, 17 §G).
 
 ## ToDo
 
@@ -62,6 +63,7 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 - [ ] Fold generator with purge/embargo; augmentation.
 - [ ] Exclusion accounting + MLflow logging.
 - [ ] Tests; docs.
+- [ ] Write `silver` labels to `models.label` (insert-only, provenance to the decision and settlement rows).
 
 ## Verification
 
@@ -75,7 +77,7 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 - Given fewer than the minimum rows per class (default 200), then the builder refuses with a clear message instead of training on noise.
 
 ### Stress / failure injection
-- 1M rows build in < 15 min on the host; memory < 8 GB (streamed Parquet).
+- 1M rows build in < 15 min on the workstation; memory < 8 GB (streamed Parquet).
 
 ## Acceptance criteria
 
@@ -92,7 +94,7 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 
 - Do NOT use shadow outputs as labels; do NOT use rows with `train_ok=false`.
 - Do NOT let Telegram text (or any `model_input_ok = false` / `train_ok = false` row) reach a model, prompt, RAG index, memory bank or training set (12 §4–5).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -111,3 +113,4 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T107; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (silver labels written back as `label_source=silver` and used by default; user labels optional; workstation instead of host)

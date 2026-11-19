@@ -121,3 +121,4 @@ Each strategy version is **promoted** draft → backtested → validated only th
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (promotion vs mode ceiling (strategy.set_mode caps bots, C2/C3/C1), per-strategy gate profile from 16 §2.4 with loosening C3, DSR ≥ 0.95)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; lifecycle in `mt-api` (Rust); tools [uv] → [cargo, supabase]; services [postgres] → [supabase-postgres])

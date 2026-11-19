@@ -102,3 +102,4 @@ Four step-by-step runbooks in `docs/runbooks/` let you act correctly under stres
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (runbooks reflect the three-layer dead-man, restart flat with bots paused, deadman keys, rotation and inline data age)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (runtime-host wording)

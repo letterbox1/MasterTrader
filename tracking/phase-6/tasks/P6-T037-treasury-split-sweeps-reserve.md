@@ -15,17 +15,17 @@ requirements: [R6.22, R6.24]
 roadmap_todos: [T6.28]
 modules: [M22, M18]
 dashboards: [D18]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, prefect, nats]
+services: [supabase-postgres, nats]
 branch: p6/P6-T037-treasury-split-sweeps-reserve
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/16-configuration-and-safety-model.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ A daily treasury job keeps working floats per sleeve, sweeps realised profit abo
 
 ## Requirements
 
-- Daily Prefect flow (after EOD reconciliation): compute realised profit per sleeve from the journal; amount above float → sweep proposal.
+- Daily scheduled job in `mt-treasury` (after EOD reconciliation): compute realised profit per sleeve from the journal; amount above float → sweep proposal.
 - Sweep path: venue/hot → stables → vault address (allow-listed destination only); exchange withdrawals are **manual tasks** (keys have withdrawals disabled).
 - Concentration: per stablecoin-issuer cap (default ≤ 50% of stables in any one issuer, a setting proposed for 16 §2.7) and the venue cap read from the L1 risk policy (default ≤ 25% of total equity per venue, 16 §2.1; one value everywhere); breaches → rebalance proposal + alert.
 - Reserve check: reserve % of portfolio in stables/AUD kept within band; below min → stop new earn entries and propose top-up.
@@ -57,7 +57,7 @@ A daily treasury job keeps working floats per sleeve, sweeps realised profit abo
 
 ## ToDo
 
-- [ ] `mt_treasury.sweeps` flow + proposals.
+- [ ] `mt_treasury::sweeps` job (`crates/mt-treasury/src/sweeps/`) + proposals.
 - [ ] Concentration + reserve monitors publishing `treasury.*` events.
 - [ ] Journal tagging integration.
 - [ ] Tests; docs.
@@ -65,6 +65,7 @@ A daily treasury job keeps working floats per sleeve, sweeps realised profit abo
 ## Verification
 
 ### Tests
+- `cargo test -p mt-treasury sweeps` and `cargo clippy`.
 - Unit: profit-above-float calc; concentration breach detection; reserve band logic.
 - Integration: fixture day → expected sweep proposals and tasks.
 
@@ -74,7 +75,7 @@ A daily treasury job keeps working floats per sleeve, sweeps realised profit abo
 - Given the reserve falls to 18%, then earn entries are blocked until restored.
 
 ### Stress / failure injection
-- Run the flow over 90 days of fixture fills; proposals deterministic and journal tags complete.
+- Run the job over 90 days of fixture fills; proposals deterministic and journal tags complete.
 
 ## Acceptance criteria
 
@@ -90,7 +91,7 @@ A daily treasury job keeps working floats per sleeve, sweeps realised profit abo
 
 - Do NOT enable withdrawals on exchange keys to automate sweeps.
 - Do NOT sweep to any non-allow-listed address.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT touch live money or live keys; keys stay trade-only, IP-locked, withdrawals disabled (live is gated to P7).
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
@@ -112,3 +113,4 @@ A daily treasury job keeps working floats per sleeve, sweeps realised profit abo
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (venue cap from L1 risk policy 25% (17 §B P6-B008); issuer cap as a setting; cross-phase deps P5-T028/P5-T022/P3-T018; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (sweeps in the Rust `mt-treasury` crate as a scheduled job (no Prefect); tools cargo)

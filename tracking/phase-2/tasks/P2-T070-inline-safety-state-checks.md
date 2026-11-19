@@ -127,3 +127,4 @@ review_result: ""
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.39: R2.58, R2.16)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])

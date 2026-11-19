@@ -104,3 +104,4 @@ You set the first bot's **starting live allocation** in its strategy settings (d
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (starting allocation per bot default A$2,000 (16 §2.5, 17 §E); stress replay (P7-T069) and live key audit before funding)
 - 2026-11-19: Now also waits on the shift (P7-T073), the real worm_owner ceremony (P0-T013) and your login (P0-T062).
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (keeps USER deps (funding is real money; P0-T013/P0-T062 are your credentials); go-live pack, YubiKey and shift come via P7-T070/P7-T073)

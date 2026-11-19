@@ -121,3 +121,4 @@ A bot = one pinned strategy version × market scope (single instrument, explicit
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (bot is L4 (proposals, tighten C1/loosen C3, never above parents), on_system_failure + auto_resume per bot, short code for client IDs, netting-account rule)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats])

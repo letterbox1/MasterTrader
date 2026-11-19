@@ -102,3 +102,4 @@ Provisioned Grafana dashboards show risk state, ladder rung, kill and dead-man s
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (three-layer dead-man panels, two-stage drawdown and safety-state panels/alerts, alert fan-out per 17 §D)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording, `infra/` paths, CI line; `ops/` → `infra/grafana/`)

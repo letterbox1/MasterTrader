@@ -25,7 +25,7 @@ doc_sync: [docs/research/decision-models-system-one.md, docs/roadmap/phase-6-ai-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ The free external accesses only you can obtain are in place: a **Tally** free AP
 ## ToDo
 
 - [ ] Create a Tally account → Settings → API → create key; `sops ~/.config/mastertrader/secrets.enc.yaml` → add `TALLY_API_KEY`.
-- [ ] Follow the FinMMEval task page (arXiv 2602.10886) to obtain the Buy/Hold/Sell data; save it under `data/external/finmmeval/` on the host (git-ignored) and write its licence text to `data/external/finmmeval/LICENCE.txt`.
+- [ ] Follow the FinMMEval task page (arXiv 2602.10886) to obtain the Buy/Hold/Sell data; save it under `data/external/finmmeval/` on the workstation (git-ignored) and write its licence text to `data/external/finmmeval/LICENCE.txt`.
 - [ ] Note here when both are done (or that you declined either), so P6-T059 and P6-T070 know what to run.
 
 ## Verification
@@ -72,7 +72,7 @@ The free external accesses only you can obtain are in place: a **Tally** free AP
 ## Acceptance criteria
 
 - [ ] Tally key present in sops (verified by `sops -d` key listing, value not printed).
-- [ ] FinMMEval data on the host with its licence file, or a written note that access was refused.
+- [ ] FinMMEval data on the workstation with its licence file, or a written note that access was refused.
 - [ ] Any decline recorded, so the dependants skip that part.
 
 ## Exceptions & edge cases
@@ -102,3 +102,4 @@ The free external accesses only you can obtain are in place: a **Tally** free AP
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Kev/licence (U) check moved to agent task P6-T068 per 17 §E; Tally key as TALLY_API_KEY in the sops file outside the repo; feeds live check P6-T070 and P6-T059)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation instead of host; stays USER: Tally key and FinMMEval access are account actions only you can do)

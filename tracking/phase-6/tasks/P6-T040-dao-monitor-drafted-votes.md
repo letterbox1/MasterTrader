@@ -15,17 +15,17 @@ requirements: [R6.23]
 roadmap_todos: [T6.28]
 modules: [M22, M19]
 dashboards: [D18, D13]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [snapshot-hub, postgres, prefect]
+services: [snapshot-hub, supabase-postgres]
 branch: p6/P6-T040-dao-monitor-drafted-votes
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Snapshot (GraphQL, keyless 100 req/min) and Tally (free key) are polled for prop
 
 ## ToDo
 
-- [ ] Snapshot + Tally clients with quota tracker.
+- [ ] Snapshot + Tally clients with quota tracker in `crates/mt-treasury/src/dao/` (scheduled poll job).
 - [ ] Impact classifier.
 - [ ] Task creation + digest entry.
 - [ ] Tests; docs.
@@ -63,6 +63,7 @@ Snapshot (GraphQL, keyless 100 req/min) and Tally (free key) are polled for prop
 ## Verification
 
 ### Tests
+- `cargo test -p mt-treasury dao` and `cargo clippy` (recorded Snapshot/Tally fixtures, no key needed).
 - Unit: parsers on recorded responses; impact rules.
 - Integration: new oracle-change proposal → one task.
 
@@ -102,3 +103,4 @@ Snapshot (GraphQL, keyless 100 req/min) and Tally (free key) are polled for prop
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: no dependency on the Tally key (live check P6-T070); cross-phase dep P5-T029; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (DAO monitor in the Rust `mt-treasury` crate (keyless fixtures; scheduled job, no Prefect); tools cargo)

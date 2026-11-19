@@ -18,14 +18,14 @@ dashboards: [D03, D05]
 tools: [git, uv]
 mcp: []
 env: []
-services: [FP Markets MT5 or cTrader demo, mt5-bridge (MT5 route), postgres, nats]
+services: [FP Markets MT5 or cTrader demo, mt5-bridge (MT5 route), supabase-postgres, nats]
 branch: p7/P7-T051-verify-mt5-ctrader-paper-parity
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (demo runs for the adapters happen here (build first, keys last); fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

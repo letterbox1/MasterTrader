@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D09-agents.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- `pnpm test` and `pnpm playwright` (viewport matrix).
 - Playwright: start analysis → run appears → detail shows stages and provenance.
 - Viewport matrix 240 → 2560 px (DESIGN §6.8) overflow/overlap checks.
 - Component tests for unsourced-number flag.
@@ -90,8 +91,8 @@ review_result: ""
 
 ## Cardinal rules (do NOT)
 
-- Do NOT call services directly from the UI; only `mt_api`.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT call services directly from the UI; only `mt-api`.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -110,3 +111,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (signal card shows 03 M8 fields; cross-phase deps P0-T048/P0-T049; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (web verification via `pnpm test` / `pnpm playwright`)

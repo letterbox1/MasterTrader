@@ -105,3 +105,4 @@ A consolidated `crates/mt-risk/tests/golden/` suite (sizing, limits, sleeves/net
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (goldens for two-stage drawdowns, layering strictest-wins and 16 defaults; safety-state goldens joined from P2-T076)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; goldens in `crates/mt-risk/tests/golden/`, proptest, cargo-mutants; binding parity (P2-T202); depends_on + P2-T202; tools [uv] → [cargo, uv])

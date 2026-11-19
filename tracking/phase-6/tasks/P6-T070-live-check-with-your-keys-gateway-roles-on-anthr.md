@@ -18,14 +18,14 @@ dashboards: [D09, D10]
 tools: [uv, docker, sops, curl]
 mcp: []
 env: [ANTHROPIC_API_KEY, MT_CUSTOM_LLM_BASE_URL, MT_CUSTOM_LLM_API_KEY, TALLY_API_KEY]
-services: [anthropic-api, custom-llm-endpoint, tally-api, litellm, llm-local, agents, postgres]
+services: [anthropic-api, custom-llm-endpoint, tally-api, litellm, llm-local, agents, supabase-postgres]
 branch: p6/P6-T070-live-check-with-your-keys-gateway-roles-on-anthr
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -114,3 +114,4 @@ The last, keyed step for the Phase 6 integrations that were built and tested key
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created (build first, keys last: live LLM roles and Tally split out of P6-T002/P6-T040/P6-T053 per 17 §E)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (keeps USER deps P0-T007 and P6-T002 (your keys: live check, build first, keys last); P6-T001 is now an agent seed)

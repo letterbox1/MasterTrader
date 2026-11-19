@@ -121,3 +121,4 @@ When our whole runtime host (the workstation until the P7 shift) or its internet
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.36: R2.56)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])

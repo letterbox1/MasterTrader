@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-l
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ Every AU venue you trade on has your own vault/warm withdrawal addresses pre-reg
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (dep on P3-T012 ops.wallets instead of P5 per 17 §B/§D P7-B011; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER)

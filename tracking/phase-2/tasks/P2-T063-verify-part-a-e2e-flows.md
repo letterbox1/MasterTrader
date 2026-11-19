@@ -102,3 +102,4 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless scripted run (fake Telegram, test TOTP), safety-state checks in F2, L0 loosen in F5, on_system_failure in F6)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; scenario script → `tests/scenarios/`; tools [uv, docker, pnpm] → [cargo, uv, docker, pnpm]; services [nats, postgres, grafana] → [nats, supabase-postgres, grafana, supabase-auth])

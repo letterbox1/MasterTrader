@@ -18,14 +18,14 @@ dashboards: [D06, D16]
 tools: [git, uv]
 mcp: []
 env: []
-services: [postgres, mt-api]
+services: [supabase-postgres, mt-api]
 branch: p7/P7-T046-verify-registry-recheck-before-funding
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -82,7 +82,7 @@ Tests and a recorded check prove that funding confirmation, capital steps and li
 - Do NOT stub the registry in the recorded pre-funding check.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 
 ## Doc sync on completion
 
@@ -99,3 +99,4 @@ Tests and a recorded check prove that funding confirmation, capital steps and li
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tools/mcp/env/services; 90-day re-check per 12 §2 unchanged)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

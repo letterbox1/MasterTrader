@@ -105,3 +105,4 @@ At the end of the phase the agent switches the validated P1 candidates (trend on
 
 - 2026-11-19: Converted from USER to agent (17 §G): paper has no money at stake, so it starts automatically after validation; live modes still need your approval (P7-T070, P7-T058).
 - 2026-11-19: No longer waits on P2-T066 (which waits on testnet keys): the agent creates the paper bots itself, so the ≥ 8-week paper clock starts as soon as the candidates validate.
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stack wording only (`mt-api`); already converted)

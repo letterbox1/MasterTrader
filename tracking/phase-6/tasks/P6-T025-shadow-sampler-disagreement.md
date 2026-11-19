@@ -15,17 +15,17 @@ requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21, M8]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, uv, python>=3.12, docker, supabase]
 mcp: []
 env: []
-services: [decision-svc, litellm, nats, postgres]
+services: [decision-svc, litellm, nats, supabase-postgres]
 branch: p6/P6-T025-shadow-sampler-disagreement
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 
 - [ ] Sampler hook in decision-svc (post-decision, non-blocking).
 - [ ] Shadow worker consuming a NATS queue.
-- [ ] Migration for `models.shadow_check`.
+- [ ] SQL migration (`supabase/migrations/`) for `models.shadow_check`.
 - [ ] Metrics + alert rule.
 - [ ] Tests; docs.
 
@@ -108,3 +108,4 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (shadow role budget default $0.30 (16 §2.10); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (migration in `supabase/migrations/`; tools supabase; services supabase-postgres)

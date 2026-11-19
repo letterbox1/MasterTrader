@@ -120,3 +120,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (bot modes paper/hitl/autonomous in context, signal time for decision deadline; cross-phase deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; Rust `MtStrategy` trait counterpart for deterministic strategies; dep P0-T071 (`mt_store` binding); depends_on + P0-T071; tools [uv] → [cargo, uv])

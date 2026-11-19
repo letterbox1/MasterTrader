@@ -109,3 +109,4 @@ Venue keys from the sops file reach only the services and modes that need them, 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build of wiring + audit (real-key run in P2-T071), separate deadman keys, rotation default 90 days)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; `mt keys audit` in Rust, nightly via `mt-monitor`; tools [uv, sops] → [cargo, sops])

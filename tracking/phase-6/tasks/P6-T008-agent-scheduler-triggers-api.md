@@ -15,17 +15,17 @@ requirements: [R6.02, R6.01]
 roadmap_todos: [T6.20]
 modules: [M8, M15]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, uv, python>=3.12, docker, cargo]
 mcp: []
 env: []
-services: [prefect, nats, postgres, mt-api]
+services: [prefect, nats, supabase-postgres, mt-api]
 branch: p6/P6-T008-agent-scheduler-triggers-api
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,13 +60,14 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 
 - [ ] Scheduler module `mt_agents.scheduler` (Prefect deployments + NATS consumer for triggers).
 - [ ] Trigger rules + debounce store (NATS KV `agent_debounce`).
-- [ ] `mt_api` command handler + queries + WS fan-out.
+- [ ] `mt-api` (Rust, axum) command handler + queries + WS fan-out.
 - [ ] Static check/test: `mt_agents` never subscribes to `md.*`.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api` for the command handler and queries; `uv run pytest` for the scheduler.
 - Unit: debounce, trigger rule matching, budget preflight rejection.
 - Integration: anomaly event → exactly one run; 20 duplicate events in 5 min → one run.
 - API tests: command levels enforced server-side (C1), idempotency key honoured.
@@ -93,7 +94,7 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 ## Cardinal rules (do NOT)
 
 - Do NOT subscribe agents to tick/quote/book streams.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -113,3 +114,4 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P0-T034/P0-T036; scheduler test is T6.67 (P6-T052); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`agents.run` command handler, queries and WS fan-out in Rust `mt-api`; scheduler stays Python; tools cargo)

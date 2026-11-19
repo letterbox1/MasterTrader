@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,13 +50,13 @@ The Windows VPS is hardened to the 07 §5.1 baseline (Tailscale-only, inbound de
 - Windows firewall: inbound deny-all except Tailscale interface → bridge port; no RDP or other port open to the internet; Defender on; automatic security updates; auto-login disabled; local admin password in sops (not stored on the VPS).
 - Secrets on the VPS: **only** the MT5 trade-only login (and the bridge's own token); nothing else from the sops file (07 §5.1). Where FP Markets supports IP allow-listing, only the VPS's static IP is allow-listed.
 - Bridge token/mTLS cert from sops, delivered once via Tailscale SSH/SCP; stored with Windows DPAPI.
-- Logs → Vector agent (pinned) → Loki on the host; heartbeat visible in D16 Services.
+- Logs → Vector agent (pinned) → Loki on the runtime host; heartbeat visible in D16 Services.
 - Windows Update: active hours set to cover trading sessions; reboot window weekends only.
 - Rebuild procedure documented and timed (target < 60 min).
 
 ## ToDo
 
-- [ ] Install bridge service, Vector agent, Tailscale ACL (only `engine` host may reach bridge port).
+- [ ] Install bridge service, Vector agent, Tailscale ACL (only the runtime host running `engine` may reach the bridge port).
 - [ ] Firewall and update policy.
 - [ ] D16 service entry for `mt5-bridge`.
 - [ ] Port-scan and auth tests from outside and inside the tailnet.
@@ -78,7 +78,7 @@ The Windows VPS is hardened to the 07 §5.1 baseline (Tailscale-only, inbound de
 
 ## Acceptance criteria
 
-- [ ] Bridge reachable only via Tailscale ACL from the host.
+- [ ] Bridge reachable only via Tailscale ACL from the runtime host.
 - [ ] Only the MT5 trade-only login and the bridge token on the VPS; demo round-trip passes.
 - [ ] Logs/heartbeat in Loki/D16.
 - [ ] Rebuild procedure written and timed.
@@ -110,3 +110,4 @@ The Windows VPS is hardened to the 07 §5.1 baseline (Tailscale-only, inbound de
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (T7.43: VPS hardened to 07 §5.1 / 17 §D P7-B010 (Tailscale-only, only the MT5 trade-only login); demo round-trip moved here from P7-T034)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host (Loki and Tailscale ACL point at the runtime host))

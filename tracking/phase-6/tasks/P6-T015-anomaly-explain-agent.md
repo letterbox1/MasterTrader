@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/mobile-and-telegram.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -113,3 +113,4 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (anomaly.explain command (C1, 02 §7.2); explain budget default 16 §2.10; keyless; cross-phase deps P1-T045/P0-T034; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; alerts reach Telegram through the P1-T045 fan-out and the Rust `mt-telegram-bot`)

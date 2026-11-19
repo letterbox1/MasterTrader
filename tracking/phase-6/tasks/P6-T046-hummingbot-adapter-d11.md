@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D11-market-making.md, third
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 ## Requirements
 
 - Pinned image/commit; telemetry disabled check and broker-ID stripping check both block start if failing.
-- Adapter: Hummingbot API ↔ `mt_engine` venue abstraction; every order intent passes M11 (exposure counts toward global limits).
+- Adapter (Python, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)): Hummingbot API ↔ `mt-engine` venue abstraction, through `mt-api`/`mt-risk` like every other client; every order intent passes M11 (exposure counts toward global limits).
 - Kill switch → all bots stop within 1 s; `mm.bot.cancel_all` (C1).
 - Commands `mm.bot.create|start|stop|update|cancel_all` with D11 levels: create/start paper C1; live start C3 (quotes on its own, like `autonomous`); edit live C2, risk-increasing C3; stop and cancel_all C1. Live is out of scope in P6.
 - Paper P&L decomposition (spread capture, inventory, fees/rebates, funding) vs HLP APR on the same notional, weekly.
@@ -86,11 +86,12 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 ## Exceptions & edge cases
 
 - Venue not `allowed` in registry → no bot can target it.
+- Optional module, **off by default** (P6-T003 records `modules.*.enabled: false`). Build it only once you enable it in settings; while it stays off at phase exit, P6-T066 cancels this item with reason "optional module off by default (P6-T003)" and it can be re-opened any time you enable it.
 
 ## Cardinal rules (do NOT)
 
 - Do NOT run live market making in P6.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT touch live money or live keys; keys stay trade-only, IP-locked, withdrawals disabled (live is gated to P7).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
@@ -112,3 +113,4 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (D11 levels incl. live start C3; cross-phase deps P2-T017/P2-T031; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Hummingbot adapter stays Python (18 §2.2) and reaches venues only through `mt-api`/`mt-risk`; depends on P6-T003 (agent default: off), not a human decision)

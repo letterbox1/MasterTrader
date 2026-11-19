@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-mode
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ You have reviewed and approved (C3) the first treasury policy and the protocol a
 
 ## Requirements
 
-- Review the prefilled defaults (reserve band 20–40%, per-protocol ≤ 20% of treasury, depeg 50 bps, HLP cap; 16 §2.7, 13 §5) and set floats per sleeve, per-chain and per-stablecoin caps. Tightening is free; anything looser than the defaults is C3, like the approval itself.
+- Review the defaults P6-T033 seeded (reserve band 20–40%, per-protocol ≤ 20% of treasury, depeg 50 bps, HLP cap, floats per sleeve, per-chain and per-stablecoin caps; 16 §2.7, 13 §5) and change any you want. Tightening is free; anything looser than the defaults is C3, like the approval itself.
 - Choose the initial allow-list (e.g. JitoSOL/mSOL/stETH, core Aave/Spark/Kamino markets, Pendle PTs) and which entries may auto-move (stablecoin lending only).
 - HLP: yes only if the venue registry says Hyperliquid is `allowed` for your residency; default cap ≤ 10% of stablecoins and ≤ 5% of total portfolio, whichever is smaller (16 §2.7); raising it is C3.
 
@@ -81,6 +81,7 @@ You have reviewed and approved (C3) the first treasury policy and the protocol a
 ## Exceptions & edge cases
 
 - You can tighten any time (C1); loosening later repeats C3.
+- Needed only before real-money treasury moves. No build or RUN task waits on it: fork/paper runs use the seeded policy ([17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)); the policy also appears in the go-live pack (P7-T070), so one approval can cover both.
 
 ## Cardinal rules (do NOT)
 
@@ -104,3 +105,4 @@ You have reviewed and approved (C3) the first treasury policy and the protocol a
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (HLP cap both bounds and 16 §2.7 defaults to review; dep P2-T035; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays USER (approval of real-money treasury moves); the values are seeded by P6-T033 and fork/paper work never waits on this; also shown in the go-live pack)

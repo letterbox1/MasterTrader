@@ -1,7 +1,7 @@
 ---
 id: P7-T036
 kind: task
-title: mt_engine MT5 execution and data adapter via the bridge
+title: mt-engine MT5 execution and data adapter via the bridge
 phase: 7
 type: BUILD
 status: backlog
@@ -15,17 +15,17 @@ requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M12, M16]
 dashboards: [D05]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt5-bridge (P7-T035), FP Markets MT5 demo]
+services: [supabase-postgres, nats, mt5-bridge (P7-T035), FP Markets MT5 demo]
 branch: p7/P7-T036-mt5-engine-adapter
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P7-T036 · mt_engine MT5 execution and data adapter via the bridge
+# P7-T036 · mt-engine MT5 execution and data adapter via the bridge
 
 ## Goal / expected outcome
 
-NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` talk to the MT5 bridge, so MasterTradingBot strategies run through M11, the journal, TCA and reconciliation exactly like other venues — paper (demo account) first.
+NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt-engine` talk to the MT5 bridge, so MasterTradingBot strategies run through M11, the journal, TCA and reconciliation exactly like other venues — paper (demo account) first.
 
 ## Context & references
 
@@ -57,7 +57,7 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` tal
 
 ## ToDo
 
-- [ ] `packages/mt_engine/adapters/mt5/` exec + data clients.
+- [ ] `crates/mt-engine/src/adapters/mt5/` exec + data clients (Rust, against Nautilus's adapter traits, 18 §2.1).
 - [ ] Symbol mapper + cost/swap ingestion.
 - [ ] Recon side adapter.
 - [ ] Tests (bridge fake + demo).
@@ -66,6 +66,7 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` tal
 ## Verification
 
 ### Tests
+- `cargo test -p mt-engine adapters::mt5` and `cargo clippy` (recorded bridge fixtures).
 - Unit: symbol mapping, order translation, deal parsing (fixtures from demo).
 - Integration (demo): full order lifecycle through M11; fill journalled; TCA computed; recon clean.
 
@@ -89,7 +90,7 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` tal
 
 - Do NOT route MT5 orders outside M11.
 - Do NOT trade live on MT5 until P7-T051 parity passes.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT use keys that are not trade-only, IP-locked and withdrawal-disabled; no live money before the P7 gates pass.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -101,10 +102,11 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt_engine` tal
 ## Branch & PR
 
 - Branch: `p7/P7-T036-mt5-engine-adapter`
-- PR title: `P7-T036: mt_engine MT5 execution and data adapter via the bridge`
+- PR title: `P7-T036: mt-engine MT5 execution and data adapter via the bridge`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P7-T036` run
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (deps on the deployed bridge (P7-T035) and P2-T021/T027; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (MT5 adapter in Rust `crates/mt-engine/src/adapters/mt5/` against Nautilus adapter traits; tools cargo)

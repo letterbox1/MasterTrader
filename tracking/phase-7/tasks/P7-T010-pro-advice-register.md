@@ -15,17 +15,17 @@ requirements: [R7.13]
 roadmap_todos: [T7.07]
 modules: [M19, M11]
 dashboards: [D13, D06, D15]
-tools: [git, uv, pnpm]
+tools: [git, cargo, uv, pnpm, supabase]
 mcp: []
 env: []
-services: [postgres, prefect-server, mt-api]
+services: [supabase-postgres, prefect-server, mt-api]
 branch: p7/P7-T010-pro-advice-register
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/ui/dashboards/D13-tasks-curation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,9 +56,9 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 
 ## ToDo
 
-- [ ] Alembic migration: `curation.pro_advice_link` + WORM grants/triggers (reuse the P0 WORM helper).
+- [ ] SQL migration in `supabase/migrations/`: `curation.pro_advice_link` + WORM grants/triggers (reuse the P0 WORM helper).
 - [ ] Seed data module `packages/mt_curation/seeds/pro_advice.py` with the 9 items and default links (Hyperliquid perps/HLP, OKX AU perps, FP Markets CFDs).
-- [ ] Registry guard in `packages/mt_api/commands/venue.py`: reject `allowed` while linked advice not `answered` (problem+json `pending_advice`).
+- [ ] Registry guard in `crates/mt-api/src/commands/venue.rs`: reject `allowed` while linked advice not `answered` (problem+json `pending_advice`).
 - [ ] Prefect flow `pro_advice_revisit` (daily).
 - [ ] D13 task detail: state selector (answered/deferred), reason, revisit date, linked products list.
 - [ ] Tests (below); update docs.
@@ -66,6 +66,7 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api` (registry guard); `supabase test db` (WORM grants on `curation.pro_advice_link`); `uv run pytest` (seed module).
 - Unit: state machine open → answered/deferred → open (revisit); deferred without reason rejected.
 - Integration: linked product cannot be set `allowed` (command returns 409 `pending_advice`); unlinked product can (C3 path).
 - Migration test: seed is idempotent (run twice → 9 items).
@@ -93,7 +94,7 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 
 - Do NOT store advice documents in git; only encrypted-store references.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -113,3 +114,4 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (curation.task from P3 not P5 per P7-B011; cross-phase deps; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (registry guard in Rust `mt-api`; SQL migration in `supabase/`; seeds stay Python (`mt_curation`); tools cargo/supabase)

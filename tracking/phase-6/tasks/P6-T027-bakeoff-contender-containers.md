@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, docker, sops]
 mcp: []
 env: []
-services: [gpu, huggingface-hub]
+services: [huggingface-hub]
 branch: p6/P6-T027-bakeoff-contender-containers
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,6 +56,7 @@ Every bake-off contender runs locally, digest-pinned, bound to `127.0.0.1`/inter
 - GPU sharing: contenders run one at a time via the harness (VRAM 16–24 GB); a lock prevents co-scheduling with production vLLM beyond capacity.
 - Licence entries in `third_party/LICENSES.md` (Laya Apache-2.0, Clef weights Apache-2.0, SemIf MIT, Kev per P6-T068).
 - Telemetry grep on each image/codebase.
+- `models.gpu_profile: auto`: with no GPU, contenders run on CPU (llama.cpp / ONNX) on a smaller evaluation sample and the bake-off report says so; the GPU lock applies only when a GPU is present.
 
 ## ToDo
 
@@ -111,3 +112,4 @@ Every bake-off contender runs locally, digest-pinned, bound to `127.0.0.1`/inter
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Kev per 17 §D P6-B003 via agent check P6-T068 (not the USER item); R6.N2; cross-phase deps P0-T020/T022; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (contenders run per `models.gpu_profile: auto` (CPU sample when no GPU); gpu service removed)

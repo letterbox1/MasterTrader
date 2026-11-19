@@ -15,17 +15,17 @@ requirements: [R7.08]
 roadmap_todos: [T7.06]
 modules: [M11, M0, M15]
 dashboards: [D03, D01]
-tools: [git, uv, pnpm, node>=20]
+tools: [git, cargo, pnpm, node>=20]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, telegram bot api]
+services: [supabase-postgres, nats, mt-api, telegram bot api]
 branch: p7/P7-T028-bot-live-autonomous-promotion
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Every bot starts live in `hitl` (R7.08); it can move to `autonomous` only throug
 
 ## ToDo
 
-- [ ] Eligibility service `packages/mt_strategy/bots/eligibility.py`.
+- [ ] Eligibility check in `crates/mt-risk/src/eligibility/`, called by `mt-api` at request and at apply time.
 - [ ] Wire into `bot.set_mode` C3 path (check at request and at apply).
 - [ ] Default escalation rules for newly autonomous bots.
 - [ ] D03 Bots tab eligibility checklist; Telegram C3 message shows the checklist summary.
@@ -64,6 +64,7 @@ Every bot starts live in `hitl` (R7.08); it can move to `autonomous` only throug
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk eligibility -p mt-api` and `cargo clippy`; `pnpm test` (D03 Bots tab).
 - Integration: each failing condition blocks with its reason; all passing → applies after cool-down; condition breaks during cool-down → not applied.
 - Integration: two bots on one strategy (BTC autonomous, gold HITL) stay isolated.
 - Playwright: Bots tab eligibility list at §6.8 viewports.
@@ -93,7 +94,7 @@ Every bot starts live in `hitl` (R7.08); it can move to `autonomous` only throug
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -112,3 +113,4 @@ Every bot starts live in `hitl` (R7.08); it can move to `autonomous` only throug
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (modes paper/hitl/autonomous per bot (17 §B); eligibility = gate profile incl. paper/HITL period (16 §2.4); the 4-clean-weeks rule is now an optional tightening; dep P2-T037)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (eligibility check moved to Rust `crates/mt-risk/src/eligibility/` (enforced by `mt-api`); tools cargo)

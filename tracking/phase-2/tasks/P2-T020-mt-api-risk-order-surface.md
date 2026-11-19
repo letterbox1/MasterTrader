@@ -112,3 +112,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (risk.sleeve.restart C3 replaces resume, effective-limit and safety-state fields, flatten-and-halt form, cross-phase deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; Supabase JWT + `aal2` for commands (18 §4.6); tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats, supabase-auth])

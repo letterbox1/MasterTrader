@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [postgres, mlflow, nats, decision-svc]
+services: [supabase-postgres, mlflow, nats, decision-svc]
 branch: p6/P6-T030-model-promotion-gates-veto
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,11 +50,12 @@ Models move candidate → shadow → production only through `models.promote` wi
 
 ## Requirements
 
-- Gate checks (defaults from 16 §2.10, read from settings): coverage at ≥ 0.75 precision, ECE ≤ 0.05, Brier ≤ baseline, worst walk-forward fold not worse than the frozen baseline (current production or SemIf), latency p95 within SLO (< 50 ms GPU), flip rate ≤ 0.1%, dataset provenance clean, calibration report present, post-cutoff rule (P6-T017) for LLM-derived labels.
+- Gate checks (defaults from 16 §2.10, read from settings): coverage at ≥ 0.75 precision, ECE ≤ 0.05, Brier ≤ baseline, worst walk-forward fold not worse than the frozen baseline (current production or SemIf), latency p95 within SLO (< 50 ms on GPU when present; CPU profile per R6.11), flip rate ≤ 0.1%, dataset provenance clean, calibration report present, post-cutoff rule (P6-T017) for LLM-derived labels.
 - Shadow stage: default ≥ 14 days in shadow (scored, never acting) meeting the thresholds above before production (16 §2.10); the teacher stays in shadow after promotion.
 - Veto enablement is a separate gated flag per question requiring precision ≥ the veto target (default 0.90, 16 §2.10) on holdout and in shadow.
 - `models.promote` / `models.rollback` audited; registry status history kept (append-only).
 - Tier-A candidates from distillation use the same command with P2's tier-A gate set.
+- **Tier A on the engine path:** when a tier-A candidate is promoted for in-engine use, it is exported to ONNX and loaded in-process by the Rust runtime (`ort`) in `mt-engine` ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); promotion requires a parity test (Python reference vs `ort` outputs equal within 1e-6 on a fixed input set). Training stays Python.
 
 ## ToDo
 
@@ -67,6 +68,7 @@ Models move candidate → shadow → production only through `models.promote` wi
 ## Verification
 
 ### Tests
+- Parity: `cargo test -p mt-engine tier_a_parity` against the Python reference outputs for a promoted tier-A model.
 - Unit: each gate pass/fail; level selection C2 vs C3.
 - Integration: promote → decision-svc routes to new model; rollback → previous within 5 s.
 
@@ -113,3 +115,4 @@ Models move candidate → shadow → production only through `models.promote` wi
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (16 §2.10 gate defaults incl. ≥ 14 days shadow and veto 0.90; C3 for models used by autonomous bots (02 §7.2, 17 §B modes); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tier-A models promoted to the engine path are served by Rust ONNX (`ort`) in `mt-engine` with a parity test (18 §2.2); latency gate per active profile)

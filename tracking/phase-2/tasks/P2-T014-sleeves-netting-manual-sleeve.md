@@ -115,3 +115,4 @@ Capital is split into sleeves, each with its own capital, risk budget, limits an
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (sleeves are L3 with two-stage drawdowns, names from policy, restart C3, drawdown basis; mode per bot)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats])

@@ -15,7 +15,7 @@ requirements: [R7.12, R7.08]
 roadmap_todos: [T7.25]
 modules: [M15]
 dashboards: [D01, D05]
-tools: [git, pnpm, node>=20, uv]
+tools: [git, pnpm, node>=20, cargo]
 mcp: []
 env: []
 services: [mt-api, telegram bot api]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/mobile-and-telegram.md, docs/ui/components.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,6 +67,7 @@ Approving a live HITL order or a C3 change from a cold phone open takes ≤ 3 ta
 ## Verification
 
 ### Tests
+- `pnpm test` and `pnpm playwright`; `cargo test -p mt-telegram-bot`.
 - Playwright: tap counts on 375×667, 280×653, 568×320 from cold start (service worker cached).
 - Integration: approval after TTL rejected server-side even if the client shows time left (clock skew).
 - Unit: batch toggles produce one approval per selected line.
@@ -95,7 +96,7 @@ Approving a live HITL order or a C3 change from a cold phone open takes ≤ 3 ta
 - Do NOT include Telegram message text in any model context.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT put Telegram text into any model, RAG index or training set (12 §4–5).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -114,3 +115,4 @@ Approving a live HITL order or a C3 change from a cold phone open takes ≤ 3 ta
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (TTLs and large-order TOTP threshold per 16 §2.3; deps P2-T149/P2-T039)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Telegram side in Rust `mt-telegram-bot`; tools cargo)

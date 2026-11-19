@@ -15,17 +15,17 @@ requirements: [R6.04]
 roadmap_todos: [T6.21]
 modules: [M9, M8]
 dashboards: [D10, D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, uv, python>=3.12, docker, cargo]
 mcp: []
 env: []
-services: [hindsight, postgres, mt-api]
+services: [hindsight, supabase-postgres, mt-api]
 branch: p6/P6-T012-memory-client-banks-pit-recall
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,12 +64,13 @@ review_result: ""
 - [ ] Implement the client (`packages/mt_memory/mt_memory/agent_memory.py`) on Hindsight's HTTP API.
 - [ ] PIT filter on `observed_at`/`ingested_at` + derived-memory lineage (latest source time); frozen-snapshot export and `off` mode for the lab.
 - [ ] Bind `recall_memory` into the P6-T006 tool belt.
-- [ ] `mt_api` queries + `memory.delete` command + tombstones.
+- [ ] `mt-api` (Rust) queries + `memory.delete` command + tombstones.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api` (memory queries, `memory.delete`); `uv run pytest` for the client.
 - Unit: PIT filter with synthetic timestamps, lineage exclusion of consolidated memories.
 - Integration (compose): retain at t1, t2, t3; recall with as_of=t2 returns only t1/t2 items.
 - API tests: delete is C1, audited, tombstoned.
@@ -100,7 +101,7 @@ review_result: ""
 - Do NOT recall without `as_of` inside backtests or the lab.
 - Do NOT retain secrets, TFNs or personal identifiers.
 - Do NOT let Telegram text (or any `model_input_ok = false` / `train_ok = false` row) reach a model, prompt, RAG index, memory bank or training set (12 §4–5).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -120,3 +121,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (PIT per 17 §A P6-B016: observed_at/ingested_at, derived memories carry latest source time, frozen-snapshot/off backtest modes; dep P0-T034; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (memory queries and `memory.delete` in Rust `mt-api`; client stays Python; tools cargo)

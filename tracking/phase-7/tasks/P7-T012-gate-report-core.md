@@ -18,14 +18,14 @@ dashboards: [D03, D04]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, mlflow, backtest-worker]
+services: [supabase-postgres, mlflow, backtest-worker]
 branch: p7/P7-T012-gate-report-core
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -93,7 +93,7 @@ review_result: ""
 
 - Do NOT compute gates on non-PIT data or screening results.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 
@@ -113,3 +113,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (DSR ≥ 0.95, walk-forward ≥ 60% and worst fold, regime_v1, safety drills, gate profile in the layered policy (16 §2.4); deps on the P2 harness)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; gate evaluators stay Python (`mt_lab`, 18 §2.2))

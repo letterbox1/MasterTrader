@@ -15,17 +15,17 @@ requirements: [R6.20, R6.22, R6.24]
 roadmap_todos: [T6.28]
 modules: [M22, M11]
 dashboards: [D18]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p6/P6-T033-treasury-policy-allow-list
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A versioned treasury policy (floats per sleeve, reserve 20–40%, caps per protocol/chain/stablecoin, HLP cap, auto-move scope) and a protocol allow-list live in `mt_treasury`, change only via audited commands (tighten C1, loosen/add protocol C3) and are read by M11 for every treasury intent.
+A versioned treasury policy (floats per sleeve, reserve 20–40%, caps per protocol/chain/stablecoin, HLP cap, auto-move scope) and a protocol allow-list live in the Rust `mt-treasury` crate, change only via audited commands (tighten C1, loosen/add protocol C3) and are read by M11 for every treasury intent.
 
 ## Context & references
 
@@ -58,16 +58,17 @@ A versioned treasury policy (floats per sleeve, reserve 20–40%, caps per proto
 
 ## ToDo
 
-- [ ] Migration adding `treasury.policy` and `treasury.allow_list` to the `treasury` schema created in P0 (P0-T024, 17 §B); wallets come from `ops.wallets`.
-- [ ] Policy model + diff classifier.
+- [ ] SQL migration (`supabase/migrations/`) adding `treasury.policy` and `treasury.allow_list` to the `treasury` schema created in P0 (P0-T024, 17 §B); wallets come from `ops.wallets`.
+- [ ] Policy model + diff classifier in `crates/mt-treasury/src/policy/`.
 - [ ] Commands + KV publish.
 - [ ] M11 hook: `treasury.intent` checks against policy.
-- [ ] Seed a draft policy for P6-T034 approval.
+- [ ] Seed the policy and allow-list defaults (13 §4–5, 16 §2.7) through `mt-api` with source `seed` (idempotent; never overwrites your edits). Fork/paper runs use them; your C3 approval (P6-T034) is needed only before real-money treasury moves, and the values appear in the go-live pack (P7-T070).
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-treasury policy` and `cargo clippy`; `supabase test db` (WORM on the change rows).
 - Unit: diff classifier (raising any cap = loosen); hard-ceiling rejection.
 - Integration: loosen requires Telegram + TOTP + cool-down (P0/P2 C3 flow).
 - WORM tests on change rows.
@@ -95,7 +96,7 @@ A versioned treasury policy (floats per sleeve, reserve 20–40%, caps per proto
 - Do NOT add protocols automatically (adding is a manual C3 decision).
 - Do NOT loosen anything (risk, LLM budgets, treasury policy, allow-list, autonomous mode, mandates) without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -115,3 +116,4 @@ A versioned treasury policy (floats per sleeve, reserve 20–40%, caps per proto
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (HLP cap both bounds (17 §B P6-B013), venue cap from L1 25% (P6-B008), treasury schema from P0 (P6-B005), L0 ceilings in settings (17 §E), defaults 16 §2.7; cross-phase deps P0-T024/P2-T010/T011/T017/T019; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (treasury policy in the Rust `mt-treasury` crate; SQL migration in `supabase/`; policy and allow-list defaults seeded (source `seed`) instead of waiting for approval; tools cargo/supabase)

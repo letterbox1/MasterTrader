@@ -18,14 +18,14 @@ dashboards: [D10, D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [litellm, llm-local, postgres, prometheus]
+services: [litellm, llm-local, supabase-postgres, prometheus]
 branch: p6/P6-T009-llm-budgets-local-fallback
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -114,3 +114,4 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.32; 16 §2.10 defaults incl. shadow, month-to-date US$40 cap, precedence; spend events; keyless vs fake provider; deps P0-T042/P0-T044/P2-T019 (no longer P6-T005); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; gateway budget logic stays with LiteLLM (Python))

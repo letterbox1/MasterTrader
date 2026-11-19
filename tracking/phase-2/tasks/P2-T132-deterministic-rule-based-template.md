@@ -107,3 +107,4 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (template slot and base-class deps explicit)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)

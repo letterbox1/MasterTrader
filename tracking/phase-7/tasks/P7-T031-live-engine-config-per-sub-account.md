@@ -15,17 +15,17 @@ requirements: [R7.04]
 roadmap_todos: [T7.40]
 modules: [M12, M17, M15]
 dashboards: [D05, D16]
-tools: [git, docker, sops, uv]
+tools: [git, docker, sops, cargo]
 mcp: []
 env: []
-services: [postgres, nats, alertmanager, telegram bot api, ntfy]
+services: [supabase-postgres, nats, alertmanager, telegram bot api, ntfy]
 branch: p7/P7-T031-live-engine-config-per-sub-account
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ The `engine` container can run live trading per sub-account with its own config 
 
 ## ToDo
 
-- [ ] Config schema + validator in `mt_engine` (pydantic).
+- [ ] Config schema + validator in `mt-engine` (serde, validated at load).
 - [ ] Compose overrides for live; sops → tmpfs mapping per sub-account.
 - [ ] Alertmanager routes + Telegram/ntfy/email templates for live incidents.
 - [ ] Start-up guard (key audit + preflight).
@@ -65,6 +65,7 @@ The `engine` container can run live trading per sub-account with its own config 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-engine config` and `cargo clippy`.
 - Unit: validator rejects shared sub-account between paper and live; missing secret ref.
 - Integration: engine start with a failing key audit → sub-account not started, critical alert.
 - Integration: synthetic critical alert during quiet hours reaches all three channels.
@@ -110,3 +111,4 @@ The `engine` container can run live trading per sub-account with its own config 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: keyless with testnet sub-accounts, live entries verified in P7-T047; deadman sidecar keys (16 §3.1); exit-node egress; deps P1-T045/P2-T021)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (live engine config validated in Rust `mt-engine` (serde) instead of pydantic; tools cargo)

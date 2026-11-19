@@ -15,7 +15,7 @@ requirements: [R7.12]
 roadmap_todos: [T7.25]
 modules: [M15]
 dashboards: [D01, D13]
-tools: [git, pnpm, node>=20, uv]
+tools: [git, pnpm, node>=20, cargo]
 mcp: []
 env: []
 services: [mt-api, telegram bot api]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/mobile-and-telegram.md, docs/roadmap/phase-7-prove-and-go-liv
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,13 +54,14 @@ An optional Telegram Mini App reuses the web routes for Cockpit, Approvals and T
 
 ## ToDo
 
-- [ ] `POST /auth/telegram-miniapp` init-data exchange.
+- [ ] `POST /auth/telegram-miniapp` init-data exchange in `mt-api` (Rust): verify the `initData` signature for your one linked Telegram user, ask for a TOTP code checked against the Supabase MFA factor before C3, issue a short-lived `aal2` command session ([18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth)).
 - [ ] Mini App route shell + Telegram theme mapping.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api auth::telegram_miniapp`; `pnpm test` and `pnpm playwright`.
 - Unit: init-data validation (valid, tampered hash, old auth_date, wrong user id).
 - Playwright: routes render inside a Telegram WebApp emulator viewport.
 
@@ -102,3 +103,4 @@ An optional Telegram Mini App reuses the web routes for Cockpit, Approvals and T
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tools/mcp/env/services only; no decision changes it)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Mini App auth in Rust `mt-api` (initData + TOTP against the Supabase MFA factor, short-lived aal2 session, 18 §4.6); tools cargo)

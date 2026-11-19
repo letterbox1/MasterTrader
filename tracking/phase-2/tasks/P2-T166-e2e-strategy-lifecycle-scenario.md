@@ -103,3 +103,4 @@ A Playwright + API end-to-end scenario of flow F7 through the UI: a strategy cre
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper start via mode ceiling + paper bot, waiver C2, lifecycle/engine/bot deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [pnpm, uv, playwright] → [pnpm, uv, cargo, playwright]; services [nats, postgres, mlflow] → [nats, supabase-postgres, mlflow])

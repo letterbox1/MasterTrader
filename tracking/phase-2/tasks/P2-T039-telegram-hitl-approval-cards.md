@@ -117,3 +117,4 @@ Each `risk.approval.request` from a hitl bot (or an escalated autonomous order) 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (large-order and TTL defaults from 16 §2.3, batched card as the only bulk approve; keyless (fake Bot API))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; TOTP checked against the Supabase MFA factor; tools [uv] → [cargo]; services [nats] → [nats, supabase-auth])

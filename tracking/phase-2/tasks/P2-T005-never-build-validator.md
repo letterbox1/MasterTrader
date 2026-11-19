@@ -111,3 +111,4 @@ The manifest validator rejects strategies on the 14 §3 X/Never list (sniping, l
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; generator link)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; rules in `mt-core`, Python AST + Rust `syn` checks; tools [uv] → [cargo, uv])

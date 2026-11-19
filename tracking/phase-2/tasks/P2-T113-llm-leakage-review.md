@@ -118,3 +118,4 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (leakage waiver is C2 (17 §D P2-B056), strategy-gen budget per 16 §2.10, cross-phase gateway/WORM deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; `mt-api` handler in Rust; SQL migration + pgTAP; tools [uv] → [uv, cargo, supabase]; services [litellm, postgres] → [litellm, supabase-postgres])

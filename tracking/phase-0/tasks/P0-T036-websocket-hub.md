@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T032, P0-T033]
 requirements: [R0.08]
 roadmap_todos: [T0.24]
-modules: [mt_api]
+modules: [mt-api]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [nats, postgres]
+services: [nats, supabase-postgres, supabase-auth]
 branch: p0/P0-T036-websocket-hub
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`/api/v1/ws` authenticates with the session cookie, supports `{op: sub|unsub, topic, params}`, bridges NATS subjects to topics, and sends envelopes `{topic, seq, ts, data}` with a per-connection, per-topic monotonic `seq` so clients detect gaps and re-sync via REST. P0 topics: `system`, `heartbeat`, `kill`, `notifications`.
+`/api/v1/ws` (axum WebSocket) authenticates with a single-use WS ticket bound to the Supabase `aal2` JWT, supports `{op: sub|unsub, topic, params}`, bridges NATS subjects to topics, and sends envelopes `{topic, seq, ts, data}` with a per-connection, per-topic monotonic `seq` so clients detect gaps and re-sync via REST. P0 topics: `system`, `heartbeat`, `kill`, `notifications`.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ review_result: ""
 
 ## Requirements
 
-- Auth: cookie session checked at upgrade; Origin header must match the Caddy host; idle sockets closed after session expiry.
+- Auth: browsers can't send an `Authorization` header on a WebSocket, so the client first calls `POST /ws/ticket` with its `aal2` bearer token and gets a single-use ticket (TTL 30 s, a setting) passed on upgrade; Origin header must match the Caddy host (or the Vercel origin when `web.host: vercel`); sockets are closed when the JWT behind the ticket expires unless the client re-authenticates over the socket with a fresh token.
 - Envelope: `{topic, seq, ts, data}`; `seq` starts at 1 per (connection, topic) and increments per **delivered or dropped** message, so server-side drops (slow consumer) appear as gaps.
 - Backpressure: per-connection queue 1,000 messages; overflow drops oldest and increments seq (client re-syncs); `mt_ws_dropped_total` metric.
 - Throttle: per-topic max rate (P0 topics 1 Hz except `kill`/`notifications` unthrottled); coalesce to latest value.
@@ -59,7 +59,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement hub, topic registry, NATS bridges, throttling/backpressure.
+- [ ] Implement the WS ticket endpoint, hub (tokio tasks + bounded channels), topic registry, NATS bridges (async-nats), throttling/backpressure.
 - [ ] Add the four P0 topics with REST counterparts for re-sync (`/system/services`, `/risk/state` kill subset, `/notifications`).
 - [ ] Document the protocol in OpenAPI `x-websocket` extension + README.
 - [ ] Tests below.
@@ -69,7 +69,7 @@ review_result: ""
 ### Tests
 - Integration: subscribe → snapshot seq 1 → updates seq 2..n.
 - Gap: force a slow consumer → client observes a seq jump; re-sync endpoint returns the latest state.
-- Auth: no cookie → 4401; wrong Origin → rejected.
+- Auth: no or reused ticket → 4401; wrong Origin → rejected; JWT expiry closes the socket with 4401 unless refreshed.
 
 ### Scenarios
 - Given NATS restarts, when bridges reconnect, then subscribers get a new snapshot (seq continues incrementing) and no stale kill state is shown.
@@ -112,3 +112,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity status bridged to the system topic; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (axum WebSocket with a single-use ticket from the Supabase `aal2` JWT replaces the session cookie)

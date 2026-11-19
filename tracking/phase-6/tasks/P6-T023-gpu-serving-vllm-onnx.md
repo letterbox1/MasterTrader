@@ -15,17 +15,17 @@ requirements: [R6.11, R6.N2, R6.N3]
 roadmap_todos: [T6.40]
 modules: [M21]
 dashboards: [D10]
-tools: [git, docker, sops, nvidia-smi]
+tools: [git, docker, sops]
 mcp: []
 env: []
-services: [gpu, prometheus, grafana]
+services: [prometheus, grafana]
 branch: p6/P6-T023-gpu-serving-vllm-onnx
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,7 +44,7 @@ review_result: ""
 - Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.40
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (serving, hardware, AMD note: llama.cpp Vulkan) · [07 §5](../../../docs/07-security-notes.md#5-network--host) (local inference servers bind 127.0.0.1 + API key) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`decision-svc`) · [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos)
 - Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P6-B002: ~2–12 ms per decision on GPU (0.6B), p95 SLO < 50 ms; CPU 100–400 ms) · [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B010: prefix caching off on the decision path)
-- Cross-phase: P0-T005 (GPU decision), P0-T020 (Compose), P0-T022 (secrets → tmpfs), P4-T029 (decision-svc stage 1)
+- Cross-phase: P0-T005 (CPU/GPU profile), P0-T020 (Compose), P0-T022 (secrets → tmpfs), P4-T029 (decision-svc stage 1)
 - Verified by: P6-T069 (port/API-key check, T6.73), P6-T058 (latency, T6.71)
 
 ## Requirements
@@ -54,7 +54,8 @@ review_result: ""
 - ONNX Runtime CPU worker image (FP32 for backtests; optional int8 for slow flags).
 - Prometheus metrics: latency histograms per question/model, queue depth, GPU memory, timeouts, fallbacks.
 - Degraded mode: GPU unavailable → route to ONNX CPU (slower) or disable non-critical questions; UI status `tierb_degraded`.
-- AMD GPU path documented (no ROCm Laya; llama.cpp Vulkan for Qwen models) if the host has one.
+- AMD GPU path documented (no ROCm Laya; llama.cpp Vulkan for Qwen models) if the workstation has one (`models.gpu_profile: auto` detects it).
+- Profile per `models.gpu_profile: auto` ([16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)): ONNX Runtime on CPU is the default; the vLLM container starts only when P0-T005 detects a GPU. Tests run on CPU; GPU checks run only where a GPU exists.
 
 ## ToDo
 
@@ -71,7 +72,7 @@ review_result: ""
 - Smoke: classify a toy head via both runtimes; outputs match within 1e-4.
 
 ### Scenarios
-- Given the GPU is removed (device unavailable), then `decision-svc` switches to ONNX CPU within 30 s and D10 shows degraded.
+- Given a GPU profile and the GPU is removed (device unavailable), then `decision-svc` switches to ONNX CPU within 30 s and D10 shows degraded.
 - Given a request without API key from another container, then 401.
 
 ### Stress / failure injection
@@ -109,3 +110,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (prefix caching off on decision path (17 §A P4-B010); latency per 17 §B P6-B002 (R6.N3); 127.0.0.1 + API key (R6.N2); cross-phase deps P0-T005/T020/T022/P4-T029; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (serving per `models.gpu_profile: auto`: ONNX on CPU by default, vLLM only when a GPU is detected; no GPU precondition)

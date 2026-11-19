@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [postgres, mlflow]
+services: [supabase-postgres, mlflow]
 branch: p6/P6-T017-post-cutoff-evaluation-gate
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/16-configuration-and-safety-model.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -88,7 +88,7 @@ The lab enforces gate §8 item 4: any strategy whose inputs include an LLM (M8 S
 ## Cardinal rules (do NOT)
 
 - Do NOT hand-enter a cutoff to make a gate pass; cutoff edits are audited and need a source.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
@@ -110,3 +110,4 @@ The lab enforces gate §8 item 4: any strategy whose inputs include an LLM (M8 S
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (embargo/min-OOS as gate-profile settings (16 §2.4, loosen C3); dep P2-T114; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,7 +62,7 @@ The whole F4 flow works on the real stack: you ask for an analysis of an arbitra
 ## Verification
 
 ### Tests
-- Playwright E2E (recorded LLM) for the D09 part in CI; real run once on the host.
+- Playwright E2E (recorded LLM) for the D09 part in CI; real run once on the workstation.
 
 ### Scenarios
 - Given 'Analyse XAUUSD', then D09 shows stages, a Signal with ≥ 3 provenance items, cost and model; next day settlement and reflection appear.
@@ -84,7 +84,7 @@ The whole F4 flow works on the real stack: you ask for an analysis of an arbitra
 
 - Do NOT hand-edit DB rows to make the flow pass.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -103,3 +103,4 @@ The whole F4 flow works on the real stack: you ask for an analysis of an arbitra
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (sample runs moved to P6-T067 (T6.66); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation instead of host)

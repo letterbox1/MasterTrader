@@ -18,14 +18,14 @@ dashboards: [D13]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [llm-local, postgres]
+services: [llm-local, supabase-postgres]
 branch: p6/P6-T047-social-drafts-web-intent
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/ui/dashboards/D13-tasks-curation.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -83,6 +83,7 @@ review_result: ""
 ## Exceptions & edge cases
 
 - X intent format changes: link still opens; text may need manual paste (documented).
+- Optional module, **off by default** (P6-T003 records `modules.*.enabled: false`). Build it only once you enable it in settings; while it stays off at phase exit, P6-T066 cancels this item with reason "optional module off by default (P6-T003)" and it can be re-opened any time you enable it.
 
 ## Cardinal rules (do NOT)
 
@@ -108,3 +109,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P5-T029/P0-T044; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (optional module off by default (P6-T003, agent); depends on nothing human)

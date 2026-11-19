@@ -15,17 +15,17 @@ requirements: [R7.08, R7.07]
 roadmap_todos: [T7.06, T7.22]
 modules: [M11, M0]
 dashboards: [D03, D06]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, nats, telegram bot api]
+services: [supabase-postgres, nats, telegram bot api]
 branch: p7/P7-T029-bot-auto-downgrade-live
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,6 +63,7 @@ Live autonomous bots drop to `hitl` (or `paused`, per bot) automatically and imm
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk downgrade` and `cargo clippy`.
 - Integration: each trigger injected individually downgrades within 2 s and records the reason (table-driven, one row per trigger).
 - Integration: in-flight autonomous intent becomes an approval card; stop-loss still fires unapproved.
 
@@ -89,7 +90,7 @@ Live autonomous bots drop to `hitl` (or `paused`, per bot) automatically and imm
 - Do NOT auto-upgrade a bot after a trigger clears.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT add discretionary overrides; the only manual trading action outside HITL approvals is flatten-and-halt with a required reason (14 §4).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -107,3 +108,4 @@ Live autonomous bots drop to `hitl` (or `paused`, per bot) automatically and imm
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (triggers per 16 §2.6 (health check halts instead; 5 losses; 26-week window); egress trigger; latency per 16 §2.2; dep P2-T037)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (auto-downgrade in Rust `mt-risk`/`mt-api`; tools cargo)

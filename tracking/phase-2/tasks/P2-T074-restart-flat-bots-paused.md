@@ -112,3 +112,4 @@ After any unplanned stop (crash, kill -9, workstation reboot), the engine starts
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.36: R2.56, R2.32)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo]; services [nats, postgres] → [nats, supabase-postgres])

@@ -101,3 +101,4 @@ Reproducible benchmarks on the workstation show pre-trade risk check p99 < 1 ms 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (benchmark includes safety-state checks and layer merge; Part B links)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; criterion; host → workstation; tools [uv] → [cargo])

@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,7 +67,7 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 
 ### Scenarios
 - Given the VPS is up, when you `nmap` its public IP from outside, then no RDP/SSH/bridge port answers.
-- Given Tailscale is up, when the host pings the VPS's tailnet name, then it responds.
+- Given Tailscale is up, when the runtime host pings the VPS's tailnet name, then it responds.
 
 ### Stress / failure injection
 - n/a: provisioning.
@@ -105,3 +105,4 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (07 §5.1 / 17 §D P7-B010: only the MT5 trade-only login on the VPS; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host; stays USER (VPS account))

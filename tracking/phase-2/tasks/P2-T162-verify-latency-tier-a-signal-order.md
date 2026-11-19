@@ -105,3 +105,4 @@ Measured evidence on the workstation that runs the stack (the runtime host until
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mode name autonomous; engine/Grafana deps explicit)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; criterion/`ort` benches; production host → workstation (P7 reruns); tools [uv] → [cargo, uv])

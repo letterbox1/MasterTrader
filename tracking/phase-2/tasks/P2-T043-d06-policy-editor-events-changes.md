@@ -125,3 +125,4 @@ You edit the risk policy at every layer (L1–L4 in D06; L0 ceilings, bot defaul
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (layered policy editor (effective value, layer, ceiling, default), D03 settings page (L0 ceilings, bot defaults, gate profile), Stress tab placeholder (R2.57/T2.38))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line; services [] → [supabase-auth])

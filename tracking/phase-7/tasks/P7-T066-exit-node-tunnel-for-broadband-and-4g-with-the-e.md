@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md, docs/ui/dashbo
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ All exchange traffic (engine, `deadman` sidecar, monitor reconciliation, `ib-gat
 
 - **Egress path as code** in `infra/egress/`: a dedicated `egress` network container (Tailscale exit-node client or WireGuard) that exchange-facing containers share (`network_mode: service:egress`); other containers keep the normal route. Image pinned by digest.
 - **No leak:** inside the exchange network namespace the only default route is the tunnel; a firewall rule drops anything else. Tunnel down → connections fail (never fall back to the home/4G IP).
-- **Both links:** the host reaches the exit node over broadband and over the 4G router (P7-T009); the tunnel re-establishes after a link switch without changing the egress IP. Reconnect target ≤ the venue cancel-after timeout (default 60 s, 16 §3.1); measure it.
+- **Both links:** the runtime host reaches the exit node over broadband and over the 4G router (P7-T009); the tunnel re-establishes after a link switch without changing the egress IP. Reconnect target ≤ the venue cancel-after timeout (default 60 s, 16 §3.1); measure it.
 - **Egress check:** set P1-T071's `expected_ips` to the exit node's static IP and `residency_country` to your configured residency (change = `system.settings.update`; loosening is C3, tightening C1). Mismatch or unreachable → new orders blocked + critical alert (P1-T071 behaviour).
 - **Tunnel-down handling:** tunnel heartbeat published on `sys.heartbeat.egress`; down → critical alert on every channel; the engine treats venues as disconnected (accounts `unconfirmed`, P7-T026); protection relies on layer 3 (venue timers + resting stops).
 - D16 Egress panel shows tunnel state, link in use (broadband/4G), observed IP vs expected, last check.
@@ -80,7 +80,7 @@ All exchange traffic (engine, `deadman` sidecar, monitor reconciliation, `ib-gat
 - Given the tunnel is down for longer than the venue cancel-after timeout, then open orders are cancelled by the venue timers, positions stay under their resting stops, and you get a critical alert on every channel.
 
 ### Stress / failure injection
-- Flap the tunnel 10 times in 10 minutes: no request ever leaves via a non-tunnel IP (packet capture on the host's WAN shows only tunnel traffic for exchange hosts); alerts grouped; accounts return to `confirmed` only after a clean recon.
+- Flap the tunnel 10 times in 10 minutes: no request ever leaves via a non-tunnel IP (packet capture on the runtime host's WAN shows only tunnel traffic for exchange hosts); alerts grouped; accounts return to `confirmed` only after a clean recon.
 
 ## Acceptance criteria
 
@@ -94,6 +94,7 @@ All exchange traffic (engine, `deadman` sidecar, monitor reconciliation, `ib-gat
 - Exit-node VM rebooting: tunnel down for the reboot; same handling as tunnel down; the static IP survives.
 - Tailscale control plane unreachable: existing WireGuard sessions keep working; new sessions may fail → treated as tunnel down.
 - MT5 route: the Windows VPS uses its own static IP for FP Markets (07 §5.1); it is not routed through this exit node.
+- **Conditional:** if P7-T071 picks a Sydney cloud VM with a static IP as the runtime host, that IP is the egress IP ([18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) and this item isn't needed: cancel it then with reason "runtime host is a static-IP VM (P7-T071)" (dependants treat cancelled as done). Until that choice, keep it. The egress check (P1-T071) then points at the runtime host's IP in P7-T073.
 
 ## Cardinal rules (do NOT)
 
@@ -121,3 +122,4 @@ All exchange traffic (engine, `deadman` sidecar, monitor reconciliation, `ib-gat
 
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.14/T7.42: exit-node tunnel on both links, no-leak routing, egress check on the static IP, 16 §3.1–3.2)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (conditional: not needed if P7-T071 picks a static-IP Sydney VM as the runtime host (state it, not cancelled); the host → the runtime host)

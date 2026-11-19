@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [prefect, mlflow, gpu]
+services: [prefect, mlflow]
 branch: p6/P6-T031-nightly-distillation-flow
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B
 
 ## Requirements
 
-- Schedule: nightly 02:00 Australia/Sydney (configurable), skip if GPU busy with production > threshold.
+- Schedule: nightly 02:00 Australia/Sydney (configurable), skip if the GPU is busy with production > threshold (GPU profile only; CPU profile runs the reduced budget).
 - Steps: build datasets (P6-T020) → train tier-B candidate (P6-T021, warm-start from production adapter) and tier-A candidate (P2 pipeline with tier-B scores as features) → calibrate (P6-T022) → quick bake-off subset vs production → register candidate → proposal row for D10.
 - Distillation lineage recorded: teacher runs + outcomes used (D10 Registry detail).
 - Budget: time cap 4 h; failure alerts; partial results kept as failed runs in MLflow.
@@ -106,3 +106,4 @@ A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T125; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU-busy skip only on a GPU profile; gpu service removed)

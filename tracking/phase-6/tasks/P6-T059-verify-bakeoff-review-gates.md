@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T029, P6-T030, P6-T031, P6-T002, P6-T068]
+depends_on: [P6-T029, P6-T030, P6-T031, P6-T068]
 requirements: [R6.12, R6.14, R6.10]
 roadmap_todos: [T6.60]
 modules: [M21]
@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [mlflow, postgres]
+services: [mlflow, supabase-postgres]
 branch: p6/P6-T059-verify-bakeoff-review-gates
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -43,7 +43,7 @@ The bake-off report is reviewed (agent prepares, you sign off), it names a produ
 
 - Roadmap: [R6.12](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.14](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.60
 - Roadmap: R6.12 'Bake-off report', R6.14 'Promotion audit', R6.10 'Calibration report' · [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 3
-- Depends on (this phase): P6-T029, P6-T030, P6-T031, P6-T068 (Kev/licences), P6-T002 (FinMMEval data; if you declined it, the review documents the absence)
+- Depends on (this phase): P6-T029, P6-T030, P6-T031, P6-T068 (Kev/licences). FinMMEval access (P6-T002, yours) is not a dependency: its data is included if it is on the workstation at review time, otherwise the review documents its absence (17 §G)
 - Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)
 
 ## Requirements
@@ -101,3 +101,4 @@ The bake-off report is reviewed (agent prepares, you sign off), it names a produ
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (shadow ≥ 14 days and thresholds per 16 §2.10; Kev via P6-T068; FinMMEval from P6-T002 at review time; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dep P6-T002 (FinMMEval is optional: included if available at review time, else the report documents its absence; build first, keys last))

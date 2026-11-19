@@ -15,17 +15,17 @@ requirements: [R6.10]
 roadmap_todos: [T6.24]
 modules: [M21, M7]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker, nvidia-smi]
+tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [mlflow, gpu]
+services: [mlflow]
 branch: p6/P6-T021-tierb-trainer-qwen3-lora-head
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -43,7 +43,7 @@ review_result: ""
 
 - Roadmap: [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.24
 - Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) stage 2 · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [research: decision models](../../../docs/research/decision-models-system-one.md) (HF + PEFT recipe; `MersivMedia/clef-finetune` CE + λ·Brier reference; TEI can't serve Qwen3 classification, issue #643)
-- Cross-phase: P2-T046 (MLflow artefact storage + registry stages); the GPU comes from P0-T005 (without one, training is smoke-only)
+- Cross-phase: P2-T046 (MLflow artefact storage + registry stages); the CPU/GPU profile comes from P0-T005 (`models.gpu_profile: auto`, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions))
 - Depends on (this phase): P6-T020
 
 ## Requirements
@@ -53,7 +53,7 @@ review_result: ""
 - Loss: cross-entropy + λ·Brier (λ grid {0.1, 0.5, 1.0}); class weights from train fold.
 - Hyper-parameters via Optuna with complexity penalty; selection on walk-forward validation folds (never the final holdout).
 - Reproducibility: fixed seeds, deterministic CUDA flags where possible, dataset manifest hash and code commit logged; artefacts: LoRA adapter + head weights + tokenizer revision.
-- Runs on the GPU (16–24 GB); CPU fallback allowed for 0.6B smoke runs only.
+- `models.gpu_profile: auto`: runs on the GPU (16–24 GB) when one is detected; on a CPU-only workstation it trains the 0.6B head on CPU with a reduced trial budget (1.7B skipped) and records `profile=cpu` with the run. No task waits on a GPU; tests use CPU smoke fixtures.
 - Refuses datasets whose manifest shows `train_ok=false` rows (defence in depth).
 
 ## ToDo
@@ -69,14 +69,14 @@ review_result: ""
 ### Tests
 - Unit: loss function (CE + λ·Brier) gradients on toy tensors; head config.
 - Smoke: 0.6B trains 50 steps on a tiny dataset on CPU in CI (marked slow) and loss decreases.
-- Determinism: two runs with the same seed on GPU produce metrics within 1e-3.
+- Determinism: two runs with the same seed on the same profile (CPU always; GPU when present) produce metrics within 1e-3.
 
 ### Scenarios
 - Given the `news_direction` dataset, when trained, then MLflow holds an adapter, head, metrics per fold and the dataset hash.
 - Given a dataset manifest with Telegram-lineage rows, then training refuses to start.
 
 ### Stress / failure injection
-- GPU OOM injected (batch too large): trainer reduces batch via gradient accumulation and logs it, or fails cleanly without corrupting MLflow.
+- GPU OOM injected (GPU profile only; batch too large): trainer reduces batch via gradient accumulation and logs it, or fails cleanly without corrupting MLflow.
 
 ## Acceptance criteria
 
@@ -86,7 +86,7 @@ review_result: ""
 
 ## Exceptions & edge cases
 
-- GPU unavailable: training jobs queue and alert; never silently fall back to multi-day CPU training.
+- GPU disappears mid-run: the job fails cleanly and alerts; the next run uses the CPU profile explicitly (logged and shown in D10), never silently.
 - Class imbalance extreme (< 2% minority): flag question as unsuitable for SEQ_CLS; keep SemIf.
 
 ## Cardinal rules (do NOT)
@@ -113,3 +113,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T046; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU precondition removed: `models.gpu_profile: auto` (GPU when detected, CPU otherwise); no nvidia-smi/gpu requirement)

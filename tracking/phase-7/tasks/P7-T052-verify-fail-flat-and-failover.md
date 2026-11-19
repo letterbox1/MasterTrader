@@ -18,14 +18,14 @@ dashboards: [D06, D16]
 tools: [git, uv, docker, nut]
 mcp: []
 env: []
-services: [postgres, nats, tailscale, egress exit-node VM, 4G router, venue testnet with cancel-after timers]
+services: [supabase-postgres, nats, tailscale, egress IP (exit node or static-IP runtime host), 4G router, venue testnet with cancel-after timers]
 branch: p7/P7-T052-verify-fail-flat-and-failover
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,13 +53,13 @@ A scripted drill with paper/testnet positions proves (T7.64): cutting broadband 
 ## ToDo
 
 - [ ] Script `tools/drills/failover_drill.sh` (router WAN switch or interface down for broadband, tunnel stop, engine heartbeat stop, NUT dummy driver).
-- [ ] Run on the host with paper/testnet positions on a venue with cancel-after timers.
+- [ ] Run on the runtime host (the workstation unless P7-T071 chose otherwise; P7-T073 reruns this drill on the target after a move) with paper/testnet positions on a venue with cancel-after timers.
 - [ ] Attach results.
 
 ## Verification
 
 ### Tests
-- The script asserts each case's outcome via `mt_api` queries and venue REST.
+- The script asserts each case's outcome via `mt-api` queries and venue REST.
 
 ### Scenarios
 - Given the tunnel is down for 90 s, then the venue's timer has cancelled open orders by ~60 s, positions sit under resting stops, and after reconnection recon shows the cancels and the accounts return to `confirmed`.
@@ -96,3 +96,4 @@ A scripted drill with paper/testnet positions proves (T7.64): cutting broadband 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (re-scoped to the T7.64 failover drill per 16 §3.1–3.2: same egress IP on 4G, tunnel down → venue timers + resting stops; dropped the invented N)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (runs on the runtime host (workstation by default; P7-T073 reruns it after a move); egress IP may be the runtime host's)

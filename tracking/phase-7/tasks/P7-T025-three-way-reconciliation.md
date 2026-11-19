@@ -15,17 +15,17 @@ requirements: [R7.09]
 roadmap_todos: [T7.23]
 modules: [M16, M12, M18]
 dashboards: [D07, D05, D14]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, nats, prefect-server]
+services: [supabase-postgres, nats]
 branch: p7/P7-T025-three-way-reconciliation
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D07-data-quality.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,9 +57,9 @@ Positions and open orders (every 60 s), balances (every 5 min) and a full reconc
 
 ## ToDo
 
-- [ ] `packages/mt_monitor/recon/three_way.py` with side adapters (venue via ccxt/native read-only; engine snapshot RPC; journal SQL).
+- [ ] `crates/mt-monitor/src/recon/three_way.rs` with side adapters (venue via ccxt/native read-only; engine snapshot RPC; journal SQL).
 - [ ] Explanation rules module with unit-tested rule ids.
-- [ ] Scheduler (monitor service loop: 60 s positions/orders, 5 min balances) + EOD (Sydney) Prefect flow.
+- [ ] Scheduler (monitor service loop: 60 s positions/orders, 5 min balances) + EOD (Sydney) run in the same service.
 - [ ] `data.recon.resolve` command (C1, reason required) writing resolution rows.
 - [ ] D07 Reconciliation tab: three columns (venue/engine/journal), age, rule, resolve action.
 - [ ] Tests; docs.
@@ -67,6 +67,7 @@ Positions and open orders (every 60 s), balances (every 5 min) and a full reconc
 ## Verification
 
 ### Tests
+- `cargo test -p mt-monitor recon` and `cargo clippy`.
 - Unit: each explanation rule with positive/negative fixtures.
 - Integration (venue mock + sandbox paper venue, no keys): clean run → zero breaks; injected phantom position on the engine side → break within one 60 s interval, `unexplained` after 24 h without a matching journal event.
 - WORM: recon rows immutable; resolution creates a new row.
@@ -96,7 +97,7 @@ Positions and open orders (every 60 s), balances (every 5 min) and a full reconc
 - Do NOT 'fix' a break by editing journal or audit rows; append corrections.
 - Do NOT use trade keys for recon; read-only keys only.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT use keys that are not trade-only, IP-locked and withdrawal-disabled; no live money before the P7 gates pass.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -116,3 +117,4 @@ Positions and open orders (every 60 s), balances (every 5 min) and a full reconc
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (16 §2.9 defaults: 60 s positions/orders, 5 min balances, EOD Sydney, exact qty, 0.01%/dust, 24 h explained rule (P7-B007); keyless build; deps P1-T041/T042, P3-T034)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (three-way recon in Rust `crates/mt-monitor/src/recon/` (EOD run in the same service, no Prefect); tools cargo)

@@ -118,3 +118,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (M11 in backtest mode applies layered limits, drawdown stages, data age on the simulated clock; deps on base classes and RiskGate)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; risk via the `mt-risk` binding (dep P2-T202); depends_on + P2-T202; services [postgres] → [supabase-postgres])

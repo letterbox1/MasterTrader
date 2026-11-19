@@ -15,17 +15,17 @@ requirements: [R7.02, R7.13, R7.04, R7.14, R7.01]
 roadmap_todos: [T7.60, T7.63]
 modules: [M11, M17]
 dashboards: [D16, D06, D03]
-tools: [git, uv, pnpm, docker]
+tools: [git, cargo, pnpm, docker, supabase]
 mcp: []
 env: []
-services: [postgres, nats, mt-api]
+services: [supabase-postgres, nats, mt-api]
 branch: p7/P7-T011-go-live-preflight
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D16-system.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,28 +45,30 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 - Roadmap §2 entry criteria ([phase 7](../../../docs/roadmap/phase-7-prove-and-go-live.md)) · [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (AUSTRAC re-check quarterly) · [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) (runbooks) · [16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile) (paper/HITL period: ≥ 8 weeks and ≥ 50 trades; P1 ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks) · [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) (egress check) · [17 §D P7-B011](../../../docs/17-decisions-register.md#d-other-decisions) (wallet-drained drill only if a hot/burner wallet exists)
 - Cross-phase: P2-T033 (modes and approval routing) and P1-T071 (`egress.status`) are `depends_on`; reads P2-T180 (paper clock), P3-T001 (tax agent) and the runbooks from P0-T060/P0-T061, P2-T068 and (only if a hot/burner wallet exists) P5-T051.
 - Related: P7-T001, P7-T010, P7-T046 (VERIFY of the registry check), P7-T044/T045 (drills that write the log)
+- Platform: [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19) (agents seed values, you approve once in the go-live pack) · [18 §8–9](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode) (hardware key before live money; shift and re-verify on the target). Reads P7-T070, P7-T072 and P7-T073 results.
 
 ## Requirements
 
-- Checks (each returns pass/fail + evidence link): (1) the bot's paper/HITL period meets its gate profile (16 §2.4 defaults: ≥ 8 weeks **and** ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency bots ≥ 26 weeks) through the real policy/risk/execution path, counted from paper/HITL fills with no gap > 24 h; (2) tax regime set for the current FY; (3) every target venue/product `allowed` with AUSTRAC `checked_at` < 90 days; (4) runbooks drilled at least once with result `pass`: kill, keys leaked, server down with open positions, bad data, and wallet drained **only if** `ops.wallets` holds a hot/burner wallet (17 §D P7-B011); (5) all `PRO_ADVICE` items answered or deferred (deferred keeps products blocked); (6) live keys audited (P7-T032) for the sub-account; (7) `egress.status = ok` on the exit-node IP (16 §3.2); (8) the go-live settings pack is approved (P7-T070) and nothing was loosened since. Thresholds come from the effective gate profile/policy, never hard-coded.
+- Checks (each returns pass/fail + evidence link): (1) the bot's paper/HITL period meets its gate profile (16 §2.4 defaults: ≥ 8 weeks **and** ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency bots ≥ 26 weeks) through the real policy/risk/execution path, counted from paper/HITL fills with no gap > 24 h; (2) tax regime set for the current FY; (3) every target venue/product `allowed` with AUSTRAC `checked_at` < 90 days; (4) runbooks drilled at least once with result `pass`: kill, keys leaked, server down with open positions, bad data, and wallet drained **only if** `ops.wallets` holds a hot/burner wallet (17 §D P7-B011); (5) all `PRO_ADVICE` items answered or deferred (deferred keeps products blocked); (6) live keys audited (P7-T032) for the sub-account; (7) `egress.status = ok` on the egress IP (the exit node's static IP from P7-T065, or the runtime host's own static IP when P7-T071 chose a static-IP Sydney VM, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)); (8) the go-live settings pack is approved through `ops.golive_pack.approve` (C3, P7-T070) and nothing was loosened since; (9) the age identities are on the hardware key (`secrets.age_identity_store = yubikey`, P7-T072, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)); (10) the shift's full verification suite passed on the runtime host after its last deploy (P7-T073). Thresholds come from the effective gate profile/policy, never hard-coded.
 - New WORM table `ops.drill_log(id, runbook, started_at, ended_at, result, evidence_ref, notes, chain fields)`; command `ops.drill.record` (C1).
 - Enforcement hooks: `strategy.set_mode` → any live mode, `bot.set_mode` → live hitl/autonomous, `risk.capital_step.approve`, and sub-account funding confirmation all call preflight and reject with the failing check list.
 - Non-functional: preflight runs in < 2 s; results cached 60 s; every evaluation written to `audit.command` context.
 
 ## ToDo
 
-- [ ] `packages/mt_risk/preflight/` with one check class per criterion and a `Preflight.evaluate(scope)` API.
-- [ ] Migration for `ops.drill_log` (WORM) and `ops.drill.record` command.
+- [ ] `crates/mt-risk/src/preflight/` with one check per criterion and a `Preflight::evaluate(scope)` API (linked into `mt-api`).
+- [ ] SQL migration (`supabase/migrations/`) for `ops.drill_log` (WORM) and `ops.drill.record` command.
 - [ ] Paper/HITL-period calculator (weeks and trades per the gate profile) reading `strategy.run`/`audit.fill` with gap detection.
 - [ ] Hook preflight into the commands listed; problem+json `preflight_failed` with failing checks.
 - [ ] Query `/system/preflight?strategy=&venue=`; D16 'Go-live preflight' card; D03 Gates tab shows the same rows.
-- [ ] **Settings pack** (D16 card + `mt preflight --pack`): every effective L0–L3 value, sleeve and manifest, each with its default and changes since seed; check (8) "settings pack approved" reads the P7-T070 approval and fails on any loosening since
+- [ ] **Settings pack** (D16 card + `mt preflight --pack`): every effective L0–L3 value, sleeve and manifest, each with its default and changes since seed; the pack also lists the other seeded values when present (P1-T001 universe, P1-T066 DQ thresholds, P4-T003 keywords/feeds, P5-T007 disposal rule and EV hurdle, P5-T065 wallet/signer/gas limits, P6-T001 LLM budgets, P6-T003 optional modules, P6-T033 treasury policy); command `ops.golive_pack.approve` (C3) writes a WORM approval row naming the policy and manifest versions; check (8) "settings pack approved" reads that row and fails on any loosening since
 - [ ] CLI `mt preflight --strategy <id>` for drills and the exit demo.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk preflight` and `cargo clippy`; `supabase test db` (WORM on `ops.drill_log`). Extra cases: pack unapproved or loosened since → check (8) fails; `secrets.age_identity_store = keychain` → check (9) fails; no passing P7-T073 run since the last deploy → check (10) fails.
 - Unit: each check with pass/fail fixtures (55 vs 56 days and 49 vs 50 trades for the default profile; 26-week window for a low-frequency bot; 89 vs 91 days since AUSTRAC check; gap of 25 h resets the clock; wallet-drained drill required only when a hot/burner wallet is registered; egress `ip_mismatch` fails).
 - Integration: `bot.set_mode autonomous` on a live sub-account is rejected when any check fails, accepted when all pass.
 - WORM: UPDATE/DELETE on `ops.drill_log` fails for app roles.
@@ -81,7 +83,7 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 
 ## Acceptance criteria
 
-- [ ] All seven checks implemented with evidence links.
+- [ ] All ten checks implemented with evidence links.
 - [ ] Live-mode, funding and capital-step commands are refused when preflight fails.
 - [ ] `ops.drill_log` is WORM and readable in D16.
 - [ ] CI green.
@@ -96,7 +98,7 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 
 - Do NOT add a bypass flag or 'force' option to preflight.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -116,3 +118,4 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper/HITL period per the 16 §2.4 gate profile; wallet-drained drill only if a hot/burner wallet exists (P7-B011); egress check (16 §3.2); deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (preflight in Rust `crates/mt-risk/src/preflight/`; checks for the go-live pack (`ops.golive_pack.approve`, C3), the YubiKey identity store and the shift's verification run; egress IP may be the runtime host's; tools cargo/supabase)

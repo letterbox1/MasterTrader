@@ -25,7 +25,7 @@ doc_sync: [docs/ui/mobile-and-telegram.md, docs/roadmap/phase-7-prove-and-go-liv
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,11 +63,12 @@ The PWA prompts installation on phones, loads offline with the last known state 
 ## Verification
 
 ### Tests
+- `pnpm test` and `pnpm playwright` (PWA install and offline cases).
 - Playwright: offline mode shows banner; actions disabled except Kill.
 - Lighthouse CI: installable.
 
 ### Scenarios
-- Given the host is unreachable, when you tap HALT and confirm, then the app falls back to the Telegram `/kill` deep link.
+- Given the runtime host is unreachable, when you tap HALT and confirm, then the app falls back to the Telegram `/kill` deep link.
 
 ### Stress / failure injection
 - n/a: client-side behaviour; covered by offline tests.
@@ -84,7 +85,7 @@ The PWA prompts installation on phones, loads offline with the last known state 
 ## Cardinal rules (do NOT)
 
 - Do NOT queue trading actions offline.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -102,3 +103,4 @@ The PWA prompts installation on phones, loads offline with the last known state 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (dep P0-T050; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host; web verification via `pnpm test` / `pnpm playwright`)

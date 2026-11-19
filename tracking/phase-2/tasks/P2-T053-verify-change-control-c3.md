@@ -106,3 +106,4 @@ End-to-end tests prove: tightenings apply immediately at every layer; every loos
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (C3 matrix for every layer incl. L0, gate profile, sleeve restart; paper→HITL C2; break-glass off)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv, docker] → [cargo, docker]; services [nats, postgres] → [nats, supabase-postgres, supabase-auth])

@@ -114,3 +114,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (leakage waiver C2, D04 tabs per 17 §D P2-B052)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line)

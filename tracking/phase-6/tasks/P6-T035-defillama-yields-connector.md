@@ -15,17 +15,17 @@ requirements: [R6.21]
 roadmap_todos: [T6.28]
 modules: [M22, M1]
 dashboards: [D18]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker, supabase]
 mcp: []
 env: []
-services: [defillama-yields-api, postgres, prefect]
+services: [defillama-yields-api, supabase-postgres]
 branch: p6/P6-T035-defillama-yields-connector
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An `mt_data` connector pulls DefiLlama pool yields (free) at most hourly, caches them with provenance, and computes risk-haircut inputs (protocol age, audits, TVL trend) for allow-listed pools only.
+A connector in the Rust `mt-treasury` crate pulls DefiLlama pool yields (free) at most hourly, caches them with provenance, and computes risk-haircut inputs (protocol age, audits, TVL trend) for allow-listed pools only.
 
 ## Context & references
 
@@ -49,14 +49,14 @@ An `mt_data` connector pulls DefiLlama pool yields (free) at most hourly, caches
 ## Requirements
 
 - Fetch pools from the official free host `yields.llama.fi` (`/pools`; no key) for allow-listed protocols; tests run on recorded JSON; fields `apyBase`, `apyReward` (stored, never used for allocation), `tvlUsd`, `pool`, `chain`, `stablecoin`, timestamp.
-- Cache hourly in `market.yield_snapshot` (hypertable) with provenance (`source=defillama`, `display_ok`, `commercial_ok=false`); no republishing.
+- Cache hourly in `market.yield_snapshot` (monthly native partitions, [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb)) with provenance (`source=defillama`, `display_ok`, `commercial_ok=false`); no republishing.
 - Haircut inputs: protocol age (launch date in allow-list), audit count, 30d TVL trend (slope, drawdown) → `risk_haircut_bps` per pool (formula documented, conservative defaults).
 - Quota tracker entry; backoff on 429; staleness flag after 3 h.
 
 ## ToDo
 
-- [ ] Connector + Prefect hourly flow.
-- [ ] Hypertable migration.
+- [ ] Connector in `crates/mt-treasury/src/yields/` + hourly scheduled job.
+- [ ] SQL migration (`supabase/migrations/`) for the monthly-partitioned `market.yield_snapshot`.
 - [ ] Haircut calculator.
 - [ ] Quota + staleness metrics.
 - [ ] Tests; docs.
@@ -64,8 +64,9 @@ An `mt_data` connector pulls DefiLlama pool yields (free) at most hourly, caches
 ## Verification
 
 ### Tests
+- `cargo test -p mt-treasury yields` and `cargo clippy`; `supabase test db` (partitions and grants).
 - Unit: parser on recorded JSON; haircut formula golden values.
-- Integration: hourly flow idempotent per hour bucket.
+- Integration: hourly job idempotent per hour bucket.
 
 ### Scenarios
 - Given DefiLlama is down, then the last snapshot is used until 3 h old, then allocation is paused with reason `stale_yields`.
@@ -106,3 +107,4 @@ An `mt_data` connector pulls DefiLlama pool yields (free) at most hourly, caches
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (DefiLlama official hosts only per 17 §D P6-B006; cross-phase deps P1-T006/T007/T029; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (DefiLlama yields connector in the Rust `mt-treasury` crate; monthly native partitions instead of a hypertable (18 §4.3); scheduled job instead of Prefect; tools cargo/supabase)

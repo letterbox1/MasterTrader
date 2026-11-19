@@ -10,9 +10,9 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T071, P7-T072, P0-T003]
-requirements: [R7.01, R7.04]
-roadmap_todos: []
+depends_on: [P7-T071, P7-T072, P0-T003, P7-T066]
+requirements: [R7.18, R7.04]
+roadmap_todos: [T7.44]
 modules: [M17, M11, M12]
 dashboards: [D16]
 tools: [git, cargo, uv, pnpm, docker, supabase, vercel, tailscale]
@@ -41,7 +41,7 @@ The system that was built and paper-traded on the workstation runs on the runtim
 ## Context & references
 
 - Modes: [18 §5](../../../docs/18-platform-and-deployment.md#5-deployment-modes) · DB: [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) · hardening baseline: P0-T019, [07 §5](../../../docs/07-security-notes.md#5-network--host) · Decisions: [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)
-- Depends on: P7-T071 (choice), P7-T072 (YubiKey), P0-T003 (Tailscale). Related: P7-T065 (egress exit node; skipped if the runtime host is a static-IP VM), P7-T009 (UPS/4G for a workstation host).
+- Depends on: P7-T071 (choice), P7-T072 (YubiKey), P0-T003 (Tailscale). Related: P7-T065/P7-T066 (egress exit node; conditional: cancelled if the runtime host is a static-IP VM, in which case that VM's IP is the egress IP), P7-T009 (UPS/4G for a workstation host).
 - Unblocks: P7-T057 (fund micro-live).
 
 ## Requirements
@@ -51,10 +51,11 @@ The system that was built and paper-traded on the workstation runs on the runtim
 - **Web:** `local` stays on Caddy; `vercel`: deploy `apps/web` with `api.exposure: tailnet` by default; Deployment Protection on.
 - **Re-verify on the target:** the full suite (risk, `pit`, WORM and tax golden tests; dead-man drill; restore test; egress check) passes on the target; results linked in the progress log.
 - Secrets: env var names only here (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `VERCEL_TOKEN` when used); values in the sops file.
+- **Egress:** the P1-T071 egress check points at the egress IP (the exit node's static IP from P7-T065, or the runtime host's own static IP when P7-T071 chose a static-IP Sydney VM, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) and reports `ok` on the target before the suite runs.
 
 ## ToDo
 
-- [ ] Apply the host playbook in `live` profile; checklist PASS
+- [ ] Apply the runtime host playbook in `live` profile; checklist PASS
 - [ ] Database migration path for the chosen `db.target`, with WORM chain verification
 - [ ] Web deploy for the chosen `web.host`
 - [ ] Run the full verification suite on the target; attach results
@@ -101,3 +102,4 @@ The system that was built and paper-traded on the workstation runs on the runtim
 ## Progress log
 
 - 2026-11-19 09:16 · cloud:vm:be04b6ae61f8 · created
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (requirements R7.18, R7.04 / ToDo T7.44; added dep P7-T066 (egress; cancelled counts as done when the runtime host is a static-IP VM); egress check points at the exit node or the runtime host's static IP)

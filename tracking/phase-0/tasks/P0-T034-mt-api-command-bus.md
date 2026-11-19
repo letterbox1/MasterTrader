@@ -13,19 +13,19 @@ claimed_by: ""
 depends_on: [P0-T032, P0-T031]
 requirements: [R0.08]
 roadmap_todos: [T0.24]
-modules: [mt_api, M17]
+modules: [mt-api, M17]
 dashboards: []
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [postgres, nats, prefect-server]
+services: [supabase-postgres, nats, prefect-server]
 branch: p0/P0-T034-mt-api-command-bus
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,10 +50,10 @@ review_result: ""
 
 ## Requirements
 
-- Registry: `@command(name, level, args=Struct, result=Struct, scopes=...)`; unknown command → 404 problem+json; schema in OpenAPI per command.
+- Registry (Rust): a `Command` trait / `register!` macro with `name`, `level`, typed `Args`/`Result` (serde + utoipa `ToSchema`), `scopes`; unknown command → 404 problem+json; schema in OpenAPI per command.
 - P0 commands: `system.settings.update` (C0 for preferences, layout and digests; C1 to tighten or for schedules; C3 to loosen, e.g. raise an LLM budget or a DQ threshold, via the diff classifier hook; 02 §7.2), `system.backup.run` (C1), `system.restore.test` (C1), `audit.verify` (C1), `risk.kill.on` (Kill), `risk.kill.off` (C3), `system.key.rotate_reminder` (C0), `system.service.restart` (C2; registered here with a 501 stub; P0-T065 wires it through `docker-proxy`, allow-listed containers only, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012), `audit.integrity.ack` (C3; handler in P0-T038).
 - Idempotency: `ops.idempotency_key (key, command, args_hash, status, response, created_at)`, TTL 24 h; same key + same args → replay stored response (200, header `Idempotent-Replay: true`); same key + different args → 409; in-flight duplicate → 409 `in_progress`.
-- Audit: `accepted` row written **before** the handler runs (if it fails to write → 503, handler never runs); terminal row (`applied|failed|rejected`) after; `source` from the authenticated principal (`web` session, `telegram`/`mcp` token, `system` for internal).
+- Audit: `accepted` row written **before** the handler runs (if it fails to write → 503, handler never runs); terminal row (`applied|failed|rejected`) after; `source` from the authenticated principal (`web` = a Supabase Auth `aal2` JWT, `telegram` = a command session, `mcp` = a scoped token, `system` for internal; P0-T033).
 - Args redaction before audit; `args_hash` = sha256 of canonical args (unredacted) for idempotency comparison.
 - Every command publishes `audit.command.{status}` on NATS for the WS `notifications`/`system` topics.
 - Handler timeout default 10 s; long jobs return `202` with a job id and finish via Prefect.
@@ -115,3 +115,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (settings levels per 02 §7.2, restart via docker-proxy (17 §D P0-B012), audit.integrity.ack registered, Kill recorded via JetStream buffer, command-bus SLO; run fields added)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust command registry (trait/macro with serde + utoipa schemas) replaces the Python decorator; principal from the Supabase JWT / command session)

@@ -107,3 +107,4 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps; consumers named)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording, `infra/` paths, CI line; MLflow backend on Supabase Postgres; Tailscale optional; services [mlflow, postgres] → [mlflow, supabase-postgres])

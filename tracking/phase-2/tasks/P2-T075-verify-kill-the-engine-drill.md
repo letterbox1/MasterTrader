@@ -110,3 +110,4 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.70: R2.56, R2.18)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; drill script → `tests/drills/`; host → workstation; tools [uv, docker] → [cargo, uv, docker]; services [nats, postgres] → [nats, supabase-postgres])

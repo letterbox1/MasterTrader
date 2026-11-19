@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P7-T009 · Install the UPS and 4G failover for the host and router
+# P7-T009 · Install the UPS and 4G failover for the runtime host and router
 
 ## Goal / expected outcome
 
-The host and router run on a UPS with enough runtime to fail flat cleanly, and a 4G failover link takes over on a fixed-line outage while exchange traffic keeps the **same static egress IP** because both links tunnel to the Sydney exit node (16 §3.2).
+The runtime host and router run on a UPS with enough runtime to fail flat cleanly, and a 4G failover link takes over on a fixed-line outage while exchange traffic keeps the **same static egress IP** because both links tunnel to the Sydney exit node (16 §3.2).
 
 ## Context & references
 
@@ -48,13 +48,13 @@ The host and router run on a UPS with enough runtime to fail flat cleanly, and a
 
 ## Requirements
 
-- UPS runtime ≥ 15 min at host+router load; USB/network signalling to the host (NUT) so a low-battery event triggers the fail-flat path before shutdown.
-- 4G router in automatic failover mode; it only has to give the host internet: exchange traffic reaches the venues through the exit-node tunnel (P7-T066) on either link, so the allow-listed IP never changes (16 §3.2).
+- UPS runtime ≥ 15 min at host+router load; USB/network signalling to the runtime host (NUT) so a low-battery event triggers the fail-flat path before shutdown.
+- 4G router in automatic failover mode; it only has to give the runtime host internet: exchange traffic reaches the venues through the exit-node tunnel (P7-T066) on either link, so the allow-listed IP never changes (16 §3.2).
 - Failover time (link switch + tunnel re-established) measured and recorded; target ≤ the venue cancel-after timeout (default 60 s, 16 §3.1). The dead-man timings stay the 16 §3.1 defaults (5 s cancel / 10 s `on_system_failure`); they are not derived from the failover time.
 
 ## ToDo
 
-- [ ] Install the UPS; plug in host, router, 4G router; connect the UPS signal cable to the host.
+- [ ] Install the UPS; plug in host, router, 4G router; connect the UPS signal cable to the runtime host.
 - [ ] Configure the 4G router for automatic failover; test by unplugging the fixed line.
 - [ ] If the 4G router needs settings for the tunnel to pass, store its admin access in the sops file so P7-T066 can confirm the tunnel works over 4G.
 - [ ] Measure: UPS runtime at load, failover time; record both on the task.
@@ -67,7 +67,7 @@ The host and router run on a UPS with enough runtime to fail flat cleanly, and a
 
 ### Scenarios
 - Given the fixed line is unplugged, when 4G takes over and the tunnel re-establishes, then the venues still see the exit node's IP and venue connections resume.
-- Given mains power is cut, when the UPS reaches low battery, then NUT signals the host and fail-flat runs before shutdown.
+- Given mains power is cut, when the UPS reaches low battery, then NUT signals the runtime host and fail-flat runs before shutdown.
 
 ### Stress / failure injection
 - Unplug the fixed line 3 times in 10 minutes; record failover each time.
@@ -75,12 +75,13 @@ The host and router run on a UPS with enough runtime to fail flat cleanly, and a
 ## Acceptance criteria
 
 - [ ] UPS runtime and failover time recorded and meet the numbers above.
-- [ ] The UPS signals the host (NUT) and the 4G link carries the exit-node tunnel (confirmed with P7-T066).
+- [ ] The UPS signals the runtime host (NUT) and the 4G link carries the exit-node tunnel (confirmed with P7-T066).
 
 ## Exceptions & edge cases
 
 - 4G carrier CGNAT changes the public IP: irrelevant to the venues because exchange traffic exits via the tunnel; never widen key allow-lists.
 - UPS battery ages: record the install date; replace per vendor guidance.
+- **Conditional:** UPS and 4G protect a runtime host at your premises (workstation or home server). If P7-T071 picks a cloud VM as the runtime host, cancel this item then with reason "runtime host is a cloud VM (P7-T071)". Until that choice, keep it.
 
 ## Cardinal rules (do NOT)
 
@@ -97,10 +98,11 @@ The host and router run on a UPS with enough runtime to fail flat cleanly, and a
 ## Branch & PR
 
 - Branch: `p7/P7-T009-ups-and-4g-failover`
-- PR title: `P7-T009: Install the UPS and 4G failover for the host and router`
+- PR title: `P7-T009: Install the UPS and 4G failover for the runtime host and router`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P7-T009` run · evidence (redacted, no secrets) linked in the progress log
 
 ## Progress log
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (egress via the exit-node tunnel on both links per 16 §3.2/17 §A P7-B004; dead-man timings per 16 §3.1; dep P0-T012)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host; conditional on the runtime host being at your premises (P7-T071); stays USER (hardware))

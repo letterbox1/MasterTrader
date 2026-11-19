@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/16-configuration-and-safety-model.md,
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -71,7 +71,7 @@ A small cloud VM in a Sydney region with a **static public IP** exists, is joine
 
 ### Scenarios
 - Given the VM is up, when you scan its public IP from outside, then only the tunnel port answers (no SSH from the internet if you restricted it to the tailnet).
-- Given the exit node is advertised, when the host routes a test request through it, then `api.ipify.org` returns the static IP and the GeoIP country is `AU`.
+- Given the exit node is advertised, when the runtime host routes a test request through it, then `api.ipify.org` returns the static IP and the GeoIP country is `AU`.
 
 ### Stress / failure injection
 - Reboot the VM: the static IP is unchanged and the node rejoins the tailnet automatically.
@@ -87,6 +87,7 @@ A small cloud VM in a Sydney region with a **static public IP** exists, is joine
 - Provider recycles IPs on stop/start: use a reserved/elastic IP; never rely on an ephemeral IP.
 - No free tier available: a small paid VM is acceptable (16 §3.2); this is infrastructure, not a paid data source.
 - Provider outage: the tunnel is down → fail-flat via venue timers + resting stops (16 §3.1–3.2); recovery is a rebuild from this task's steps.
+- **Conditional:** if P7-T071 picks a Sydney cloud VM with a static IP as the runtime host, that IP is the egress IP ([18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) and this item isn't needed: cancel it then with reason "runtime host is a static-IP VM (P7-T071)" (dependants treat cancelled as done). Until that choice, keep it.
 
 ## Cardinal rules (do NOT)
 
@@ -111,3 +112,4 @@ A small cloud VM in a Sydney region with a **static public IP** exists, is joine
 
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.14/T7.11: static AU egress exit node, 16 §3.2, 17 §A P7-B004)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (conditional: not needed if P7-T071 picks a static-IP Sydney VM as the runtime host (state it, not cancelled); the host → the runtime host)

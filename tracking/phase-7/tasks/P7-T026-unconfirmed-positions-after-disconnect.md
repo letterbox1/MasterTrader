@@ -15,17 +15,17 @@ requirements: [R7.09]
 roadmap_todos: [T7.23]
 modules: [M12, M11, M16]
 dashboards: [D05, D01]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T026-unconfirmed-positions-after-disconnect
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D05-execution.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ After any venue disconnect, engine restart or order in unknown state, affected p
 
 ## ToDo
 
-- [ ] Account confirmation state in `mt_engine` (KV `account_state`).
+- [ ] Account confirmation state in `mt-engine` (KV `account_state`).
 - [ ] M11 pre-trade check `account_confirmed`.
 - [ ] Recon-triggered confirmation on clean run.
 - [ ] D05/D01 UI states.
@@ -65,6 +65,7 @@ After any venue disconnect, engine restart or order in unknown state, affected p
 ## Verification
 
 ### Tests
+- `cargo test -p mt-engine account_state` and `cargo clippy`.
 - Integration: drop venue WS for 10 s → state unconfirmed; entries rejected; reconnect + clean recon → confirmed.
 - Integration: engine crash mid-order → restart → open orders fetched from venue, no duplicate submits (epoch ids), positions confirmed only after recon.
 - Unit: kill switch flatten allowed while unconfirmed.
@@ -91,7 +92,7 @@ After any venue disconnect, engine restart or order in unknown state, affected p
 
 - Do NOT clear `unconfirmed` manually without a recon run.
 - Do NOT block protective exits or kill-switch flattening.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -111,3 +112,4 @@ After any venue disconnect, engine restart or order in unknown state, affected p
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (restart flat/paused per 16 §3.1; tunnel-down trigger; dep P2-T027)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (account confirmation state in Rust `mt-engine`; tools cargo)

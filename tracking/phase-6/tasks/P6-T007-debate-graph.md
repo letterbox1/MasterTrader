@@ -18,14 +18,14 @@ dashboards: [D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [litellm, llm-local, postgres, nats]
+services: [litellm, llm-local, supabase-postgres, nats]
 branch: p6/P6-T007-debate-graph
 pr: ""
 doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,7 +103,7 @@ review_result: ""
 
 - Do NOT let the graph place orders or call commands; the Signal is its only output.
 - Do NOT run the graph per tick.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT let Telegram text (or any `model_input_ok = false` / `train_ok = false` row) reach a model, prompt, RAG index, memory bank or training set (12 §4–5).
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
@@ -125,3 +125,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Signal = 03 M8 fields; keyless build on local-advisor/recorded responses, live check in P6-T070; cross-phase deps P0-T042/P0-T044; run fields)
 - 2026-11-19 00:00 · coordinator · TradingAgents pin ≥ 0.7.1; links to P6-T071/T072 (17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; agents stay Python (18 §2.2))

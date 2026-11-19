@@ -125,3 +125,4 @@ The default limits of [16 §2.1–§2.3](../../../docs/16-configuration-and-safe
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (defaults from 16 §2.1–§2.3, two-stage sleeve (10/15) and system (10/25 + lock) drawdowns on the 16 drawdown basis, risk.sleeve.restart C3, venue cap 25%, Sydney day, cost blow-out pauses the bot)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats])

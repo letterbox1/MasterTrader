@@ -18,14 +18,14 @@ dashboards: [D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [prefect, postgres, hindsight, litellm]
+services: [prefect, supabase-postgres, hindsight, litellm]
 branch: p6/P6-T013-settlement-reflection-jobs
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -93,7 +93,7 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 
 - Do NOT backdate settlement or reflection memories to the decision time.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -113,3 +113,4 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (memory timestamps observed_at/ingested_at per 17 §A P6-B016; Signal id per 03 M8; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

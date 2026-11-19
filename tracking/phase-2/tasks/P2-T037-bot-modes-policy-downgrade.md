@@ -115,3 +115,4 @@ Each bot's mode (`paper` / `hitl` / `autonomous`), approval policy and escalatio
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper→HITL C2, strategy ceiling caps bots, decay signals per 16 §2.6 incl. 5 losing trades, TTL/large-order defaults)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo]; services [nats, postgres] → [nats, supabase-postgres])

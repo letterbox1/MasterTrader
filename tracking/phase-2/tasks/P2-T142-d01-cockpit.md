@@ -112,3 +112,4 @@ The `/` Cockpit answers 'am I safe, what's running, what changed, what needs me,
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; backend dep on the risk/order API (P2-T020))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line)

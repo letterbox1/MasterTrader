@@ -113,3 +113,4 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (regime_v1 per 16 §2.4.1, cost gate 2× (3× reported), D06 stress tab distinction)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)

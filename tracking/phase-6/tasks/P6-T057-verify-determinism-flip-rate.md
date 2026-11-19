@@ -15,17 +15,17 @@ requirements: [R6.11]
 roadmap_todos: [T6.61]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker, nvidia-smi]
+tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [decision-svc, gpu]
+services: [decision-svc]
 branch: p6/P6-T057-verify-determinism-flip-rate
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Measured flip rate (decisions that change on identical repeated inputs, incl. across restarts and batch positions) is ≤ the gate (default 0.1%) on GPU, and backtests using CPU ONNX FP32 reproduce bit-identically across runs.
+Measured flip rate (decisions that change on identical repeated inputs, incl. across restarts and batch positions) is ≤ the gate (default 0.1%) on every available profile (CPU always; GPU when present, `models.gpu_profile: auto`), and backtests using CPU ONNX FP32 reproduce bit-identically across runs.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 
 ## Requirements
 
-- GPU: 10k states × 5 repeats, varying restart and neighbouring batch content; count argmax flips and probability deltas.
+- Active profile (CPU ONNX always; GPU when present): 10k states × 5 repeats, varying restart and neighbouring batch content; count argmax flips and probability deltas.
 - CPU ONNX FP32: two full backtests over the same window produce identical decision hashes and identical P&L.
 - Report flip rate per question/model in D10.
 
@@ -67,7 +67,7 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 - Given prefix caching accidentally enabled, then the flip-rate test fails (negative control).
 
 ### Stress / failure injection
-- Repeat under GPU memory pressure (other model loaded): flip rate still ≤ gate or the question is flagged.
+- Repeat under GPU memory pressure (GPU profile only; other model loaded): flip rate still ≤ gate or the question is flagged.
 
 ## Acceptance criteria
 
@@ -99,3 +99,4 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (flip-rate default 16 §2.10, prefix caching off (17 §A); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (flip-rate check on every available profile (CPU always, GPU when present); nvidia-smi/gpu preconditions removed)

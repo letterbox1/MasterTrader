@@ -106,3 +106,4 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper parity on the sandbox venue (no keys), engine/template deps explicit)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [uv] → [uv, cargo]; services [postgres, mlflow] → [supabase-postgres, mlflow])

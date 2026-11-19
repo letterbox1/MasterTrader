@@ -122,3 +122,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (layer-aware classifier (L0–L4), 15 min cool-down default, paper→HITL C2 vs C3 loosenings, risk.sleeve.restart C3, break-glass retirement setting)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats, supabase-auth])

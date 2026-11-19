@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P7-T006, P7-T065]
+depends_on: [P7-T006, P7-T065, P7-T071, P7-T072]
 requirements: [R7.04, R7.14]
 roadmap_todos: [T7.03, T7.11]
 modules: [M12]
@@ -18,14 +18,14 @@ dashboards: [D16, D05]
 tools: []
 mcp: []
 env: []
-services: [venue API key pages, egress exit-node VM (P7-T065)]
+services: [venue API key pages, egress IP (P7-T065 exit node or the static-IP runtime host)]
 branch: p7/P7-T007-live-trade-only-keys
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,16 +48,17 @@ Each live sub-account has its own API key with trade-only scope, withdrawals dis
 ## Requirements
 
 - Scopes: read + trade only. **No** withdrawal, transfer, sub-account management or margin-loan scopes.
-- IP allow-list: **only** the exit node's static IP (16 §3.2); broadband and 4G both tunnel to it, so failover never needs another IP. Never widen to 0.0.0.0/0 or add the home/4G IP.
+- IP allow-list: **only** the egress IP (the exit node's static IP from P7-T065, or the runtime host's own static IP when P7-T071 chose a static-IP Sydney VM, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) (16 §3.2); broadband and 4G both tunnel to it, so failover never needs another IP. Never widen to 0.0.0.0/0 or add the home/4G IP.
 - Secrets file entries: `live.<venue>.<subaccount>.{api_key,api_secret,passphrase,created_at}`; `created_at` drives the 90-day rotation alert.
 - Per sub-account: one engine trade key, the `deadman` sidecar's own trade-only key (16 §3.1, `live.<venue>.<subaccount>.deadman.*`) and one read-only recon key; per-container least privilege (`engine` and `deadman` get their trade-only keys, `monitor` only the read-only key).
+- Create live keys only after the age identities are on the YubiKey (P7-T072), so live secrets are never encrypted to a keychain identity.
 
 ## ToDo
 
 - [ ] For each sub-account: create an API key with trade + read scopes only; untick every withdrawal/transfer scope.
 - [ ] Set the IP allow-list to the exit node's static IP from P7-T065 only (and the VPS IP for FP Markets if relevant); this is T7.11's 'allow-list its IP on every live key' step.
-- [ ] Edit the sops file on the host (`sops secrets/live.enc.yaml`) and add the key fields plus `created_at`; never paste them anywhere else.
-- [ ] Create the `deadman` sidecar's own trade-only key per sub-account and a separate **read-only** key per venue for reconciliation (`live.<venue>.recon.*`), all allow-listed to the same exit-node IP.
+- [ ] Edit the sops file on the runtime host (`sops secrets/live.enc.yaml`) and add the key fields plus `created_at`; never paste them anywhere else.
+- [ ] Create the `deadman` sidecar's own trade-only key per sub-account and a separate **read-only** key per venue for reconciliation (`live.<venue>.recon.*`), all allow-listed to the same egress IP.
 - [ ] Run the key audit (P7-T032) from D16 → Keys → 'Audit live keys' and fix anything it flags.
 - [ ] Note the key creation date on the D16 keys metadata view.
 
@@ -106,3 +107,4 @@ Each live sub-account has its own API key with trade-only scope, withdrawals dis
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (allow-list only the exit-node static IP per 16 §3.2/17 §A P7-B004; deadman sidecar keys per 16 §3.1; dep P7-T065; T7.11)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (keys allow-listed to the egress IP (exit node or static-IP runtime host); added deps P7-T071 (which IP) and P7-T072 (YubiKey before live keys); the host → the runtime host)

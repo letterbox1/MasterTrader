@@ -115,3 +115,4 @@ The web approvals queue in part B's dashboards — D05 Approvals tab (pending + 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no bulk approve except the batched dynamic-selection card (17 §D P2-B058), large-order hold-to-confirm; ApprovalCard dep)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line; re-login → Supabase Auth + TOTP (`aal2`); services [] → [supabase-auth])

@@ -108,3 +108,4 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless drills (sandbox/mock venues, fake Bot API), layer-1 timers 5 s/10 s with per-bot on_system_failure; engine-death drill moved to P2-T075)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; drill script → `tests/drills/`; tools [uv, docker] → [cargo, uv, docker]; services [nats, postgres] → [nats, supabase-postgres])

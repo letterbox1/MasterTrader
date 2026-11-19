@@ -18,14 +18,14 @@ dashboards: [D10, D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [decision-svc, nats, postgres, gpu]
+services: [decision-svc, nats, supabase-postgres]
 branch: p6/P6-T024-tierb-export-serving-determinism
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -98,7 +98,7 @@ Calibrated heads export to ONNX (FP32) and vLLM adapters; `decision-svc` stage 2
 
 - Do NOT let tier B place orders; veto goes through `risk.event` → M11.
 - Do NOT call any remote API from the decision path.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT let Telegram text (or any `model_input_ok = false` / `train_ok = false` row) reach a model, prompt, RAG index, memory bank or training set (12 §4–5).
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
@@ -120,3 +120,4 @@ Calibrated heads export to ONNX (FP32) and vLLM adapters; `decision-svc` stage 2
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (latency per 17 §B (R6.N3), veto default 0.90 and prefix caching off (16 §2.10, 17 §A); cross-phase deps P4-T029/P2-T128; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no GPU service precondition (`models.gpu_profile: auto`))

@@ -120,3 +120,4 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.72: R2.30, R2.N3, R2.31)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; host → workstation; USER dep P2-T001 kept (live keys); tools [uv, docker, sops] → [cargo, docker, sops]; services [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, postgres] → [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, supabase-postgres])

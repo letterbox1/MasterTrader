@@ -18,14 +18,14 @@ dashboards: [D03]
 tools: [git, uv]
 mcp: []
 env: []
-services: [postgres, mlflow, backtest-worker]
+services: [supabase-postgres, mlflow, backtest-worker]
 branch: p7/P7-T038-mastertradingbot-strategy-port
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -85,7 +85,7 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 
 - Do NOT skip gates for strategies that 'already worked' in MasterTradingBot.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -103,3 +103,4 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (per-trade risk default per 16 §2.1; paper start moved to P7-T051; deps P2-T132/T133)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; port follows P2-T132's template language (deterministic strategies may be Rust, 18 §9 step 4))

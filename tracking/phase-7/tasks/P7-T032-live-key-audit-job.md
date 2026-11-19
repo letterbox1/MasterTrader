@@ -15,17 +15,17 @@ requirements: [R7.04, R7.14]
 roadmap_todos: [T7.40]
 modules: [M17, M12]
 dashboards: [D16, D05]
-tools: [git, uv]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
-services: [postgres, prefect-server, mt-api]
+services: [supabase-postgres, mt-api]
 branch: p7/P7-T032-live-key-audit-job
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/ui/dashboards/D16-system.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A key audit (`system.key.audit`, daily and at engine start) verifies for every live key: trade-only scopes, withdrawals disabled, IP allow-list equal to exactly the exit node's static IP (16 §3.2), and age < 90 days (rotation, 16 §2.3), using each venue's permission endpoint where one exists and a documented manual attestation where not.
+A key audit (`system.key.audit`, daily and at engine start) verifies for every live key: trade-only scopes, withdrawals disabled, IP allow-list equal to exactly the egress IP (the exit node's static IP from P7-T065, or the runtime host's own static IP when P7-T071 chose a static-IP Sydney VM, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) (16 §3.2), and age < 90 days (rotation, 16 §2.3), using each venue's permission endpoint where one exists and a documented manual attestation where not.
 
 ## Context & references
 
@@ -48,20 +48,21 @@ A key audit (`system.key.audit`, daily and at engine start) verifies for every l
 ## Requirements
 
 - Per venue: use permission introspection where available (e.g. Binance `apiRestrictions`, Kraken key info, OKX `account/config`/API key perms); otherwise require a signed manual attestation row (date, screenshot reference) renewed every 90 days.
-- Fail if: any withdrawal/transfer scope; no IP restriction, or an allow-list containing anything other than the configured exit-node IP (and the VPS IP for FP Markets); age ≥ 90 days (warn at 80; both settings); attestation missing/expired.
+- Fail if: any withdrawal/transfer scope; no IP restriction, or an allow-list containing anything other than the configured egress IP (and the VPS IP for FP Markets); age ≥ 90 days (warn at 80; both settings); attestation missing/expired.
 - Results in `audit.key_audit` (WORM); D16 keys view shows status (masked metadata only).
 - Engine start-up guard consumes the latest result.
 
 ## ToDo
 
-- [ ] `packages/mt_obs/key_audit/` with per-venue introspectors.
+- [ ] `crates/mt-obs/src/key_audit/` with per-venue introspectors.
 - [ ] Attestation command `system.key.attest` (C1).
-- [ ] Daily Prefect flow + start-up hook.
+- [ ] Daily scheduled job + start-up hook.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-obs key_audit` and `cargo clippy`; `supabase test db` (WORM on `audit.key_audit`).
 - Unit: introspector parsers for each supported venue (fixtures).
 - Integration (fixtures, no keys): key with withdrawal scope fails audit and blocks start; key allow-listed to an extra IP fails with `ip_allowlist_mismatch`.
 
@@ -105,3 +106,4 @@ A key audit (`system.key.audit`, daily and at engine start) verifies for every l
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (allow-list must equal the exit-node IP (16 §3.2); 90-day rotation (16 §2.3); keyless fixtures, live run in P7-T047)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (key audit in Rust `crates/mt-obs/src/key_audit/` as a scheduled job (no Prefect); allow-list = the egress IP (exit node or static-IP runtime host); tools cargo/supabase)

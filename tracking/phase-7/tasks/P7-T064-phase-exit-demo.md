@@ -18,14 +18,14 @@ dashboards: [D01, D03, D06, D14]
 tools: [git, uv, pnpm]
 mcp: []
 env: []
-services: [postgres, nats, mt-api]
+services: [supabase-postgres, nats, mt-api]
 branch: p7/P7-T064-phase-exit-demo
 pr: ""
 doc_sync: [docs/roadmap/README.md, docs/04-plan-of-action.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ A recorded walkthrough proves every exit criterion: at least one strategy is liv
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (R7.14–R7.16 added (P7-T052, P7-T067, P7-T069); P7-T062 cancelled → recurring review; exit 4 per roadmap §6)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)

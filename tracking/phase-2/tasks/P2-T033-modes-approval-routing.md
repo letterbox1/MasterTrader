@@ -118,3 +118,4 @@ After the gate approves an intent, routing follows the bot's mode (capped by its
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (bot mode capped by strategy ceiling, TTL and large-order defaults from 16 §2.3, MCP cards always need approval)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo]; services [nats, postgres] → [nats, supabase-postgres])

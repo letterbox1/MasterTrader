@@ -124,3 +124,4 @@ A small `deadman` sidecar (`mt-deadman`: a small static Rust binary linking `mt-
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.36: R2.56, R2.18)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; `mt-deadman` static binary linking `mt-risk`; tools [uv, docker] → [cargo, docker])

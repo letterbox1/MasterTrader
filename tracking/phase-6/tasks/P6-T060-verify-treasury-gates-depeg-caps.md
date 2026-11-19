@@ -18,14 +18,14 @@ dashboards: [D18]
 tools: [git, uv, python>=3.12, docker, anvil, solana-test-validator]
 mcp: []
 env: []
-services: [anvil, signer, postgres]
+services: [anvil, signer, supabase-postgres]
 branch: p6/P6-T060-verify-treasury-gates-depeg-caps
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -92,7 +92,7 @@ On forks/testnets: an uneconomic move is rejected by the cost gate with numbers 
 
 - Do NOT run these scenarios with real funds.
 - Do NOT touch live money or live keys; keys stay trade-only, IP-locked, withdrawals disabled (live is gated to P7).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT loosen anything (risk, LLM budgets, treasury policy, allow-list, autonomous mode, mandates) without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
@@ -112,3 +112,4 @@ On forks/testnets: an uneconomic move is rejected by the cost gate with numbers 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (HLP both bounds, venue 25% L1, depeg reduce from P6 (17 §B); test policy so no wait on USER P6-T034; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)

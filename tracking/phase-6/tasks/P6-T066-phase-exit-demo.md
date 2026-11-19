@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073]
+depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073]
 requirements: [R6.01, R6.05, R6.10, R6.12, R6.20, R6.21, R6.22, R6.24, R6.40]
 roadmap_todos: []
 modules: [M8, M9, M10, M21, M22]
@@ -25,7 +25,7 @@ doc_sync: [tracking/phase-6/PHASE.md, docs/roadmap/phase-6-ai-models-treasury.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,12 +44,12 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.12](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.20](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.21](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.22](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.24](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.40](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting item)
 - [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) · Roadmap §5 deliverables
 - All VERIFY items in this phase
-- Depends on (this phase): P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T044, P6-T045, P6-T032, P6-T010, P6-T034 (your approved treasury policy), P6-T067 (sample runs), P6-T069 (port check), P6-T070 (live keys)
+- Depends on (this phase): P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034 (your approved treasury policy), P6-T067 (sample runs), P6-T069 (port check), P6-T070 (live keys)
 
 ## Requirements
 
-- Live demo on the host in paper/fork mode, recorded (screenshots + ids).
-- Re-check: no open S1/S2 bugs in phase 6; all tasks done/cancelled; optional items decided.
+- Live demo on the workstation in paper/fork mode, recorded (screenshots + ids).
+- Re-check: no open S1/S2 bugs in phase 6; all tasks done/cancelled; optional items match the module settings (P6-T003).
 - Tick the exit criteria in PHASE.md with evidence links.
 
 ## ToDo
@@ -60,6 +60,7 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - [ ] Demo 4: allocate idle test stables on fork under your approved policy (P6-T034) → gate allow → position within caps; reserve ≥ min.
 - [ ] Link the evidence of P6-T067 (sample runs), P6-T069 (port check) and P6-T070 (live key check).
 - [ ] Confirm no open S1/S2 bugs; tick PHASE.md exit boxes.
+- [ ] Cancel each optional item (P6-T046–P6-T051) whose module is still off in settings, with reason "optional module off by default (P6-T003)"; offer to cancel P6-T044 if you didn't label (optional; silver labels were used).
 
 ## Verification
 
@@ -86,7 +87,7 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 
 - Do NOT demo with live money.
 - Do NOT touch live money or live keys; keys stay trade-only, IP-locked, withdrawals disabled (live is gated to P7).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -106,3 +107,4 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo now also depends on P6-T034, P6-T067, P6-T069, P6-T070 (new T6.66/T6.73 and the live check); run fields)
 - 2026-11-19 00:00 · coordinator · depends on P6-T073 (vetted additions, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dep P6-T044 (labelling is optional, agent silver labels by default); keeps P6-T034 (real-money treasury approval, listed for the demo); optional modules cancelled at exit while off; workstation instead of host)

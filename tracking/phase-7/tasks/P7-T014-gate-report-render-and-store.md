@@ -15,17 +15,17 @@ requirements: [R7.01, R7.02, R7.15]
 roadmap_todos: [T7.20, T7.26]
 modules: [M0, M15, M17]
 dashboards: [D03]
-tools: [git, uv, pnpm, node>=20]
+tools: [git, uv, pnpm, node>=20, cargo, supabase]
 mcp: []
 env: []
-services: [postgres, mlflow, prefect-server, mt-api]
+services: [supabase-postgres, mlflow, prefect-server, mt-api]
 branch: p7/P7-T014-gate-report-render-and-store
 pr: ""
 doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/02-v1-architecture.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,9 +55,9 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 
 ## ToDo
 
-- [ ] Migration `strategy.gate_report` (WORM).
+- [ ] SQL migration (`supabase/migrations/`) `strategy.gate_report` (WORM).
 - [ ] Renderer (Jinja → HTML; WeasyPrint → PDF, licence-clean) in `packages/mt_lab/gates/render.py`.
-- [ ] API query + command; nightly Prefect flow.
+- [ ] `mt-api` (Rust) query + command; nightly Prefect flow calling the Python renderer.
 - [ ] D03 Gates tab component consuming `/strategies/{id}/gate-report` (+ viewport matrix).
 - [ ] Hook report id into promotion/mode commands.
 - [ ] Tests; docs.
@@ -65,6 +65,7 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 ## Verification
 
 ### Tests
+- `supabase test db` (WORM on `strategy.gate_report`); `cargo test -p mt-api`; `uv run pytest` (renderer); `pnpm test` and `pnpm playwright` (Gates tab).
 - Unit: renderer snapshot (HTML) for pass and fail fixtures.
 - Integration: promotion refused with a stale (8-day-old) report; accepted with a fresh passing one; audit row carries `gate_report_id`.
 - WORM: report rows cannot be updated; regenerated report is a new row.
@@ -94,7 +95,7 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 - Do NOT allow editing a report; regenerate as a new row.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -113,3 +114,4 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (R7.15/T7.26 share (gate-report API); stress-replay section (R7.16); deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (query and command in Rust `mt-api`; WORM migration in `supabase/`; renderer stays Python; tools cargo/supabase)

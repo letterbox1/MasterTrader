@@ -15,17 +15,17 @@ requirements: [R7.06]
 roadmap_todos: [T7.21]
 modules: [M11, M16]
 dashboards: [D06, D03]
-tools: [git, uv]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T020-kill-criteria-micro-live
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,8 +56,8 @@ A kill-criteria framework in M11 evaluates each live sleeve's written kill crite
 
 ## ToDo
 
-- [ ] `packages/mt_risk/kill_criteria/` framework + two criteria.
-- [ ] Migration `risk.kill_eval` (WORM); NATS `risk.event` type `kill_criterion`.
+- [ ] `crates/mt-risk/src/kill_criteria/` framework + two criteria.
+- [ ] SQL migration (`supabase/migrations/`) `risk.kill_eval` (WORM); NATS `risk.event` type `kill_criterion`.
 - [ ] Restart command `risk.sleeve.restart` (C3, reason required).
 - [ ] Kill-criteria panel component per sleeve/bot (status, value, threshold, last eval), composed into the D06 Live tab by P7-T067.
 - [ ] Tests; docs.
@@ -65,6 +65,7 @@ A kill-criteria framework in M11 evaluates each live sleeve's written kill crite
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk kill_criteria` and `cargo clippy`; `supabase test db` (WORM on `risk.kill_eval`).
 - Unit: thresholds at 1.99× (ok), 2.01× (breach); 59 trades (n/a), 60 trades below p5 (breach).
 - Integration: injected breach halts only that sleeve within 5 s; other sleeves continue.
 - Property: a manifest cannot loosen a default threshold.
@@ -96,7 +97,7 @@ A kill-criteria framework in M11 evaluates each live sleeve's written kill crite
 - Do NOT add discretionary overrides; the only manual trading action outside HITL approvals is flatten-and-halt with a required reason (14 §4).
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -115,3 +116,4 @@ A kill-criteria framework in M11 evaluates each live sleeve's written kill crite
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (one meaning per signal (16 §2.6); 1.5× warning steps back one step, halt → starting allocation (16 §2.5); sleeve-level 60-trade Sharpe; deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (kill criteria in Rust `crates/mt-risk/src/kill_criteria/`; SQL migration in `supabase/`; tools cargo/supabase)

@@ -15,17 +15,17 @@ requirements: [R7.03, R7.15]
 roadmap_todos: [T7.05, T7.26]
 modules: [M18, M15]
 dashboards: [D14]
-tools: [git, uv, pnpm, node>=20]
+tools: [git, cargo, pnpm, node>=20, supabase]
 mcp: []
 env: []
-services: [postgres, mt-api, telegram bot api]
+services: [supabase-postgres, mt-api, telegram bot api]
 branch: p7/P7-T016-weekly-review-signoff
 pr: ""
 doc_sync: [docs/ui/dashboards/D14-journal.md, docs/02-v1-architecture.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ You can review a pack and sign it off from web or phone; sign-offs are WORM jour
 
 ## ToDo
 
-- [ ] Migration + command + query `/journal/reviews`.
+- [ ] SQL migration (`supabase/migrations/`) + command + query `/journal/reviews`.
 - [ ] D14 Reviews tab (list, review page, sign-off form) with viewport matrix.
 - [ ] Telegram reminder job and deep link.
 - [ ] Tests; docs.
@@ -62,6 +62,7 @@ You can review a pack and sign it off from web or phone; sign-offs are WORM jour
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api` (command, query); `supabase test db`; `pnpm test` and `pnpm playwright`.
 - Integration: sign-off creates a WORM row; a second sign-off for the same pack is a new row with `supersedes_id`.
 - Playwright: digest deep link → review → sign-off in ≤ 3 taps at 375×667 and 280×653.
 
@@ -87,7 +88,7 @@ You can review a pack and sign it off from web or phone; sign-offs are WORM jour
 
 - Do NOT allow edits to a signed review; corrections supersede.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -106,3 +107,4 @@ You can review a pack and sign it off from web or phone; sign-offs are WORM jour
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (clean week per 16 §2.5: an unsigned review is a warning, not a dirty week; R7.15 share)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (sign-off command and query in Rust `mt-api`; SQL migration in `supabase/`; tools cargo/supabase)

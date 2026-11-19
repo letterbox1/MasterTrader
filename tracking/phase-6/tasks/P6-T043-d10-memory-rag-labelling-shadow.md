@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D10-models-memory.md, docs/roadmap/phase-6-ai-mode
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,6 +65,7 @@ D10 shows Hindsight banks (counts, recent, PIT search, delete C1), the RAG playg
 ## Verification
 
 ### Tests
+- `pnpm test` and `pnpm playwright` (viewport matrix); the labelling tab shows `silver` vs `user` label counts.
 - Playwright: label 5 items → 5 `models.label.add` commands; undo creates a superseding row.
 - Viewport matrix.
 
@@ -87,7 +88,7 @@ D10 shows Hindsight banks (counts, recent, PIT search, delete C1), the RAG playg
 ## Cardinal rules (do NOT)
 
 - Do NOT show model (shadow) answers as default selections in the labelling UI (anchoring).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -106,3 +107,4 @@ D10 shows Hindsight banks (counts, recent, PIT search, delete C1), the RAG playg
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (labels endpoint + D10 queue tab per 17 §D P6-B004; PIT memory search per 17 §A; deps P4-T032/P0-T049; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (labelling tab works on silver labels by default; your labels optional; web verification via `pnpm test` / `pnpm playwright`)

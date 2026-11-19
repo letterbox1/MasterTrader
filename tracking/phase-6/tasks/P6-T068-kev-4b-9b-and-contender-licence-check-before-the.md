@@ -25,7 +25,7 @@ doc_sync: [docs/research/decision-models-system-one.md, docs/10-memory-rag-and-m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -111,3 +111,4 @@ The unverified (U) fact behind R6.12 is settled by an agent before any weights a
 
 - 2026-10-22 00:00 · aligner · created for T6.72 (Kev (U) check moved from the USER item P6-T002 to an agent check per 17 §E; owns P6-B003)
 - 2026-11-19 00:00 · coordinator · Trading-R1 added to the contender licence check (17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)

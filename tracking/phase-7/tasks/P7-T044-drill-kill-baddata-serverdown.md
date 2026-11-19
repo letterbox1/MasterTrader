@@ -18,14 +18,14 @@ dashboards: [D06, D07, D16]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, monitor, grafana]
+services: [supabase-postgres, nats, mt-api, monitor, grafana]
 branch: p7/P7-T044-drill-kill-baddata-serverdown
 pr: ""
 doc_sync: [docs/runbooks/, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ The kill, bad-data and server-down-with-open-positions runbooks are each drilled
 
 - Kill: `/kill` from phone → all cancels sent < 1 s; each bot's `on_system_failure` applied; new treasury/earn moves frozen ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)); kill OFF via C3 only.
 - Bad data: inject a stale/bad feed on a traded instrument → `dq.status` flips ≤ 250 ms p99 after the threshold and M11 rejects orders on it inline (16 §2.2); affected strategies paused, autonomous bots downgraded; runbook steps (halt autonomous bots, switch feeds) followed.
-- Server down: stop the host's `engine` + `mt-api` with paper positions open → the `deadman` sidecar cancels within 5 s and applies `on_system_failure` at 10 s (16 §3.1); you check each venue's web UI/terminal following the runbook; resting stops verified present; restart → bots paused → recon → confirmed → you resume (C1).
+- Server down: stop the runtime host's `engine` + `mt-api` with paper positions open → the `deadman` sidecar cancels within 5 s and applies `on_system_failure` at 10 s (16 §3.1); you check each venue's web UI/terminal following the runbook; resting stops verified present; restart → bots paused → recon → confirmed → you resume (C1).
 - Dead-man and restart drills also count for the gate's 'safety drills' (16 §2.4): record them per venue the first bots will trade on.
 - Each drill recorded via `ops.drill.record` with start/end, result, evidence (Grafana snapshot links, redacted screenshots).
 
@@ -107,3 +107,4 @@ The kill, bad-data and server-down-with-open-positions runbooks are each drilled
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (timings per 16 §2.2/§3.1; dead-man + restart drills count for the 16 §2.4 safety-drills gate; kill actions per 17 §B)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host; services supabase-postgres)

@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [docker, nmap, ss, curl, uv]
 mcp: []
 env: []
-services: [vllm-classify, onnx-cpu, hindsight, laya, clef-flash, llm-local, tailscale]
+services: [vllm-classify, onnx-cpu, hindsight, laya, clef-flash, llm-local]
 branch: p6/P6-T069-local-inference-port-check-127-0-0-1-only-and-ap
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ Evidence for R6.N2: every local inference server added in Phase 6 (tier-B `vllm-
 
 - [ ] Write the script (inventory, scan, auth probes, cross-network probe).
 - [ ] Add a CI job on the compose `bakeoff` + core profiles.
-- [ ] Run on the host; record the table in the progress log.
+- [ ] Run on the workstation; record the table in the progress log.
 - [ ] File a bug (S2) for any server that answers without a key or is reachable from outside.
 
 ## Verification
@@ -105,3 +105,4 @@ Evidence for R6.N2: every local inference server added in Phase 6 (tier-B `vllm-
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T6.73 / R6.N2 (07 §5 port and API-key check over every P6 inference server)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (port check from LAN/tailnet; Tailscale not a precondition before Phase 7; workstation instead of host)

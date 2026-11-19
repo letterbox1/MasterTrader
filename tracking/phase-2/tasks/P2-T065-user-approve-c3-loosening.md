@@ -102,3 +102,4 @@ You prove the TOTP + cool-down path by approving one real (paper) risk loosening
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (retire the P0 break-glass C3 path after Telegram C3 passes (T2.24, 17 §D); cool-down default)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording; no dependency change (keys/drill stay USER); services [telegram, mt-web] → [telegram, mt-web, supabase-auth])

@@ -127,3 +127,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (check order with inline safety-state slot (P2-T070), strictest-layer limits (P2-T069), 16 defaults for collar/spread/blackout, signal-hash duplicate check, cross-phase deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; criterion benchmark; workstation SLO (P7 reruns on the runtime host); tools [uv] → [cargo])

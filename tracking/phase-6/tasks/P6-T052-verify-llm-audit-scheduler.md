@@ -18,14 +18,14 @@ dashboards: [D09, D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [litellm, postgres, nats]
+services: [litellm, supabase-postgres, nats]
 branch: p6/P6-T052-verify-llm-audit-scheduler
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -106,3 +106,4 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.67; audit.llm_call from P0 (17 §D P6-B010); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)

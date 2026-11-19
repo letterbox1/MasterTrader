@@ -25,7 +25,7 @@ doc_sync: [docs/ui/mobile-and-telegram.md, docs/roadmap/phase-7-prove-and-go-liv
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -100,3 +100,4 @@ On your actual phone with the PWA installed, every phone flow in mob §2 complet
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tools/mcp/env/services; flows unchanged)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change)

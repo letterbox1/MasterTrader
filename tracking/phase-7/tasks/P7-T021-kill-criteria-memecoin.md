@@ -15,17 +15,17 @@ requirements: [R7.06]
 roadmap_todos: [T7.21]
 modules: [M11]
 dashboards: [D06]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T021-kill-criteria-memecoin
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,13 +57,14 @@ The memecoin sleeve has its four kill criteria implemented on the P7-T020 framew
 
 ## ToDo
 
-- [ ] Four criteria in `packages/mt_risk/kill_criteria/memecoin.py`.
+- [ ] Four criteria in `crates/mt-risk/src/kill_criteria/memecoin.rs`.
 - [ ] Rug labeller consuming `token_risk_report` updates post-entry.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk kill_criteria::memecoin` and `cargo clippy`.
 - Unit: each criterion at boundary values (30.0% vs 30.1%; 199 vs 200 trades; 5/100 vs 6/100; loss 0.99% vs 1.01%).
 - Integration: injected rug labels breach the sleeve and halt only memecoin bots.
 - Sim (`tests/sim/test_kill_memecoin.py`): the four criteria breached on paper venues with injected fills and rug labels; scope, alerts, WORM rows and C3 restart gating asserted (the memecoin half of R7.06's simulated breach).
@@ -88,7 +89,7 @@ The memecoin sleeve has its four kill criteria implemented on the P7-T020 framew
 - Do NOT average down or widen memecoin limits to avoid a breach (14 §4).
 - Do NOT add discretionary overrides; the only manual trading action outside HITL approvals is flatten-and-halt with a required reason (14 §4).
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -106,3 +107,4 @@ The memecoin sleeve has its four kill criteria implemented on the P7-T020 framew
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on P5-T036 rug labels per 17 §D P7-B011; memecoin simulated breaches moved here from P7-T048; settings per 14 §7/16 §2.1)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (memecoin kill criteria in Rust `mt-risk`; tools cargo)

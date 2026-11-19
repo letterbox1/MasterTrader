@@ -112,3 +112,4 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; golden inputs from P2-T002 are checked in P2-T133)
 - 2026-10-22 00:00 · coordinator · depends on P0-T014 (code lives in the uv monorepo; dependency gating)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)

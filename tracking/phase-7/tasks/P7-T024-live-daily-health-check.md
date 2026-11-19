@@ -15,17 +15,17 @@ requirements: [R7.07]
 roadmap_todos: [T7.22]
 modules: [M11]
 dashboards: [D06]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, prefect-server, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T024-live-daily-health-check
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,15 +55,16 @@ A daily job (00:15 UTC) **halts any live bot** pending your review when its live
 
 ## ToDo
 
-- [ ] Prefect flow `daily_health_check` (00:15 UTC).
+- [ ] Scheduled job `daily_health_check` (00:15 UTC) in `mt-monitor`.
 - [ ] Reuse the kill-criteria action path.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-monitor health` and `cargo clippy`.
 - Unit: Sharpe 0.49× (halt) vs 0.51× validated (ok); DD 1.49× vs 1.51× backtest max.
-- Integration: flow halts only the breaching bot (not its sleeve-mates) and alerts.
+- Integration: the job halts only the breaching bot (not its sleeve-mates) and alerts.
 
 ### Scenarios
 - Given DD is 1.6× backtest max on day 12, then the bot halts even though the Sharpe leg is warming up.
@@ -85,7 +86,7 @@ A daily job (00:15 UTC) **halts any live bot** pending your review when its live
 - Do NOT skip a day's check silently; a missed run is an alert.
 - Do NOT add discretionary overrides; the only manual trading action outside HITL approvals is flatten-and-halt with a required reason (14 §4).
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -103,3 +104,4 @@ A daily job (00:15 UTC) **halts any live bot** pending your review when its live
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (health check halts the bot, not the sleeve (16 §2.6); restart via risk.sleeve.restart C3; dep P2-T034)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (daily health check as a scheduled job in Rust `mt-monitor` (no Prefect); tools cargo)

@@ -107,3 +107,4 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (stress tab placeholder (R2.57) and P7 replay noted; caps as L1 settings)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; Prefect → engine timer; tools [uv] → [cargo])

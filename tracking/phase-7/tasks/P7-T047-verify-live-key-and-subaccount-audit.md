@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T032, P7-T007, P7-T008, P7-T031, P7-T066]
+depends_on: [P7-T032, P7-T007, P7-T008, P7-T031, P7-T066, P7-T073]
 requirements: [R7.04, R7.14]
 roadmap_todos: [T7.65, T7.40]
 modules: [M12, M17]
@@ -18,14 +18,14 @@ dashboards: [D16, D05]
 tools: [git, uv, docker, sops]
 mcp: []
 env: [MT_LIVE_TRADE_KEY, MT_LIVE_TRADE_SECRET, MT_LIVE_DEADMAN_KEY, MT_LIVE_DEADMAN_SECRET, MT_LIVE_RECON_KEY, MT_LIVE_RECON_SECRET]
-services: [live venue sub-accounts (P7-T006/T007), egress exit node (P7-T065/T066)]
+services: [live venue sub-accounts (P7-T006/T007), egress IP (P7-T065/T066 exit node or the static-IP runtime host)]
 branch: p7/P7-T047-verify-live-key-and-subaccount-audit
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ A recorded key audit (T7.65, after P7-T007 and P7-T065) shows every live key is 
 ## Requirements
 
 - Add the real live sub-account entries to the engine config (P7-T031 schema; secret names only) and run the key audit: `pass` for every live key (P7-T032), one engine key per sub-account (plus the `deadman` and recon keys, 16 §3.1).
-- Each key's allow-list equals exactly the exit node's static IP (venue introspection or attestation); a request from a non-allow-listed IP (e.g. the home IP outside the tunnel) with a **read-only** recon key is rejected by the venue (proves the IP lock), and the same request through the tunnel succeeds; never probe with a trade key.
+- Each key's allow-list equals exactly the egress IP (the exit node's static IP from P7-T065, or the runtime host's own static IP when P7-T071 chose a static-IP Sydney VM, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) (venue introspection or attestation); a request from a non-allow-listed IP (e.g. the home IP outside the tunnel) with a **read-only** recon key is rejected by the venue (proves the IP lock), and the same request through the tunnel succeeds; never probe with a trade key.
 - Container inspection: only `engine` and `deadman` hold trade-only keys; only `monitor` holds recon keys; all three use the egress namespace.
 - STP: two opposing small paper/testnet orders from two sub-accounts never self-match (STP cancel recorded as non-fill).
 - Venue rows list whitelisted addresses and dates.
@@ -103,3 +103,4 @@ A recorded key audit (T7.65, after P7-T007 and P7-T065) shows every live key is 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (T7.65 live key audit: allow-list = exit-node IP (16 §3.2/17 §A P7-B004), deadman keys (16 §3.1); carries the live env names; deps P7-T066)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (allow-list = the egress IP (exit node or static-IP runtime host); added dep P7-T073 (audit runs on the final runtime host))

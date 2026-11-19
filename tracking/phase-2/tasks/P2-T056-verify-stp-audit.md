@@ -103,3 +103,4 @@ A query over `audit.order` and captured venue payloads proves that every order s
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (STP-capable vs netting venues (17 §D P2-B006), keyless mock self-match; live window in P2-T071)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres] → [supabase-postgres])

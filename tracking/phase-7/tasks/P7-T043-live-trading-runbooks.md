@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/, docs/07-security-notes.md, docs/roadmap/phase-7-prove
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ review_result: ""
 
 - New runbooks: `kill-criterion-fired.md` (sleeve halt, step-down, C3 restart), `system-drawdown-stages.md` (stage 1 no new entries; stage 2 flatten + 30-day review template; two-strike end; 16 §2.1), `recon-break-unexplained.md` (12 h warn / 24 h halt), `power-or-link-loss.md` (UPS/4G/fail-flat, 16 §3.1), `egress-tunnel-down.md` (exit node or tunnel down: venue timers + resting stops, rebuild the exit node, 16 §3.2), `mt5-vps-down.md` (rebuild procedure, broker web/terminal fallback; only if the MT5 route is used).
 - Updates: `server-down-with-open-positions.md` and `keys-leaked.md` list each live venue's web UI steps (flatten, revoke key) and sub-account ids (no secrets).
-- Every runbook: trigger, first 5 minutes, decision points, commands (`mt_api`/Telegram), verification, record-the-drill step (`ops.drill.record`).
+- Every runbook: trigger, first 5 minutes, decision points, commands (`mt-api`/Telegram), verification, record-the-drill step (`ops.drill.record`).
 - Plain English; each runbook ≤ 2 pages.
 
 ## ToDo
@@ -103,3 +103,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (system-drawdown-stages runbook (16 §2.1), egress-tunnel-down runbook (16 §3.2), wallet drained only if a hot/burner wallet exists (P7-B011); deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; runbooks refer to the runtime host)

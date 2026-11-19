@@ -15,17 +15,17 @@ requirements: [R6.03]
 roadmap_todos: [T6.31]
 modules: [M17, M21, M8]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, uv, python>=3.12, docker, supabase]
 mcp: []
 env: []
-services: [litellm, postgres, nats, grafana]
+services: [litellm, supabase-postgres, nats, grafana]
 branch: p6/P6-T005-llm-call-audit-prompt-registry
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 
 ## ToDo
 
-- [ ] Additive Alembic migration for the extra `audit.llm_call` columns (skip any P0 already has).
+- [ ] Additive SQL migration in `supabase/migrations/` for the extra `audit.llm_call` columns (skip any P0 already has).
 - [ ] Prompt registry loader + CI check (hash vs version).
 - [ ] Request-metadata plumbing from `mt_agents` callers into the P0 callback.
 - [ ] Seed `models.registry` gateway entries with `training_cutoff` and its source (marked (U) if unverified).
@@ -69,6 +69,7 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 ## Verification
 
 ### Tests
+- `supabase test db` (15 §2.4 WORM suite on `audit.llm_call`); `uv run pytest` for the prompt registry and loader.
 - Unit: prompt hash stability, version check, metadata mapping.
 - Integration: a call through LiteLLM with `prompt_version` produces exactly one `audit.llm_call` row carrying it; failure and fallback calls carry it too.
 - WORM: the 15 §2.4 suite stays green on `audit.llm_call` after the migration.
@@ -121,3 +122,4 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (re-scoped to T6.31: audit.llm_call writer exists from P0 (P0-T042, 17 §D P6-B010); this adds prompt registry, model versioning, training_cutoff and additive columns only; deps P0-T042/P0-T031/P4-T028)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (prompt-registry migration is plain SQL in `supabase/migrations/`; tools supabase; services supabase-postgres)

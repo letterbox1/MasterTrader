@@ -15,17 +15,17 @@ requirements: [R7.05]
 roadmap_todos: [T7.21]
 modules: [M11]
 dashboards: [D06, D03]
-tools: [git, uv]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
-services: [postgres, nats]
+services: [supabase-postgres, nats]
 branch: p7/P7-T018-capital-step-state-machine
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,8 +55,8 @@ Each live bot (rolled up per sleeve) has a persisted capital state (`paper → m
 
 ## ToDo
 
-- [ ] `packages/mt_risk/capital_steps/` (state machine, evaluator, policy model).
-- [ ] Migration `risk.capital_step` (WORM); capital-step settings (starting allocation per bot, step %, clean weeks needed, target cap) as L3/L4 settings in the layered policy (P2-T010; tighten C1, loosen C3).
+- [ ] `crates/mt-risk/src/capital_steps/` (state machine, evaluator, policy model).
+- [ ] SQL migration (`supabase/migrations/`) `risk.capital_step` (WORM); capital-step settings (starting allocation per bot, step %, clean weeks needed, target cap) as L3/L4 settings in the layered policy (P2-T010; tighten C1, loosen C3).
 - [ ] Clean-week input adapters (kill criteria, recon, S1/S2 incidents, shortfall, P&L band, decay downgrade) and step-down handlers (warning → back one step; halt → starting allocation after review).
 - [ ] NATS subject `risk.capital.status`; `/risk/capital-steps` query.
 - [ ] Tests; docs.
@@ -64,6 +64,7 @@ Each live bot (rolled up per sleeve) has a persisted capital state (`paper → m
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk capital_steps` and `cargo clippy`; `supabase test db` (WORM on `risk.capital_step`).
 - Unit: transition table exhaustive (illegal transitions rejected); counter resets on any dirty week.
 - Property: capital never increases without an approval event; capital after n steps ≤ min(target cap, L0 ceiling); a warning steps back exactly one step; a halt + reviewed restart returns exactly the starting allocation.
 - Golden: 8-week fixture with one dirty week in week 3 → eligible only after week 7.
@@ -95,7 +96,7 @@ Each live bot (rolled up per sleeve) has a persisted capital state (`paper → m
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
 - Do NOT weaken a gate, threshold or window to "get live sooner" (roadmap §1, Out).
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -114,3 +115,4 @@ Each live bot (rolled up per sleeve) has a persisted capital state (`paper → m
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (clean week, +25% of current, step-down rules and per-bot starting allocation default A$2,000 per 16 §2.5/17 §A P7-B003; L0 ceilings in strategy settings per 17 §E; dep P2-T010)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (capital steps in Rust `crates/mt-risk/src/capital_steps/`; SQL migration in `supabase/`; tools cargo/supabase)

@@ -11,8 +11,8 @@ severity: ""
 owner: user
 claimed_by: ""
 depends_on: []
-requirements: [R7.01]
-roadmap_todos: []
+requirements: [R7.18]
+roadmap_todos: [T7.13]
 modules: [M17]
 dashboards: [D16]
 tools: []
@@ -49,6 +49,7 @@ You choose where the always-on trading services run for live money, and whether 
 - Pick one runtime host: **workstation** (free; needs the UPS and 4G failover, P7-T009) · **home server** · **Sydney cloud VM** with a static IP (a few dollars to tens of dollars a month; doubles as the egress IP).
 - Optional: **Vercel** for the web app (Hobby is free for personal use (U)); **Supabase cloud** in Sydney (paid plan needed; free plan is 500 MB and pauses after 7 idle days); point-in-time recovery add-on (paid).
 - Account sign-ups for anything you pick are yours (Vercel, Supabase, the VM provider); the agent writes step-by-step instructions.
+- **Egress:** a Sydney cloud VM with a static IP doubles as the egress IP ([18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)); P7-T065/P7-T066 (exit node) are then cancelled with that reason. A workstation or home server keeps the exit node and needs the UPS and 4G (P7-T009, P7-T053).
 
 ## ToDo
 
@@ -92,3 +93,4 @@ You choose where the always-on trading services run for live money, and whether 
 ## Progress log
 
 - 2026-11-19 09:16 · cloud:vm:be04b6ae61f8 · created
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (requirements R7.18 / ToDo T7.13; a static-IP Sydney VM makes the exit node (P7-T065/T066) unnecessary)

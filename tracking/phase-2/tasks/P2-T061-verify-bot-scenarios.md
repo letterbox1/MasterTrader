@@ -109,3 +109,4 @@ End-to-end scenarios on paper prove: HITL approve / approve ½ / reject / expiry
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless (fake Telegram), C2 paper→HITL, large-order TOTP, strategy ceiling scenario; real run is P2-T066)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv, docker] → [cargo, docker]; services [nats, postgres] → [nats, supabase-postgres])

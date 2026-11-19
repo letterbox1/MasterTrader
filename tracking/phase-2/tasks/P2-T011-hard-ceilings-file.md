@@ -124,3 +124,4 @@ The **L0 hard ceilings** (absolute maxima such as crypto-derivatives leverage �
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (reworked: L0 ceilings are a versioned layer edited in the strategy settings (tighten C1, loosen C3) instead of a host-only file (17 §E))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats])

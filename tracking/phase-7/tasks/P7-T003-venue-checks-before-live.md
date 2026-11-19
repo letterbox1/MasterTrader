@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-l
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -109,3 +109,4 @@ Every venue/product you intend to trade live has a fresh (< 90 days) AUSTRAC reg
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (record native stops, cancel-after timers and single-IP allow-list support per 16 §3.1–3.2; dep P2-T042)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER (venue terms and AUSTRAC checks))

@@ -15,17 +15,17 @@ requirements: [R7.15]
 roadmap_todos: [T7.26]
 modules: [M15, M11, M17]
 dashboards: [D06, D03, D14, D16]
-tools: [git, uv, pnpm, node>=20, docker]
+tools: [git, cargo, pnpm, node>=20, docker]
 mcp: []
 env: []
-services: [postgres, nats, mt-api]
+services: [supabase-postgres, nats, mt-api]
 branch: p7/P7-T067-phase-7-api-surface-and-d06-live-and-d03-go-live
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D06-risk.md, docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock state, gate reports, weekly reviews, preflight) is reachable through `mt_api` exactly as catalogued in 02 §7, contract-tested with the right confirmation levels, and shown in the **D06 Live tab** and the **D03 Go-live tab**, on desktop and phone.
+Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock state, gate reports, weekly reviews, preflight) is reachable through `mt-api` exactly as catalogued in 02 §7, contract-tested with the right confirmation levels, and shown in the **D06 Live tab** and the **D03 Go-live tab**, on desktop and phone.
 
 ## Context & references
 
@@ -72,6 +72,7 @@ Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api` and `cargo clippy`; `pnpm test` and `pnpm playwright`.
 - Contract: every Phase 7 endpoint in 02 §7 exists with the documented confirmation level; a command missing from the catalogue fails the test.
 - Integration: `/risk/kill-criteria` returns `warning` when shortfall is 1.6× modelled and `halted` after a breach (fixture evaluations from P7-T020).
 - Integration: raising a bot's starting allocation above the current value is classified C3; lowering it is C1 and immediate.
@@ -101,7 +102,7 @@ Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock 
 
 - Do NOT add API paths or commands that aren't in 02 §7; raise a doc gap instead.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -122,3 +123,4 @@ Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock 
 
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.15/T7.26: Phase 7 API catalogue + D06 Live / D03 Go-live, 17 §D P7-B008, starting allocation per bot default A$2,000)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Phase 7 API in Rust `mt-api`; tools cargo)

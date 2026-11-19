@@ -15,17 +15,17 @@ requirements: [R7.03]
 roadmap_todos: [T7.05]
 modules: [M16, M18, M7]
 dashboards: [D14, D07]
-tools: [git, uv]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
-services: [postgres, prefect-server, nats, telegram bot api]
+services: [supabase-postgres, nats, telegram bot api]
 branch: p7/P7-T015-weekly-review-pack
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/ui/dashboards/D14-journal.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,15 +56,16 @@ Every Monday 07:00 Australia/Sydney a weekly review pack is generated per strate
 
 ## ToDo
 
-- [ ] Prefect flow `weekly_review_pack` (cron `0 7 * * MON`, tz Australia/Sydney).
-- [ ] Section builders in `packages/mt_journal/review/`.
-- [ ] Migration `journal.weekly_review_pack`.
+- [ ] Scheduled job `weekly_review_pack` in `mt-journal` (cron `0 7 * * MON`, tz Australia/Sydney).
+- [ ] Section builders in `crates/mt-journal/src/review/` (paper-tracking figures read from P7-T013's stored rows).
+- [ ] SQL migration (`supabase/migrations/`) `journal.weekly_review_pack`.
 - [ ] Telegram digest template (no free text from Telegram sources).
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-journal review` and `cargo clippy`; `supabase test db`.
 - Golden: fixture week produces the expected five sections (numbers match fixture fills/fees).
 - Unit: five-worst ordering by R; ties broken by absolute loss.
 - Integration: digest message sent with a working deep link.
@@ -90,7 +91,7 @@ Every Monday 07:00 Australia/Sydney a weekly review pack is generated per strate
 ## Cardinal rules (do NOT)
 
 - Do NOT include Telegram-derived text in the pack or send pack content to any model.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT put Telegram text into any model, RAG index or training set (12 §4–5).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -112,3 +113,4 @@ Every Monday 07:00 Australia/Sydney a weekly review pack is generated per strate
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (clean-week status per 16 §2.5; deps on P2-T150/P3-T034)
 - 2026-11-19 00:00 · coordinator · llm-trading-lab added as reading for weekly reviews (17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (review-pack builders in the Rust `mt-journal` crate as a scheduled job (no Prefect); SQL migration in `supabase/`; tools cargo/supabase)

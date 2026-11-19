@@ -116,3 +116,4 @@ Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/pract
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (egress IP and exit node note, separate deadman key, practice credentials, sops file outside the repo, keys-last unblocks)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording; no dependency change (keys/drill stay USER))

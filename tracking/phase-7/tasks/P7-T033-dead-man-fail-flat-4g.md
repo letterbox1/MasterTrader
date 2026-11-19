@@ -15,17 +15,17 @@ requirements: [R7.11]
 roadmap_todos: [T7.41]
 modules: [M11]
 dashboards: [D06, D16]
-tools: [git, docker, uv, nut]
+tools: [git, docker, cargo, nut]
 mcp: []
 env: []
-services: [postgres, nats, UPS (NUT)]
+services: [supabase-postgres, nats, UPS (NUT)]
 branch: p7/P7-T033-dead-man-fail-flat-4g
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/ui/dashboards/D06-risk.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ The three-layer dead-man's switch (16 §3.1) is configured for live sub-accounts
 - Per-bot `on_system_failure: flatten | cancel_orders_only | hold` (default `flatten`; `cancel_orders_only` keeps the position under its resting stop, useful for long-horizon holds; hold-and-earn exempt).
 - Link failover: a broadband → 4G switch shows up as a short tunnel outage (P7-T066); feeds go stale and M11 rejects new orders inline; if the outage outlasts the 10 s feed threshold, bots apply `on_system_failure`. The measured failover time (P7-T009) is recorded next to these timings; changing a timing is your call (loosening C3), never automatic.
 - Restart after an unplanned stop: the engine starts with every bot paused, reconciles, flattens/cancels residuals per policy and waits for your resume (C1) unless `auto_resume_after_crash: true` (16 §3.1).
-- NUT (Network UPS Tools) on the host: `ONBATT` → alert warning; `LOWBATT` or runtime < 5 min → kill ON (reason `power`) with each bot's `on_system_failure`, then clean shutdown.
+- NUT (Network UPS Tools) on the runtime host: `ONBATT` → alert warning; `LOWBATT` or runtime < 5 min → kill ON (reason `power`) with each bot's `on_system_failure`, then clean shutdown.
 - All config versioned in the risk policy (tighten C1, loosen C3).
 
 ## ToDo
@@ -66,6 +66,7 @@ The three-layer dead-man's switch (16 §3.1) is configured for live sub-accounts
 ## Verification
 
 ### Tests
+- `cargo test -p mt-deadman` and `cargo clippy`.
 - Integration: simulate `LOWBATT` via NUT dummy driver → kill ON within 1 s, cancels sent < 1 s (02 §9.2).
 - Integration: stop the engine heartbeat → sidecar cancels within 5 s and applies `on_system_failure` at 10 s; block the tunnel for 70 s → venue cancel-after timers cancel open orders (testnet/sandbox), resting stops remain.
 
@@ -86,13 +87,14 @@ The three-layer dead-man's switch (16 §3.1) is configured for live sub-accounts
 
 - Both links or the tunnel down: host-side cancels can't reach the venue — resting stops and venue cancel-after timers (layer 3) cover it (16 §3.1–3.2).
 - Host clock jumps after power loss: chrony resync before resuming.
+- The UPS/NUT part applies when the runtime host is at your premises (workstation or home server). On a cloud-VM runtime host (P7-T071) only the dead-man timings and venue timers apply; record that and skip the NUT steps.
 
 ## Cardinal rules (do NOT)
 
 - Do NOT loosen any dead-man timing to avoid flattening without C3.
 - Do NOT disable cancel-on-disconnect on live accounts.
 - Do NOT let loosening risk, autonomous mode or a capital step apply without C3 (Telegram + TOTP + cool-down); protective exits never wait for approval.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -111,3 +113,4 @@ The three-layer dead-man's switch (16 §3.1) is configured for live sub-accounts
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (three-layer dead-man per 16 §3.1: 5 s cancel / 10 s on_system_failure, venue timers 15 s/60 s; dropped the invented 90 s N (P7-B015); restart flat/paused; dep P2-T032)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (dead-man config for the Rust `mt-deadman`; NUT on the runtime host; UPS part conditional on the runtime host being at your premises; tools cargo)

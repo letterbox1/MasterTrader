@@ -15,17 +15,17 @@ requirements: [R6.23]
 roadmap_todos: [T6.28]
 modules: [M22]
 dashboards: [D18]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo]
 mcp: []
 env: []
-services: [postgres, prefect]
+services: [supabase-postgres]
 branch: p6/P6-T039-node-validator-earnings-model
 pr: ""
 doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,14 +53,15 @@ A monthly model computes `net = rewards + MEV fees + commission − infra − op
 
 ## ToDo
 
-- [ ] Model + report generator.
-- [ ] Monthly Prefect job.
+- [ ] Model + report generator in `crates/mt-treasury/src/validators/`.
+- [ ] Monthly scheduled job in `mt-treasury`.
 - [ ] Retire-task creation.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
+- `cargo test -p mt-treasury validators` and `cargo clippy`.
 - Unit: formula golden cases; conservative mode is never more optimistic than base.
 - Two-negative-months rule test.
 
@@ -100,3 +101,4 @@ A monthly model computes `net = rewards + MEV fees + commission − infra − op
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; model only, no automation)
 - 2026-10-22 00:00 · coordinator · depends on P0-T014 (code lives in the uv monorepo; dependency gating)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (node/validator model in the Rust `mt-treasury` crate as a monthly scheduled job (no Prefect); tools cargo)

@@ -11,8 +11,8 @@ severity: ""
 owner: user
 claimed_by: ""
 depends_on: []
-requirements: [R7.01]
-roadmap_todos: []
+requirements: [R7.19]
+roadmap_todos: [T7.14]
 modules: [M17]
 dashboards: []
 tools: []
@@ -91,3 +91,4 @@ Before live keys exist, the two age identities that protect the secrets file liv
 ## Progress log
 
 - 2026-11-19 09:16 · cloud:vm:be04b6ae61f8 · created
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (requirements R7.19 / ToDo T7.14)

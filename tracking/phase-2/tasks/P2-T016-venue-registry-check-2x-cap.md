@@ -117,3 +117,4 @@ Every order is checked against `ops.venue_registry` (venue × product × residen
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper_ok semantics, venue cap 25%, stp n/a (netting) column, residency recompute C3, L2 layer)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo, supabase]; services [postgres, nats] → [supabase-postgres, nats])

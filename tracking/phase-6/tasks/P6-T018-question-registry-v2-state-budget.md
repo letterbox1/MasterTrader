@@ -15,17 +15,17 @@ requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, uv, python>=3.12, docker, supabase]
 mcp: []
 env: []
-services: [postgres, decision-svc]
+services: [supabase-postgres, decision-svc]
 branch: p6/P6-T018-question-registry-v2-state-budget
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ The tier-B question registry (from P4) is extended so every question is binary/l
 
 ## ToDo
 
-- [ ] Migration for registry v2 columns + seed the social battery questions.
+- [ ] SQL migration (`supabase/migrations/`) for registry v2 columns + seed the social battery questions.
 - [ ] State builder + tokenizer counting per model family (Qwen3 tokenizer).
 - [ ] Provenance boundary guard in `decision-svc` request path.
 - [ ] `models.question.update` command handler (C1) with versioning.
@@ -112,3 +112,4 @@ The tier-B question registry (from P4) is extended so every question is binary/l
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (per-question threshold defaults from 16 §2.10 (17 §C P6-B015), below-default = C3; cross-phase deps P4-T028/T029/T025; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (registry migration in `supabase/migrations/`; tools supabase; services supabase-postgres)

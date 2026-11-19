@@ -101,3 +101,4 @@ Before P2-T024–P2-T026 write the custom **Alpaca, OANDA v20 and IG** adapters 
 ## Progress log
 
 - 2026-11-19 00:00 · aligner · created: re-platformed per docs/18 (custom adapters move to Rust; nothing checked the Nautilus adapter traits first)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands)

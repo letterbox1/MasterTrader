@@ -115,3 +115,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (deadman container with its own trade-only keys (16 §3.1), egress note, cross-phase deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording, `infra/` paths, CI line; engine/deadman images from Rust builds; gVisor on the workstation (`infra/host/`))

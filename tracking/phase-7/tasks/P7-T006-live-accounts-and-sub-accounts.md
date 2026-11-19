@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ At each `allowed` target venue you hold one KYC'd live account and a separate **
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (modes paper/hitl/autonomous per 17 §B; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER (KYC accounts))

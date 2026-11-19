@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 
 - API (gRPC or HTTP+JSON over Tailscale, mTLS or token from sops): `place_order`, `modify_order`, `cancel_order`, `positions`, `orders`, `deals(from,to)`, `account_info`, `symbol_info`, `ticks/bars stream`, `heartbeat`.
 - Idempotency: client order id → MT5 `comment`/`magic` mapping; duplicate submits return the existing ticket.
-- Safety: refuses any non-trading call (no withdrawals exist in MT5, but no account/password change, no EA install); refuses requests not from the host's tailnet identity.
+- Safety: refuses any non-trading call (no withdrawals exist in MT5, but no account/password change, no EA install); refuses requests not from the runtime host's tailnet identity.
 - Heartbeat every 1 s to the engine; terminal disconnect reported within 2 s.
 - No telemetry; pinned dependencies with hashes; packaged as a Windows service (nssm or pywin32) with auto-restart.
 - Code lives in `services/mt5-bridge/` (MIT/our licence); no MasterTradingBot code copied in.
@@ -112,3 +112,4 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first: fake-backed tests, demo run moved to P7-T035; 07 §5.1 baseline; dep P7-T004)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (bridge stays Python on Windows (`MetaTrader5` is Python-only, 18 §2.2); the host → the runtime host)

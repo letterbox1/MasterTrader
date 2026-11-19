@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-7-prove-and-go-live.md, docs/roadmap/phase-6-ai-mo
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -85,7 +85,7 @@ The four-week soak is **started** and healthy: nightly distillation runs with th
 - Do NOT promote models outside gates during the soak.
 - Do NOT move LLM-signal strategies beyond paper.
 - Do NOT touch live money or live keys; keys stay trade-only, IP-locked, withdrawals disabled (live is gated to P7).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
 
@@ -104,3 +104,4 @@ The four-week soak is **started** and healthy: nightly distillation runs with th
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; LLM-signal bots in `paper` mode only (17 §B))
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)

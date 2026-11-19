@@ -18,14 +18,14 @@ dashboards: [D10]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [mlflow, gpu, postgres]
+services: [mlflow, supabase-postgres]
 branch: p6/P6-T029-bakeoff-harness-report
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -77,7 +77,7 @@ One command (`models.bakeoff.run`, C1) evaluates every contender — own Qwen-Lo
 - Given a contender container fails mid-run, then the report marks it `incomplete` and the run still finishes for others.
 
 ### Stress / failure injection
-- Full bake-off on 5 questions completes within one overnight window (< 8 h) with GPU lock respected.
+- Full bake-off on 5 questions completes within one overnight window (< 8 h) with the GPU lock respected (GPU profile) or on the reduced CPU sample (CPU profile).
 
 ## Acceptance criteria
 
@@ -112,3 +112,4 @@ One command (`models.bakeoff.run`, C1) evaluates every contender — own Qwen-Lo
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Kev via P6-T068; FinMMEval optional input (keys/data last); report flags 16 §2.10 thresholds; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU lock only on a GPU profile; CPU sample otherwise; gpu service removed)

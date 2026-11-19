@@ -103,3 +103,4 @@ Any running strategy version can be shadowed by another version (or itself) in p
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mapped to roadmap T2.37 (experimentation), run_shadow via engine.cmd.*)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])

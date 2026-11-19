@@ -117,3 +117,4 @@ The Phase 2 trading components in `apps/web/src/components` that part B's dashbo
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (ModeSwitch values/labels/levels per 17 §B and 16 §2.3; cross-phase UI deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line)

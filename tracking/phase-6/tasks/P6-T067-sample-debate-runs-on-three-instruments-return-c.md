@@ -18,14 +18,14 @@ dashboards: [D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
 env: []
-services: [agents, litellm, llm-local, hindsight, tei-embed, tei-rerank, postgres, nats]
+services: [agents, litellm, llm-local, hindsight, tei-embed, tei-rerank, supabase-postgres, nats]
 branch: p6/P6-T067-sample-debate-runs-on-three-instruments-return-c
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -94,7 +94,7 @@ Evidence for R6.01 ("Sample runs"): three debate runs, on one crypto, one FX and
 
 - Do NOT call a paid provider or use your API keys in this task (live check is P6-T070).
 - Do NOT hand-edit stored Signals or audit rows to make the check pass.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; agents output Signals only, never orders.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; agents output Signals only, never orders.
 - Do NOT let Telegram text (or any `model_input_ok = false` row) reach a prompt, memory bank or training set (12 §4–5).
 - Do NOT commit secrets; do NOT skip, weaken or delete a test to get green.
 
@@ -112,3 +112,4 @@ Evidence for R6.01 ("Sample runs"): three debate runs, on one crypto, one FX and
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for T6.66 (sample runs, keyless on `local-advisor`; 03 M8 Signal fields per 17 §D)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)

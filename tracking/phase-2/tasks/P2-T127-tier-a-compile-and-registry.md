@@ -107,3 +107,4 @@ Calibrated tier-A models are compiled to ONNX Runtime, Treelite or lleaves, veri
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; MLflow storage link)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; host → workstation)

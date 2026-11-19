@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/12-policy-and-compl
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -104,3 +104,4 @@ You know whether FP Markets' AU client agreement permits algorithmic trading, sc
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (route choice names every task to cancel; cTrader app credentials as a user step; fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; stays USER (broker terms))

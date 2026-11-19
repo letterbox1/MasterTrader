@@ -117,3 +117,4 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase data deps)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; continuous aggregates/Timescale → monthly partitions + `date_bin` via `mt_store.pit` (18 §4.3); dep P0-T071; depends_on + P0-T071; services [postgres] → [supabase-postgres])

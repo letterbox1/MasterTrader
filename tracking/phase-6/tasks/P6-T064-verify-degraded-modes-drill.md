@@ -15,17 +15,17 @@ requirements: [R6.07, R6.11, R6.04, R6.24]
 roadmap_todos: []
 modules: [M8, M9, M21, M22, M10]
 dashboards: [D09, D10, D18]
-tools: [docker, uv, nvidia-smi]
+tools: [docker, uv]
 mcp: []
 env: []
-services: [litellm, llm-local, hindsight, decision-svc, postgres, gpu]
+services: [litellm, llm-local, hindsight, decision-svc, supabase-postgres]
 branch: p6/P6-T064-verify-degraded-modes-drill
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,14 +47,14 @@ A chaos drill shows each P6 component degrades as 02 §9.3 says: gateway/budget 
 
 ## Requirements
 
-- Fault injections: stop `litellm`; exhaust budgets; remove GPU (`nvidia-smi` disable / container device removal); stop `hindsight`; stop `tei`; pause Postgres 60 s; kill `agents` mid-run; kill switch ON.
+- Fault injections: stop `litellm`; exhaust budgets; remove the GPU (GPU profile only: `nvidia-smi` disable / container device removal); stop `hindsight`; stop `tei`; pause Postgres 60 s; kill `agents` mid-run; kill switch ON.
 - For each: expected system + UI behaviour, observed behaviour, recovery time.
 - No data loss in `audit.llm_call` and `audit.tierb_decision` (buffer replay).
 
 ## ToDo
 
 - [ ] Write the drill runbook `docs/runbooks/ai-layer-degraded-drill.md`.
-- [ ] Execute on the host in paper mode.
+- [ ] Execute on the workstation in paper mode.
 - [ ] Record results table in the progress log; file bugs for deviations.
 
 ## Verification
@@ -63,7 +63,7 @@ A chaos drill shows each P6 component degrades as 02 §9.3 says: gateway/budget 
 - Automated subset in CI compose (gateway down, Hindsight down).
 
 ### Scenarios
-- Given the GPU disappears, then tier-A p99 stays < 50 µs and D10 shows tier B degraded.
+- Given a GPU profile and the GPU disappears, then tier-A p99 stays < 50 µs and D10 shows tier B degraded.
 - Given Postgres pauses for 60 s, then LLM audit rows buffer and all land after recovery.
 
 ### Stress / failure injection
@@ -102,3 +102,4 @@ A chaos drill shows each P6 component degrades as 02 §9.3 says: gateway/budget 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; local fallback runs keyless on P0 llm-local; budgets per 16 §2.10)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU fault injection only on a GPU profile; workstation instead of host; nvidia-smi/gpu preconditions removed)

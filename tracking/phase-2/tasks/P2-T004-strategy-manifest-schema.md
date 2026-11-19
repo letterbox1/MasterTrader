@@ -115,3 +115,4 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (manifest mode and risk values become proposals (16 §1), modes paper/hitl/autonomous, failure policy and event_sensitive proposals)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; manifest models move to `mt-core` (serde/schemars) with PyO3 exposure; proptest; tools [uv] → [cargo, uv])

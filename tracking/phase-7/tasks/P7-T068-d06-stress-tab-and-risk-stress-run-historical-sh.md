@@ -15,17 +15,17 @@ requirements: [R7.16]
 roadmap_todos: [T7.27]
 modules: [M11, M7, M15]
 dashboards: [D06]
-tools: [git, uv, pnpm, node>=20, docker]
+tools: [git, cargo, pnpm, node>=20, docker, supabase]
 mcp: []
 env: []
-services: [postgres, nats, mt-api, backtest-worker]
+services: [supabase-postgres, nats, mt-api, backtest-worker]
 branch: p7/P7-T068-d06-stress-tab-and-risk-stress-run-historical-sh
 pr: ""
 doc_sync: [docs/ui/dashboards/D06-risk.md, docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,8 +59,8 @@ The D06 Stress tab replaces the Phase 2 placeholder: `risk.stress.run` (C1) repl
 
 ## ToDo
 
-- [ ] `packages/mt_risk/stress/` (scenario loader, replay engine, proxy mapper, limit-trigger simulator using the M11 evaluators in dry-run mode).
-- [ ] Migration `risk.stress_run` (WORM) + `risk.stress.run` command + `/risk/stress` query.
+- [ ] `crates/mt-risk/src/stress/` (scenario loader, replay engine, proxy mapper, limit-trigger simulator using the M11 evaluators in dry-run mode).
+- [ ] SQL migration (`supabase/migrations/`) `risk.stress_run` (WORM) + `risk.stress.run` command + `/risk/stress` query.
 - [ ] `config/stress_scenarios.yaml` with the four windows (dates marked U until confirmed from recorded data).
 - [ ] D06 Stress tab (replace the placeholder), viewport matrix + axe.
 - [ ] Tests; docs.
@@ -68,6 +68,7 @@ The D06 Stress tab replaces the Phase 2 placeholder: `risk.stress.run` (C1) repl
 ## Verification
 
 ### Tests
+- `cargo test -p mt-risk stress` and `cargo clippy`; `supabase test db` (WORM on `risk.stress_run`); `pnpm test` and `pnpm playwright` (Stress tab).
 - Golden: a fixture portfolio (BTC long, ETH long, AUD/JPY long) replayed over `aug_2024` reproduces the fixture P&L to the cent and flags the expected limit (sleeve stage 1).
 - Unit: proxy mapping labels every proxied instrument; a missing-data instrument without a proxy fails the run (`incomplete`), never a zero P&L.
 - Property: replay never mutates live state (M11 evaluators run in dry-run; no orders, no `risk.event` except `stress_run`).
@@ -99,7 +100,7 @@ The D06 Stress tab replaces the Phase 2 placeholder: `risk.stress.run` (C1) repl
 - Do NOT place orders or change any live state from a stress run.
 - Do NOT read data outside `pit(as_of)`, and do NOT use paid data to fill gaps.
 - Do NOT show sample or made-up results in the UI.
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT update or delete WORM rows; corrections are new rows with `supersedes_id` (15 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -120,3 +121,4 @@ The D06 Stress tab replaces the Phase 2 placeholder: `risk.stress.run` (C1) repl
 
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.16/T7.27: full D06 Stress tab + `risk.stress.run`, moved from the P2 placeholder per 17 §D)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stress replay in Rust `crates/mt-risk/src/stress/` (M11 evaluators in dry-run); SQL migration in `supabase/`; tools cargo/supabase)

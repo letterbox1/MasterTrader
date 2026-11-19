@@ -15,17 +15,17 @@ requirements: [R6.11, R6.N3]
 roadmap_todos: [T6.71]
 modules: [M21]
 dashboards: [D10]
-tools: [git, docker, k6, nvidia-smi]
+tools: [git, docker, k6]
 mcp: []
 env: []
-services: [decision-svc, gpu, grafana]
+services: [decision-svc, grafana]
 branch: p6/P6-T058-verify-tierb-latency-slo
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,7 +44,7 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 - Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.N3](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.71
 - SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (expected ~2–12 ms GPU; 100–400 ms CPU int8 est.)
 - Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P6-B002: ~2–12 ms per decision on GPU (0.6B), p95 SLO < 50 ms; CPU 100–400 ms)
-- Cross-phase: P0-T005 (GPU on the host)
+- Cross-phase: P0-T005 (CPU/GPU profile)
 - Depends on (this phase): P6-T024, P6-T023
 
 ## Requirements
@@ -58,7 +58,7 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 ## ToDo
 
 - [ ] k6/locust script against decision-svc.
-- [ ] Run profiles on the host; capture Grafana snapshots.
+- [ ] Run profiles on the workstation; capture Grafana snapshots.
 - [ ] Write results + CPU-mode question list.
 
 ## Verification
@@ -74,12 +74,12 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 
 ## Acceptance criteria
 
-- [ ] p95 < 50 ms on GPU documented.
+- [ ] p95 < 50 ms on GPU documented (or n/a recorded on a CPU-only workstation); CPU figures documented.
 - [ ] CPU fallback numbers documented.
 
 ## Exceptions & edge cases
 
-- No GPU on the host: SLO can't be met; record and keep SemIf/slow flags only (exit criterion 3 still satisfiable by keeping SemIf).
+- No GPU on the workstation (`models.gpu_profile: auto` picks CPU): the GPU p95 check is recorded as n/a, CPU figures are recorded, and tier B keeps SemIf/slow flags only (exit criterion 3 still satisfiable by keeping SemIf).
 
 ## Cardinal rules (do NOT)
 
@@ -103,3 +103,4 @@ A load test proves the tier-B SLO (p95 < 50 ms per decision, GPU, 0.6B head) at 
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.71 + R6.N3; latency per 17 §B P6-B002; dep P0-T005 (GPU); run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU p95 check runs only when a GPU exists (`models.gpu_profile: auto`); CPU figures always recorded; nvidia-smi/gpu preconditions removed)

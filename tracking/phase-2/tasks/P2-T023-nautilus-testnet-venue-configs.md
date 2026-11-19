@@ -114,3 +114,4 @@ The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build (mock testnet, sandbox), live run moved to P2-T071, paper_ok, deadman account block)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; node per venue from P2-T200; depends_on + P2-T200; tools [uv] → [cargo, uv])

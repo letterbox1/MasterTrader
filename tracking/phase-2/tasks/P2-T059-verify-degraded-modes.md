@@ -107,3 +107,4 @@ Fault-injection tests prove the 02 §9.3 / 16 §2–§3 behaviours relevant to P
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (inline data age + 250 ms monitor flip, buffer bounds, integrity and egress rows, kill.set-only NATS path)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv, docker] → [cargo, docker]; services [nats, postgres] → [nats, supabase-postgres])

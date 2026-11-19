@@ -117,3 +117,4 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper_ok rule for blocked perps, memecoin ≥ 300 trades gate, blackout defaults)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; Rust versions where sensible; tools [uv] → [uv, cargo])

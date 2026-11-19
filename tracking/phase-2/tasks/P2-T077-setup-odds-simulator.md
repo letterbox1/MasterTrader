@@ -116,3 +116,4 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 ## Progress log
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [uv, pnpm, git] → [uv, cargo, pnpm, git]; services [postgres] → [supabase-postgres])

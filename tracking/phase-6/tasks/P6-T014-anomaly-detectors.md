@@ -15,17 +15,17 @@ requirements: [R6.05]
 roadmap_todos: [T6.22]
 modules: [M10]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, uv, python>=3.12, docker, supabase]
 mcp: []
 env: []
-services: [nats, postgres, mlflow, prefect]
+services: [nats, supabase-postgres, mlflow, prefect]
 branch: p6/P6-T014-anomaly-detectors
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -43,7 +43,7 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 
 - Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.22
 - Spec: [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor--mt_anomaly) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M10 owns `audit.anomaly`, publishes `alert.anomaly.*`, consumes `md.*`, `text.*`, `evt.*`) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`anomaly` container)
-- Cross-phase: P1-T013 (bars + continuous aggregates), P4-T040 (sentiment/regime features), P0-T031 (WORM helper); event streams (P4-T033/P4-T034) are optional inputs, mocked in tests
+- Cross-phase: P1-T013 (bars at the standard sizes written by `mt-recorder`, no continuous aggregates, [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb)), P4-T040 (sentiment/regime features), P0-T031 (WORM helper); event streams (P4-T033/P4-T034) are optional inputs, mocked in tests
 
 ## Requirements
 
@@ -57,7 +57,7 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 
 - [ ] Package `packages/mt_anomaly/` with detector interfaces and the four detectors.
 - [ ] Streaming runner (NATS consumer) + nightly Prefect fit job.
-- [ ] `audit.anomaly` WORM migration; publish `alert.anomaly.{severity}.{kind}`.
+- [ ] `audit.anomaly` WORM SQL migration (`supabase/migrations/`); publish `alert.anomaly.{severity}.{kind}`.
 - [ ] `anomaly` container in Compose.
 - [ ] Backtest the detectors on recorded history; tune thresholds; record in MLflow.
 - [ ] Tests; docs.
@@ -65,6 +65,7 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 ## Verification
 
 ### Tests
+- `supabase test db` (WORM on `audit.anomaly`); `uv run pytest` for the detectors.
 - Unit: each detector on synthetic series with an injected spike/level shift/correlation flip.
 - Property: robust z is invariant to a single outlier in the baseline window.
 - Integration: seeded bar stream → one `alert.anomaly.*` with cool-down respected.
@@ -85,14 +86,14 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 
 ## Exceptions & edge cases
 
-- Restart: rolling windows rebuilt from Timescale via `pit`; no burst of stale alerts.
+- Restart: rolling windows rebuilt from the bar tables via `pit`; no burst of stale alerts.
 - New instrument with < baseline length: detectors abstain.
 
 ## Cardinal rules (do NOT)
 
 - Do NOT let detectors trade or call M11; they only alert.
 - Do NOT UPDATE or DELETE WORM rows (`audit.*`, `journal.*`, policy changes); corrections are new rows referencing the original (15 §2).
-- Do NOT bypass `mt_api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
+- Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order and on-chain move goes through M11.
 - Do NOT let Telegram text (or any `model_input_ok = false` / `train_ok = false` row) reach a model, prompt, RAG index, memory bank or training set (12 §4–5).
 - Do NOT commit secrets or paste them into chats/issues/PRs; secrets live only in the sops/age file (07 §2).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral/broker IDs in vendored code.
@@ -113,3 +114,4 @@ An `anomaly` service runs robust z-score, IsolationForest, change-point and corr
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P1-T013/P4-T040/P0-T031; thresholds as settings; run fields)
+- 2026-11-19 00:00 · aligner · re-platformed per docs/18 (bars come from the standard sizes `mt-recorder` writes (no continuous aggregates, 18 §4.3); WORM migration in `supabase/`)
