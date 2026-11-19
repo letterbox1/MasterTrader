@@ -1,11 +1,11 @@
 ---
 id: P0-T003
 kind: task
-title: Create the Tailscale tailnet with MFA and assign a hardware key for age
+title: Optional now: create the Tailscale tailnet with MFA (phone access; required at go-live)
 phase: 0
 type: USER
 status: ready
-priority: high
+priority: medium
 size: S
 severity: ""
 owner: user
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T003 · Create the Tailscale tailnet with MFA and assign a hardware key for age
+# P0-T003 · Optional now: create the Tailscale tailnet with MFA (phone access; required at go-live)
 
 ## Goal / expected outcome
 
@@ -112,3 +112,4 @@ A Tailscale tailnet whose identity provider has MFA, with your laptop/phone join
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys-last: P0-T022 builds with a test age key; recipients go to infra/secrets/recipients.txt; run fields added)
+- 2026-11-19: Re-scoped (17 §G, 18 §8): Tailscale is needed only for phone/laptop access to the app, the private API in hybrid mode and the go-live egress exit node; nothing in the build waits on it. The hardware-key part moved to P7-T072 (OS keychain until then).

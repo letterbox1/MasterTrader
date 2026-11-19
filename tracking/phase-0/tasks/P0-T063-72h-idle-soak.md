@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T062, P0-T065, P0-T013, P0-T006, P0-T002]
+depends_on: [P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T065, P0-T006, P0-T002]
 requirements: [R0.02, R0.10, R0.N4, R0.07, R0.12]
 roadmap_todos: [T0.80]
 modules: [ops, M17]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ The complete P0 stack runs untouched on the real host for 72 hours: no container
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (late live check for real bucket/bot (keys last) with env names; integrity status + hourly/daily verify (16 §2.11); deps trimmed and ceremony P0-T013 added; run fields added)
+- 2026-11-19: Workstation-first: the soak runs on the workstation with the test account and the throwaway worm_owner; no longer waits on P0-T062 or P0-T013.

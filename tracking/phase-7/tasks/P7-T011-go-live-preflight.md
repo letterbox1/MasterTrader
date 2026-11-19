@@ -48,7 +48,7 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 
 ## Requirements
 
-- Checks (each returns pass/fail + evidence link): (1) the bot's paper/HITL period meets its gate profile (16 §2.4 defaults: ≥ 8 weeks **and** ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency bots ≥ 26 weeks) through the real policy/risk/execution path, counted from paper/HITL fills with no gap > 24 h; (2) tax regime set for the current FY; (3) every target venue/product `allowed` with AUSTRAC `checked_at` < 90 days; (4) runbooks drilled at least once with result `pass`: kill, keys leaked, server down with open positions, bad data, and wallet drained **only if** `ops.wallets` holds a hot/burner wallet (17 §D P7-B011); (5) all `PRO_ADVICE` items answered or deferred (deferred keeps products blocked); (6) live keys audited (P7-T032) for the sub-account; (7) `egress.status = ok` on the exit-node IP (16 §3.2). Thresholds come from the effective gate profile/policy, never hard-coded.
+- Checks (each returns pass/fail + evidence link): (1) the bot's paper/HITL period meets its gate profile (16 §2.4 defaults: ≥ 8 weeks **and** ≥ 50 trades; P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency bots ≥ 26 weeks) through the real policy/risk/execution path, counted from paper/HITL fills with no gap > 24 h; (2) tax regime set for the current FY; (3) every target venue/product `allowed` with AUSTRAC `checked_at` < 90 days; (4) runbooks drilled at least once with result `pass`: kill, keys leaked, server down with open positions, bad data, and wallet drained **only if** `ops.wallets` holds a hot/burner wallet (17 §D P7-B011); (5) all `PRO_ADVICE` items answered or deferred (deferred keeps products blocked); (6) live keys audited (P7-T032) for the sub-account; (7) `egress.status = ok` on the exit-node IP (16 §3.2); (8) the go-live settings pack is approved (P7-T070) and nothing was loosened since. Thresholds come from the effective gate profile/policy, never hard-coded.
 - New WORM table `ops.drill_log(id, runbook, started_at, ended_at, result, evidence_ref, notes, chain fields)`; command `ops.drill.record` (C1).
 - Enforcement hooks: `strategy.set_mode` → any live mode, `bot.set_mode` → live hitl/autonomous, `risk.capital_step.approve`, and sub-account funding confirmation all call preflight and reject with the failing check list.
 - Non-functional: preflight runs in < 2 s; results cached 60 s; every evaluation written to `audit.command` context.
@@ -60,6 +60,7 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 - [ ] Paper/HITL-period calculator (weeks and trades per the gate profile) reading `strategy.run`/`audit.fill` with gap detection.
 - [ ] Hook preflight into the commands listed; problem+json `preflight_failed` with failing checks.
 - [ ] Query `/system/preflight?strategy=&venue=`; D16 'Go-live preflight' card; D03 Gates tab shows the same rows.
+- [ ] **Settings pack** (D16 card + `mt preflight --pack`): every effective L0–L3 value, sleeve and manifest, each with its default and changes since seed; check (8) "settings pack approved" reads the P7-T070 approval and fails on any loosening since
 - [ ] CLI `mt preflight --strategy <id>` for drills and the exit demo.
 - [ ] Tests; docs.
 

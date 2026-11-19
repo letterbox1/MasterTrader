@@ -1,7 +1,7 @@
 ---
 id: P2-T066
 kind: task
-title: Create your first bots and do one HITL approval from Telegram
+title: Walk through your first bot and one HITL approval from Telegram (any time before go-live)
 phase: 2
 type: USER
 status: backlog
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P2-T066 · Create your first bots and do one HITL approval from Telegram
+# P2-T066 · Walk through your first bot and one HITL approval from Telegram (any time before go-live)
 
 ## Goal / expected outcome
 
@@ -101,3 +101,4 @@ You create your first bots (scope + mode) in the D03 Bots wizard and approve one
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (wizard proposals vs limits, C2 paper→HITL, HITL bot on testnet after P2-T071, defaults from 16 §2.3)
+- 2026-11-19: Off the critical path (17 §G): the paper bots are created by the agent (P2-T067); this walkthrough is yours to do any time before go-live and is checked by the go-live pack (P7-T070).

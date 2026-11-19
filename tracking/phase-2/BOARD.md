@@ -80,9 +80,9 @@ _None._
 | [P2-T045](tasks/P2-T045-engine-secrets-key-audit.md) | Engine secret wiring per mode and automated key audit | OPS | high | S | agent | P2-T044, P0-T022 |
 | [P2-T046](tasks/P2-T046-mlflow-artifacts-registry-stages.md) | MLflow artefact storage and model registry stages | OPS | medium | S | agent | P0-T020, P0-T039 |
 | [P2-T047](tasks/P2-T047-grafana-risk-latency-tca.md) | Grafana boards and alerts for risk, ladder, kill/dead-man, SLOs and TCA | OPS | high | M | agent | P2-T017, P2-T031, P2-T032, P2-T029, P0-T045, P1-T045 |
-| [P2-T048](tasks/P2-T048-user-risk-policy-ceilings.md) | Review the prefilled defaults and set your initial risk values and L0 ceilings in the settings | USER | critical | S | user | P2-T011, P2-T012, P2-T043, P0-T062 |
-| [P2-T049](tasks/P2-T049-user-decide-sleeves.md) | Decide sleeves and their risk budgets | USER | high | XS | user | P2-T014, P2-T043 |
-| [P2-T050](tasks/P2-T050-user-first-manifests.md) | Write your first strategy manifests for the P1 candidates | USER | high | S | user | P2-T004, P2-T005, P2-T008 |
+| [P2-T048](tasks/P2-T048-user-risk-policy-ceilings.md) | Seed the initial risk policy (L1–L3) and L0 ceilings from the 16 §2 defaults | BUILD | critical | S | agent | P2-T011, P2-T012, P2-T043 |
+| [P2-T049](tasks/P2-T049-user-decide-sleeves.md) | Seed the sleeves and risk budgets from the 14 §3 allocation table | BUILD | high | XS | agent | P2-T014, P2-T043 |
+| [P2-T050](tasks/P2-T050-user-first-manifests.md) | Draft the first strategy manifests for the P1 candidates | BUILD | high | S | agent | P2-T004, P2-T005, P2-T008 |
 | [P2-T051](tasks/P2-T051-verify-risk-golden-property.md) | Risk golden and property test suite as a mandatory merge gate | VERIFY | critical | M | agent | P2-T017, P2-T018, P2-T069 |
 | [P2-T052](tasks/P2-T052-verify-no-bypass-all-sources.md) | No-bypass tests: every order source passes M11 | VERIFY | critical | S | agent | P2-T021, P2-T035, P2-T020, P2-T038 |
 | [P2-T053](tasks/P2-T053-verify-change-control-c3.md) | Change-control C3 and hard-ceilings tests | VERIFY | critical | S | agent | P2-T019, P2-T035, P2-T043, P2-T011, P2-T012, P2-T037 |
@@ -98,8 +98,8 @@ _None._
 | [P2-T063](tasks/P2-T063-verify-part-a-e2e-flows.md) | Part A end-to-end flows on paper: F2 with HITL, F5 and F6 | VERIFY | critical | M | agent | P2-T021, P2-T029, P2-T039, P2-T043, P2-T051, P2-T054 |
 | [P2-T064](tasks/P2-T064-user-kill-drill-phone.md) | Take part in the kill-switch drill from your phone | USER | critical | XS | user | P2-T054, P2-T035, P0-T002, P0-T062 |
 | [P2-T065](tasks/P2-T065-user-approve-c3-loosening.md) | Approve a test C3 loosening with TOTP and cool-down | USER | high | XS | user | P2-T053, P0-T062 |
-| [P2-T066](tasks/P2-T066-user-first-bots-hitl.md) | Create your first bots and do one HITL approval from Telegram | USER | high | S | user | P2-T061, P2-T071, P0-T002 |
-| [P2-T067](tasks/P2-T067-user-start-paper-clock.md) | Start the paper clock for the validated P1 candidates | USER | critical | XS | user | P2-T050, P2-T066, P2-T063, P2-T048, P2-T049, P2-T114 |
+| [P2-T066](tasks/P2-T066-user-first-bots-hitl.md) | Walk through your first bot and one HITL approval from Telegram (any time before go-live) | USER | high | S | user | P2-T061, P2-T071, P0-T002 |
+| [P2-T067](tasks/P2-T067-user-start-paper-clock.md) | Start the paper clock automatically for the validated P1 candidates | OPS | critical | XS | agent | P2-T050, P2-T063, P2-T048, P2-T049, P2-T114 |
 | [P2-T068](tasks/P2-T068-runbooks-incidents.md) | Runbooks: keys leaked, server down with open positions, kill-switch drill, bad data | DOC | high | M | agent | P2-T031, P2-T032, P2-T027, P2-T072, P2-T074 |
 | [P2-T069](tasks/P2-T069-config-layering-effective-limits.md) | Config layering service: strictest-wins merge, save-time validation, effective-limits API | BUILD | critical | M | agent | P2-T010, P2-T011 |
 | [P2-T070](tasks/P2-T070-inline-safety-state-checks.md) | Inline pre-trade safety-state checks: data age, audit.integrity, egress status, decision deadline | BUILD | critical | M | agent | P2-T010, P1-T030, P1-T071, P0-T038 |

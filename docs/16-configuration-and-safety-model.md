@@ -116,6 +116,8 @@ Configurable per asset class.
 
 | Setting | Default |
 |---|---|
+| Paper auto-start (`paper.auto_start_on_validation`) | On: a strategy that passes validation starts paper trading without asking; live modes always need your approval | Turn off to start paper by hand (C1) |
+| Paper notional capital | A$10,000 in total, split by the 14 §3 capital shares (P2-T049) | Notional only; no money |
 | Starting live allocation | Set in each bot's strategy settings when it goes live (default A$2,000; suggested range A$2–5k micro-live) |
 | **Clean week** | A calendar week (Mon–Sun, Sydney) with: no kill-criterion breach; no unexplained reconciliation mismatch; no S1/S2 incident on that bot; live implementation shortfall ≤ 1.5× modelled; weekly P&L inside the backtest's 5th–95th percentile band |
 | Step up | After **4 consecutive clean weeks**: +25% of the **current** allocation (A → 1.25A), up to the sleeve's target cap. Each step needs your approval (C3) |
@@ -222,6 +224,27 @@ Configurable per bot and per event type.
 | Backups | Continuous WAL archive; nightly incremental 02:00 and weekly full Sun 02:00 (Australia/Sydney); pgBackRest keeps 4 full backups | Monthly restore test and WORM export ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) P0-B011) |
 | Service-restart allow-list (`docker-proxy`) | `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | `postgres`, `nats`, `mt-api` and `docker-proxy` are never on it by default. Adding a container is C3; removing one is C1 |
 | Intel pipeline | Poll intervals, per-source caps, Telegram join pacing and posture windows live in `config/intel/*.yaml`. Defaults: RSS poll 5 min (min 2 min, [P4-T011](../tracking/phase-4/tasks/P4-T011-rss-trafilatura-crawl4ai.md)); 200 docs/hour per source ([P4-T030](../tracking/phase-4/tasks/P4-T030-nlp-relevance-gate.md)); Telegram ≤ 500 channels ([P4-T001](../tracking/phase-4/tasks/P4-T001-telegram-channel-list.md)), ≤ 1 join per 10–20 min and ≤ 20 per day ([P4-T018](../tracking/phase-4/tasks/P4-T018-telethon-join-queue.md)); posture windows 15 min / 1 h / 24 h ([P4-T019](../tracking/phase-4/tasks/P4-T019-telegram-postures.md)) | Tightening is free; the Telegram caps never exceed the platform rules ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
+
+### 2.15 Platform, deployment and regions
+
+See [18](18-platform-and-deployment.md). Changing the mode is an OPS task; loosening exposure or adding a region is C3.
+
+| Setting | Default | Notes |
+|---|---|---|
+| `deploy.mode` | `workstation` | `workstation` \| `hybrid` \| `regional` ([18 §5](18-platform-and-deployment.md#5-deployment-modes)) |
+| `db.target` | `local` (self-hosted Supabase on the workstation; Supabase CLI for tests) | `local` \| `supabase_cloud` |
+| `db.region` | `ap-southeast-2` (Sydney) | Must match the primary engine region |
+| `db.read_replica_regions` | `[]` | Cloud only; dashboards and reports, never the order path |
+| `db.bars_hot_months` | Workstation: unlimited; cloud: 24 (1m bars) | Older bars move to Parquet; `pit` reads both |
+| `supabase.data_api` / `supabase.realtime` | `off` / `off` | The browser reads only through `mt-api` |
+| `web.host` | `local` | `local` (Caddy) \| `vercel` |
+| `api.exposure` | `tailnet` | `tailnet` \| `public` (Supabase Auth + TOTP, CORS allow-list, rate limits); changing to `public` is C3 |
+| `deploy.engine_regions` | `[syd]` | Adding a region needs all four conditions in [18 §7](18-platform-and-deployment.md#7-latency-and-regions) |
+| `deploy.region_min_benefit_bps` | 2 bps of latency-attributable slippage per trade | Measured by M16 TCA |
+| `deploy.region_eval_trades` | 200 | Minimum sample before a region is considered |
+| `risk.region_sync_s` | 1 s | Primary reconciles regional risk slices |
+| `models.gpu_profile` | `auto` (GPU if detected, else CPU) | TEI, `llm-local`, decision-svc |
+| `secrets.age_identity_store` | `keychain` until P7, then `yubikey` | `keychain` \| `file` \| `yubikey` ([18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) |
 
 ---
 

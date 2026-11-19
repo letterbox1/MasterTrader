@@ -28,7 +28,7 @@ Calendar dates are indicative; halve the durations if you work full-time.
 | P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/71 | [BOARD](../../tracking/phase-4/BOARD.md) |
 | P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-5/BOARD.md) |
 | P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-6/BOARD.md) |
-| P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/68 | [BOARD](../../tracking/phase-7/BOARD.md) |
+| P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/72 | [BOARD](../../tracking/phase-7/BOARD.md) |
 | P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/35 | [BOARD](../../tracking/phase-8/BOARD.md) |
 <!-- kanban:phase-status:end -->
 

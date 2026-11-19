@@ -31,9 +31,9 @@ _None._
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P0-T002](tasks/P0-T002-telegram-account-and-bot.md) | Set up the dedicated Telegram identity, api_id/api_hash and alert bot | USER | high | S | user | — |
-| [P0-T003](tasks/P0-T003-tailscale-mfa-and-age-hardware-key.md) | Create the Tailscale tailnet with MFA and assign a hardware key for age | USER | high | S | user | — |
+| [P0-T003](tasks/P0-T003-tailscale-mfa-and-age-hardware-key.md) | Optional now: create the Tailscale tailnet with MFA (phone access; required at go-live) | USER | medium | S | user | — |
 | [P0-T004](tasks/P0-T004-github-private-secret-scanning.md) | Keep the GitHub repo private and enable secret scanning | USER | high | XS | user | — |
-| [P0-T005](tasks/P0-T005-provision-host-hardware.md) | Provision the host hardware and decide on the GPU | USER | critical | M | user | — |
+| [P0-T005](tasks/P0-T005-provision-host-hardware.md) | Profile the workstation and select CPU/GPU profiles | OPS | critical | M | agent | — |
 | [P0-T006](tasks/P0-T006-offsite-object-lock-backup-target.md) | Open the off-site backup target with Object Lock | USER | high | S | user | — |
 | [P0-T007](tasks/P0-T007-llm-gateway-credentials.md) | Provide LLM gateway credentials and spend caps | USER | medium | XS | user | — |
 | [P0-T008](tasks/P0-T008-discord-server-and-bot.md) | Create the private Discord feeds server and bot application | USER | medium | S | user | — |
@@ -47,12 +47,12 @@ _None._
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
-| [P0-T013](tasks/P0-T013-worm-owner-offline-credential.md) | Generate the offline worm_owner credential | USER | high | XS | user | P0-T003, P0-T022, P0-T031, P0-T061 |
+| [P0-T013](tasks/P0-T013-worm-owner-offline-credential.md) | Generate the offline worm_owner credential (before live money; the build uses a throwaway one) | USER | high | XS | user | P0-T022, P0-T031, P0-T061 |
 | [P0-T015](tasks/P0-T015-ci-pipeline.md) | Set up the CI pipeline (lint, types, tests, audit, secrets) | OPS | high | M | agent | P0-T014 |
 | [P0-T016](tasks/P0-T016-mt-core-domain-types.md) | Implement mt_core domain types and versioned message schemas | BUILD | high | M | agent | P0-T014 |
 | [P0-T017](tasks/P0-T017-mt-core-config-clock.md) | Implement mt_core config, clock and ID helpers | BUILD | high | S | agent | P0-T014 |
 | [P0-T018](tasks/P0-T018-mt-obs-logging-metrics-tracing.md) | Implement mt_obs structured logging, metrics and tracing | BUILD | high | M | agent | P0-T017 |
-| [P0-T019](tasks/P0-T019-host-hardening.md) | Harden the host (LUKS, firewall, SSH, updates, Tailscale, chrony) | OPS | high | M | agent | P0-T005, P0-T003 |
+| [P0-T019](tasks/P0-T019-host-hardening.md) | Harden the workstation baseline (firewall, Docker, updates, chrony; live profile at the shift) | OPS | high | M | agent | P0-T005 |
 | [P0-T020](tasks/P0-T020-compose-core-services-digest-pinned.md) | Build the Compose stack for core services pinned by digest | OPS | critical | L | agent | P0-T014 |
 | [P0-T021](tasks/P0-T021-docker-network-segmentation.md) | Define the Docker networks and segmentation | OPS | high | S | agent | P0-T020 |
 | [P0-T022](tasks/P0-T022-sops-age-secrets-tmpfs.md) | Wire sops + age secrets into tmpfs with per-service scoping | OPS | critical | M | agent | P0-T020, P0-T017 |
@@ -95,8 +95,8 @@ _None._
 | [P0-T059](tasks/P0-T059-degraded-modes-failure-injection.md) | Failure-inject degraded modes and stress the P0 stack | VERIFY | high | M | agent | P0-T051, P0-T042, P0-T043, P0-T044, P0-T039, P0-T038, P0-T045 |
 | [P0-T060](tasks/P0-T060-runbooks-backup-restore-host-rebuild.md) | Write runbooks: backup & restore, host rebuild | DOC | medium | S | agent | P0-T041, P0-T019 |
 | [P0-T061](tasks/P0-T061-runbooks-secret-rotation-worm-incident.md) | Write runbooks: secret rotation, WORM incident and worm_owner ceremony | DOC | medium | S | agent | P0-T022, P0-T038 |
-| [P0-T062](tasks/P0-T062-set-password-enrol-totp.md) | Set your login password and enrol TOTP on first boot | USER | high | XS | user | P0-T050, P0-T019 |
-| [P0-T063](tasks/P0-T063-72h-idle-soak.md) | Run the 72-hour idle soak | RUN | high | S | agent | P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T062, P0-T065, P0-T013, P0-T006, P0-T002 |
+| [P0-T062](tasks/P0-T062-set-password-enrol-totp.md) | Create your login and enrol TOTP when you first open the app | USER | high | XS | user | P0-T050 |
+| [P0-T063](tasks/P0-T063-72h-idle-soak.md) | Run the 72-hour idle soak | RUN | high | S | agent | P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T065, P0-T006, P0-T002 |
 | [P0-T064](tasks/P0-T064-phase-exit-demo.md) | Phase 0 exit demo: run every exit criterion | VERIFY | critical | S | agent | P0-T063, P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069 |
 | [P0-T065](tasks/P0-T065-docker-proxy-restart-allow-list.md) | Deploy the restricted docker-proxy for allow-listed service restarts | OPS | medium | M | agent | P0-T021, P0-T034 |
 | [P0-T066](tasks/P0-T066-worm-insert-benchmark.md) | Benchmark WORM inserts: p99 under 5 ms, order path never waits on seals | VERIFY | high | S | agent | P0-T031, P0-T037 |

@@ -1,7 +1,7 @@
 ---
 id: P0-T013
 kind: task
-title: Generate the offline worm_owner credential
+title: Generate the offline worm_owner credential (before live money; the build uses a throwaway one)
 phase: 0
 type: USER
 status: backlog
@@ -10,7 +10,7 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P0-T003, P0-T022, P0-T031, P0-T061]
+depends_on: [P0-T022, P0-T031, P0-T061]
 requirements: [R0.07, R0.N1]
 roadmap_todos: [T0.23]
 modules: [M17]
@@ -25,7 +25,7 @@ doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T013 · Generate the offline worm_owner credential
+# P0-T013 · Generate the offline worm_owner credential (before live money; the build uses a throwaway one)
 
 ## Goal / expected outcome
 
@@ -104,3 +104,4 @@ The Postgres `worm_owner` password exists **only** in an offline sops file encry
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys-last: no longer blocks P0-T029 (CI uses a throwaway password); depends on the migrations + ceremony runbook; secrets file path → `~/.config/mastertrader/`, outside the repo (17 §D P0-B018); run fields added)
+- 2026-11-19: Workstation-first (17 §G): the build and paper stack generate a throwaway `worm_owner` credential automatically (dev/paper data only). This ceremony, encrypted to the offline age identity, is done once before live money and gates P7-T057, not the soak.

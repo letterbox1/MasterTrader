@@ -1,7 +1,7 @@
 ---
 id: P0-T062
 kind: task
-title: Set your login password and enrol TOTP on first boot
+title: Create your login and enrol TOTP when you first open the app
 phase: 0
 type: USER
 status: backlog
@@ -10,7 +10,7 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P0-T050, P0-T019]
+depends_on: [P0-T050]
 requirements: [R0.08]
 roadmap_todos: [T0.12]
 modules: [mt_api]
@@ -18,14 +18,14 @@ dashboards: []
 tools: []
 mcp: []
 env: []
-services: [mt-api, tailscale]
+services: [mt-web, supabase-auth]
 branch: p0/P0-T062-set-password-enrol-totp
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T062 · Set your login password and enrol TOTP on first boot
+# P0-T062 · Create your login and enrol TOTP when you first open the app
 
 ## Goal / expected outcome
 
@@ -105,3 +105,4 @@ You own the only login: a strong password and a TOTP enrolment on your authentic
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (deps trimmed and production host added; run fields added)
+- 2026-11-19: Workstation-first (17 §G): login is Supabase Auth (password + TOTP). Done whenever you first open the app on the workstation (about 2 minutes); automated tests use a test account, so no agent task waits on this. Required before C3 actions and before live money.

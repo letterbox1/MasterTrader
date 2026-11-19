@@ -161,3 +161,23 @@ Eleven repositories were vetted ([01 §8](01-repo-vetting-report.md#8-addendum-2
 | Morning brief per-instrument layout borrows daily_stock_analysis's structure | P4-T047 |
 | Not adopted: alpaca-mcp-server in the trading path (bypasses M11; dev/paper tool only), FinceptTerminal (AGPL, overlap), tradingview-mcp (undocumented interfaces), llm-trading-lab code (no licence; reading only) | 01 §8 |
 
+
+## G. Platform: Rust and Python, Supabase, Vercel, workstation-first (2026-11-19)
+
+You asked for a Rust backend with Python only where necessary, a Vercel-deployable frontend, Supabase Postgres run locally or in the cloud, and a workstation-first build. The full design is [18](18-platform-and-deployment.md).
+
+| Decision | Plan |
+|---|---|
+| **Rust first** for every service we write: `mt-api` (axum), `mt-risk` (one crate, used by the API, the engine and the dead-man), `mt-deadman`, `mt-recorder`, `mt-monitor`, `mt-store` (`pit` with Python bindings), `mt-obs` (WORM writer, seal), `mt-signer`, `mt-journal` (lot engine, tax), `mt-events`, `mt-telegram-bot`, `mt-mcp` | [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates) |
+| **Python only where necessary:** ML training, agents/RAG, Python-only data SDKs (OpenBB, edgartools, Telethon, trafilatura), Python strategies and the research lab. Python never places orders or signs | [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary) |
+| **Engine stays NautilusTrader** (Rust core). Rust live node where the venue's Rust adapter is production-ready (verified per venue), else the Python node with the same `mt-risk` binding | [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates) |
+| **Supabase Postgres** replaces plain Postgres + TimescaleDB, locally (CLI / self-hosted) and optionally in Supabase cloud. SQL migrations in `supabase/` replace Alembic | [18 §4](18-platform-and-deployment.md#4-database-supabase-postgres) |
+| **No TimescaleDB** (deprecated on Supabase Postgres 17): native monthly partitions; the recorder writes the standard bar sizes; `date_bin` for others; old bars to Parquet | [18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb) |
+| **Supabase Auth** (password + TOTP MFA, sign-ups off) replaces the hand-built login; the browser never reads the database directly (RLS deny-all, Data API and Realtime off) | [18 §4.5–4.6](18-platform-and-deployment.md#45-access-rules) |
+| **Frontend:** the same React SPA served locally or deployed to Vercel. Vercel Functions only for stateless short jobs, never in the order path | [18 §5](18-platform-and-deployment.md#5-deployment-modes) |
+| **Always-on services never run on Vercel** (engine, dead-man, recorder, NATS, workers, signer): no long-lived processes, duration caps, no static egress IP for IP-locked keys | [18 §6](18-platform-and-deployment.md#6-what-cant-run-on-vercel-and-why) |
+| **Workstation first:** Phases 0–6 build, test and paper-trade on your workstation; the shift to a runtime host / Vercel / Supabase cloud is a set of P7 OPS tasks before live money. Host hardware is whatever you run the agent on; GPU optional (CPU profiles default) | [18 §9](18-platform-and-deployment.md#9-workstation-first-build-path) |
+| **Regions:** one region (Sydney) by default. Regional engines are allowed later only with measured benefit, a venue-permitted jurisdiction (no location masking), a static IP per region and pre-allocated risk budgets under one global risk authority. Database read replicas serve dashboards, not orders | [18 §7](18-platform-and-deployment.md#7-latency-and-regions) |
+| **Tailscale** is needed only for phone access, the private API in hybrid mode and the go-live egress exit node; **the hardware key** only before live money (OS keychain until then). Both move from P0 to when they're needed | [18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode) |
+| **Cloud costs are your call at shift time:** Supabase cloud needs a paid plan for a trading database (free plan: 500 MB, pauses after 7 idle days); Vercel Hobby covers personal use (U). Workstation mode is free | [18 §4.1](18-platform-and-deployment.md#41-where-it-runs) |
+| **Values you'd otherwise be asked to set** (P2-T048 risk values, P2-T049 sleeves, P2-T050 manifests) are drafted by agents from the 14/16 defaults and approved once in the go-live pack ([P7-T011](../tracking/phase-7/tasks/P7-T011-go-live-preflight.md)), changeable any time in settings | 16 §2 |

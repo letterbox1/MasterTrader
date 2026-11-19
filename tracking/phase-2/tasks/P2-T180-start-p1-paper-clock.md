@@ -43,7 +43,7 @@ The validated P1 candidates (trend on majors; funding carry only if the venue re
 
 - Roadmap: ToDo T2.80 · [exit criterion 4](../../../docs/roadmap/phase-2-strategies-risk-lab.md#6-exit-criteria-demo) · [14 §7](../../../docs/14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) (paper: all P1 sleeves ≥ 8 weeks) · [14 §6 gate 7](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8)
 - [Phase 7 entry](../../../docs/roadmap/phase-7-prove-and-go-live.md) ('≥ 8 weeks of paper for each P1 sleeve … started T2.80'; R7.02/T7.80)
-- Prerequisites: your manifests (P2-T050, T2.05) and your switch to paper (P2-T067, T2.08, `depends_on`), M11 policy/sleeves (T2.22), paper engine on the sandbox venue (T2.25; no venue keys needed for paper)
+- Prerequisites: the drafted manifests (P2-T050, T2.05) and the automatic switch to paper (P2-T067, T2.08, `depends_on`), M11 policy/sleeves (T2.22), paper engine on the sandbox venue (T2.25; no venue keys needed for paper)
 - Gate profile ([16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile)): paper/HITL period default ≥ 8 weeks **and** ≥ 50 trades; class override for P1 sleeves ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks.
 
 ## Requirements

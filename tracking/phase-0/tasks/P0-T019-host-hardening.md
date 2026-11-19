@@ -1,7 +1,7 @@
 ---
 id: P0-T019
 kind: task
-title: Harden the host (LUKS, firewall, SSH, updates, Tailscale, chrony)
+title: Harden the workstation baseline (firewall, Docker, updates, chrony; live profile at the shift)
 phase: 0
 type: OPS
 status: backlog
@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T005, P0-T003]
+depends_on: [P0-T005]
 requirements: [R0.N2]
 roadmap_todos: [T0.40]
 modules: [ops]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T019 · Harden the host (LUKS, firewall, SSH, updates, Tailscale, chrony)
+# P0-T019 · Harden the workstation baseline (firewall, Docker, updates, chrony; live profile at the shift)
 
 ## Goal / expected outcome
 
@@ -115,3 +115,4 @@ The host meets 07 §5 and is reproducible from a script: LUKS verified, deny-inb
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes (host task, needs the real box and tailnet); run fields added)
+- 2026-11-19: Workstation-first (17 §G): two profiles. `workstation` (now): deny-inbound firewall, every service bound to localhost, hardened Docker daemon, chrony, updates; the Tailscale rules apply only if `tailscale0` exists, LUKS is reported as a warning. `live` (P7-T073): LUKS required, SSH only over Tailscale, Tailscale ACLs. No longer depends on P0-T003 (Tailscale) or a dedicated host.

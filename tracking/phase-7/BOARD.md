@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 68 | 0 | 0 | 0 | 0 | 0 | 1 | 0/0/0/0 | 0/6 |
+| 72 | 0 | 0 | 0 | 0 | 0 | 1 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-7-prove-and-go-live.md](../../docs/roadmap/phase-7-prove-and-go-live.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -28,7 +28,7 @@ _None._
 
 _None._
 
-## Backlog (68)
+## Backlog (72)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -88,7 +88,7 @@ _None._
 | [P7-T054](tasks/P7-T054-verify-phone-flows-and-pwa.md) | Phone test: ≤ 3-tap flows, PWA installed, C3 on phone | VERIFY | high | S | agent | P7-T039, P7-T040 |
 | [P7-T055](tasks/P7-T055-e2e-gate-to-capital-step-scenario.md) | End-to-end scenario: gate pass → fund → micro-live → clean weeks → capital step | VERIFY | high | M | agent | P7-T019, P7-T028, P7-T014, P7-T016, P7-T020, P7-T011 |
 | [P7-T056](tasks/P7-T056-run-paper-approve-period.md) | Paper/HITL period: confirm P1 ≥ 8 weeks and continue others | RUN | critical | S | agent | P7-T014, P2-T180 |
-| [P7-T057](tasks/P7-T057-fund-micro-live.md) | Fund the starting allocation (default A$2,000) after the gate report passes | USER | critical | XS | user | P7-T001, P7-T011, P7-T014, P7-T044, P7-T045, P7-T046, P7-T047, P7-T053, P7-T056, P7-T069 |
+| [P7-T057](tasks/P7-T057-fund-micro-live.md) | Fund the starting allocation (default A$2,000) after the gate report passes | USER | critical | XS | user | P7-T001, P7-T011, P7-T014, P7-T044, P7-T045, P7-T046, P7-T047, P7-T053, P7-T056, P7-T069, P7-T070, P7-T073, P0-T013, P0-T062 |
 | [P7-T058](tasks/P7-T058-approve-bot-promotions.md) | Approve each bot promotion HITL → autonomous (C3) | USER | medium | XS | user | P7-T028, P7-T057 |
 | [P7-T059](tasks/P7-T059-run-micro-live-windows.md) | Run micro-live 4-week windows (each clean window allows one +25% step) | RUN | critical | M | agent | P7-T057 |
 | [P7-T060](tasks/P7-T060-weekly-review-signoffs.md) | Run and sign off the weekly review every live week | USER | critical | S | user | P7-T016 |
@@ -100,6 +100,10 @@ _None._
 | [P7-T067](tasks/P7-T067-phase-7-api-surface-and-d06-live-and-d03-go-live.md) | Phase 7 API surface and D06 Live and D03 Go-live views | BUILD | high | M | agent | P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022 |
 | [P7-T068](tasks/P7-T068-d06-stress-tab-and-risk-stress-run-historical-sh.md) | D06 Stress tab and risk.stress.run historical shock replay | BUILD | high | L | agent | P2-T043, P2-T015, P2-T103 |
 | [P7-T069](tasks/P7-T069-stress-replay-of-the-four-historical-shocks-befo.md) | Stress replay of the four historical shocks before the first funding | VERIFY | critical | S | agent | P7-T068, P7-T014 |
+| [P7-T070](tasks/P7-T070-approve-the-go-live-pack-risk-values-ceilings-sl.md) | Approve the go-live pack: risk values, ceilings, sleeves and manifests | USER | critical | S | user | P7-T011, P2-T048, P2-T049, P2-T050, P2-T066 |
+| [P7-T071](tasks/P7-T071-choose-the-go-live-runtime-host-and-cloud-option.md) | Choose the go-live runtime host and cloud options (default: stay on the workstation) | USER | high | XS | user | — |
+| [P7-T072](tasks/P7-T072-move-the-age-identities-onto-a-yubikey-before-li.md) | Move the age identities onto a YubiKey before live money | USER | high | XS | user | — |
+| [P7-T073](tasks/P7-T073-shift-to-the-go-live-runtime-host-harden-migrate.md) | Shift to the go-live runtime host: harden, migrate, deploy, re-verify | OPS | critical | L | agent | P7-T071, P7-T072, P0-T003 |
 
 ## Done (0)
 

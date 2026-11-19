@@ -10,7 +10,7 @@ size: XS
 severity: ""
 owner: user
 claimed_by: ""
-depends_on: [P7-T001, P7-T011, P7-T014, P7-T044, P7-T045, P7-T046, P7-T047, P7-T053, P7-T056, P7-T069]
+depends_on: [P7-T001, P7-T011, P7-T014, P7-T044, P7-T045, P7-T046, P7-T047, P7-T053, P7-T056, P7-T069, P7-T070, P7-T073, P0-T013, P0-T062]
 requirements: [R7.05, R7.01]
 roadmap_todos: [T7.04]
 modules: [M11]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ You set the first bot's **starting live allocation** in its strategy settings (d
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (starting allocation per bot default A$2,000 (16 §2.5, 17 §E); stress replay (P7-T069) and live key audit before funding)
+- 2026-11-19: Now also waits on the shift (P7-T073), the real worm_owner ceremony (P0-T013) and your login (P0-T062).

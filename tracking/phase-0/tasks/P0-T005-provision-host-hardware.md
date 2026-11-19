@@ -1,21 +1,21 @@
 ---
 id: P0-T005
 kind: task
-title: Provision the host hardware and decide on the GPU
+title: Profile the workstation and select CPU/GPU profiles
 phase: 0
-type: USER
+type: OPS
 status: ready
 priority: critical
 size: M
 severity: ""
-owner: user
+owner: agent
 claimed_by: ""
 depends_on: []
 requirements: [R0.02]
 roadmap_todos: [T0.01]
 modules: [ops]
 dashboards: []
-tools: [lsblk, nproc]
+tools: [git, docker]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-19
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T005 · Provision the host hardware and decide on the GPU
+# P0-T005 · Profile the workstation and select CPU/GPU profiles
 
 ## Goal / expected outcome
 
@@ -110,3 +110,4 @@ One Linux box that meets 03 §2 (8–16 cores, 32–64 GB RAM, 2–4 TB NVMe + a
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tier-B latency per 17 §B P6-B002 (the 150–300 ms figure is retired); run fields added)
+- 2026-11-19: Workstation-first (17 §G): this is no longer a USER gate. The build runs on whatever machine you run the agent on. The agent detects cores, RAM, disk and GPU, writes `infra/profile.yaml` (`models.gpu_profile: auto`), and warns (never blocks) when the machine is below the 03 §2 recommendation; heavy services fall back to CPU profiles. LUKS and the production hardware check move to the go-live shift (P7-T073).
