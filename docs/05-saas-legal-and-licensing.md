@@ -19,29 +19,37 @@ Key facts:
 - **AGPL** closes that loophole: if users interact with a modified AGPL program over a network, you must offer them its source.
 - **LGPL** behaves like GPL for the library itself, not for code that merely uses it.
 
+**Where the full picture lives.** The third-party register [19](19-third-party-register.md) lists every outside component with its language, licence, how we use it and what an open-source or commercial release would need. Copyleft items are flagged ⚑ in its copyleft register with the release plan ([19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan)); `just licence-audit` (cargo-deny + pip-licenses + a scan of `third_party/`) reports every ⚑ item. The table below is the SaaS view of the same facts.
+
+**Clean-room rule** ([17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20), [19 §3](19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime)). Since we write everything in Rust anyway, borrowed designs are rebuilt, not imported:
+- **GPL/AGPL sources** (freqtrade, MiroFish, nofx): ideas only. Our Rust code is written from the idea and public docs; no code is copied or translated line by line.
+- **MIT/Apache sources** (TradingAgents, FinRobot, Vibe-Trading, anthropics/financial-services, day-trader-skill, ai-hedge-fund): prompts, skill files and formulas may be adapted, keeping the copyright notice in `NOTICE`.
+- Any copyleft code that is ever vendored goes under `third_party/copyleft/<name>/` with its licence and a line in the copyleft register.
+
 | Component | Licence | SaaS impact | What to do |
 |---|---|---|---|
-| NautilusTrader | LGPL-3.0 | ✅ OK as an unmodified dependency on your servers | If you modify Nautilus itself, you only have to publish those changes if you *distribute* it (e.g., a desktop app). Simplest: don't fork it; upstream fixes. The Rust live node and custom adapters link Nautilus crates statically; that changes nothing on your own servers, but a distributed binary would have to let users relink against a changed Nautilus (U: lawyer). |
-| freqtrade code (look-ahead/recursive analysers, vendored under `third_party/` and isolated in the Python `mt_lab` package for personal use, [03 §1](03-build-spec.md#1-ground-rules)) | GPL-3.0 | ⚠️ Licence-wise OK for pure server-side SaaS (no distribution) | **Decided (P2-B051):** for a SaaS, replace the vendored analysers with a **clean-room re-implementation** before launch. That also keeps any later desktop/on-prem/self-hosted version from forcing the whole combined program to be GPL. Until then, keep it isolated (§9). |
-| Hummingbot, TradingAgents, FinRobot | Apache-2.0 | ✅ OK | Keep LICENSE/NOTICE files. **Don't use "FinRobot" in your product name** (its trademark policy). |
+| NautilusTrader ⚑ | LGPL-3.0 | ✅ OK as an unmodified dependency on your servers | If you modify Nautilus itself, you only have to publish those changes if you *distribute* it (e.g., a desktop app). Simplest: don't fork it; upstream fixes. The Rust live node and custom adapters link Nautilus crates statically; that changes nothing on your own servers, but a distributed binary would have to let users relink against a changed Nautilus (U: lawyer). Release actions: [19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan). |
+| freqtrade (ideas for the look-ahead/recursive analysers; the vendored copy from P2-B051 is being replaced) ⚑ | GPL-3.0 | ✅ No GPL code once the clean-room analysers land | **Decided ([17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20), replacing P2-B051's SaaS-only plan):** clean-room Rust analysers in `mt-lab-core` replace the vendored copy now, not only for a SaaS. The release checklist fails if `third_party/` still holds GPL code ([19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan)). |
+| Hummingbot, TradingAgents, FinRobot | Apache-2.0 | ✅ OK | Hummingbot runs unmodified, driven by the Rust `mt-mm-adapter`. TradingAgents and FinRobot are designs rebuilt in Rust (prompts adapted): keep their NOTICE. **Don't use "FinRobot" in your product name** (its trademark policy). |
 | Vibe-Trading, osiris, Hindsight, LightRAG, ccxt | MIT | ✅ OK | Keep copyright notices. Remove osiris's token panel and unreviewable `.pyc` files anyway. |
 | **nofx** | **AGPL-3.0** | ❌ Using its code in the SaaS forces you to publish the SaaS source to users | Don't use it; re-implement ideas clean-room (already the plan). |
-| **MiroFish** | **AGPL-3.0** | ❌ Same as nofx | Drop it, or rebuild on CAMEL-AI OASIS (Apache-2.0). |
-| Grafana | AGPL-3.0 | ⚠️ OK if **unmodified** and internal-only; risky if you modify it and expose it to customers | Keep it as an internal ops tool; build the customer UI yourself. |
+| **MiroFish** | **AGPL-3.0** | ❌ Same as nofx | Not used: M14 is `mt-crowdsim`, clean-room Rust on the idea; no MiroFish or OASIS code (17 §H). |
+| Grafana, Loki ⚑ | AGPL-3.0 | ⚠️ OK if **unmodified** and internal-only; risky if you modify it and expose it to customers | Keep them as internal ops tools, never patched; build the customer UI yourself. For a hosted product, optionally swap to Perses + VictoriaLogs (Apache-2.0). |
 | worldmonitor, Firecrawl server, backtesting.py | AGPL-3.0 | ❌ for customer-facing use | Avoid, or use permissive alternatives (crawl4ai). |
-| vectorbt (open) | Apache-2.0 + **Commons Clause** | ❌ You can't sell a product or service whose value derives substantially from it | Replace with Nautilus / your own vectorised engine, or buy vectorbt PRO's licence. |
+| vectorbt (open) ⚑ | Apache-2.0 + **Commons Clause** | ❌ You can't sell a product or service whose value derives substantially from it | Used only for research exploration in `mt_research`, never in the runtime ([19 §2](19-third-party-register.md#2-python-libraries-we-keep-only-where-absolutely-required-18-22)). Drop it from any commercial build (the Rust `mt-lab-core` harness covers validation), or buy vectorbt PRO's licence. Fine as an optional research extra in an open-source release. |
 | ArcticDB | BSL 1.1 | ⚠️ Fine as your internal DB; not as a database service offered to third parties | Fine to keep internally, or use Postgres/Parquet. |
 | TimescaleDB (TSL features) | Timescale License | No longer used: Supabase Postgres with native partitions replaces it ([18 §4.2](18-platform-and-deployment.md#42-extensions)) | Nothing to do. |
 | Supabase stack (self-hosted or CLI) | Mostly **Apache-2.0** (Studio, Storage, Realtime, Kong, Supavisor, postgres-meta); Auth and PostgREST **MIT**; Postgres and the extensions we use (pgvector, pg_partman, pgTAP) under the **PostgreSQL** licence; the log-shipper Vector **MPL-2.0** (U per component: check each image's licence when pinning it) | ✅ OK, all permissive or weak copyleft, used unmodified | Keep the notices; re-check the licence of each Supabase image on every bump. |
-| Rust crates: axum, tokio, sqlx, utoipa, alloy, `ort`, PyO3, `rust_decimal` | MIT and/or Apache-2.0 | ✅ OK | `cargo deny` enforces an allow-list of licences ([07 §7](07-security-notes.md#7-supply-chain)). |
+| Rust crates: axum, tokio, sqlx, utoipa, alloy, `ort`, PyO3, `rust_decimal`, `rig-core` | MIT and/or Apache-2.0 | ✅ OK | `cargo deny` enforces an allow-list of licences ([07 §7](07-security-notes.md#7-supply-chain)). |
 | teloxide (Telegram bot) | MIT | ✅ OK | Keep the notice. |
 | `rmcp` (official Rust MCP SDK) | MIT and/or Apache-2.0 (U) | ✅ OK if permissive | Confirm the licence before Phase 8. |
+| MetaTrader5 Python package ⚑ | Proprietary (MetaQuotes) (U) | ⚠️ Can't be redistributed as ours | Ship the MT5 bridge as an optional adapter the user installs, or use the cTrader route (Rust) ([19 §2](19-third-party-register.md#2-python-libraries-we-keep-only-where-absolutely-required-18-22)). |
 | Redis 8 | RSAL / SSPL / AGPL tri-licence | ⚠️ | Use **Valkey** (BSD). |
 | LLM weights (Qwen/Llama/Chronos/TimesFM/Kronos) | Varies (Apache, Llama licence, custom) | ⚠️ Check each model's licence for commercial-use and user-count clauses | Keep a model licence register. |
 
 **Licence checklist for a SaaS launch:**
-1. Generate an SBOM (e.g., `cargo deny` / `cargo about` for Rust, `pip-licenses` for Python, `syft` for images) and fail CI on AGPL, SSPL, Commons Clause or "non-commercial" licences in customer-facing services.
-2. Remove or replace: nofx-derived code, MiroFish, vectorbt (open), the vendored freqtrade analysers (clean-room rewrite), and any other GPL code *if* you will ever distribute software.
+1. Start from `just licence-audit` and the copyleft register (19 §4). Generate an SBOM (e.g., `cargo deny` / `cargo about` for Rust, `pip-licenses` for Python, `syft` for images) and fail CI on AGPL, SSPL, Commons Clause or "non-commercial" licences in customer-facing services.
+2. Remove or replace: vectorbt (open), the MetaTrader5 package (make it a user-installed adapter), any vendored GPL code (the freqtrade analysers should already be gone, replaced by the clean-room Rust ones), and any other GPL code *if* you will ever distribute software. nofx and MiroFish were never used as code.
 3. Ship a "third-party notices" page in the product (Apache/MIT attribution).
 4. Have a lawyer review the result once, before launch.
 
@@ -98,11 +106,11 @@ Other SaaS obligations:
 ## 4. What to do *now* so a SaaS flip stays cheap
 
 1. Follow [build spec §9](03-build-spec.md#9-future-proof-hygiene):
-   - keep a `third_party/LICENSES.md` manifest;
-   - keep GPL/AGPL code isolated;
+   - keep a `third_party/LICENSES.md` manifest and the register in [19](19-third-party-register.md) current;
+   - keep GPL/AGPL code isolated under `third_party/copyleft/<name>/`, each with a ⚑ line in 19 §4;
    - tag every data source `license: personal|commercial_ok|unknown`.
-2. Keep the core (the shared `mt_core` types, the Rust crates `mt-store`, `mt-risk`, `mt-api` and the `mt-engine` wrapper ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), and the Python `mt_agents`) **your own code** or MIT/Apache-derived.
-3. Design data access behind provider interfaces so yfinance can be swapped for a licensed feed with a config change.
+2. Keep the core (the Rust crates `mt-core`, `mt-store`, `mt-risk`, `mt-api`, the `mt-engine` wrapper, `mt-agents` and `mt-lab-core` ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates))) **your own code** or MIT/Apache-derived, under the clean-room rule (§1).
+3. Design data access behind provider interfaces (`mt-connectors`) so a personal-use source like Yahoo can be swapped for a licensed feed with a config change.
 4. Keep the repo private. Publishing it would count as distributing any GPL code inside it.
 
 ## 5. Bottom line
@@ -111,6 +119,6 @@ Other SaaS obligations:
 |---|---|
 | Can I use everything (incl. GPL/AGPL) for personal use? | **Yes.** |
 | Does flipping to a SaaS make the project impossible? | **No.** |
-| What must change for a SaaS? | Drop/replace the AGPL bits (nofx, MiroFish), Commons-Clause vectorbt and non-commercial data; rewrite the vendored freqtrade analysers clean-room. Pay for commercial data. Choose a product shape that fits your regulatory appetite. |
+| What must change for a SaaS? | Work through the copyleft register ([19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan)): drop Commons-Clause vectorbt and non-commercial data, keep Grafana/Loki unmodified (or swap them), make sure the vendored freqtrade analysers are gone (replaced by clean-room Rust ones). nofx and MiroFish are ideas only, no code. Pay for commercial data. Choose a product shape that fits your regulatory appetite. |
 | Biggest cost? | Data licences. |
 | Biggest legal risk? | Financial regulation (advice / managing others' money), not GitHub licences. |

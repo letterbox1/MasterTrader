@@ -40,9 +40,9 @@ This doc is canonical for **which language each service is written in, where eac
 | `mt-api` | M15 command layer | axum + tokio; OpenAPI via utoipa (`openapi-typescript` generates the web client). REST + WebSocket; Supabase Auth JWTs (§4.6); C0–C3 and preview tokens |
 | `mt-risk` | M11 | **One implementation**, linked into `mt-api`, the engine (PyO3 binding for any Python node) and `mt-deadman`; risk golden tests run against the crate |
 | `mt-deadman` | M11 layer 2 | Small static binary, own trade-only keys, cancel/flatten only |
-| `mt-engine` | M12 | NautilusTrader **Rust live node** where the venue's Rust adapter is production-ready (U, per venue), else the Python node with the same `mt-risk` binding. Custom adapters (Alpaca, OANDA, IG, cTrader) in Rust |
+| `mt-engine` | M12 | NautilusTrader **Rust live node** where the venue's Rust adapter is production-ready (U, per venue), else the Python node with the same `mt-risk` binding. Custom adapters in Rust where Nautilus has none: Alpaca, OANDA, IG, cTrader, and the AU spot venues Independent Reserve and BTC Markets (U: check Nautilus's adapter list first). ccxt is never used to place orders |
 | `mt-recorder` | M1 streaming | Venue WebSocket → Parquet catalog + bars (§4.3); Nautilus Rust data clients where available (U) |
-| `mt-connectors` | M1 batch, M5 calendars | **Replaces OpenBB, fredapi, sdmx1, edgartools and yfinance:** typed Rust clients for FRED/ALFRED, EIA, USDA NASS, US Treasury, BLS, ECB/SDMX, CFTC COT, World Bank, IMF, SEC EDGAR (submissions + XBRL `companyfacts` JSON), Dukascopy (`bi5`), data.binance.vision, CoinGecko, DefiLlama, Myfxbook, Finnhub, CryptoPanic, Twelve Data, calendars. Every client writes through `pit` with provenance |
+| `mt-connectors` | M1 batch, M5 calendars | **Replaces OpenBB, fredapi, sdmx1, edgartools and yfinance:** typed Rust clients for FRED/ALFRED, EIA, USDA NASS, US Treasury, BLS, ECB/SDMX, CFTC COT, World Bank, IMF, SEC EDGAR (submissions + XBRL `companyfacts` JSON), Dukascopy (`bi5`), data.binance.vision, daily futures from free sources whose terms allow automated personal use (Yahoo chart data only if its terms allow (U)), CoinGecko, DefiLlama, Myfxbook, Finnhub, CryptoPanic, Twelve Data, calendars. Every client writes through `pit` with provenance |
 | `mt-scheduler` | batch orchestration | **Replaces Prefect:** Postgres-backed job queue and cron (`apalis`-style), retries, backfills, run history in Postgres, job status on D16/D07. Runs Rust jobs in-process and Python training jobs (§2.2) as containers/subprocesses |
 | `mt-features` | M6 | Feature library and evaluator (incremental in the engine, batch via `mt-scheduler`) |
 | `mt-nlp` | M2 pipeline (`nlp`) | Relevance gate, entity linking (GLiNER ONNX (U)), FinBERT sentiment (ONNX via `ort`), embeddings and rerank via TEI over HTTP → `text.document` |
@@ -57,6 +57,7 @@ This doc is canonical for **which language each service is written in, where eac
 | `mt-social` | M23 | Drafts → your approval → web intent; credibility and shill-burst posture |
 | `mt-onchain`, `mt-treasury`, `mt-signer` | 13, M22 | Chain reads, cost gate (`mt_onchain::costgate`), indexer, hold-and-earn; intents-only signer (alloy, Solana SDK) |
 | `mt-journal` | M18 | Lot engine, tax rules (`rust_decimal`), reports, exports; tax golden tests in the crate |
+| `mt-feeds` | M2 sources | RSS/Atom (incl. rss-bridge output), the Discord feeds bot, Bluesky, Mastodon, Farcaster and GDELT clients → `raw.text.*` on the `scrape` network; article text extraction is handed to `mt_extract` (§2.2) |
 | `mt-events`, `mt-intel-writer` | M3, M2/M3 writer | Event pollers (USGS, GDACS, NOAA, FIRMS, ReliefWeb, UCDP, ACLED, Kalshi, Polymarket, congressional disclosures R4.17); INSERT-only writer for scrape outputs |
 | `mt-monitor`, `mt-store`, `mt-obs` | M16, `pit`, M17 | DQ/costs/recon/egress; `pit` + WORM helpers (PyO3 bindings); WORM writer, hash chain, seal |
 | `mt-telegram-bot`, `mt-mcp` | M15, M20 | teloxide bot; `rmcp` MCP adapter over `mt-api` |
@@ -66,11 +67,11 @@ This doc is canonical for **which language each service is written in, where eac
 
 | Package | Why Python is required | Boundary |
 |---|---|---|
-| `mt_research` (lab exploration + training) | The ML and research ecosystem has no Rust equivalent: PyTorch, LightGBM, scikit-learn, Optuna, Qlib, vectorbt, LoRA/FinBERT fine-tuning, notebooks, MLflow client | Trains and explores only. Promoted models are exported to **ONNX** and run in Rust; reads data only through the `pit` binding; runs as `mt-scheduler` jobs |
+| `mt_research` (lab exploration + training + offline batch reports) | The ML and research ecosystem has no Rust equivalent: PyTorch, LightGBM, scikit-learn, Optuna, Qlib, vectorbt, LoRA/FinBERT fine-tuning, notebooks, MLflow client. Also the nightly offline batch jobs that use Python-only libraries: Pandera/Evidently DQ reports and `exchange_calendars` table generation (written to Postgres for the Rust services) | Trains and explores only. Promoted models are exported to **ONNX** and run in Rust; reads data only through the `pit` binding; runs as `mt-scheduler` jobs |
 | `mt_extract` (`ingest-text` extraction) | trafilatura's article extraction quality has no Rust match (U); crawl4ai (container) for JS pages | On the `scrape` network; publishes `raw.text.*` only |
 | `mt_telegram_reader` | **Telethon** for MTProto: the Rust option (grammers) was archived in Feb 2026 and is unaudited | Scrape side; regex postures only (`posture.telegram.*`), never text to models |
 | `mt_ledger_import` | ccxt's ledger/statement endpoints across many exchanges (historical accounts) | Hands normalised events to `mt-journal` |
-| MT5 bridge (optional, Windows VPS) | The `MetaTrader5` package is Windows/Python-only | Reaches venues only through `mt-api` / `mt-risk` |
+| `mt_mt5_bridge` (optional, Windows VPS) | The `MetaTrader5` package is Windows/Python-only | Executes only orders that already passed `mt-risk` in `mt-engine`'s MT5 adapter; no decisions of its own |
 
 **Rules:** Python never places orders, signs, or runs on the live decision path. It publishes to NATS or calls `mt-api`; reads only through `pit`; writes audit rows through the `mt-obs` binding (`mt_store.obs`), so the hash chain has one implementation.
 

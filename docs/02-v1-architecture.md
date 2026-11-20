@@ -38,9 +38,9 @@ This is the blueprint that backend and frontend work build against.
 5. **Measure, then feed back.** Live data quality and trading costs (M16) gate trading and calibrate backtests.
 6. **Record everything.** Audit and journal are WORM (write-once, hash-chained, externally sealed; [15 §2](15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)); logs only for operations.
 7. **One command layer (`mt-api`, Rust).** The web UI, Telegram and (Phase 8) MCP are thin clients of the same typed, audited commands. The browser never talks to the database: every read and command goes through `mt-api` ([18 §4.5](18-platform-and-deployment.md#45-access-rules)).
-8. **Free only, personal use, private, no telemetry.** Generated code is sandboxed; GPL/AGPL code is isolated; secrets never reach LLMs.
+8. **Free only, personal use, private, no telemetry.** Generated code is sandboxed; GPL/AGPL code is isolated and listed in the copyleft register ([19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan)); secrets never reach LLMs.
 9. **Nothing that shapes trading is hard-coded.** Limits, sizing, timers, gates and failure behaviour are layered settings with defaults (L0 hard ceilings → L4 bot; the strictest wins), set in the UI or Telegram and versioned as WORM rows ([16 §1](16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance)).
-10. **Rust first, Python where necessary; workstation first.** Every service we write is Rust unless a Python-only library makes Python necessary. Python services never place orders or sign. Everything builds, tests and paper-trades on your workstation; moving to a runtime host or the cloud is a set of Phase 7 OPS tasks, not a rewrite ([18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), [§9](18-platform-and-deployment.md#9-workstation-first-build-path)).
+10. **Rust first, Python only where absolutely required; workstation first.** Everything we write is Rust, including what we rebuild from borrowed designs ([17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)). Python is limited to five packages: `mt_research` (training and exploration), `mt_extract` (trafilatura), `mt_telegram_reader` (Telethon), `mt_ledger_import` (ccxt) and the MT5 bridge ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)). Python never places orders, signs or sits on the live decision path. Everything builds, tests and paper-trades on your workstation; moving to a runtime host or the cloud is a set of Phase 7 OPS tasks, not a rewrite ([18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), [§9](18-platform-and-deployment.md#9-workstation-first-build-path)).
 
 ## 2. System context
 
@@ -109,7 +109,7 @@ Each service names its crate (Rust, `crates/`) or package (Python, `packages/`) 
 | `supabase-studio` | Supabase Studio | Database admin UI, bound to 127.0.0.1 only | 0 |
 | (off by default) `supabase-rest`, `supabase-realtime` | PostgREST, Realtime | **Off** for MasterTrader schemas (`supabase.data_api: off`, `supabase.realtime: off`); live streams come from NATS via `mt-api` | — |
 | `nats` | nats (JetStream) | Event bus, KV state | 0 |
-| `prefect-server` + `prefect-worker` | prefect | Scheduled batch flows (backfills, macro, EOD jobs, retraining) | 0 |
+| `scheduler` | `mt-scheduler` (Rust; replaces Prefect) | Postgres-backed jobs and cron: backfills, macro, EOD jobs, retraining. Retries, run history in Postgres, job status on D16/D07. Runs Rust jobs in-process and Python training jobs (`mt_research`) as containers or subprocesses | 0 |
 | `grafana`, `loki`, `prometheus`, `vector`, `alertmanager` | — | Observability | 0 |
 | `mlflow` | mlflow | Experiments + model registry | 0 |
 | `litellm` | LiteLLM ≥ 1.83 | Model gateway (research/chat/debate); its callback writes every call to `audit.llm_call` from P0 | 0 |
@@ -119,35 +119,36 @@ Each service names its crate (Rust, `crates/`) or package (Python, `packages/`) 
 | `docker-proxy` | restricted Docker-socket proxy | Lets `system.service.restart` restart allow-listed containers only; mt-api never mounts the Docker socket | 0 |
 | `ingest-market` | `mt-recorder` (Rust; Nautilus Rust data clients where available (U)) | Venue WS clients, Parquet recorder, bar builder writing the standard bar sizes ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)) | 1 |
 | `ib-gateway` | IB Gateway, IBC-managed (digest-pinned) | IBKR API session with scheduled re-login; only when IBKR is used (read-only API for P1 recon) | 1 (when IBKR is used) |
-| `ingest-batch` | `mt_data` (Python, Prefect flows) | Macro, fundamentals, calendars, backfills (Python-only SDKs: OpenBB, edgartools, yfinance, fredapi, sdmx1) | 1 |
+| `ingest-batch` | `mt-connectors` (Rust, run as `mt-scheduler` jobs) | Macro, fundamentals, calendars, backfills. Typed Rust clients replace OpenBB, edgartools, yfinance, fredapi and sdmx1 (SEC XBRL via `companyfacts` JSON); every client writes with provenance and has a quota tracker | 1 |
 | `monitor` | `mt-monitor` (Rust) | Data-quality + cost/TCA + reconciliation (M16) | 1 |
-| `engine` | `mt-engine` (Rust; NautilusTrader Rust live node where the venue adapter is production-ready (U), else the Python node) + strategies (`mt_strategy` Python or Rust) + `mt-risk` (Rust, linked; PyO3 binding on the Python node) + Decision One tier A | Live/paper trading node; strategies; risk; execution; in-engine watchdog (dead-man layer 1) | 2 |
+| `engine` | `mt-engine` (Rust; NautilusTrader Rust live node where the venue adapter is production-ready (U), else the Python node) + strategies (Rust by default; Python only for ML research on paper, ported to Rust (ONNX) before live) + `mt-risk` (Rust, linked; PyO3 binding on the Python node) + Decision One tier A | Live/paper trading node; strategies; risk; execution; in-engine watchdog (dead-man layer 1) | 2 |
 | `deadman` | `mt-deadman` (Rust, small static binary) | Dead-man layer 2: watches the **engine's** heartbeat with its own trade-only keys and venue connections; can only cancel and flatten per `on_system_failure` ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) | 2 |
-| `backtest-worker` | `mt_lab` (Python) | Backtests, validation, optimisation, distillation, sandbox orchestration | 2 |
-| `sandbox` | gVisor/`--network none` runner | LLM-generated strategy code | 2 |
-| `journal` | `mt-journal` (Rust: lot engine, tax, reports) + `mt_journal` (Python, only statement parsers that need a Python-only library) | Journal ingestion, lot engine, tax rules, reports | 3 |
-| `ingest-text` | `mt_data.text` (Python: Telethon is Python-only) | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT, on `scrape` with no DB route: publishes `raw.*` and `posture.telegram.*` only. **Telegram: postures only** (regex extractor → `posture.telegram.*`; never to nlp, RAG or models, F3b) | 4 |
+| `backtest-worker` | `mt-lab-core` (Rust: walk-forward and validation harness, gate reports, cost models, bias analysers, setup-odds; drives Nautilus backtests) + `mt_research` (Python: exploration, screening, training, optimisation, distillation; runs as `mt-scheduler` jobs, calls `mt-lab-core` through PyO3) | Backtests, validation, optimisation, distillation, sandbox orchestration | 2 |
+| `sandbox` | gVisor/`--network none` runner | LLM-generated strategy code (Rust, compiled and tested here) | 2 |
+| `journal` | `mt-journal` (Rust: lot engine, tax, reports) + `mt_ledger_import` (Python, ccxt ledger/statement history only; hands normalised events to `mt-journal`) | Journal ingestion, lot engine, tax rules, reports | 3 |
+| `ingest-text` | Rust feed clients (crate not named in 18 §2.1 (U)) + `mt_extract` (Python, trafilatura) + `mt_telegram_reader` (Python, Telethon) | RSS, Telegram (Telethon + Bot), Discord bot, Bluesky, Mastodon, GDELT, on `scrape` with no DB route: publishes `raw.*` and `posture.telegram.*` only. **Telegram: postures only** (regex extractor → `posture.telegram.*`; never to nlp, RAG or models, F3b) | 4 |
 | `crawl4ai` | crawl4ai | Fallback extractor for JS-rendered pages (trafilatura first); on `scrape`, publishes `raw.text.*` only | 4 |
 | `intel-writer` | `mt-intel-writer` (Rust, [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) | Core-side writer for scrape outputs: `posture.telegram.*` → `text.telegram_mention` / `text.telegram_posture`, `raw.evt.*` → `text.geo_event`, `raw.reg.*` → regulatory-watch snapshots. No model clients; INSERT-only on its tables | 4 |
 | `rss-bridge` | rss-bridge | Feeds for sites without RSS | 4 |
-| `nlp` | `mt_features.text` (Python) | Relevance gate, entity linking, FinBERT, embeddings → `text.document` | 4 |
+| `nlp` | `mt-nlp` (Rust: GLiNER entities via ONNX (U), FinBERT via `ort`, embeddings and rerank via TEI over HTTP) | Relevance gate, entity linking, FinBERT, embeddings → `text.document` | 4 |
 | `ingest-events` | `mt-events` (Rust) | USGS/GDACS/NOAA/FIRMS/ReliefWeb/UCDP/Kalshi/Polymarket | 4 |
-| `airdrop` | `mt_airdrop` (Python) | Discovery, enrichment, risk/viability scoring | 5 |
+| `airdrop` | `mt-airdrop` (Rust) | Discovery, enrichment, risk/viability scoring | 5 |
 | `airdrop-exec` + `signer` | `mt-airdrop-exec` + `mt-signer` (Rust) | The **policy service** in P5: mandated claims, simulation, revokes, sweeps to the vault | 5 |
 | (library) | `mt-onchain` (Rust; cost gate module `costgate`, was `mt_onchain.costgate`) | On-chain cost gate, used by the signer path from P5 and by `treasury` in P6 ([13 §7](13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16)) | 5 |
-| `curation` | `mt_curation` (Python) | Task queue, digests | 5 |
+| `curation` | `mt-curation` (Rust) | Task queue, digests | 5 |
 | `wallet-indexer` | `mt-treasury` indexer (Rust) | Unified wallet view: balances, transfers (internal tagging), approvals, nonce-authority and depeg monitors; extends `ops.wallets` | 5 |
 | `treasury` | `mt-treasury` (Rust) | M22 hold-and-earn + treasury allocation; uses the `mt-onchain` cost gate; signs only via the policy service | 6 |
 | `signer` (extended) | `mt-signer` (Rust: alloy for EVM, Solana SDK) | Intents-only signer for hot/burner/identity keys (13 §2); accepts intents only from the policy service (airdrop-exec, treasury and DEX execution all go through it) | 5 |
 | `anvil` | foundry anvil | Local mainnet-fork simulation before signatures | 5 |
-| `social` | `mt_social` (Python) | M23 social drafts (approval → web intent from your account) | 6 (optional) |
+| `social` | `mt-social` (Rust) | M23 social drafts (approval → web intent from your account) | 6 (optional) |
 | `ntfy` | ntfy (self-hosted) | Second, independent alert channel (push), reachable via localhost or Tailscale only; iOS push uses ntfy's upstream relay, which carries only a message ID | 1 |
-| `telegram-bot` | `mt-telegram-bot` (Rust, teloxide; Bot API) | Alerts, digests, approvals, task buttons, `/kill` (its NATS credentials may publish only `kill.set`). Reading channels is Telethon in `ingest-text` (Python) | 2 (alerts from 1) |
-| `agents` | `mt_agents` (Python) | LangGraph debate runs (M8) | 6 |
+| `telegram-bot` | `mt-telegram-bot` (Rust, teloxide; Bot API) | Alerts, digests, approvals, task buttons, `/kill` (its NATS credentials may publish only `kill.set`). Reading channels is Telethon in `ingest-text` (`mt_telegram_reader`, Python) | 2 (alerts from 1) |
+| `agents` | `mt-agents` (Rust agent runtime on `rig-core`; explicit state-machine graph, Postgres checkpoints; replaces LangGraph) | M8: TradingAgents-style debate, valuation desk, research workflows, optional persona lenses; all model calls via LiteLLM | 6 |
 | `hindsight` | Hindsight (slim) | Agent memory (schema `hindsight`) | 6 |
-| `decision-svc` | `mt_models` (Python) + vLLM (`/classify`) or ONNX | Decision One tier B (SemIf readout → own Qwen-LoRA head). Decision path: prefix caching **off**, fixed batch ([10 §4.3](10-memory-rag-and-models.md)). GPU if present, else CPU (`models.gpu_profile: auto`) | 4 (SemIf) / 6 |
-| `anomaly` | `mt_anomaly` (Python) | Detectors + explain agent | 6 |
-| `hummingbot` | hummingbot (telemetry off) | Market-making sidecar | 6 (optional) |
+| `decision-svc` | `mt-models` (Rust) + vLLM (`/classify`) or ONNX via `ort`; training in `mt_research` (Python) | Decision One tier B (SemIf readout → own Qwen-LoRA head). Decision path: prefix caching **off**, fixed batch ([10 §4.3](10-memory-rag-and-models.md)). GPU if present, else CPU (`models.gpu_profile: auto`) | 4 (SemIf) / 6 |
+| `anomaly` | `mt-anomaly` (Rust) | Detectors + explain agent (on `mt-agents`) | 6 |
+| `hummingbot` | hummingbot + Hummingbot API (unmodified, telemetry off), driven by `mt-mm-adapter` (Rust) | Market-making sidecar | 6 (optional) |
+| `crowdsim` + scenario twin | `mt-crowdsim` (Rust, clean-room; no MiroFish/OASIS code) + a second paper-only `engine` | M14 scenario & crowd simulator: persona crowd → scenario (sentiment path plus price, volatility, spread and liquidity shocks). The scenario twin runs the same bots on replayed data with injected scenarios: weekly report per bot in the paper period, plus pre-live stress tests. Data flagged `synthetic = true`, never used for features, training or RAG; no route to the signer or to real paper/live accounts ([18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)) | 6 (build) / 7 (paper period, stress tests) |
 | `mcp` | `mt-mcp` (Rust, official MCP SDK `rmcp`) | MCP adapter over `mt-api` (thin; no DB or NATS access); on `edge` behind Caddy, Tailscale only (§7.4) | 8 (optional) |
 | (external) egress exit node | WireGuard/Tailscale on a Sydney cloud VM, static IP | Fixed egress IP for all exchange traffic (§3.1) | 7 |
 
@@ -155,34 +156,34 @@ Each service names its crate (Rust, `crates/`) or package (Python, `packages/`) 
 
 ## 4. Logical components
 
-The package column names the Rust crate (`mt-…`) or the Python package (`mt_…`) per [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
+The package column names the Rust crate (`mt-…`) or the Python package (`mt_…`) per [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary). Batch jobs for every module run on `mt-scheduler` (Rust; replaces Prefect).
 
 | Module | Package | Runs in | Owns (Supabase Postgres schema/tables) | Publishes | Consumes |
 |---|---|---|---|---|---|
-| M0 Strategy framework | `mt_strategy` (Python); deterministic strategies may be Rust ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)) | engine, backtest-worker | `strategy.registry`, `strategy.versions`, `strategy.runs`, `strategy.bot`, `strategy.bot_version` (WORM) | `sig.*`, `strat.status.*`, `bot.{id}.status` | `md.*`, `feat.*`, `dec.tierb.*`, `engine.cmd.*` |
-| M1 Market data | `mt-recorder` (Rust, streaming) + `mt_data` (Python, batch flows) | ingest-market, ingest-batch | `market.instrument`, `market.bar_*`, `market.macro_series`, `market.filing` | `md.*`, `dq.raw.*` | venue WS/REST |
-| M2 News & social | `mt_data.text` (Python) | ingest-text, nlp | `text.document`, `text.source`, `text.telegram_mention`, `text.telegram_posture` (both `model_input_ok = false`, `train_ok = false`; written by `intel-writer`) | `raw.*`, `text.doc.*` (never Telegram), `posture.telegram.*` | feeds |
+| M0 Strategy framework | Rust by default: templates in `mt-engine`, your own in `strategies/<name>/`; registry and bots in `mt-api`. Python only for ML research on paper, ported before live ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) | engine, backtest-worker | `strategy.registry`, `strategy.versions`, `strategy.runs`, `strategy.bot`, `strategy.bot_version` (WORM) | `sig.*`, `strat.status.*`, `bot.{id}.status` | `md.*`, `feat.*`, `dec.tierb.*`, `engine.cmd.*` |
+| M1 Market data | `mt-recorder` (Rust, streaming) + `mt-connectors` (Rust, batch jobs on `mt-scheduler`) | ingest-market, ingest-batch | `market.instrument`, `market.bar_*`, `market.macro_series`, `market.filing` | `md.*`, `dq.raw.*` | venue WS/REST |
+| M2 News & social | Rust feed clients + `mt_extract`, `mt_telegram_reader` (Python) in ingest-text; `mt-nlp` (Rust) in nlp | ingest-text, nlp | `text.document`, `text.source`, `text.telegram_mention`, `text.telegram_posture` (both `model_input_ok = false`, `train_ok = false`; written by `intel-writer`) | `raw.*`, `text.doc.*` (never Telegram), `posture.telegram.*` | feeds |
 | M3 Events | `mt-events` (Rust) | ingest-events | `text.geo_event`, `text.exposure_map` | `evt.*` | feeds |
-| M4 Airdrops | `mt_airdrop` (Python, discovery and scoring) + `mt-airdrop-exec` (Rust) | airdrop, airdrop-exec | `curation.airdrop_*`, `curation.mandate`, `curation.exec_log` | `airdrop.*`, `task.new` | risk APIs, chain RPC, `posture.telegram.*` (rules only) |
-| M5 Calendars | `mt_data.calendar` (Python) | ingest-batch | `text.calendar_event` | `cal.*` | FRED, ForexFactory, CB |
-| M6 Features | `mt_features` (Python, research side) | engine (incremental), batch | `features.value`, `features.def` | `feat.*` | `md.*`, `text.*`, `evt.*` |
-| M7 Lab | `mt_lab` (Python) | backtest-worker, sandbox | `strategy.backtest`, `strategy.experiment` (+ MLflow) | `lab.job.*` | catalog, features |
-| M8 Agents | `mt_agents` (Python) | agents | `audit.decision_run`, `audit.signal` (`Signal` fields in [03 M8](03-build-spec.md)) | `sig.agent.*` | RAG, memory, gateway |
-| M9 Memory & RAG | `mt_memory` (Python) | agents, nlp, hindsight | `rag.doc_chunk`, `hindsight.*` | — | TEI |
-| M10 Anomaly | `mt_anomaly` (Python) | anomaly | `audit.anomaly` | `alert.anomaly.*` | `md.*`, `text.*`, `evt.*`, `anomaly.explain` requests |
+| M4 Airdrops | `mt-airdrop` (Rust, discovery and scoring) + `mt-airdrop-exec` (Rust) | airdrop, airdrop-exec | `curation.airdrop_*`, `curation.mandate`, `curation.exec_log` | `airdrop.*`, `task.new` | risk APIs, chain RPC, `posture.telegram.*` (rules only) |
+| M5 Calendars | `mt-connectors` (Rust, calendar clients) | ingest-batch | `text.calendar_event` | `cal.*` | FRED, ForexFactory, CB |
+| M6 Features | `mt-features` (Rust; incremental in the engine, batch via `mt-scheduler`); exploration in `mt_research` | engine (incremental), batch | `features.value`, `features.def` | `feat.*` | `md.*`, `text.*`, `evt.*` |
+| M7 Lab | `mt-lab-core` (Rust, production harness and bias analysers) + `mt_research` (Python, exploration and training) | backtest-worker, sandbox | `strategy.backtest`, `strategy.experiment` (+ MLflow) | `lab.job.*` | catalog, features |
+| M8 Agents | `mt-agents` (Rust, `rig-core`) | agents | `audit.decision_run`, `audit.signal` (`Signal` fields in [03 M8](03-build-spec.md)) | `sig.agent.*` | RAG, memory, gateway |
+| M9 Memory & RAG | `mt-memory` (Rust; Hindsight over HTTP) | agents, nlp, hindsight | `rag.doc_chunk`, `hindsight.*` | — | TEI |
+| M10 Anomaly | `mt-anomaly` (Rust) | anomaly | `audit.anomaly` | `alert.anomaly.*` | `md.*`, `text.*`, `evt.*`, `anomaly.explain` requests |
 | M11 Risk | `mt-risk` (Rust, one crate; PyO3 binding for the Python node) + `mt-deadman` | engine (in-process) + mt-api (policy) + deadman | `risk.policy`, `risk.limit_state`, `risk.change`, `risk.event`, `risk.approval` | `risk.*`, KV `risk_state`, `kill` | `ord.intent.*`, `dq.status.*`, `cost.*`, KV `audit.integrity`, `egress.status`, `posture.telegram.*` (rules only), `venue.registry.changed`, `sys.heartbeat.*` |
 | M12 Execution | `mt-engine` (Rust) | engine | `audit.order`, `audit.fill`, `audit.position_snapshot` | `ord.*`, `fill.*`, `pos.*` | venues |
-| M13 MM sidecar | hummingbot + adapter | hummingbot | `audit.mm_*` | `mm.*` | Hummingbot API |
-| M14 Crowd-sim | services/crowdsim | optional | `strategy.crowdsim_run` | — | — |
+| M13 MM sidecar | hummingbot + Hummingbot API, driven by `mt-mm-adapter` (Rust) | hummingbot | `audit.mm_*` | `mm.*` | Hummingbot API |
+| M14 Scenario & crowd sim | `mt-crowdsim` (Rust) | crowdsim, scenario twin (paper-only engine) | `strategy.crowdsim_run` (rows flagged `synthetic = true`) | — | `evt.*`, `text.doc.*` (never Telegram), Parquet catalog (replay) |
 | M15 UI | `apps/web` (TypeScript) + `mt-telegram-bot` (Rust) | caddy or Vercel, telegram-bot | `ops.user_pref`, `ops.notification` | — | WS topics |
 | M16 Monitor | `mt-monitor` (Rust) | monitor | `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `market.spread_*`, `audit.recon` | `dq.status.*`, `cost.*`, `recon.*`, `egress.status` | `md.*`, `dq.raw.*`, fills, venues |
 | M17 Observability & audit | `mt-obs` (Rust) | all | `audit.*` hash chain, `audit.command`, `audit.llm_call` (from P0, LiteLLM callback), `audit.seal`, `audit.integrity_incident` | metrics, logs, KV `audit.integrity` | — |
-| M18 Journal & tax | `mt-journal` (Rust) + Python statement parsers where needed | journal | `journal.*`, `ops.wallets` (account and address registry, created P3) | `journal.*`, `tax.residency.changed` | fills, ledgers, chain, airdrops |
-| M19 Curation | `mt_curation` (Python) | curation, telegram-bot | `curation.task` (minimal table from P3 for tax questions; P5 extends it additively), `curation.community` | `task.*` | `airdrop.*`, `risk.approval.*` |
+| M18 Journal & tax | `mt-journal` (Rust) + `mt_ledger_import` (Python, ccxt ledger history only) | journal | `journal.*`, `ops.wallets` (account and address registry, created P3) | `journal.*`, `tax.residency.changed` | fills, ledgers, chain, airdrops |
+| M19 Curation | `mt-curation` (Rust) | curation, telegram-bot | `curation.task` (minimal table from P3 for tax questions; P5 extends it additively), `curation.community` | `task.*` | `airdrop.*`, `risk.approval.*` |
 | M20 MCP | `mt-mcp` (Rust) | mcp | — (via `mt-api`: `audit.mcp_call` for every MCP call, `audit.command` for commands) | — | `mt-api` |
 | M22 Treasury & hold-and-earn | `mt-treasury` (Rust) | treasury, wallet-indexer | `treasury.transfer`, `treasury.position`, `treasury.policy`; extends `ops.wallets` (P5) | `wallet.*`, `treasury.*` | chain RPC, venues, `risk.*` |
-| M23 Social participation | `mt_social` (Python) | social | `curation.social_draft` | `social.draft.*` | `text.doc.*`, `task.*` |
-| M21 Models | `mt_models` (Python; tier A inference via ONNX in Rust (`ort`) once promoted to the engine path) | engine (tier A), decision-svc, litellm, llm-local, tei-embed, tei-rerank | `models.registry`, `models.question`, `models.label`, `audit.tierb_decision` | `dec.tierb.*`, KV `tierb_scores` | `text.doc.*`, M8 teacher log |
+| M23 Social participation | `mt-social` (Rust) | social | `curation.social_draft` | `social.draft.*` | `text.doc.*`, `task.*` |
+| M21 Models | `mt-models` (Rust runtime: tier A via ONNX/`ort`, tier B client, registries, labels) + `mt_research` (Python: training, distillation, ONNX export) | engine (tier A), decision-svc, litellm, llm-local, tei-embed, tei-rerank | `models.registry`, `models.question`, `models.label`, `audit.tierb_decision` | `dec.tierb.*`, KV `tierb_scores` | `text.doc.*`, M8 teacher log |
 
 **Naming rules:**
 - **Audit tables are singular and schema-qualified.** The canonical names are `audit.order`, `audit.fill`, `audit.command`, `audit.llm_call`, `audit.dq_event`, `audit.dq_ack`, `audit.cost_event`, `audit.recon`, `audit.decision_run`, `audit.seal`, `audit.integrity_incident`, `audit.mcp_call` ([17 §B](17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)). Other docs use these names.
@@ -443,23 +444,24 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
    - entity/ticker linking;
    - FinBERT sentiment;
    - TEI embeddings.
+   All in `mt-nlp` (Rust; FinBERT and entity models via ONNX/`ort`).
 4. The result goes to `text.document` + `rag.doc_chunk`.
 5. `text.doc.new` triggers decision-svc questions (direction, event type, veto…).
 6. `dec.tierb.*` updates KV `tierb_scores`, which tier A reads as features.
 7. High-severity veto → `risk.event` (above the calibrated threshold only).
 
 **F3b: Telegram → postures (code and policy only)**
-1. Telegram messages arrive (Telethon / Bot API) in ingest-text.
+1. Telegram messages arrive (Telethon in `mt_telegram_reader` / Bot API) in ingest-text.
 2. A deterministic regex extractor pulls contract addresses, tickers and counts and turns them into postures (mention velocity, channel count, new-channel share, time since first call).
 3. ingest-text publishes postures and mentions on `posture.telegram.{subject}`; it has no DB route. The core-side `intel-writer` stores them in `text.telegram_mention` (structured fields only) and `text.telegram_posture` (both `model_input_ok = false`, `train_ok = false`).
 4. Only code/policy rules consume them (M4 airdrop rules, M11 rules); D08 displays them as postures. Never nlp, RAG, M6 features, tier A/B, agents or MCP ([12 §4–5](12-policy-and-compliance.md#4-per-platform-data--automation-rules)).
 
 **F4: Research debate → signal → teacher log → distillation**
-1. A scheduled or event-triggered `agents.run_analysis` (M8, via the LiteLLM gateway) runs with RAG + memory recall.
+1. A scheduled or event-triggered `agents.run_analysis` (M8, `mt-agents`, via the LiteLLM gateway) runs with RAG + memory recall.
 2. It produces a structured `Signal` with provenance.
 3. The signal is stored in `audit.decision_run`, and Hindsight retains the episode.
 4. After the horizon, **settlement** computes the outcome and the agent writes a reflection.
-5. A nightly Prefect flow distils teacher + outcomes into tier A / tier B candidates.
+5. A nightly `mt-scheduler` job runs the Python training in `mt_research`: it distils teacher + outcomes into tier A / tier B candidates and exports them to ONNX for the Rust runtime.
 6. Candidates are calibrated and benchmarked, then promoted only through the gates (models registry).
 
 **F5: Risk policy change**
@@ -487,7 +489,7 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 4. **Restart after an unplanned stop:** the engine starts with every bot paused, reconciles each venue, flattens or cancels any residue, and resumes only when you tap resume (C1) or a bot has `auto_resume_after_crash: true` ([16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)).
 
 **F7: Strategy lifecycle**
-1. `draft` (create/template/generate in the sandbox).
+1. `draft` (create/template/generate in the sandbox; the generator emits Rust).
 2. `backtested`.
 3. `validated` (gate profile, [16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile): walk-forward, MC permutation, DSR ≥ 0.95, look-ahead check, cost stress…).
 4. **Bots** run the validated version in a mode, set per bot: `paper` → `hitl` (C2) → `autonomous` (C3, only after the paper/HITL period: default ≥ 8 weeks and ≥ 50 trades).
@@ -522,6 +524,13 @@ Every C3 approval and every settings change is a WORM row (`audit.command`, `ris
 - **Backups:** continuous WAL archive → nightly incremental → weekly full → monthly restore test → monthly immutable WORM export → alert on any failure. On Supabase cloud, managed daily backups replace pgBackRest and our nightly logical dump still goes to restic ([18 §4.7](18-platform-and-deployment.md#47-backups)).
 - **Incident runbooks** in `docs/runbooks/`: keys leaked, server down with open positions, bad data, wallet drained.
 
+**F12: Scenario twin (paper period and pre-live)**
+1. `mt-crowdsim` picks the week's scenarios (default 3: top events plus one tail, [16 §2.14b](16-configuration-and-safety-model.md#214b-scenario--crowd-simulator-m14)) and runs the seeded persona crowd on the local model.
+2. The output is a scenario: a sentiment path plus price, volatility, spread and liquidity shocks, capped by `crowdsim.max_shock`.
+3. The scenario twin, a second paper-only engine, replays live data with the shocks injected and runs the same bots behind the same `mt-risk`.
+4. A weekly report per bot joins the weekly review pack; before live, the scenarios join the four historical shocks in the stress tests (P7-T069).
+5. Everything is flagged `synthetic = true`: never used for features, training or RAG, never sent to real accounts or the signer ([18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)).
+
 ## 9. Cross-cutting
 
 ### 9.1 Security
@@ -551,7 +560,7 @@ See [07-security-notes.md](07-security-notes.md):
 | UI live update lag (server → screen) | p95 < 500 ms | Client telemetry (local only) |
 | Kill switch → all cancels sent | < 1 s | Engine metrics |
 | Dead-man reaction | Cancel at 5 s, `on_system_failure` at 10 s of missing heartbeat (defaults, [16 §3.1](16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)) | Engine + deadman metrics |
-| Backup restore test | Monthly pass | Prefect flow |
+| Backup restore test | Monthly pass | `mt-scheduler` job |
 
 Targets are defaults. Operating values (stale thresholds, reconciliation intervals, collars, error pauses, dead-man timers) live in [16 §2–3](16-configuration-and-safety-model.md#2-default-values-all-configurable) and are changed in settings.
 
@@ -604,14 +613,14 @@ Each phase ends with a usable demo; details are in [04-plan-of-action.md](04-pla
 
 | Phase | Backend deliverables | Frontend deliverables (see [ui/](ui/README.md)) | Exit criteria |
 |---|---|---|---|
-| 0 Foundations | Cargo + uv + pnpm workspaces, workstation compose, Supabase local stack (db, auth, storage, studio)/NATS/Prefect/obs/MLflow/LiteLLM (+ `audit.llm_call`)/`tei-embed`/`tei-rerank`/`llm-local` (CPU profiles by default), all schemas as `supabase/migrations` + `pit` (`mt-store` with Python binding), WORM layer + integrity response, `mt-api` skeleton (Supabase Auth JWT + `aal2`, commands with preview tokens, WS), break-glass C3 CLI, backups | Web shell (top bar, nav, status bar, kill-switch placeholder), design preset, component library v0, **System** dashboard (health), Playwright matrix in CI | Stack healthy; login + TOTP; responsive shell passes matrix |
-| 1 Data & monitoring | ingest-market (`mt-recorder`: Parquet recorder, bar builder into monthly partitions, rollup job), batch macro/fundamentals (`mt_data`), quota tracker, **monitor** (`mt-monitor`: DQ, costs, recon) | **Data & Quality**, **Markets** (charts, matrix, instrument detail), notifications | Live bars tick→1D for all asset classes; DQ alerts on Telegram |
-| 2 Strategies, risk, lab | Strategy framework + templates, bots, **risk manager** (`mt-risk`, layered config), three-layer dead-man (`mt-deadman` sidecar), engine paper/testnet (`mt-engine`), custom adapters in Rust (Alpaca/OANDA/IG), lab (backtest/validate/optimise/MLflow), tier A runtime, sandbox generator, Telegram bot v1 (`mt-telegram-bot`) | **Cockpit**, **Strategies**, **Research Lab**, **Execution**, **Risk** | Any strategy type created → backtested with measured costs → paper behind risk; kill switch drill passes |
+| 0 Foundations | Cargo + uv + pnpm workspaces, workstation compose, Supabase local stack (db, auth, storage, studio)/NATS/`mt-scheduler`/obs/MLflow/LiteLLM (+ `audit.llm_call`)/`tei-embed`/`tei-rerank`/`llm-local` (CPU profiles by default), all schemas as `supabase/migrations` + `pit` (`mt-store` with Python binding), WORM layer + integrity response, `mt-api` skeleton (Supabase Auth JWT + `aal2`, commands with preview tokens, WS), break-glass C3 CLI, backups | Web shell (top bar, nav, status bar, kill-switch placeholder), design preset, component library v0, **System** dashboard (health), Playwright matrix in CI | Stack healthy; login + TOTP; responsive shell passes matrix |
+| 1 Data & monitoring | ingest-market (`mt-recorder`: Parquet recorder, bar builder into monthly partitions, rollup job), batch macro/fundamentals (`mt-connectors` jobs on `mt-scheduler`), quota tracker, **monitor** (`mt-monitor`: DQ, costs, recon) | **Data & Quality**, **Markets** (charts, matrix, instrument detail), notifications | Live bars tick→1D for all asset classes; DQ alerts on Telegram |
+| 2 Strategies, risk, lab | Strategy framework + templates, bots, **risk manager** (`mt-risk`, layered config), three-layer dead-man (`mt-deadman` sidecar), engine paper/testnet (`mt-engine`), custom adapters in Rust (Alpaca/OANDA/IG), lab (`mt-lab-core` harness with clean-room bias analysers; `mt_research` exploration/optimisation/MLflow), tier A runtime (ONNX via `ort`), sandbox generator (emits Rust), Telegram bot v1 (`mt-telegram-bot`) | **Cockpit**, **Strategies**, **Research Lab**, **Execution**, **Risk** | Any strategy type created → backtested with measured costs → paper behind risk; kill switch drill passes |
 | 3 Journal & tax | Journal ingestion, FX service, lot engine, AU_2026 (+ 2027 scaffold), residency, exports | **Journal**, **Tax & Reports** | Every paper fill auto-journalled; FY-to-date AU summary + PAYG estimate |
 | 4 Intel | ingest-text/events, RSS-Bridge, nlp pipeline, RAG, calendars, SemIf tier B | **Intel** (news/social/events/calendar), tier B outputs on Markets/Cockpit | Morning brief; calendar blackouts enforce in risk |
 | 5 Airdrops & curation | airdrop pipeline, risk feeds, mandates + signer + Anvil simulation, task queue + digests, custody tiers, wallet-indexer (unified wallet view) | **Airdrops & Launches**, **Tasks & Curation**, **Wallets & Treasury** (view) | Weekly vetted digest; simulated auto-claim on testnet |
-| 6 AI & models | Agents (debate), Hindsight, decision-svc (own head), distillation, anomaly, optional Hummingbot, M22 hold-and-earn, optional M23 social drafts | **Agents & Decisions**, **Models & Memory**, **Market Making** | Sourced signals; bake-off report; anomaly explanations |
-| 7 Prove → small live | Go-live pack approval (P7-T070), runtime host choice (P7-T071), YubiKey (P7-T072), shift to the runtime host: harden, migrate, optional Vercel and Supabase cloud, re-verify (P7-T073); live sub-accounts, fixed-IP egress exit node, reconciliation hardening, capital steps and kill criteria, gate reports, weekly reviews | Approvals polish, mobile polish; capital-step, kill-criteria and gate-report views (D03/D06/D14/D16) | Gates passed per bot's strategy ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile): paper/HITL default ≥ 8 weeks and ≥ 50 trades); micro-live stable. The 12-month review is a recurring calendar task, not a phase item |
+| 6 AI & models | Agents (`mt-agents` on `rig-core`: debate, valuation desk), Hindsight, decision-svc (own head), distillation, anomaly, optional Hummingbot (`mt-mm-adapter`), M22 hold-and-earn, optional M23 social drafts, `mt-crowdsim` + scenario twin (M14, needed by Phase 7) | **Agents & Decisions**, **Models & Memory**, **Market Making** | Sourced signals; bake-off report; anomaly explanations |
+| 7 Prove → small live | Go-live pack approval (P7-T070), runtime host choice (P7-T071), YubiKey (P7-T072), shift to the runtime host: harden, migrate, optional Vercel and Supabase cloud, re-verify (P7-T073); live sub-accounts, fixed-IP egress exit node, reconciliation hardening, capital steps and kill criteria, gate reports, weekly reviews with the scenario-twin report, crowd-sim scenarios in the pre-live stress tests (M14) | Approvals polish, mobile polish; capital-step, kill-criteria and gate-report views (D03/D06/D14/D16) | Gates passed per bot's strategy ([16 §2.4](16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile): paper/HITL default ≥ 8 weeks and ≥ 50 trades); micro-live stable. The 12-month review is a recurring calendar task, not a phase item |
 | 8 MCP | `mt-mcp` (Rust, `rmcp`) over `mt-api` | **MCP Console** (audit of MCP sessions) | Claude can analyse/adjust with approvals |
 
 ## 13. Asset coverage & promotion gates
@@ -621,8 +630,8 @@ Each phase ends with a usable demo; details are in [04-plan-of-action.md](04-pla
 | Crypto spot / perps | Exchange WebSockets (ticks, L2), data.binance.vision, CoinGecko, DefiLlama | Nautilus (Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid), Hummingbot |
 | Forex & metals | OANDA/IG streams, Dukascopy ticks, ECB/Frankfurter, FRED | OANDA v20, IG, IBKR; optional cTrader/Saxo/MT5 |
 | Commodities | EIA, USDA, COT, Baker Hughes; daily futures | CFDs (OANDA/IG), crypto perps; IBKR futures (data is paid) |
-| Stocks / ETFs | Alpaca IEX (real-time, 30 symbols), yfinance, EDGAR | Alpaca, IBKR |
-| Bonds / rates | Treasury, FRED/ALFRED, sdmx1 | Bond ETFs, Treasury futures (IBKR) |
+| Stocks / ETFs | Alpaca IEX (real-time, 30 symbols), Yahoo daily (Rust client (U)), EDGAR | Alpaca, IBKR |
+| Bonds / rates | Treasury, FRED/ALFRED, ECB/SDMX | Bond ETFs, Treasury futures (IBKR) |
 | IPOs | EDGAR S-1/424B, exchange calendars | Alpaca / IBKR after listing |
 | ICOs / airdrops | M4 tracker + risk feeds | Auto-claim (eligible, safe) or user task |
 | Prediction markets | Kalshi / Polymarket public reads | Signal source; Polymarket adapter optional |

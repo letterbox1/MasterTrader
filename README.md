@@ -5,7 +5,7 @@ A **private, proprietary, single-user** AI trading **platform** built from open-
 MasterTrader is a platform, not a strategy. You set up and experiment with **any strategy type on any timeframe**, from tick/order-book level to daily and beyond. Under the hood it combines:
 - NautilusTrader's execution and backtesting engine;
 - a built-in, user-configurable risk manager;
-- TradingAgents-style AI agents with FinRobot valuation tools;
+- TradingAgents-style AI agents and a FinRobot-style valuation desk (both rebuilt in Rust);
 - Vibe-Trading-style research tooling;
 - Hummingbot market making.
 
@@ -14,11 +14,13 @@ Around that it adds:
 - an automatic audit trail, trading journal and tax records (Australia now; UAE/Egypt/Cyprus pluggable);
 - news, social (Telegram/Discord/Bluesky) and global-event feeds;
 - vetted airdrop/launch tracking with a user task queue;
+- a scenario & crowd simulator that shows how each bot copes with simulated shocks before live money;
 - optional Claude/MCP control, built last.
 
 **Stack and where it runs** (full picture in [docs/18](docs/18-platform-and-deployment.md)):
-- **Rust first** for every service we write (API, risk, dead-man, recorder, monitor, `pit`, WORM writer, signer, journal, Telegram bot, MCP); **Python only where necessary** (ML training, agents/RAG, Python-only data SDKs, Python strategies and the research lab).
-- **NautilusTrader** stays the trading engine (Rust core; strategies in Rust or Python).
+- **Rust for everything we write**, including designs borrowed from other projects: API, risk, dead-man, recorder, data connectors, job scheduler, agents, NLP, model runtime, lab harness, simulator, journal, signer, Telegram bot, MCP. **Python only where absolutely required:** ML training and exploration, trafilatura extraction, the Telethon reader, ccxt ledger import and the MT5 bridge.
+- **NautilusTrader** stays the trading engine (Rust core). Strategies are Rust by default; Python strategies are for ML research on paper and are ported to Rust before live.
+- **Third-party services** (LiteLLM, NATS, MLflow, Grafana, Hummingbot and others) run unmodified; their licences and the copyleft items are in [docs/19](docs/19-third-party-register.md).
 - **Supabase Postgres**, local (Supabase CLI, or self-hosted on the workstation) or, if you choose, Supabase cloud. One set of SQL migrations serves both.
 - **Web app** (React + TypeScript), served locally or deployed to **Vercel**. Login is Supabase Auth with password + TOTP.
 - **Workstation first:** everything is built, tested and paper-traded on your workstation. Before live money, Phase 7 shifts to the runtime host you choose (default: stay on the workstation). The always-on trading services never run on Vercel.
@@ -44,8 +46,9 @@ Around that it adds:
 | [docs/04-plan-of-action.md](docs/04-plan-of-action.md) | Phases 0–8 with checklists and a demo per phase (platform first, strategies second, MCP last) |
 | [docs/15-bots-hitl-and-worm-audit.md](docs/15-bots-hitl-and-worm-audit.md) | **Trading bots** (strategy × market scope × mode; autonomous vs HITL via Telegram approval cards) and **WORM records** (tamper-proof Supabase Postgres audit/journal with external seals) |
 | [docs/16-configuration-and-safety-model.md](docs/16-configuration-and-safety-model.md) | **Configuration & failure safety:** tighten-only configuration layers, every default value (all changeable in settings), three-layer dead-man, fixed egress IP, valuation and live inputs |
-| [docs/17-decisions-register.md](docs/17-decisions-register.md) | **Decisions register:** the decision for every planning gap, ratified 2026-10-22, and how work runs; §G records the 2026-11-19 re-platform |
-| [docs/18-platform-and-deployment.md](docs/18-platform-and-deployment.md) | **Platform & deployment (canonical for the stack):** Rust first / Python where necessary, repository layout, Supabase Postgres (bars without TimescaleDB, access rules, Supabase Auth, backups), deployment modes (workstation, hybrid with Vercel + Supabase cloud, regional engines), what can't run on Vercel, latency and regions, Tailscale and the hardware key per mode, the workstation-first build path |
+| [docs/17-decisions-register.md](docs/17-decisions-register.md) | **Decisions register:** the decision for every planning gap, ratified 2026-10-22, and how work runs; §G records the 2026-11-19 re-platform, §H the 2026-11-20 Rust-max decisions |
+| [docs/18-platform-and-deployment.md](docs/18-platform-and-deployment.md) | **Platform & deployment (canonical for the stack):** Rust first / Python only where absolutely required (the crate and package lists), the scenario & crowd simulator, repository layout, Supabase Postgres (bars without TimescaleDB, access rules, Supabase Auth, backups), deployment modes (workstation, hybrid with Vercel + Supabase cloud, regional engines), what can't run on Vercel, latency and regions, Tailscale and the hardware key per mode, the workstation-first build path |
+| [docs/19-third-party-register.md](docs/19-third-party-register.md) | **Third-party register:** every outside component with its language, licence and use; designs rebuilt in Rust; the copyleft register (⚑) and what an open-source or commercial release would need |
 | [docs/roadmap/](docs/roadmap/README.md) | **Roadmap:** one scoped document per phase (requirements with IDs, ToDos split into your actions / build / ops / verify / run, entry & exit criteria, risks), timeline, dependencies, fixed external dates, a register of every action only you can do, and traceability back to SPEC, GOAL, modules, dashboards and docs |
 | [docs/05-saas-legal-and-licensing.md](docs/05-saas-legal-and-licensing.md) | What would change licence-, data- and regulation-wise if this ever became a SaaS |
 | [docs/06-aggregators-and-market-providers.md](docs/06-aggregators-and-market-providers.md) | Aggregators, social sources and forex/macro providers: RSS-Bridge, Spacebar, threads-scraper, listeningkit, log, the social-scraping landscape, IG/cTrader/Saxo, calendars, central banks, nowcasts, retail sentiment, prediction markets. **Reddit and X are deferred; Telegram and Discord are the free social feeds** |
@@ -61,7 +64,7 @@ Around that it adds:
 
 ## Licensing stance
 
-This is a private project for personal use only. GPL obligations start only when software is distributed, and AGPL obligations only when others use it over a network. Neither happens here, so GPL/AGPL code may be used directly. The verdicts below reflect what is **best**, not just what is licence-safe. See [docs/05](docs/05-saas-legal-and-licensing.md) for the SaaS picture. **Keep this repo private.**
+This is a private project for personal use only. GPL obligations start only when software is distributed, and AGPL obligations only when others use it over a network. Neither happens here, so GPL/AGPL code may be used directly. Every copyleft item is still flagged in [docs/19](docs/19-third-party-register.md#4-copyleft-register--and-the-release-plan), so a release later is a known checklist. The verdicts below reflect what is **best**, not just what is licence-safe. See [docs/05](docs/05-saas-legal-and-licensing.md) for the SaaS picture. **Keep this repo private.**
 
 ## Repos vetted
 
@@ -69,13 +72,13 @@ This is a private project for personal use only. GPL obligations start only when
 |---|---|---|
 | nautechsystems/nautilus_trader | LGPL-3.0 | Adopt as core engine |
 | hummingbot/hummingbot | Apache-2.0 | Adopt as a module (market making, DEX) |
-| TauricResearch/TradingAgents | Apache-2.0 | Borrow its pattern and components (AI decision layer) |
-| HKUDS/Vibe-Trading | MIT | Borrow components (research lab, order guard) |
-| AI4Finance-Foundation/FinRobot | Apache-2.0 | Borrow components (valuation) |
-| freqtrade/freqtrade | GPL-3.0 | Reference only (redundant as an engine) |
+| TauricResearch/TradingAgents | Apache-2.0 | Borrow its design (debate graph rebuilt in Rust, prompts adapted with NOTICE) |
+| HKUDS/Vibe-Trading | MIT | Borrow ideas (research lab, generator loop, order guard; rebuilt in Rust) |
+| AI4Finance-Foundation/FinRobot | Apache-2.0 | Borrow its design (valuation desk, rebuilt in Rust; name not used) |
+| freqtrade/freqtrade | GPL-3.0 | Reference only (redundant as an engine); its bias-analyser ideas are rebuilt clean-room in Rust, no GPL code |
 | NoFxAiOS/nofx | AGPL-3.0 | Avoid the code; borrow ideas |
 | VibeTradingLabs/vibetrading | No LICENSE file | Avoid (redundant) |
-| 666ghj/MiroFish | AGPL-3.0 | Reference only / experiment |
+| 666ghj/MiroFish | AGPL-3.0 | Idea only: rebuilt clean-room in Rust as the scenario & crowd simulator (`mt-crowdsim`); no code |
 | simplifaisoul/osiris | MIT | Reference only |
 | RSS-Bridge/rss-bridge | Unlicense | Adopt (internal sidecar for feedless sites) |
 | spacebarchat | AGPL-3.0 | Avoid (a chat server, not a data source) |

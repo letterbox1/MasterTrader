@@ -13,7 +13,7 @@ Personal-use build, one developer plus AI pair-programming. Time estimates assum
 
 Every number in this plan (periods, sizes, limits, timers) is a **default you can change in settings** ([16](16-configuration-and-safety-model.md)), not a fixed rule.
 
-Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md). The stack (Rust first, Python where necessary, NautilusTrader, Supabase Postgres, the web app local or on Vercel) and the deployment modes are in [18](18-platform-and-deployment.md).
+Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md). The stack (Rust for everything we write, Python only where absolutely required, NautilusTrader, Supabase Postgres, the web app local or on Vercel) and the deployment modes are in [18](18-platform-and-deployment.md); outside components and their licences are in [19](19-third-party-register.md).
 
 **Detailed scoping per phase** (requirements with IDs, ToDos split into `USER` / `BUILD` / `OPS` / `VERIFY` / `RUN`, exit criteria, traceability to every doc) lives in the **[roadmap](roadmap/README.md)**, and execution is tracked task-by-task on per-phase kanbans in [`tracking/`](../tracking/README.md) (project board: [`KANBAN.md`](../KANBAN.md) / `kanban.html`). This page is the summary.
 
@@ -37,9 +37,9 @@ Module numbers (M0–M23) refer to [03-build-spec.md](03-build-spec.md). The sta
 ## Phase 0 — Foundations & security baseline (weeks 1–2)
 Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **Monorepo and code quality** ([18 §3](18-platform-and-deployment.md#3-repository-layout)):
-  - Cargo workspace (`crates/`, Rust services) + `uv` workspace (`packages/`, Python only where necessary) + `pnpm` for `apps/web`;
+  - Cargo workspace (`crates/`, everything we write) + `uv` workspace (`packages/`, only the Python packages in [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) + `pnpm` for `apps/web`;
   - `cargo clippy`/`cargo test`, ruff, mypy, pytest, pre-commit with **gitleaks**;
-  - `third_party/LICENSES.md`.
+  - `third_party/LICENSES.md` and `just licence-audit`, which flags every copyleft item against the register ([19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan)).
 - [ ] **Workstation baseline** (the live hardening profile is applied at the Phase 7 shift):
   - firewall deny-inbound, Docker, automatic security updates;
   - chrony for time sync;
@@ -48,7 +48,6 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **Supabase stack** ([18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)): `supabase start` (Supabase CLI) for development and tests; self-hosted Supabase on the always-on workstation; pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP (no TimescaleDB).
 - [ ] **`infra/` Compose files** (images pinned by digest):
   - NATS JetStream;
-  - Prefect;
   - Grafana + Loki + Prometheus + Vector;
   - MLflow;
   - Caddy (serves the web app locally; the same build can go to Vercel at the shift);
@@ -65,7 +64,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **Secrets and backups:**
   - `sops`/`age` secrets; the encrypted file lives outside the repo (e.g. `~/.config/mastertrader/`); the age identities stay in the OS keychain until the YubiKey in Phase 7;
   - pgBackRest (against the Supabase Postgres container) + restic off-site backups: continuous WAL, nightly incremental, weekly full, monthly immutable WORM export;
-  - monthly automated restore test.
+  - monthly restore test (automated as an `mt-scheduler` job from Phase 1).
 - [ ] **`mt-api` command layer skeleton** (Rust, axum, OpenAPI via utoipa): login via **Supabase Auth** (password + TOTP MFA, sign-ups off; commands need `aal2`), C0–C3/Kill enforced server-side, every command written to `audit.command`. The UI and Telegram will call it; MCP will later wrap it. Until Telegram C3 exists (P2), C3 completes via the workstation-only break-glass CLI (`mtctl approve <id>` + TOTP), audited.
 - [ ] **Web shell:** top bar, nav, status bar, kill-switch placeholder and the D16 System dashboard on the DESIGN.md v2 Tailwind preset.
 - [ ] **Model gateway:**
@@ -77,19 +76,20 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 **Demo:** `supabase start` + `docker compose up` on your workstation give a healthy stack, with Grafana showing DB/NATS/workstation health and logs in Loki; you log in with password + TOTP (Supabase Auth) to the responsive web shell.
 
 ## Phase 1 — Market data, recording & live monitoring (weeks 3–6)
-- [ ] **Crypto real-time** via Nautilus/ccxt WebSockets: trades, L1, L2. Recorded by `mt-recorder` to the **Parquet catalog** (raw L2 diffs only for symbols a bot needs order-book data for, default ≤ 3; 1 s snapshots for the rest). The recorder also writes every standard bar size (1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W) into monthly partitions in Postgres; a rollup job rebuilds higher sizes after backfills and corrections, and other sizes use `date_bin` at read time ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)).
+- [ ] **Batch connectors and jobs** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): typed Rust clients in **`mt-connectors`** (replacing OpenBB, fredapi, sdmx1, edgartools and yfinance), run as jobs by **`mt-scheduler`** (Rust, Postgres-backed jobs and cron, retries, backfills, run history shown on D16/D07; replaces Prefect).
+- [ ] **Crypto real-time** via Nautilus data clients (Rust where available (U)): trades, L1, L2. Recorded by `mt-recorder` to the **Parquet catalog** (raw L2 diffs only for symbols a bot needs order-book data for, default ≤ 3; 1 s snapshots for the rest). The recorder also writes every standard bar size (1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W) into monthly partitions in Postgres; a rollup job rebuilds higher sizes after backfills and corrections, and other sizes use `date_bin` at read time ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb)).
 - [ ] **Crypto history:** data.binance.vision backfill (trades/aggTrades/1s klines).
 - [ ] **FX & metals:**
   - OANDA practice stream + IG demo stream;
   - Dukascopy tick history;
   - ECB/Frankfurter reference rates;
   - **RBA F11 FX** (for tax).
-- [ ] **Stocks/ETFs:** Alpaca IEX + yfinance daily; FinanceDatabase symbol master; `exchange_calendars`.
+- [ ] **Stocks/ETFs:** Alpaca IEX + Yahoo daily bars (personal use, `mt-connectors`); FinanceDatabase symbol master; `exchange_calendars`.
 - [ ] **Macro:**
-  - FRED/ALFRED, Treasury, `sdmx1` (ECB/IMF/OECD/BIS/Eurostat), BoE/BoC/RBA/SNB;
+  - FRED/ALFRED, Treasury, SDMX (ECB/IMF/OECD/BIS/Eurostat), BoE/BoC/RBA/SNB;
   - EIA, USDA, CFTC COT;
   - **ABS CPI** (All groups, weighted average of eight capital cities).
-- [ ] **Fundamentals:** EDGAR via edgartools.
+- [ ] **Fundamentals:** SEC EDGAR submissions and XBRL `companyfacts` JSON (`mt-connectors`).
 - [ ] **Quota tracker** per connector (free-tier throttling).
 - [ ] **M16 data-quality monitor:** stale (data age vs per-bot thresholds, [16 §2.2](16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)), gaps, bad ticks, cross-source divergence, clock skew, book integrity → `audit.dq_event`. One alert fan-out: Grafana alerts → webhook → `alert.*` → Telegram / ntfy / email.
 - [ ] **M16 cost monitor:**
@@ -103,6 +103,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 
 ## Phase 2 — Strategy framework, risk manager & research lab (weeks 7–11)
 - [ ] **M0 strategy framework:**
+  - strategies are **Rust by default**; Python strategies are for ML research on paper only and are ported to Rust (ONNX via `ort`) before live ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates));
   - templates for scalping, intraday, EMA/MA, mean-reversion, breakout, swing, grid/DCA, pairs, event, ML;
   - manifest schema; registry; multi-timeframe helpers.
 - [ ] **M11 risk manager** (`mt-risk` crate: one implementation linked into `mt-api`, the engine and the dead-man; golden tests run against it):
@@ -119,17 +120,17 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - **sleeves**, two-stage sleeve/system drawdowns and the **fallback ladder**, all with defaults from [16 §2.1](16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown).
 - [ ] **Trading bots** with modes `paper` / `hitl` / `autonomous` ([15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots)); decay/kill signals for paper ([16 §2.6](16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)).
 - [ ] **M12 engine (`mt-engine`):** Nautilus sandbox/paper on testnets/practice accounts; Rust live node where the venue's Rust adapter is production-ready (U, per venue), else the Python node, with `mt-risk` linked in either way. Custom **Alpaca, OANDA and IG** adapters (Rust, against Nautilus's adapter traits).
-- [ ] **M7 lab:**
+- [ ] **M7 lab** (production harness **`mt-lab-core`** in Rust with a PyO3 binding; exploration and training in the Python package `mt_research`, [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)):
   - fast screener + Nautilus truth backtests using **measured costs from M16**;
   - validation suite (walk-forward, purged CV, MC permutation, bootstrap Sharpe, deflated Sharpe with the default gate DSR ≥ 0.95);
   - **validation extensions:** per-year/per-regime breakdown (`regime_v1`), 2×/3× cost stress, automatic trial counter, worst fold, LLM leakage review, CUSUM decay monitoring ([14 §6](14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8));
-  - vendored freqtrade look-ahead/recursive analysers;
+  - clean-room Rust look-ahead/recursive bias analysers in `mt-lab-core` (they replace the vendored freqtrade copy, which is removed once they pass the seeded-bug test);
   - Optuna;
   - MLflow tracking.
-- [ ] **M6 core features:** TA-Lib, Alpha158, microstructure; IC evaluator.
-- [ ] **Sandboxed LLM strategy generator.**
+- [ ] **M6 core features** (`mt-features`, Rust): TA-Lib, Alpha158, microstructure; IC evaluator.
+- [ ] **Sandboxed LLM strategy generator:** it emits Rust strategies against our templates, compiled and tested in the sandbox.
 - [ ] **M21 Decision One tier A:**
-  - train (forward-return / triple-barrier labels until the P6 teacher exists) → calibrate → compile (ONNX/Treelite) → in-process runtime;
+  - train in `mt_research` (forward-return / triple-barrier labels until the P6 teacher exists) → calibrate → export to ONNX → in-process Rust runtime (`mt-models`, `ort`);
   - latency benchmark (target < 50 µs);
   - MLflow model registry.
 - [ ] **Design system:** implement DESIGN.md v2 tokens/breakpoints as a shared Tailwind preset + component library, with a Playwright viewport-matrix CI check (DESIGN.md §6.8).
@@ -138,7 +139,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 **Demo:** you create any strategy type on any timeframe (template, code or "describe it"), backtest it with realistic costs, validate it, and run it on paper behind the risk manager.
 
 ## Phase 3 — Journal & tax (weeks 12–15)
-- [ ] **M18 journal ingestion:** Nautilus fills, ccxt ledgers (funding, fees, transfers), broker statements (IBKR Flex, OANDA, IG), and on-chain events.
+- [ ] **M18 journal ingestion:** Nautilus fills, ccxt ledgers through the Python `mt_ledger_import` (funding, fees, transfers), broker statements (IBKR Flex, OANDA, IG), and on-chain events.
 - [ ] **FX and valuation:** RBA F11 for AUD (missing days: last business day; other currencies via USD); crypto valued per the hierarchy in [16 §4.1](16-configuration-and-safety-model.md#41-valuing-crypto-for-the-journal); source and method recorded per event.
 - [ ] **Lot engine** (`mt-journal` crate): specific-ID → FIFO; FX-cash lots (Div 775); `rust_decimal`.
 - [ ] **Rules plugins:**
@@ -159,15 +160,15 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 **Demo:** every paper trade, fee and funding payment appears automatically in the journal; an FY-to-date AU tax summary and PAYG estimate are generated.
 
 ## Phase 4 — News, social, events & calendars (weeks 16–19)
-- [ ] **News:** RSS + trafilatura/crawl4ai; **RSS-Bridge** sidecar (whitelist, auth, internal network); GDELT.
+- [ ] **News:** RSS (Rust clients) + trafilatura extraction (`mt_extract`, Python) and crawl4ai for JS pages; **RSS-Bridge** sidecar (whitelist, auth, internal network); GDELT.
 - [ ] **Social:**
   - Telegram (Telethon + Bot API + RSS-Bridge fallback) as **postures only** (counts/addresses → `text.telegram_posture` / `posture.telegram.*`, consumed only by M4/M11 rules; no text to models, RAG or training);
   - Farcaster (Hubble), CryptoPanic;
   - Discord bot on followed announcement channels;
   - Bluesky Jetstream; Mastodon;
   - StockTwits conditional; the YouTube check happens in this phase.
-- [ ] **Text processing:** tier-B stage-1 relevance gate (SemIf) → entity linking → FinBERT → embeddings (TEI) → `document`. `models.label.add` + a minimal labelling tool.
-- [ ] **M9 document RAG** (`rag` schema):
+- [ ] **Text processing** (`mt-nlp`, Rust): tier-B stage-1 relevance gate (SemIf) → entity linking → FinBERT (ONNX) → embeddings (TEI) → `document`. `models.label.add` + a minimal labelling tool.
+- [ ] **M9 document RAG** (`mt-memory`, `rag` schema):
   - hybrid pgvector + tsvector with RRF;
   - rerank;
   - point-in-time filter;
@@ -181,7 +182,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 
 ## Phase 5 — Airdrops, launches & curation queue (weeks 20–23)
 - [ ] **Custody tiers + intents-only signer** ([13 §1–2](13-wallets-treasury-and-onchain.md#1-custody-tiers)); the signer accepts intents only from the policy service; durable-nonce hard block; sized approvals; on-chain cost gate library (`mt-onchain` crate; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Vault and warm are watch-only.
-- [ ] **USER:** confirm wallet floats, signer caps and gas budgets ([16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13)); signing stays disabled until you do. Prove control of each address by signing a challenge in your own wallet app.
+- [ ] **Wallet floats, signer caps and gas budgets** are seeded by the agent from [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13); mainnet signing stays disabled until you confirm them (C3). **USER:** prove control of each address by signing a challenge in your own wallet app.
 - [ ] **Wallet-indexer + unified wallet view** (D18) extending `ops.wallets`, internal-transfer tagging into the journal, approval/nonce/depeg monitors (depeg: alert + task until the P6 treasury exists). Kill switch sweep of hot trading balances to the vault (default on).
 - [ ] **M4 additions:** corroboration score, EV gate, burner-first + one identity wallet per chain, campaign record, project dossier, blacklist, wallet-cluster detection, disposal rule ([08](08-airdrops-and-token-launches.md#additions-from-the-cryptotrader-review-see-11-13)).
 - [ ] **M19 task queue:** canonical task types ([03 M19](03-build-spec.md#m19-user-task-queue--community-curation--mt_curation)), extending the P3 `curation.task` table; Telegram Done/Skip/Snooze/Details/Never; daily and weekly digests. Airdrop disposal is a USER task until Phase 7.
@@ -203,7 +204,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 **Demo:** a weekly digest of vetted airdrops/launches with step-by-step tasks; eligible claims executed automatically from the identity wallet with simulation proof; scams rejected with reasons.
 
 ## Phase 6 — AI decision layer, memory & anomalies (weeks 24–28)
-- [ ] **M8 decision graph:** LangGraph debate graph (TradingAgents-derived) with FinRobot valuation tools and a macro/events analyst; structured `Signal` ([03 M8](03-build-spec.md#m8-ai-decision-layer--mt_agents) fields).
+- [ ] **M8 decision graph** (`mt-agents`, Rust on `rig-core`: explicit state-machine graph, Postgres checkpoints): the TradingAgents-style debate rebuilt in Rust, with the FinRobot-style valuation desk (deterministic DCF/WACC/comps, LLM only for narrative) and a macro/events analyst; structured `Signal` ([03 M8](03-build-spec.md#m8-ai-decision-layer--mt_agents) fields).
 - [ ] **M9 memory:**
   - **Hindsight** self-hosted (slim, our Postgres schema, TEI embeddings/rerank, LLM via gateway);
   - memory banks;
@@ -212,7 +213,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **M21 tier B decision models:**
   - question registry;
   - SemIf readout in production;
-  - train our own Qwen3-0.6B/1.7B + LoRA + classification head (distilled + outcome-corrected, calibrated, abstention);
+  - train our own Qwen3-0.6B/1.7B + LoRA + classification head in `mt_research` (distilled + outcome-corrected, calibrated, abstention);
   - serve via vLLM `/classify` or ONNX;
   - scores to NATS KV as tier-A features;
   - thresholds and latency: [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) defaults, p95 < 50 ms on GPU (CPU figures recorded; GPU-only checks run when a GPU is present, `models.gpu_profile: auto`).
@@ -223,10 +224,11 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - **Promotion:** only via gates.
 - [ ] **M21 distillation loop:** teacher log (M8) + outcomes → tier A retrain / tier B decision-head retrain → calibration → gated promotion; teacher in shadow.
 - [ ] **Optional:** LightRAG graph over filings (offline).
-- [ ] **M10:** anomaly detectors + explain agent.
+- [ ] **M10** (`mt-anomaly`, Rust): anomaly detectors + explain agent.
 - [ ] **LLM-signal strategy template** (M0) consuming M8 signals; LLM-signal paper trading starts in this phase and is checked at Phase 7 entry.
 - [ ] **Evaluation and cost:** evaluate on post-training-cutoff data; monthly LLM cap + per-role daily budgets with local fallback ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)) and spend panel; `audit.llm_call` (live since P0) extended with the prompt registry and training cutoff.
-- [ ] **Optional:** Hummingbot MM sidecar; MiroFish/OASIS crowd-sim experiment (local memory backend and hardened config only, no Zep Cloud; otherwise skipped).
+- [ ] **M14 scenario & crowd simulator** (`mt-crowdsim`, clean-room Rust, [18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)): persona crowds turn an event into simulated shocks; the **scenario twin**, a second paper engine, runs the same bots under them during the paper period (weekly report per bot), and the scenarios join the pre-live stress tests. It never trades, and its synthetic data never reaches features, training or RAG ([16 §2.14b](16-configuration-and-safety-model.md#214b-scenario--crowd-simulator-m14)).
+- [ ] **Optional:** Hummingbot MM sidecar (run unmodified, driven by the Rust `mt-mm-adapter`).
 - [ ] **M22 hold-and-earn + treasury** with the on-chain cost gate ([13 §4–7](13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury)); automated depeg reduction; HLP cap.
 - [ ] **Optional M23 social drafts** (approval → web intent; nothing auto-posts).
 - [ ] **Decision-model operating rules:** 5% shadow checks, labels endpoint + D10 labelling queue tab, per-question thresholds, monthly fine-tune ([10 §4.3](10-memory-rag-and-models.md#43-design)).
@@ -241,12 +243,14 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
   - realised vs modelled costs;
   - DQ incidents;
   - journal reconciliation;
+  - the scenario-twin report per bot once the simulator exists (an extra input, not a gate);
   - clean-week status per bot ([16 §2.5](16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot)).
 - [ ] **Go-live pack:** you approve, once, the values agents seeded during the build (risk values, L0 ceilings, sleeves, first manifests), shown in D16 → Go-live preflight → Settings pack (C3). Everything stays editable afterwards.
 - [ ] **Runtime host and cloud choice** (yours; default: stay on the workstation): workstation, home server or Sydney cloud VM; optionally the web app on Vercel and the database on Supabase cloud (paid) ([18 §5](18-platform-and-deployment.md#5-deployment-modes)).
 - [ ] **Hardware key:** move the age identities from the OS keychain onto a YubiKey before live keys exist ([18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)).
 - [ ] **The shift** ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)): harden the runtime host for live money (LUKS, Tailscale-only SSH, firewall), migrate the database if it moves, deploy the web app if it moves, set up the egress IP, then rerun the full verification suite on the target. Live money starts only after it passes.
 - [ ] **Static AU egress:** a WireGuard/Tailscale exit node with a fixed IP; only that IP allow-listed on every key; egress IP/country check ([16 §3.2](16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)).
+- [ ] **Stress tests before live money:** replay the four historical shocks (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) plus the simulator's scenarios against current positions and policy.
 - [ ] **Safety drills** (kill switch, dead-man, restart) passed on each live venue.
 - [ ] Promote strategies that pass the [gates](03-build-spec.md#8-promotion-gates-per-strategy-configurable) to small live allocations (starting allocation set per bot, default A$2,000), using separate live sub-accounts with withdrawals disabled.
 - [ ] MT5 bridge (on a hardened, Tailscale-only Windows VPS with a trade-only MT5 login and no other secrets) / cTrader / Saxo adapters if needed; share risk, journal and data libraries with **MasterTradingBot** (FP Markets MT5) rather than duplicating them ([14 §8](14-strategy-evidence-and-validation.md#8-mastertradingbot-integration)).
@@ -272,7 +276,7 @@ Phase 7 closes once micro-live is stable. The **12-month keep/kill review** is a
 - **Paper first, always.** Live keys have no withdrawal rights, are IP-locked to the fixed egress IP, and start with small caps.
 - **Settings, not constants:** every limit, threshold and allocation is a default you change in settings ([16](16-configuration-and-safety-model.md)); tightening is immediate, loosening is C3.
 - **Tests:** nothing merges without passing them. The point-in-time, risk-manager and tax golden tests are mandatory.
-- **Vendored code:** review every third-party bump (diff for telemetry, referral IDs, network calls).
+- **Vendored code:** review every third-party bump (diff for telemetry, referral IDs, network calls); copyleft code only under `third_party/copyleft/`, checked by `just licence-audit` ([19](19-third-party-register.md)).
 - **Monthly upkeep:**
   - check data-source API/ToS changes;
   - rotate keys every 90 days;

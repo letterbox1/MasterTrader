@@ -19,10 +19,12 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 | + | [666ghj/MiroFish](https://github.com/666ghj/MiroFish) | **AGPL-3.0** | ~80.9k | 2026-10-02 | Swarm social-simulation "prediction engine" on CAMEL-AI OASIS + Zep Cloud | **Reference only / sandboxed experiment** |
 | + | [simplifaisoul/osiris](https://github.com/simplifaisoul/osiris) | MIT | ~11.2k | 2026-10-20 | OSINT world-map dashboard (GDELT, USGS, GDACS, FIRMS…) | **Reference only; lift small pieces** (memecoin promo, unreviewable binaries) |
 
+> _Superseded by [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (2026-11-20):_ "borrow components" now means **borrow the design and rebuild it in Rust**, with no third-party code in the runtime. Vibe-Trading (generator loop), FinRobot (valuation desk) and TradingAgents (debate) land in `mt-agents` and `mt-lab-core`; MiroFish/OASIS is a clean-room idea for `mt-crowdsim`, now a go-live tool; Hummingbot runs unmodified, driven by the Rust `mt-mm-adapter`. Where each one lands: [19 §3](19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime). The verdicts below are kept as written.
+
 ### Redundancy calls
 
 - **VibeTradingLabs/vibetrading is fully redundant** next to HKUDS/Vibe-Trading. The two are **unrelated projects that happen to share a name**: separate histories and authors, no shared code. It isn't a fork or a squat; VibeTradingLabs actually published the name on PyPI first, in May 2025. HKUDS does everything it does, with far better safety and backtest realism. Its only unique asset is a set of DEX-perp adapters (Paradex, Lighter, Aster, Extended), and ccxt / Nautilus / official SDKs cover those better.
-- **freqtrade is redundant *as an engine*** next to NautilusTrader. Nautilus does crypto directional trading with more realistic fills, and handles every other asset class too. freqtrade's unique value is its research tooling: look-ahead/recursive-bias analysers, hyperopt, FreqAI and FreqUI. Re-implement those ideas; GPL blocks importing the code. _(Superseded for the analysers: they are vendored for personal use; see the note in §2.)_
+- **freqtrade is redundant *as an engine*** next to NautilusTrader. Nautilus does crypto directional trading with more realistic fills, and handles every other asset class too. freqtrade's unique value is its research tooling: look-ahead/recursive-bias analysers, hyperopt, FreqAI and FreqUI. Re-implement those ideas; GPL blocks importing the code. _(Superseded for the analysers: they are vendored for personal use; see the note in §2.)_ _Superseded by [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (2026-11-20):_ the vendored analysers are replaced by clean-room Rust analysers in `mt-lab-core`, so this original advice holds again.
 - **nofx is redundant** next to Nautilus + Hummingbot (execution) and TradingAgents (LLM reasoning). It also carries serious trust problems. Keep only its "Frontier mode" idea.
 - **Hummingbot is NOT redundant.** It's the only repo with mature market-making, cross-exchange arbitrage and AMM liquidity-provision strategies, plus long-tail CEX/DEX venues that Nautilus lacks. Its *backtester* is redundant.
 - **TradingAgents and FinRobot are complementary, not redundant.** TradingAgents is the investment committee (debate → decision); FinRobot is the valuation desk (deterministic DCF/WACC/comps and SEC XBRL).
@@ -44,6 +46,8 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 **Recommended platform license posture:** keep the MasterTrader core permissive or proprietary. Depend on Nautilus as an unmodified LGPL dependency, behind our own wrapper package. Copy/port only MIT/Apache code (Vibe-Trading, TradingAgents, FinRobot, Hummingbot connectors, osiris snippets). Treat GPL/AGPL projects as **external processes behind an API boundary**, or re-implement their ideas clean-room.
 
 > **Superseded (decision P2-B051, [17](17-decisions-register.md#a-s2-items-all-resolved)):** MasterTrader is personal and never distributed, so vendoring GPL code is allowed ([03 §1](03-build-spec.md#1-ground-rules)). freqtrade's look-ahead/recursive analysers are vendored under `third_party/` with their licence, isolated in `mt_lab`. A clean-room rewrite is needed only for a SaaS ([05](05-saas-legal-and-licensing.md)). The "GPL blocks importing" advice in this report applies to distribution only.
+
+> _Superseded by [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (2026-11-20):_ the vendored freqtrade analysers are replaced by **clean-room Rust analysers** in `mt-lab-core` (ideas only, no GPL code); the vendored copy is removed when they land. Copyleft code that is ever vendored goes under `third_party/copyleft/<name>/` and into the copyleft register ⚑ with its release action ([19 §4](19-third-party-register.md#4-copyleft-register--and-the-release-plan)).
 
 ---
 
@@ -89,6 +93,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 - **Main community complaint:** hyperopt overfitting (issues #7190, #5612; one write-up reports −40% out-of-sample).
 - **No telemetry found.** One OKX broker ID is hardcoded.
 - _Update (P2-B051): the look-ahead/recursive analysers are vendored under `third_party/` in `mt_lab` for personal use (§2 note); check and strip the OKX broker ID if any vendored file carries it._
+- _Superseded by [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (2026-11-20):_ replaced by clean-room Rust analysers in `mt-lab-core`; the vendored copy goes when they land.
 
 ### 3.4 HKUDS/Vibe-Trading — research and strategy-generation layer
 - **Stack:** LangGraph agent, FastAPI, MCP server, CLI, React UI. About 508k lines of Python, roughly 231k of them tests across 908 test files.
@@ -184,6 +189,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 - **Popularity:** the star spike is consistent with viral press in March 2026 (a student's 10-day build, reportedly ~30M RMB invested), not star-farming.
 - **Use:** an isolated private service fed by our event store, its output only a *candidate feature* tested over many runs on events after the model's training cutoff. **Long term:** rebuild on OASIS (Apache) with a local LLM and our own memory.
 - _Update (decision P6-B009): MiroFish/OASIS runs only with a local memory backend and a hardened config, never Zep Cloud; otherwise M14 is skipped._
+- _Superseded by [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (2026-11-20):_ no MiroFish or OASIS code is used. M14 is `mt-crowdsim`, a clean-room Rust scenario & crowd simulator and a **go-live tool** (scenario twin in the paper period, pre-live stress tests). Its output is synthetic and never a feature ([18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)).
 
 ### 3.10 osiris — reference only
 - **What it is:** a Next.js map dashboard, not a data pipeline, and it keeps no event history.
@@ -209,7 +215,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 | High-fidelity backtest (order book, latency) | **Nautilus** | — | Others are all candle-based |
 | Fast candle backtest across many markets | **Vibe-Trading** engines | freqtrade (crypto) | Vibe-Trading models FX swaps, metals and futures rules |
 | Market making / arbitrage / DEX LP | **Hummingbot** | Nautilus (DIY) | Disable telemetry |
-| Look-ahead / bias detection | **freqtrade** (idea) + **TradingAgents** tests | Vibe-Trading validation | Re-implement freqtrade's ideas (GPL). _Superseded: analysers vendored for personal use (§2 note)_ |
+| Look-ahead / bias detection | **freqtrade** (idea) + **TradingAgents** tests | Vibe-Trading validation | Re-implement freqtrade's ideas (GPL). _Superseded: analysers vendored for personal use (§2 note). Superseded again by 17 §H: clean-room Rust in `mt-lab-core`_ |
 | Strategy robustness (Monte Carlo, walk-forward) | **Vibe-Trading** `validation.py` | freqtrade hyperopt | Watch for hyperopt overfit |
 | ML / feature models | freqtrade FreqAI (idea), **Qlib** | FinRL | |
 | LLM-generated strategies | **Vibe-Trading** | VibeTradingLabs (worse) | Sandbox the generated code |
@@ -225,6 +231,8 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 ## 5. Supporting ecosystem — recommended free/open picks
 
 **Market data**
+> _Superseded by [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (2026-11-20):_ the Python libraries recommended in this section are replaced where we write the code: OpenBB, fredapi, sdmx1, edgartools and yfinance by Rust clients in `mt-connectors`; Prefect by `mt-scheduler`; LangGraph by `mt-agents` on `rig-core`. Python stays only for training/research (`mt_research`), trafilatura, Telethon, ccxt ledger import and the MT5 bridge. Full list with language and licence: [19](19-third-party-register.md).
+
 - **Multi-provider normaliser:** **OpenBB Platform**. Its license is now Apache-2.0 per its LICENSE file and PyPI 5.0.0. Provenance checked 2026-11-19: `OpenBB-finance/OpenBB` and `openbq-org/OpenBB` serve the same repository (identical commit history and HEAD), so the new org is the project's own home; pin by commit as usual (§8).
 - **Crypto:** **ccxt** (MIT).
 - **Macro:** **FRED/ALFRED**; its vintages give point-in-time data with no look-ahead.
@@ -259,7 +267,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 - mem0 and Graphiti as alternatives. Zep Community Edition is deprecated.
 
 **Storage**
-- **Postgres + pgvector + TimescaleDB.** Timescale's compression and continuous aggregates are under the TSL license: free to self-host, but you can't sell it as a managed DB.
+- **Postgres + pgvector + TimescaleDB.** Timescale's compression and continuous aggregates are under the TSL license: free to self-host, but you can't sell it as a managed DB. _Superseded (2026-11-19, 17 §G): TimescaleDB is no longer used. Supabase Postgres 17 with monthly native partitions, a rollup job and `date_bin` at read time replaces it ([18 §4.3](18-platform-and-deployment.md#43-bars-without-timescaledb))._
 - **DuckDB / Parquet** for research.
 - Avoid **ArcticDB** (BSL 1.1) if you might ever offer a hosted service.
 
@@ -271,7 +279,7 @@ _Date: 2026-10-21. Method: every repo was shallow-cloned and its code read (noth
 - **Chronos / TimesFM / Kronos** time-series models for volatility and volume features (check each model's weights license).
 
 **Orchestration**
-- **LangGraph** (MIT), **Prefect** (Apache-2.0).
+- **LangGraph** (MIT), **Prefect** (Apache-2.0). _Superseded by 17 §H: replaced by `mt-agents` (Rust, `rig-core`) and `mt-scheduler` (Rust)._
 - **NATS JetStream** or **Valkey** (BSD; prefer it over Redis 8's tri-license).
 - **Grafana** (AGPL; fine unmodified).
 
@@ -357,9 +365,9 @@ Vetted by cloning each repository and reading its licence, recent history and co
 
 | Repo | Licence · activity | Verdict | Where it lands |
 |---|---|---|---|
-| [HKUDS/Vibe-Trading](https://github.com/HKUDS/Vibe-Trading) | MIT · 2026-11-18 | **Borrow components** (unchanged, §3.4) | M7 lab, strategy generation |
-| [TauricResearch/TradingAgents](https://github.com/TauricResearch/TradingAgents) | Apache-2.0 · 2026-11-04 | **Borrow pattern + components** (unchanged, §3.6); **pin ≥ 0.7.1** | P6-T007 debate graph |
-| [OpenBB](https://github.com/openbq-org/OpenBB) (`OpenBB-finance/OpenBB` serves the same repository) | Apache-2.0 · 2026-11-18 | **Use** as the multi-provider normaliser (unchanged, §5); provenance resolved | M1 data |
+| [HKUDS/Vibe-Trading](https://github.com/HKUDS/Vibe-Trading) | MIT · 2026-11-18 | **Borrow components** (unchanged, §3.4). _Superseded by 17 §H: design rebuilt in Rust; the generator emits Rust_ | M7 lab, strategy generation |
+| [TauricResearch/TradingAgents](https://github.com/TauricResearch/TradingAgents) | Apache-2.0 · 2026-11-04 | **Borrow pattern + components** (unchanged, §3.6); **pin ≥ 0.7.1**. _Superseded by 17 §H: debate rebuilt in Rust in `mt-agents`; the 0.7.1 look-ahead fix is covered by `pit`_ | P6-T007 debate graph |
+| [OpenBB](https://github.com/openbq-org/OpenBB) (`OpenBB-finance/OpenBB` serves the same repository) | Apache-2.0 · 2026-11-18 | **Use** as the multi-provider normaliser (unchanged, §5); provenance resolved. _Superseded by 17 §H: replaced by Rust clients in `mt-connectors`_ | M1 data |
 | [anthropics/financial-services](https://github.com/anthropics/financial-services) | Apache-2.0 · 2026-11-12 | **Borrow skills** (adapt, keep NOTICE): equity-research (earnings preview and analysis, catalyst calendar, thesis tracker, morning note) and financial-analysis (DCF, comps, 3-statement) as research-agent workflows. Not used: investment-banking, private-equity, fund-admin, KYC skills; the paid LSEG/S&P connectors | R6.08 · P6-T071 |
 | [Jakeschincariol/day-trader-skill](https://github.com/Jakeschincariol/day-trader-skill) | MIT · 2026-10-20 (new) | **Ideas**: the "Time Machine" setup-odds replay (bootstrapped continuations from the instrument's own recent bars plus past occurrences of the same setup) and the congressional-trade tracker (official House disclosures). Not used: its risk/budget/broker skills (would bypass M11) and Yahoo intraday scanning at scale (terms and rate limits) | R2.59 · P2-T077/T078; R4.17 · P4-T070/T071 |
 | [virattt/ai-hedge-fund](https://github.com/virattt/ai-hedge-fund) | MIT · 2026-11-09 | **Ideas**: investor-persona signal lenses (Buffett, Munger, Graham, Lynch, Druckenmiller) as optional, off-by-default debate viewpoints. Not used: paid Financial Datasets data (free-data rule); x402 pay-per-call from a wallet private key in an environment variable (never) | R6.08 · P6-T072 |

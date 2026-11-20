@@ -15,7 +15,7 @@ Decided 2026-10-21 with the user's input on the S2 items. A gap is closed throug
 | P2-B001 | Two-stage sleeve drawdown: 10% → halve new sizes, 15% → halt (configurable; e.g. 15%/30%). System: 10% → no new entries, 25% → flatten + 30-day lock | 16 §2.1, 14 §4–§5 |
 | P2-B002 | Three-layer dead-man: in-engine watchdog + **external `deadman` sidecar** (own keys/connections) + **venue-side cancel-after timers and resting stops**. Per-bot `on_system_failure` (default `flatten`). Restart flat with bots paused until you resume | 16 §3.1, 02 §3.2/F6, 03 M11/M12, 07 §9 |
 | P2-B050 | Deflated Sharpe **≥ 0.95** (it's a probability). "> 0" was an error | 16 §2.4, 03 §8, 14 §6–§7 |
-| P2-B051 | Personal, never-distributed use allows vendoring GPL code (03 §1). freqtrade analysers stay vendored under `third_party/` with their licence, isolated in `mt_lab`; a clean-room rewrite is needed only for a SaaS (05) | 03 M7, 01, 05 |
+| P2-B051 | *Superseded by §H (2026-11-20): the analysers are rebuilt clean-room in Rust (`mt-lab-core`); the vendored GPL copy is removed when they land.* Personal, never-distributed use allows vendoring GPL code (03 §1). freqtrade analysers stay vendored under `third_party/` with their licence, isolated in `mt_lab`; a clean-room rewrite is needed only for a SaaS (05) | 03 M7, 01, 05 |
 | P3-B001 | Crypto valuation hierarchy: fill price → VWAP of our recorded trades → on-chain pool price → aggregators as cross-check only; stored values are ours | 16 §4.1, 09 |
 | P3-B002 | Snapshot price convention per asset class, recorded with source and method | 16 §4.2, 09 |
 | P4-B001 | 02 F3 split: Telegram → regex extractor → postures → code/policy only. Other sources → model chain | 02 F3, 12 §4 |

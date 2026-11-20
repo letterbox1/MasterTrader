@@ -1,6 +1,6 @@
 # Memory, RAG & Model Serving (M9, M21)
 
-_Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware first principles. Latencies must be benchmarked on the actual machine (your workstation now, the runtime host after the shift, [18 §5](18-platform-and-deployment.md#5-deployment-modes)). Code split: training, agents, memory and the tier B service are Python (`mt_models`, `mt_agents`, `mt_memory`); tier A inference can run in Rust ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required))._
+_Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware first principles. Latencies must be benchmarked on the actual machine (your workstation now, the runtime host after the shift, [18 §5](18-platform-and-deployment.md#5-deployment-modes)). Code split ([17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)): the runtime is Rust: agents (`mt-agents`, on `rig-core`), memory and RAG (`mt-memory`), the model runtime and tier B service (`mt-models`), NLP (`mt-nlp`), with inference via ONNX through `ort`. **Training stays Python** in `mt_research`, which exports promoted models to ONNX ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)). Third-party model services (Hindsight, TEI, vLLM, llama-server, LiteLLM, MLflow) run unmodified._
 
 ## Summary
 
@@ -8,10 +8,10 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 |---|---|---|---|
 | Agent memory | **Hindsight 1.0.0**, self-hosted: **slim** image, our Supabase Postgres in its own schema, local embedder + reranker via TEI, LLM via the LiteLLM gateway | MIT | Recall 100–600 ms with a CPU reranker (vendor figure); retain is LLM-bound (seconds) |
 | Embedder | **bge-small-en-v1.5** (384-d) now. **Qwen3-Embedding-0.6B** (Matryoshka 512/1024) once a GPU is available (`models.gpu_profile: auto`) | MIT (U) / Apache-2.0 (U) | ~2–5 ms / ~40–100 ms per query on CPU (est.) |
-| Embedding/rerank server | **HF Text Embeddings Inference (TEI)**, CPU image, as **two containers** (`tei-embed`, `tei-rerank`; TEI serves one model per instance); **fastembed** (ONNX) for in-process use | Apache-2.0 | ~900–2,000 texts/s (Hindsight's measurement) |
+| Embedding/rerank server | **HF Text Embeddings Inference (TEI)**, CPU image, as **two containers** (`tei-embed`, `tei-rerank`; TEI serves one model per instance); Rust services call it over HTTP; **fastembed** (ONNX) only for in-process use in `mt_research` | Apache-2.0 | ~900–2,000 texts/s (Hindsight's measurement) |
 | Reranker | **bge-reranker-v2-m3** or **mxbai-rerank-base-v2**; ms-marco-MiniLM-L-6 if CPU is tight. **Avoid Jina rerankers** (CC-BY-NC) | Apache-2.0 | Tens to hundreds of ms for 30–50 pairs on CPU (U) |
 | Document RAG | Supabase Postgres: **pgvector HNSW (halfvec) + native tsvector/`ts_rank_cd` + pg_trgm**, fused with **Reciprocal Rank Fusion**, then cross-encoder rerank, recency decay and a **point-in-time filter** | PostgreSQL | ms-level retrieval + rerank |
-| Hot-path decision, **Decision One tier A** | **LightGBM** (or XGBoost/linear/small MLP) compiled to **ONNX Runtime / Treelite / lleaves**, run **in-process** inside the Nautilus strategy (Rust strategies: ONNX Runtime via the `ort` crate) | MIT / Apache-2.0 | **~10–50 µs per prediction** (published benchmarks, indicative) |
+| Hot-path decision, **Decision One tier A** | **LightGBM** (or XGBoost/linear/small MLP) compiled to **ONNX Runtime / Treelite / lleaves**, run **in-process** inside the Nautilus strategy: exported to ONNX and loaded through the `ort` crate (strategies are Rust by default) | MIT / Apache-2.0 | **~10–50 µs per prediction** (published benchmarks, indicative) |
 | Text/context decisions, **Decision One tier B** | A **decision model** ("System One" class, no text generation). Stage 1 (project Phase 4): **SemIf**-style logit readout on Qwen3.5-4B (no training). Stage 2 (Phase 6): our own **Qwen3 0.6B/1.7B + LoRA + classification head** (Clef pattern), distilled and calibrated. Benchmarked against **Laya** and **Clef-flash** (both Apache-2.0) | Apache-2.0 / MIT | ~2–12 ms GPU for 0.6B (est.; SLO p95 < 50 ms); 0.6B on CPU ~100–400 ms; ~15–40 ms for 4B; Clef-flash ~0.4 s local |
 | Research / chat / debate routing | **LiteLLM proxy** (≥ 1.83, pinned by hash or image digest): Claude API → your custom endpoint → local model fallback (`llm-local`); monthly cap + per-role daily budgets ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); every call audited to `audit.llm_call` from P0 | MIT core | A few ms of overhead (U); **never on the hot path** |
 
@@ -47,7 +47,7 @@ _Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware fi
 - **Timestamps:** every memory carries `observed_at` (when the fact or event it records happened) and `ingested_at` (when we stored it).
 - **Derived memories:** consolidated/reflection memories (observations, mental models) carry the **latest** `observed_at`/`ingested_at` of their sources, not their own creation time.
 - **Filter:** at `as_of`, a memory is visible only if both its times are ≤ `as_of`; derived memories whose latest source time is > `as_of` are excluded.
-- **Enforcement:** `mt_memory` (Python) applies the filter (over-fetch, then post-filter with a lineage check), since Hindsight's own API may not filter on these times (U).
+- **Enforcement:** `mt-memory` (Rust) applies the filter (over-fetch, then post-filter with a lineage check), since Hindsight's own API may not filter on these times (U).
 - **Fallback:** if Hindsight can't enforce this, backtests run with memory **disabled**, or from a **frozen per-`as_of` snapshot** of the bank.
 - **Test:** a PIT recall test is **mandatory** in CI. It seeds memories after `as_of` (including a consolidated memory that summarises older facts plus one newer fact) and asserts none are recalled.
 
@@ -72,13 +72,14 @@ LightRAG is kept as an **optional, offline** graph layer over filings (§3.7).
 | all-MiniLM-L6-v2 | 22M | 384 | 256 | Apache-2.0 | Fallback only |
 
 **Finance:**
-- FinBERT stays as the sentiment classifier; it isn't an embedder.
+- FinBERT stays as the sentiment classifier; it isn't an embedder. It runs in `mt-nlp` (Rust) as an ONNX model through `ort`; fine-tuning stays Python in `mt_research`.
 - Research (FinMTEB) shows **keyword (BM25-style) search beats dense embeddings on financial text similarity**. That's why hybrid retrieval is mandatory.
 - Later option: fine-tune bge-small on our own filing/news pairs.
 
 **Serving:**
 - **TEI** (Apache-2.0; embeddings, `/rerank`, dynamic batching). TEI serves one model per instance, so there are **two containers**: `tei-embed` (bge-small) and `tei-rerank` (bge-reranker-v2-m3), each shared by RAG and Hindsight.
-- **fastembed** (ONNX, Apache-2.0) for in-process embedding in Python services.
+- Rust services (`mt-nlp`, `mt-memory`) call TEI over HTTP.
+- **fastembed** (ONNX, Apache-2.0) only for in-process embedding in `mt_research` (training and exploration).
 - Ollama is **not** used for embeddings under load (`OLLAMA_NUM_PARALLEL` defaults to 1).
 
 ## 3. Document RAG design (Postgres)
@@ -109,7 +110,7 @@ LightRAG is kept as an **optional, offline** graph layer over filings (§3.7).
    - vLLM/SGLang prefix caching locally, for research/chat generation only; it stays **off** on the tier-B decision path (§4.3).
 7. **Graph RAG (optional, later):** LightRAG over filings (supplier/customer/subsidiary/litigation links), run offline in batch for the research path only, once plain hybrid retrieval is benchmarked.
 8. **Extensions:**
-   - **Not used:** `pg_textsearch` (needs PG17+); VectorChord (AGPL/ELv2).
+   - **Not used:** `pg_textsearch` (needs PG17+; Supabase now runs 17, but availability there is (U)); VectorChord (AGPL/ELv2).
    - **Optional:** ParadeDB `pg_search` (AGPL, fine privately) if true BM25 is ever needed.
    - **Scale-up:** `pgvectorscale` only above ~10M vectors.
 
@@ -161,11 +162,11 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
   - LightGBM/XGBoost/linear/small MLP;
   - compiled to **ONNX Runtime / Treelite / lleaves**;
   - **in-process** in the Nautilus strategy (no network hop);
-  - a Python strategy uses the Python runtimes; a Rust strategy or the Rust live node loads the same exported **ONNX** model through `ort` ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)). Training stays Python (M7); a parity test checks the Rust and Python scores match on a fixed sample before promotion.
+  - strategies are Rust by default and load the exported **ONNX** model through `ort` (`mt-models`); a Python research strategy on paper uses the Python runtimes and is ported before live ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Training stays Python (`mt_research`, M7); a parity test checks the Rust and Python scores match on a fixed sample before promotion.
 - **Latency:** ~10–50 µs.
 - **Calibration:** isotonic/Platt on a time-ordered holdout, tracking Brier/ECE.
 - **Inputs:** M6 numeric features + **cached tier B scores** (from NATS KV).
-- **Training labels:** from P2, outcome labels from market data: **forward-return sign over horizon h** and **triple-barrier** hits. The P6 teacher (M8 debate log) is added later as an extra label source without changing existing model versions. Training runs via `models.tiera.train` (C1; train → calibrate → compile).
+- **Training labels:** from P2, outcome labels from market data: **forward-return sign over horizon h** and **triple-barrier** hits. The P6 teacher (M8 debate log) is added later as an extra label source without changing existing model versions. Training runs via `models.tiera.train` (C1; train → calibrate → export to ONNX), a Python `mt_research` job on `mt-scheduler`.
 
 **Tier B: decision models (asynchronous, event-driven, never on the tick path)**
 - **Questions are typed and versioned in a registry**, e.g.:
@@ -177,19 +178,20 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
   - `rug_risk_text{low,med,high}`;
   - `debate_quality{sound, stale_data, contradictory}`.
 - **Stage 1 (Phase 4, no training):**
-  - **SemIf-style logit readout** on Qwen3.5-4B for relevance gating (replaces the planned LLM gate) and first-pass flags.
+  - **SemIf-style logit readout** on Qwen3.5-4B (served by vLLM or llama-server; `mt-models` reads the option logits over HTTP) for relevance gating (replaces the planned LLM gate) and first-pass flags.
   - **Prefix caching is off and the batch is fixed** for every score that feeds a decision, tier A or a backtest.
   - **Shared-prefix mode** (many criteria per document in one cached prefix) is allowed **only for offline/backfill scoring**. Those scores are marked non-deterministic and are never used for decisions or backtests.
   - **Latency target (relevance gate):** p95 ≤ 300 ms per document on GPU, ≤ 3 s on CPU. Documents are queued; the gate is never on the order path.
 - **Stage 2 (Phase 6): our own decision models.**
   - **Base:** **Qwen3-0.6B or 1.7B (dense, ONNX-exportable)**.
+  - **Training:** in `mt_research` (Python: PyTorch, PEFT), run as `mt-scheduler` jobs; the head is exported to ONNX.
   - **LoRA and head:** LoRA (rank 8–64) + **classification head** (`Qwen3ForSequenceClassification` + PEFT `SEQ_CLS`) or a Clef-style joint schema head scoring several questions in one pass.
   - **Training labels:** distilled from M8 debate decisions (the teacher), then **corrected against realised outcomes** (forward returns / barrier hits) so it doesn't just copy the debate's biases. Your labels (`models.label.add`) are a third, optional source: nothing waits on them. Where a gate needs labelled examples before you've given any (e.g. the SemIf relevance gate, D10), an LLM labeller via the gateway supplies **silver labels** (`source: silver`), checked against outcomes and never taken from the model's own shadow outputs.
   - **Validation:** purged, embargoed walk-forward CV; option shuffle/rename augmentation.
   - **Loss:** CE + λ·Brier.
   - **Calibration:** post-hoc temperature/isotonic on a walk-forward holdout.
   - **Abstention:** thresholds set at a target precision ("auto-decide coverage"; default ≥ 0.75 precision, configurable, [16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)), with abstain as the default.
-  - **Serving:** vLLM pooling runner (`/classify`) on GPU, or ONNX Runtime on CPU (FP32 for reproducible backtests).
+  - **Serving:** vLLM pooling runner (`/classify`) on GPU, or ONNX Runtime on CPU through `ort` in `mt-models` (FP32 for reproducible backtests).
   - **Expected latency:**
     - **~2–12 ms per decision on a consumer GPU (0.6B)**; SLO p95 < 50 ms ([02 §9.2](02-v1-architecture.md#92-observability--slos));
     - ~15–40 ms for 4B;
@@ -231,7 +233,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
 
 **The trading hot path (tiers A and B) never calls a remote API**, and the engine has no dependency on the gateway.
 
-Everything else (M8 debate agents, M7 strategy generator, M10 explain agent, Hindsight's LLM, chat via UI/Telegram/MCP) calls **one OpenAI-compatible gateway: LiteLLM proxy** (MIT core).
+Everything else (M8 debate agents, M7 strategy generator, M10 explain agent, the M14 crowd simulator, Hindsight's LLM, chat via UI/Telegram/MCP) calls **one OpenAI-compatible gateway: LiteLLM proxy** (MIT core). The Rust agent runtime (`mt-agents`, `rig-core`) talks to it as an OpenAI-compatible endpoint.
 
 ```yaml
 model_list:
@@ -264,8 +266,8 @@ router_settings:
 | Module | Change |
 |---|---|
 | M6 Features | Feature snapshots logged per decision (for distillation) |
-| M7 Lab | Trains, calibrates, compiles and benchmarks tier-A models and tier-B decision models (LoRA + head); runs the decision-model bake-off; distillation jobs; registers models in MLflow |
-| M8 Agents | Run via the gateway; their decisions are the teacher log |
-| M9 Memory & RAG | Hindsight (agent memory, point-in-time filtered, §1) + `rag` schema hybrid retrieval, sharing the `tei-embed` and `tei-rerank` containers |
-| **M21 Decision One & model serving** | Tier A runtime (in-strategy), tier B decision-model service (SemIf readout → own Qwen-LoRA head), question registry, labels (`models.label.add`), LiteLLM gateway + `audit.llm_call` callback, `llm-local`, TEI (`tei-embed`, `tei-rerank`), model registry, benchmarks |
+| M7 Lab | `mt_research` (Python) trains, calibrates and exports (ONNX) tier-A models and tier-B decision models (LoRA + head); distillation jobs; registers models in MLflow. `mt-lab-core` (Rust) runs the decision-model bake-off benchmarks and the Rust/Python parity checks |
+| M8 Agents | `mt-agents` (Rust, `rig-core`; explicit state-machine graph with Postgres checkpoints, replacing LangGraph). Run via the gateway; their decisions are the teacher log |
+| M9 Memory & RAG | `mt-memory` (Rust): Hindsight client (agent memory, point-in-time filtered, §1) + `rag` schema hybrid retrieval, sharing the `tei-embed` and `tei-rerank` containers |
+| **M21 Decision One & model serving** | `mt-models` (Rust): tier A runtime (in-strategy, ONNX via `ort`), tier B decision-model service (SemIf readout → own Qwen-LoRA head), question registry, labels (`models.label.add`), LiteLLM gateway + `audit.llm_call` callback, `llm-local`, TEI (`tei-embed`, `tei-rerank`), model registry, benchmarks |
 | M17 Observability | Latency histograms per tier, timeout and fallback counts, LLM spend |

@@ -237,7 +237,7 @@ Configurable per bot and per event type.
 | `modules.hummingbot.enabled` | off | Market-making sidecar (M13), behind M11 |
 | `modules.social_drafts.enabled` | off | M23 drafts → your approval → web intent |
 | `modules.credibility.enabled` | off | Account credibility scoring and shill-burst posture |
-| `modules.crowdsim.enabled` | off | M14 research only |
+| `modules.crowdsim.enabled` | — | Superseded: the scenario & crowd simulator is a go-live tool with its own settings (§2.14b, 17 §H) |
 | `modules.lightrag.enabled` | off | Offline graph over filings (research path) |
 | `modules.persona_lenses.enabled` | off | Enabled only if they improve shadow results (17 §F) |
 
