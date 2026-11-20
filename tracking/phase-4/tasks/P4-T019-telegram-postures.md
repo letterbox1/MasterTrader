@@ -61,7 +61,7 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 - [ ] `extractors.py` with validators + golden test corpus (synthetic messages, no real Telegram text in the repo).
 - [ ] `postures.py` sliding-window calculators (pure functions, deterministic).
 - [ ] Publisher for `posture.telegram.{subject}` (Python, `ingest-text`) and the `mt-intel-writer` handlers (Rust) for `text.telegram_mention`/`text.telegram_posture`.
-- [ ] Bot API listener limited to channel posts: a reading path, so it stays Python in `ingest-text` next to Telethon and the extractor (pinned client, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); the alert/command bot is the Rust `mt-telegram-bot` (teloxide) and never receives channel text.
+- [ ] Bot API listener limited to channel posts: a reading path, so it stays Python in `ingest-text` next to Telethon and the extractor (pinned client, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); the alert/command bot is the Rust `mt-telegram-bot` (teloxide) and never receives channel text.
 - [ ] RSS-Bridge Telegram fallback via P4-T012 client.
 - [ ] Consumer allow-list: `posture.telegram.>` subscribers declared in `config/provenance/consumers.yaml` (M4 rules, M11 rules, intel-writer, mt-api display); CI fails if any other service subscribes.
 - [ ] Retention job entry for `text.telegram_mention` (90 d default, configurable).

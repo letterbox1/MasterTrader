@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`ingest-text`, `crawl4ai`, `nlp`, `ingest-events` and `decision-svc` run under Compose with digest-pinned images, the right networks (`scrape` for fetchers, `core` for processing) and a **narrow NATS account** for scrape-side publishers, so untrusted fetching can only publish raw items to NATS and never reach Supabase Postgres or the signer. The core-side writer is the Rust `mt-intel-writer` and the event pollers are the Rust `mt-events` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); `ingest-text`, `crawl4ai`, `nlp` and `decision-svc` stay Python ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)).
+`ingest-text`, `crawl4ai`, `nlp`, `ingest-events` and `decision-svc` run under Compose with digest-pinned images, the right networks (`scrape` for fetchers, `core` for processing) and a **narrow NATS account** for scrape-side publishers, so untrusted fetching can only publish raw items to NATS and never reach Supabase Postgres or the signer. The core-side writer is the Rust `mt-intel-writer` and the event pollers are the Rust `mt-events` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); `ingest-text`, `crawl4ai`, `nlp` and `decision-svc` stay Python ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)).
 
 ## Context & references
 

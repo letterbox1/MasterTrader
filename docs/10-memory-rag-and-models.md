@@ -1,6 +1,6 @@
 # Memory, RAG & Model Serving (M9, M21)
 
-_Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware first principles. Latencies must be benchmarked on the actual machine (your workstation now, the runtime host after the shift, [18 §5](18-platform-and-deployment.md#5-deployment-modes)). Code split: training, agents, memory and the tier B service are Python (`mt_models`, `mt_agents`, `mt_memory`); tier A inference can run in Rust ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary))._
+_Research date 2026-10-21. (U) = unverified; "est." = estimated from hardware first principles. Latencies must be benchmarked on the actual machine (your workstation now, the runtime host after the shift, [18 §5](18-platform-and-deployment.md#5-deployment-modes)). Code split: training, agents, memory and the tier B service are Python (`mt_models`, `mt_agents`, `mt_memory`); tier A inference can run in Rust ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required))._
 
 ## Summary
 
@@ -161,7 +161,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
   - LightGBM/XGBoost/linear/small MLP;
   - compiled to **ONNX Runtime / Treelite / lleaves**;
   - **in-process** in the Nautilus strategy (no network hop);
-  - a Python strategy uses the Python runtimes; a Rust strategy or the Rust live node loads the same exported **ONNX** model through `ort` ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)). Training stays Python (M7); a parity test checks the Rust and Python scores match on a fixed sample before promotion.
+  - a Python strategy uses the Python runtimes; a Rust strategy or the Rust live node loads the same exported **ONNX** model through `ort` ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)). Training stays Python (M7); a parity test checks the Rust and Python scores match on a fixed sample before promotion.
 - **Latency:** ~10–50 µs.
 - **Calibration:** isotonic/Platt on a time-ordered holdout, tracking Brier/ECE.
 - **Inputs:** M6 numeric features + **cached tier B scores** (from NATS KV).

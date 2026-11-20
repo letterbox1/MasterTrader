@@ -52,7 +52,7 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 ## Requirements
 
 - Pinned image/commit; telemetry disabled check and broker-ID stripping check both block start if failing.
-- Adapter (Python, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)): Hummingbot API ↔ `mt-engine` venue abstraction, through `mt-api`/`mt-risk` like every other client; every order intent passes M11 (exposure counts toward global limits).
+- Adapter (Python, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): Hummingbot API ↔ `mt-engine` venue abstraction, through `mt-api`/`mt-risk` like every other client; every order intent passes M11 (exposure counts toward global limits).
 - Kill switch → all bots stop within 1 s; `mm.bot.cancel_all` (C1).
 - Commands `mm.bot.create|start|stop|update|cancel_all` with D11 levels: create/start paper C1; live start C3 (quotes on its own, like `autonomous`); edit live C2, risk-increasing C3; stop and cancel_all C1. Live is out of scope in P6.
 - Paper P&L decomposition (spread capture, inventory, fees/rebates, funding) vs HLP APR on the same notional, weekly.

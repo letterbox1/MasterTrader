@@ -55,7 +55,7 @@ Models move candidate → shadow → production only through `models.promote` wi
 - Veto enablement is a separate gated flag per question requiring precision ≥ the veto target (default 0.90, 16 §2.10) on holdout and in shadow.
 - `models.promote` / `models.rollback` audited; registry status history kept (append-only).
 - Tier-A candidates from distillation use the same command with P2's tier-A gate set.
-- **Tier A on the engine path:** when a tier-A candidate is promoted for in-engine use, it is exported to ONNX and loaded in-process by the Rust runtime (`ort`) in `mt-engine` ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); promotion requires a parity test (Python reference vs `ort` outputs equal within 1e-6 on a fixed input set). Training stays Python.
+- **Tier A on the engine path:** when a tier-A candidate is promoted for in-engine use, it is exported to ONNX and loaded in-process by the Rust runtime (`ort`) in `mt-engine` ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); promotion requires a parity test (Python reference vs `ort` outputs equal within 1e-6 on a fixed input set). Training stays Python.
 
 ## ToDo
 

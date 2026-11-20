@@ -49,7 +49,7 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 - Pandera schemas per data type (trades, quotes, L2 deltas, bars): types, non-null, price > 0, monotonic `event_time` within file, `ingest_time ≥ event_time − skew`, provenance present
 - Evidently report per instrument: log returns, spread bps, volume, inter-arrival vs trailing 30-day reference; drift flagged with the report URL stored
-- Runs after compaction (P1-T012) as a Python Prefect flow (Pandera and Evidently are Python-only, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); results are published on `dq.raw.batch.*` and `mt-monitor` writes the incidents to `audit.dq_event` (check `batch_schema` / `batch_drift`), so one writer owns the WORM table; HTML reports under `/data/reports/dq/<date>/`
+- Runs after compaction (P1-T012) as a Python Prefect flow (Pandera and Evidently are Python-only, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); results are published on `dq.raw.batch.*` and `mt-monitor` writes the incidents to `audit.dq_event` (check `batch_schema` / `batch_drift`), so one writer owns the WORM table; HTML reports under `/data/reports/dq/<date>/`
 
 ## ToDo
 

@@ -243,6 +243,18 @@ Configurable per bot and per event type.
 
 Enabling a module is C1 and changes nothing about risk; each still runs behind M11 and the data rules.
 
+### 2.14b Scenario & crowd simulator (M14)
+
+See [18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool). Synthetic data is never used for features, training or RAG, whatever these settings say.
+
+| Setting | Default | Notes |
+|---|---|---|
+| `crowdsim.scenario_twin.enabled` | on during the paper period and before live | A second paper engine running the same bots on replayed data with injected scenarios; never touches real paper or live accounts |
+| `crowdsim.scenarios_per_week` | 3 | Picked from the week's top events plus one tail scenario |
+| `crowdsim.population` | 200 persona agents, 10 rounds | Seeded and recorded so runs replay |
+| `crowdsim.model_route` | `local-advisor` | Local model by default; cloud routes only inside the LLM budget (§2.10) |
+| `crowdsim.max_shock` | Price ±15%, volatility ×3, spread ×5, liquidity ÷5 | Caps on the shocks a scenario may inject |
+
 ### 2.15 Platform, deployment and regions
 
 See [18](18-platform-and-deployment.md). Changing the mode is an OPS task; loosening exposure or adding a region is C3.

@@ -183,7 +183,7 @@ The gate is one library, `mt_onchain::costgate` in the Rust `mt-onchain` crate (
 
 ## 8. Social participation (M23, `mt_social`)
 
-M23 stays Python (`mt_social`, LLM drafting tooling, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)); it never signs or posts by itself.
+M23 stays Python (`mt_social`, LLM drafting tooling, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); it never signs or posts by itself.
 
 Social tasks run from **your real accounts, with you approving every post**. The system removes the grind (finding tasks, drafting, tracking) without pretending to be anyone.
 

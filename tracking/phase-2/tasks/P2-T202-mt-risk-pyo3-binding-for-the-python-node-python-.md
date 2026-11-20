@@ -42,7 +42,7 @@ The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 bindi
 ## Context & references
 
 - Roadmap: [R2.10, R2.N2](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Platform: [18 §2.1 `mt-risk`](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) · [18 §2.2 rule](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary) (Python never places orders without `mt-risk`)
+- Platform: [18 §2.1 `mt-risk`](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) · [18 §2.2 rule](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required) (Python never places orders without `mt-risk`)
 - Built on: P2-T017 (`RiskGate` in the crate), P0-T071 (the `mt_store` PyO3 module carrying the `mt-core` types; this binding reuses those classes).
 - Used by: P2-T003 (`RiskGateProtocol` default implementation), P2-T021 (Python node path), P2-T105 (truth backtests), P2-T052 (no-bypass tests through Python).
 

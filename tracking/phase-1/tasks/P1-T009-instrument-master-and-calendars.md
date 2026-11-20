@@ -50,7 +50,7 @@ review_result: ""
 ## Requirements
 
 - Instrument IDs use Nautilus `InstrumentId` (`BTCUSDT.BINANCE`); precision, tick size, lot size from venue metadata (Nautilus instrument providers; ccxt `load_markets` only as fallback in the Python sync flow)
-- Language split ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)): the sync job is a Python Prefect flow because FinanceDatabase and `exchange_calendars` are Python-only; it materialises sessions into `market.session_calendar` so the Rust services (`mt-monitor`, `mt-api`) read them without Python
+- Language split ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): the sync job is a Python Prefect flow because FinanceDatabase and `exchange_calendars` are Python-only; it materialises sessions into `market.session_calendar` so the Rust services (`mt-monitor`, `mt-api`) read them without Python
 - FinanceDatabase (MIT) for equities/ETFs classification (sector, asset class, exchange) refreshed weekly
 - Sessions: `exchange_calendars` for equities (XNYS/XNAS), FX weekly session (Sun 22:00 → Fri 22:00 UTC, broker-specific), crypto 24/7; stored as `session_calendar` reference used by the stale check (P1-T031): closed sessions are `closed`, never `stale` ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means))
 - Resolution metadata per instrument: `rt_finest` (tick|l2_100ms|quote_4hz|iex_trade|daily|none) and `hist_finest` (trade|1s|tick|1m|daily) with a reason string (e.g. "US stocks: IEX only; no tick L2")

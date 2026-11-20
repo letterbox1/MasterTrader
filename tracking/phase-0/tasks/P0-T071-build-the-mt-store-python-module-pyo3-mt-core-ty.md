@@ -42,7 +42,7 @@ Python research code imports **one** module, `mt_store`, built from `crates/mt-s
 ## Context & references
 
 - [Roadmap P0 R0.01, R0.04](../../../docs/roadmap/phase-0-foundations.md#3-requirements) · [T0.21, T0.22](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
-- [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-core` exposed through the same PyO3 module as `pit`) · [18 §2.2 rule](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)
+- [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-core` exposed through the same PyO3 module as `pit`) · [18 §2.2 rule](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)
 - [03 §3 layout](../../../docs/03-build-spec.md#3-repository-layout) · [03 §4 point-in-time rule](../../../docs/03-build-spec.md#4-data-model-overview)
 - [SPEC NN1](../../../SPEC.md#non-negotiable-requirements)
 - Depends on: P0-T016 (`mt-core` types), P0-T027 (`pit` in Rust)

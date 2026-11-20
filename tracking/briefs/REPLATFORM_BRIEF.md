@@ -100,3 +100,37 @@ Report:
 - USER dependencies kept, with the reason;
 - anchors renamed;
 - contradictions found in docs you didn't own.
+
+---
+
+# Wave 4 (2026-11-20): Rust-max
+
+The canonical sources are [`docs/18 §2`](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (rewritten: the crate list in §2.1, the short Python list in §2.2, the simulator in §2.4), [`docs/19`](../../docs/19-third-party-register.md) (third-party register) and [`docs/17 §H`](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20). Read all three. Sections 1–5 above still apply, including the USER-blocker rule and the naming rules from `.env.example`.
+
+## 6. Mapping (wave 4)
+
+| Was | Now |
+|---|---|
+| `mt_agents` (LangGraph), TradingAgents/FinRobot/Vibe-Trading used as Python libraries | `mt-agents` (Rust, `rig-core`, explicit state-machine graph, Postgres checkpoints); designs rebuilt in Rust, prompts adapted with NOTICE |
+| `mt_memory` | `mt-memory` (Rust RAG + Hindsight HTTP client) |
+| `mt_features`, `mt_anomaly`, `mt_models` runtime | `mt-features`, `mt-anomaly`, `mt-models` (inference via ONNX/`ort`; SemIf via the vLLM server) |
+| `nlp` (`mt_features.text`, spaCy, FinBERT in Python) | `mt-nlp` (ONNX FinBERT, GLiNER entities (U), TEI over HTTP) |
+| `mt_airdrop` discovery/scoring, `mt_curation`, `mt_social` | `mt-airdrop`, `mt-curation`, `mt-social` (Rust) |
+| Prefect flows (`prefect-server`, `prefect-worker`) | `mt-scheduler` (Rust, Postgres-backed jobs + cron, run history, D16/D07 status). Python training jobs run as scheduler jobs |
+| OpenBB, fredapi, sdmx1, edgartools, yfinance | `mt-connectors` (Rust clients; SEC XBRL via `companyfacts` JSON) |
+| `mt_lab` (Python lab) | Exploration/training stay Python in `mt_research`; the production harness (walk-forward, validation, gate reports, cost models, bias analysers, setup-odds) is `mt-lab-core` (Rust, PyO3 binding for notebooks) |
+| Python strategies by default | **Rust strategies by default**; Python only for ML research on paper, ported (ONNX) before live; the LLM generator emits Rust compiled in the sandbox |
+| Vendored freqtrade analysers (P2-B051) | Clean-room Rust analysers in `mt-lab-core`; vendored GPL copy removed when they land |
+| M14 crowd-sim optional experiment (MiroFish/OASIS) | `mt-crowdsim` (Rust, clean-room) **go-live tool**: scenario twin during the paper period + pre-live stress tests (16 §2.14b); synthetic data never used for features/training/RAG |
+| Hummingbot Python adapter | `mt-mm-adapter` (Rust client of the Hummingbot API) |
+| Python stays | `mt_research` (training/exploration), `mt_extract` (trafilatura), `mt_telegram_reader` (Telethon), `mt_ledger_import` (ccxt), the MT5 bridge |
+
+Front matter `tools` follows the language: `cargo` for Rust crates, `uv` only for the five Python packages. `services`: replace `prefect-server`/`prefect-worker` with `mt-scheduler`.
+
+## 7. Task wave 4
+
+- Apply §6 to every task in your phases: text, paths (`crates/mt-*`), commands (`cargo test -p …`), `tools`, `services`.
+- Create tasks where the new stack needs work no task covers, e.g. the `mt-scheduler` skeleton and job migration, `mt-connectors` per provider group, the `mt-agents` runtime, the ONNX export/parity checks, `mt-crowdsim` and the scenario twin, and removal of the vendored GPL analysers. Wire `depends_on` and exit demos.
+- **Never weaken a test.** Where a Python test moves to Rust, keep the same cases.
+- Progress-log line: `- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (<what changed>)`.
+- Validate your phases: 0 errors, 0 warnings. Hooks are paused; don't build or commit. Report per §5.

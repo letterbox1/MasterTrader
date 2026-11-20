@@ -181,7 +181,7 @@ Only if the MT5 route is used (Phase 7). It's a second host, so it gets its own 
     - MiroFish open CORS / default secret.
 - **LiteLLM:** releases 1.82.7/1.82.8 were malicious (PyPI compromise, March 2026). Use ≥ 1.83, pinned by hash or image digest; give it only the API keys it needs; keep it on the internal network.
 - **Rust** (every service we write, [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): a committed `Cargo.lock`; `cargo deny` (licences, advisories, bans, duplicate crates) and `cargo audit` (RustSec advisories) in the git hooks and CI; `cargo vet` for crates on the money path (`mt-risk`, `mt-signer`, `mt-deadman`, `mt-engine`). New crates and version bumps are reviewed like vendored code.
-- **Python** (only where necessary, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-necessary)): `uv lock` with hashes; Dependabot/Renovate on the private repo; `pip-audit` in CI.
+- **Python** (only where necessary, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): `uv lock` with hashes; Dependabot/Renovate on the private repo; `pip-audit` in CI.
 - **Web:** `pnpm` lockfile; `pnpm audit` in CI.
 - **Images:** every container is pinned by digest, **including the Supabase images** (self-hosted stack and the CLI's local stack). A Supabase or CLI upgrade is a reviewed bump: read the changelog, update the digests, rerun `supabase test db`.
 - No `curl | sh` installers; build from source or pinned images.
