@@ -52,7 +52,7 @@ Your phone receives pushes from the self-hosted ntfy server on a private topic o
 ## Requirements
 
 - Install the ntfy app (Android or iOS) and the Tailscale app on the phone; the phone must be on your tailnet to reach the server
-- Subscribe to the private topic (the agent tells you the topic name; you read the `phone` read token yourself with `sops -d ~/.config/mastertrader/secrets.sops.yaml`, key `NTFY_PHONE_TOKEN`)
+- Subscribe to the private topic (the agent tells you the topic name; you read the `phone` read token yourself with `sops -d ~/.config/mastertrader/secrets.sops.env`, key `MT_NTFY_PHONE_TOKEN`)
 
 ## ToDo
 

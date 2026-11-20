@@ -35,6 +35,7 @@ Around that it adds:
 | [docs/ui/](docs/ui/README.md) | **Frontend scope:** information architecture & routes, app shell, component library, 18 dashboard specs (widgets, data shown, actions + confirmation levels, states, acceptance criteria, backend contract), mobile/PWA/Telegram |
 | [ui-examples/](ui-examples/README.md) | 13 Stitch reference screens (screenshots + HTML) with a responsive audit and content corrections |
 | [brand/](brand/README.md) | Signal M logo, app icon, palette |
+| [.env.example](.env.example) · [docs/ENV-SETUP.md](docs/ENV-SETUP.md) | **Every key and token, P0 → P8**, one naming convention, with step-by-step setup per line; copy to `.env` (git-ignored) and seal |
 | [docs/OWNER-SETUP.md](docs/OWNER-SETUP.md) | **Owner setup sheet:** every step only you can do, in order (week one, when pinged, before go-live, after go-live) |
 | [SPEC.md](SPEC.md) | v1 specification and core decisions |
 | [docs/01-repo-vetting-report.md](docs/01-repo-vetting-report.md) | Vetting of 10 open-source repos: licenses, code audit, reputation, overlap and redundancy, verdicts, and the supporting free data/memory/quant ecosystem |

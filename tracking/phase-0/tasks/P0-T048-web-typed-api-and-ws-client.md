@@ -50,7 +50,7 @@ The web app talks to mt-api through a generated, typed REST client (TanStack Que
 
 ## Requirements
 
-- REST: `fetch` wrapper adding `Authorization: Bearer <access JWT>` from the Supabase Auth client (auto-refresh), base URL from `API_BASE_URL` (same origin by default), problem+json → typed `ApiError` (with `trace_id`), 401 → login route, 403 `aal2_required` → TOTP step. No cookies, so no CSRF token is needed.
+- REST: `fetch` wrapper adding `Authorization: Bearer <access JWT>` from the Supabase Auth client (auto-refresh), base URL from `VITE_MT_API_URL` (same origin by default), problem+json → typed `ApiError` (with `trace_id`), 401 → login route, 403 `aal2_required` → TOTP step. No cookies, so no CSRF token is needed.
 - Commands: `useCommand(name)` → `preview()` then `execute({args, idempotency_key: uuidv7(), confirm_token})` (02 §7.2); handles 428 `confirmation_required` and `reauth_required` (C2 needs a TOTP re-auth within 12 h → Supabase MFA challenge/verify step-up, then retry with the fresh token), 409 replay, C3 pending states (incl. 'Waiting for break-glass approval', ui §3.3).
 - WS: single connection opened with a single-use ticket from `POST /ws/ticket` (P0-T036), re-authenticated over the socket when the JWT refreshes; auto-reconnect (backoff 0.5 s → 30 s, jitter), subscriptions restored on reconnect; per-topic `lastSeq`; on gap (`seq != lastSeq+1`) mark topic `resyncing`, invalidate the mapped query, resume after refetch.
 - Background tabs: drop to 0.2 Hz except `kill`, `notifications` (ui §3.4).

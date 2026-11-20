@@ -53,7 +53,7 @@ Helius Free (Solana) and Alchemy Free (EVM) keys already exist from P0-T010. Thi
 - Accounts: Helius Free (1M credits/month, 10 rps) and Alchemy Free (30M CU/month) exist from P0-T010; add one Solana fallback (Chainstack or QuickNode free) and, if you want it, one EVM fallback (Infura free); PublicNode needs no account (low-volume fallback only).
 - Optional: a Blockscout API key if the instance requires one; The Graph key (100k queries/month) only if P5 tasks need subgraphs.
 - Exactly **one** account per provider, registered to you; no referral links.
-- Keys live in the sops secrets file outside the repo (path from P0-T022, [07 §2](../../../docs/07-security-notes.md#2-secrets)) and reach services by name only: `HELIUS_API_KEY`, `ALCHEMY_API_KEY` (from P0-T010), plus `CHAINSTACK_API_KEY` / `QUICKNODE_API_KEY` / `INFURA_API_KEY` for the fallbacks you create, each with a `created` date (key-age alert, 07 §2).
+- Keys live in the sops secrets file outside the repo (path from P0-T022, [07 §2](../../../docs/07-security-notes.md#2-secrets)) and reach services by name only: `HELIUS_API_KEY`, `ALCHEMY_API_KEY` (from P0-T010), plus `CHAINSTACK_SOLANA_RPC_URL` / `QUICKNODE_SOLANA_RPC_URL` / `INFURA_API_KEY` for the fallbacks you create, each with a `created` date (key-age alert, 07 §2).
 
 ## ToDo
 

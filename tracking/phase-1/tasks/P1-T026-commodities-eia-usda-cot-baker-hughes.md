@@ -49,7 +49,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 ## Requirements
 
 - EIA API v2 series (crude stocks, production) with release timestamps as `event_time`
-- USDA WASDE report tables (monthly, keyless); QuickStats API with the free `USDA_QUICKSTATS_API_KEY` (P0-T010; P1-B019); proven on fixtures here, live in P1-T073
+- USDA WASDE report tables (monthly, keyless); QuickStats API with the free `USDA_NASS_API_KEY` (P0-T010; P1-B019); proven on fixtures here, live in P1-T073
 - CFTC COT (legacy + disaggregated futures-only) weekly files; `event_time` = Friday 15:30 ET release, not the Tuesday as-of date (store both)
 - Baker Hughes weekly rig count file (official download)
 - Same macro table schema; provenance from 06

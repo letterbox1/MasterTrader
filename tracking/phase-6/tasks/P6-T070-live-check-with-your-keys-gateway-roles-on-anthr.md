@@ -17,7 +17,7 @@ modules: [M8, M10, M21, M22]
 dashboards: [D09, D10]
 tools: [uv, docker, sops, curl]
 mcp: []
-env: [ANTHROPIC_API_KEY, MT_CUSTOM_LLM_BASE_URL, MT_CUSTOM_LLM_API_KEY, TALLY_API_KEY]
+env: [ANTHROPIC_API_KEY, CUSTOM_LLM_BASE_URL, CUSTOM_LLM_API_KEY, TALLY_API_KEY]
 services: [anthropic-api, custom-llm-endpoint, tally-api, litellm, llm-local, agents, supabase-postgres]
 branch: p6/P6-T070-live-check-with-your-keys-gateway-roles-on-anthr
 pr: ""

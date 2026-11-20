@@ -17,7 +17,7 @@ modules: [M16]
 dashboards: [D07]
 tools: [git, uv, docker, sops]
 mcp: []
-env: [BINANCE_TESTNET_READ_KEY, BINANCE_TESTNET_READ_SECRET, BYBIT_TESTNET_READ_KEY, BYBIT_TESTNET_READ_SECRET, OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY]
+env: [BINANCE_TESTNET_READONLY_API_KEY, BINANCE_TESTNET_READONLY_API_SECRET, BYBIT_TESTNET_READONLY_API_KEY, BYBIT_TESTNET_READONLY_API_SECRET, OANDA_PRACTICE_API_TOKEN, OANDA_PRACTICE_PAPER_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_API_KEY, ALPACA_PAPER_API_SECRET]
 services: [nats, supabase-postgres, binance-testnet, bybit-testnet, oanda-practice, ig-demo, alpaca-paper]
 branch: p1/P1-T074-verify-live-reconciliation
 pr: ""
@@ -47,7 +47,7 @@ With your keys loaded, reconciliation runs against every practice/testnet venue 
 - IBKR: only when you use it; then P1-T070's `ib-gateway` must be up with `IBKR_PAPER_USERNAME`/`IBKR_PAPER_PASSWORD` in the sops file (not listed in `env` because IBKR is optional)
 - Cross-phase prerequisite: P0-T009 (the accounts)
 - Depends on (this phase): P1-T002 (credentials), P1-T041 and P1-T042 (keyless recon framework and adapters)
-- Run with `sops exec-env ~/.config/mastertrader/secrets.sops.yaml 'make verify-live-recon'`
+- Run with `sops exec-env ~/.config/mastertrader/secrets.sops.env 'make verify-live-recon'`
 
 ## Requirements
 

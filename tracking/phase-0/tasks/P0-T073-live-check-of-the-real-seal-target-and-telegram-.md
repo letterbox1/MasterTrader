@@ -17,7 +17,7 @@ modules: [mt-obs, ops]
 dashboards: [D16]
 tools: [docker, cargo, sops, curl]
 mcp: []
-env: [TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_CHAT_ID, MT_WORM_SEAL_S3_KEY_ID, MT_WORM_SEAL_S3_SECRET]
+env: [TELEGRAM_BOT_TOKEN, TELEGRAM_OWNER_CHAT_ID, B2_WORM_SEAL_KEY_ID, B2_WORM_SEAL_APPLICATION_KEY]
 services: [telegram, backblaze-b2, supabase-postgres]
 branch: p0/P0-T073-live-check-of-the-real-seal-target-and-telegram-
 pr: ""

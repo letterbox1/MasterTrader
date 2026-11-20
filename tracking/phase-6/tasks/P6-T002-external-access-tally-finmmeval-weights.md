@@ -54,7 +54,7 @@ The free external accesses only you can obtain are in place: a **Tally** free AP
 
 ## ToDo
 
-- [ ] Create a Tally account → Settings → API → create key; `sops ~/.config/mastertrader/secrets.enc.yaml` → add `TALLY_API_KEY`.
+- [ ] Create a Tally account → Settings → API → create key; `sops ~/.config/mastertrader/secrets.sops.env` → add `TALLY_API_KEY`.
 - [ ] Follow the FinMMEval task page (arXiv 2602.10886) to obtain the Buy/Hold/Sell data; save it under `data/external/finmmeval/` on the workstation (git-ignored) and write its licence text to `data/external/finmmeval/LICENCE.txt`.
 - [ ] Note here when both are done (or that you declined either), so P6-T059 and P6-T070 know what to run.
 

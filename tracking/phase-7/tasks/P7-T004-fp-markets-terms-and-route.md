@@ -56,7 +56,7 @@ You know whether FP Markets' AU client agreement permits algorithmic trading, sc
 - [ ] Download the current FP Markets AU client agreement and PDS from the client area.
 - [ ] Read the clauses on algorithmic trading, scalping, hedging, EAs/APIs; note the clause numbers.
 - [ ] Note your MT5 server name (client area) and whether a cTrader account is available on your login.
-- [ ] If the route includes cTrader: register a cTrader Open API application on your FP Markets cTrader login and put its client id/secret in the sops file (names `CTRADER_CLIENT_ID`, `CTRADER_CLIENT_SECRET`), never in chat or git; P7-T051 uses them for the demo run.
+- [ ] If the route includes cTrader: register a cTrader Open API application on your FP Markets cTrader login and put its client id/secret in the sops file (names `FPMARKETS_CTRADER_CLIENT_ID`, `FPMARKETS_CTRADER_CLIENT_SECRET`), never in chat or git; P7-T051 uses them for the demo run.
 - [ ] Record the findings and the route choice on the FP Markets task in D13; update the FP Markets venue row in D06 (tightening immediate).
 - [ ] Tell the agent which route you chose so it cancels the unchosen tasks: cTrader only → cancel P7-T005, P7-T034, P7-T035, P7-T036; MT5 only → cancel P7-T037.
 

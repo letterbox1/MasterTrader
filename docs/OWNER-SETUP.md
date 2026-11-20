@@ -13,7 +13,8 @@ Every remaining thing only you can do, in the order to do it. Each line links to
   - the long-lead outside parties, such as your tax agent.
 - **One review of all settings, at go-live:** the go-live pack ([P7-T070](../tracking/phase-7/tasks/P7-T070-approve-the-go-live-pack-risk-values-ceilings-sl.md)). Until then you can change anything in settings whenever you like, but you're never asked to.
 - **Secrets:** never paste a key into chat, issues or git.
-  - Keep each value in your password manager until the agent has created the encrypted secrets file ([P0-T022](../tracking/phase-0/tasks/P0-T022-sops-age-secrets-tmpfs.md), its first day). Then add them all in one `sops` session; the agent prints the exact key names.
+  - Every key in the whole system has a named line in [`.env.example`](../.env.example). Copy it to `.env` (git-ignored) and fill it as you go through the steps below; [ENV-SETUP.md](ENV-SETUP.md) has the exact clicks for each line.
+  - On its first day the agent builds the sealing step ([P0-T022](../tracking/phase-0/tasks/P0-T022-sops-age-secrets-tmpfs.md)); then `just secrets-generate` and `just secrets-seal` encrypt `.env` into the secrets file outside the repo.
   - Tasks list only the names, never values.
 
 **Reddit:** [P0-T001](../tracking/phase-0/tasks/P0-T001-reddit-api-decision.md) is waiting on Reddit's reply to your 29 Oct 2026 request. When it comes, do [P4-T004](../tracking/phase-4/tasks/P4-T004-reddit-decision.md) (5 min). Nothing else waits on it.
@@ -44,7 +45,7 @@ Do these in this order; most are sign-ups.
 | 16 | *Long lead, optional until go-live:* order a UPS and a 4G failover router | Needed only for live money on the workstation | 15 min | [P0-T012](../tracking/phase-0/tasks/P0-T012-ups-and-4g-failover.md) |
 
 **Right after the agent's first run** (it posts on Telegram when the secrets file exists):
-- Put every value from rows 2–10 into the secrets file in one `sops` session ([P0-T022](../tracking/phase-0/tasks/P0-T022-sops-age-secrets-tmpfs.md) prints the names).
+- Run `just secrets-generate` and `just secrets-seal`: your filled `.env` becomes the encrypted secrets file ([P0-T022](../tracking/phase-0/tasks/P0-T022-sops-age-secrets-tmpfs.md)).
 - **Read-only keys** on the practice/testnet accounts, IP-locked to your workstation's IP (10 min, [P1-T002](../tracking/phase-1/tasks/P1-T002-read-only-recon-keys.md)).
 - **Trade-only testnet keys** per mode, withdrawals off, IP-locked, plus the dead-man key (20 min, [P2-T001](../tracking/phase-2/tasks/P2-T001-testnet-trade-only-keys.md)).
 - Open the app on the workstation, **set your password and enrol TOTP**, ideally with a second device as backup (2 min, [P0-T062](../tracking/phase-0/tasks/P0-T062-set-password-enrol-totp.md)).

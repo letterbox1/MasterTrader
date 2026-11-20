@@ -50,7 +50,7 @@ The system that was built and paper-traded on the workstation runs on the runtim
 - **Database:** `local` stays self-hosted Supabase; `supabase_cloud`: `supabase link` + `supabase db push`, data migrated with a verified row-count and hash-chain check on every WORM table, the external seal re-anchored, backups configured (18 §4.7).
 - **Web:** `local` stays on Caddy; `vercel`: deploy `apps/web` with `api.exposure: tailnet` by default; Deployment Protection on.
 - **Re-verify on the target:** the full suite (risk, `pit`, WORM and tax golden tests; dead-man drill; restore test; egress check) passes on the target; results linked in the progress log.
-- Secrets: env var names only here (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `VERCEL_TOKEN` when used); values in the sops file.
+- Secrets: env var names only here (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_CLOUD_DB_PASSWORD`, `VERCEL_TOKEN` when used); values in the sops file.
 - **Egress:** the P1-T071 egress check points at the egress IP (the exit node's static IP from P7-T065, or the runtime host's own static IP when P7-T071 chose a static-IP Sydney VM, [18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)) and reports `ok` on the target before the suite runs.
 
 ## ToDo

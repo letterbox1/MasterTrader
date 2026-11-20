@@ -53,7 +53,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - Model: Qwen3.5-4B, revision pinned by commit hash in `config/models/semif.yaml`; weights checksum verified at start.
 - Serving: GPU path vLLM (logprobs/logits endpoint) or llama-server (`--logits-all` equivalent / `n_probs`); CPU path llama.cpp with the same API shape.
 - Determinism settings: prefix caching **off**, fixed batch (1 or padded fixed), FP32 logits readout where the backend allows, seed fixed. A second, separately named profile `offline-shared-prefix` may enable prefix reuse for backfill scoring only; every score it produces is tagged `deterministic=false` and is refused by decision, tier A and backtest readers.
-- Bound to internal network only; `SEMIF_API_KEY` from secrets; no published port.
+- Bound to internal network only; `MT_SEMIF_API_KEY` from secrets; no published port.
 - Expose `/health` and Prometheus metrics (latency, queue depth, tokens/s).
 
 ## ToDo

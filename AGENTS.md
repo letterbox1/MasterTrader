@@ -106,7 +106,7 @@ Agents that don't load skills automatically can read the same `SKILL.md` files a
 ## What tasks need to run
 
 Each task lists `tools`, `mcp`, `env` and `services` in its front matter (checked by `./kanban preflight` and `./kanban start`):
-- `env` holds variable **names** only; values live in the sops/age secrets file ([07 §2](docs/07-security-notes.md#2-secrets)) and never in item files.
+- `env` holds variable **names** only, exactly as listed in [`.env.example`](.env.example) (naming: `<SERVICE>_<ENVIRONMENT>_<ROLE>_<FIELD>`, [07 §2](docs/07-security-notes.md#2-secrets)); a new secret gets a line there first. Values live in the sealed sops file and never in item files.
 - Exchange keys, accounts, paid plans and anything with money are USER tasks the item depends on.
 
 ## Git

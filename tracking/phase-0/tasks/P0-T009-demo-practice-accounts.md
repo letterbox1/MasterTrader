@@ -55,7 +55,7 @@ Free practice/testnet accounts exist at OANDA (practice), IG (demo), Alpaca (pap
 - Each with a unique strong password + 2FA where offered; account ids recorded (not secret).
 - No real money deposited anywhere in P0.
 - Practice/paper accounts use their normal credentials (no money at risk, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B008). Paper/testnet keys stay separate from the later `hitl`/`autonomous` keys and sub-accounts (07 §3).
-- Outputs: logins in your password manager; any key you already created → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022).
+- Outputs: logins in your password manager; any key you already created → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022).
 
 ## ToDo
 

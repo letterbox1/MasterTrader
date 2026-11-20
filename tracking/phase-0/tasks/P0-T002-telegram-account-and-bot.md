@@ -56,7 +56,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - `api_id` / `api_hash` from my.telegram.org → *API development tools* (app title `MasterTrader`, platform Desktop).
 - Bot via @BotFather: name `MasterTrader Alerts`, username ending `_bot`; `/setjoingroups` → Disable; `/setprivacy` → Enable. Store the bot token.
 - Find your personal chat id with the bot (send `/start`, then call `getUpdates` from the workstation) and record it as `telegram.owner_chat_id`.
-- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `telegram:` (`api_id`, `api_hash`, `bot_token`, `owner_chat_id`). The late live check (P0-T073) uses the env names `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_CHAT_ID` (names only; values stay in the secrets file). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022) under `telegram:` (`api_id`, `api_hash`, `bot_token`, `owner_chat_id`). The late live check (P0-T073) uses the env names `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_CHAT_ID` (names only; values stay in the secrets file). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 
@@ -65,7 +65,7 @@ A dedicated Telegram identity (landline voice code or prepaid SIM) with a 2-step
 - [ ] Create the app at my.telegram.org and note `api_id`/`api_hash` in your password manager.
 - [ ] Create the bot with @BotFather and apply `/setjoingroups` Disable and `/setprivacy` Enable.
 - [ ] From your **personal** Telegram account, open the bot and send `/start`; read your chat id via `getUpdates`.
-- [ ] Once P0-T022 lands, run `sops ~/.config/mastertrader/secrets.sops.yaml` and add the `telegram:` block.
+- [ ] Once P0-T022 lands, run `sops ~/.config/mastertrader/secrets.sops.env` and add the `telegram:` block.
 - [ ] Log completion date and 'stored in secrets file' in the progress log.
 
 ## Verification

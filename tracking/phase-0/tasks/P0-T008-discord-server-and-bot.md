@@ -54,7 +54,7 @@ A private Discord server "MasterTrader Feeds" with `#mt-inbox` and category chan
 - Server: private; channels `#mt-inbox` + categories (e.g. `crypto-projects`, `exchanges`, `macro`, `airdrops`), ≤ ~10–15 follower webhooks per receiving channel.
 - Bot app at the Discord developer portal: name `MasterTrader Reader`, **Message Content intent** on (self-serve under 10k servers), permissions View Channels + Read Message History only; added only to your server.
 - Follows: use Discord's **Follow** button on public announcement channels you already know; spread across category channels.
-- Outputs: `bot_token`, `application_id`, `guild_id`, channel ids → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `discord:`. Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs: `bot_token`, `application_id`, `guild_id`, channel ids → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022) under `discord:`. Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 

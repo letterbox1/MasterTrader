@@ -17,7 +17,7 @@ modules: [M4, M19]
 dashboards: [D12, D13]
 tools: [uv]
 mcp: []
-env: [TELEGRAM_BOT_TOKEN, COINGECKO_DEMO_API_KEY, CRYPTORANK_API_KEY, GOPLUS_API_KEY]
+env: [TELEGRAM_BOT_TOKEN, COINGECKO_DEMO_API_KEY, CRYPTORANK_API_KEY, GOPLUS_APP_KEY]
 services: [telegram, coingecko, cryptorank, goplus]
 branch: p5/P5-T063-run-two-weekly-digests-fp-review
 pr: ""

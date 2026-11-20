@@ -53,7 +53,7 @@ Either the email alert channel has working SMTP credentials from **your own mail
 - If on:
   - At your mail provider, turn on 2-step verification if it is required, then create an **app password** named `MasterTrader alerts` (Gmail: Google Account → Security → App passwords; Fastmail: Settings → Privacy & Security → App passwords; iCloud: appleid.apple.com → App-Specific Passwords; others: the provider's "app password" page).
   - Note the provider's SMTP host and port (TLS: 465 implicit or 587 STARTTLS) and the sender address.
-  - Add to the sops file (run `sops ~/.config/mastertrader/secrets.sops.yaml`), keys `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_APP_PASSWORD`, `ALERT_EMAIL_FROM`, `ALERT_EMAIL_TO`. Values go **only** into that file, never into chat, issues, git or the item file.
+  - Add to the sops file (run `sops ~/.config/mastertrader/secrets.sops.env`), keys `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_APP_PASSWORD`, `ALERT_EMAIL_FROM`, `ALERT_EMAIL_TO`. Values go **only** into that file, never into chat, issues, git or the item file.
 - If off: set `alerts.email.enabled: false` in `config/alerts.yaml` (or tell the agent "email off"); this is a routing change you make yourself, and turning a channel off later is a loosening of alert routing (C3 via the break-glass CLI until Telegram C3 lands in P2).
 - Rotation: the secrets file records the creation date; revoke the app password at the provider if you suspect a leak.
 

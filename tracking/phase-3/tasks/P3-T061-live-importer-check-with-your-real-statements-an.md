@@ -17,7 +17,7 @@ modules: [M18]
 dashboards: [D14, D15]
 tools: [git, cargo, uv, docker]
 mcp: []
-env: [BINANCE_TESTNET_READONLY_KEY, BINANCE_TESTNET_READONLY_SECRET, BYBIT_TESTNET_READONLY_KEY, BYBIT_TESTNET_READONLY_SECRET, OANDA_PRACTICE_TOKEN, IG_DEMO_API_KEY]
+env: [BINANCE_TESTNET_READONLY_API_KEY, BINANCE_TESTNET_READONLY_API_SECRET, BYBIT_TESTNET_READONLY_API_KEY, BYBIT_TESTNET_READONLY_API_SECRET, OANDA_PRACTICE_API_TOKEN, IG_DEMO_API_KEY]
 services: [supabase-postgres, journal, Binance testnet, Bybit testnet, OANDA practice, IG demo]
 branch: p3/P3-T061-live-importer-check-with-your-real-statements-an
 pr: ""

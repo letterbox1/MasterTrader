@@ -57,8 +57,8 @@ Free keys for NASA FIRMS (`MAP_KEY`) and ACLED (research account) are in the sec
 
 ## ToDo
 
-- [ ] Request the FIRMS `MAP_KEY` and the ACLED access key; store both in the sops/age secrets file outside the repo (`/etc/mastertrader/secrets.sops.yaml`, P0-T022; see [07 §2](../../../docs/07-security-notes.md#2-secrets)) under `firms.map_key` and `acled.email`/`acled.key`.
-- [ ] Optional: if you want YouTube as a source, create a free YouTube Data API v3 key in your own Google Cloud account and store it as `youtube.api_key` in the same file (P4-T066 checks its quota). Otherwise tell the agent you decline YouTube.
+- [ ] Request the FIRMS `MAP_KEY` and the ACLED access key; store both in the sops/age secrets file outside the repo (`~/.config/mastertrader/secrets.sops.env`, P0-T022; see [07 §2](../../../docs/07-security-notes.md#2-secrets)) under `NASA_FIRMS_MAP_KEY` and `ACLED_EMAIL`/`ACLED_API_KEY`.
+- [ ] Optional: if you want YouTube as a source, create a free YouTube Data API v3 key in your own Google Cloud account and store it as `YOUTUBE_DATA_API_KEY` in the same file (P4-T066 checks its quota). Otherwise tell the agent you decline YouTube.
 - [ ] Read Finnhub's terms (ML clause), CryptoPanic's API terms (attribution) and OpenSanctions' licence (non-commercial use).
 - [ ] Fill `config/intel/source_terms.yaml` with one entry per source and the date you read the terms.
 - [ ] Tell the agent which sources you decided not to enable.

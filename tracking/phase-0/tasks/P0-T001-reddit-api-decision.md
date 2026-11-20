@@ -54,7 +54,7 @@ A recorded yes/no decision on Reddit as an optional source, made **before 2026-1
 - Deadline: application submitted (or decision 'no' recorded) by **2026-10-31** (target 2026-10-28 to leave slack).
 - Dedicated Reddit account (not your personal one), 2FA on, used read-only; official OAuth API only (PRAW), never scraping or Reddit RSS (reported to end 2026-11-13).
 - Reddit is a *sunsetting* source (06 §0): never core; no AI training on Reddit data without approval (12 §4).
-- Outputs: client id / secret / user agent → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs: client id / secret / user agent → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 

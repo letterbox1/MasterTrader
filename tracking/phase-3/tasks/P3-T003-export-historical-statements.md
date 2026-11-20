@@ -59,7 +59,7 @@ Every historical statement you already have (IBKR Flex, OANDA, IG, exchanges, an
 - [ ] List every account you've held since your oldest open lot (venue, account id suffix, currency)
 - [ ] Export statements per the formats above; name files `<venue>_<account>_<from>_<to>.<ext>`
 - [ ] Copy them into the inbox paths on the workstation (a local copy; scp over Tailscale only if the stack runs on another machine); confirm checksums
-- [ ] If using the IBKR Flex Web Service: create a read-only Flex token + query ids; add them to the sops file (`sops secrets/journal.enc.yaml`)
+- [ ] If using the IBKR Flex Web Service: create a read-only Flex token + query ids; add them to the sops file (`sops `~/.config/mastertrader/secrets.sops.env`)
 - [ ] Note any gaps (closed accounts, lost records) in the progress log so P3-T061 can flag those lots as `cost_base_estimated`
 - [ ] Tell the agent (comment here) when the drop is complete
 

@@ -57,7 +57,7 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 - [ ] Write `ops/scripts/telethon_login.py` (interactive, prints no secrets).
 - [ ] Add the sops creation rule for `/etc/mastertrader/telethon.session.sops` to `infra/secrets/.sops.yaml` and its decrypt step to `infra/scripts/secrets-up.sh` (scope `ingest-text`).
-- [ ] Add `discord.bot_token`, `telegram.api_id`, `telegram.api_hash`, `telegram.ingest_bot_token` key names to `infra/secrets/secrets.example.yaml` (names only) and the `ingest-text` scope.
+- [ ] Add `discord.bot_token`, `TELEGRAM_READER_API_ID`, `TELEGRAM_READER_API_HASH`, `telegram.ingest_bot_token` key names to `.env.example` (names only) and the `ingest-text` scope.
 - [ ] Add gitleaks custom rules for Telethon session strings and Discord token format.
 - [ ] Document the bootstrap + rotation in `docs/runbooks/social-accounts.md`.
 

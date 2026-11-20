@@ -60,8 +60,8 @@ review_result: ""
 - Global CSS: `min-h-dvh` shell, `tabular-nums` utility, reduced-motion overrides, focus ring 2px Cobalt + 2px offset, default theme dark.
 - PWA: manifest (name, icons from `brand/app-icon.svg`), service worker caches the shell only — never API responses.
 - `openapi-typescript` generation from `crates/mt-api/openapi.json` (utoipa, P0-T032) into `src/lib/api/types.ts` (CI fails if stale).
-- `@supabase/supabase-js` (pinned) for **Auth only**: an ESLint rule bans `.from(`, `.rpc(`, `.channel(` and `.storage` on the client, so the browser never talks to the database, Realtime or Storage ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)); the Supabase URL and the public anon key come from build-time env (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`), never the `service_role` key.
-- `vercel.json` (static SPA rewrites to `index.html`, security headers matching Caddy's CSP/HSTS, no Vercel Functions, no analytics) and an `API_BASE_URL` build setting so the same bundle can call `mt-api` on the runtime host later.
+- `@supabase/supabase-js` (pinned) for **Auth only**: an ESLint rule bans `.from(`, `.rpc(`, `.channel(` and `.storage` on the client, so the browser never talks to the database, Realtime or Storage ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)); the Supabase URL and the public anon key come from build-time env (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`), never the `service_role` key.
+- `vercel.json` (static SPA rewrites to `index.html`, security headers matching Caddy's CSP/HSTS, no Vercel Functions, no analytics) and an `VITE_MT_API_URL` build setting so the same bundle can call `mt-api` on the runtime host later.
 
 ## ToDo
 

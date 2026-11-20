@@ -17,7 +17,7 @@ modules: [M22, M4]
 dashboards: [D18, D07]
 tools: [cargo, uv, docker, sops, git]
 mcp: []
-env: [HELIUS_API_KEY, ALCHEMY_API_KEY, GOPLUS_API_KEY, CRYPTORANK_API_KEY]
+env: [HELIUS_API_KEY, ALCHEMY_API_KEY, GOPLUS_APP_KEY, CRYPTORANK_API_KEY]
 services: [helius, alchemy, goplus, cryptorank, supabase-postgres, nats]
 branch: p5/P5-T068-live-read-only-check-with-your-keys-helius-alche
 pr: ""
@@ -52,7 +52,7 @@ The keyless builds (RPC pools, wallet indexer, discovery, enrichment and risk cl
 - Read-only calls only: balances/assets (Helius DAS `getAssetsByOwner`, Alchemy/Blockscout token balances), `eth_feeHistory`/`getRecentPrioritizationFees` samples, GoPlus token/approval security for ≤ 20 tokens, CryptoRank calendar and funding for ≤ 20 projects.
 - Every registered address (P5-T005) gets at least one successful live balance read; D18 shows them with the live source and timestamp.
 - Quota usage after the run stays below 5% of each provider's daily share; the quota tracker (P1) records every call.
-- Keys are read from the sops tmpfs by name only (`HELIUS_API_KEY`, `ALCHEMY_API_KEY`, `GOPLUS_API_KEY`, `CRYPTORANK_API_KEY`); a log/NATS capture of the run contains no key value.
+- Keys are read from the sops tmpfs by name only (`HELIUS_API_KEY`, `ALCHEMY_API_KEY`, `GOPLUS_APP_KEY`, `CRYPTORANK_API_KEY`); a log/NATS capture of the run contains no key value.
 - Live vs fixture: parse every live response with the same adapters; schema differences are fixed in the adapter (with a refreshed fixture) or filed as a bug.
 
 ## ToDo

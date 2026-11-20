@@ -53,13 +53,13 @@ Read-only API keys exist on the Binance and Bybit testnets (IP-allow-listed); th
 - OANDA practice: generate a personal access token on the practice account (fxTrade Practice → Manage API Access); normal credentials, no money at risk
 - IG demo: API key + demo username/password (normal credentials)
 - Alpaca paper: paper key ID/secret; IBKR paper (only if you use IBKR): paper username/password for the `ib-gateway` login (P1-T070); no live-account credentials
-- Every value goes into the sops file **outside the repo** (`sops ~/.config/mastertrader/secrets.sops.yaml`, [07 §2](../../../docs/07-security-notes.md#2-secrets)) under these names: `BINANCE_TESTNET_READ_KEY`, `BINANCE_TESTNET_READ_SECRET`, `BYBIT_TESTNET_READ_KEY`, `BYBIT_TESTNET_READ_SECRET`, `OANDA_PRACTICE_TOKEN`, `OANDA_PRACTICE_ACCOUNT_ID`, `IG_DEMO_API_KEY`, `IG_DEMO_USERNAME`, `IG_DEMO_PASSWORD`, `ALPACA_PAPER_KEY_ID`, `ALPACA_PAPER_SECRET_KEY`, and if used `IBKR_PAPER_USERNAME`, `IBKR_PAPER_PASSWORD`; record each key's creation date (rotation alert at 90 days, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)). **Never** chat, issues, git or this file
+- Every value goes into the sops file **outside the repo** (`sops ~/.config/mastertrader/secrets.sops.env`, [07 §2](../../../docs/07-security-notes.md#2-secrets)) under these names: `BINANCE_TESTNET_READONLY_API_KEY`, `BINANCE_TESTNET_READONLY_API_SECRET`, `BYBIT_TESTNET_READONLY_API_KEY`, `BYBIT_TESTNET_READONLY_API_SECRET`, `OANDA_PRACTICE_API_TOKEN`, `OANDA_PRACTICE_PAPER_ACCOUNT_ID`, `IG_DEMO_API_KEY`, `IG_DEMO_USERNAME`, `IG_DEMO_PASSWORD`, `ALPACA_PAPER_API_KEY`, `ALPACA_PAPER_API_SECRET`, and if used `IBKR_PAPER_USERNAME`, `IBKR_PAPER_PASSWORD`; record each key's creation date (rotation alert at 90 days, [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)). **Never** chat, issues, git or this file
 - The agent's GET-only client allow-list stays as a second safeguard for the full-scope practice credentials (P1-T041/T042)
 
 ## ToDo
 
 - [ ] For each testnet/practice venue, create the narrowest key available and turn on its IP allow-list
-- [ ] Run `sops ~/.config/mastertrader/secrets.sops.yaml` and add the values under the names above, with creation dates
+- [ ] Run `sops ~/.config/mastertrader/secrets.sops.env` and add the values under the names above, with creation dates
 - [ ] Tell the agent which venues are done (names only, no values)
 - [ ] Run `./kanban preflight P1-T073 P1-T074` and confirm no key name is reported missing
 - [ ] Record in the progress log which venues use read-only keys (Binance/Bybit testnets) and which use normal practice credentials

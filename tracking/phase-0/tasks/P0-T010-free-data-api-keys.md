@@ -53,7 +53,7 @@ Free-tier API keys exist for FRED, EIA, USDA NASS QuickStats, Myfxbook, CoinGeck
 - One account per provider (12 §4: no multi-accounting, no key multiplexing).
 - Record each key's free limit (e.g. Myfxbook 100 calls/day; Finnhub 60 calls/min; CoinGecko Demo cache ≤ 24 h with attribution) in the log for P1's quota tracker.
 - Blockscout needs no key; Etherscan is manual lookups only (never a decision input); Anvil is local.
-- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `data_keys:` (`fred`, `eia`, `usda_quickstats` (env `USDA_QUICKSTATS_API_KEY`; requested by email, free; gap P1-B019), `myfxbook`, `coingecko_demo`, `cryptorank`, `helius`, `alchemy`, `goplus`, `finnhub`, `cryptopanic`). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022) under `data_keys:` (`fred`, `eia`, `usda_quickstats` (env `USDA_NASS_API_KEY`; requested by email, free; gap P1-B019), `myfxbook`, `coingecko_demo`, `cryptorank`, `helius`, `alchemy`, `goplus`, `finnhub`, `cryptopanic`). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 

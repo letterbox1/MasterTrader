@@ -56,7 +56,7 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 
 ## ToDo
 
-- [ ] Start the ported paper bots (P7-T038) on the demo account via the chosen adapter and run MasterTradingBot in parallel (cTrader route: uses `CTRADER_CLIENT_ID`/`CTRADER_CLIENT_SECRET` from P7-T004, read from the sops file).
+- [ ] Start the ported paper bots (P7-T038) on the demo account via the chosen adapter and run MasterTradingBot in parallel (cTrader route: uses `FPMARKETS_CTRADER_CLIENT_ID`/`FPMARKETS_CTRADER_CLIENT_SECRET` from P7-T004, read from the sops file).
 - [ ] Collect signals/orders; write `tools/parity/mtb_parity.py` comparison.
 - [ ] Produce and attach the parity report.
 - [ ] File bugs for unexplained mismatches.

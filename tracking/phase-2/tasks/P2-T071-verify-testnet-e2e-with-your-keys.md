@@ -17,7 +17,7 @@ modules: [M12, M11]
 dashboards: [D05, D06]
 tools: [cargo, docker, sops]
 mcp: []
-env: [BINANCE_TESTNET_TRADE_KEY, BINANCE_TESTNET_TRADE_SECRET, BINANCE_TESTNET_DEADMAN_KEY, BINANCE_TESTNET_DEADMAN_SECRET, ALPACA_PAPER_KEY_ID, ALPACA_PAPER_SECRET_KEY, OANDA_PRACTICE_TOKEN, OANDA_PRACTICE_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
+env: [BINANCE_TESTNET_PAPER_API_KEY, BINANCE_TESTNET_PAPER_API_SECRET, BINANCE_TESTNET_HITL_API_KEY, BINANCE_TESTNET_HITL_API_SECRET, BINANCE_TESTNET_AUTO_API_KEY, BINANCE_TESTNET_AUTO_API_SECRET, BYBIT_TESTNET_HITL_API_KEY, BYBIT_TESTNET_HITL_API_SECRET, BYBIT_TESTNET_DEADMAN_API_KEY, BYBIT_TESTNET_DEADMAN_API_SECRET, BINANCE_TESTNET_DEADMAN_API_KEY, BINANCE_TESTNET_DEADMAN_API_SECRET, ALPACA_PAPER_API_KEY, ALPACA_PAPER_API_SECRET, OANDA_PRACTICE_API_TOKEN, OANDA_PRACTICE_PAPER_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
 services: [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, supabase-postgres]
 branch: p2/P2-T071-verify-testnet-e2e-with-your-keys
 pr: ""
@@ -121,3 +121,4 @@ With your trade-only, IP-locked, no-withdrawal testnet/practice keys from P2-T00
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.72: R2.30, R2.N3, R2.31)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; host → workstation; USER dep P2-T001 kept (live keys); tools [uv, docker, sops] → [cargo, docker, sops]; services [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, postgres] → [binance-testnet, alpaca-paper, oanda-practice, ig-demo, nats, supabase-postgres])
+- 2026-11-20 00:00 · main · env names moved to the `.env.example` convention (`<SERVICE>_<ENVIRONMENT>_<ROLE>_<FIELD>`); keys per mode listed.

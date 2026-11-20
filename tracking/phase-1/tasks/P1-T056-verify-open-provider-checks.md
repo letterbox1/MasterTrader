@@ -17,7 +17,7 @@ modules: [M1]
 dashboards: []
 tools: [git, uv, sops]
 mcp: []
-env: [OANDA_PRACTICE_TOKEN, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
+env: [OANDA_PRACTICE_API_TOKEN, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
 services: [oanda-practice, ig-demo]
 branch: p1/P1-T056-verify-open-provider-checks
 pr: ""

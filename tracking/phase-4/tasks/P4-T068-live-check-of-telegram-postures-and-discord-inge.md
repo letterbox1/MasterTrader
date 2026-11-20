@@ -17,7 +17,7 @@ modules: [M2]
 dashboards: [D08, D07]
 tools: [uv, cargo, sops, git]
 mcp: []
-env: [TELEGRAM_API_ID, TELEGRAM_API_HASH, DISCORD_BOT_TOKEN]
+env: [TELEGRAM_READER_API_ID, TELEGRAM_READER_API_HASH, DISCORD_BOT_TOKEN]
 services: [telegram-account, discord-feeds-server, nats, supabase-postgres]
 branch: p4/P4-T068-live-check-of-telegram-postures-and-discord-inge
 pr: ""

@@ -56,7 +56,7 @@ A Windows VPS in the same data centre region as your FP Markets MT5 server (LD4 
 
 - [ ] Pick a VPS provider with a location next to the MT5 server; create the instance.
 - [ ] Install Tailscale, join your tailnet, disable public RDP in the provider firewall (inbound deny-all).
-- [ ] Record the static egress IP on the task (it is not secret) and store the admin credential in sops (`secrets/live.enc.yaml` → `mt5_vps.*`).
+- [ ] Record the static egress IP on the task (it is not secret) and store the admin credential in sops (`~/.config/mastertrader/secrets.sops.env` → `mt5_vps.*`).
 - [ ] Install the MT5 terminal from FP Markets only (no third-party builds); log in with your **demo** account first.
 - [ ] Tell the agent the VPS is ready so P7-T035 can harden it and deploy the bridge.
 

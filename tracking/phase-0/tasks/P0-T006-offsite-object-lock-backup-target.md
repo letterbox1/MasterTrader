@@ -53,11 +53,11 @@ An off-site, immutable target exists for (a) the pgBackRest repo + WAL archive, 
 
 - Three private buckets with Object Lock enabled **at creation** (it can't be added later on B2):
 - `mt-pgbackrest`: compliance retention **35 days** (must not exceed pgBackRest's effective retention, or expiry fails); `mt-restic`: compliance 35 days; `mt-worm-seal`: compliance **2557 days (7 years)** for seals and monthly WORM exports.
-- One application key **per bucket**, limited to that bucket (list/read/write; no delete on `mt-worm-seal`); key ids/secrets → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `pgbackrest:`, `restic:`, `worm_seal:`.
+- One application key **per bucket**, limited to that bucket (list/read/write; no delete on `mt-worm-seal`); key ids/secrets → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022) under `pgbackrest:`, `restic:`, `worm_seal:`.
 - Free alternative: second box (e.g. a Raspberry Pi + USB disk at another location) running `rest-server --append-only --private-repos`, reachable over Tailscale only (or another private path you control).
 - Cost note: B2 is pay-as-you-go storage (first 10 GB free); it is storage, not data, and is the docs' named default. Log the expected size (~50–200 GB in year 1).
 - Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
-- Env names the late live checks use (names only; values stay in the secrets file): `PGBACKREST_REPO1_S3_KEY`, `PGBACKREST_REPO1_S3_KEY_SECRET`, `PGBACKREST_REPO1_CIPHER_PASS`, `RESTIC_PASSWORD`, `B2_ACCOUNT_ID`, `B2_ACCOUNT_KEY`, `MT_WORM_SEAL_S3_KEY_ID`, `MT_WORM_SEAL_S3_SECRET`.
+- Env names the late live checks use (names only; values stay in the secrets file): `B2_PGBACKREST_KEY_ID`, `B2_PGBACKREST_APPLICATION_KEY`, `MT_PGBACKREST_CIPHER_PASSWORD`, `MT_RESTIC_PASSWORD`, `B2_RESTIC_KEY_ID`, `B2_RESTIC_APPLICATION_KEY`, `B2_WORM_SEAL_KEY_ID`, `B2_WORM_SEAL_APPLICATION_KEY`.
 
 ## ToDo
 

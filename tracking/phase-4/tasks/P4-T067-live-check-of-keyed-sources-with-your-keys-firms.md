@@ -17,7 +17,7 @@ modules: [M2, M3, M6]
 dashboards: [D07, D08]
 tools: [uv, sops, git]
 mcp: []
-env: [FINNHUB_API_KEY, CRYPTOPANIC_API_KEY, FIRMS_MAP_KEY, ACLED_EMAIL, ACLED_API_KEY, MYFXBOOK_EMAIL, MYFXBOOK_PASSWORD]
+env: [FINNHUB_API_KEY, CRYPTOPANIC_API_KEY, NASA_FIRMS_MAP_KEY, ACLED_EMAIL, ACLED_API_KEY, MYFXBOOK_EMAIL, MYFXBOOK_PASSWORD]
 services: [finnhub, cryptopanic, nasa-firms, acled, opensanctions, myfxbook, ig-demo, oanda-practice]
 branch: p4/P4-T067-live-check-of-keyed-sources-with-your-keys-firms
 pr: ""

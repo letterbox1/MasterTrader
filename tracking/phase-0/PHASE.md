@@ -143,7 +143,7 @@ Every R0.xx and T0.xx is covered. P0-T013 (offline `worm_owner` credential) is a
 - **Build first, keys last** (17 §E): P0-T022 uses a throwaway age key, P0-T029–P0-T031 a throwaway `worm_owner` password, P0-T037/P0-T039/P0-T040 MinIO with Object Lock, P0-T045 a mocked Bot API, P0-T042 a mock LLM provider, P0-T033 and the tests a seeded Supabase test user, P0-T026 the 12 §2 starting classifications. The real accounts are first used in the late VERIFY tasks P0-T057 (backup target), P0-T073 (seals/witness/alerts) and P0-T068 (LLM keys), which carry the env names; the soak (P0-T063) is keyless.
 - **C3 before Telegram**: until Telegram C3 lands in P2 (T2.33, retired via T2.24), C3 completes through the workstation-only break-glass CLI `mtctl approve <id>` + TOTP (a Supabase password + TOTP login), audited (17 §D P0-B002; P0-T035).
 - **Integrity response** (17 §A P0-B001, 16 §2.11): KV `audit.integrity`, default `block_new_entries`; P0 builds the `mt_risk::integrity_gate` hook point (`mt-risk` crate) and P2 calls it inline on every order (R2.58/T2.39).
-- **Secrets file location**: outside the repo, e.g. `~/.config/mastertrader/secrets.sops.yaml`, backed up by restic (17 §D P0-B018).
+- **Secrets file location**: outside the repo, e.g. `~/.config/mastertrader/secrets.sops.env`, backed up by restic (17 §D P0-B018).
 - **WORM write path**: if Postgres is unreachable, WORM writes buffer in JetStream (default 1 GB or 24 h; new entries stop above 80 %, exits/Kill still recorded; 16 §3.3).
 - **Object Lock arithmetic**: pgBackRest expiry fails if bucket lock > repo retention; buckets use 35 days, seals/exports 7 years (P0-T006, P0-T039).
 - **SLOs** (02 §9.2): WORM insert p99 < 5 ms (gated in P0-T066), command bus p99 < 50 ms excl. handler.

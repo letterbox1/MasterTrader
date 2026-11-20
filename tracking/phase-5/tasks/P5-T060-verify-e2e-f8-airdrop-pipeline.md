@@ -17,7 +17,7 @@ modules: [M4, M19]
 dashboards: [D12, D13]
 tools: [cargo, uv, pnpm, anvil, git]
 mcp: []
-env: [GOPLUS_API_KEY, CRYPTORANK_API_KEY, COINGECKO_DEMO_API_KEY, HELIUS_API_KEY, ALCHEMY_API_KEY]
+env: [GOPLUS_APP_KEY, CRYPTORANK_API_KEY, COINGECKO_DEMO_API_KEY, HELIUS_API_KEY, ALCHEMY_API_KEY]
 services: [supabase-postgres, nats, goplus, cryptorank, coingecko, helius, alchemy]
 branch: p5/P5-T060-verify-e2e-f8-airdrop-pipeline
 pr: ""

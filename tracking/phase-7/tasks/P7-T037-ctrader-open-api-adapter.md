@@ -47,7 +47,7 @@ An `mt-engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 
 ## Requirements
 
-- OAuth app registered by you in P7-T004 (credentials in sops: `CTRADER_CLIENT_ID`, `CTRADER_CLIENT_SECRET`); token refresh handled; scopes trading + accounts only.
+- OAuth app registered by you in P7-T004 (credentials in sops: `FPMARKETS_CTRADER_CLIENT_ID`, `FPMARKETS_CTRADER_CLIENT_SECRET`); token refresh handled; scopes trading + accounts only.
 - Respect documented rate limits (record them from P7-T004); backoff on throttling.
 - Same capabilities as P7-T036: orders with broker-side SL/TP, symbol mapping, fills, swaps/commissions, recon side.
 - Licence-clean implementation (own protobuf client generated from the published proto files).

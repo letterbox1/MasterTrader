@@ -17,7 +17,7 @@ modules: [M10, M15]
 dashboards: [D09]
 tools: [git, uv, python>=3.12, docker]
 mcp: []
-env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERT_CHAT_ID]
+env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERTS_CHAT_ID]
 services: [anomaly, telegram-bot-api]
 branch: p6/P6-T061-verify-seeded-anomaly-telegram
 pr: ""

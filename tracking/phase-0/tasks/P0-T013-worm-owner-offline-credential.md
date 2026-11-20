@@ -51,7 +51,7 @@ Before live money, the Postgres `worm_owner` password for the real stack exists 
 ## Requirements
 
 - Password: ≥ 32 random chars (`openssl rand -base64 36`), generated on a machine you control, never typed into chat.
-- Stored in `offline/worm_owner.sops.yaml` encrypted **only** to the offline age recipient; kept on removable media + a copy in your password manager's secure notes; never copied into `~/.config/mastertrader/secrets.sops.yaml`.
+- Stored in `offline/worm_owner.sops.yaml` encrypted **only** to the offline age recipient; kept on removable media + a copy in your password manager's secure notes; never copied into `~/.config/mastertrader/secrets.sops.env`.
 - Ceremony (documented in P0-T061): unlock the offline identity → `sops exec-env offline/worm_owner.sops.yaml 'just db-migrate'` (the recipe switches to `worm_owner` only for `-- mt:worm` files) → lock it again; the password lives only in that process's environment.
 - The ceremony runs against the stack that will hold live money (the workstation's self-hosted Supabase, or Supabase cloud if you choose it at the shift; on cloud the platform operator still holds the real superuser, so the external seal is what proves tampering, 18 §4.4).
 - Rotation: on any suspicion and yearly; rotation is itself a ceremony (`ALTER ROLE` from a `psql` session as an admin role).

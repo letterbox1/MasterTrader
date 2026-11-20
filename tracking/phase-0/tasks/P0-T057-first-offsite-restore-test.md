@@ -17,7 +17,7 @@ modules: [M17]
 dashboards: []
 tools: [docker, supabase, pgbackrest, restic, sops]
 mcp: []
-env: [PGBACKREST_REPO1_S3_KEY, PGBACKREST_REPO1_S3_KEY_SECRET, PGBACKREST_REPO1_CIPHER_PASS, RESTIC_PASSWORD, B2_ACCOUNT_ID, B2_ACCOUNT_KEY]
+env: [B2_PGBACKREST_KEY_ID, B2_PGBACKREST_APPLICATION_KEY, MT_PGBACKREST_CIPHER_PASSWORD, MT_RESTIC_PASSWORD, B2_RESTIC_KEY_ID, B2_RESTIC_APPLICATION_KEY]
 services: [backblaze-b2, supabase-postgres, prefect-server]
 branch: p0/P0-T057-first-offsite-restore-test
 pr: ""

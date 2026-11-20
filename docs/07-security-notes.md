@@ -20,7 +20,16 @@ The scope is a single-user, self-hosted platform (workstation first, optional cl
 ## 2. Secrets
 
 - **Never in git.** `.env` is git-ignored. Add a pre-commit secret scanner (`gitleaks`), plus GitHub secret scanning on the private repo.
-- **Location:** the encrypted sops file lives **outside the repo** (e.g. `~/.config/mastertrader/`) and is backed up by restic. The repo holds only `.sops.yaml` and an example file with key names, no values.
+- **Location:** the encrypted sops file `~/.config/mastertrader/secrets.sops.env` lives **outside the repo** and is backed up by restic. The repo holds only `infra/secrets/.sops.yaml` and [`.env.example`](../.env.example), the catalogue of every name from P0 to P8, with no values.
+- **Intake (P0-T022):** copy `.env.example` to `.env` (git-ignored: `.env`, `.env.*`, `!.env.example`), fill it with [ENV-SETUP.md](ENV-SETUP.md), then `just secrets-generate` → `just secrets-seal`. Sealing encrypts it into the sops file, verifies, and shreds the plaintext. Agents only ever see names (`just secrets-check`).
+- **Naming:** `<SERVICE>_<ENVIRONMENT>_<ROLE>_<FIELD>`.
+  - **SERVICE:** the provider as branded (`BINANCE`, `FRED`).
+  - **ENVIRONMENT** (venues only): `TESTNET`, `PRACTICE`, `DEMO`, `PAPER` or `LIVE`.
+  - **ROLE** (venues only): `READONLY`, `PAPER`, `HITL`, `AUTO` or `DEADMAN`.
+  - **FIELD:** `API_KEY`, `API_SECRET`, `API_PASSPHRASE`, `API_TOKEN`, `ACCOUNT_ID`, `USERNAME`, `PASSWORD`, `CLIENT_ID`, `CLIENT_SECRET`, `BOT_TOKEN`, `CHAT_ID`, `URL` or `EMAIL`.
+  - **Prefixes:** `MT_` marks values MasterTrader generates; `VITE_` marks public web build values, never secrets.
+  - Every task's `env` field and every service scope uses these names; a lint check enforces it.
+- **Never in `.env` or the sealed file:** wallet seeds and private keys (the signer creates and holds hot, identity and burner keys; vault and warm keys stay on your hardware wallets), the offline `worm_owner` credential (P0-T013), and MCP client tokens (your client's keychain).
 - **Storage:**
   - v1: `sops` + `age`-encrypted secrets file, decrypted at container start into tmpfs.
   - **Where the age identity lives** (`secrets.age_identity_store`, [16 §2.15](16-configuration-and-safety-model.md#215-platform-deployment-and-regions); [18 §8](18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)):
@@ -28,8 +37,8 @@ The scope is a single-user, self-hosted platform (workstation first, optional cl
     - **Before live money:** a hardware key (YubiKey, `yubikey`) holds both identities: *host* (decrypts the runtime secrets at start-up) and *offline* (only the `worm_owner` database credential and recovery of the secrets file). Setting it up is [P7-T072](../tracking/phase-7/tasks/P7-T072-move-the-age-identities-onto-a-yubikey-before-li.md) (a USER task, done before live keys exist).
     - In every mode the age key is never on the same disk as the backups, so a stolen disk or backup stays encrypted.
   - Upgrade path: self-hosted **OpenBao** (Vault fork, MPL; preferred) or Infisical. Move there once the signer service (13 §2) holds more than one hot key.
-- **What goes in it:** exchange/broker keys, LLM API keys (Anthropic, custom endpoint), the SMTP app password (§9), NATS credentials, the MCP token pepper, the Supabase database passwords and service keys (the `service_role` key, the JWT signing keys of a self-hosted stack), and the Supabase and Vercel access tokens used by deploy tasks. You add them yourself (USER tasks); never via chat or git.
-- **Per-service least privilege:** each container gets only the secrets it needs. The LLM agents never see broker keys. The web app (local or on Vercel) holds no secrets beyond the public Supabase URL and anon key, which open nothing because RLS denies all (§6).
+- **What goes in it:** exchange/broker keys, LLM API keys (Anthropic, custom endpoint), the SMTP app password (§9), NATS credentials, the MCP token pepper, the Supabase database passwords and service keys (the `service_role` key, the JWT signing keys of a self-hosted stack), and the Supabase and Vercel access tokens used by deploy tasks. You add them yourself through `.env` (USER tasks); never via chat or git.
+- **Per-service least privilege:** each container gets only the secrets it needs. The LLM agents never see broker keys. The web app (local or on Vercel) holds no secrets beyond the public Supabase URL and publishable (anon) key (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`), which open nothing because RLS denies all (§6).
 - **Rotation:** rotate exchange/broker keys every 90 days by default (configurable) and immediately after any suspected leak. The secrets file records each key's creation date, and Grafana alerts when a key is older than 90 days.
 
 ## 3. Broker & exchange keys
@@ -112,7 +121,7 @@ At the workstation, everything is on localhost and Tailscale isn't needed.
   - the in-engine watchdog and the separate `deadman` sidecar cancel orders after 5 s and apply each bot's `on_system_failure` (default `flatten`) after 10 s (defaults, configurable);
   - if the host or its internet is down, only the venue side protects you: cancel-on-disconnect / cancel-after timers and a **resting venue-side stop placed at entry on every live position**;
   - after an unplanned stop the engine restarts flat with every bot paused until you resume it.
-- Local inference servers (Laya, `llm-local` with llama-server or vLLM, TEI) bind to `127.0.0.1` and require an API key (`LAYA_API_KEY` etc.), even inside the internal network.
+- Local inference servers (Laya, `llm-local` with llama-server or vLLM, TEI) bind to `127.0.0.1` and require an API key (`MT_LAYA_API_KEY` etc.), even inside the internal network.
 
 ### 5.1 Optional Windows VPS (MT5 bridge)
 

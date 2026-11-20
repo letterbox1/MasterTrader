@@ -54,7 +54,7 @@ LiteLLM has what it needs for its routes: an Anthropic API key with a monthly sp
 - Anthropic Console: workspace `mastertrader`, API key scoped to it, **monthly spend limit** set at or slightly above the gateway's monthly cap (log the number).
 - Custom endpoint: base URL + key, OpenAI-compatible, reachable from the workstation (log the hostname only).
 - Budgets are configurable defaults from [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets), not numbers you have to invent: monthly cap **US$40**; daily per-role budgets debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30; over budget → `local-advisor` fallback. Changing one later is a setting (`system.settings.update`; raising it is C3).
-- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.yaml` (created by the secrets task, P0-T022) under `litellm:` (`anthropic_api_key`, `custom_endpoint_url`, `custom_endpoint_key`). P0-T068 uses the env names `ANTHROPIC_API_KEY`, `MT_CUSTOM_LLM_BASE_URL`, `MT_CUSTOM_LLM_API_KEY` (names only). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
+- Outputs → the sops secrets file `~/.config/mastertrader/secrets.sops.env` (created by the secrets task, P0-T022) under `litellm:` (`anthropic_api_key`, `custom_endpoint_url`, `custom_endpoint_key`). P0-T068 uses the env names `ANTHROPIC_API_KEY`, `CUSTOM_LLM_BASE_URL`, `CUSTOM_LLM_API_KEY` (names only). Until the secrets file exists, keep values **only** in your password manager; never in chat, email, git, issues or notes apps.
 
 ## ToDo
 

@@ -42,7 +42,7 @@ Evidence for R6.N2: every local inference server added in Phase 6 (tier-B `vllm-
 ## Context & references
 
 - Roadmap: [R6.N2](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.73
-- Spec: [07 §5](../../../docs/07-security-notes.md#5-network--host) (local inference servers bind to `127.0.0.1` and require an API key, even inside the internal network; no published ports except via Tailscale) · [02 §3](../../../docs/02-v1-architecture.md) networks (`core`, `scrape`, `signer`) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (`LAYA_API_KEY`)
+- Spec: [07 §5](../../../docs/07-security-notes.md#5-network--host) (local inference servers bind to `127.0.0.1` and require an API key, even inside the internal network; no published ports except via Tailscale) · [02 §3](../../../docs/02-v1-architecture.md) networks (`core`, `scrape`, `signer`) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (`MT_LAYA_API_KEY`)
 - Depends on (this phase): P6-T011 (Hindsight), P6-T023 (tier-B serving), P6-T027 (bake-off containers)
 - Cross-phase: P0-T056 (image scan + "nothing exposed outside Tailscale" check this extends)
 

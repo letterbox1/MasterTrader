@@ -17,7 +17,7 @@ modules: [M2]
 dashboards: [D08]
 tools: [uv, yt-dlp, git]
 mcp: []
-env: [YOUTUBE_API_KEY]
+env: [YOUTUBE_DATA_API_KEY]
 services: [youtube-data-api]
 branch: p4/P4-T066-youtube-check-channel-rss-data-api-v3-quota-and-
 pr: ""

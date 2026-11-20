@@ -57,7 +57,7 @@ Each live sub-account has its own API key with trade-only scope, withdrawals dis
 
 - [ ] For each sub-account: create an API key with trade + read scopes only; untick every withdrawal/transfer scope.
 - [ ] Set the IP allow-list to the exit node's static IP from P7-T065 only (and the VPS IP for FP Markets if relevant); this is T7.11's 'allow-list its IP on every live key' step.
-- [ ] Edit the sops file on the runtime host (`sops secrets/live.enc.yaml`) and add the key fields plus `created_at`; never paste them anywhere else.
+- [ ] Edit the sops file on the runtime host (`sops `~/.config/mastertrader/secrets.sops.env`) and add the key fields plus `created_at`; never paste them anywhere else.
 - [ ] Create the `deadman` sidecar's own trade-only key per sub-account and a separate **read-only** key per venue for reconciliation (`live.<venue>.recon.*`), all allow-listed to the same egress IP.
 - [ ] Run the key audit (P7-T032) from D16 → Keys → 'Audit live keys' and fix anything it flags.
 - [ ] Note the key creation date on the D16 keys metadata view.

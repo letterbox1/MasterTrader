@@ -55,7 +55,7 @@ A recorded yes/no on Reddit API access (applied for in P0 T0.08, before 2026-10-
 ## ToDo
 
 - [ ] Check the email account used in T0.08 for Reddit's API decision.
-- [ ] If granted: put `client_id`/`client_secret` into the sops/age secrets file outside the repo (`/etc/mastertrader/secrets.sops.yaml`, P0-T022; see [07 §2](../../../docs/07-security-notes.md#2-secrets)); never paste them anywhere else.
+- [ ] If granted: put `client_id`/`client_secret` into the sops/age secrets file outside the repo (`~/.config/mastertrader/secrets.sops.env`, P0-T022; see [07 §2](../../../docs/07-security-notes.md#2-secrets)); never paste them anywhere else.
 - [ ] Write the yes/no outcome in this task's progress log.
 
 ## Verification

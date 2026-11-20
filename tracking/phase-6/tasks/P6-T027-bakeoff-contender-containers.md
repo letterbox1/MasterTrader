@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every bake-off contender runs locally, digest-pinned, bound to `127.0.0.1`/internal network with an API key: Laya server (`LAYA_API_KEY`), self-hosted Clef-flash (FP8 ~11.5 GB or NF4 8 GB), Kev-4B/9B (only if P6-T068 found a public, licence-compatible release), the SemIf service from P4 and a JSON-generation baseline on `local-advisor`.
+Every bake-off contender runs locally, digest-pinned, bound to `127.0.0.1`/internal network with an API key: Laya server (`MT_LAYA_API_KEY`), self-hosted Clef-flash (FP8 ~11.5 GB or NF4 8 GB), Kev-4B/9B (only if P6-T068 found a public, licence-compatible release), the SemIf service from P4 and a JSON-generation baseline on `local-advisor`.
 
 ## Context & references
 

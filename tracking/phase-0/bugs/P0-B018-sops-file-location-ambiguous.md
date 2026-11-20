@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The docs agree and the implementing tasks have one unambiguous answer. Suggested fix: Document the P0 choice (P0-T022): encrypted file lives at `/etc/mastertrader/secrets.sops.yaml` outside the repo, encrypted copy off-site via restic; the repo holds only `.sops.yaml` and an example with key names.
+The docs agree and the implementing tasks have one unambiguous answer. Suggested fix: Document the P0 choice (P0-T022): encrypted file lives at `~/.config/mastertrader/secrets.sops.env` outside the repo, encrypted copy off-site via restic; the repo holds only `.sops.yaml` and an example with key names.
 
 ## Context & references
 
@@ -51,7 +51,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 - **Expected:** An explicit location rule for the encrypted file.
 - **Actual:** Ambiguous: sops files are commonly committed encrypted, but R0.N1 says no secret in git.
 - **Impact:** Low: someone may commit the encrypted file (and its metadata: key names, dates) to the repo.
-- **Suggested fix:** Document the P0 choice (P0-T022): encrypted file lives at `/etc/mastertrader/secrets.sops.yaml` outside the repo, encrypted copy off-site via restic; the repo holds only `.sops.yaml` and an example with key names.
+- **Suggested fix:** Document the P0 choice (P0-T022): encrypted file lives at `~/.config/mastertrader/secrets.sops.env` outside the repo, encrypted copy off-site via restic; the repo holds only `.sops.yaml` and an example with key names.
 
 ## ToDo
 

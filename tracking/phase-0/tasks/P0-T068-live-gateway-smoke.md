@@ -17,7 +17,7 @@ modules: [M21, M17]
 dashboards: [D16]
 tools: [docker, cargo, sops, curl]
 mcp: []
-env: [ANTHROPIC_API_KEY, MT_CUSTOM_LLM_BASE_URL, MT_CUSTOM_LLM_API_KEY]
+env: [ANTHROPIC_API_KEY, CUSTOM_LLM_BASE_URL, CUSTOM_LLM_API_KEY]
 services: [anthropic-api, custom-llm-endpoint, litellm, llm-local, tei-embed, supabase-postgres]
 branch: p0/P0-T068-live-gateway-smoke
 pr: ""

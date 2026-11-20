@@ -51,8 +51,8 @@ One notifier consumes `alert.{severity}.{kind}` and delivers to Telegram (alerts
 
 ## Requirements
 
-- `mt-telegram-bot` (Rust, teloxide, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) alerts-only bot: sends to your chat ID (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_ALERT_CHAT_ID` from the secrets file at runtime); ignores and does not store incoming messages except `/start` from the configured chat
-- Email via your mail provider's SMTP (TLS required; `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_APP_PASSWORD`, `ALERT_EMAIL_FROM`, `ALERT_EMAIL_TO` from the secrets file), or `alerts.email.enabled: false` (P1-T068); ntfy via HTTP publish with `NTFY_NOTIFIER_TOKEN`
+- `mt-telegram-bot` (Rust, teloxide, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) alerts-only bot: sends to your chat ID (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_ALERTS_CHAT_ID` from the secrets file at runtime); ignores and does not store incoming messages except `/start` from the configured chat
+- Email via your mail provider's SMTP (TLS required; `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_APP_PASSWORD`, `ALERT_EMAIL_FROM`, `ALERT_EMAIL_TO` from the secrets file), or `alerts.email.enabled: false` (P1-T068); ntfy via HTTP publish with `MT_NTFY_PUBLISHER_TOKEN`
 - Routing: `critical` → all three; `warning` → Telegram + ntfy; `info` → notification centre + daily digest; configurable defaults in `config/alerts.yaml` (loosening routing = C3 via the break-glass CLI (`mtctl approve <id>` + TOTP) until Telegram C3 lands in P2; tightening C1)
 - Dedupe key (kind + subject) with a 5 min window and escalation if still open after 15 min (defaults, configurable); global rate limit ≤ 1 msg/s per channel, never above Telegram's 30 msg/s
 - Alertmanager webhook receiver → publishes `alert.*` so Grafana alerts reach all channels through one path; remove P0-T045's direct `telegram_configs` route in the same PR (test: Alertmanager has exactly one receiver, the webhook)

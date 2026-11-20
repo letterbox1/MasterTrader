@@ -17,7 +17,7 @@ modules: [M17]
 dashboards: [D16]
 tools: [git, cargo, uv, docker, sops]
 mcp: []
-env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERT_CHAT_ID, NTFY_NOTIFIER_TOKEN]
+env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERTS_CHAT_ID, MT_NTFY_PUBLISHER_TOKEN]
 services: [telegram, ntfy, nats, grafana, alertmanager]
 branch: p1/P1-T060-verify-alert-path-three-channels
 pr: ""
@@ -46,7 +46,7 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 - Depends on (this phase): P1-T045, P1-T054, P1-T068
 - This is the live, keyed half of the alert path: it needs your Telegram bot (P0-T002) and the SMTP app password or email off (P1-T068); network paths per [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) (P1-B020)
 - Workstation first ([18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)): ntfy is checked with a subscriber on the workstation; the phone subscription over Tailscale is the pre-go-live USER step P1-T003, which this task no longer waits for
-- Run with `sops exec-env ~/.config/mastertrader/secrets.sops.yaml 'make verify-alerts'`; if email is on, the `SMTP_*`/`ALERT_EMAIL_*` names from P1-T068 must also be present
+- Run with `sops exec-env ~/.config/mastertrader/secrets.sops.env 'make verify-alerts'`; if email is on, the `SMTP_*`/`ALERT_EMAIL_*` names from P1-T068 must also be present
 - Cross-phase prerequisites (depends_on): P0-T002 (Telegram bot, your T0.06)
 
 ## Requirements

@@ -64,7 +64,7 @@ Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/pract
 - [ ] Create an API key per sub-account with only trade + read permissions; screenshot (locally, not in git) the permission page showing withdrawals OFF
 - [ ] Set the IP allow-list to the workstation's egress IP (run `curl -s https://ifconfig.me` on the workstation to read it)
 - [ ] Create the separate `deadman` key per venue account (trade-only, cancel/flatten use only, same IP lock)
-- [ ] Add each key to the sops file that lives **outside the repo** (07 §2, e.g. `sops ~/.config/mastertrader/secrets.enc.yaml`) → under `venues.<venue>.<mode>` (and `venues.<venue>.deadman`) add `api_key`, `api_secret`, `created`, `scopes`, `ip_allow`
+- [ ] Add each key to the sops file that lives **outside the repo** (07 §2, e.g. `sops ~/.config/mastertrader/secrets.sops.env`) → under `venues.<venue>.<mode>` (and `venues.<venue>.deadman`) add `api_key`, `api_secret`, `created`, `scopes`, `ip_allow`
 - [ ] Confirm the repo holds only `.sops.yaml` and the example file with key names (no values); run `gitleaks detect` locally
 - [ ] Tell the agent (in the task progress log, no secrets) which venues/modes are ready
 - [ ] Record completion in the progress log (no secrets) and run `./kanban done P2-T001`

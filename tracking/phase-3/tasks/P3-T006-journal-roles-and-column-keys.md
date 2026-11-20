@@ -51,7 +51,7 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 ## Requirements
 
 - Roles: `journal_app` (INSERT, SELECT on `journal.*`), `journal_ro` (SELECT on non-sensitive columns + views; used by `mt-api` queries), `journal_decrypt` (function-level EXECUTE on decrypt helpers only, granted to `journal` and report generation). No role but offline `worm_owner` owns the tables.
-- **Master key** `JOURNAL_MASTER_KEY` (32-byte random, base64, versioned `mk_v<n>`) in the sops file outside the repo ([17 §D P0-B018](../../../docs/17-decisions-register.md#d-other-decisions)); mounted only into `journal` (not `mt-api`, `agents`, `litellm`, `decision-svc`).
+- **Master key** `MT_JOURNAL_ENCRYPTION_KEY` (32-byte random, base64, versioned `mk_v<n>`) in the sops file outside the repo ([17 §D P0-B018](../../../docs/17-decisions-register.md#d-other-decisions)); mounted only into `journal` (not `mt-api`, `agents`, `litellm`, `decision-svc`).
 - **Data keys:** one per FY (e.g. `dk_fy2026-27`), generated on first use, stored **wrapped** (AES-256-GCM under the master key) in `ops.journal_data_key` {`key_id`, `fy`, `wrapped_key`, `master_key_version`, `created_at`, `rewrapped_at`}. This table is **not** WORM (re-wrap is an UPDATE of the wrap only) but every change is recorded in `audit.command` (source `system`). Each encrypted row stores its `key_id`.
 - **Rotation:** `mtctl journal-keys rewrap` (host CLI, TOTP) re-wraps every data key under a new master key version; it never decrypts/re-encrypts or updates a WORM row. Rotation reminder every 90 days by default ([16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)) and immediately after any suspected leak.
 - Fail-closed: `journal` refuses to start without the master key, logs only the key version, and raises an alert.
@@ -61,7 +61,7 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 - [ ] Add role DDL migration `journal_0002_roles` (run as `worm_owner` from the offline secret)
 - [ ] Migration for `ops.journal_data_key` (non-WORM, audited) and its grants (`journal` only)
 - [ ] Add `journal` secrets stanza to `infra/sops/.sops.yaml` and the compose service's tmpfs mount
-- [ ] Generate `JOURNAL_MASTER_KEY` on the workstation (`openssl rand -base64 32`) straight into the sops file; never echo it
+- [ ] Generate `MT_JOURNAL_ENCRYPTION_KEY` on the workstation (`openssl rand -base64 32`) straight into the sops file; never echo it
 - [ ] Implement data-key create/unwrap in `crates/mt-journal/src/keys.rs` and the `mtctl journal-keys rewrap` CLI
 - [ ] Ensure `mt-api`, `agents`, `litellm`, `decision-svc` have no access to the master key or the key table (compose scoping + grant test)
 - [ ] Startup check in `mt_journal::app` that refuses to run without the master key and logs only its version

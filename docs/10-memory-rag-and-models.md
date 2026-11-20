@@ -212,7 +212,7 @@ So the current approach (trees) **stays authoritative for numeric decisions**. *
 - **Labels come from outcomes, from silver labels (an LLM labeller via the gateway, `source: silver`, checked against outcomes) or from you, never from shadow-model outputs**, so models don't train on each other's mistakes. Your labels go in through `models.label.add` (C0): a minimal labelling tool from Phase 4, then the D10 labelling queue tab from Phase 6.
 - **Retraining cadence:** monthly fine-tune, promoted only through the gates.
 - **Social battery** (for X/Bluesky/Discord/Farcaster text, never Telegram): `organic`, `bot_like`, `scam_language`, `narrative`, `stance`, `conviction`.
-- **Laya serving:** bind to `127.0.0.1` with `LAYA_API_KEY`; on CPU each question is ~0.7 s and independent, so batch by question. Laya has no ROCm build: on an AMD GPU (e.g. 7900 XTX) use llama.cpp with Vulkan for the Qwen-based models instead.
+- **Laya serving:** bind to `127.0.0.1` with `MT_LAYA_API_KEY`; on CPU each question is ~0.7 s and independent, so batch by question. Laya has no ROCm build: on an AMD GPU (e.g. 7900 XTX) use llama.cpp with Vulkan for the Qwen-based models instead.
 
 **Determinism controls (GPU):**
 - **Precision and model:** FP32 head, pinned model revision.

@@ -48,7 +48,7 @@ The docs say whether USDA data is loaded keyless (WASDE report files only) or vi
 ## Requirements
 
 - **Steps to reproduce:** read 03 M1 (QuickStats named) and T0.10 (no USDA key); the NASS QuickStats API requires a free key requested by email
-- **Expected:** either (a) USDA = WASDE report files only (keyless) and 03 M1 drops "QuickStats", or (b) T0.10 adds a free USDA NASS QuickStats key (`USDA_QUICKSTATS_API_KEY` in the sops file) and P1-T073 checks it live
+- **Expected:** either (a) USDA = WASDE report files only (keyless) and 03 M1 drops "QuickStats", or (b) T0.10 adds a free USDA NASS QuickStats key (`USDA_NASS_API_KEY` in the sops file) and P1-T073 checks it live
 - **Actual:** QuickStats is named but no USER task obtains its key
 - **Suggested fix:** (b): add the key to T0.10 (it is free and needs only an email); until then P1-T026 ships QuickStats disabled with the reason and loads WASDE keylessly
 - **Impact:** S3: no QuickStats series until decided; WASDE, EIA, COT and Baker Hughes unaffected
@@ -57,7 +57,7 @@ The docs say whether USDA data is loaded keyless (WASDE report files only) or vi
 
 - [x] Decided (b): free USDA NASS QuickStats key, recorded via 17 §E (configurable/free inputs follow the suggested fix)
 - [x] Edited 03 M1, P0 roadmap T0.10 and 06 §3 (WASDE keyless; QuickStats with a free key)
-- [x] P0-T010 (adds `usda_quickstats` / `USDA_QUICKSTATS_API_KEY`), P1-T026 (fixtures) and P1-T073 (live check) updated
+- [x] P0-T010 (adds `usda_quickstats` / `USDA_NASS_API_KEY`), P1-T026 (fixtures) and P1-T073 (live check) updated
 
 ## Verification
 
