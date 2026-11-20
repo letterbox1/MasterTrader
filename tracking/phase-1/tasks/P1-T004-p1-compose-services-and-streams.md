@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,31 +37,31 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`ingest-market`, `ingest-batch`, `monitor` and `telegram-bot` (alerts only) run under Compose with health checks, the right networks and scoped secrets, and JetStream streams/KV buckets exist for `md.*`, `dq.*` (incl. `dq.raw.*`), `cost.*`, `recon.*`, `egress.*` and `alert.*`.
+`ingest-market`, `monitor` and `telegram-bot` (alerts only) run under Compose with health checks, the right networks and scoped secrets, and JetStream streams/KV buckets exist for `md.*`, `dq.*` (incl. `dq.raw.*`), `cost.*`, `recon.*`, `egress.*` and `alert.*`.
 
 ## Context & references
 
 - Roadmap: requirements [R1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.10](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.20](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.27](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.31](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Containers: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) · networks [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) · subjects [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · stores [02 §5.1](../../../docs/02-v1-architecture.md#51-stores)
-- Cross-phase prerequisites (depends_on): P0-T020 (Compose core: NATS JetStream, Supabase stack, Prefect; image lock), P0-T021 (networks), P0-T022 (sops → tmpfs per service), P0-T016 (`mt-core` schemas, shared with Python through the PyO3 module), P0-T018 (`mt-obs` metrics and logging)
+- Cross-phase prerequisites (depends_on): P0-T020 (Compose core: NATS JetStream, Supabase stack; image lock), P0-T021 (networks), P0-T022 (sops → tmpfs per service), P0-T016 (`mt-core` schemas, shared with Python through the PyO3 module), P0-T018 (`mt-obs` metrics and logging)
 - Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (Rust services, Python only where necessary) · [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path) (runs on the workstation)
 - `ib-gateway` (only when IBKR is used) is a separate opt-in service: P1-T070
 
 ## Requirements
 
-- Services in `infra/docker-compose.yml` (workstation mode, 18 §5): `ingest-market` (`mt-recorder`, Rust), `ingest-batch` (`mt_data`, Python Prefect worker pool `batch`), `monitor` (`mt-monitor`, Rust), `telegram-bot` (`mt-telegram-bot`, Rust/teloxide, alerts only); all on network `core` with venue egress via the allow-list; images pinned by digest (our Rust images built from the Cargo workspace, multi-stage, distroless or slim base)
+- Services in `infra/docker-compose.yml` (workstation mode, 18 §5): `ingest-market` (`mt-recorder`, Rust), `monitor` (`mt-monitor`, Rust), `telegram-bot` (`mt-telegram-bot`, Rust/teloxide, alerts only); the `scheduler` and `research-worker` services come with P1-T077 and the `ingest-batch` worker (`mt-connectors` jobs on `mt-scheduler`, Rust) with P1-T053; all on network `core` with venue egress via the allow-list; images pinned by digest (our Rust images built from the Cargo workspace, multi-stage, distroless or slim base)
 - Health checks: each service publishes `sys.heartbeat.{service}` every 1 s and exposes `/healthz` + Prometheus `/metrics`
 - JetStream streams (file storage): `MD` (`md.>`, max age 24 h, discard old), `DQ` (`dq.>`, 7 d), `COST` (`cost.>`, 7 d), `RECON` (`recon.>`, 7 d), `EGRESS` (`egress.>`, 7 d), `ALERT` (`alert.>`, 7 d); KV buckets `feed_status` (created in P0), `quota` and `egress` (history 1); retention values are configurable defaults in `infra/nats/streams.yaml`
-- Payload schemas are Rust types in `mt-core` (serde, versioned, `schema_version` field), exposed to Python through the PyO3 module so Python flows encode/decode the same definitions
-- Secrets scoped per service: `ingest-*` get data API keys and practice stream credentials, `monitor` gets the recon/fee-tier credentials (read-only testnet keys, practice credentials), `telegram-bot` gets only the alert-channel secrets (bot token, chat ID, ntfy notifier token, SMTP app password). Builds and CI run with no secrets: a service with a missing secret starts and reports `credentials_missing` for that feed
+- Payload schemas are Rust types in `mt-core` (serde, versioned, `schema_version` field), exposed to Python through the PyO3 module so the `mt_research` jobs (e.g. the nightly DQ report, P1-T037) encode/decode the same definitions
+- Secrets scoped per service: `ingest-market` gets the practice stream credentials (data API keys go only to `ingest-batch`, P1-T053), `monitor` gets the recon/fee-tier credentials (read-only testnet keys, practice credentials), `telegram-bot` gets only the alert-channel secrets (bot token, chat ID, ntfy notifier token, SMTP app password). Builds and CI run with no secrets: a service with a missing secret starts and reports `credentials_missing` for that feed
 - Resource limits per container so a runaway recorder cannot starve Supabase Postgres on the workstation
 
 ## ToDo
 
-- [ ] Add the four services to `infra/docker-compose.yml` with digests, networks, tmpfs secrets mounts and resource limits
+- [ ] Add the three services to `infra/docker-compose.yml` with digests, networks, tmpfs secrets mounts and resource limits
 - [ ] Add `infra/nats/streams.yaml` and a bootstrap job (`mt-ops nats-bootstrap`, Rust, `async-nats`) that creates/updates streams and KV idempotently
 - [ ] Add `mt-core` schemas for `md.trade`, `md.quote`, `md.book`, `md.bar`, `dq.raw`, `dq.status` (`ok | degraded | stale | closed | bad` + reasons + data age), `cost`, `recon`, `egress.status`, `alert`, with Python bindings
-- [ ] Add heartbeat helper in `mt-obs` (and its Python binding for `ingest-batch`) used by every P1 service
+- [ ] Add heartbeat helper in `mt-obs` (and its Python binding for the `mt_research` jobs) used by every P1 service
 - [ ] Write compose smoke test and stream bootstrap test
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -69,7 +69,7 @@ review_result: ""
 
 ### Tests
 
-- Integration: `docker compose up` brings all four services to healthy in CI (compose-in-CI, with `supabase start` for the database)
+- Integration: `docker compose up` brings all three services to healthy in CI (compose-in-CI, with `supabase start` for the database)
 - `cargo test -p mt-core schemas`: round-trip (encode/decode) for every new payload; unknown `schema_version` is rejected with a logged error; `uv run pytest -k schemas` decodes the same fixtures through the Python binding
 - Integration: bootstrap is idempotent (run twice → no diff); stream limits match `streams.yaml`
 
@@ -84,7 +84,7 @@ review_result: ""
 
 ## Acceptance criteria
 
-- [ ] All four services healthy; heartbeats visible in Grafana and D16
+- [ ] All three services healthy; heartbeats visible in Grafana and D16
 - [ ] Streams and KV buckets exist with the documented limits, created by code not by hand
 - [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
 
@@ -116,3 +116,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (dq.raw/egress streams and KV, dq.status incl. closed, keyless start; P0 deps explicit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services are Rust `mt-recorder`, `mt-monitor`, `mt-telegram-bot` plus Python `ingest-batch`; schemas in `mt-core` with Python bindings; tools cargo+uv; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`ingest-batch` (Python Prefect) removed from this task: the Rust `ingest-batch` worker (`mt-connectors` on `mt-scheduler`) is added by P1-T053 and `scheduler`/`research-worker` by P1-T077; four → three services; Python binding now serves the `mt_research` jobs; Prefect dropped from the P0-T020 note)

@@ -15,7 +15,7 @@ requirements: [R4.14, R4.01]
 roadmap_todos: [T4.80]
 modules: [M2, M15]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [telegram-bot, supabase-postgres, nats, decision-svc]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md, docs/06-aggregators-and-market-provide
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -106,3 +106,4 @@ For 14 consecutive days the morning brief is delivered, you can mark items usefu
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (first live run: depends on your lists (P4-T003) and live checks P4-T067/T068; brief per mob §3 (17 §D P4-B011))
 - 2026-10-22 00:00 · aligner · waits for the calibrated gate (P4-T053) instead of the raw labels
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed P4-T067/P4-T068 deps: keyed and Telegram/Discord sources join when their live checks pass; your votes optional; services postgres → supabase-postgres; depends_on removed P4-T067, P4-T068)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tuning uses the Rust `mt-feeds` tooling; tools uv → cargo)

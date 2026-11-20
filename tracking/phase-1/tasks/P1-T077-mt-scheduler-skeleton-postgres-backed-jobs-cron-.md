@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt-scheduler` (Rust, `crates/mt-scheduler`) replaces Prefect: a Postgres-backed job queue with timezone-aware cron, retries, resumable backfill runs and run history in Supabase Postgres, with job status on D16 (Jobs) and an API that D07 reads. It runs Rust jobs in-process (in queue workers) and Python `mt_research` jobs as subprocesses in a research worker. The P0 jobs (Merkle seal, monthly WORM export, restore test) move onto it, so the platform has one scheduler. Every batch job in Phase 1 and later phases (connectors, backfills, rollups, retention, nightly DQ reports, training runs, the scenario twin) runs on it.
+`mt-scheduler` (Rust, `crates/mt-scheduler`) replaces Prefect: a Postgres-backed job queue with timezone-aware cron, retries, resumable backfill runs and run history in Supabase Postgres, with job status on D16 (Jobs) and an API that D07 reads. It runs Rust jobs in-process (in queue workers) and Python `mt_research` jobs as subprocesses in a research worker. It is built so the P0 host-timer jobs (`infra/timers/`) can move onto it; that move and the wiring of `system.backup.run` / `system.restore.test` are P1-T080, so this skeleton doesn't wait for the P0 backup chain. Every batch job in Phase 1 and later phases (connectors, backfills, rollups, retention, nightly DQ reports, training runs, the scenario twin) runs on it.
 
 ## Context & references
 
@@ -46,9 +46,10 @@ review_result: ""
 - Decision: [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (Prefect → `mt-scheduler`)
 - Architecture: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`scheduler` container) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (`alert.*`, `sys.heartbeat.*`)
 - UI: [D16 System](../../../docs/ui/dashboards/D16-system.md) Jobs widget (`/system/jobs`, WS `system`) and "Re-run a failed job" (`system.job.run`, C1); [D07](../../../docs/ui/dashboards/D07-data-quality.md) Feeds shows batch sources' last run
-- Cross-phase prerequisites (depends_on): P0-T024 (Supabase migrations baseline, `ops` schema, roles), P0-T018 (`mt-obs` metrics, logs, heartbeats), P0-T034 (`mt-api` command bus with `audit.command`), P0-T051 (D16 page the Jobs widget sits on)
+- Cross-phase prerequisites (depends_on): P0-T024 (Supabase migrations baseline, `ops` schema, roles incl. `mt_jobs_rw`), P0-T018 (`mt-obs` metrics, logs, heartbeats), P0-T034 (`mt-api` command bus with `audit.command`; `system.backup.run`/`system.restore.test` stubs), P0-T051 (D16 page the Jobs widget sits on)
 - Depends on (this phase): P1-T004 (Compose services and NATS streams, incl. `ALERT`)
-- Used by: P1-T053 (every P1 schedule and the `ingest-batch` worker), P1-T079 (scheduler VERIFY), the P0 jobs (P0-T037 seal, P0-T040 WORM export, P0-T041 restore test), and later phases' batch jobs
+- P0 hand-over: P0 runs the seal, verify, pgBackRest/restic backups, restore test and WORM export as host timers (`infra/timers/`, `just timers-install`; P0-T037, P0-T039, P0-T040, P0-T041), and `mt-api`'s `system.backup.run` and `system.restore.test` answer `job_runner_unavailable` until the scheduler exists (P0-T034, P0-T051). The scheduler's DB role is `mt_jobs_rw` (P0-T024)
+- Used by: P1-T053 (every P1 schedule and the `ingest-batch` worker), P1-T079 (scheduler VERIFY), P1-T080 (moves the P0 timer jobs and wires the two P0 commands), and later phases' batch jobs
 
 ## Requirements
 
@@ -63,7 +64,8 @@ review_result: ""
 - **API and UI:** `mt-api` read `/api/v1/system/jobs` (+ `/system/jobs/{id}/runs`) and command `system.job.run` (C1, audited in `audit.command`; re-runs a failed job or starts a backfill range); WS `system` pushes run status changes; D16 Jobs widget per [D16](../../../docs/ui/dashboards/D16-system.md) (last run, result, duration, next run, retries, link to run history; "Re-run" button)
 - **Observability:** `sys.heartbeat.scheduler` every 1 s, `/healthz`, Prometheus `mt_job_runs_total{job,status}`, `mt_job_duration_seconds{job}`, `mt_job_last_success_timestamp{job}`, `mt_job_queue_depth{queue}`; structured logs with `trace_id` per run
 - **Compose:** `scheduler` and `research-worker` services in the workstation compose file (digest-pinned images built from the Cargo workspace / `mt_research`), on the `core` network, no venue or data API keys (data keys belong to the `ingest-batch` worker added in P1-T053)
-- **Move the P0 jobs:** register `mt-obs seal` (daily 00:15 UTC), `mt-obs export` (monthly, 1st), the restore test (monthly) and any other P0 job that a temporary scheduler runs (Prefect deployment, pg_cron entry calling out, or systemd timer) as `command` jobs, and remove the old schedule in the same PR so each job has exactly one scheduler; then remove the Prefect services and the `prefect` database from compose if P0 created them. A P0 job not built yet is registered `enabled: false` and its own task enables it
+- **P0 timer jobs and commands:** not moved here. P1-T080 registers the `infra/timers/` jobs as `command` jobs, removes the timers and wires `system.backup.run` / `system.restore.test`; this task proves with stub commands that a `command` job can carry each timer's cron and timezone unchanged
+- **DB role:** the scheduler and workers connect as `mt_jobs_rw` (renamed from `mt_flows_rw` in P0); it can read/write `ops.job*` and enqueue, never touch `audit.*` except through the WORM writer
 - Run history is operational data in `ops.*` (status changes allowed); manual runs are audited through `audit.command`, which stays WORM
 
 ## ToDo
@@ -74,7 +76,7 @@ review_result: ""
 - [ ] Add `mt-api` `/system/jobs`, `/system/jobs/{id}/runs` and `system.job.run` (C1), and WS `system` run events
 - [ ] Add the D16 Jobs widget in `apps/web` (Vitest + Playwright viewport matrix)
 - [ ] Add `scheduler` and `research-worker` to the workstation compose file with health checks, heartbeats and metrics; Grafana panel for job failures
-- [ ] Register the P0 jobs (seal, WORM export, restore test) and remove their previous schedules and, once unused, the Prefect services and `prefect` database
+- [ ] Grant the `ops.job*` tables to `mt_jobs_rw` in the migration
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -87,7 +89,8 @@ review_result: ""
 - `cargo test -p mt-scheduler backfill`: a 30-day backfill is chunked per day, checkpoints after each chunk and resumes at the first unfinished chunk after a kill
 - `cargo test -p mt-scheduler python_job` (needs `uv`): a stub `mt_research.jobs.echo` job succeeds; a non-zero exit fails; a timeout kills the process group; a secret-looking string in its output is scrubbed in the run row
 - `cargo test -p mt-api system_jobs`: `/system/jobs` lists jobs with last/next run; `system.job.run` is C1, audited, and refuses an unknown job
-- `supabase test db`: `ops.job_run` constraints (status enum, one running attempt per run); the app role can't touch `audit.*` from the scheduler
+- `cargo test -p mt-scheduler command_job`: a stub `command` job with a timer-style schedule (daily 00:15 UTC; monthly on the 1st, `Australia/Sydney`) fires at the same times a systemd `OnCalendar` expression would on a fixed clock
+- `supabase test db`: `ops.job_run` constraints (status enum, one running attempt per run); `mt_jobs_rw` can use `ops.job*` and can't UPDATE or DELETE `audit.*`
 - `pnpm test` and `pnpm playwright`: D16 Jobs widget renders loading/empty/error states and the run list across the viewport matrix
 - `cargo clippy --all-targets -- -D warnings`
 
@@ -108,7 +111,7 @@ review_result: ""
 
 - [ ] `mt-scheduler` runs `rust`, `command` and `python` jobs with cron, retries, deferrals, backfill checkpoints and run history in `ops.job_run`
 - [ ] `/system/jobs`, `system.job.run` (C1) and the D16 Jobs widget work; failures raise `alert.warning.job_failed`
-- [ ] The P0 seal, WORM export and restore-test jobs run on `mt-scheduler`; no Prefect service or deployment remains
+- [ ] A `command` job can carry a P0 timer job's schedule unchanged (proven with stub commands); the real move is P1-T080
 - [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pnpm test`, `pnpm playwright`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
@@ -147,4 +150,4 @@ review_result: ""
 ## Progress log
 
 - 2026-11-20 01:08 · cloud:vm:be04b6ae61f8 · created
-- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (filled the stub: `mt-scheduler` skeleton replacing Prefect per 18 §2.1 and R1.18/T1.35; Postgres queue + cron + retries + backfill checkpoints + run history; `/system/jobs`, `system.job.run`, D16 Jobs widget; moves the P0 seal, WORM-export and restore-test jobs; the T1.68 checks are the separate VERIFY task P1-T079)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (filled the stub: `mt-scheduler` skeleton replacing Prefect per 18 §2.1 and R1.18/T1.35; Postgres queue + cron + retries + backfill checkpoints + run history; `/system/jobs`, `system.job.run`, D16 Jobs widget; DB role `mt_jobs_rw` (renamed from `mt_flows_rw` in P0); per the coordinator's P0 hand-over, moving the P0 host-timer jobs and wiring `system.backup.run`/`system.restore.test` is the separate task P1-T080 so this skeleton doesn't wait on P0-T037/T039/T040/T041; the T1.68 checks are the separate VERIFY task P1-T079)

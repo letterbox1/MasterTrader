@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/social-accounts.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ On your dedicated Telegram account and your Discord feeds server, the account-bo
 
 ## ToDo
 
-- [ ] Confirm the encrypted Telethon session exists and decrypts into `ingest-text` tmpfs only
+- [ ] Confirm the encrypted Telethon session exists and decrypts into the `mt-telegram-reader` tmpfs only
 - [ ] Enable Telegram ingest; watch the first joins and the first postures in D08
 - [ ] Enable the Discord bot; confirm each receiving channel shows items/day > 0 within 48 h
 - [ ] Run the P4-T050 probes on the live stack for 24 h and save the report
@@ -111,3 +111,4 @@ On your dedicated Telegram account and your Discord feeds server, the account-bo
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (keys-last live check for account-bound Telegram/Discord sources (17 §E); postures per 17 §A/§D)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (session scoped to the `mt-telegram-reader` container; Discord bot is Rust `mt-feeds`)

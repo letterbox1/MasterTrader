@@ -15,7 +15,7 @@ requirements: [R4.17]
 roadmap_todos: [T4.33]
 modules: [M2, M3]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.congress` polls the House Clerk's financial-disclosure index for periodic transaction reports (PTRs), parses each filing (member, asset/ticker, transaction type, amount range, transaction date, filing date) and publishes them as events linked to instruments. The Senate eFD is added only if its terms allow automated personal access (U). Idea from day-trader-skill (MIT).
+The Rust `mt-events` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) polls the House Clerk's financial-disclosure index for periodic transaction reports (PTRs), parses each filing (member, asset/ticker, transaction type, amount range, transaction date, filing date) and publishes them as events linked to instruments. The Senate eFD is added only if its terms allow automated personal access (U). Idea from day-trader-skill (MIT).
 
 ## Context & references
 
@@ -57,7 +57,7 @@ review_result: ""
 ## ToDo
 
 - [ ] Check the House Clerk and Senate eFD terms and record them (U)
-- [ ] House Clerk index poller + filing parser (PDF/XML)
+- [ ] House Clerk index poller + filing parser (XML index; PDF text through a Rust PDF crate, (U) extraction quality checked on the golden files)
 - [ ] Instrument mapping + event publishing with provenance
 - [ ] Write tests (see Verification)
 - [ ] Update docs listed under Doc sync
@@ -79,7 +79,7 @@ review_result: ""
 
 - [ ] Golden-file tests pass
 - [ ] Events carry filing-date timestamps and provenance
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-events`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ review_result: ""
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (connector in Rust `mt-events` (18 §2.1); tools uv → cargo)

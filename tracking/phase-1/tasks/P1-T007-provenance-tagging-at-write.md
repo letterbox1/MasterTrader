@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compl
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-All writers in `mt-store` (Supabase Postgres tables and Parquet files; Rust, with the same writer exposed to Python through the PyO3 module) stamp `source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days` and `commercial_ok` from the source registry, and untagged rows are rejected.
+All writers in `mt-store` (Supabase Postgres tables and Parquet files; Rust, with the same writer exposed to Python through the PyO3 module for the `mt_research` jobs) stamp `source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days` and `commercial_ok` from the source registry, and untagged rows are rejected.
 
 ## Context & references
 
@@ -48,10 +48,10 @@ All writers in `mt-store` (Supabase Postgres tables and Parquet files; Rust, wit
 
 ## Requirements
 
-- `mt-store` `provenance::Tagged` writer wrapper (Rust; Python binding for batch flows): every batch insert gets the source's defaults from `config/sources.yaml`; per-row overrides only to be stricter (e.g. a row can set `train_ok=false`, never flip false → true)
+- `mt-store` `provenance::Tagged` writer wrapper (Rust; Python binding for the `mt_research` jobs; `mt-connectors` uses it directly, P1-T078): every batch insert gets the source's defaults from `config/sources.yaml`; per-row overrides only to be stricter (e.g. a row can set `train_ok=false`, never flip false → true)
 - DB: provenance columns `NOT NULL` plus a CHECK that `retention_days >= 0 OR retention_days IS NULL` (NULL = keep forever); writers fail closed
 - Parquet: provenance stored as file-level key-value metadata and as columns on mixed-source files; the recorder (P1-T012) uses it
-- Defaults per 12 §5: exchange public data `train_ok=true, model_input_ok=true, commercial_ok=false` unless 06 says otherwise; CoinGecko `retention_days=1`; yfinance/Twelve Data `licence=personal`
+- Defaults per 12 §5: exchange public data `train_ok=true, model_input_ok=true, commercial_ok=false` unless 06 says otherwise; CoinGecko `retention_days=1`; Twelve Data and Yahoo-sourced daily data (only if its terms allow, P1-T023) `licence=personal`
 - A read helper `provenance::filter(rows, purpose = train | model_input | display)` in `mt-store`, exposed to Python, for P2/P4/P6 consumers
 
 ## ToDo
@@ -115,3 +115,4 @@ All writers in `mt-store` (Supabase Postgres tables and Parquet files; Rust, wit
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (P0 deps explicit; canonical provenance columns cited)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (writer wrapper and purpose filter in Rust `mt-store` with Python binding; Supabase migration + pgTAP replace Alembic; tools cargo/uv/supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (batch writers are the Rust `mt-connectors` (P1-T078); the Python binding stays for the `mt_research` jobs; yfinance default replaced by terms-checked daily sources)

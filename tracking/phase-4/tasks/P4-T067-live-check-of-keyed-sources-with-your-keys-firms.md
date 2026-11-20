@@ -15,7 +15,7 @@ requirements: [R4.01, R4.08, R4.11]
 roadmap_todos: [T4.66]
 modules: [M2, M3, M6]
 dashboards: [D07, D08]
-tools: [uv, sops, git]
+tools: [cargo, sops, git]
 mcp: []
 env: [FINNHUB_API_KEY, CRYPTOPANIC_API_KEY, NASA_FIRMS_MAP_KEY, ACLED_EMAIL, ACLED_API_KEY, MYFXBOOK_EMAIL, MYFXBOOK_PASSWORD]
 services: [finnhub, cryptopanic, nasa-firms, acled, opensanctions, myfxbook, ig-demo, oanda-practice]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -111,3 +111,4 @@ With your real free keys in the stack, each keyed or licence-bound P4 source del
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T4.66 keys-last live check per 17 §E; FIRMS/ACLED/OpenSanctions per 17 §D P4-B008)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (keyed clients are Rust (`mt-connectors`, `mt-events`); tools uv → cargo)

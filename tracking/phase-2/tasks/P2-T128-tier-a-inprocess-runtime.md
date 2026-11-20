@@ -15,7 +15,7 @@ requirements: [R2.47, R2.N1]
 roadmap_todos: [T2.30]
 modules: [M21, M0]
 dashboards: [D03, D01]
-tools: [uv, cargo]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_models.tier_a.Runtime` loads a registered compiled model inside the Nautilus strategy process, builds the feature vector incrementally (M6 + cached tier-B flags from NATS KV `tierb_scores`), returns a calibrated edge per event in < 50 µs p99 and exports an in-process latency histogram.
+`mt_models::tier_a::Runtime` (Rust crate `crates/mt-models`, ONNX via `ort`, 18 §2.1) loads a registered ONNX model inside the engine process (linked into `mt-engine`), builds the feature vector incrementally (M6 + cached tier-B flags from NATS KV `tierb_scores`), returns a calibrated edge per event in < 50 µs p99 and exports an in-process latency histogram.
 
 ## Context & references
 
@@ -49,15 +49,14 @@ review_result: ""
 
 - Load by artefact hash from the registry at strategy start; verify hash, CPU features and feature-version compatibility; refuse to start on mismatch.
 - Feature vector assembled from incremental M6 features (P2-T120) with a fixed column order from the model signature; missing tier-B flags (no tier B before P4) use declared defaults and set `tierb_missing=true`.
-- Predict returns `Edge(prob, edge, model_version, latency_ns)`; no allocation on the hot path; GIL-free back-end call where possible.
+- Predict returns `Edge(prob, edge, model_version, latency_ns)`; no allocation on the hot path (pre-allocated `ort` input/output tensors).
 - Prometheus histogram `mt_tier_a_predict_seconds` (buckets 5 µs → 1 ms) per strategy/model; exemplars with trace_id.
 - Failure handling: load failure or predict exception → strategy reports `model_down`, which M11 maps to ladder rung 4 (no new entries, exits managed).
 - Same runtime used in truth backtests (CPU, deterministic) so backtest and paper predictions match.
 
 ## ToDo
 
-- [ ] Implement `mt_models/tier_a/runtime.py` with the three back-end loaders (Python node and strategies)
-- [ ] Rust loader for ONNX models via `ort` in `crates/mt-engine/src/tier_a.rs` for Rust strategies and the Rust node (18 §2.2: inference moves to Rust when a model joins the engine path)
+- [ ] Implement `crates/mt-models/src/tier_a/runtime.rs` (ONNX loader via `ort`, hash/CPU/feature-version checks) and link it into `mt-engine` for Rust strategies; Python research strategies on paper reach the same runtime through the binding (P2-T203), so there is one inference implementation
 - [ ] Feature-vector assembler bound to model signature; KV `tierb_scores` reader with staleness check
 - [ ] Prometheus histogram + OpenTelemetry span attributes
 - [ ] Integration into the ML-signal template hook (coordinate with part A T2.21)
@@ -66,7 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_models -k runtime`, `cargo test -p mt-engine tier_a`, `cargo bench -p mt-engine tier_a`.
+- Commands: `cargo test -p mt-models tier_a`, `cargo test -p mt-engine tier_a`, `cargo bench -p mt-models tier_a`.
 - Unit: column-order mismatch detected at load.
 - Integration: truth backtest and a paper replay produce identical predictions for the same events.
 - Benchmark harness reused by P2-T162.
@@ -83,7 +82,7 @@ review_result: ""
 - [ ] Model loads in-process and predicts with p99 < 50 µs on the workstation
 - [ ] Histogram exported
 - [ ] Failure maps to `model_down`
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-models -p mt-engine`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -114,3 +113,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Part A prerequisites made explicit dependencies)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; Rust `ort` loader for the engine path; tools [uv] → [uv, cargo])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (runtime moves from `mt_models/tier_a/runtime.py` (three back-ends) to `crates/mt-models` (ONNX via `ort`), linked into `mt-engine`; Python research path uses it through the binding; same tests under `cargo`; tools [uv, cargo] → [cargo])

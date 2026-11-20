@@ -15,7 +15,7 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6, M7]
 dashboards: [D04]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,11 +49,11 @@ An evaluator that reports, per feature version and instrument set, the informati
 - IC (Pearson) and rank-IC (Spearman) between feature at t and forward return over horizons {1, 5, 20, 60} bars; per period and aggregate with t-stat (Newey-West).
 - Decay curve: IC vs horizon; half-life estimate.
 - Point-in-time: features and forward returns from P2-T103 datasets; forward returns never enter the feature computation.
-- Run as a lab job (`run_type=feature_eval`), results to MLflow and `features.def` metadata (latest IC summary).
+- Run as an `mt-scheduler` lab job (`run_type=feature_eval`, Rust `JobRunner`), results to MLflow (REST client, P2-T107) and `features.def` metadata (latest IC summary).
 
 ## ToDo
 
-- [ ] Implement `mt_features/evaluate.py`
+- [ ] Implement `crates/mt-features/src/evaluate.rs` (IC, rank-IC, Newey-West t-stat, decay)
 - [ ] Register `feature_eval` JobRunner
 - [ ] Tests on synthetic predictive/non-predictive features
 - [ ] Doc
@@ -61,7 +61,7 @@ An evaluator that reports, per feature version and instrument set, the informati
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_features -k evaluate`.
+- Commands: `cargo test -p mt-features evaluate`.
 - Unit: synthetic feature = future return + noise yields positive IC decaying with horizon; random feature IC ~ 0.
 
 ### Scenarios
@@ -74,7 +74,7 @@ An evaluator that reports, per feature version and instrument set, the informati
 
 - [ ] IC, rank-IC, decay reported per feature
 - [ ] Results in MLflow
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-features`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,4 @@ An evaluator that reports, per feature version and instrument set, the informati
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (IC evaluator in `mt-features` (Rust), run as an `mt-scheduler` lab job; same tests; tools [uv] → [cargo])

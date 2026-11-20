@@ -15,7 +15,7 @@ requirements: [R4.12]
 roadmap_todos: [T4.63]
 modules: [M21]
 dashboards: [D10]
-tools: [uv, git]
+tools: [cargo, uv, git]
 mcp: []
 env: []
 services: [decision-svc, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 ## ToDo
 
 - [ ] Run the P4-T048 calibration on the silver labels (your P4-T049 labels take precedence where present) and activate the chosen threshold via `models.question.update` (C1).
-- [ ] Evaluation script `tools/bench/semif_eval.py`.
+- [ ] Evaluation binary in `mt-models` (`cargo run -p mt-models --bin semif-eval`: metrics, bootstrap CIs, determinism runs), logged to MLflow over its REST API.
 - [ ] Run on labelled batch; bootstrap CIs.
 - [ ] Determinism runs (3× + restart).
 - [ ] Publish report.
@@ -62,7 +62,7 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 ## Verification
 
 ### Tests
-- Evaluation script unit tests (metric code).
+- Evaluation binary unit tests (metric code; `cargo test -p mt-models`).
 
 ### Scenarios
 - Given flip rate > 0.1% on GPU, then file a bug, switch to batch size 1 and re-run.
@@ -76,7 +76,7 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 
 - [ ] Report with P/R/F1/balanced accuracy + CIs, flip rate and latency published
 - [ ] Results meet targets or bugs filed with decisions
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, `uv run pytest` (`mt_research` calibration), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -106,3 +106,4 @@ A report gives the relevance gate's precision, recall, F1 and balanced accuracy 
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (flip-rate ≤ 0.1%, precision/ECE targets from 16 §2.10; decision-path settings per 17 §A P4-B010; depends on P4-T048 too)
 - 2026-10-22 00:00 · aligner · calibration run on your labels moved here from P4-T048 (threshold activated before the report)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dependency P4-T049 (silver labels by default, 17 §G); depends_on removed P4-T049; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (evaluation binary in Rust `mt-models`; calibration run stays `mt_research`; tools +cargo)

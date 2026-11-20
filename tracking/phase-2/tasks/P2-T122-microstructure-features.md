@@ -15,7 +15,7 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,13 +47,13 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 ## Requirements
 
 - Features: OFI (Cont et al.) at levels 1/5/10, quoted and effective spread (bps), depth at ±10/25/50 bps, book imbalance, trade intensity (trades/s), signed volume, micro-price, realised vol (1s/1m).
-- Incremental update from book deltas ≤ 20 µs median per event (numba, or Rust behind the binding when promoted to the engine path) so they can feed tier A in-process.
+- Incremental update from book deltas ≤ 20 µs median per event (Rust in `mt-features`, used directly in the engine) so they can feed tier A in-process.
 - Batch from the Parquet catalog for the same windows; parity harness passes.
 - Book integrity: if the book is flagged bad by M16, features publish `None` with `dq=bad`.
 
 ## ToDo
 
-- [ ] Implement `mt_features/micro.py` (numba-accelerated incremental + batch)
+- [ ] Implement `crates/mt-features/src/micro.rs` (incremental + batch)
 - [ ] Register features; parity tests on a recorded L2 fixture
 - [ ] Micro-benchmark for per-event update
 - [ ] Doc
@@ -61,7 +61,7 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_features -k micro`.
+- Commands: `cargo test -p mt-features micro`, `cargo bench -p mt-features micro`.
 - Parity on a 1-hour recorded BTC L2 fixture.
 - Unit: OFI sign correct on synthetic bid/ask events.
 - Benchmark: per-event update latency.
@@ -76,7 +76,7 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 
 - [ ] Microstructure features registered with parity
 - [ ] Per-event median ≤ 20 µs
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-features`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (microstructure features in `mt-features` (Rust) instead of numba; same parity and latency tests; tools [uv] → [cargo])

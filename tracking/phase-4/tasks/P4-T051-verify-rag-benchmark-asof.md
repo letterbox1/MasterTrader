@@ -15,7 +15,7 @@ requirements: [R4.07]
 roadmap_todos: [T4.61]
 modules: [M9]
 dashboards: [D10]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, tei-embed, tei-rerank, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 ## ToDo
 
 - [ ] Build and review the query set.
-- [ ] Benchmark harness (`tools/bench/rag_bench.py`).
+- [ ] Benchmark harness as a Rust binary in `mt-memory` (`cargo run -p mt-memory --bin rag-bench`), results to MLflow over its REST API.
 - [ ] Leakage property test in CI.
 - [ ] Write results to MLflow and `docs/10` §3.
 
@@ -75,7 +75,7 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 
 - [ ] Benchmark table published (recall@10, nDCG@10, MRR, p50/p95) for all variants
 - [ ] Leakage test: 0 violations
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-memory`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ A reproducible benchmark measures hybrid retrieval quality (recall@10, nDCG@10, 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (bench harness in Rust `mt-memory`; tools uv → cargo)

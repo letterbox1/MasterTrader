@@ -18,14 +18,14 @@ dashboards: [D13, D07]
 tools: [uv, cargo, supabase, git, docker]
 mcp: []
 env: []
-services: [supabase-postgres, nats, crawl4ai, prefect-server]
+services: [supabase-postgres, nats, crawl4ai, mt-scheduler]
 branch: p4/P4-T063-regulatory-and-jurisdiction-watch-fetch-diff-and
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,9 +59,9 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 ## ToDo
 
 - [ ] `regwatch.yaml` with the AU sources and the dormant UAE/CY/EG entries
-- [ ] Prefect flow + fetcher (reusing P4-T011 extraction) publishing `raw.reg.{source}`
+- [ ] `mt-scheduler` job + fetcher (Rust `mt-feeds` for RSS; the P4-T011 `mt_extract`/crawl4ai page path for pages) publishing `raw.reg.{source}`
 - [ ] `ops.reg_watch_source` / `ops.reg_watch_snapshot` SQL migrations (`supabase/migrations/`) and the `mt-intel-writer` handler (Rust)
-- [ ] Differ + materiality filter + `REG_CHANGE` task writer (`curation.task`) + `task.new` / alert
+- [ ] Differ + materiality filter (Rust, `mt-intel-writer`) + `REG_CHANGE` task writer (`curation.task`) + `task.new` / alert
 - [ ] Residency-aware activation of foreign sources (reads the P3 residency timeline)
 - [ ] Fixtures (two snapshots per source with a real-looking change) and tests
 - [ ] Update docs listed under Doc sync
@@ -72,7 +72,7 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 - Unit: differ ignores boilerplate/date-only changes and flags a changed paragraph.
 - Unit: foreign sources inactive unless the residency timeline has a planned period there.
 - Integration (diff + task test, R4.15): fixture page v1 → v2 creates exactly one `REG_CHANGE` task with the diff and an alert; v2 → v2 creates none.
-- Static check: the regwatch package imports no risk-policy, venue-registry or tax-rule writers.
+- Static check: the regwatch code (in `mt-feeds` and `mt-intel-writer`) depends on no risk-policy, venue-registry or tax-rule writers.
 
 ### Scenarios
 - Given ATO updates its crypto guidance page, when the daily fetch runs, then a `REG_CHANGE` task appears in your tasks with the diff, and nothing else changes.
@@ -87,7 +87,7 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 - [ ] All AU sources fetched on schedule with snapshots stored
 - [ ] Diff + task test passes; no rule is ever auto-applied (static check + test)
 - [ ] Foreign sources follow the residency timeline
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green (`cargo test -p mt-feeds -p mt-intel-writer`, `cargo clippy`, `uv run pytest` (`mt_extract`), `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -120,3 +120,4 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.15 / T4.30; REG_CHANGE watch per 16 §4.3)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect flow → `mt-scheduler` job (services prefect-server → mt-scheduler); fetch in `mt-feeds` + `mt_extract`; differ in `mt-intel-writer`)

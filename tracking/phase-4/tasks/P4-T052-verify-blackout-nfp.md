@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 ## ToDo
 
 - [ ] Seed fixtures + simulated-clock harness.
-- [ ] Integration test in `tests/integration/test_blackout_nfp.py`.
+- [ ] Integration test in `crates/mt-risk/tests/blackout_nfp.rs` driving the paper engine with the Rust scalper template ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); where a Python engine node is used, the same cases run through the `mt-risk` binding (`uv run pytest`).
 - [ ] Playwright check.
 - [ ] Demo script `ops/demo/blackout_nfp.sh` for the exit demo (paper mode).
 
@@ -76,7 +76,7 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 
 - [ ] Integration test green
 - [ ] Demo script runs on paper and shows the pause in D06/D08
-- [ ] CI green (`cargo test -p mt-risk`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-risk`, `cargo clippy`, `uv run pytest` (Python node binding, where used), `pnpm playwright`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (bots marked event_sensitive and 16 §2.8 defaults (17 §C P4-B004); modes are per bot (paper); explicit P2 depends_on and P4-T045)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (integration test in Rust `mt-risk` with the Rust scalper; Python node only through the binding)

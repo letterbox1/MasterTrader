@@ -15,7 +15,7 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6]
 dashboards: [D03, D04]
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-2-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,21 +48,21 @@ The core market feature library: TA-Lib indicators and the Qlib Alpha158 factor 
 ## Requirements
 
 - TA-Lib set: SMA/EMA/WMA, RSI, MACD, ATR, ADX, Bollinger, Stoch, OBV, CCI, ROC, MFI (+ any used by templates), registered as `ta.<name>` with params.
-- Alpha158 set: the 158 Qlib expressions (KBAR, price, volume, rolling ops windows 5/10/20/30/60) ported as pure pandas/numpy expressions, registered as `alpha158.<name>` v1.
+- Alpha158 set: the 158 Qlib expressions (KBAR, price, volume, rolling ops windows 5/10/20/30/60) rebuilt in Rust (rolling ops in `mt-features`), registered as `alpha158.<name>` v1; Qlib itself stays in `mt_research` for exploration and to generate the golden reference fixtures (03 M6).
 - All incremental implementations pass the parity harness (P2-T120) or are marked `batch_only=true` with a reason.
 - Computation from OHLCV via `pit`; no Yahoo/Qlib prebuilt dataset used (personal-terms data excluded).
 
 ## ToDo
 
-- [ ] Wrap TA-Lib (pinned) as registry features with incremental counterparts
-- [ ] Port Alpha158 expressions into `mt_features/alpha158.py` with attribution/NOTICE
-- [ ] Parity tests for each feature; golden values vs Qlib reference on a fixture
+- [ ] Implement the TA-Lib set in Rust (pure-Rust implementations, or the TA-Lib C library through a pinned FFI crate (U) where a pure version doesn't match) as registry features with incremental counterparts
+- [ ] Port Alpha158 expressions into `crates/mt-features/src/alpha158.rs` with attribution/NOTICE
+- [ ] Parity tests for each feature; golden values vs TA-Lib and Qlib references on a fixture (reference values generated once by `mt_research` and committed)
 - [ ] Record licences in `third_party/LICENSES.md`
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_features -k alpha158`.
+- Commands: `cargo test -p mt-features ta`, `cargo test -p mt-features alpha158`; regenerate references with `uv run python -m mt_research.fixtures.features` only when a reference version changes.
 - Golden: each Alpha158 feature equals the Qlib reference implementation on a fixture to 1e-8.
 - Parity: incremental vs batch for every TA-Lib feature marked incremental.
 
@@ -77,7 +77,7 @@ The core market feature library: TA-Lib indicators and the Qlib Alpha158 factor 
 - [ ] TA-Lib and Alpha158 features registered with versions
 - [ ] Golden + parity tests pass
 - [ ] Licences recorded
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-features`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ The core market feature library: TA-Lib indicators and the Qlib Alpha158 factor 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (TA-Lib and Alpha158 rebuilt in `mt-features` (Rust) with golden values vs TA-Lib/Qlib references produced by `mt_research`; same golden tolerances; tools [uv] → [cargo, uv])

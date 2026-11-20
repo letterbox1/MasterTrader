@@ -15,7 +15,7 @@ requirements: [R1.01, R1.04, R1.05, R1.06]
 roadmap_todos: [T1.01]
 modules: [M1]
 dashboards: [D02]
-tools: [git, cargo, uv, supabase]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ The universe P1 records and monitors starts populated: the agent drafts it from 
 ## Context & references
 
 - Roadmap: requirements [R1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Sources of the default lists: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (sources per asset class: crypto venues, OANDA/IG FX and metals, Alpaca IEX 30 symbols, yfinance daily futures `GC=F`/`CL=F`, FRED/ALFRED, central banks, ABS CPI, RBA F11) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (finest free timeframe per class)
+- Sources of the default lists: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (sources per asset class: crypto venues, OANDA/IG FX and metals, Alpaca IEX 30 symbols, daily futures such as gold and crude via `mt-connectors` (terms-checked sources, P1-T023), FRED/ALFRED, central banks, ABS CPI, RBA F11) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (finest free timeframe per class)
 - Storage budget is sized for ~10 liquid crypto symbols ([03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket), R1.N3); Alpaca free IEX allows 30 WebSocket symbols
 - Decisions: [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19) (values you'd otherwise be asked to set are drafted by agents and approved once in the go-live pack) · [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) (configurable values are settings, not questions)
 - Built on: P1-T005 (fixture universe, `universe validate`), P1-T009 (instrument master resolves symbols), P1-T046 (`data.universe.update` command in `mt-api`)
@@ -54,7 +54,7 @@ The universe P1 records and monitors starts populated: the agent drafts it from 
   - ~10 liquid crypto pairs (e.g. BTC/ETH/SOL vs USDT on Binance, with the same pairs on Bybit/OKX/Coinbase/Kraken where listed, for cross-source checks); `l2: true` on at most 3 (`market.l2.max_native_symbols`, default 3, configurable); every other symbol gets 1 s book snapshots ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002)
   - FX and metal pairs on OANDA practice and IG demo (e.g. EURUSD, AUDUSD, USDJPY, XAUUSD, XAGUSD); no LBMA
   - up to 30 US ETFs/stocks (hard Alpaca IEX free limit), including the passive-benchmark ETFs
-  - daily futures (e.g. `GC=F`, `CL=F`) and the macro/rates series the docs name (FRED/ALFRED core series, US Treasury curve, RBA/BoE/ECB policy rates, RBA F11, ABS CPI, which is always included)
+  - daily futures (e.g. gold and crude continuous contracts, from the terms-checked sources of P1-T023) and the macro/rates series the docs name (FRED/ALFRED core series, US Treasury curve, RBA/BoE/ECB policy rates, RBA F11, ABS CPI, which is always included)
 - `mt universe seed` (CLI over `mt-api`, command `data.universe.update`, C1) writes the effective universe with source `seed`: idempotent (no new version when nothing changed) and never overwriting a value you set (your rows win; the seed only fills what has no value)
 - Every universe version is recorded (`audit.command` + a versioned settings row); connectors read the effective universe from settings and fall back to the P1-T005 fixture universe only when no version exists
 - The universe and its source (`seed` or `user`) appear in the go-live pack generator (P7-T070 reads it) and in D02 watchlists
@@ -64,7 +64,7 @@ The universe P1 records and monitors starts populated: the agent drafts it from 
 
 - [ ] Draft `config/defaults/universe.yaml` from 03 M1, 03 §6 and R1.01–R1.06 (each entry with its doc link)
 - [ ] Implement `mt universe seed` over `mt-api` (`data.universe.update`, source `seed`), idempotent, never overwriting user rows
-- [ ] Validate with `mt-data universe validate` (symbols resolve on each venue via P1-T009, ≤ 30 Alpaca symbols, ≤ 3 native-L2 symbols by default, no paid source)
+- [ ] Validate with `mt universe validate` (symbols resolve on each venue via P1-T009, ≤ 30 Alpaca symbols, ≤ 3 native-L2 symbols by default, no paid source)
 - [ ] Run the seed on the workstation stack; screenshot D02 watchlists showing the seeded universe
 - [ ] Add the effective universe to the go-live pack generator (P7-T070)
 - [ ] Write the tests listed under Verification
@@ -74,7 +74,7 @@ The universe P1 records and monitors starts populated: the agent drafts it from 
 
 ### Tests
 
-- `uv run pytest -k universe_seed`: every seeded entry equals the defaults file; the defaults file's lists match the doc sections they cite (doc-link test)
+- `cargo test -p mt-api universe_seed`: every seeded entry equals the defaults file; the defaults file's lists match the doc sections they cite (doc-link test)
 - `cargo test -p mt-api universe`: `data.universe.update` with source `seed` is C1, audited, and refuses to overwrite a user-set version
 - Re-run the seed: no new version. Edit one entry by hand, re-run: your edit stays
 
@@ -127,3 +127,4 @@ The universe P1 records and monitors starts populated: the agent drafts it from 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 native diffs only for ≤ 3 symbols by default, others 1 s snapshots (P1-B002); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (converted from USER to an agent seed per 17 §G and the re-platform brief §2: the agent drafts the universe from 03 M1/§6 and R1.01–R1.06 and seeds it through `mt-api` with source `seed`; you review it in the go-live pack P7-T070; deps P1-T005, P1-T009, P1-T046; tools cargo/uv/supabase, services supabase-postgres, mt-api)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (validation CLI `mt universe validate` (Rust); the seed test moves from pytest to `cargo test -p mt-api` with the same cases; daily futures named without yfinance tickers; tools drop uv)

@@ -15,7 +15,7 @@ requirements: [R1.08]
 roadmap_todos: [T1.25]
 modules: [M1]
 dashboards: [D07]
-tools: [git, cargo, uv, supabase, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 ## Requirements
 
-- `QuotaTracker` in `mt-core` (Rust; [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), used by `mt-recorder`, `mt-monitor` and, through the PyO3 binding, by the Python batch flows: token buckets per (source, scope) with rolling windows (per second, minute, day, month); `acquire(cost)` waits or returns `QuotaExhausted`
+- `QuotaTracker` in `mt-core` (Rust; [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), used by `mt-recorder`, `mt-monitor` and `mt-connectors` (P1-T078): token buckets per (source, scope) with rolling windows (per second, minute, day, month); `acquire(cost)` waits or returns `QuotaExhausted`
 - Budgets from `config/quotas.yaml` with a documented source for each number; live overrides from headers (e.g. Binance `X-MBX-USED-WEIGHT-1M`, Alpaca/Finnhub `X-RateLimit-Remaining`, `Retry-After`)
 - Throttle thresholds are configurable defaults: warn at 80% of the free limit (D07), hard stop at 95%; never exceed 100%
 - Header parsers are tested on recorded/documented headers in CI (keyless); reading them from real keyed endpoints is checked in P1-T073
@@ -73,11 +73,11 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 - `cargo test -p mt-core quota`: bucket maths across windows; header override lowers budget; `Retry-After` pauses the scope
 - Property (proptest): for any random call sequence, granted calls never exceed the configured limit in any window
-- Integration: a Rust connector and a Python worker (through the binding) share one KV budget and together stay under the limit (`uv run pytest -k quota_shared`)
+- Integration: two processes (an `mt-recorder` connector and an `mt-connectors` worker) share one KV budget and together stay under the limit (`cargo test -p mt-core quota_shared`)
 
 ### Scenarios
 
-- Given Twelve Data at 640/800 calls today, when another flow asks for 200 calls, then 120 are granted, the rest wait for the reset, and D07 shows "throttled" before any 429
+- Given Twelve Data at 640/800 calls today, when another job asks for 200 calls, then 120 are granted, the rest wait for the reset, and D07 shows "throttled" before any 429
 - Given NATS KV is unreachable, when a connector asks for budget, then it uses the local fallback at half rate and raises `alert.warning.quota_kv_down`
 
 ### Stress / failure injection
@@ -87,9 +87,9 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 ## Acceptance criteria
 
-- [ ] No connector code path performs an outbound request without `acquire` (enforced by a test that greps for raw `reqwest`/`httpx` clients outside the connector bases in `mt-recorder` and `mt_data.core`)
+- [ ] No connector code path performs an outbound request without `acquire` (enforced by a test that greps for raw `reqwest` clients outside the connector base in `mt-recorder`; P1-T078 extends it to `mt-connectors`, whose shared client `mt_connectors::http` is the only one allowed there)
 - [ ] Quota warnings appear at 80%, before throttling starts (D07 acceptance 3)
-- [ ] CI green (`cargo clippy`, `cargo test`, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -119,3 +119,4 @@ Every connector asks one quota tracker before each call; it throttles before any
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (thresholds as configurable defaults; live headers verified in P1-T073; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (quota tracker in Rust `mt-core` with Python binding; Supabase migration + pgTAP for `ops.quota_usage`; proptest; tools cargo/uv/supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (consumers are Rust only (`mt-recorder`, `mt-monitor`, `mt-connectors`); the shared-budget test uses two Rust processes with the same cases; grep guard covers `mt-connectors` via P1-T078; tools drop uv)

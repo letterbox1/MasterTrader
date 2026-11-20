@@ -15,7 +15,7 @@ requirements: [R4.N1]
 roadmap_todos: []
 modules: [M2]
 dashboards: [D16]
-tools: [docker, uv, git]
+tools: [docker, cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats, rss-bridge, crawl4ai, decision-svc]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Supabas
 ## ToDo
 
 - [ ] `ops/tests/network_isolation.sh` extended for P4 services.
-- [ ] Prompt secret scanner in `mt_models` client + tests.
+- [ ] Prompt secret scanner in the Rust `mt-models` tier-B client and the shared LiteLLM gateway client (used by `mt-agents`) + tests.
 - [ ] Injection fixture through the pipeline + assertions.
 - [ ] Report for the exit demo.
 
@@ -76,7 +76,7 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Supabas
 ## Acceptance criteria
 
 - [ ] All probes fail as expected; scanner tests green; injection fixture inert
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, network probe script, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -104,3 +104,4 @@ A test proves R4.N1: RSS-Bridge, crawl4ai and `ingest-text` cannot reach Supabas
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (scrape NATS permissions match P4-T008 (posture.telegram.> for F3b); added P4-T029 (prompt scanner on the decision path))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (prompt scanner in Rust `mt-models`/gateway client; tools uv → cargo)

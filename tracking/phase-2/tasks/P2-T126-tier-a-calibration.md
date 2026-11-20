@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-2-strategies-ris
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,12 +48,12 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 
 - Fit isotonic (default when ≥ 1,000 holdout samples) or Platt on the calibration holdout only; choose by lower holdout Brier.
 - Report Brier, ECE (15 equal-mass bins), reliability curve data, per-regime ECE (regime_v1 from P2-T111) on the test split.
-- Calibrator is part of the exported model graph (compiled with the model in P2-T127) or a lookup table applied in-process (≤ 1 µs).
+- Calibrator is part of the exported ONNX graph (P2-T127) or a lookup table shipped with the model and applied in-process by `mt-models` in Rust (≤ 1 µs).
 - Acceptance thresholds configurable; default: ECE ≤ 0.05 on test, else model not promotable.
 
 ## ToDo
 
-- [ ] Implement `mt_models/tier_a/calibrate.py`
+- [ ] Implement `packages/mt_research/tier_a/calibrate.py`
 - [ ] Log metrics + reliability data to MLflow
 - [ ] Tests
 - [ ] Doc thresholds
@@ -61,7 +61,7 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_models -k calibrate`.
+- Commands: `uv run pytest packages/mt_research -k calibrate`.
 - Unit: isotonic on a miscalibrated synthetic model reduces ECE; Platt on a sigmoid-shaped one.
 - Unit: calibrator never sees test-split data (asserted by index).
 
@@ -75,7 +75,7 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 
 - [ ] Brier, ECE and reliability recorded for every model
 - [ ] Calibrator exported with the model
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: ruff, mypy, `uv run pytest packages/mt_research`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,4 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (calibration stays Python in `mt_research`; calibrator exported in the ONNX graph or as a lookup table applied by `mt-models` (Rust); tools unchanged [uv])

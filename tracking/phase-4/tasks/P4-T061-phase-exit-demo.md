@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071]
+depends_on: [P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071, P4-T072, P4-T073]
 requirements: [R4.14, R4.10, R4.03]
 roadmap_todos: []
 modules: [M2, M3, M5, M6, M9, M21, M11]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md, docs/roadmap/README.md, docs/04-plan-o
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ A recorded demo runs every Phase 4 exit criterion: (1) a morning Telegram brief 
 ## Context & references
 
 - Roadmap: §6 Exit criteria · [R4.14, R4.10, R4.03](../../../docs/roadmap/phase-4-intel.md#3-requirements)
-- Evidence: P4-T047/T060 (brief), P4-T052 (blackout), P4-T050 (gate), P4-T051/T053/T054/T055/T056/T057/T058/T059 (other verifies), P4-T066/T067/T068 (live and conditional source checks), P4-T069 (stage-1 latency, R4.N2), P4-T063/T064 (regulatory & venue watch, R4.15).
+- Evidence: P4-T047/T060 (brief), P4-T052 (blackout), P4-T050 (gate), P4-T051/T053/T054/T055/T056/T057/T058/T059 (other verifies), P4-T066/T067/T068 (live and conditional source checks), P4-T069 (stage-1 latency, R4.N2), P4-T063/T064 (regulatory & venue watch, R4.15), P4-T072/T073 (ONNX export and Rust/Python parity, [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)).
 - Phase file: `tracking/phase-4/PHASE.md`.
 
 ## Requirements
@@ -108,3 +108,4 @@ A recorded demo runs every Phase 4 exit criterion: (1) a morning Telegram brief 
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (blackout demo uses an event_sensitive paper bot (16 §2.8); depends on the new tasks P4-T063–T069; phase-completion doc sync added)
 - 2026-11-19 00:00 · coordinator · depends on P4-T071 (vetted additions, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (exit demo depends on the new ONNX parity checks P4-T072/P4-T073)

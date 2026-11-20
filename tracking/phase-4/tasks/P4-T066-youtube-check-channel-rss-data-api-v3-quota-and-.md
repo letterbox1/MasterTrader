@@ -15,7 +15,7 @@ requirements: [R4.05]
 roadmap_todos: [T4.65]
 modules: [M2]
 dashboards: [D08]
-tools: [uv, yt-dlp, git]
+tools: [cargo, yt-dlp, git]
 mcp: []
 env: [YOUTUBE_DATA_API_KEY]
 services: [youtube-data-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,14 +48,14 @@ A recorded pass/fail decides whether YouTube joins as a source: channel RSS reac
 
 ## Requirements
 
-- `ops/checks/youtube_check.py`: (1) channel RSS (`/feeds/videos.xml?channel_id=`) returns entries for each chosen channel; (2) Data API v3 key works and the planned call budget (videos.list/channels.list per day) is ≤ 50% of the 10,000-unit free quota (configurable); (3) yt-dlp fetches subtitles for one recent video per channel without login/cookies.
+- `mt-feeds` check command (`cargo run -p mt-feeds -- source-check youtube`, Rust; yt-dlp called as its pinned standalone CLI): (1) channel RSS (`/feeds/videos.xml?channel_id=`) returns entries for each chosen channel; (2) Data API v3 key works and the planned call budget (videos.list/channels.list per day) is ≤ 50% of the 10,000-unit free quota (configurable); (3) yt-dlp fetches subtitles for one recent video per channel without login/cookies.
 - The key is read only for this check session (`sops exec-env`), never printed or logged.
 - Result row in `ops.source_check` (source `youtube`, per-check result, reason, checked_at); the flag flips on only when all three pass; pass/fail with date recorded in 06.
 - Terms: no downloading of video/audio, subtitles only; no circumvention of age/region gates.
 
 ## ToDo
 
-- [ ] Write `ops/checks/youtube_check.py` (+ unit tests on recorded responses)
+- [ ] Write the `source-check youtube` command in `mt-feeds` (+ unit tests on recorded responses)
 - [ ] Run it on your channel list with your key
 - [ ] Record the result in `ops.source_check` and 06; set the flag accordingly
 - [ ] If it passed, confirm the connector schedules and stays within quota for 24 h
@@ -106,3 +106,4 @@ A recorded pass/fail decides whether YouTube joins as a source: channel RSS reac
 ## Progress log
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T4.65 YouTube check moved to P4 (17 §D P4-B005); keys last)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (check script → Rust `mt-feeds` command; tools uv → cargo)

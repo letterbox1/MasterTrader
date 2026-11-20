@@ -1,7 +1,7 @@
 ---
 id: P2-T120
 kind: task
-title: mt_features registry, versioning and batch/incremental parity
+title: mt-features registry, versioning and batch/incremental parity
 phase: 2
 type: BUILD
 status: backlog
@@ -15,7 +15,7 @@ requirements: [R2.46]
 roadmap_todos: [T2.29]
 modules: [M6]
 dashboards: [D04]
-tools: [uv, supabase]
+tools: [cargo, supabase]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P2-T120 · mt_features registry, versioning and batch/incremental parity
+# P2-T120 · mt-features registry, versioning and batch/incremental parity
 
 ## Goal / expected outcome
 
-A versioned feature registry (`features.def`) with one definition per feature that computes identically in batch (lab, point-in-time) and incrementally (engine), stores values in `features.value` and publishes `feat.{name}.{symbol}`.
+A versioned feature registry (`features.def`) in the Rust crate `crates/mt-features` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features)) with one definition per feature that computes identically in batch (lab, point-in-time) and incrementally (engine), stores values in `features.value` and publishes `feat.{name}.{symbol}`.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ A versioned feature registry (`features.def`) with one definition per feature th
 ## Requirements
 
 - `features.def`: name, version (semver), inputs (bar spec / tick / L2), params, warm-up bars, code_sha, owner, licence; immutable once published — changes create a new version.
-- `Feature` protocol with `batch(df) -> Series` and `update(state, event) -> value`; the parity harness asserts |batch − incremental| ≤ 1e-9 on fixtures.
+- `Feature` trait with `batch(&Dataset) -> Series` and `update(&mut State, &Event) -> Value` (one Rust implementation, used incrementally in the engine and in batch by `mt-scheduler` jobs and `mt-lab-core`; `mt_research` reads them through the binding); the parity harness asserts |batch − incremental| ≤ 1e-9 on fixtures.
 - Batch values computed through `pit(as_of)` datasets; stored in `features.value` (monthly native partitions, 18 §4.3: feature_id, version, instrument_id, event_time, ingest_time, value) only for features marked `materialise=true`.
 - Engine-side incremental values published on `feat.{name}.{symbol}` (`mt-core` message schema) with ≤ 1 ms compute per update for TA-style features.
 - Provenance: features inherit the most restrictive `train_ok`/`model_input_ok` of their inputs.
@@ -56,17 +56,17 @@ A versioned feature registry (`features.def`) with one definition per feature th
 ## ToDo
 
 - [ ] SQL migration in `supabase/migrations/` for `features.def`, `features.value` (monthly native partitions; pgTAP test)
-- [ ] Implement `packages/mt_features/{registry,base,store,publish}.py`
-- [ ] Implement parity harness `mt_features.testing.assert_parity`
+- [ ] Implement `crates/mt-features/src/{registry,base,store,publish}.rs`
+- [ ] Implement parity harness `mt_features::testing::assert_parity`
 - [ ] Provenance propagation
 - [ ] Tests + doc
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_features`, `supabase test db`.
+- Commands: `cargo test -p mt-features`, `cargo clippy -p mt-features`, `supabase test db`.
 - Unit: registry refuses re-publishing a changed definition under the same version.
-- Property: parity harness passes for a moving-average feature on random series (hypothesis).
+- Property: parity harness passes for a moving-average feature on random series (proptest, same property as the earlier Hypothesis plan).
 - Integration: materialised feature written and read back via `pit`.
 
 ### Scenarios
@@ -80,7 +80,7 @@ A versioned feature registry (`features.def`) with one definition per feature th
 
 - [ ] Registry, store and publish path working
 - [ ] Parity harness used by all later feature sets
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-features`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -103,7 +103,7 @@ A versioned feature registry (`features.def`) with one definition per feature th
 ## Branch & PR
 
 - Branch: `p2/P2-T120-feature-registry-and-store`
-- PR title: `P2-T120: mt_features registry, versioning and batch/incremental parity`
+- PR title: `P2-T120: mt-features registry, versioning and batch/incremental parity`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P2-T120` run
 
 ## Progress log
@@ -111,3 +111,4 @@ A versioned feature registry (`features.def`) with one definition per feature th
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; hypertable → monthly native partitions; SQL migration; tools [uv] → [uv, supabase])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`packages/mt_features` → `crates/mt-features` (Rust `Feature` trait; batch via `mt-scheduler`/`mt-lab-core`, `mt_research` via the binding); Hypothesis → proptest; title updated; tools [uv, supabase] → [cargo, supabase])

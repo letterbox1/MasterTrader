@@ -15,17 +15,17 @@ requirements: [R4.15]
 roadmap_todos: [T4.30]
 modules: [M16, M5]
 dashboards: [D07, D06]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [supabase-postgres, nats, prefect-server]
+services: [supabase-postgres, nats, mt-scheduler]
 branch: p4/P4-T064-venue-status-incident-and-proof-of-reserve-watch
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ Each venue's official status page / incident feed, announcements page and proof-
 ## ToDo
 
 - [ ] Venue entries in `regwatch.yaml` for every venue in `ops.venue_registry`
-- [ ] Status-API parsers (Statuspage JSON, RSS) + page fallback via P4-T063
+- [ ] Status-API parsers (Statuspage JSON, RSS; Rust, `mt-feeds`) + page fallback via P4-T063
 - [ ] Mapper to P1-T043 health fields + alert + `REG_CHANGE` task on material change
 - [ ] Fixtures (normal, incident open, incident resolved, PoR update) and tests
 - [ ] Update docs listed under Doc sync
@@ -79,7 +79,7 @@ Each venue's official status page / incident feed, announcements page and proof-
 
 - [ ] Every registry venue has a watched status source (or a recorded reason why not)
 - [ ] Health fields update from fixtures; only tightening is automatic (test)
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green (`cargo test -p mt-feeds -p mt-intel-writer`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ Each venue's official status page / incident feed, announcements page and proof-
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.15 / T4.30 venue-status inputs per 16 §4.3 and 17 §D P1-B014)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (status parsers in Rust `mt-feeds`; services prefect-server → mt-scheduler; tools uv → cargo)

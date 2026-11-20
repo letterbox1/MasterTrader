@@ -15,7 +15,7 @@ requirements: [R1.01, R1.08, R1.09]
 roadmap_todos: [T1.20]
 modules: [M1]
 dashboards: [D07]
-tools: [git, cargo, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every connector shares one base: streaming connectors in `mt-recorder` (Rust) and batch connectors in `mt_data` (Python, Prefect) implement the same lifecycle, reconnect with backoff, heartbeats, metrics, provenance defaults and quota hooks, and all are registered in one `config/sources.yaml` with licence and cost tags, so new feeds are uniform and a paid feed cannot be enabled.
+Every connector shares one base: streaming connectors in `mt-recorder` (Rust) implement one lifecycle (reconnect with backoff, heartbeats, metrics, provenance defaults, quota hooks), batch connectors in `mt-connectors` (Rust, P1-T078) build on the same registry, and all are registered in one `config/sources.yaml` with licence and cost tags, so new feeds are uniform and a paid feed cannot be enabled.
 
 ## Context & references
 
@@ -47,11 +47,11 @@ Every connector shares one base: streaming connectors in `mt-recorder` (Rust) an
 - UI: [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Feeds tab shows licence/cost tags; acceptance 2 ("a paid feed can't be enabled")
 - Depends on (this phase): P1-T004
 - Cross-phase prerequisites (depends_on): P0-T014 (repository skeleton: Cargo and uv workspaces), P0-T017 (`mt-core` settings and clock)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (streaming in Rust; Python only for Python-only SDKs)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (streaming and batch connectors are Rust; `mt-connectors` replaces OpenBB, fredapi, sdmx1, edgartools and yfinance) · [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)
 
 ## Requirements
 
-- Layout: `crates/mt-recorder/src/connector/` (`StreamConnector` trait, reconnect, heartbeat, metrics) for streaming; `packages/mt_data/src/mt_data/core/` (`BatchConnector`) for Python batch flows; one `SourceRegistry` in `mt-core` (Rust) loading `config/sources.yaml`, exposed to Python through the PyO3 module so both sides validate the same file
+- Layout: `crates/mt-recorder/src/connector/` (`StreamConnector` trait, reconnect, heartbeat, metrics) for streaming; the batch base (`BatchConnector`) is `crates/mt-connectors` (P1-T078); one `SourceRegistry` in `mt-core` (Rust) loading `config/sources.yaml`, used by both
 - `config/sources.yaml` entry per source: `id`, `kind` (stream|batch), `licence` (personal|commercial_ok|unknown), `cost` (free|paid), `use_flags` defaults (`train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`), `quota` reference, `docs` link to 06
 - Registry refuses to start a source with `cost: paid` (server-side) and `data.feed.resume` on it returns problem+json 409
 - Reconnect: exponential backoff with jitter (defaults 1 s → 60 s cap, reset after 5 min healthy; configurable per source in `config/sources.yaml`, not constants); never hammer a venue (Binance 418 escalates to multi-day bans, [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry))
@@ -63,10 +63,10 @@ Every connector shares one base: streaming connectors in `mt-recorder` (Rust) an
 
 ## ToDo
 
-- [ ] Implement the Rust `StreamConnector` trait and the Python `BatchConnector` base with start/stop, backoff, heartbeat, metrics and structured logs (`trace_id`)
-- [ ] Implement `SourceRegistry` in `mt-core` (serde) loading and validating `config/sources.yaml`, with the paid-feed refusal; Python binding
-- [ ] Seed `config/sources.yaml` with every P1 source from 06 §3 and 03 M1 (licence and cost per 06; yfinance/Twelve Data = personal)
-- [ ] Add CLIs: `mt-recorder feed run <id>` (streams) and `mt-data sources list`, `universe validate`, `flow run <id>` (Python, batch)
+- [ ] Implement the Rust `StreamConnector` trait with start/stop, backoff, heartbeat, metrics and structured logs (`trace_id`) (the batch base is P1-T078)
+- [ ] Implement `SourceRegistry` in `mt-core` (serde) loading and validating `config/sources.yaml`, with the paid-feed refusal
+- [ ] Seed `config/sources.yaml` with every P1 source from 06 §3 and 03 M1 (licence and cost per 06; Twelve Data and any Yahoo-sourced daily data = personal; a `terms` field per source is added by P1-T078)
+- [ ] Add CLIs: `mt-recorder feed run <id>` (streams) and `mt sources list`, `mt universe validate` (Rust `mt` CLI; batch runs are `mt-connectors run <id>`, P1-T078)
 - [ ] Unit + integration tests; docs
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -74,7 +74,7 @@ Every connector shares one base: streaming connectors in `mt-recorder` (Rust) an
 
 ### Tests
 
-- `cargo test -p mt-core registry` and `cargo test -p mt-recorder connector`: registry validation (missing licence → error; `cost: paid` → refused); backoff schedule; timestamp fields always set; `uv run pytest -k registry` runs the registry cases through the binding
+- `cargo test -p mt-core registry` and `cargo test -p mt-recorder connector`: registry validation (missing licence → error; `cost: paid` → refused); backoff schedule; timestamp fields always set
 - Integration: a fake WS server drops the connection 5 times; the connector reconnects with growing delays and publishes again
 - Property: `ingest_time >= event_time - max_skew` holds or the message is flagged for the clock-skew check
 
@@ -89,9 +89,9 @@ Every connector shares one base: streaming connectors in `mt-recorder` (Rust) an
 
 ## Acceptance criteria
 
-- [ ] All P1 sources listed with licence and cost tags; `mt-data sources list` matches 06
+- [ ] All P1 sources listed with licence and cost tags; `mt sources list` matches 06
 - [ ] Paid sources cannot be enabled through API or CLI (tested)
-- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -123,3 +123,4 @@ Every connector shares one base: streaming connectors in `mt-recorder` (Rust) an
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (configurable backoff defaults, keyless credentials_missing state, receive time as data-age basis; P0 deps explicit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (streaming connector trait in Rust `mt-recorder`, batch base in Python `mt_data`, one `SourceRegistry` in `mt-core` with Python binding; tools cargo+uv)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (the Python `mt_data` `BatchConnector` base moved to the Rust `mt-connectors` crate (P1-T078); `SourceRegistry` without a Python binding; CLIs `mt sources list`/`mt universe validate`; tools drop uv)

@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T007, P0-T027]
+depends_on: [P1-T005, P1-T007, P0-T027, P1-T078]
 requirements: [R1.04]
 roadmap_todos: [T1.23]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, cargo, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T020-rba-f11-daily-fx
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/09-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,7 +44,7 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (RBA F11 daily FX, needed for tax) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) (three currencies on every event; RBA daily rate with source and timestamp)
 - Consumer: [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md) T3.21 FX service (R3.03)
-- Depends on (this phase): P1-T005, P1-T007
+- Depends on (this phase): P1-T005, P1-T007, P1-T078 (`mt-connectors` base)
 - Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
 
 ## Requirements
@@ -56,9 +56,9 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 
 ## ToDo
 
-- [ ] Implement downloader + parser for current and historical files (column headers change across files)
-- [ ] Implement the daily flow and the one-off history load
-- [ ] Add the `pit` query helper `fx_reference::rate(base, quote, as_of)` in `mt-store` (Rust, one implementation) with its Python binding, for P3
+- [ ] Implement the `rba_f11` provider in `mt-connectors`: downloader + parser for current and historical files (column headers change across files)
+- [ ] Implement the daily job (scheduled in P1-T053) and the one-off history load
+- [ ] Add the `pit` query helper `fx_reference::rate(base, quote, as_of)` in `mt-store` (Rust, one implementation) for P3 (`mt-journal`)
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -66,12 +66,12 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 
 ### Tests
 
-- Unit: parser against fixtures of the current and two historical file layouts; header metadata rows skipped
+- `cargo test -p mt-connectors rba_f11`: parser against fixtures of the current and two historical file layouts; header metadata rows skipped
 - Integration: history load then daily increment; pit query returns the value known at `as_of`
 
 ### Scenarios
 
-- Given an Australian public holiday, when the flow runs, then no row is written and no incident raised
+- Given an Australian public holiday, when the job runs, then no row is written and no incident raised
 - Given RBA corrects a past value, when re-ingested, then both rows exist and `pit(as_of)` before the correction returns the old value
 
 ### Stress / failure injection
@@ -81,7 +81,7 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 ## Acceptance criteria
 
 - [ ] Full RBA F11 history loaded; daily update running; pit helper tested
-- [ ] CI green (`cargo clippy`, `cargo test -p mt-store`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test -p mt-connectors`, `cargo test -p mt-store`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (RBA gap rule from 17 §D P3-B008 cited; 5% as default; P0 dep on pit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; the `pit` FX helper lives in Rust `mt-store` with a Python binding; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python Prefect flow → `mt-connectors` `rba_f11` provider (Rust) on `mt-scheduler`; FX `pit` helper serves the Rust `mt-journal` (binding not needed here); deps +P1-T078; tools cargo; services drop prefect-server)

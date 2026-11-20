@@ -15,7 +15,7 @@ requirements: [R4.N2, R4.12]
 roadmap_todos: [T4.67]
 modules: [M21, M2]
 dashboards: [D10, D07]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [decision-svc, nats, supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 
 ## ToDo
 
-- [ ] Benchmark harness `tools/bench/semif_latency.py` (fixed seed, warm-up, percentiles)
+- [ ] Benchmark harness as a Rust binary in `mt-models` (`cargo run -p mt-models --bin semif-latency`; fixed seed, warm-up, percentiles)
 - [ ] Run GPU and CPU profiles; record in MLflow
 - [ ] Queue test at 2× peak arrival
 - [ ] Order-path isolation checks (static + runtime with decision-svc stopped)
@@ -80,7 +80,7 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 - [ ] p95 ≤ 300 ms (GPU) and/or ≤ 3 s (CPU) recorded on the workstation with decision-path settings
 - [ ] Queue bounded and drained under 2× peak
 - [ ] Order-path isolation proven (static + runtime)
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -111,3 +111,4 @@ A reproducible benchmark shows the stage-1 SemIf relevance gate meets **p95 ≤ 
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.N2 / T4.67 per 17 §A P4-B010)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; "host" → workstation (18 §9))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (bench harness in Rust `mt-models`; tools uv → cargo)

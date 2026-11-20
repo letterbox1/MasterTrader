@@ -15,7 +15,7 @@ requirements: [R4.11]
 roadmap_todos: [T4.64]
 modules: [M6]
 dashboards: [D04]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -73,7 +73,7 @@ The P2 IC evaluator produces an IC / rank-IC / decay report for every new P4 fea
 
 - [ ] IC report covers every new feature with a recommendation
 - [ ] Shuffled-target control passes
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-features`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -102,3 +102,4 @@ The P2 IC evaluator produces an IC / rank-IC / decay report for every new P4 fea
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P2-T123; added P4-T035 (event-score features))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (IC evaluator runs from Rust `mt-features` (P2-T123); tools uv → cargo)

@@ -15,7 +15,7 @@ requirements: [R4.16, R4.12]
 roadmap_todos: [T4.31]
 modules: [M21, M2]
 dashboards: [D08, D10]
-tools: [uv, cargo, supabase, pnpm, node>=20, git]
+tools: [cargo, supabase, pnpm, node>=20, git]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D08-intel.md, docs/02-v1-architecture.md, docs/roa
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 ## ToDo
 
 - [ ] SQL migration in `supabase/migrations/` for `models.label` (table only; schema from P0) + insert-only privileges; pgTAP test
-- [ ] Sampler + batch creation command/CLI (`mt_models.labels.sample`), guard applied
+- [ ] Sampler + batch creation command/CLI (`mt_models::labels::sample` in the Rust `mt-models` crate), guard applied
 - [ ] `models.label.add` handler (C0) + `/models/labels` queries in `mt-api` (Rust; utoipa OpenAPI updated)
 - [ ] D08 Label mode UI (keyboard + phone buttons, hidden scores, progress, resume)
 - [ ] Post the batch link to your Telegram when a batch is ready (via the alert path)
@@ -87,7 +87,7 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 - [ ] A ~200-doc batch can be created and labelled end to end on desktop and phone
 - [ ] Labels stored insert-only via `models.label.add` (C0), audited
 - [ ] Telegram and flagged rows never offered (test)
-- [ ] CI green (lint, types, tests, `pit` check, viewport matrix + axe)
+- [ ] CI green (`cargo test -p mt-models -p mt-api`, `cargo clippy`, `supabase test db`, `pnpm test`, `pnpm playwright` viewport matrix + axe, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -119,3 +119,4 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R4.16 / T4.31 per 17 §D P4-B007; split out of P4-T048)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (labels gain `source = silver`; Rust `mt-api` handler; Supabase migration; services postgres → supabase-postgres; tools +cargo +supabase; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (sampler in Rust `mt-models`; tools −uv; explicit CI commands)

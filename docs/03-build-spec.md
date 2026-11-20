@@ -283,7 +283,7 @@ Module headings keep their original package names so existing links still work. 
 
 ### M2 News & social — `mt_data.text`
 
-**Package:** ingest-text: feed clients in Rust (RSS, Discord bot, Bluesky, Mastodon, Farcaster, GDELT; API news via `crates/mt-connectors`; the crate for the streaming feeds isn't named in 18 §2.1 (U)), article extraction in `packages/mt_extract` (Python, trafilatura; crawl4ai container for JS pages), Telegram reading in `packages/mt_telegram_reader` (Python, Telethon; postures only). The nlp service is `crates/mt-nlp` (Rust: entity linking with GLiNER via ONNX (U), FinBERT via `ort`, embeddings and rerank via TEI over HTTP) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
+**Package:** ingest-text: feed clients in Rust (RSS, Discord bot, Bluesky, Mastodon, Farcaster, GDELT; API news via `crates/mt-connectors`; streaming feeds in `crates/mt-feeds`), article extraction in `packages/mt_extract` (Python, trafilatura; crawl4ai container for JS pages), Telegram reading in `packages/mt_telegram_reader` (Python, Telethon; postures only). The nlp service is `crates/mt-nlp` (Rust: entity linking with GLiNER via ONNX (U), FinBERT via `ort`, embeddings and rerank via TEI over HTTP) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
 See [06 §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack).
 

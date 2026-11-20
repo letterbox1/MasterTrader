@@ -15,7 +15,7 @@ requirements: [R4.09, R4.01, R4.05]
 roadmap_todos: []
 modules: [M2, M3]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,14 +52,14 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 
 ## ToDo
 
-- [ ] Run `python -m mt_data.text.audit_sources` (lists enabled sources with flags).
+- [ ] Run `cargo run -p mt-feeds -- audit-sources` (lists enabled sources with flags, incl. the `mt-connectors` news sources and `mt-events` prediction markets).
 - [ ] Complete the checklist; file bugs for findings.
 - [ ] Save the review.
 
 ## Verification
 
 ### Tests
-- The audit script itself has a unit test for flag listing.
+- The audit command itself has a unit test for flag listing (`cargo test -p mt-feeds`).
 
 ### Scenarios
 - Given a source lacks a terms entry, then the review fails and the source is disabled until fixed.
@@ -70,7 +70,7 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 ## Acceptance criteria
 
 - [ ] Review saved with zero open findings (or bugs filed and fixed)
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -99,3 +99,4 @@ A checklist review (recorded in this file and as `ops/reviews/p4-sources.md`) co
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (reviews your P4-T005 terms decisions (added dependency); Reddit optional per 17 §D P4-B009)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (source audit is an `mt-feeds` command; tools uv → cargo)

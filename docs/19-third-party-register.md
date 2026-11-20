@@ -28,6 +28,8 @@ Their language is irrelevant to the Rust-first rule: we run them as they are and
 | Hindsight | Python | MIT (U: PyPI lists Apache-2.0) | Agent memory service | None |
 | Hummingbot + Hummingbot API | Python/Cython | Apache-2.0 | Optional market-making sidecar; our Rust `mt-mm-adapter` drives its REST API | None |
 | crawl4ai | Python | Apache-2.0 (attribution request (U)) | JS-page extraction fallback | Keep attribution |
+| yt-dlp | Python (standalone CLI) | Unlicense | Subtitles for earnings calls, optional YouTube source | None |
+| Farcaster hub (Hubble) | TypeScript + Rust | MIT (U) | Optional: a public hub's HTTP API, or self-hosted | None |
 | rss-bridge | PHP | Unlicense (U) | Feeds for sites without RSS | None |
 | Anvil (Foundry) | **Rust** | MIT / Apache-2.0 | Mainnet-fork simulation | None |
 | Prometheus, Alertmanager | Go | Apache-2.0 | Metrics, alert routing | None |

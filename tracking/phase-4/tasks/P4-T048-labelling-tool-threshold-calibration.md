@@ -15,17 +15,17 @@ requirements: [R4.12]
 roadmap_todos: [T4.28]
 modules: [M21]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, uv, git]
 mcp: []
 env: []
-services: [supabase-postgres, mlflow, decision-svc]
+services: [supabase-postgres, mlflow, decision-svc, mt-scheduler]
 branch: p4/P4-T048-labelling-tool-threshold-calibration
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An LLM labeller via the gateway **silver-labels** the ~200-document P4-T062 batch against the written relevance rubric (the P4-T049 definition; [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design)), stored as `models.label` rows with `source = silver`. A calibration script reads the labels (your P4-T049 labels take precedence where present, silver labels elsewhere) and picks the relevance-gate threshold at the target precision, writing it as a new `models.question` version. Nothing waits for your labelling; P4-T053 runs it, activates the threshold and measures the result.
+An LLM labeller via the gateway **silver-labels** the ~200-document P4-T062 batch against the written relevance rubric (the P4-T049 definition; [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design)), stored as `models.label` rows with `source = silver`. A calibration job in `mt_research` (Python, run on `mt-scheduler`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) reads the labels (your P4-T049 labels take precedence where present, silver labels elsewhere) and picks the relevance-gate threshold at the target precision, writing it as a new `models.question` version. Nothing waits for your labelling; P4-T053 runs it, activates the threshold and measures the result.
 
 ## Context & references
 
@@ -49,14 +49,14 @@ An LLM labeller via the gateway **silver-labels** the ~200-document P4-T062 batc
 
 ## Requirements
 
-- Input: the latest label per (subject, question) from `models.label`, `source = user` first, else `source = silver`, excluding skips; Telegram and `model_input_ok=false` subjects can't be there (P4-T062 sampler), and the script re-checks with the P4-T025 guard.
+- Input: the latest label per (subject, question) from `models.label`, `source = user` first, else `source = silver`, excluding skips; Telegram and `model_input_ok=false` subjects can't be there (P4-T062 sampler), and the job re-checks with the P4-T025 guard (`mt_store.provenance`).
 - Calibration: choose the threshold maximising recall subject to precision ≥ the question's target (default 0.75 for the auto-decide gate, 0.90 for any veto use, per 16 §2.10; configurable); report precision/recall/F1, ECE, confusion matrix, bootstrap CIs and the chosen value to MLflow; activate via `models.question.update` (C1) as a new question version.
 - Cross-validated threshold choice (k-fold) so P4-T053 doesn't evaluate on the documents used to pick it.
 
 ## ToDo
 
-- [ ] Silver-label the P4-T062 batch: an LLM labeller via the LiteLLM gateway applies the written rubric to each sampled document (only rows the P4-T025 guard allows as model input) and stores `models.label` rows with `source = silver` via the CLI path (never SemIf, the tier-B teacher or any shadow model as labeller).
-- [ ] Calibration script (`tools/calibrate/semif_threshold.py`) + MLflow logging, reporting silver-label and your-label figures separately.
+- [ ] Silver-label the P4-T062 batch: an LLM labeller via the LiteLLM gateway applies the written rubric to each sampled document (only rows the P4-T025 guard allows as model input) and stores `models.label` rows with `source = silver` via the Rust `mt-models` CLI path (`cargo run -p mt-models -- label-silver`; never SemIf, the tier-B teacher or any shadow model as labeller).
+- [ ] Calibration job (`packages/mt_research/calibrate/semif_threshold.py`; labels read through the `pit` binding) + MLflow logging, reporting silver-label and your-label figures separately.
 - [ ] `models.question.update` activation step with the chosen threshold.
 - [ ] Tests.
 
@@ -78,7 +78,7 @@ An LLM labeller via the gateway **silver-labels** the ~200-document P4-T062 batc
 
 - [ ] Calibration runs end to end on a synthetic labelled set and writes a new question version with the chosen threshold (the run on your labels is P4-T053)
 - [ ] MLflow run records precision/recall/F1/ECE and the 16 §2.10 targets used
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, `pnpm test`, `pnpm playwright` viewport matrix + axe)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, ruff, mypy, `uv run pytest` (`mt_research`), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ An LLM labeller via the gateway **silver-labels** the ~200-document P4-T062 batc
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (labelling tool + models.label.add split out to new P4-T062 (R4.16/T4.31, 17 §D P4-B007); now calibration only, targets from 16 §2.10; depends on P4-T062, P4-T030, P2-T046)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (silver labels (`source = silver`, gateway LLM labeller per 10 §4.3) are the default per 17 §G; your P4-T049 labels optional and take precedence; services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (silver labeller is a Rust `mt-models` CLI via the gateway; calibration is an `mt_research` job on `mt-scheduler`; services +mt-scheduler; tools +cargo; stray web checks removed from the CI line)

@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T007]
+depends_on: [P1-T005, P1-T007, P1-T078]
 requirements: [R1.04]
 roadmap_todos: [T1.23]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T019-ecb-frankfurter-reference-rates
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,24 +37,24 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A self-hosted Frankfurter container serves ECB euro reference rates internally, and a daily flow stores them in `market.fx_reference` for cross-checks and UI conversions.
+A self-hosted Frankfurter container serves ECB euro reference rates internally, and a daily `mt-connectors` job (Rust) stores them in `market.fx_reference` for cross-checks and UI conversions.
 
 ## Context & references
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (ECB reference rates + self-hosted Frankfurter) · [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1) (Frankfurter, MIT)
-- Depends on (this phase): P1-T005, P1-T007
+- Depends on (this phase): P1-T005, P1-T007, P1-T078 (`mt-connectors` base)
 
 ## Requirements
 
 - `frankfurter` service in Compose (image pinned by digest, internal `core` network only), its own DB volume
-- Daily flow after ECB publication (~16:00 CET; schedule in P1-T053) stores (date, base EUR, quote, rate) with `source=ecb`, `licence=public`, `event_time` = ECB reference date 16:00 CET, `ingest_time` = now
+- Daily job after ECB publication (~16:00 CET; schedule in P1-T053) stores (date, base EUR, quote, rate) with `source=ecb`, `licence=public`, `event_time` = ECB reference date 16:00 CET, `ingest_time` = now
 - Backfill full ECB history once (from 1999)
 
 ## ToDo
 
 - [ ] Add the container and health check
-- [ ] Implement the flow and the backfill
+- [ ] Implement the `ecb` provider in `mt-connectors` (via the self-hosted Frankfurter) and the one-off backfill
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -62,12 +62,12 @@ A self-hosted Frankfurter container serves ECB euro reference rates internally, 
 
 ### Tests
 
-- Unit: parse Frankfurter JSON; weekend/holiday dates carry no rows (no forward-fill in storage)
-- Integration: container up in CI and the flow loads a fixture date range
+- `cargo test -p mt-connectors ecb`: parse Frankfurter JSON; weekend/holiday dates carry no rows (no forward-fill in storage)
+- Integration: container up in CI and the job loads a fixture date range
 
 ### Scenarios
 
-- Given a TARGET holiday, when the flow runs, then nothing is written and no DQ incident is raised
+- Given a TARGET holiday, when the job runs, then nothing is written and no DQ incident is raised
 
 ### Stress / failure injection
 
@@ -76,7 +76,7 @@ A self-hosted Frankfurter container serves ECB euro reference rates internally, 
 ## Acceptance criteria
 
 - [ ] ECB rates from 1999 to today in `market.fx_reference`; daily update running
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -106,3 +106,4 @@ A self-hosted Frankfurter container serves ECB euro reference rates internally, 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless public source)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python Prefect flow → `mt-connectors` `ecb` provider (Rust), scheduled by `mt-scheduler` (P1-T053); deps +P1-T078; tools cargo; services drop prefect-server)

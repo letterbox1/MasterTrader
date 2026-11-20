@@ -8,7 +8,7 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-11-19
+updated: 2026-11-20
 ---
 
 # Phase 4 · News, social, events & calendars
@@ -17,7 +17,7 @@ updated: 2026-11-19
 
 Free news, social, event and calendar intelligence flows into point-in-time features, document RAG and first-stage decision models (SemIf tier B stage 1), and calendar blackouts reach the risk manager (M11). **Telegram contributes postures only** (02 F3b: regex extractor → `text.telegram_posture` / `posture.telegram.*` → M4/M11 rules; D08 and the brief show the numbers). No Telegram text reaches any model, RAG index or training set. Deliverables: text/social/event/calendar ingestion, Telegram postures, document RAG, sentiment/regime features, SemIf tier B (prefix caching off on the decision path; stage-1 gate p95 ≤ 300 ms GPU / ≤ 3 s CPU, never on the order path), blackouts in M11 (16 §2.8 defaults), a minimal labelling tool, the regulatory & venue watch (`REG_CHANGE` tasks), D08 Intel, live D02 positioning/nowcast widgets and the morning brief (contents canonical in mobile-and-telegram §3).
 
-The work is organised as: your inputs (channel lists + Telethon login, follows, keywords, keys/licences, labels) → ops (secrets, RSS-Bridge sidecar, containers/NATS accounts, SemIf serving) → the `mt_data.text` framework and **one connector task per source family, built on recorded fixtures** → the `nlp` chain (provenance gate → dedupe → relevance gate → linking → FinBERT → TEI → store) → decision-svc (question registry, SemIf readout) → RAG → events/exposure → calendars/blackouts → features → API/UI/brief → regulatory & venue watch → verification, **late live checks with your keys/accounts** (P4-T066–T068), a 2-week brief run and the exit demo.
+The work is organised as: your inputs (channel lists + Telethon login, follows, keywords, keys/licences, labels) → ops (secrets, RSS-Bridge sidecar, containers/NATS accounts, SemIf serving) → the text framework (Rust `mt-feeds` + `mt-connectors`; Python only for `mt_extract` and `mt_telegram_reader`) and **one connector task per source family, built on recorded fixtures** → the `nlp` chain in Rust `mt-nlp` (provenance gate → dedupe → relevance gate → linking → FinBERT via ONNX → TEI → store) → decision-svc (`mt-models`: question registry, SemIf readout) → RAG (`mt-memory`) → events/exposure → calendars/blackouts → features → API/UI/brief → regulatory & venue watch → verification, **late live checks with your keys/accounts** (P4-T066–T068), a 2-week brief run and the exit demo.
 
 ## Entry criteria
 
@@ -55,7 +55,7 @@ With `phase_gating: "dependencies"` these are enforced per task through explicit
 | Build: positioning ingestion + features (R4.11) | P4-T039, P4-T040, P4-T041, P4-T042, P4-T065 |
 | Build: API, D08, D01/D02 chips, morning brief (R4.13–R4.14) | P4-T043, P4-T044, P4-T045, P4-T046, P4-T047 |
 | Build: regulatory & venue watch (R4.15) | P4-T063, P4-T064 |
-| Verify (fixtures, CI) | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T069 |
+| Verify (fixtures, CI) | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T069, P4-T072, P4-T073 (ONNX export parity) |
 | Verify (live, keys last) | P4-T066, P4-T067, P4-T068 |
 | Run + exit | P4-T060, P4-T061 |
 
@@ -74,12 +74,12 @@ P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T02
 | R4.03 | No Telegram text reaches any model, RAG index or training set | P4-T010, P4-T019, P4-T025, P4-T050, P4-T061, P4-T068 |
 | R4.04 | Discord bot on your server ingesting followed announcement channels | P4-T002, P4-T006, P4-T020, P4-T057, P4-T068 |
 | R4.05 | Bluesky, Mastodon, Farcaster; StockTwits if T1.60 passed; YouTube if T4.65 passes | P4-T003, P4-T021, P4-T022, P4-T023, P4-T024, P4-T056, P4-T057, P4-T066 |
-| R4.06 | Text chain (non-Telegram, provenance first): dedupe → gate → linking → FinBERT → TEI → `text.document` | P4-T008, P4-T010, P4-T025, P4-T026, P4-T027, P4-T030, P4-T057, P4-T058 |
+| R4.06 | Text chain in `mt-nlp` (non-Telegram, provenance first): dedupe → gate → linking → FinBERT (ONNX) → TEI → `text.document` | P4-T008, P4-T010, P4-T025, P4-T026, P4-T027, P4-T030, P4-T057, P4-T058, P4-T072 |
 | R4.07 | Document RAG with `as_of` filter | P4-T031, P4-T032, P4-T051 |
 | R4.08 | Global events, exposure map, event score | P4-T005, P4-T013, P4-T033, P4-T034, P4-T035, P4-T067 |
 | R4.09 | Polymarket/Kalshi read-only, lawful reach only | P4-T036, P4-T056, P4-T065 |
 | R4.10 | Calendars + "event within N minutes" → M11 blackouts (16 §2.8 defaults) | P4-T037, P4-T038, P4-T045, P4-T052, P4-T061 |
-| R4.11 | Features per market type; positioning + nowcasts ingested (D02 widgets go live); Fed path; VIX; PM; forecasts | P4-T036, P4-T039, P4-T040, P4-T041, P4-T042, P4-T054, P4-T065, P4-T067 |
+| R4.11 | Features per market type; positioning + nowcasts ingested (D02 widgets go live); Fed path; VIX; PM; forecasts | P4-T036, P4-T039, P4-T040, P4-T041, P4-T042, P4-T054, P4-T065, P4-T067, P4-T073 |
 | R4.12 | SemIf stage 1 + registry + KV + determinism (prefix caching off; shared-prefix offline only) | P4-T009, P4-T028, P4-T029, P4-T030, P4-T046, P4-T048, P4-T049, P4-T053, P4-T058, P4-T062, P4-T069 |
 | R4.13 | D08 Intel; Telegram as postures only | P4-T043, P4-T044, P4-T045, P4-T046, P4-T057, P4-T058, P4-T059 |
 | R4.14 | Morning brief per mobile-and-telegram §3 | P4-T047, P4-T060, P4-T061 |
@@ -99,14 +99,14 @@ P4-T010 → P4-T025 → P4-T026 → P4-T027 → P4-T030 (with P4-T028 → P4-T02
 | T4.04 | USER (optional; agent silver labels by default, 17 §G) | Label ~200 documents with the labelling tool | P4-T049 |
 | T4.05 | USER | Reddit access yes/no (optional) | P4-T004 |
 | T4.06 | USER | FIRMS / ACLED keys, OpenSanctions licence | P4-T005 |
-| T4.20 | BUILD | `mt_data.text` news sources | P4-T010, P4-T011, P4-T012, P4-T013, P4-T014, P4-T015, P4-T016, P4-T017 |
+| T4.20 | BUILD | Text sources (`mt-feeds`, `mt-connectors`, `mt_extract`) | P4-T010, P4-T011, P4-T012, P4-T013, P4-T014, P4-T015, P4-T016, P4-T017 |
 | T4.21 | BUILD | Telegram ingest → postures | P4-T018, P4-T019, P4-T068 |
 | T4.22 | BUILD | Discord, Bluesky, Mastodon, Farcaster | P4-T020, P4-T021, P4-T022, P4-T023, P4-T024, P4-T068 |
-| T4.23 | BUILD | `nlp` service | P4-T025, P4-T026, P4-T027, P4-T030 |
-| T4.24 | BUILD | `mt_memory` RAG | P4-T031, P4-T032 |
+| T4.23 | BUILD | `mt-nlp` service | P4-T025, P4-T026, P4-T027, P4-T030, P4-T072 |
+| T4.24 | BUILD | `mt-memory` RAG | P4-T031, P4-T032 |
 | T4.25 | BUILD | Events + exposure + event score; Polymarket/Kalshi | P4-T013, P4-T033, P4-T034, P4-T035, P4-T036 |
 | T4.26 | BUILD | Calendar + blackout API (±15 min, `event_sensitive`) | P4-T037, P4-T038 |
-| T4.27 | BUILD | Feature pipelines | P4-T040, P4-T041, P4-T042 |
+| T4.27 | BUILD | Feature pipelines (`mt-features`) | P4-T040, P4-T041, P4-T042, P4-T073 |
 | T4.28 | BUILD | decision-svc stage 1 (determinism, queue off the order path) | P4-T028, P4-T029, P4-T030, P4-T048 |
 | T4.29 | BUILD | D08 + tier-B chips + morning brief | P4-T043, P4-T044, P4-T045, P4-T046, P4-T047 |
 | T4.30 | BUILD | Regulatory & venue watch, `REG_CHANGE` | P4-T063, P4-T064 |
@@ -152,15 +152,16 @@ These are explicit `depends_on` entries on the tasks that need them (they replac
 | Phase | Tasks relied on | Used by |
 |---|---|---|
 | P0 | P0-T001 (Reddit application), P0-T002 (Telegram account), P0-T005 (CPU/GPU profile), P0-T008 (Discord server/bot), P0-T010 (free keys), P0-T020 (Compose), P0-T021 (networks), P0-T022 (sops → tmpfs), P0-T024 (13 schemas), P0-T025 (provenance columns), P0-T027 (`pit`), P0-T029/T030 (WORM triggers, hash chain), P0-T034 (command bus), P0-T036 (WS hub), P0-T043 (TEI embed/rerank), P0-T049 (component library) | P4-T001, T002, T004, T006–T010, T027, T028, T031, T032, T043, T044, T067 |
-| P1 | P1-T004 (streams/KV), P1-T005 (connector framework), P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T009 (symbol master), P1-T013 (bars), P1-T024 (FRED/macro), P1-T026 (EIA/USDA/COT/BH), P1-T028 (EDGAR), P1-T030 (DQ, `audit.dq_event`), P1-T043 (venue health), P1-T045 (alert fan-out), P1-T046 (`/data/feeds`), P1-T049/T050 (D02), P1-T056 (open checks T1.60) | P4-T008, T010, T014, T024, T025, T026, T037, T039, T042, T046, T063, T064, T065 |
+| P1 | P1-T004 (streams/KV), P1-T005 (connector framework), P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T009 (symbol master), P1-T013 (bars), P1-T024 (FRED/macro), P1-T026 (EIA/USDA/COT/BH), P1-T028 (EDGAR), P1-T030 (DQ, `audit.dq_event`), P1-T043 (venue health), P1-T045 (alert fan-out), P1-T046 (`/data/feeds`), P1-T049/T050 (D02), P1-T056 (open checks T1.60), P1-T077 (`mt-scheduler`), P1-T078 (`mt-connectors` skeleton) | P4-T008, T010, T014, T024, T025, T026, T037, T039, T042, T046, T047, T063, T064, T065 |
 | P2 | P2-T008 (scalping template), P2-T010 (risk policy), P2-T017 (RiskGate blackout check), P2-T019 (C3 change control), P2-T021 (paper engine), P2-T035 (Telegram commands), P2-T036 (bots, `event_sensitive`), P2-T042 (D06), P2-T046 (MLflow), P2-T120 (feature registry), P2-T123 (IC evaluator), P2-T142 (D01) | P4-T009, T035, T036, T038, T040–T042, T046–T048, T052, T054 |
 | P3 | P3-T031 (residency timeline), P3-T038 (minimal `curation.task`) | P4-T063 |
+| P6 | P6-T074 (`mt-agents` runtime skeleton; the brief workflow runs on it) | P4-T047 |
 | P5 (downstream) | R5.10 consumes Telegram postures (M4 rules) + Discord inbox; R5.21 reuses the Discord bot; the brief's airdrop section | P4-T019, P4-T020, P4-T047 |
 | P6 (downstream) | P4 text + RAG + SemIf running ≥ 4 weeks; R6.13 reuses the provenance guard; D10 labelling queue reuses `models.label` / `models.label.add` | P4-T025, P4-T029, P4-T032, P4-T062 |
 
 ## Planning notes & risks
 
-- **Telegram is the highest-risk area.** Enforced in five layers: a DB CHECK constraint (P4-T010), `nlp` never subscribing to Telegram subjects plus a guard at every model boundary and a CI lint (P4-T025), a consumer allow-list for `posture.telegram.>` limited to M4/M11 rules and the display paths (P4-T019), the canary gate test on fixtures (P4-T050) and again on the live stack (P4-T068). Postures are never M6 features, tier A/B, agents, RAG or MCP inputs (17 §D).
+- **Telegram is the highest-risk area.** Enforced in five layers: a DB CHECK constraint (P4-T010), `nlp` never subscribing to Telegram subjects plus a guard at every model boundary (the Rust `ModelInput<T>` type, clippy and the Python AST lint) (P4-T025), a consumer allow-list for `posture.telegram.>` limited to M4/M11 rules and the display paths (P4-T019), the canary gate test on fixtures (P4-T050) and again on the live stack (P4-T068). Postures are never M6 features, tier A/B, agents, RAG or MCP inputs (17 §D).
 - **Scrape side has no DB route** (02 §3.1): `ingest-text`/`ingest-events` publish to `raw.>` and `posture.telegram.>` only; a core `intel-writer` (P4-T008) persists geo events and postures; connector state (join queue, cursors) lives in local state files.
 - **Build first, keys last** (17 §E): every connector is built and tested on recorded fixtures without keys; live checks are P4-T066 (YouTube), P4-T067 (FIRMS, ACLED, OpenSanctions, Finnhub, CryptoPanic, Myfxbook/IG/OANDA) and P4-T068 (Telegram, Discord), each depending on the USER task that provides the key, licence or account.
 - **Determinism** (17 §A P4-B010): prefix caching off and fixed batch on the decision path; shared-prefix mode only offline/backfill, tagged non-deterministic and refused by decisions, tier A and backtests (P4-T009, P4-T029). Stage-1 gate latency p95 ≤ 300 ms GPU / ≤ 3 s CPU, queued, never on the order path (P4-T069).
@@ -172,7 +173,7 @@ These are explicit `depends_on` entries on the tasks that need them (they replac
 - **Polymarket** stays disabled while residency is AU (never via VPN/proxy); Kalshi read-only (P4-T036).
 - **Reddit** is optional (17 §D P4-B009; P4-T004). X stays deferred.
 - **Schemas** are all created in P0 (17 §B); P4 adds tables only, as SQL migrations in `supabase/migrations/` with pgTAP tests (`supabase test db`).
-- **Stack (2026-11-19, [18](../../docs/18-platform-and-deployment.md), 17 §G):** Rust crates `mt-intel-writer` (INSERT-only writer for postures, geo events and reg snapshots), `mt-events` (event pollers, exposure map, Polymarket/Kalshi), `mt-risk` (blackout evaluator) and `mt-api`; Python stays for `ingest-text` (Telethon, trafilatura, crawl4ai), `nlp`, `decision-svc`, calendars, features and RAG. Supabase Postgres replaces Postgres; everything builds and runs on the workstation (no host, LUKS, Tailscale or YubiKey preconditions before P7).
+- **Stack (2026-11-20, Rust-max, [18 §2](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), 17 §G/§H):** Rust crates `mt-feeds` (RSS/Atom, RSS-Bridge, Discord bot, Bluesky, Mastodon, Farcaster, GDELT), `mt-connectors` (EDGAR, Finnhub, CryptoPanic, calendars, positioning/macro), `mt-nlp` (gate, linking with GLiNER via ONNX (U), FinBERT via `ort`, TEI), `mt-models` (decision-svc, registry, labels), `mt-memory` (RAG), `mt-features`, `mt-events` (event pollers, exposure map, Polymarket/Kalshi, congressional disclosures), `mt-intel-writer`, `mt-risk`, `mt-api` and `mt-agents` (morning brief workflow); batch jobs on `mt-scheduler` (Prefect is gone). Python only for `mt_extract` (trafilatura; crawl4ai container), `mt_telegram_reader` (Telethon postures) and `mt_research` (ONNX export, calibration, forecasters that don't export). Models trained or exported in Python and served from Rust pass a parity check first (P4-T072, P4-T073). Supabase Postgres replaces Postgres; everything builds and runs on the workstation (no host, LUKS, Tailscale or YubiKey preconditions before P7).
 - **USER inputs (17 §G):** keywords/feeds are seeded by the agent (P4-T003); relevance labels are agent silver labels (P4-T048) with your labels optional (P4-T049); your channel list, follows and keys (P4-T001, T002, T005) gate only the live checks and the exit demo; P4-T004 stays tied to the Reddit reply (P0-T001).
 - Sizes: no XL items; the largest (L) are the text framework, SemIf readout, RAG retrieval, calendar sources, sentiment/regime and D08 feed.
 - The 14-day brief run (P4-T060) now also waits for the live checks; if they slip, the exit demo slips rather than shortening the run.

@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T007]
+depends_on: [P1-T005, P1-T007, P1-T078]
 requirements: [R1.05, R1.15]
 roadmap_todos: [T1.34, T1.32]
 modules: [M1]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,12 +45,12 @@ review_result: ""
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (FinanceDatabase as symbol master) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (finest free timeframe per class; "the UI shows each instrument's finest available resolution")
 - UI: [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) header "min resolution" and timeframe picker disabling unsupported resolutions with a reason
 - Roadmap ToDo T1.34 now names FinanceDatabase and `exchange_calendars` (gap P1-B003 closed)
-- Depends on (this phase): P1-T005, P1-T007
+- Depends on (this phase): P1-T005, P1-T007, P1-T078 (`mt-connectors` base)
 
 ## Requirements
 
-- Instrument IDs use Nautilus `InstrumentId` (`BTCUSDT.BINANCE`); precision, tick size, lot size from venue metadata (Nautilus instrument providers; ccxt `load_markets` only as fallback in the Python sync flow)
-- Language split ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): the sync job is a Python Prefect flow because FinanceDatabase and `exchange_calendars` are Python-only; it materialises sessions into `market.session_calendar` so the Rust services (`mt-monitor`, `mt-api`) read them without Python
+- Instrument IDs use Nautilus `InstrumentId` (`BTCUSDT.BINANCE`); precision, tick size, lot size from venue metadata (Nautilus instrument providers; the venue's public REST metadata through `mt-connectors` as fallback; no ccxt)
+- Language split ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): the instrument sync is an `mt-connectors` job (Rust) that reads venue metadata and FinanceDatabase's published data files (MIT; file format and location (U), checked first); trading sessions come from an `mt_research` offline batch job (`mt_research.jobs.session_calendar`, `exchange_calendars` is Python-only) that writes `market.session_calendar` through the `mt_store` binding, run by `mt-scheduler` (schedule in P1-T053), so the Rust services (`mt-monitor`, `mt-api`) read sessions without Python
 - FinanceDatabase (MIT) for equities/ETFs classification (sector, asset class, exchange) refreshed weekly
 - Sessions: `exchange_calendars` for equities (XNYS/XNAS), FX weekly session (Sun 22:00 → Fri 22:00 UTC, broker-specific), crypto 24/7; stored as `session_calendar` reference used by the stale check (P1-T031): closed sessions are `closed`, never `stale` ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means))
 - Resolution metadata per instrument: `rt_finest` (tick|l2_100ms|quote_4hz|iex_trade|daily|none) and `hist_finest` (trade|1s|tick|1m|daily) with a reason string (e.g. "US stocks: IEX only; no tick L2")
@@ -59,8 +59,8 @@ review_result: ""
 ## ToDo
 
 - [ ] Supabase migration for `market.instrument` columns (resolution, session ref, classification) and `market.session_calendar` if not in P0 schema; pgTAP test
-- [ ] Instrument sync job per venue + FinanceDatabase enrichment
-- [ ] Session resolver: sessions materialised into `market.session_calendar` (next 400 days, refreshed daily) and `is_open(instrument_id, ts)` in `mt-store` (Rust, with Python binding) reading it
+- [ ] Instrument sync as an `mt-connectors` provider (per venue + FinanceDatabase enrichment from its data files)
+- [ ] Session tables: the `mt_research.jobs.session_calendar` job materialises sessions into `market.session_calendar` (next 400 days, refreshed daily by `mt-scheduler`) and `is_open(instrument_id, ts)` in `mt-store` (Rust, with Python binding) reading it
 - [ ] Seed resolution metadata from 03 §6 rules per asset class/venue
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -69,8 +69,8 @@ review_result: ""
 
 ### Tests
 
-- Unit: session resolver across DST changes (US and AU), US holidays, FX weekend; resolution rules per class
-- Integration: sync against recorded venue metadata fixtures produces stable rows; delisted symbol flagged `active=false`
+- `uv run pytest packages/mt_research -k session_calendar` and `cargo test -p mt-store is_open`: session tables and resolver across DST changes (US and AU), US holidays, FX weekend; resolution rules per class
+- `cargo test -p mt-connectors instruments`: sync against recorded venue metadata and FinanceDatabase fixtures produces stable rows; delisted symbol flagged `active=false`
 
 ### Scenarios
 
@@ -114,3 +114,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (traced to new T1.34 (P1-B003 closed); closed sessions are `closed`)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (sync flow stays Python (FinanceDatabase, exchange_calendars); sessions materialised for the Rust `is_open` in `mt-store`; Supabase migration + pgTAP; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (instrument sync moves to a Rust `mt-connectors` job (FinanceDatabase read from its data files (U), no ccxt fallback); `exchange_calendars` session tables stay Python as an `mt_research` offline job run by `mt-scheduler` per 18 §2.2; deps +P1-T078)

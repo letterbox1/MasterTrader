@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T109, P2-T120, P2-T107]
+depends_on: [P2-T109, P2-T120, P2-T107, P2-T203]
 requirements: [R2.47]
 roadmap_todos: [T2.30]
 modules: [M21, M7]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a strategy from versioned M6 features and outcome labels, using time-ordered purged splits, and logs everything to MLflow — the first stage of train → calibrate → compile → in-process.
+An `mt_research` (Python, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) lab job, run as an `mt-scheduler` job container, that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a strategy from versioned M6 features and outcome labels, using time-ordered purged splits, and logs everything to MLflow — the first stage of train → calibrate → compile → in-process.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 
 ## Requirements
 
-- Dataset: feature matrix from `features.def` versions listed in the manifest, via `pit`; rows with `train_ok=false` refused (hard error if any present).
+- Dataset: feature matrix from `features.def` versions listed in the manifest, built by `mt-lab-core`/`mt-features` and read through the binding (P2-T203), i.e. via `pit`; rows with `train_ok=false` refused (hard error if any present).
 - Labels (pluggable `LabelSource`): forward-return sign over horizon h, triple-barrier (tp/sl/time) — teacher labels added in P6.
 - Splits: time-ordered train / calibration holdout / test with purge + embargo (P2-T109 utilities); no shuffling.
 - Models: LightGBM (default), XGBoost, logistic/linear, small MLP (≤ 2 hidden layers, ≤ 64 units) — all CPU.
@@ -57,8 +57,8 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 
 ## ToDo
 
-- [ ] Implement `packages/mt_models/tier_a/train.py` (dataset, LabelSource, splits, trainers)
-- [ ] Register `tier_a_train` JobRunner, the `models.tiera.train` command (C1, 02 §7.2) and the D04 'tier A training' run type
+- [ ] Implement `packages/mt_research/tier_a/train.py` (dataset via the binding, LabelSource, splits via the Rust fold generators, trainers)
+- [ ] Register `tier_a_train` as an external job kind (P2-T101), the `models.tiera.train` command (C1, 02 §7.2) and the D04 'tier A training' run type
 - [ ] Provenance refusal + tests
 - [ ] MLflow logging
 - [ ] Doc
@@ -66,7 +66,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_models -k tier_a`.
+- Commands: `uv run pytest packages/mt_research -k tier_a`.
 - Unit: purged split never lets a label horizon cross into the holdout.
 - Unit: a dataset containing one `train_ok=false` row → training refused.
 - Integration: LightGBM trains on a fixture and logs to MLflow with all fields.
@@ -82,7 +82,7 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 
 - [ ] End-to-end training job produces an MLflow run with artefact and metrics
 - [ ] Provenance refusal enforced
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: ruff, mypy, `uv run pytest packages/mt_research`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -114,3 +114,4 @@ A lab job that trains a tier-A model (LightGBM/XGBoost/linear/small MLP) for a s
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (labels and models.tiera.train (C1) per 17 §D)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [mlflow, postgres] → [mlflow, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (training stays Python but moves from `packages/mt_models` to `packages/mt_research/tier_a` (18 §2.2), run as an `mt-scheduler` job; datasets/splits through the `mt-lab-core` binding; depends_on + P2-T203; tools unchanged [uv])

@@ -62,7 +62,7 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 - [ ] Remove any channel that requires a phone-number reveal, payment, or a bot-captcha that asks for more than a button tap.
 - [ ] Commit the file on branch `p4/P4-T001-telegram-channel-list` (or hand it to the agent) and note the count in the progress log.
 - [ ] Confirm the dedicated account (T0.06) is logged in only on your phone + the server session; never on a shared device.
-- [ ] Once P4-T006 has landed, run `ops/scripts/telethon_login.py` on your workstation yourself and type the login code and 2FA password at its prompt. It writes the session straight into the encrypted file outside the repo (`/etc/mastertrader/telethon.session.sops`). Never paste the code or password into a chat, issue or log.
+- [ ] Once P4-T006 has landed, run `uv run python packages/mt_telegram_reader/scripts/telethon_login.py` on your workstation yourself and type the login code and 2FA password at its prompt. It writes the session straight into the encrypted file outside the repo (`/etc/mastertrader/telethon.session.sops`). Never paste the code or password into a chat, issue or log.
 
 ## Verification
 
@@ -111,4 +111,4 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (posture table/subject names per 17 §D; session login moved here as your step; depends on P0-T002 + P4-T006; build tasks no longer wait for this list)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9))
-- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (list validator lives in the Python `mt_telegram_reader` package)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (list validator and Telethon login script live in the Python `mt_telegram_reader` package)

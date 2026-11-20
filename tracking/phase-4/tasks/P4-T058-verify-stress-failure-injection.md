@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -75,7 +75,7 @@ Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood v
 
 - [ ] All chaos scenarios pass with documented recovery times
 - [ ] No loss, no duplicates, no Telegram leakage
-- [ ] CI green (`cargo test -p mt-intel-writer`, `cargo test -p mt-events`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds -p mt-nlp -p mt-models -p mt-intel-writer -p mt-events`, `cargo clippy`, ruff, mypy, `uv run pytest` (`mt_telegram_reader`), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -104,3 +104,4 @@ Chaos runs prove degraded modes (02 §9.3) and the roadmap risks: source flood v
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (decision-svc outage asserts nothing on the order path waits (R4.N2, 17 §A P4-B010))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (CI covers the Rust crates under chaos and the Telethon reader)

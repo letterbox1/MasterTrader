@@ -15,7 +15,7 @@ requirements: [R4.11, R4.09]
 roadmap_todos: [T4.32]
 modules: [M6, M3]
 dashboards: [D02]
-tools: [pnpm, node>=20, cargo, uv, git]
+tools: [pnpm, node>=20, cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D02-markets.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -80,7 +80,7 @@ The D02 widgets that P1 shipped with an 'Arrives in Phase 4' empty state now sho
 
 - [ ] Macro strip shows nowcasts; Positioning shows retail sentiment and event probabilities
 - [ ] No 'Arrives in Phase 4' state remains for a live source; no placeholder data anywhere
-- [ ] CI green (lint, types, tests, `pit` check, viewport matrix + axe)
+- [ ] CI green (`cargo test -p mt-api`, `cargo clippy`, `pnpm test`, `pnpm playwright` viewport matrix + axe, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ The D02 widgets that P1 shipped with an 'Arrives in Phase 4' empty state now sho
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T4.32 D02 widgets go live (17 §D P1-B003/B004/B012))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tools −uv; explicit CI commands)

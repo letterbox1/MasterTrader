@@ -15,17 +15,17 @@ requirements: [R1.09]
 roadmap_todos: [T1.26]
 modules: [M1]
 dashboards: [D07]
-tools: [git, cargo, uv, supabase, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T008-retention-job
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compliance.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A retention job (`mt-store retention run`, Rust, scheduled hourly by a Prefect flow) deletes rows and Parquet files whose age exceeds their `retention_days`, logs what it removed, and never touches WORM tables, so terms like CoinGecko's ≤ 24 h cache are enforced automatically.
+A retention job (`mt-store retention run`, Rust, an hourly `mt-scheduler` job; schedule in P1-T053) deletes rows and Parquet files whose age exceeds their `retention_days`, logs what it removed, and never touches WORM tables, so terms like CoinGecko's ≤ 24 h cache are enforced automatically.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ A retention job (`mt-store retention run`, Rust, scheduled hourly by a Prefect f
 
 ## Requirements
 
-- `mt-store retention run` (Rust; the Prefect flow `mt_data.flows.retention` only schedules it) runs hourly (default, configurable); for each ingest table with provenance it deletes rows where `ingest_time < now() - retention_days`
+- `mt-store retention run` (Rust; run by `mt-scheduler`) runs hourly (default, configurable); for each ingest table with provenance it deletes rows where `ingest_time < now() - retention_days`
 - Parquet: files whose metadata `retention_days` has expired are deleted from hot and cold tiers
 - Writes a summary row per run to `ops.retention_run` (table, rows deleted, oldest kept) and a metric `mt_retention_deleted_total`
 - Hard allow-list of tables it may touch; any `audit.*`, `journal.*`, `risk.change` table in scope → refuse to run and alert
@@ -57,7 +57,7 @@ A retention job (`mt-store retention run`, Rust, scheduled hourly by a Prefect f
 
 ## ToDo
 
-- [ ] Implement the job in `crates/mt-store` (plus the thin Prefect schedule) with a table allow-list built from tables that have provenance columns and are not WORM
+- [ ] Implement the job in `crates/mt-store` (plus its `mt-scheduler` job definition) with a table allow-list built from tables that have provenance columns and are not WORM
 - [ ] Implement Parquet expiry using the catalog helpers
 - [ ] Add the shutdown purge hook used by P1-T029
 - [ ] Supabase migration for `ops.retention_run` with pgTAP test
@@ -69,7 +69,7 @@ A retention job (`mt-store retention run`, Rust, scheduled hourly by a Prefect f
 ### Tests
 
 - Unit: cut-off computation per row; NULL retention never deleted
-- Integration: rows with `retention_days=1` older than 24 h are deleted, younger kept; WORM table in config → flow refuses
+- Integration: rows with `retention_days=1` older than 24 h are deleted, younger kept; WORM table in config → job refuses
 - Integration: Parquet file with expired metadata is removed from both tiers
 
 ### Scenarios
@@ -85,7 +85,7 @@ A retention job (`mt-store retention run`, Rust, scheduled hourly by a Prefect f
 
 - [ ] CoinGecko-style rows never survive more than 24 h + one job interval (≤ 25 h); P1-T059 verifies end to end
 - [ ] Job cannot be pointed at WORM tables (tested)
-- [ ] CI green (`cargo clippy`, `cargo test`, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -114,3 +114,4 @@ A retention job (`mt-store retention run`, Rust, scheduled hourly by a Prefect f
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (hourly as configurable default; P0 dep on catalog helpers)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (retention job in Rust `mt-store`, scheduled by Prefect; partition drop replaces Timescale chunk handling; Supabase migration + pgTAP; tools cargo/uv/supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect → `mt-scheduler` job (schedule in P1-T053); services drop prefect-server; tools drop uv)

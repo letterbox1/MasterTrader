@@ -1,7 +1,7 @@
 ---
 id: P2-T077
 kind: task
-title: Setup-odds simulator ('time machine') in mt-lab-core and on approval cards
+title: "Setup-odds simulator ('time machine') in mt-lab-core and on approval cards"
 phase: 2
 type: BUILD
 status: backlog
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P2-T077 · Setup-odds simulator ("time machine") in mt_lab and on approval cards
+# P2-T077 · Setup-odds simulator ("time machine") in mt-lab-core and on approval cards
 
 ## Goal / expected outcome
 
@@ -110,7 +110,7 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab_
 ## Branch & PR
 
 - Branch: `p2/P2-T077-setup-odds-simulator`
-- PR title: `P2-T077: Setup-odds simulator ("time machine") in mt_lab and on approval cards`
+- PR title: `P2-T077: Setup-odds simulator ("time machine") in mt-lab-core and on approval cards`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P2-T077` run
 
 ## Progress log

@@ -15,7 +15,7 @@ requirements: [R4.17]
 roadmap_todos: [T4.68]
 modules: [M2]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -102,3 +102,4 @@ Evidence that congressional disclosures parse correctly on real filings, keep bo
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (cardinal rule names `mt-api`/`mt-risk`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tests run with `cargo test -p mt-events`; tools uv → cargo)
