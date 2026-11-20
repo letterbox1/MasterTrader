@@ -15,7 +15,7 @@ requirements: [R6.N2]
 roadmap_todos: [T6.73]
 modules: [M21, M9]
 dashboards: [D10]
-tools: [docker, nmap, ss, curl, uv]
+tools: [docker, nmap, ss, curl, cargo]
 mcp: []
 env: []
 services: [vllm-classify, onnx-cpu, hindsight, laya, clef-flash, llm-local]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-6-ai-models-treasury.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ Evidence for R6.N2: every local inference server added in Phase 6 (tier-B `vllm-
 - External scan: `nmap` from another tailnet device and from the LAN shows the ports closed.
 - Auth: for each server, a request without a key → 401/403; with a wrong key → 401/403; with the right key (read from tmpfs, never printed) → 200.
 - Network reach: containers on the `scrape` network can't reach any inference server; `agents`/`decision-svc` can.
-- Script `tools/verify/inference_ports.py` emits a pass/fail table; non-zero exit on any failure.
+- Check `tools/verify/inference_ports` (a small Rust binary in the Cargo workspace, run by `just verify-inference-ports`) emits a pass/fail table; non-zero exit on any failure.
 
 ## ToDo
 
@@ -106,3 +106,4 @@ Evidence for R6.N2: every local inference server added in Phase 6 (tier-B `vllm-
 
 - 2026-10-22 00:00 · aligner · created for T6.73 / R6.N2 (07 §5 port and API-key check over every P6 inference server)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (port check from LAN/tailnet; Tailscale not a precondition before Phase 7; workstation instead of host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (port check is a Rust binary instead of a Python script; tools cargo)

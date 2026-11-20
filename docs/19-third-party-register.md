@@ -26,6 +26,7 @@ Their language is irrelevant to the Rust-first rule: we run them as they are and
 | llama.cpp (`llama-server`) | C/C++ | MIT | Local advisor model | None |
 | vLLM | Python + C++/CUDA | Apache-2.0 | GPU model serving (SemIf, tier B) | None |
 | Hindsight | Python | MIT (U: PyPI lists Apache-2.0) | Agent memory service | None |
+| LightRAG | Python | MIT | Optional filings graph (off by default, 16 §2.14a), unmodified container | None |
 | Hummingbot + Hummingbot API | Python/Cython | Apache-2.0 | Optional market-making sidecar; our Rust `mt-mm-adapter` drives its REST API | None |
 | crawl4ai | Python | Apache-2.0 (attribution request (U)) | JS-page extraction fallback | Keep attribution |
 | yt-dlp | Python (standalone CLI) | Unlicense | Subtitles for earnings calls, optional YouTube source | None |

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/09-journal-and-tax.md, docs/roadmap/
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R3.16, T3.32](../../../docs/roadmap/phase-3-journal-and-tax.md) · verified by P3-T058 (T3.65)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Commands: [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (Journal & tax row; `task.answer` C1) · [09 Commands](../../../docs/09-journal-and-tax.md#architecture) · D15 actions [D15](../../../docs/ui/dashboards/D15-tax.md) (lock/unlock C3, unlock needs a reason) · D14 manual event (C2, reason required) [D14](../../../docs/ui/dashboards/D14-journal.md)
 - Residency contract: `tax.residency.changed` in [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) and flow step 7 in [02 §8](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · [12 §1 moving countries](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) · [12 §2 venue registry](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) · [09 Egypt finding](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design)
 - Confirmation levels: [17 §D P0-B003](../../../docs/17-decisions-register.md#d-other-decisions) (C2 = risk-preview hash bound to the command + session re-authenticated within 12 h; C3 = C2 + Telegram approve + TOTP + cool-down) · C3 cool-down 15 min default [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)
@@ -128,3 +128,4 @@ review_result: ""
 
 - 2026-10-22 00:00 · aligner · created for R3.16/T3.32 (docs/16–17 alignment; closes the implementation side of P3-B006/P3-B007)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (commands in `mt-api` (Rust); `ResidencyChanged` in `mt-core`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

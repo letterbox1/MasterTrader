@@ -15,17 +15,17 @@ requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
-services: [prefect, mlflow]
+services: [mt-scheduler, mlflow]
 branch: p6/P6-T032-monthly-finetune-flow
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,13 +47,13 @@ On the first weekend of each month a full fine-tune (not warm-start) of each pro
 
 ## Requirements
 
-- Prefect schedule monthly; uses the latest user + outcome labels; full hyper-parameter search budget smaller than initial (default 20 trials).
+- `mt-scheduler` cron, monthly; uses the latest user + outcome labels; full hyper-parameter search budget smaller than initial (default 20 trials).
 - Compares against current production and the frozen baseline; result is a proposal in D10.
 - Notification with summary to Telegram/D10.
 
 ## ToDo
 
-- [ ] Prefect deployment `finetune_monthly` reusing P6-T031 steps with `mode=full`.
+- [ ] `mt-scheduler` job `finetune_monthly` reusing P6-T031 steps with `mode=full`.
 - [ ] Summary notification.
 - [ ] Tests; docs.
 
@@ -98,3 +98,4 @@ On the first weekend of each month a full fine-tune (not warm-start) of each pro
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; promotion stays gated per 16 §2.10)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (gpu service removed (`models.gpu_profile: auto`))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect → `mt-scheduler` cron job; services mt-scheduler)

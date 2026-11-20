@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ The twelve 09 tax-agent questions (plus the 2027 follow-ups and any engine-raise
 ## Context & references
 
 - Roadmap: [T3.30, R3.07](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 3
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 questions](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) · [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) · M19 queue [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) · D15 Questions tab [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Boundary: P5 T5.30 builds the full `mt_curation` queue (ranking, digests, Telegram buttons) on the same table
 - Decision: [17 §D P3-B011/B012](../../../docs/17-decisions-register.md#d-other-decisions) (P3 adds a minimal `curation.task` table; P5 extends it additively) · [03 M19 storage](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components)
@@ -57,7 +57,7 @@ The twelve 09 tax-agent questions (plus the 2027 follow-ups and any engine-raise
 
 ## ToDo
 
-- [ ] Migration in `supabase/migrations/` (minimal `curation.task`) + question seed issued through `mt-api` (source `seed`, idempotent); the `task.answer` handler lives in `mt-api` (P5's Python `mt_curation` extends the table additively)
+- [ ] Migration in `supabase/migrations/` (minimal `curation.task`) + question seed issued through `mt-api` (source `seed`, idempotent); the `task.answer` handler lives in `mt-api` (P5's Rust `mt-curation` crate extends the table additively)
 - [ ] Command handlers + query
 - [ ] Tests; docs
 
@@ -111,3 +111,4 @@ The twelve 09 tax-agent questions (plus the 2027 follow-ups and any engine-raise
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (minimal `curation.task` created here (R3.18, P3-B012); 12 questions incl. perps Q8 (P3-B016) and wash-sale Q12 (P3-B004); `task.answer` C1 is T3.32; depends_on now P0 schema/command bus instead of P3-T005; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`curation.task` as a Supabase migration; questions seeded through `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (P5 curation is the Rust `mt-curation` crate (18 §2.1); Python boundary named (`mt_ledger_import` only))

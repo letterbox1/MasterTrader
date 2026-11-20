@@ -15,7 +15,7 @@ requirements: [R3.10]
 roadmap_todos: [T3.63]
 modules: [M18]
 dashboards: [D15]
-tools: [git, uv, cargo]
+tools: [git, docker, cargo]
 mcp: []
 env: []
 services: [journal, fava, caddy]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,12 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The Beancount export of the real paper-trading period passes `bean-check`, its balances equal journal and recon balances per account/asset, its capital-gain totals match the engine's CGT schedule, and Fava (sidecar) opens it over Tailscale.
+The Beancount export of the real paper-trading period passes `bean-check`, its balances equal journal and recon balances per account/asset, its capital-gain totals match the engine's CGT schedule, and Fava (sidecar) opens it on the workstation through Caddy (Tailscale only if you use it, 18 §8).
 
 ## Context & references
 
 - Roadmap: [R3.10, T3.63](../../../docs/roadmap/phase-3-journal-and-tax.md) · export P3-T035 · sidecar P3-T009
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 
 ## Requirements
 
@@ -54,7 +54,7 @@ The Beancount export of the real paper-trading period passes `bean-check`, its b
 ## ToDo
 
 - [ ] Export the paper period
-- [ ] Run `bean-check` and comparison queries (script `tools/journal/compare_beancount.py`)
+- [ ] Run `bean-check` (Fava container) and the comparison (`mt-journal beancount-compare` subcommand, Rust)
 - [ ] Open Fava; screenshot; record results
 
 ## Verification
@@ -102,3 +102,4 @@ The Beancount export of the real paper-trading period passes `bean-check`, its b
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (uv kept for `bean-check`/compare script)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`bean-check` from the Fava container, comparison script → `mt-journal` subcommand (no Python); Tailscale optional (workstation first); tools [git, uv, cargo] → [git, docker, cargo]; Python boundary named (`mt_ledger_import` only))

@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/journal-snapshot-2027-06-30.md, docs/runbooks/journal-r
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,12 +42,12 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 ## Context & references
 
 - Roadmap: [R3.08, R3.11, T3.25, T3.28](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Runbook convention: [07 §9](../../../docs/07-security-notes.md#9-monitoring--incident-response) · related jobs P3-T030, P3-T034 · diary P3-T004
 
 ## Requirements
 
-- `docs/runbooks/journal-snapshot-2027-06-30.md`: T-30 days checks (backups, price feeds, Prefect schedule, P3-T002 answer), on-the-day checks that the crypto recorders cover the 23:55:00–23:59:59 AEST VWAP window and every price source in the [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) convention, verification (completeness query, D15 Lots), host-down recovery (late run is identical), `needs_valuation` handling (manual valuation via `journal.manual_event.add` (C2) with evidence, or a superseding snapshot row), never edit rows.
+- `docs/runbooks/journal-snapshot-2027-06-30.md`: T-30 days checks (backups, price feeds, the `mt-scheduler` job schedule, P3-T002 answer), on-the-day checks that the crypto recorders cover the 23:55:00–23:59:59 AEST VWAP window and every price source in the [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) convention, verification (completeness query, D15 Lots), host-down recovery (late run is identical), `needs_valuation` handling (manual valuation via `journal.manual_event.add` (C2) with evidence, or a superseding snapshot row), never edit rows.
 - `docs/runbooks/journal-recon-break.md`: read the break, common causes (late funding, venue delay, missing ledger type, unmatched transfer), explain (annotation; "explained" = matched to a known journal event within 24 h, [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)) vs correct (superseding event), when to escalate (unexplained after 24 h; any WORM verify failure → the configured integrity action, default `block_new_entries` with exits continuing, cleared only by `audit.integrity.ack` (C3) after investigation, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)).
 - Each runbook has exact commands/queries and links to Grafana panels.
 
@@ -103,3 +103,4 @@ Two runbooks exist in `docs/runbooks/`: "30 June 2027 snapshot" (pre-checks, ver
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (recon explain window 24 h (16 §2.9), WORM mismatch → `block_new_entries` + C3 ack (16 §2.11), snapshot convention 16 §4.2; fields filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change beyond paths)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect schedule → `mt-scheduler` job schedule; Python boundary named (`mt_ledger_import` only))

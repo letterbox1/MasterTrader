@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 ## Context & references
 
 - Roadmap: [T3.41, R3.02, R3.N1](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [07 §2 secrets](../../../docs/07-security-notes.md#2-secrets) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · [15 §2 privileges layer](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - Decision: [17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions) (yearly data keys wrapped by a master key; rotation re-wraps keys in a non-WORM key table, never rows) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · [15 §2 Encryption row](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · key rotation reminder every 90 days [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)
 - Cross-phase prerequisites (depends_on): P0-T022 (sops + age → tmpfs, per-service scoping), P0-T024 (schemas, roles, Supabase migrations); P0-T013 (`worm_owner` offline credential) is used to run the role migration
@@ -125,3 +125,4 @@ The `journal` container connects as an insert-only `journal_app` role, read path
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (envelope encryption per P3-B009: master key in sops, yearly data keys wrapped in non-WORM `ops.journal_data_key`, rewrap-only rotation; explicit P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Supabase migrations; `mt-journal` key module; tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

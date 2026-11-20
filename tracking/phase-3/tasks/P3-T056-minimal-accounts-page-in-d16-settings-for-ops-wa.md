@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-3-journal-and-ta
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ D16 Settings has an **Accounts** section where you list, register and tag every 
 ## Context & references
 
 - Roadmap: [R3.17, R3.04, T3.33](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Spec: [D16 Settings → Accounts (Phase 3)](../../../docs/ui/dashboards/D16-system.md) · backend `/wallets?kind=account`, commands `wallet.register` / `wallet.tag` (C1) in [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - Registry: [09 goals §6–7](../../../docs/09-journal-and-tax.md#goals) · [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view) · decision [17 §D P3-B011](../../../docs/17-decisions-register.md#d-other-decisions) and [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (one registry `ops.wallets`, created in P3)
 - Viewport matrix [DESIGN §6.8](../../../DESIGN.md#68-test-matrix-every-screen-must-pass) · settings pattern [ui §3.7](../../../docs/ui/README.md#37-settings-show-configurable-defaults-and-their-layer)
@@ -119,3 +119,4 @@ D16 Settings has an **Accounts** section where you list, register and tag every 
 
 - 2026-10-22 00:00 · aligner · created for R3.17/T3.33 (docs/16–17 alignment; implementation owner for P3-B011)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (routes in `mt-api`; services supabase-auth)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

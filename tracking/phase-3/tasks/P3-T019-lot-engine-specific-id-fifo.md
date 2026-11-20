@@ -25,7 +25,7 @@ doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ Every acquisition (trade, income receipt, airdrop, staking reward, FX cash inflo
 ## Context & references
 
 - Roadmap: [R3.05, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md) · [03 M18](../../../docs/03-build-spec.md#m18-trading-journal--tax--mt_journal) · [09 architecture LOT ENGINE](../../../docs/09-journal-and-tax.md#architecture)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Borrowed ideas: rp2 (Apache) lot-matching plugins + Decimal; isaacrowntree/ledger (MIT) brokerage in cost base — see [09 tools vetted](../../../docs/09-journal-and-tax.md#tools-vetted); vendored code under `third_party/` with pinned commit + licence
 - Command `tax.lot.select` (C1) in [D15 actions](../../../docs/ui/dashboards/D15-tax.md)
 - Property tests: P3-T046
@@ -104,7 +104,7 @@ Every acquisition (trade, income receipt, airdrop, staking reward, FX cash inflo
 - Do NOT mutate lot rows; write superseding computations.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 - Do NOT present output as tax advice; every tax surface carries "Not tax advice. Confirm with a registered tax agent."
 
@@ -124,3 +124,4 @@ Every acquisition (trade, income receipt, airdrop, staking reward, FX cash inflo
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (locked-FY refusal now via `tax.fy.lock` C3 (P3-T055, P3-B006); tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (lot engine in `mt-journal` (`rust_decimal`); rp2 ideas ported, not vendored)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

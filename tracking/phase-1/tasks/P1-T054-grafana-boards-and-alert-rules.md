@@ -15,7 +15,7 @@ requirements: [R1.10, R1.11, R1.08, R1.14]
 roadmap_todos: [T1.42]
 modules: [M17, M16]
 dashboards: [D16]
-tools: [git, uv, docker]
+tools: [git, docker]
 mcp: []
 env: []
 services: [grafana, prometheus, alertmanager]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ Provisioned Grafana dashboards show live prices by timeframe, spreads/funding/sw
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (1W boards, data-age SLO rule, single webhook route (P1-B007); P0 provisioning dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Grafana reads the partitioned bar tables on Supabase Postgres via a read-only role)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (no Python in this task (Grafana JSON and provisioning); tools drop uv)

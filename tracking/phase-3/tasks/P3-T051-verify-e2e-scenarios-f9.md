@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ Scripted end-to-end scenarios run on the full stack (paper engine → journal �
 ## Context & references
 
 - Roadmap: [R3.01, R3.03, R3.04, R3.13, R3.14](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Flows: [02 F2 step 7, F9](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · acceptance [D14](../../../docs/ui/dashboards/D14-journal.md), [D15](../../../docs/ui/dashboards/D15-tax.md), [D16 Accounts](../../../docs/ui/dashboards/D16-system.md)
 - Cross-phase prerequisite (depends_on): P2-T001 (trade-only testnet keys used by the paper engine for the one live S1 run; no money)
 
@@ -116,3 +116,4 @@ Scripted end-to-end scenarios run on the full stack (paper engine → journal �
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added S11 valuation hierarchy, S12 Accounts page, S13 FY lock + content-addressed attachments; S8 via residency contract; new deps P3-T055/T056 + P2-T001 (keys last); tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-auth/storage; attachments in Storage)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ The Alpaca Basic (free) IEX WebSocket, in `mt-recorder` (Rust), streams trades a
 - Market-data WS `v2/iex` with paper keys from the secrets file at runtime (none in CI); subscribe trades + quotes (+ minute bars as a cross-check)
 - Hard cap 30 symbols enforced by config validation and at subscribe time
 - Every message tagged `feed=iex`; D02 shows an "IEX only, not NBBO" badge (P1-T050)
-- Session-aware: pre/post-market flagged; stale suppression outside sessions via `exchange_calendars`
+- Session-aware: pre/post-market flagged; stale suppression outside sessions via `market.session_calendar` (generated from `exchange_calendars` by the `mt_research` job in P1-T009)
 
 ## ToDo
 
@@ -112,3 +112,4 @@ The Alpaca Basic (free) IEX WebSocket, in `mt-recorder` (Rust), streams trades a
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (traced to new T1.34 (P1-B003 closed); keyless build, live stream in P1-T073)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (connector in Rust `mt-recorder` (thin WS client instead of alpaca-py); tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (session source is the `market.session_calendar` table from the `mt_research` job, not a Python library call)

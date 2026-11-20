@@ -15,7 +15,7 @@ requirements: [R2.06, R2.40, R2.42, R2.45, R2.50]
 roadmap_todos: [T2.32, T2.27]
 modules: [M0, M7, M15]
 dashboards: [D03, D04, D05]
-tools: [pnpm, uv, cargo, playwright]
+tools: [pnpm, cargo, playwright]
 mcp: []
 env: []
 services: [nats, supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -62,7 +62,7 @@ A Playwright + API end-to-end scenario of flow F7 through the UI: a strategy cre
 ## Verification
 
 ### Tests
-- Commands: `pnpm playwright`, `uv run pytest tests/scenarios/strategy_lifecycle.py`.
+- Commands: `pnpm playwright`, `cargo test -p mt-e2e --test strategy_lifecycle -- --ignored`.
 - The E2E spec (nightly) + manual run with screenshots for the exit demo.
 
 ### Scenarios
@@ -104,3 +104,4 @@ A Playwright + API end-to-end scenario of flow F7 through the UI: a strategy cre
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper start via mode ceiling + paper bot, waiver C2, lifecycle/engine/bot deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [pnpm, uv, playwright] → [pnpm, uv, cargo, playwright]; services [nats, postgres, mlflow] → [nats, supabase-postgres, mlflow])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (API-side scenario harness in the Rust `mt-e2e` test crate; the 'from code' path is a Rust strategy crate compiled in the sandbox; tools [pnpm, uv, cargo, playwright] → [pnpm, cargo, playwright])

@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T025, P6-T022]
+depends_on: [P6-T025, P6-T022, P1-T077]
 requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect]
+services: [supabase-postgres, mt-scheduler]
 branch: p6/P6-T026-per-question-threshold-tuner
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 
 ## ToDo
 
-- [ ] Tuner job (Prefect weekly).
+- [ ] Tuner job in `mt-models` (`mt-scheduler`, weekly).
 - [ ] Proposal table + D10 surfacing (via P6-T042).
 - [ ] Command handler rules for veto threshold direction.
 - [ ] Tests; docs.
@@ -64,6 +64,7 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 ## Verification
 
 ### Tests
+- `cargo test -p mt-models threshold_tuner`.
 - Unit: optimiser respects precision floor; direction classification for veto thresholds.
 - Integration: proposal → C1 apply → new question version used by decision-svc.
 
@@ -106,3 +107,4 @@ A weekly job proposes per-question abstention/veto thresholds from measured disa
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (C3 only below the 16 §2.10 default bars (02 §7.2); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tuner in `mt-models` as an `mt-scheduler` job instead of Prefect; tools cargo)

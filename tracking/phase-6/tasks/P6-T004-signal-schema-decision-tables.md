@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,9 +58,9 @@ A versioned `Signal` schema in the `mt-core` crate (serde; exposed to Python thr
 
 ## ToDo
 
-- [ ] Add `Signal` v2 + `Provenance` structs in `crates/mt-core/src/schemas/signal.rs` (PyO3-exposed so `mt_agents` uses the same definition), with a v1→v2 adapter.
+- [ ] Add `Signal` v2 + `Provenance` structs in `crates/mt-core/src/schemas/signal.rs` (used directly by `mt-agents`; PyO3-exposed so `mt_research` reads the same definition), with a v1→v2 adapter.
 - [ ] SQL migration in `supabase/migrations/` for `audit.decision_run`, `audit.signal` (+ `audit.decision_settlement` for P6-T013) on the WORM owner role with hash-chain triggers.
-- [ ] Writer helpers in the `mt-obs` crate (`write_decision_run`, `write_signal`), fed from the `sig.agent.*` subject; Python agents publish and never write the WORM tables directly.
+- [ ] Writer helpers in the `mt-obs` crate (`write_decision_run`, `write_signal`), fed from the `sig.agent.*` subject; `mt-agents` publishes and never writes the WORM tables directly.
 - [ ] Unsourced-number detector (regex for numbers/percentages in rationale vs provenance values).
 - [ ] Register `sig.agent.*` subject schema in the `mt-core` schema registry.
 - [ ] Tests (below); update docs.
@@ -68,7 +68,7 @@ A versioned `Signal` schema in the `mt-core` crate (serde; exposed to Python thr
 ## Verification
 
 ### Tests
-- `cargo test -p mt-core -p mt-obs` and `cargo clippy`; `supabase test db` (WORM grants and hash-chain triggers on the new tables); `uv run pytest` for the PyO3 binding.
+- `cargo test -p mt-core -p mt-obs` and `cargo clippy`; `supabase test db` (WORM grants and hash-chain triggers on the new tables); `uv run pytest` for the PyO3 binding used by `mt_research`.
 - Unit: schema round-trip, v1→v2 adapter, unsourced-number detector (golden rationale strings).
 - Integration: insert Signal → row hash chained; UPDATE/DELETE/TRUNCATE by app role fails (15 §2.4).
 - Property: any Signal with `direction != flat` requires ≥ 1 `sources[]` entry.
@@ -117,3 +117,4 @@ A versioned `Signal` schema in the `mt-core` crate (serde; exposed to Python thr
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Signal fields = 03 M8 list per 17 §D P6-B014; canonical audit names; cross-phase deps P0-T016/T030/T031; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Signal v2 in the `mt-core` crate exposed to Python via PyO3; WORM writers in `mt-obs`; SQL migrations in `supabase/`; tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (agents are Rust (`mt-agents`); the PyO3 binding remains for `mt_research`)

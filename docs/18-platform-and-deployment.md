@@ -81,7 +81,7 @@ This doc is canonical for **which language each service is written in, where eac
 
 Their language doesn't matter to us: we run them as they are and talk to them over HTTP, NATS or SQL. Full list with language, licence and what we'd do for an open-source release: [19](19-third-party-register.md).
 
-NATS JetStream, Supabase stack, Caddy, LiteLLM, MLflow, TEI, llama-server / vLLM, Hindsight, rss-bridge, crawl4ai, Hummingbot (+ Hummingbot API), Anvil, Grafana/Loki/Prometheus/Alertmanager/Vector, ntfy.
+NATS JetStream, Supabase stack, Caddy, LiteLLM, MLflow, TEI, llama-server / vLLM, Hindsight, LightRAG (optional), rss-bridge, crawl4ai, Hummingbot (+ Hummingbot API), Anvil, Grafana/Loki/Prometheus/Alertmanager/Vector, ntfy.
 
 ### 2.4 Scenario & crowd simulator (M14): a go-live tool
 
@@ -89,6 +89,7 @@ NATS JetStream, Supabase stack, Caddy, LiteLLM, MLflow, TEI, llama-server / vLLM
 - **Where it's used:**
   - **During the 8-week paper period:** a **scenario twin**, a second paper engine running the same bots on replayed live data with injected scenarios, shows how each bot behaves under shocks the real market hasn't produced yet. It's a weekly report per bot, part of the weekly review pack.
   - **In the stress tests:** alongside the four historical shocks before live (P7-T069).
+- **Storage:** `risk.sim_*` (simulator runs and scenarios) and `risk.twin_*` (twin runs and reports), every row `synthetic = true`.
 - **Boundaries:**
   - It never trades the real paper or live accounts.
   - Its data is flagged `synthetic = true` and never enters features, model training or RAG.

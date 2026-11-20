@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ The journal can import **venue-provided** annual crypto statements (CARF/CRS 2.0
 ## Context & references
 
 - Roadmap: [R3.10, T3.27](../../../docs/roadmap/phase-3-journal-and-tax.md) (R3.10 lists CARF reconciliation)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 cross-border events: CARF / CRS 2.0](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · agent question 7 (AU CARF start) ([09](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks))
 - Decision: [17 §D P3-B010](../../../docs/17-decisions-register.md#d-other-decisions) (use venue-provided statements when available; otherwise not applicable) · [09 CARF / CRS 2.0](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface)
 - Related: P3-T019 (journal disposal totals), P3-T022 (report provenance); no dependency on the daily recon
@@ -92,7 +92,7 @@ The journal can import **venue-provided** annual crypto statements (CARF/CRS 2.0
 - Do NOT change journal data to match venue totals; differences are explained or corrected via events.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -110,3 +110,4 @@ The journal can import **venue-provided** annual crypto statements (CARF/CRS 2.0
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (CARF uses venue-provided statements, else not applicable (P3-B010 closed); threshold a setting; depends_on trimmed (no daily-recon dependency); tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust importer; Supabase migrations)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

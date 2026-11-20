@@ -15,7 +15,7 @@ requirements: [R6.12, R6.14, R6.10]
 roadmap_todos: [T6.60]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, docker, supabase]
 mcp: []
 env: []
 services: [mlflow, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -102,3 +102,4 @@ The bake-off report is reviewed (agent prepares, you sign off), it names a produ
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (shadow ≥ 14 days and thresholds per 16 §2.10; Kev via P6-T068; FinMMEval from P6-T002 at review time; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dep P6-T002 (FinMMEval is optional: included if available at review time, else the report documents its absence; build first, keys last))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (review uses the committed SQL audit query on the `mt_research` bake-off outputs; tools git/docker/supabase)

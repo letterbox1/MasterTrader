@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T042, P0-T031, P4-T028]
+depends_on: [P6-T074, P0-T042, P0-T031, P4-T028]
 requirements: [R6.03]
 roadmap_todos: [T6.31]
 modules: [M17, M21, M8]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker, supabase]
+tools: [git, cargo, docker, supabase]
 mcp: []
 env: []
 services: [litellm, supabase-postgres, nats, grafana]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/10-memory-rag-and-models.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 ## Requirements
 
 - Don't re-create `audit.llm_call` or its writer. An additive migration adds nullable columns the P0 table lacks (`prompt_name`, `prompt_version`, `model_revision`, `run_id`); old rows stay untouched (WORM).
-- Prompt registry: `packages/mt_agents/prompts/<role>/<name>@<semver>.md` with front matter; the loader computes sha256; changing text without bumping the version fails CI.
+- Prompt registry: `crates/mt-agents/prompts/<role>/<name>@<semver>.md` (and the skill files in `crates/mt-agents/skills/`) with front matter; the loader computes sha256; changing text without bumping the version fails CI.
 - Metadata plumbing: callers pass `prompt_name`, `prompt_version`, `run_id` and `role` in LiteLLM request metadata; the P0 callback copies them into the row.
 - Model registry: `models.registry` rows for each gateway route (`research-primary`, `research-custom`, `local-advisor`) with resolved model id, revision and `training_cutoff` plus its source; unknown = NULL (P6-T017 fails closed on NULL).
 - Secrets never logged: the P0 redaction stays in force; a test asserts no secret value or sops key name appears in stored P6 prompts.
@@ -61,7 +61,7 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 
 - [ ] Additive SQL migration in `supabase/migrations/` for the extra `audit.llm_call` columns (skip any P0 already has).
 - [ ] Prompt registry loader + CI check (hash vs version).
-- [ ] Request-metadata plumbing from `mt_agents` callers into the P0 callback.
+- [ ] Request-metadata plumbing from the `mt-agents` gateway client (P6-T074) into the P0 callback.
 - [ ] Seed `models.registry` gateway entries with `training_cutoff` and its source (marked (U) if unverified).
 - [ ] Grafana drift panel (gateway requests − audit rows).
 - [ ] Tests; docs.
@@ -69,7 +69,7 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 ## Verification
 
 ### Tests
-- `supabase test db` (15 §2.4 WORM suite on `audit.llm_call`); `uv run pytest` for the prompt registry and loader.
+- `supabase test db` (15 §2.4 WORM suite on `audit.llm_call`); `cargo test -p mt-agents prompt_registry` for the registry, loader and version check.
 - Unit: prompt hash stability, version check, metadata mapping.
 - Integration: a call through LiteLLM with `prompt_version` produces exactly one `audit.llm_call` row carrying it; failure and fallback calls carry it too.
 - WORM: the 15 §2.4 suite stays green on `audit.llm_call` after the migration.
@@ -123,3 +123,4 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (re-scoped to T6.31: audit.llm_call writer exists from P0 (P0-T042, 17 §D P6-B010); this adds prompt registry, model versioning, training_cutoff and additive columns only; deps P0-T042/P0-T031/P4-T028)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (prompt-registry migration is plain SQL in `supabase/migrations/`; tools supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (prompt registry in `crates/mt-agents`; depends on P6-T074; tools cargo)

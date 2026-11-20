@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, nats, journal, prefect-server, grafana]
+services: [supabase-postgres, nats, journal, mt-scheduler, grafana]
 branch: p3/P3-T052-verify-stress-failure-injection
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ The journal survives load and the 02 §9.3 degraded modes without data loss, dup
 ## Context & references
 
 - Roadmap: [R3.01, R3.02, R3.11](../../../docs/roadmap/phase-3-journal-and-tax.md) · degraded modes [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · SLO-style target D14 ≤ 5 s
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Buffer bound: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (default 1 GB or 24 h; new entries stop above 80%), built in P3-T057; the bound-specific drill is P3-T060
 
 ## Requirements
@@ -108,3 +108,4 @@ The journal survives load and the 02 §9.3 degraded modes without data loss, dup
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Postgres-down case uses the 16 §3.3 bound (P3-T057/P3-T060; P3-B015 closed); tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tools cargo; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (services prefect-server → mt-scheduler; Python boundary named (`mt_ledger_import` only))

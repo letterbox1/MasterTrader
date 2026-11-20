@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ A durable JetStream consumer in `mt-recorder` (Rust) writes every `md.*` trade, 
 ## ToDo
 
 - [ ] Implement the recorder in `crates/mt-recorder` (separate process in `ingest-market`) with a durable `async-nats` consumer
-- [ ] Implement compaction as `mt-recorder compact --date` (Rust) with verification and idempotent re-run; scheduled by Prefect (P1-T053)
+- [ ] Implement compaction as `mt-recorder compact --date` (Rust) with verification and idempotent re-run; scheduled by `mt-scheduler` (P1-T053)
 - [ ] Read API through the `mt-store` catalog helpers (Rust, with Python binding; DataFusion or DuckDB) for P1-T058 and P2
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -116,3 +116,4 @@ A durable JetStream consumer in `mt-recorder` (Rust) writes every `md.*` trade, 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 recording policy and budget wording (P1-B002); P0 dep on catalog helpers)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (recorder and compaction in Rust `mt-recorder` (compaction scheduled by Prefect); catalog reads via `mt-store` with Python binding; tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (compaction scheduled by `mt-scheduler` instead of Prefect)

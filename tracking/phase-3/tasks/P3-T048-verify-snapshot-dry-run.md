@@ -18,14 +18,14 @@ dashboards: [D15]
 tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server, journal]
+services: [supabase-postgres, mt-scheduler, journal]
 branch: p3/P3-T048-verify-snapshot-dry-run
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,11 +42,11 @@ The snapshot flow runs end-to-end in production configuration for a test valuati
 ## Context & references
 
 - Roadmap: [R3.08, T3.62](../../../docs/roadmap/phase-3-journal-and-tax.md) · job P3-T030 · runbook P3-T044
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 
 ## Requirements
 
-- Run via Prefect with `kind = dry_run` (separate key space; never confused with `reform_2027`).
+- Run via `mt-scheduler` (manual trigger) with `kind = dry_run` (separate key space; never confused with `reform_2027`).
 - Checks: completeness = 100% of open lots; every row has price + source + method + timestamps per the [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) convention (crypto rows show the 23:55:00–23:59:59 AEST VWAP window); re-run creates 0 rows; worker kill mid-run recovers; late-run (next day) gives identical values; AU_2027_REFORM comparison computes for a synthetic post-date disposal.
 - Runbook steps exercised and timed.
 
@@ -102,3 +102,4 @@ The snapshot flow runs end-to-end in production configuration for a test valuati
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (dry run checks the 16 §4.2 convention and method recording (P3-B002); fields filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect → `mt-scheduler`; services prefect-server → mt-scheduler; Python boundary named (`mt_ledger_import` only))

@@ -15,7 +15,7 @@ requirements: [R1.14]
 roadmap_todos: [T1.64]
 modules: [M17]
 dashboards: [D16]
-tools: [git, cargo, uv, docker, sops]
+tools: [git, cargo, docker, sops]
 mcp: []
 env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERTS_CHAT_ID, MT_NTFY_PUBLISHER_TOKEN]
 services: [telegram, ntfy, nats, grafana, alertmanager]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/07-security-notes.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,7 +46,7 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 - Depends on (this phase): P1-T045, P1-T054, P1-T068
 - This is the live, keyed half of the alert path: it needs your Telegram bot (P0-T002) and the SMTP app password or email off (P1-T068); network paths per [02 §3.1](../../../docs/02-v1-architecture.md#31-networks) (P1-B020)
 - Workstation first ([18 §8](../../../docs/18-platform-and-deployment.md#8-tailscale-and-the-hardware-key-per-mode)): ntfy is checked with a subscriber on the workstation; the phone subscription over Tailscale is the pre-go-live USER step P1-T003, which this task no longer waits for
-- Run with `sops exec-env ~/.config/mastertrader/secrets.sops.env 'make verify-alerts'`; if email is on, the `SMTP_*`/`ALERT_EMAIL_*` names from P1-T068 must also be present
+- Run with `sops exec-env ~/.config/mastertrader/secrets.sops.env 'just verify-alerts'`; if email is on, the `SMTP_*`/`ALERT_EMAIL_*` names from P1-T068 must also be present
 - Cross-phase prerequisites (depends_on): P0-T002 (Telegram bot, your T0.06)
 
 ## Requirements
@@ -58,7 +58,7 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 
 ## ToDo
 
-- [ ] Run the tests (`uv run pytest tests/e2e/alerts_failover.py`) with a workstation ntfy subscriber; you confirm the Telegram message and, if on, the email
+- [ ] Run the tests (`cargo test -p mt-e2e --test alerts_failover -- --ignored`) with a workstation ntfy subscriber; you confirm the Telegram message and, if on, the email
 - [ ] Write the report with latencies and failover results
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -66,7 +66,7 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 
 ### Tests
 
-- Scripted part: `mt-alerts test --all` and channel-kill toggles in `tests/e2e/alerts_failover.py`
+- Scripted part: `mt-alerts test --all` and channel-kill toggles in the `alerts_failover` test of the Rust e2e crate (`tests/e2e`, package `mt-e2e`)
 
 ### Scenarios
 
@@ -79,7 +79,7 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 ## Acceptance criteria
 
 - [ ] Telegram, ntfy and (if on) email received both test alerts; failover works for each enabled channel; latencies recorded
-- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -107,3 +107,4 @@ Test alerts from both entry points (NATS `alert.*` and Grafana alerts via the we
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (email optional (P1-B005); one fan-out; live keyed check with env names; deps P1-T068, P0-T002)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (verifies Telegram + ntfy (workstation subscriber) + email if on; removed the dependency on P1-T003 (phone ntfy over Tailscale is now a pre-go-live USER step); kept P0-T002 and P1-T068 (credentials); tools cargo+uv)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python e2e harness → Rust integration tests in the `mt-e2e` crate (`tests/e2e`) with the same cases; tools drop uv)

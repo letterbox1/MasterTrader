@@ -15,7 +15,7 @@ requirements: [R6.07, R6.03]
 roadmap_todos: [T6.70]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [litellm, llm-local, grafana]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,7 +63,7 @@ The budget test proves that per-role and monthly limits hold, exhausted budgets 
 ## Verification
 
 ### Tests
-- Integration suite `tests/integration/test_llm_budgets.py`.
+- Integration suite `crates/mt-api/tests/llm_budgets.rs` (`cargo test -p mt-api --test llm_budgets`).
 
 ### Scenarios
 - Given `debate` exhausted, then the next debate call uses `local-advisor` and D09 shows the local badge.
@@ -106,3 +106,4 @@ The budget test proves that per-role and monthly limits hold, exhausted budgets 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.70 (+R6.03); 16 §2.10 defaults under test; keyless (no P6-T001 dependency, live check P6-T070); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (budget suite in Rust; tools cargo)

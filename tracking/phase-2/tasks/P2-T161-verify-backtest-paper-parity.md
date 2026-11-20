@@ -15,7 +15,7 @@ requirements: [R2.01, R2.40]
 roadmap_todos: [T2.65]
 modules: [M7, M0, M12]
 dashboards: [D04, D03]
-tools: [uv, cargo]
+tools: [cargo]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,13 +58,13 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 - [ ] Pick the week; confirm recording completeness (no gaps) via D07
 - [ ] Replay the recorded week in truth backtest with the measured cost snapshot
 - [ ] Export paper fills/orders for the week
-- [ ] Write `mt_lab/parity.py` comparison + report (paper side from the `mt-engine` node the template runs on: Rust or Python, per P2-T200)
+- [ ] Write `crates/mt-lab-core/src/parity.rs` comparison + report (paper side from the `mt-engine` node the template runs on: Rust or Python, per P2-T200)
 - [ ] Record result and categorised differences
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k parity`.
+- Commands: `cargo test -p mt-lab-core backtest_paper_parity -- --ignored`.
 - Integration: parity comparator unit-tested on synthetic identical/divergent runs.
 - The parity run itself (evidence).
 
@@ -107,3 +107,4 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper parity on the sandbox venue (no keys), engine/template deps explicit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [uv] → [uv, cargo]; services [postgres, mlflow] → [supabase-postgres, mlflow])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (parity comparison in `mt-lab-core` (Rust); same checks; tools [uv, cargo] → [cargo])

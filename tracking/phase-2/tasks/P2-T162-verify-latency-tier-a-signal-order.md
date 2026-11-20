@@ -15,7 +15,7 @@ requirements: [R2.N1, R2.47]
 roadmap_todos: [T2.66]
 modules: [M21, M12, M0]
 dashboards: [D01]
-tools: [cargo, uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/10-memory-rag-and-models.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ Measured evidence on the workstation that runs the stack (the runtime host until
 
 ## ToDo
 
-- [ ] Write `packages/mt_models/tests/perf/tier_a_bench.py` (Python node), `crates/mt-engine/benches/tier_a.rs` (`ort`) and `crates/mt-engine/benches/signal_to_order.rs` (criterion)
+- [ ] Write `crates/mt-models/benches/tier_a.rs` (`ort`, in-process as linked into the engine) and `crates/mt-engine/benches/signal_to_order.rs` (criterion)
 - [ ] Run on the workstation with the engine up
 - [ ] Capture histograms + Grafana snapshot
 - [ ] File bug items for any SLO miss
@@ -62,7 +62,7 @@ Measured evidence on the workstation that runs the stack (the runtime host until
 ## Verification
 
 ### Tests
-- Commands: `cargo bench -p mt-engine signal_to_order`, `cargo bench -p mt-engine tier_a`, `uv run pytest packages/mt_models -k bench`.
+- Commands: `cargo bench -p mt-engine signal_to_order`, `cargo bench -p mt-models tier_a`.
 - Perf benchmarks above; regression thresholds recorded for a nightly perf job.
 
 ### Scenarios
@@ -71,7 +71,7 @@ Measured evidence on the workstation that runs the stack (the runtime host until
 
 ### Stress / failure injection
 - Background load: 2 backtest workers at 100% plus NATS at 5k msg/s during the benchmark.
-- GC pressure: run with Python GC enabled and record pauses affecting p99.9.
+- Allocator pressure: run with a background allocation-heavy task in the engine process and record pauses affecting p99.9 (replaces the Python GC case: inference is Rust now).
 
 ## Acceptance criteria
 
@@ -106,3 +106,4 @@ Measured evidence on the workstation that runs the stack (the runtime host until
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mode name autonomous; engine/Grafana deps explicit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; criterion/`ort` benches; production host → workstation (P7 reruns); tools [uv] → [cargo, uv])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tier-A benchmark moves to `mt-models` (Rust `ort`), Python-node bench dropped (no Python inference path in the engine); the GC-pressure case becomes an allocator-pressure case; tools [cargo, uv] → [cargo])

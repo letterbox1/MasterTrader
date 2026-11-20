@@ -15,7 +15,7 @@ requirements: [R2.45]
 roadmap_todos: [T2.28]
 modules: [M7]
 dashboards: [D04]
-tools: [docker, runsc, uv]
+tools: [docker, runsc, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,20 +46,20 @@ Evidence that hostile generated code cannot reach the network, secrets, the host
 
 ## Requirements
 
-- Hostile fixtures (bypassing the static gate via a test flag): DNS lookup, TCP connect to postgres/nats/litellm and to 1.1.1.1, read `/proc/1/environ`, read `/run/secrets`, write outside `/tmp`, fork bomb, 8 GB allocation, 100% CPU loop, attempt `docker.sock`, ptrace, mount.
+- Hostile fixtures (Rust strategy crates, bypassing the static gate via a test flag): DNS lookup, TCP connect to postgres/nats/litellm and to 1.1.1.1, read `/proc/1/environ`, read `/run/secrets`, write outside `/tmp`, fork bomb, 8 GB allocation, 100% CPU loop, compile-time blow-up (deep generic recursion / huge `const` evaluation), a `build.rs` that tries the network, attempt `docker.sock`, ptrace, mount.
 - Expected: every network attempt fails (no interface but loopback), no secrets present, writes fail (read-only FS), fork bomb stopped at pids-limit 256, memory killed at 2 GB, CPU limited to 2, wall-clock cap 10 min; host and other containers unaffected.
 - `runsc` confirmed as the runtime (`docker inspect`) on every sandbox run; a run without gVisor is refused.
 
 ## ToDo
 
-- [ ] Write `tests/security/sandbox_escape/` fixtures
+- [ ] Write `tests/security/sandbox_escape/` fixtures (Rust crates) and the driver test in the `mt-e2e` test crate
 - [ ] Run on the workstation; capture outputs
 - [ ] Record results; file S1 bugs for any escape
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest tests/security/test_sandbox_escape.py`.
+- Commands: `cargo test -p mt-e2e --test sandbox_escape -- --ignored` on the workstation.
 - Security integration suite above (runs on the workstation, self-hosted runner or manual with evidence).
 
 ### Scenarios
@@ -101,3 +101,4 @@ Evidence that hostile generated code cannot reach the network, secrets, the host
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; sandbox container link)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; host → workstation)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (hostile fixtures are Rust crates (generator emits Rust) with compile-time and `build.rs` cases added; driver in the Rust `mt-e2e` test crate; all earlier cases kept; tools [docker, runsc, uv] → [docker, runsc, cargo])

@@ -15,7 +15,7 @@ requirements: [R1.02]
 roadmap_todos: [T1.21]
 modules: [M1]
 dashboards: [D02]
-tools: [git, cargo, supabase, docker]
+tools: [git, cargo, uv, supabase, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -126,3 +126,4 @@ The bar builder in `mt-recorder` (Rust) consumes trades and quotes and writes 1s
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (timeframes tick → 1W: 1s hypertable + CAGGs 1m…1W, vendor bars in separate tables (P1-B011))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no TimescaleDB: `mt-recorder` (Rust) writes 1s and every standard size into monthly native partitions of `market.bar_*`; late corrections go to the rollup job P1-T076; `date_bin` in `mt-store` `bars::query` replaces `time_bucket`; Supabase migrations + pgTAP; title, tools and services updated; file name kept)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tools +uv for the existing `bars::query` Python-binding test (the binding serves `mt_research`); no other change)

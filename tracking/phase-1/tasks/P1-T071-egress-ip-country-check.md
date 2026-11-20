@@ -15,7 +15,7 @@ requirements: [R1.16]
 roadmap_todos: [T1.33]
 modules: [M16, M17]
 dashboards: [D16, D06]
-tools: [git, cargo, uv, docker, pnpm, node>=20]
+tools: [git, cargo, docker, pnpm, node>=20]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ Every minute (default, configurable) `monitor` confirms that exchange traffic le
 
 - Settings (all configurable defaults in `config/egress.yaml`, linked to [16 §3.2](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys)): `expected_ips` (list; empty → status `unconfigured`, a warning, never `ok`), `residency_country` (default `AU`), `interval_s` (default 60), `observers` (≥ 2 free "what is my IP" endpoints, e.g. `api.ipify.org`, `ifconfig.co/json`; agreement required), `geoip_db` path
 - The probe uses the **same HTTP client, network and route** as venue traffic (the `core` egress allow-list; from P7 the exit-node tunnel) so it measures what the exchanges see
-- GeoIP: DB-IP Lite country MMDB (CC BY 4.0) downloaded monthly by a Prefect flow (Python), read by `mt-monitor` with the `maxminddb` crate, checksum-verified, attribution shown in D16; no paid GeoIP API
+- GeoIP: DB-IP Lite country MMDB (CC BY 4.0) downloaded monthly by an `mt-connectors` job (Rust; `providers::dbip`, scheduled by `mt-scheduler` in P1-T053), read by `mt-monitor` with the `maxminddb` crate, checksum-verified, attribution shown in D16; no paid GeoIP API
 - Status: `ok | ip_mismatch | country_mismatch | observers_disagree | unreachable | unconfigured`, with observed IP (shown masked except to you in D16), country, expected, checked_at; published on `egress.status` and KV `egress` (history 1) on change and every interval
 - Mismatch or `unreachable` for 2 consecutive checks (default) → `alert.critical.egress` on every channel; recovery → `alert.info.egress_ok`; `unconfigured` → `alert.warning.egress_unconfigured` once a day
 - Changing `expected_ips` or `residency_country` is a `system.settings.update` that **loosens** a safety gate → C3 (break-glass CLI `mtctl approve` + TOTP until Telegram C3 lands in P2); setting them stricter is C1
@@ -64,7 +64,7 @@ Every minute (default, configurable) `monitor` confirms that exchange traffic le
 ## ToDo
 
 - [ ] Implement `mt-monitor` module `egress` (Rust, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates): observers, agreement rule, GeoIP lookup, status machine) and the KV/NATS publisher
-- [ ] Add the monthly DB-IP Lite download flow with checksum and attribution
+- [ ] Add the monthly DB-IP Lite download job in `mt-connectors` with checksum and attribution
 - [ ] Add `config/egress.yaml` defaults and the C1/C3 classification hook for these settings
 - [ ] Add the D16 Egress tile (component library v0, all data states)
 - [ ] Add `egress.status` to the WS fan-out and the alert rules
@@ -95,7 +95,7 @@ Every minute (default, configurable) `monitor` confirms that exchange traffic le
 - [ ] `egress.status` published every interval with the documented states; KV `egress` holds the latest
 - [ ] Mismatch alerts fire on every channel after the default 2 checks; D16 tile shows the state
 - [ ] Changing the expected IP or residency requires C3; tightening is C1 (tested)
-- [ ] CI green (`cargo clippy`, `cargo test`, `uv run pytest` for the GeoIP flow, `pnpm playwright` viewport matrix for the tile, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `cargo test -p mt-connectors dbip` for the GeoIP download, `pnpm playwright` viewport matrix for the tile, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -128,3 +128,4 @@ Every minute (default, configurable) `monitor` confirms that exchange traffic le
 
 - 2026-10-22 00:00 · aligner · created for T1.33 / R1.16 (docs/16–17 alignment)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (egress check in Rust `mt-monitor` (maxminddb); GeoIP download stays a Python flow; before P7 the expected IP is the workstation's broadband IP your testnet keys are allow-listed to; tools cargo/uv/pnpm; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (GeoIP download Prefect flow (Python) → `mt-connectors` job on `mt-scheduler`; tools drop uv)

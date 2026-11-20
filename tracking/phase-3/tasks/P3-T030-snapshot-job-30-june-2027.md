@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T011, P3-T019, P3-T009, P1-T012, P1-T020, P1-T021, P1-T023]
+depends_on: [P3-T011, P3-T019, P3-T009, P1-T012, P1-T020, P1-T021, P1-T023, P1-T077]
 requirements: [R3.08, R3.15]
 roadmap_todos: [T3.25, T3.31]
 modules: [M18, M1]
@@ -18,14 +18,14 @@ dashboards: [D15]
 tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres, mt-scheduler]
 branch: p3/P3-T030-snapshot-job-30-june-2027
 pr: ""
 doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,12 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An idempotent snapshot job (`mt-journal snapshot`, scheduled by a Prefect flow) values **every open lot** (all accounts, all asset classes incl. FX-cash lots) at **2027-06-30 23:59:59 AEST (13:59:59Z)**, records value, price, price source, method and timestamps per lot in `journal.lot_snapshot` using the per-asset-class convention of [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change), runs regardless of the reform flag, and is reusable for residency-change (CGT event I1) snapshots.
+An idempotent snapshot job (`mt-journal snapshot`, scheduled as an `mt-scheduler` job) values **every open lot** (all accounts, all asset classes incl. FX-cash lots) at **2027-06-30 23:59:59 AEST (13:59:59Z)**, records value, price, price source, method and timestamps per lot in `journal.lot_snapshot` using the per-asset-class convention of [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change), runs regardless of the reform flag, and is reusable for residency-change (CGT event I1) snapshots.
 
 ## Context & references
 
 - Roadmap: [R3.08, T3.25](../../../docs/roadmap/phase-3-journal-and-tax.md) · [roadmap README §4 fixed dates](../../../docs/roadmap/README.md#4-fixed-external-dates)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 key findings](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) (end of day AEST, price source recorded) · [02 F9 step 6](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Convention: [16 §4.2](../../../docs/16-configuration-and-safety-model.md#42-market-value-snapshot-30-june-2027-and-any-residency-change) · decision [17 §A P3-B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (defaults, your tax agent to confirm, 09 question 10) · prices via `snapshot_price` in P3-T011
 - Cross-phase prerequisites (depends_on): P1-T012 (recorded crypto trades), P1-T020 (RBA F11), P1-T021 (recorded US trades), P1-T023 (official daily closes)
@@ -60,7 +60,7 @@ An idempotent snapshot job (`mt-journal snapshot`, scheduled by a Prefect flow) 
 ## ToDo
 
 - [ ] Implement `crates/mt-journal/src/snapshots/job.rs` + price rule module
-- [ ] Prefect deployment + schedule in `infra/prefect/deployments/journal.yaml`
+- [ ] `mt-scheduler` job definition + schedule (`journal-snapshot-2027-06-30`, Australia/Sydney timezone) in the journal job registry
 - [ ] Completeness check + alert; D15 Lots status query
 - [ ] Tests (dry run in P3-T048); docs
 
@@ -99,7 +99,7 @@ An idempotent snapshot job (`mt-journal snapshot`, scheduled by a Prefect flow) 
 - Do NOT overwrite snapshot rows.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -119,3 +119,4 @@ An idempotent snapshot job (`mt-journal snapshot`, scheduled by a Prefect flow) 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (price rule now the 16 §4.2 convention (P3-B002 closed), replaces bar-close default; R3.15/T3.31 mapped; explicit P1 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (snapshot job is an `mt-journal` subcommand scheduled by Prefect)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect deployment → `mt-scheduler` job; depends_on + P1-T077; services prefect-server → mt-scheduler; Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

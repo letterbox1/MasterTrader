@@ -15,7 +15,7 @@ requirements: [R6.01]
 roadmap_todos: [T6.66]
 modules: [M8, M9, M21]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [agents, litellm, llm-local, hindsight, tei-embed, tei-rerank, supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ Evidence for R6.01 ("Sample runs"): three debate runs, on one crypto, one FX and
 
 ## ToDo
 
-- [ ] Script `tools/verify/sample_runs.py` that issues `agents.run_analysis` (C1) for the three instruments and collects run/signal ids.
+- [ ] Check `crates/mt-agents/tests/sample_runs.rs` that issues `agents.run_analysis` (C1) for the three instruments and collects run/signal ids.
 - [ ] Field-completeness check against the 03 M8 list (schema introspection, not a hand list).
 - [ ] Provenance check: each source resolves to a stored row (bar, document, filing, memory, tool output) with `as_of ≤` the run's `as_of`.
 - [ ] Join `audit.llm_call` on `run_id`; confirm counts per run.
@@ -67,7 +67,7 @@ Evidence for R6.01 ("Sample runs"): three debate runs, on one crypto, one FX and
 ## Verification
 
 ### Tests
-- Integration (CI, recorded responses): the script on the three instruments; asserts every 03 M8 field and provenance rule.
+- Integration (CI, recorded responses): the check on the three instruments; asserts every 03 M8 field and provenance rule.
 - Unit: the field-completeness checker fails on a Signal missing `edge` (negative control).
 
 ### Scenarios
@@ -113,3 +113,4 @@ Evidence for R6.01 ("Sample runs"): three debate runs, on one crypto, one FX and
 
 - 2026-10-22 00:00 · aligner · created for T6.66 (sample runs, keyless on `local-advisor`; 03 M8 Signal fields per 17 §D)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (sample-run check in Rust; tools cargo)

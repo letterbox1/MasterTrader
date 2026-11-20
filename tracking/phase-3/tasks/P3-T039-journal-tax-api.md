@@ -15,7 +15,7 @@ requirements: [R3.13, R3.14]
 roadmap_todos: [T3.29]
 modules: [M18, M15]
 dashboards: [D14, D15]
-tools: [git, cargo, uv, node>=20, pnpm, docker]
+tools: [git, cargo, node>=20, pnpm, docker]
 mcp: []
 env: []
 services: [supabase-postgres, supabase-auth, supabase-storage, nats, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R3.13, R3.14, T3.29](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · backend contracts in [D14](../../../docs/ui/dashboards/D14-journal.md) and [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Cross-phase prerequisites (depends_on): P0-T032 (`mt-api` skeleton), P0-T034 (command bus), P0-T035 (C-levels), P0-T036 (WS hub)
 - Commands from other tasks exposed here: `tax.fy.lock`/`unlock` (C3) and `journal.manual_event.add` (C2) from P3-T055; `task.answer` (C1) from P3-T038
@@ -68,7 +68,7 @@ review_result: ""
 
 ### Tests
 
-- Contract: OpenAPI snapshot; `uv run schemathesis` against a fixture DB; `cargo test -p mt-api`.
+- Contract: OpenAPI snapshot; schemathesis from its pinned container image (`docker run … schemathesis run`) against a fixture DB; `cargo test -p mt-api`.
 - Unit: each command enforces its C-level server-side (C1 without confirm → 409/problem).
 - Integration: `/tax/summary?fy=2026-27` returns both regimes + PAYG with provenance fields.
 
@@ -119,3 +119,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (content-addressed attachments (P3-B013); FY lock/manual-event commands from P3-T055 (P3-B006); explicit P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (axum routes/commands in `mt-api` (utoipa); attachments in Supabase Storage)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (schemathesis runs from its pinned container instead of `uv`; tools drop uv; Python boundary named (`mt_ledger_import` only))

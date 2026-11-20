@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T018, P4-T062]
+depends_on: [P6-T018, P4-T062, P1-T077]
 requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker, cargo, supabase]
+tools: [git, cargo, docker, supabase]
 mcp: []
 env: []
-services: [supabase-postgres, prefect, mt-api]
+services: [supabase-postgres, mt-scheduler, mt-api]
 branch: p6/P6-T019-label-store-labelling-queue-api
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ui/dashboards/D10-models-memory.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ Training labels come **only from outcomes, agent silver labels or you** (never s
 
 - `models.label` already exists from P4 (P4-T062: insert-only, source `user` | `outcome`). Extend it additively (decision ref, labeller, note, queue item ref, a DB CHECK on the source column if P4 didn't add one); never re-create it. Corrections are new rows superseding old.
 - `models.shadow_check` lives in a separate table; there is no code path or FK that writes a shadow output into `models.label` (enforced by role grants: shadow writer has no INSERT on `models.label`).
-- Queue sampler (Prefect hourly): abstentions, shadow disagreements, high-value calls (by notional/EV), stratified per question; target ~15 min/day of items (default 40/day); excludes rows with `train_ok=false`.
+- Queue sampler (`mt-models`, hourly `mt-scheduler` job): abstentions, shadow disagreements, high-value calls (by notional/EV), stratified per question; target ~15 min/day of items (default 40/day); excludes rows with `train_ok=false`.
 - API (Rust `mt-api`): add `GET /models/labels/queue` and extend `GET /models/labels` (`?question=`); reuse the P4 `models.label.add` command (C0, audited, idempotent), adding the queue item reference.
 - Outcome labels written by the settlement-driven job (P6-T020) with `label_source=outcome`.
 - **Silver labels (default):** `label_source` gains `silver`: the teacher decision corrected against the settled outcome, written by P6-T020. Training runs on `outcome` + `silver` labels without waiting for anyone. Your labels (`user`, from the queue or D08) are an optional improvement that outranks `silver`/`outcome` for the same item; the queue never blocks training or promotion ([17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19); P6-T044 is optional).
@@ -67,7 +67,7 @@ Training labels come **only from outcomes, agent silver labels or you** (never s
 ## Verification
 
 ### Tests
-- `supabase test db`: INSERT with `label_source='shadow'` fails, `silver` is accepted only from the dataset-builder role; `cargo test -p mt-api` for the label endpoints; `uv run pytest` for the sampler.
+- `supabase test db`: INSERT with `label_source='shadow'` fails, `silver` is accepted only from the dataset-builder role; `cargo test -p mt-api` for the label endpoints; `cargo test -p mt-models label_queue` for the sampler.
 - Unit: sampler stratification and daily cap.
 - DB: INSERT into `models.label` with `label_source='shadow'` fails; shadow writer role lacks grant.
 - API: label add is idempotent and audited.
@@ -116,3 +116,4 @@ Training labels come **only from outcomes, agent silver labels or you** (never s
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (extends P4 models.label/models.label.add (P4-T062) instead of re-creating; labels endpoint + D10 queue tab per 17 §D P6-B004; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (label API in Rust `mt-api`, SQL migration in `supabase/`; `silver` label source added: agent silver labels by default, your labels optional (17 §G); tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (sampler in `mt-models` as an `mt-scheduler` job instead of Prefect; tools cargo; services mt-scheduler)

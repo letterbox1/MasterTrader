@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078]
+depends_on: [P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078, P2-T204, P2-T206]
 requirements: [R2.01, R2.06, R2.40, R2.42, R2.43, R2.45, R2.47, R2.48, R2.50, R2.51, R2.N1, R2.18, R2.19, R2.20, R2.56, R2.58]
 roadmap_todos: []
 modules: [M0, M7, M11, M12, M15, M21]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/README.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,7 +64,7 @@ A recorded, end-to-end demonstration of every Phase 2 exit criterion, run from t
 ## Verification
 
 ### Tests
-- Commands: `pnpm playwright`, `cargo test` and `uv run pytest` across the workspace, `supabase test db`.
+- Commands: `pnpm playwright`, `cargo test` across the workspace, `uv run pytest packages/mt_research` (research side), `supabase test db`; lab binding parity evidence from P2-T206.
 - Re-run of the E2E nightly suites immediately before the demo (all green).
 
 ### Scenarios
@@ -110,3 +110,4 @@ A recorded, end-to-end demonstration of every Phase 2 exit criterion, run from t
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo depends on Part A evidence and the new safety-state and dead-man tasks; HITL bot wording)
 - 2026-11-19 00:00 · coordinator · depends on P2-T078 (vetted additions, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [pnpm, uv, playwright] → [pnpm, uv, cargo, playwright])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (exit demo also collects P2-T206 (lab binding parity, Python stays on paper) and P2-T204 (no GPL analysers left); depends_on + P2-T204, P2-T206)

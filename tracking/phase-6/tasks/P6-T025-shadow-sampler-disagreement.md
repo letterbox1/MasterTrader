@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T024, P6-T019, P6-T009]
+depends_on: [P6-T024, P6-T019, P6-T009, P6-T074]
 requirements: [R6.13]
 roadmap_todos: [T6.26]
 modules: [M21, M8]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker, supabase]
+tools: [git, cargo, docker, supabase]
 mcp: []
 env: []
 services: [decision-svc, litellm, nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 ## ToDo
 
 - [ ] Sampler hook in decision-svc (post-decision, non-blocking).
-- [ ] Shadow worker consuming a NATS queue.
+- [ ] Shadow worker in `mt-models` consuming a NATS queue; teacher calls through the `mt-agents` gateway client (P6-T074).
 - [ ] SQL migration (`supabase/migrations/`) for `models.shadow_check`.
 - [ ] Metrics + alert rule.
 - [ ] Tests; docs.
@@ -65,6 +65,7 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 ## Verification
 
 ### Tests
+- `cargo test -p mt-models shadow`; `supabase test db` for the migration.
 - Unit: sampling rate within ±1% over 100k decisions; stratification floor.
 - Integration: shadow worker writes checks; nothing appears in `models.label`.
 - Budget: exhausted `shadow` budget pauses sampling.
@@ -109,3 +110,4 @@ About 5% of tier-B decisions are re-asked of the teacher (M8 quick path / gatewa
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (shadow role budget default $0.30 (16 §2.10); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (migration in `supabase/migrations/`; tools supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (shadow sampler and worker in the Rust `mt-models` crate; tools cargo)

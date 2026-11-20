@@ -12,10 +12,10 @@ owner: agent
 claimed_by: ""
 depends_on: [P6-T003]
 requirements: [R6.31]
-roadmap_todos: [T6.30]
-modules: [M23, M6]
+roadmap_todos: [T6.35]
+modules: [M23, M6, mt-social]
 dashboards: [D13, D12]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-mode
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -41,8 +41,8 @@ Accounts you follow get credibility scores from past calls vs outcomes, and a sh
 
 ## Context & references
 
-- Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.30
-- Optional: only if P6-T003 recorded `yes`; otherwise cancel this item.
+- Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.35
+- Optional module, off by default (P6-T003, 16 §2.14a); built once you enable it in settings.
 - Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social) (credibility, shill-burst) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (Telegram counts only)
 - Cross-phase: P4 social ingest, P5 wallet/on-chain data
 - Depends on (this phase): P6-T003
@@ -63,6 +63,7 @@ Accounts you follow get credibility scores from past calls vs outcomes, and a sh
 ## Verification
 
 ### Tests
+- `cargo test -p mt-social credibility`.
 - Unit: posture on synthetic mention/buyer series.
 - Provenance: Telegram text never enters the extractor (counts only).
 
@@ -92,7 +93,7 @@ Accounts you follow get credibility scores from past calls vs outcomes, and a sh
 ## Doc sync on completion
 
 - `docs/13-wallets-treasury-and-onchain.md` §8: feature definitions.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.30 (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.35 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -105,3 +106,4 @@ Accounts you follow get credibility scores from past calls vs outcomes, and a sh
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; Telegram counts only (12 §4))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (optional module off by default (P6-T003, agent); depends on nothing human)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (credibility and shill-burst in the Rust `mt-social` crate; roadmap ToDo T6.30 → T6.35; tools cargo)

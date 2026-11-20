@@ -15,7 +15,7 @@ requirements: [R6.14, R6.12]
 roadmap_todos: [T6.27]
 modules: [M21, M7]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow, nats, decision-svc]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ Models move candidate → shadow → production only through `models.promote` wi
 
 ## ToDo
 
-- [ ] Gate runner `mt_models.gates`.
+- [ ] Gate runner in `mt-models` (Rust; gate reports through `mt-lab-core`).
 - [ ] Commands with level logic (C2 / C3 if any consumer bot is `autonomous`).
 - [ ] Registry status history table.
 - [ ] Rollback path (KV routing switch < 5 s).
@@ -69,6 +69,7 @@ Models move candidate → shadow → production only through `models.promote` wi
 
 ### Tests
 - Parity: `cargo test -p mt-engine tier_a_parity` against the Python reference outputs for a promoted tier-A model.
+- `cargo test -p mt-models gates`.
 - Unit: each gate pass/fail; level selection C2 vs C3.
 - Integration: promote → decision-svc routes to new model; rollback → previous within 5 s.
 
@@ -116,3 +117,4 @@ Models move candidate → shadow → production only through `models.promote` wi
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (16 §2.10 gate defaults incl. ≥ 14 days shadow and veto 0.90; C3 for models used by autonomous bots (02 §7.2, 17 §B modes); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tier-A models promoted to the engine path are served by Rust ONNX (`ort`) in `mt-engine` with a parity test (18 §2.2); latency gate per active profile)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (promotion gates in the Rust `mt-models` crate; tools cargo)

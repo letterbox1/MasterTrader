@@ -10,12 +10,12 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T022, P6-T024, P6-T027, P6-T028, P6-T068]
+depends_on: [P6-T022, P6-T024, P6-T027, P6-T028, P6-T068, P1-T077]
 requirements: [R6.12]
 roadmap_todos: [T6.25]
 modules: [M21, M7]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
 services: [mlflow, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ One command (`models.bakeoff.run`, C1) evaluates every contender — own Qwen-Lo
 
 ## ToDo
 
-- [ ] Harness `mt_models.bakeoff` + contender adapters.
+- [ ] Harness `mt_research.bakeoff` (Python, run as an `mt-scheduler` job) + contender adapters over HTTP.
 - [ ] FinMMEval loader (licence-respecting, local files only).
 - [ ] Metrics + report generator.
 - [ ] `models.bakeoff.run` command + `/models/benchmarks` query.
@@ -68,6 +68,7 @@ One command (`models.bakeoff.run`, C1) evaluates every contender — own Qwen-Lo
 ## Verification
 
 ### Tests
+- `uv run pytest` for the harness and metrics; `cargo test -p mt-api models_bakeoff` for the command and query.
 - Unit: metric functions vs references; flip-rate computation.
 - Integration: harness on two toy contenders produces a report with all metrics.
 - API: command level C1, job visible on WS `lab.job`.
@@ -113,3 +114,4 @@ One command (`models.bakeoff.run`, C1) evaluates every contender — own Qwen-Lo
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Kev via P6-T068; FinMMEval optional input (keys/data last); report flags 16 §2.10 thresholds; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU lock only on a GPU profile; CPU sample otherwise; gpu service removed)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (bake-off harness in `mt_research` run by `mt-scheduler`; command/query in Rust `mt-api`; tools cargo + uv)

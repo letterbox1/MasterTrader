@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,7 +59,7 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 
 ## ToDo
 
-- [ ] `mt_models.distill.dataset` builder + CLI `mt-models build-dataset --question ... --as-of ...`.
+- [ ] `mt_research.distill.dataset` builder (Python, training side; reads only through the `mt_store` `pit` binding) + CLI `mt-research build-dataset --question ... --as-of ...`, run as an `mt-scheduler` job.
 - [ ] Fold generator with purge/embargo; augmentation.
 - [ ] Exclusion accounting + MLflow logging.
 - [ ] Tests; docs.
@@ -114,3 +114,4 @@ A reproducible builder turns the teacher log (M8 decisions + tier-B context), fe
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T107; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (silver labels written back as `label_source=silver` and used by default; user labels optional; workstation instead of host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (dataset builder lives in the Python `mt_research` package (training side, 18 §2.2), not `mt_models`)

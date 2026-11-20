@@ -101,7 +101,7 @@ One Rust SDMX client in `mt-connectors` (SDMX REST, JSON/CSV; replaces sdmx1) lo
 ## Branch & PR
 
 - Branch: `p1/P1-T025-macro-sdmx-central-banks-dbnomics`
-- PR title: `P1-T025: Ingest sdmx1, central-bank and DBnomics series`
+- PR title: `P1-T025: Ingest SDMX, central-bank and DBnomics series`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P1-T025` run
 
 ## Progress log

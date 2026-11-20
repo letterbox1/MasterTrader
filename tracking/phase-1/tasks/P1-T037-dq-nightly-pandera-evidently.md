@@ -18,14 +18,14 @@ dashboards: [D07]
 tools: [git, uv, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server, nats]
+services: [supabase-postgres, mt-scheduler, nats]
 branch: p1/P1-T037-dq-nightly-pandera-evidently
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,11 +49,11 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 - Pandera schemas per data type (trades, quotes, L2 deltas, bars): types, non-null, price > 0, monotonic `event_time` within file, `ingest_time ≥ event_time − skew`, provenance present
 - Evidently report per instrument: log returns, spread bps, volume, inter-arrival vs trailing 30-day reference; drift flagged with the report URL stored
-- Runs after compaction (P1-T012) as a Python Prefect flow (Pandera and Evidently are Python-only, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); results are published on `dq.raw.batch.*` and `mt-monitor` writes the incidents to `audit.dq_event` (check `batch_schema` / `batch_drift`), so one writer owns the WORM table; HTML reports under `/data/reports/dq/<date>/`
+- Runs after compaction (P1-T012) as an `mt_research` offline batch job (`mt_research.jobs.dq_nightly`; Pandera and Evidently are Python-only, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) run by `mt-scheduler` (kind `python` on the `research-worker`, schedule in P1-T053); it reads Parquet only through the `mt_store` binding; results are published on `dq.raw.batch.*` and `mt-monitor` writes the incidents to `audit.dq_event` (check `batch_schema` / `batch_drift`), so one writer owns the WORM table; HTML reports under `/data/reports/dq/<date>/`
 
 ## ToDo
 
-- [ ] Write schemas and the flow
+- [ ] Write the Pandera schemas and the `mt_research.jobs.dq_nightly` job (Evidently report included)
 - [ ] Report storage and D07 links (`/data/dq-events` includes report path)
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -62,12 +62,12 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 
 ### Tests
 
-- Unit: each schema rejects a crafted bad frame (negative price, null ts, unsorted)
-- Integration: flow over a fixture day produces pass + one injected failure
+- `uv run pytest packages/mt_research -k dq_nightly`: each schema rejects a crafted bad frame (negative price, null ts, unsorted)
+- Integration: the job over a fixture day produces pass + one injected failure
 
 ### Scenarios
 
-- Given a compaction run is late, when the nightly flow starts, then it waits for the compaction marker rather than validating fragments
+- Given a compaction run is late, when the nightly job starts, then it waits for the compaction marker rather than validating fragments
 
 ### Stress / failure injection
 
@@ -105,3 +105,4 @@ Each night, yesterday's compacted Parquet files are validated with Pandera schem
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow (Pandera, Evidently); incidents go through `dq.raw.batch.*` to the Rust `mt-monitor` writer; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (stays Python per 18 §2.2 but as an `mt_research` offline batch job run by `mt-scheduler` (kind `python`), not a Prefect flow; services prefect-server → mt-scheduler)

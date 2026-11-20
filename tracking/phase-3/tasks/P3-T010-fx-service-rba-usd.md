@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T005, P1-T020, P1-T019, P0-T027]
+depends_on: [P3-T005, P1-T020, P1-T019, P0-T027, P1-T077]
 requirements: [R3.03]
 roadmap_todos: [T3.21]
 modules: [M18]
@@ -25,7 +25,7 @@ doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R3.03, T3.21](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 goals §5](../../../docs/09-journal-and-tax.md#goals) (native + USD + AUD, RBA daily) · [11 §3 base currency resolution](../../../docs/11-cryptotrader-crossover-review.md#3-conflicts-and-how-they-were-resolved) · [02 F9 step 2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Rule: [09 FX and valuation rules](../../../docs/09-journal-and-tax.md#fx-and-valuation-rules) · [16 §4.3 FX for tax](../../../docs/16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants) · decision [17 §D P3-B008](../../../docs/17-decisions-register.md#d-other-decisions)
 - Cross-phase prerequisites (depends_on): P1-T020 (RBA F11 daily FX), P1-T019 (Frankfurter/ECB reference rates), P0-T027 (`pit(as_of)`)
@@ -60,7 +60,7 @@ review_result: ""
 
 - [ ] Implement `crates/mt-journal/src/fx/service.rs`, `fx/rba.rs` (reader over `market.macro_series`), `fx/cross.rs`
 - [ ] Persist used rates to `journal.fx_rate` (append-only, idempotent per (pair, date, source))
-- [ ] Pending-FX queue + retry flow (Prefect `journal-fx-backfill`, hourly)
+- [ ] Pending-FX queue + retry job (`mt-scheduler` job `journal-fx-backfill`, hourly); the RBA F11 series itself is fetched by the `mt-connectors` client (P1), never by Python
 - [ ] Unit + golden tests with a fixture of F11 rows (incl. a long weekend and Christmas)
 - [ ] Docs: FX rule in 09
 
@@ -100,7 +100,7 @@ review_result: ""
 - Do NOT default a missing rate to 1 or interpolate silently.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -120,3 +120,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (RBA gap rule = last published business day, non-F11 via USD (P3-B008 closed); staleness limit is a setting; explicit P1/P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (FX service in the `mt-journal` crate (09 architecture, 18 §2.1))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect retry flow → `mt-scheduler` job; FX source fetch stays in `mt-connectors` (Rust); depends_on + P1-T077; Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

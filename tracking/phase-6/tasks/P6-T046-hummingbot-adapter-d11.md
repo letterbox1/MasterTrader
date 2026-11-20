@@ -12,20 +12,20 @@ owner: agent
 claimed_by: ""
 depends_on: [P6-T003, P2-T017, P2-T031]
 requirements: [R6.30]
-roadmap_todos: [T6.30]
-modules: [M13, M11, M16]
+roadmap_todos: [T6.35]
+modules: [M13, M11, M16, mt-mm-adapter]
 dashboards: [D11]
-tools: [git, docker, uv]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [hummingbot, nats]
 branch: p6/P6-T046-hummingbot-adapter-d11
 pr: ""
-doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D11-market-making.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
+doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D11-market-making.md, docs/19-third-party-register.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -41,8 +41,8 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 
 ## Context & references
 
-- Roadmap: [R6.30](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.30
-- Optional: only if P6-T003 recorded `yes`; otherwise cancel this item.
+- Roadmap: [R6.30](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.35
+- Optional module, off by default (P6-T003, 16 §2.14a); built once you enable it in settings.
 - Spec: [03 M13](../../../docs/03-build-spec.md#m13-market-making-sidecar) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) (market making P3; must beat HLP) · [07 §7](../../../docs/07-security-notes.md#7-supply-chain) (Hummingbot metrics + broker IDs)
 - UI: [D11](../../../docs/ui/dashboards/D11-market-making.md)
 - Kill: [02 F6](../../../docs/02-v1-architecture.md#8-end-to-end-flows) (Hummingbot stops)
@@ -52,15 +52,15 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 ## Requirements
 
 - Pinned image/commit; telemetry disabled check and broker-ID stripping check both block start if failing.
-- Adapter (Python, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): Hummingbot API ↔ `mt-engine` venue abstraction, through `mt-api`/`mt-risk` like every other client; every order intent passes M11 (exposure counts toward global limits).
+- Adapter `mt-mm-adapter` (Rust client of the Hummingbot API, REST + WebSocket, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): Hummingbot and the Hummingbot API run unmodified in their own containers ([19 §1](../../../docs/19-third-party-register.md#1-run-unmodified-separate-services-or-libraries-we-call)); the adapter maps Hummingbot API ↔ `mt-engine` venue abstraction, through `mt-api`/`mt-risk` like every other client; every order intent passes M11 (exposure counts toward global limits).
 - Kill switch → all bots stop within 1 s; `mm.bot.cancel_all` (C1).
 - Commands `mm.bot.create|start|stop|update|cancel_all` with D11 levels: create/start paper C1; live start C3 (quotes on its own, like `autonomous`); edit live C2, risk-increasing C3; stop and cancel_all C1. Live is out of scope in P6.
 - Paper P&L decomposition (spread capture, inventory, fees/rebates, funding) vs HLP APR on the same notional, weekly.
 
 ## ToDo
 
-- [ ] Vendor/pin Hummingbot; telemetry + broker-ID audit.
-- [ ] Adapter + M11 integration.
+- [ ] Pin the Hummingbot and Hummingbot API images by digest (unmodified); telemetry + broker-ID audit; Hummingbot API credentials as a generated line in `.env.example` §14 first (07 §2 naming), never in this file.
+- [ ] `crates/mt-mm-adapter` + M11 integration.
 - [ ] D11 UI + API.
 - [ ] Weekly HLP comparison report.
 - [ ] Tests; docs.
@@ -68,6 +68,7 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 ## Verification
 
 ### Tests
+- `cargo test -p mt-mm-adapter` (recorded Hummingbot API responses) and `cargo clippy`.
 - Integration: bot quote → M11 check → paper fill.
 - Start blocked if telemetry check fails.
 - Kill drill: bots stop < 1 s.
@@ -100,8 +101,8 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 
 - `docs/03-build-spec.md` M13: adapter notes.
 - `docs/ui/dashboards/D11-market-making.md`: implemented.
-- `third_party/LICENSES.md`: Hummingbot entry.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.30 (and note this task ID) once all items covering it are done.
+- `docs/19-third-party-register.md` §1: confirm the Hummingbot row.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.35 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -114,3 +115,4 @@ Hummingbot runs as a sidecar venue behind M11 (telemetry off, broker IDs strippe
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (D11 levels incl. live start C3; cross-phase deps P2-T017/P2-T031; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Hummingbot adapter stays Python (18 §2.2) and reaches venues only through `mt-api`/`mt-risk`; depends on P6-T003 (agent default: off), not a human decision)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (adapter is the Rust `mt-mm-adapter` driving the unmodified Hummingbot API; roadmap ToDo T6.30 → T6.35; tools cargo)

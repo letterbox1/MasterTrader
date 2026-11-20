@@ -15,7 +15,7 @@ requirements: [R6.08]
 roadmap_todos: [T6.33]
 modules: [M8, M15]
 dashboards: [D08, D10]
-tools: [uv, git]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [litellm, llm-local, supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/10-memory-rag-and-models.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ Agent workflows adapted from Anthropic's financial-services equity-research and 
 
 ## Requirements
 
-- Adapt the skill prompts and steps; keep the Apache-2.0 licence and NOTICE with any copied text.
+- Adapt the skill prompts and steps as `mt-agents` workflows (state-machine graphs on the P6-T074 runtime) with the skill files kept as prompts in `crates/mt-agents/skills/`; keep the Apache-2.0 licence and NOTICE with any copied text.
 - All inputs through `pit(as_of)` tools; every output carries its sources and `as_of`.
 - Runs on cadence/events (earnings dates, catalysts), never per tick; costs within the per-role LLM budgets (16 §2.10).
 - Thesis tracker: each thesis has invalidation conditions; a breached condition raises an alert and a task, never an order.
@@ -56,7 +56,7 @@ Agent workflows adapted from Anthropic's financial-services equity-research and 
 
 ## ToDo
 
-- [ ] Port the four workflows as agent workflows
+- [ ] Build the four workflows as `mt-agents` graphs (skill files as prompts in `crates/mt-agents/skills/`)
 - [ ] Thesis tracker store + invalidation alerts
 - [ ] Wire outputs into the debate inputs and the morning brief
 - [ ] Write tests (see Verification)
@@ -78,7 +78,7 @@ Agent workflows adapted from Anthropic's financial-services equity-research and 
 
 - [ ] Workflows produce sourced, PIT-correct outputs
 - [ ] Licence/NOTICE kept for adapted content
-- [ ] CI green (ruff, mypy, pytest, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-agents workflows`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ Agent workflows adapted from Anthropic's financial-services equity-research and 
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (workflows are `mt-agents` graphs with skill files as prompts in `crates/mt-agents/skills/`; tools cargo)

@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, SPEC.md, docs/roadmap/phase-2-strategies-risk-
 doc_sync_status: done
 found_in: docs/03-build-spec.md M7; SPEC.md research-lab row; docs/01-repo-vetting-report.md §2–3.3
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: 2026-10-22
 blocked_reason: ""
@@ -104,3 +104,4 @@ The docs agree and part-B tasks can be built without guessing: a single decided 
 - 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §A (P2-B051)); docs updated: 03 §1 personal use; 03 M7 (analysers vendored under `third_party/` with their licence, isolated in `mt_lab`); 01 §2 superseded note and table; 14 §6; implementation owned by P2-T112
 - 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · done
 - 2026-10-22 02:14 · cloud:vm:be04b6ae61f8 · doc sync done: docs updated in the alignment wave
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (superseded: 17 §H replaces the vendoring route with clean-room Rust analysers in `mt-lab-core` (P2-T112); any vendored copy is removed and its 19 §4 row dropped by P2-T204. Item stays done; no reopen)

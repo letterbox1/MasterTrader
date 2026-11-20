@@ -15,7 +15,7 @@ requirements: [R6.11, R6.10, R6.N3]
 roadmap_todos: [T6.24]
 modules: [M21]
 dashboards: [D10, D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
 services: [decision-svc, nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,8 +60,8 @@ Calibrated heads export to ONNX (FP32) and vLLM adapters; `decision-svc` stage 2
 
 ## ToDo
 
-- [ ] Exporter + parity tests.
-- [ ] decision-svc model router + calibration/abstention layer.
+- [ ] Exporter in `mt_research` (ONNX FP32 + vLLM adapters) + parity tests against the Rust `ort` runtime.
+- [ ] Model router + calibration/abstention layer in `mt-models` (Rust, runs in `decision-svc`).
 - [ ] Audit writer and NATS/KV publishing (extend P4).
 - [ ] Veto gate wiring to `risk.event`.
 - [ ] Lab client forcing CPU ONNX FP32.
@@ -70,7 +70,8 @@ Calibrated heads export to ONNX (FP32) and vLLM adapters; `decision-svc` stage 2
 ## Verification
 
 ### Tests
-- Parity: ONNX vs PyTorch probabilities on 1,000 states (< 1e-4).
+- `cargo test -p mt-models` (router, calibration, abstention, veto) and `cargo clippy`; `uv run pytest` for the exporter.
+- Parity: ONNX (`ort`) vs PyTorch probabilities on 1,000 states (< 1e-4).
 - Unit: abstention and veto threshold logic.
 - Integration: `text.doc.new` → own head decision → KV updated → tier A reads feature.
 - Determinism smoke (full test in P6-T057).
@@ -121,3 +122,4 @@ Calibrated heads export to ONNX (FP32) and vLLM adapters; `decision-svc` stage 2
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (latency per 17 §B (R6.N3), veto default 0.90 and prefix caching off (16 §2.10, 17 §A); cross-phase deps P4-T029/P2-T128; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no GPU service precondition (`models.gpu_profile: auto`))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (export in `mt_research`, serving/calibration/abstention in the Rust `mt-models` runtime; tools cargo + uv)

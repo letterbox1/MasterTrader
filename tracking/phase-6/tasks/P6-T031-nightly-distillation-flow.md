@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T020, P6-T022, P6-T030, P2-T125]
+depends_on: [P6-T020, P6-T022, P6-T030, P2-T125, P1-T077]
 requirements: [R6.14]
 roadmap_todos: [T6.27]
 modules: [M21, M7]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, uv, docker]
 mcp: []
 env: []
-services: [prefect, mlflow]
+services: [mt-scheduler, mlflow]
 branch: p6/P6-T031-nightly-distillation-flow
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B candidates, calibrates and benchmarks them, registers them as candidates and opens promotion proposals — never promoting by itself; the teacher stays in shadow.
+A nightly `mt-scheduler` job chain (Python `mt_research` steps run as containers/subprocesses) distils the teacher log + outcomes into tier-A and tier-B candidates, calibrates and benchmarks them, registers them as candidates and opens promotion proposals — never promoting by itself; the teacher stays in shadow.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B
 
 ## ToDo
 
-- [ ] Prefect flow `distill_nightly`.
+- [ ] `mt-scheduler` job chain `distill_nightly` (build dataset → train → calibrate → benchmark → register).
 - [ ] Proposal table + notification.
 - [ ] Lineage writer.
 - [ ] Tests; docs.
@@ -107,3 +107,4 @@ A nightly Prefect flow distils the teacher log + outcomes into tier-A and tier-B
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T125; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU-busy skip only on a GPU profile; gpu service removed)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect flow → `mt-scheduler` job chain over `mt_research` steps; services mt-scheduler)

@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T007, P3-T039, P0-T042]
+depends_on: [P3-T007, P3-T039, P0-T042, P1-T077]
 requirements: [R3.N1]
 roadmap_todos: [T3.64]
 modules: [M18, M21, M17]
 dashboards: []
-tools: [git, cargo, uv, supabase, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
 services: [supabase-postgres, litellm, journal]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ An automated audit shows that no tax-sensitive field (TFN, address, raw statemen
 ## Context & references
 
 - Roadmap: [R3.N1, T3.64](../../../docs/roadmap/phase-3-journal-and-tax.md) · [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · provenance [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Cross-phase prerequisite (depends_on): P0-T042 (LiteLLM gateway, writes `audit.llm_call` from P0 per [17 §D P6-B010](../../../docs/17-decisions-register.md#d-other-decisions)); P6 agents must keep passing this audit
 
 ## Requirements
@@ -50,13 +50,13 @@ An automated audit shows that no tax-sensitive field (TFN, address, raw statemen
 - Grant audit: roles used by `litellm`, `agents`, `decision-svc`, `nlp` have no SELECT on `journal.*` except `journal.llm_safe_summary`; no EXECUTE on decrypt helpers.
 - Secret audit: only `journal` mounts the master key; data keys exist only wrapped in `ops.journal_data_key`, which no other role can read (envelope encryption, P3-T006).
 - Content audit: seed canary values (fake TFN `123 456 782`-style pattern, fake address string) into `journal.taxpayer_profile` in a test env; run every agent/tool path available; scan `audit.llm_call` prompts + LiteLLM logs → zero canary hits.
-- CI static check: any crate other than `mt-journal` using `mt_journal::crypto`, and any Python code reaching it, fails the build.
+- CI static check: any crate other than `mt-journal` using `mt_journal::crypto`, and any Python package (the five in 18 §2.2) reaching it through a binding, fails the build (the `mt_store` module exports no journal crypto).
 - Job runs in CI and monthly in production (canary-free mode: pattern scan of `audit.llm_call` for TFN-like 9-digit checksummed numbers).
 
 ## ToDo
 
-- [ ] Write the pgTAP grants check `supabase/tests/journal_prompt_audit.sql` and the secrets/canary test `tests/security/test_prompt_audit.py` (`uv run pytest`; the gateway clients are Python)
-- [ ] Monthly Prefect flow `security-prompt-audit`
+- [ ] Write the pgTAP grants check `supabase/tests/journal_prompt_audit.sql` and the secrets/canary test `tests/security/prompt_audit.rs` in the Rust `mt-e2e` test crate (`cargo test -p mt-e2e --test prompt_audit`; the gateway clients are Rust: `mt-agents`, `mt-nlp`, `mt-lab-core`)
+- [ ] Monthly `mt-scheduler` job `security-prompt-audit`
 - [ ] CI import guard
 - [ ] Record results
 
@@ -108,3 +108,4 @@ An automated audit shows that no tax-sensitive field (TFN, address, raw statemen
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (secret audit covers the envelope-encryption master key and key table (P3-B009); explicit P0-T042 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (pgTAP grants check + Python gateway canary)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (canary test moves to the Rust `mt-e2e` crate (gateway clients are Rust now); Prefect → `mt-scheduler`; depends_on + P1-T077; same checks; tools [git, cargo, uv, supabase, docker] → [git, cargo, supabase, docker]; Python boundary named (`mt_ledger_import` only))

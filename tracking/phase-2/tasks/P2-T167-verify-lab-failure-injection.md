@@ -15,7 +15,7 @@ requirements: [R2.40, R2.44, R2.45]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
-tools: [uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,14 +52,14 @@ Evidence that the lab degrades safely: worker crashes, MLflow/Supabase Postgres/
 
 ## ToDo
 
-- [ ] Write chaos scripts (`tests/chaos/lab_*.sh`) using `docker compose stop/kill`
+- [ ] Write chaos scripts (`tests/chaos/lab_*.sh`) using `docker compose stop/kill`, driven by `tests/chaos/lab.rs` in the `mt-e2e` test crate; include an `mt-scheduler` restart and an `mt_research` job-container kill
 - [ ] Run, collect metrics, record results
 - [ ] File bugs for any false pass or data loss
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest tests/chaos/lab`.
+- Commands: `cargo test -p mt-e2e --test chaos_lab -- --ignored`.
 - Chaos suite (manual/nightly-weekly) with assertions on DB state after each injection.
 
 ### Scenarios
@@ -101,3 +101,4 @@ Evidence that the lab degrades safely: worker crashes, MLflow/Supabase Postgres/
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; host → workstation; services [nats, postgres] → [nats, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (chaos driver in the Rust `mt-e2e` test crate; `mt-scheduler` restart and `mt_research` container kill added; all earlier cases kept; tools [uv, docker] → [cargo, docker])

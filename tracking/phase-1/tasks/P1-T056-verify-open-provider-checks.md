@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T009]
+depends_on: [P0-T009, P1-T078]
 requirements: [R1.04, R1.05, R1.06]
 roadmap_todos: [T1.60]
 modules: [M1]
 dashboards: []
-tools: [git, uv, sops]
+tools: [git, cargo, sops]
 mcp: []
 env: [OANDA_PRACTICE_API_TOKEN, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD]
 services: [oanda-practice, ig-demo]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/06-aggregators-and-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,22 +46,23 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 - Keys: the OANDA books and IG sentiment checks need your practice/demo credentials (P0-T009), loaded with `sops exec-env`; TrueFX needs a free registration (if you haven't registered, record "needs registration")
 - Decision context: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B016 (ABS CPI series ID (U), verified here)
 - Cross-phase prerequisites (depends_on): P0-T009 (practice/testnet accounts, your T0.09)
+- Depends on (this phase): P1-T078 (`mt-connectors check <source>` and the quota-aware HTTP client the probes use)
 
 ## Requirements
 
 - OANDA order book / position book endpoints (`/v3/instruments/{instrument}/orderBook` and `positionBook`) on the practice host return data
 - TrueFX downloads still work (free registration, monthly files)
-- Live IMF SDMX 3.0 base URL (record the exact URL `sdmx1` should use)
+- Live IMF SDMX 3.0 base URL (record the exact URL the `mt-connectors` SDMX client should use, P1-T025)
 - IG client-sentiment endpoint path (demo) returns data
 - StockTwits API reachability (`streams/symbol/{SYM}`), without auth and within terms
 - Tardis.dev free monthly samples (which exchanges/data types, licence)
 - BoC Valet and BoJ time-series work without a key
 - ABS CPI series ID `A2325846C` (All groups CPI, weighted average of eight capital cities) and its release calendar: confirm the ID and title via the ABS Data API; if different, set `macro.abs_cpi_series` (P1-T027)
-- Scripts in `tools/provider_checks/` (no secrets in output); results table appended to 06 §3 "Open checks"
+- Probes as `mt-connectors check <name>` subcommands (Rust; no secrets in output); results table appended to 06 §3 "Open checks"
 
 ## ToDo
 
-- [ ] Write one check script per item using quota-aware clients
+- [ ] Write one `mt-connectors check` probe per item using the quota-aware client
 - [ ] Run each, capture status code, sample size and date
 - [ ] Record the ABS CPI result in P1-B016's progress log and close it if the ID is confirmed
 - [ ] Update 06 §3 with a pass/fail table and consequences (e.g. disable source in `config/sources.yaml` on fail)
@@ -71,7 +72,7 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 ### Tests
 
-- Each script exits 0 on pass, 1 on fail, and prints a one-line summary (no payload dumps)
+- `cargo test -p mt-connectors checks` (fixtures) and each live probe exits 0 on pass, 1 on fail, and prints a one-line summary (no payload dumps)
 
 ### Scenarios
 
@@ -87,7 +88,7 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 
 - [ ] All eight checks (incl. the ABS CPI series ID) have a pass/fail line with date in 06 §3
 - [ ] Sources that failed are disabled in `config/sources.yaml` with the reason
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -115,3 +116,4 @@ Each open check from 06 §3 is tested against the live provider with a small scr
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (adds the ABS CPI series ID check (P1-B016, T1.60); credential env names; dep P0-T009)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; live VERIFY with practice credentials (P0-T009) stays separate and late)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (provider check scripts (Python) → `mt-connectors check` probes in Rust; IMF URL recorded for the Rust SDMX client; deps +P1-T078; tools uv → cargo)

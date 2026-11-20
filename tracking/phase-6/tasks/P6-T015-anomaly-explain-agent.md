@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T014, P6-T005, P6-T006, P6-T009, P1-T045, P0-T034]
+depends_on: [P6-T014, P6-T005, P6-T006, P6-T009, P6-T074, P1-T045, P0-T034]
 requirements: [R6.05]
 roadmap_todos: [T6.22]
 modules: [M10, M8, M15]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [litellm, llm-local, nats, telegram-bot-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/mobile-and-telegram.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,7 +61,7 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 
 ## ToDo
 
-- [ ] `mt_anomaly.explain` consumer + prompt (registry versioned).
+- [ ] Explain consumer in `mt-anomaly` on the `mt-agents` runtime (P6-T074) + prompt (registry versioned).
 - [ ] Context-pack builder using the tool belt.
 - [ ] Telegram + notification delivery; link to D09.
 - [ ] `anomaly.explain` command handler (C1).
@@ -70,6 +70,7 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 ## Verification
 
 ### Tests
+- `cargo test -p mt-anomaly explain` and `cargo clippy`.
 - Unit: context pack contains only `as_of`-valid items; brief length limit.
 - Integration: anomaly event → Telegram mock receives one message with source links.
 
@@ -114,3 +115,4 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (anomaly.explain command (C1, 02 §7.2); explain budget default 16 §2.10; keyless; cross-phase deps P1-T045/P0-T034; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change; alerts reach Telegram through the P1-T045 fan-out and the Rust `mt-telegram-bot`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (explain agent in Rust on the `mt-agents` runtime; tools cargo)

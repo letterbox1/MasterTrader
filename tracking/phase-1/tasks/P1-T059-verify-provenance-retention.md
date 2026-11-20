@@ -15,17 +15,17 @@ requirements: [R1.09]
 roadmap_todos: [T1.63]
 modules: [M1]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres, mt-scheduler]
 branch: p1/P1-T059-verify-provenance-retention
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/12-policy-and-compliance.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ On the running stack, CoinGecko rows disappear after 24 h, untagged writes are r
 
 ## ToDo
 
-- [ ] Write `tests/e2e/provenance_retention.py`
+- [ ] Write the e2e test `provenance_retention` in the Rust e2e crate (`tests/e2e`, package `mt-e2e`; `cargo test -p mt-e2e --test provenance_retention -- --ignored`)
 - [ ] Run on the dev stack and store the report
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -76,7 +76,7 @@ On the running stack, CoinGecko rows disappear after 24 h, untagged writes are r
 ## Acceptance criteria
 
 - [ ] All assertions pass; report stored
-- [ ] CI green (`cargo clippy`, `cargo test`, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -104,3 +104,4 @@ On the running stack, CoinGecko rows disappear after 24 h, untagged writes are r
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless (CoinGecko fixture rows via the real write path))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (asserts run against Supabase Postgres and the Rust `mt-store` retention job; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python e2e harness → Rust integration tests in the `mt-e2e` crate (`tests/e2e`) with the same cases; tools drop uv; services prefect-server → mt-scheduler (the retention job runs on it))

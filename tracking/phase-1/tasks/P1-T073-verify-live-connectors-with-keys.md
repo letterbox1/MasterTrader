@@ -15,17 +15,17 @@ requirements: [R1.01, R1.04, R1.05, R1.06, R1.08, R1.11]
 roadmap_todos: [T1.66]
 modules: [M1, M16]
 dashboards: [D07, D02]
-tools: [git, uv, docker, sops]
+tools: [git, cargo, docker, sops]
 mcp: []
 env: [OANDA_PRACTICE_API_TOKEN, OANDA_PRACTICE_PAPER_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_API_KEY, ALPACA_PAPER_API_SECRET, FRED_API_KEY, EIA_API_KEY, COINGECKO_DEMO_API_KEY, FINNHUB_API_KEY, BINANCE_TESTNET_READONLY_API_KEY, BINANCE_TESTNET_READONLY_API_SECRET, BYBIT_TESTNET_READONLY_API_KEY, BYBIT_TESTNET_READONLY_API_SECRET, USDA_NASS_API_KEY]
-services: [nats, supabase-postgres, prefect-server, oanda-practice, ig-demo, alpaca-paper, binance-testnet, bybit-testnet]
+services: [nats, supabase-postgres, mt-scheduler, oanda-practice, ig-demo, alpaca-paper, binance-testnet, bybit-testnet]
 branch: p1/P1-T073-verify-live-connectors-with-keys
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/06-aggregators-and-market-providers.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-With your practice/demo/paper credentials and free API keys loaded from the secrets file, every keyed connector that was built keyless (against fixtures) is proven live: the OANDA, IG and Alpaca streams deliver, the keyed batch flows (FRED, EIA, CoinGecko Demo, Alpaca history, Finnhub cross-check) load real data, the keyed cost collectors (testnet fee tiers, OANDA/IG financing) read real values, and the quota tracker reads live rate-limit headers. Real recorded fixtures replace the documented-format fixtures where they differ.
+With your practice/demo/paper credentials and free API keys loaded from the secrets file, every keyed connector that was built keyless (against fixtures) is proven live: the OANDA, IG and Alpaca streams deliver, the keyed `mt-connectors` batch jobs (FRED, EIA, CoinGecko Demo, Alpaca history, Finnhub cross-check) load real data, the keyed cost collectors (testnet fee tiers, OANDA/IG financing) read real values, and the quota tracker reads live rate-limit headers. Real recorded fixtures replace the documented-format fixtures where they differ.
 
 ## Context & references
 
@@ -62,7 +62,7 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 
 - [ ] Run `./kanban preflight P1-T073`; if a key is missing, block this item and point at the USER task (P0-T009, P0-T010 or P1-T002)
 - [ ] Start the keyed connectors with secrets loaded via `sops exec-env`; run the streams for ≥ 30 min in market hours
-- [ ] Run the keyed batch flows once (FRED, EIA, CoinGecko, Alpaca history, Finnhub) and the keyed cost collectors
+- [ ] Run the keyed `mt-connectors` jobs once (FRED, EIA, USDA QuickStats, CoinGecko, Alpaca history and daily bars, Finnhub, Twelve Data if enabled) and the keyed cost collectors
 - [ ] Capture quota headers and reconcile `config/quotas.yaml`
 - [ ] Record scrubbed fixtures; update golden tests where the real format differs (never loosen an assertion)
 - [ ] Write and store the report
@@ -72,7 +72,7 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 
 ### Tests
 
-- `make verify-live-connectors` (`cargo test --features live` for the Rust connectors and `uv run pytest -m live` for the Python flows, both excluded from normal CI) exits 0 only if every connector passes
+- `make verify-live-connectors` (`cargo test -p mt-recorder -p mt-connectors -p mt-monitor --features live`, excluded from normal CI) exits 0 only if every connector passes
 - Fixture scrubber test: no token, account ID or balance pattern survives in recorded fixtures (gitleaks + a regex test)
 
 ### Scenarios
@@ -87,7 +87,7 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 
 ## Acceptance criteria
 
-- [ ] Every keyed stream, batch flow and cost collector passes live; report stored
+- [ ] Every keyed stream, batch job and cost collector passes live; report stored
 - [ ] Quota tracker shows live headers for every source that sends them
 - [ ] Recorded fixtures are scrubbed and golden tests pass with them
 
@@ -120,3 +120,4 @@ With your practice/demo/paper credentials and free API keys loaded from the secr
 
 - 2026-10-22 00:00 · aligner · created for T1.66 (docs/16–17 alignment: live checks split from the keyless builds)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (live checks run `cargo test --features live` (Rust connectors) and `uv run pytest -m live` (Python flows); still depends on your key tasks P0-T009, P0-T010, P1-T002 (allowed: live VERIFY); services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (keyed batch flows → `mt-connectors` jobs, live tests are Rust only (`--features live`); tools uv → cargo; services prefect-server → mt-scheduler)

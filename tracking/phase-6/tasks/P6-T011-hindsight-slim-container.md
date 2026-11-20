@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -72,7 +72,7 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 - Egress test: container has no route except Postgres, TEI, LiteLLM.
 
 ### Scenarios
-- Given TEI is down, when Hindsight recalls, then it errors cleanly and `mt_memory` reports memory unavailable (handled in P6-T012).
+- Given TEI is down, when Hindsight recalls, then it errors cleanly and `mt-memory` reports memory unavailable (handled in P6-T012).
 - Given the embedding model is changed by mistake, then startup refuses because stored dimension 384 ≠ new dimension.
 
 ### Stress / failure injection
@@ -114,3 +114,4 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (hindsight schema exists from P0 (17 §B); R6.N2 127.0.0.1 + API key; cross-phase deps P0-T020/T022/T024/T042/T043; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Hindsight on Supabase Postgres (pgvector) with its role from a SQL migration; port scan from LAN/tailnet instead of Tailscale-only; tools supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (client name `mt-memory` (Rust))

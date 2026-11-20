@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073]
-requirements: [R6.01, R6.05, R6.10, R6.12, R6.20, R6.21, R6.22, R6.24, R6.40]
+depends_on: [P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073, P6-T077, P6-T078, P6-T079, P6-T080]
+requirements: [R6.01, R6.05, R6.10, R6.12, R6.20, R6.21, R6.22, R6.24, R6.33, R6.40]
 roadmap_todos: []
-modules: [M8, M9, M10, M21, M22]
-dashboards: [D09, D10, D18]
-tools: [git, uv, docker, pnpm, playwright]
+modules: [M8, M9, M10, M21, M22, M14]
+dashboards: [D09, D10, D18, D14]
+tools: [git, cargo, docker, pnpm, playwright]
 mcp: []
 env: []
 services: [mt-api, agents, anvil, telegram-bot-api]
@@ -25,7 +25,7 @@ doc_sync: [tracking/phase-6/PHASE.md, docs/roadmap/phase-6-ai-models-treasury.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of any instrument → sourced Signal with provenance in D09; (2) an anomaly explained on Telegram; (3) the bake-off report names a production tier-B model or keeps SemIf with calibration evidence; (4) idle stables allocated within the allow-list after the cost gate with the reserve holding.
+Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of any instrument → sourced Signal with provenance in D09; (2) an anomaly explained on Telegram; (3) the bake-off report names a production tier-B model or keeps SemIf with calibration evidence; (4) idle stables allocated within the allow-list after the cost gate with the reserve holding; (5) the scenario twin's first weekly report per bot on replayed data, visible in D14.
 
 ## Context & references
 
@@ -58,14 +58,15 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - [ ] Demo 2: seeded anomaly → Telegram brief.
 - [ ] Demo 3: open the signed-off bake-off report (P6-T059) and the registry entry.
 - [ ] Demo 4: allocate idle test stables on fork under your approved policy (P6-T034) → gate allow → position within caps; reserve ≥ min.
-- [ ] Link the evidence of P6-T067 (sample runs), P6-T069 (port check) and P6-T070 (live key check).
-- [ ] Cancel each optional item (P6-T046–P6-T051) whose module is still off in settings, with reason "optional module off by default (P6-T003)"; offer to cancel P6-T044 if you didn't label (optional; silver labels were used).
+- [ ] Demo 5: open D14 → Scenario twin and show the first weekly report per bot (P6-T079 dry run, P6-T080 first scheduled week), labelled Simulated.
+- [ ] Link the evidence of P6-T067 (sample runs), P6-T069 (port check), P6-T070 (live key check) and P6-T078 (simulator isolation).
+- [ ] Cancel each optional item (P6-T046, P6-T047, P6-T048, P6-T051) whose module is still off in settings, with reason "optional module off by default (P6-T003)"; offer to cancel P6-T044 if you didn't label (optional; silver labels were used).
 - [ ] Confirm no open S1/S2 bugs; tick PHASE.md exit boxes.
 
 ## Verification
 
 ### Tests
-- Re-run of the CI suites (pit, provenance, prompt-injection, WORM) green on the demo commit.
+- Re-run of the CI suites (pit, provenance incl. synthetic-row refusal, prompt-injection, WORM) green on the demo commit.
 
 ### Scenarios
 - Given the demo checklist, when each step runs, then evidence ids are logged here.
@@ -75,7 +76,7 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 
 ## Acceptance criteria
 
-- [ ] All four exit criteria demonstrated with evidence.
+- [ ] All five exit criteria demonstrated with evidence.
 - [ ] PHASE.md exit criteria ticked.
 - [ ] No open S1/S2 bugs.
 
@@ -108,3 +109,4 @@ Every Phase 6 exit criterion is demonstrated live and recorded: (1) analysis of 
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (exit demo now also depends on P6-T034, P6-T067, P6-T069, P6-T070 (new T6.66/T6.73 and the live check); run fields)
 - 2026-11-19 00:00 · coordinator · depends on P6-T073 (vetted additions, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed USER dep P6-T044 (labelling is optional, agent silver labels by default); keeps P6-T034 (real-money treasury approval, listed for the demo); optional modules cancelled at exit while off; workstation instead of host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (exit criterion 5 (scenario twin report in D14) added with deps P6-T077–P6-T080; P6-T050 is no longer an optional item to cancel; tools cargo)

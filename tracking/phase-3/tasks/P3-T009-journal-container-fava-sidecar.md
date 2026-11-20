@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T008, P0-T020, P0-T021, P0-T023]
+depends_on: [P3-T008, P0-T020, P0-T021, P0-T023, P1-T077]
 requirements: [R3.10, R3.01]
 roadmap_todos: [T3.40]
 modules: [M18]
@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, docker]
 mcp: []
 env: []
-services: [supabase-postgres, supabase-storage, nats, prefect-server, caddy, grafana]
+services: [supabase-postgres, supabase-storage, nats, mt-scheduler, caddy, grafana]
 branch: p3/P3-T009-journal-container-fava-sidecar
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,15 +37,15 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A `journal` service (image pinned by digest, `mt-journal` binary) runs on the `core` network with its NATS durable consumers, Prefect worker queue `journal` and health checks; a `fava` sidecar serves the latest Beancount export read-only on the internal network only (reached through Caddy on localhost, remotely only over Tailscale when you use it; never public).
+A `journal` service (image pinned by digest, `mt-journal` binary) runs on the `core` network with its NATS durable consumers, its `mt-scheduler` job kinds (`journal-*`) and health checks; a `fava` sidecar serves the latest Beancount export read-only on the internal network only (reached through Caddy on localhost, remotely only over Tailscale when you use it; never public).
 
 ## Context & references
 
 - Roadmap: [T3.40, R3.10](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Containers + networks: [02 §3](../../../docs/02-v1-architecture.md#3-deployment-topology) (`journal` in phase 3, `core` network)
 - Optional sidecars: `services/beancount-fava` in [03 §3](../../../docs/03-build-spec.md#3-repository-layout)
-- Cross-phase prerequisites (depends_on): P0-T020 (compose stack pinned by digest, incl. Prefect), P0-T021 (Docker networks), P0-T023 (observability containers)
+- Cross-phase prerequisites (depends_on): P0-T020 (compose stack pinned by digest), P0-T021 (Docker networks), P0-T023 (observability containers), P1-T077 (`mt-scheduler`: Postgres-backed jobs and cron, replacing Prefect)
 - Write-path buffer: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (owned by P3-T057)
 - Related: P3-T035 (export), P3-T049 (Fava opens it)
 
@@ -55,14 +55,14 @@ A `journal` service (image pinned by digest, `mt-journal` binary) runs on the `c
 - Heartbeat `sys.heartbeat.journal` every 5 s; `/healthz` reports DB, NATS consumer lag, last FX update.
 - NATS durable consumers: `journal-fills` on `fill.>`, `journal-wallet` on `wallet.*.*.transfer`, explicit ack (only after commit), max-deliver unlimited with backoff; the Postgres-down buffer is the bounded `WORM_BUFFER` stream (default 1 GB or 24 h, configurable) defined in P3-T057.
 - `fava` sidecar: pinned digest, serves `/srv/mastertrader/journal/exports/current.beancount` read-only, behind Caddy route `/fava/` gated by the same Supabase Auth session (`aal2`) as the web app (Caddy forward-auth to `mt-api`, 18 §4.6); no egress.
-- Prefect flows for journal jobs (`journal-*`) are thin wrappers that run `mt-journal` CLI subcommands in this container; all computation lives in the crate (18 §2).
+- Journal jobs (`journal-*`) are `mt-scheduler` jobs that run `mt-journal` subcommands in this container (Rust, in-process); `journal-ccxt-ledger` launches the `mt_ledger_import` Python container (P3-T014); all tax computation lives in the crate (18 §2).
 - Grafana panel: journal consumer lag, events/min, quarantine count, last recon result.
 
 ## ToDo
 
 - [ ] Add `journal` and `fava` services to `infra/docker-compose.yml` (digests pinned)
 - [ ] Caddy route `/fava/*` → `fava:5000` with forward-auth; deny anything not from localhost or the tailnet
-- [ ] Prefect work queue `journal` + worker in the container (runs `mt-journal` subcommands)
+- [ ] Register the `journal-*` job kinds and the `journal` queue with `mt-scheduler`; the container runs them as `mt-journal` subcommands
 - [ ] Private Storage buckets `journal-attachments` and `tax-exports` in `supabase/config.toml` (or a migration); no public access; only `mt-api` and the `journal` service can read or write them
 - [ ] NATS consumer definitions in `infra/nats/consumers/journal.json`
 - [ ] Grafana dashboard JSON `infra/grafana/dashboards/journal.json` + alert rules (lag > 5 s for 5 min; quarantine > 0)
@@ -120,3 +120,4 @@ A `journal` service (image pinned by digest, `mt-journal` binary) runs on the `c
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Postgres-down buffer now the 16 §3.3 bound owned by P3-T057 (P3-B015); attachments mount (P3-B013); explicit P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-journal` binary; Prefect flows wrap the CLI; attachments/exports in private Supabase Storage buckets; Fava behind Supabase Auth forward-auth, Tailscale optional)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect work queue/worker → `mt-scheduler` job kinds; depends_on + P1-T077; services prefect-server → mt-scheduler; Python boundary named (`mt_ledger_import` only))

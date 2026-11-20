@@ -15,7 +15,7 @@ requirements: [R6.08]
 roadmap_todos: [T6.74]
 modules: [M8]
 dashboards: [D10]
-tools: [uv, git]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [litellm, llm-local, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -100,3 +100,4 @@ Evidence that the research workflows use point-in-time inputs and cite their sou
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (workflows under test are Rust (`mt-agents`); tools cargo)

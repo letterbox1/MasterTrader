@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T007, P6-T012]
+depends_on: [P6-T007, P6-T012, P1-T077]
 requirements: [R6.04, R6.14]
 roadmap_todos: [T6.21]
 modules: [M9, M8, M21]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [prefect, supabase-postgres, hindsight, litellm]
+services: [mt-scheduler, supabase-postgres, hindsight, litellm]
 branch: p6/P6-T013-settlement-reflection-jobs
 pr: ""
 doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-After each Signal's horizon a Prefect flow settles it (realised return, alpha vs benchmark, barrier hits) via `pit`, writes an `audit.decision_settlement` row, has the agent write a reflection, and retains episode + lesson to Hindsight; this is the outcome-labelled teacher log for distillation.
+After each Signal's horizon an `mt-scheduler` job settles it (realised return, alpha vs benchmark, barrier hits) via `pit`, writes an `audit.decision_settlement` row, has the agent write a reflection, and retains episode + lesson to Hindsight; this is the outcome-labelled teacher log for distillation.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 
 ## Requirements
 
-- Settlement flow (Prefect, every 15 min): select runs with `settlement_due_at ≤ now` and no settlement row.
+- Settlement job (`mt-scheduler`, every 15 min): select runs with `settlement_due_at ≤ now` and no settlement row.
 - Outcome via `pit(as_of=settlement_time)`: forward return over horizon, alpha vs the instrument's benchmark (manifest/asset-class default), triple-barrier hit (upper/lower/time) with barriers from the Signal or volatility default, hit/miss vs direction, P&L if traded (join fills).
 - `audit.decision_settlement` WORM row referencing `run_id`/the Signal `id`; never update the run.
 - Reflection: gateway role `memory` (budgeted) writes a short reflection; stored with the settlement; Hindsight retain into `decisions` (episode) and `strategies` (lesson) with `observed_at` = the horizon end (when the outcome happened) and `ingested_at` = settlement time; the reflection's lineage lists the run and settlement so derived memories inherit the latest source time (P6-T012, 17 §A P6-B016).
@@ -57,7 +57,7 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 
 ## ToDo
 
-- [ ] Prefect flow `settle_decisions` + `reflect_decision` in `mt_memory.settlement`.
+- [ ] `mt-scheduler` jobs `settle_decisions` + `reflect_decision` in `crates/mt-memory/src/settlement/` (the reflection runs on the `mt-agents` runtime).
 - [ ] Outcome calculators (forward return, alpha, triple barrier) with unit tests.
 - [ ] Reflection prompt in the prompt registry.
 - [ ] Scorecard aggregation query.
@@ -66,6 +66,7 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 ## Verification
 
 ### Tests
+- `cargo test -p mt-memory settlement` and `cargo clippy`.
 - Unit: triple-barrier and alpha calculators (golden series).
 - Integration: a recorded run with 1-day horizon settles once; rerun of the flow is idempotent.
 - PIT: settlement uses only bars ≤ settlement time (pit mock asserts).
@@ -114,3 +115,4 @@ After each Signal's horizon a Prefect flow settles it (realised return, alpha vs
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (memory timestamps observed_at/ingested_at per 17 §A P6-B016; Signal id per 03 M8; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (settlement and reflection as `mt-scheduler` jobs in `mt-memory` instead of Prefect; tools cargo; services mt-scheduler)

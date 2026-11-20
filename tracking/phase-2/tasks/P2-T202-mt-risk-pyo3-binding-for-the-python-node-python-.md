@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/18-platform-and-deployment.md, docs/roadm
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,14 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 binding exposes `RiskGate` (decide and preview), the compiled policy cache and the sizing models to the Nautilus Python node, Python strategies (`mt_strategy`'s `RiskGateProtocol`) and the lab's truth backtests. There is one risk implementation ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)); the risk golden suite runs against the crate and a parity subset runs through the binding.
+The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 binding exposes `RiskGate` (decide and preview), the compiled policy cache and the sizing models to the Nautilus Python node, paper-only Python research strategies (the `mt_research.strategy` base, P2-T003) and the Python research truth path (P2-T105). There is one risk implementation ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)); the risk golden suite runs against the crate and a parity subset runs through the binding.
 
 ## Context & references
 
 - Roadmap: [R2.10, R2.N2](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
 - Platform: [18 §2.1 `mt-risk`](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) · [18 §2.2 rule](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required) (Python never places orders without `mt-risk`)
 - Built on: P2-T017 (`RiskGate` in the crate), P0-T071 (the `mt_store` PyO3 module carrying the `mt-core` types; this binding reuses those classes).
-- Used by: P2-T003 (`RiskGateProtocol` default implementation), P2-T021 (Python node path), P2-T105 (truth backtests), P2-T052 (no-bypass tests through Python).
+- Used by: P2-T003 (gate for the `mt_research` Python research base), P2-T021 (Python node path), P2-T105 (Python research truth path; the Rust truth runner links `mt-risk` directly), P2-T052 (no-bypass tests through Python).
 
 ## Requirements
 
@@ -66,7 +66,7 @@ The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 bindi
 ## Verification
 
 ### Tests
-- Commands: `cargo test -p mt-risk`, `cargo clippy -p mt-risk`, `uv run pytest packages/mt_strategy -k risk_binding`.
+- Commands: `cargo test -p mt-risk`, `cargo clippy -p mt-risk`, `uv run pytest packages/mt_research -k risk_binding`.
 - Parity: the golden subset gives identical decisions, reasons and sizes through Python and Rust.
 - Default-deny: a forced panic in a check returns `reject internal_default_deny` to Python.
 
@@ -108,3 +108,4 @@ The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 bindi
 
 - 2026-11-19 00:00 · aligner · created: re-platformed per docs/18 (`mt-risk` is one Rust crate; the Python node, strategies and lab need a binding no task built)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python strategies live in `mt_research` (paper-only research); the Rust truth runner links `mt-risk` directly; test path `packages/mt_strategy` → `packages/mt_research`)

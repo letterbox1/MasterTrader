@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T007, P6-T009, P0-T034, P0-T036]
+depends_on: [P6-T007, P6-T009, P0-T034, P0-T036, P1-T077]
 requirements: [R6.02, R6.01]
 roadmap_todos: [T6.20]
 modules: [M8, M15]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker, cargo]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [prefect, nats, supabase-postgres, mt-api]
+services: [mt-scheduler, nats, supabase-postgres, mt-api]
 branch: p6/P6-T008-agent-scheduler-triggers-api
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 
 ## Requirements
 
-- Prefect deployment per schedule (`agents-scheduled-<id>`), cron from settings; LLM-signal strategies declare cadence in their manifest.
+- `mt-scheduler` cron job per schedule (`agents-scheduled-<id>`), cron from settings; LLM-signal strategies declare cadence in their manifest.
 - NATS triggers: `alert.anomaly.*` (P6-T014), `cal.*` within N minutes of high-impact events, `text.doc.new` with tier-B `event_type` severity ≥ threshold; trigger rules in settings.
 - Debounce: max 1 run per (subject, trigger kind) per configurable window (default 30 min); global max concurrent runs (default 2); no subscription to `md.*` at all.
 - `agents.run_analysis` command (C1) with args subject, depth, route, context toggles; response returns `run_id` and budget estimate.
@@ -58,16 +58,16 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 
 ## ToDo
 
-- [ ] Scheduler module `mt_agents.scheduler` (Prefect deployments + NATS consumer for triggers).
+- [ ] Trigger module in `crates/mt-agents/src/triggers/` (registers `mt-scheduler` jobs + NATS consumer for triggers).
 - [ ] Trigger rules + debounce store (NATS KV `agent_debounce`).
 - [ ] `mt-api` (Rust, axum) command handler + queries + WS fan-out.
-- [ ] Static check/test: `mt_agents` never subscribes to `md.*`.
+- [ ] Static check/test: `mt-agents` never subscribes to `md.*`.
 - [ ] Tests; docs.
 
 ## Verification
 
 ### Tests
-- `cargo test -p mt-api` for the command handler and queries; `uv run pytest` for the scheduler.
+- `cargo test -p mt-api` for the command handler and queries; `cargo test -p mt-agents triggers` for the schedules and triggers.
 - Unit: debounce, trigger rule matching, budget preflight rejection.
 - Integration: anomaly event → exactly one run; 20 duplicate events in 5 min → one run.
 - API tests: command levels enforced server-side (C1), idempotency key honoured.
@@ -88,7 +88,7 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 
 ## Exceptions & edge cases
 
-- Prefect down: scheduled runs are missed and alerted (not back-filled in a burst); event triggers still work via NATS.
+- `mt-scheduler` down: scheduled runs are missed and alerted (not back-filled in a burst); event triggers still work via NATS.
 - Restart: debounce state survives in KV.
 
 ## Cardinal rules (do NOT)
@@ -115,3 +115,4 @@ Agent runs start only on a configured cadence, on events (anomaly, calendar, big
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P0-T034/P0-T036; scheduler test is T6.67 (P6-T052); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`agents.run` command handler, queries and WS fan-out in Rust `mt-api`; scheduler stays Python; tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (schedules on `mt-scheduler` (P1-T077) instead of Prefect; triggers in `mt-agents`; tools cargo; services mt-scheduler)

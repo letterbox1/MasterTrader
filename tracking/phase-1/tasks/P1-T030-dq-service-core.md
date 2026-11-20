@@ -1,7 +1,7 @@
 ---
 id: P1-T030
 kind: task
-title: Build the mt_monitor DQ service core
+title: Build the mt-monitor DQ service core
 phase: 1
 type: BUILD
 status: backlog
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,7 +33,7 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P1-T030 · Build the mt_monitor DQ service core
+# P1-T030 · Build the mt-monitor DQ service core
 
 ## Goal / expected outcome
 
@@ -115,7 +115,7 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p1/P1-T030-dq-service-core`
-- PR title: `P1-T030: Build the mt_monitor DQ service core`
+- PR title: `P1-T030: Build the mt-monitor DQ service core`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P1-T030` run
 
 ## Progress log
@@ -123,3 +123,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (status incl. closed; audit.dq_ack acks (P1-B018); ≤ 250 ms reaction via deadline timers (P1-B001); thresholds as 16 §2.2 defaults, C3 via break-glass (P1-B009); P0 WORM/C-level deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (DQ engine in Rust `mt-monitor`; WORM tables as Supabase migrations with pgTAP; tools cargo/supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (title uses the crate name `mt-monitor`)

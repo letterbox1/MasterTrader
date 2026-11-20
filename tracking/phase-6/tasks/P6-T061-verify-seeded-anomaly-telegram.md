@@ -15,7 +15,7 @@ requirements: [R6.05]
 roadmap_todos: [T6.68]
 modules: [M10, M15]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: [TELEGRAM_BOT_TOKEN, TELEGRAM_ALERTS_CHAT_ID]
 services: [anomaly, telegram-bot-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -102,3 +102,4 @@ End-to-end proof for R6.05: a seeded anomaly in a replayed bar stream is detecte
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.68; Telegram uses the P1 alert bot (P1-T060), CI mocked; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (detectors and explain agent are Rust; tools cargo)

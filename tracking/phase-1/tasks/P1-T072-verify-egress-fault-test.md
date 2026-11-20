@@ -15,7 +15,7 @@ requirements: [R1.16]
 roadmap_todos: [T1.65]
 modules: [M16, M17]
 dashboards: [D16]
-tools: [git, cargo, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres, ntfy]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ On the running stack, a wrong egress IP and a wrong egress country each flip `eg
 
 ## Requirements
 
-- E2E suite `tests/e2e/egress_fault.py` (`uv run pytest tests/e2e/egress_fault.py`, `make e2e-egress`) against the dev stack, keyless: the probe's observers are pointed at a local fake that returns a chosen IP; GeoIP uses a fixture MMDB mapping that IP to a chosen country
+- E2E test `egress_fault` in the Rust e2e crate (`tests/e2e`, package `mt-e2e`; `cargo test -p mt-e2e --test egress_fault -- --ignored`, `just e2e-egress`) against the dev stack, keyless: the probe's observers are pointed at a local fake that returns a chosen IP; GeoIP uses a fixture MMDB mapping that IP to a chosen country
 - Cases: (1) IP not in `expected_ips`; (2) expected IP but country ≠ `residency_country`; (3) observers disagree; (4) observers unreachable; (5) `expected_ips` empty (`unconfigured`); (6) recovery to `ok`
 - For each: assert `egress.status` and KV `egress`, time to state (≤ 2 intervals at a test interval of 5 s), `alert.critical.egress` delivered to the notifier with dedupe, D16 tile state (Playwright), and `egress_allows("entry") == False` / `egress_allows("exit") == True` for blocking states
 - Also assert a stale KV value (older than 3 intervals) is treated as blocking by `egress_allows`
@@ -110,3 +110,4 @@ On the running stack, a wrong egress IP and a wrong egress country each flip `eg
 
 - 2026-10-22 00:00 · aligner · created for T1.65 / R1.16 (docs/16–17 alignment)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (gate contract in the Rust `mt-risk` crate; Python e2e harness; tools cargo+uv; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python e2e harness → Rust integration tests in the `mt-e2e` crate (`tests/e2e`) with the same cases; tools drop uv)

@@ -15,7 +15,7 @@ requirements: [R6.01, R6.07, R6.03, R6.23]
 roadmap_todos: []
 modules: [M8, M10, M21, M22]
 dashboards: [D09, D10]
-tools: [uv, docker, sops, curl]
+tools: [cargo, docker, sops, curl]
 mcp: []
 env: [ANTHROPIC_API_KEY, CUSTOM_LLM_BASE_URL, CUSTOM_LLM_API_KEY, TALLY_API_KEY]
 services: [anthropic-api, custom-llm-endpoint, tally-api, litellm, llm-local, agents, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/13-wallets-treasury-and-onchai
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -68,7 +68,7 @@ The last, keyed step for the Phase 6 integrations that were built and tested key
 ## Verification
 
 ### Tests
-- Re-run `tests/integration/test_llm_budgets.py` in `--live` mode limited to the shadow-budget case.
+- Re-run `cargo test -p mt-api --test llm_budgets -- --ignored live_shadow_budget` (live mode, shadow-budget case only).
 - Tally client contract test against the live response (schema matches the recorded fixture used in CI).
 
 ### Scenarios
@@ -115,3 +115,4 @@ The last, keyed step for the Phase 6 integrations that were built and tested key
 
 - 2026-10-22 00:00 · aligner · created (build first, keys last: live LLM roles and Tally split out of P6-T002/P6-T040/P6-T053 per 17 §E)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (keeps USER deps P0-T007 and P6-T002 (your keys: live check, build first, keys last); P6-T001 is now an agent seed)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (live budget re-run uses the Rust suite; tools cargo)

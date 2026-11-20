@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md, docs/04-plan-of-action.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ A recorded demo proves all three roadmap exit criteria on the production stack a
 ## Context & references
 
 - Roadmap: [§6 exit criteria](../../../docs/roadmap/phase-3-journal-and-tax.md#6-exit-criteria-demo)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - PHASE.md exit criteria list
 - Evidence items: P3-T045…P3-T053
 
@@ -111,3 +111,4 @@ A recorded demo proves all three roadmap exit criteria on the production stack a
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on the new R3.16/R3.17/R3.N3 tasks and verifies (P3-T055–T060); gaps P3-B001/B002 closed; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (exit demo keeps P3-T001 (exit criterion 3))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

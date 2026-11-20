@@ -15,17 +15,17 @@ requirements: [R6.14, R6.06]
 roadmap_todos: [T6.80]
 modules: [M21, M0, M8]
 dashboards: [D10, D09, D03]
-tools: [uv]
+tools: [docker]
 mcp: []
 env: []
-services: [prefect, mlflow]
+services: [mt-scheduler, mlflow]
 branch: p6/P6-T065-run-start-distillation-paper-soak
 pr: ""
 doc_sync: [docs/roadmap/phase-7-prove-and-go-live.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ The four-week soak is **started** and healthy: nightly distillation runs with th
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; LLM-signal bots in `paper` mode only (17 §B))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (schedules run on `mt-scheduler` (Prefect retired); training steps are `mt_research` jobs; tools docker)

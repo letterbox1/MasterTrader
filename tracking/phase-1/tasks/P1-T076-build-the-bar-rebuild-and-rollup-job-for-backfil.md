@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ One idempotent job in `mt-recorder` rebuilds bars for an (instrument, time range
 - `mt-recorder rollup --instrument … --from … --to …`: rolls up 5m … 1W from existing 1m bars only (for vendor-free corrections)
 - Range alignment: the job widens the range to whole buckets of the largest affected size (e.g. a correction on a Wednesday rebuilds that 1W bucket)
 - Idempotent: upsert by (instrument, event_time) per size; running twice gives byte-identical rows; concurrent runs on overlapping ranges are serialised by an advisory lock per instrument
-- Triggers: a NATS request `md.rollup.request` (from backfill flows and the late-data queue) and the CLI; Prefect backfill flows (Python) call it through the CLI or the request subject, never by writing higher sizes themselves
+- Triggers: a NATS request `md.rollup.request` (from `mt-connectors` backfill jobs and the late-data queue) and the CLI; backfill jobs (P1-T015, P1-T022) call it through the request subject or as a follow-on `mt-scheduler` job, never by writing higher sizes themselves
 - Vendor bars (`market.bar_*_vendor`) are never rolled into built bars
 - Each run logs (instrument, range, sizes, rows written) to `ops.bar_rollup_run` and a metric `mt_bar_rollup_rows_total`
 
@@ -120,3 +120,4 @@ One idempotent job in `mt-recorder` rebuilds bars for an (instrument, time range
 ## Progress log
 
 - 2026-11-19 00:00 · aligner · created in the re-platform wave per docs/18 §4.3 (no task owned the rollup job that replaces continuous-aggregate refreshes for backfills and corrections)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (callers are the Rust `mt-connectors` backfill jobs on `mt-scheduler`, not Prefect flows)

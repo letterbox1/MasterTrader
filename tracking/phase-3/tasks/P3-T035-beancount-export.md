@@ -15,7 +15,7 @@ requirements: [R3.10]
 roadmap_todos: [T3.27]
 modules: [M18]
 dashboards: [D14, D15]
-tools: [git, cargo, uv]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, supabase-storage]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 ## Context & references
 
 - Roadmap: [R3.10, T3.27](../../../docs/roadmap/phase-3-journal-and-tax.md) · verified by P3-T049
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 goals §4](../../../docs/09-journal-and-tax.md#goals) · [09 tools vetted (hledger/Beancount + Fava, adopt)](../../../docs/09-journal-and-tax.md#tools-vetted) · [03 M18 exports](../../../docs/03-build-spec.md#m18-trading-journal--tax--mt_journal)
 - Related: P3-T009 (Fava sidecar), P3-T034 (balance assertions)
 
@@ -57,7 +57,7 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 
 ## ToDo
 
-- [ ] Implement `crates/mt-journal/src/exports/beancount.rs` (writes Beancount v3 text directly; the Python beancount library is used only by `bean-check` in tests)
+- [ ] Implement `crates/mt-journal/src/exports/beancount.rs` (writes Beancount v3 text directly; `bean-check` from the pinned Fava image is the only Beancount tooling, used in tests)
 - [ ] Wire `tax.export` handler
 - [ ] Tests; docs
 
@@ -65,7 +65,7 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 
 ### Tests
 
-- Integration: fixture FY → export (`cargo test -p mt-journal`) → `uv run bean-check` exit 0.
+- Integration: fixture FY → export (`cargo test -p mt-journal`) → `docker compose run --rm fava bean-check` exit 0.
 - Unit: deterministic output (same inputs → identical bytes).
 - Unit: disposal lots match `journal.lot_match` exactly.
 
@@ -93,7 +93,7 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 - Do NOT let Beancount re-book lots differently from our engine (explicit lots only).
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -111,3 +111,4 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (prices from `journal.valuation` (16 §4.1); tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust export; `bean-check` via uv in tests; copy in the `tax-exports` Storage bucket)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`bean-check` runs from the pinned Fava container (a third-party tool) instead of `uv`; tools [git, cargo, uv] → [git, cargo, docker]; Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

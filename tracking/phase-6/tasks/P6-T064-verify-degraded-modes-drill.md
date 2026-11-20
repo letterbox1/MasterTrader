@@ -15,7 +15,7 @@ requirements: [R6.07, R6.11, R6.04, R6.24]
 roadmap_todos: []
 modules: [M8, M9, M21, M22, M10]
 dashboards: [D09, D10, D18]
-tools: [docker, uv]
+tools: [docker, cargo]
 mcp: []
 env: []
 services: [litellm, llm-local, hindsight, decision-svc, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ A chaos drill shows each P6 component degrades as 02 §9.3 says: gateway/budget 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; local fallback runs keyless on P0 llm-local; budgets per 16 §2.10)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU fault injection only on a GPU profile; workstation instead of host; nvidia-smi/gpu preconditions removed)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (services under test are Rust; tools cargo)

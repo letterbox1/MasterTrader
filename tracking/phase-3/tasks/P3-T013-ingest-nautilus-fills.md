@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D14-journal.md, docs/roadmap/phase-3-journal-and-t
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ Every paper (and later live) fill published by the engine on `fill.{venue}` beco
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [02 F2 step 7 and F9](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · subjects `fill.{venue}` / `pos.{account}` in [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [D14 acceptance 1](../../../docs/ui/dashboards/D14-journal.md) (≤ 5 s)
 - Cross-phase prerequisite (depends_on): P2-T021 (`mt-engine` wrapper, `fill.{venue}` payload and `audit.fill`); context: P2-T036 (bots carry `bot_id`), P2-T022 (STP cancels recorded as non-fills)
 - Client order IDs `{bot}-{engine_epoch}-{seq}` ([17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions)); bot modes `paper` / `hitl` / `autonomous` ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer))
@@ -99,7 +99,7 @@ Every paper (and later live) fill published by the engine on `fill.{venue}` beco
 - Do NOT read fills directly from venue APIs here (that's reconciliation, P3-T034).
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
@@ -119,3 +119,4 @@ Every paper (and later live) fill published by the engine on `fill.{venue}` beco
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (built on recorded fill fixtures (no keys); bot modes paper/hitl/autonomous; trimmed P3-T009 from depends_on; explicit P2-T021 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust adapter in `mt-journal`; fixtures under the crate)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

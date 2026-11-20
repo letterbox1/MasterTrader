@@ -25,7 +25,7 @@ doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ SQL migrations in `supabase/migrations/` create every `journal.*` table (event, 
 ## Context & references
 
 - Roadmap: [R3.02, R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - WORM design: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · [SPEC NN7](../../../SPEC.md#non-negotiable-requirements) · [03 §4](../../../docs/03-build-spec.md#4-data-model-overview)
 - Event fields: [09 journal event](../../../docs/09-journal-and-tax.md#journal-event-captured-per-transaction) · entities `journal_event`, `lot`, `lot_match`, `fx_rate`, `residency_period`, `tax_report` in [02 §5.3](../../../docs/02-v1-architecture.md#53-core-entities-abbreviated-full-ddl-in-migrations)
 - Cross-phase prerequisites (depends_on): P0-T024 (`journal` schema, roles, Supabase migrations baseline), P0-T029 (WORM privileges + blocking triggers), P0-T030 (per-row hash chain)
@@ -103,7 +103,7 @@ SQL migrations in `supabase/migrations/` create every `journal.*` table (event, 
 - Do NOT store raw statements unencrypted (P3-T007 provides the helper).
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -122,3 +122,4 @@ SQL migrations in `supabase/migrations/` create every `journal.*` table (event, 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit P0 depends_on (P0-T024/T029/T030); added `journal.valuation` (16 §4.1) and content-addressed attachment hash on `journal.note` (P3-B013); key table kept out of WORM (P3-B009); tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Alembic → `supabase/migrations/` + pgTAP; no TimescaleDB; sqlx/`mt-core` types; attachments in Supabase Storage; tools cargo/supabase, services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

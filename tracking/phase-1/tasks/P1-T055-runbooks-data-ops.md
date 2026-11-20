@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/runbooks/data-feeds
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ review_result: ""
 
 ## Requirements
 
-- One section per scenario: symptoms (alert text, D07 view), checks, commands (`mt-data`, `mt-monitor`, D07 actions), escalation, how to confirm resolved
+- One section per scenario: symptoms (alert text, D07 view), checks, commands (`mt-connectors`, `mt-scheduler`, `mt-monitor`, D07/D16 actions), escalation, how to confirm resolved
 - Covers: stale feed (data age vs threshold; closed sessions), divergence incident, clock skew/chrony, gap + backfill, quota exhausted, recon unexplained mismatch/testnet reset, disk > 85%, alert channel down, provider API change, egress IP/country mismatch, IB Gateway login failure, AUSTRAC reminder (what you do in P1-T069), loosening a DQ threshold via the break-glass CLI (C3)
 - No secrets or account numbers in the runbook
 
@@ -101,3 +101,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (runbook adds egress, IB Gateway, AUSTRAC reminder and break-glass C3 scenarios)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (runbooks reference the Rust services (`mt-recorder`, `mt-monitor`, `mt-telegram-bot`), Supabase Postgres and the partition/rollup jobs; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (runbook commands use `mt-connectors`/`mt-scheduler` instead of the Python `mt-data` CLI; failed jobs re-run from D16)

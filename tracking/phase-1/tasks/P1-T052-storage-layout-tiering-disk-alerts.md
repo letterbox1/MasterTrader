@@ -18,14 +18,14 @@ dashboards: [D07, D16]
 tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server, prometheus]
+services: [supabase-postgres, mt-scheduler, prometheus]
 branch: p1/P1-T052-storage-layout-tiering-disk-alerts
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ Parquet lives on NVMe for 90 days then moves to the HDD cold tier automatically,
 ## Requirements
 
 - Mounts: `/data/hot` (NVMe, ext4/xfs, noatime) and `/data/cold` (HDD); catalog paths resolve across tiers transparently for the `mt-store` catalog readers (Rust and its Python binding) and Nautilus; on the workstation these are directories on whatever disks you have (a separate HDD is optional, [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path))
-- Tiering job daily (`mt-recorder tier`, Rust, scheduled by Prefect): move compacted files older than 90 days (default, configurable) to cold, verify checksum, then delete hot copy; restic backup of cold tier (P0 backup infra)
+- Tiering job daily (`mt-recorder tier`, Rust, an `mt-scheduler` job; schedule in P1-T053): move compacted files older than 90 days (default, configurable) to cold, verify checksum, then delete hot copy; restic backup of cold tier (P0 backup infra)
 - Metrics: bytes per tier/venue/type, daily growth, 30-day projection to 1 year; bar partition sizes and the Parquet hot-window export (P1-T075)
 - Alerts (defaults, configurable): hot tier > 75% warning, > 85% critical; projected yearly growth > 1 TB warning; HDD SMART failure warning; Supabase Postgres volume > 80%
 - Recorder backpressure: if hot > 95%, stop recording L2 first (lowest priority), then quotes, never trades; alert
@@ -110,3 +110,4 @@ Parquet lives on NVMe for 90 days then moves to the HDD cold tier automatically,
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (L2 policy (P1-B002); thresholds as configurable defaults)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (tiering job in Rust `mt-recorder`; partition stats replace Timescale compression stats; workstation disks; tools cargo; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tiering job scheduled by `mt-scheduler`; services prefect-server → mt-scheduler)

@@ -15,7 +15,7 @@ requirements: [R6.07]
 roadmap_todos: [T6.32]
 modules: [M21, M15]
 dashboards: [D10, D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [litellm, llm-local, supabase-postgres, prometheus]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -60,8 +60,8 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 
 ## ToDo
 
-- [ ] Budget sync job: settings → LiteLLM key budgets (admin API on the internal network).
-- [ ] Month-to-date guard (LiteLLM pre-call hook) reading spend from `audit.llm_call`.
+- [ ] Budget sync in `mt-api` (Rust): settings → LiteLLM key budgets through the admin API on the internal network, on every budget change and at start-up.
+- [ ] Month-to-date guard as a LiteLLM pre-call hook plugin (`infra/litellm/mt_budget_guard.py` in the P0-T042 derived image; Python only because LiteLLM is a Python third-party service, like the P0 audit callback) reading month-to-date spend from `audit.llm_call`.
 - [ ] Settings diff classifier for budget fields (tighten/loosen) using the P0 C3 flow.
 - [ ] Spend query endpoint + Prometheus metrics `llm_spend_usd{role}` and `llm_fallback_total{role}`.
 - [ ] Tests; docs.
@@ -69,6 +69,7 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 ## Verification
 
 ### Tests
+- `cargo test -p mt-api llm_budgets` (sync, classifier, spend query); the guard plugin is tested in the derived-image integration test.
 - Unit: diff classifier (raise → C3, lower → C1).
 - Integration: exhaust the `explain` budget with a fake provider → next call served by `local-advisor`, flagged.
 - Integration: month-to-date over cap → all roles fall back.
@@ -115,3 +116,4 @@ Spend can't creep: a monthly global cap plus per-role daily budgets are enforced
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.32; 16 §2.10 defaults incl. shadow, month-to-date US$40 cap, precedence; spend events; keyless vs fake provider; deps P0-T042/P0-T044/P2-T019 (no longer P6-T005); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; gateway budget logic stays with LiteLLM (Python))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (budget sync, classifier and spend query in Rust `mt-api`; only the LiteLLM pre-call hook stays a plugin file in the P0 derived image; tools cargo)

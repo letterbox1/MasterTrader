@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T007]
+depends_on: [P6-T007, P6-T003]
 requirements: [R6.08]
 roadmap_todos: [T6.34]
 modules: [M8]
 dashboards: [D10]
-tools: [uv, git]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [litellm, llm-local]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Optional analyst viewpoints modelled on well-known investment styles (value, qua
 ## ToDo
 
 - [ ] Lens configs and prompts
-- [ ] Debate graph wiring behind a setting
+- [ ] Debate graph wiring in `mt-agents` behind `modules.persona_lenses.enabled` (seeded off by P6-T003)
 - [ ] Write tests (see Verification)
 - [ ] Update docs listed under Doc sync
 
@@ -74,7 +74,7 @@ Optional analyst viewpoints modelled on well-known investment styles (value, qua
 
 - [ ] Off by default
 - [ ] Shadow comparison possible (P6-T073)
-- [ ] CI green (ruff, mypy, pytest)
+- [ ] CI green (`cargo test -p mt-agents persona_lenses`, `cargo clippy`)
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ Optional analyst viewpoints modelled on well-known investment styles (value, qua
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (lenses wired into the Rust debate graph; setting seeded off by P6-T003; tools cargo)

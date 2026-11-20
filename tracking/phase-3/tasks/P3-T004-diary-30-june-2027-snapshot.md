@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ The 30 June 2027 end-of-day AEST market-value snapshot of every open lot is in y
 
 ## Requirements
 
-- Calendar entries (your own calendar, not the repo): **2027-06-01** check host/backups/price feeds and P3-T002 answer; **2027-06-29** confirm the Prefect deployment `journal-snapshot-2027-06-30` is scheduled; **2027-06-30 23:59 AEST** snapshot runs; **2027-07-01 09:00 AEST** verify in D15 Lots that the snapshot status is `complete` for every open lot.
+- Calendar entries (your own calendar, not the repo): **2027-06-01** check host/backups/price feeds and P3-T002 answer; **2027-06-29** confirm the `mt-scheduler` job `journal-snapshot-2027-06-30` is scheduled (D16 jobs list); **2027-06-30 23:59 AEST** snapshot runs; **2027-07-01 09:00 AEST** verify in D15 Lots that the snapshot status is `complete` for every open lot.
 - If the host is down on the date, the job is idempotent and back-dated to the 30 June valuation time using recorded prices (P3-T030); you still must confirm.
 
 ## ToDo
@@ -100,3 +100,4 @@ The 30 June 2027 end-of-day AEST market-value snapshot of every open lot is in y
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (snapshot convention 16 §4.2 linked; P3-B002 closed; services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (kept USER (calendar reminder); no stack change)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect deployment → `mt-scheduler` job in the diary reminder)

@@ -15,7 +15,7 @@ requirements: [R1.02, R1.N3]
 roadmap_todos: [T1.21]
 modules: [M1]
 dashboards: [D07]
-tools: [git, cargo, supabase, docker]
+tools: [git, cargo, uv, supabase, docker]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/18-platform-and-dep
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ Monthly partitions of every `market.bar_*` table (built and vendor) always exist
 ## Requirements
 
 - **Check first (U):** confirm whether pg_partman is available on the Supabase Postgres 17 image we pin (local CLI stack and the self-hosted workstation stack). Record the result in the progress log and in 18 §4.2
-- **Partition creation:** with pg_partman, register every `market.bar_*` parent (monthly, premake 3 months by default, configurable); without it, an `mt-store` partition job (`mt-store partitions ensure`, Rust) creates the current + next 3 months' partitions, scheduled daily with pg_cron. Either way it is idempotent and runs in a Supabase migration-defined schedule
+- **Partition creation:** with pg_partman, register every `market.bar_*` parent (monthly, premake 3 months by default, configurable); without it, an `mt-store` partition job (`mt-store partitions ensure`, Rust) creates the current + next 3 months' partitions, run daily by `mt-scheduler` (P1-T053); because pg_cron can only run SQL, the pg_cron part of 18 §4.3 is a SQL backstop function `ops.ensure_bar_partitions()` scheduled with pg_cron in a Supabase migration that creates next month's partition if the scheduler has been down. Either way it is idempotent
 - **Hot-window export:** a job (`mt-store bars export-cold`) exports whole monthly partitions past their hot window to the Parquet catalog (zstd, provenance metadata kept, row count and checksum verified), then detaches and drops the partition. 1s bars after `db.bars_1s_hot_days`; other sizes after `db.bars_hot_months` (workstation default: never). Values come from settings, never constants
 - **`pit(as_of)` reads both:** `mt-store` `bars::query` unions Postgres partitions and the exported Parquet files for a range, so a query spanning the boundary returns the same rows as before the export (tested through the Python binding too)
 - Metrics: partitions ahead per table, last export, rows exported, bytes freed; alert `alert.critical.bar_partition_missing` when fewer than 1 month is premade, `alert.warning.bar_export_failed` on a failed export
@@ -59,7 +59,7 @@ Monthly partitions of every `market.bar_*` table (built and vendor) always exist
 ## ToDo
 
 - [ ] Check pg_partman availability on the pinned Supabase Postgres 17 image; record the result
-- [ ] Supabase migration: pg_partman registration, or the pg_cron schedule for `mt-store partitions ensure`; pgTAP tests
+- [ ] Supabase migration: pg_partman registration, or the `ops.ensure_bar_partitions()` backstop with its pg_cron schedule; pgTAP tests; `mt-scheduler` job definitions for `partitions ensure` and `bars export-cold` (scheduled in P1-T053)
 - [ ] Implement `mt-store partitions ensure` (if needed) and `mt-store bars export-cold` in `crates/mt-store`
 - [ ] Extend `bars::query` to read across Postgres and Parquet; Python binding test
 - [ ] Metrics and alerts; D07 Storage tab fields (partitions ahead, last export)
@@ -88,7 +88,7 @@ Monthly partitions of every `market.bar_*` table (built and vendor) always exist
 
 ## Acceptance criteria
 
-- [ ] Partitions exist at least 3 months ahead for every `market.bar_*` table, created by code (pg_partman or the `mt-store` job via pg_cron)
+- [ ] Partitions exist at least 3 months ahead for every `market.bar_*` table, created by code (pg_partman, or the `mt-store` job on `mt-scheduler` with the pg_cron SQL backstop)
 - [ ] 1s bars past the hot window live only in Parquet and `pit(as_of)` returns the same results across the boundary
 - [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
@@ -122,3 +122,4 @@ Monthly partitions of every `market.bar_*` table (built and vendor) always exist
 ## Progress log
 
 - 2026-11-19 00:00 · aligner · created in the re-platform wave per docs/18 §4.3 (no task owned the monthly partition job or the Parquet hot-window export that replace TimescaleDB chunks and compression)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (the Rust partition and export jobs run on `mt-scheduler` (pg_cron can only run SQL, so it keeps a SQL backstop function); tools +uv for the existing `pit` binding test)

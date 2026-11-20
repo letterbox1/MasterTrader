@@ -15,7 +15,7 @@ requirements: [R6.13]
 roadmap_todos: [T6.62]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, uv, docker, supabase]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Tests prove that no shadow/model output can be written or used as a training lab
 
 ## ToDo
 
-- [ ] Write `tests/provenance/test_label_provenance.py` (DB + code + end-to-end).
+- [ ] Write `crates/mt-models/tests/label_provenance.rs` (DB + Rust paths + end-to-end) and the `mt_research` dataset-builder case (`uv run pytest`).
 - [ ] Run and record results.
 
 ## Verification
@@ -102,3 +102,4 @@ Tests prove that no shadow/model output can be written or used as a training lab
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields only; labels never from shadow outputs (10 §4.3))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (label provenance suite split between `mt-models` (Rust) and `mt_research` (Python dataset builder); tools cargo + uv + supabase)

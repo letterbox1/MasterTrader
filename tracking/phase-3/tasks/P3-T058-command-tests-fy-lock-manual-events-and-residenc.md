@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ An automated suite proves the R3.16 contract on the full stack: a locked FY reje
 ## Context & references
 
 - Roadmap: [R3.16, T3.65](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Under test: P3-T055 (commands + residency contract), P3-T031 (`tax.residency.add`), P3-T033 (Egypt block via registry), P3-T038 (`task.answer`), P3-T021 (manual opening lots)
 - Levels: [17 §D P0-B003](../../../docs/17-decisions-register.md#d-other-decisions) · cool-down [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) · contract [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats), [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 
@@ -101,3 +101,4 @@ An automated suite proves the R3.16 contract on the full stack: a locked FY reje
 
 - 2026-10-22 00:00 · aligner · created for R3.16/T3.65 (docs/16–17 alignment)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (suite in `mt-api` tests; Supabase MFA test factor)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

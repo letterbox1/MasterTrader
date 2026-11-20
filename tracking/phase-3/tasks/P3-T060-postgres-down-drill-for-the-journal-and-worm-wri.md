@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ A recorded drill on the staging stack with paper trading proves R3.N3: with Post
 ## Context & references
 
 - Roadmap: [R3.N3, T3.67](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Defaults: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (1 GB or 24 h; new entries stop above 80%; exits continue; nothing executes without a record) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes)
 - Under test: P3-T057 (stream, buffer library, M11 hook), P3-T013 (fills → journal), P3-T009 (journal consumers)
 - Related: P3-T052 (general stress; this drill is the bound-specific one)
@@ -105,3 +105,4 @@ A recorded drill on the staging stack with paper trading proves R3.N3: with Post
 
 - 2026-10-22 00:00 · aligner · created for R3.N3/T3.67 (docs/16–17 alignment)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (drill script stops the Supabase Postgres container)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

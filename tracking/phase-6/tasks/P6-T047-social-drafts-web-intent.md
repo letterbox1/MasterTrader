@@ -12,10 +12,10 @@ owner: agent
 claimed_by: ""
 depends_on: [P6-T003, P5-T029, P0-T044]
 requirements: [R6.31]
-roadmap_todos: [T6.30]
+roadmap_todos: [T6.35]
 modules: [M23, M19]
 dashboards: [D13]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker, pnpm, playwright]
 mcp: []
 env: []
 services: [llm-local, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/ui/dashboards/D13-tasks
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,12 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_social` drafts posts/replies for social quest tasks in your voice with a local model, adds a holdings disclosure line, and on your approval (`social.draft.approve`, C1) opens an X web-intent link; you click Post; the proof URL is captured and the task closed.
+`mt-social` (Rust, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) drafts posts/replies for social quest tasks in your voice with a local model, adds a holdings disclosure line, and on your approval (`social.draft.approve`, C1) opens an X web-intent link; you click Post; the proof URL is captured and the task closed.
 
 ## Context & references
 
-- Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.30
-- Optional: only if P6-T003 recorded `yes`; otherwise cancel this item.
+- Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.35
+- Optional module, off by default (P6-T003, 16 §2.14a); built once you enable it in settings.
 - Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social) · [03 M23](../../../docs/03-build-spec.md#m23-social-participation--mt_social) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (X: web intent after approval only; no auto-posting)
 - UI: [D13](../../../docs/ui/dashboards/D13-tasks-curation.md) Social drafts tab
 - Container: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`social`)
@@ -59,7 +59,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `mt_social` service + `social` container.
+- [ ] `crates/mt-social` service + `social` container.
 - [ ] Draft prompt + disclosure logic + refusal rules.
 - [ ] D13 tab + Telegram buttons.
 - [ ] Tests; docs.
@@ -67,6 +67,7 @@ review_result: ""
 ## Verification
 
 ### Tests
+- `cargo test -p mt-social drafts` and `cargo clippy`; `pnpm playwright` for the D13 tab.
 - Unit: disclosure added when holding; refusal of promotional claims.
 - Playwright: approve opens intent URL with prefilled text; nothing posts by itself.
 
@@ -97,7 +98,7 @@ review_result: ""
 
 - `docs/13-wallets-treasury-and-onchain.md` §8: implemented flow.
 - `docs/ui/dashboards/D13-tasks-curation.md`: social drafts tab.
-- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.30 (and note this task ID) once all items covering it are done.
+- `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.35 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
@@ -110,3 +111,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps P5-T029/P0-T044; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (optional module off by default (P6-T003, agent); depends on nothing human)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (drafts in the Rust `mt-social` crate; roadmap ToDo T6.30 → T6.35; tools cargo + pnpm)

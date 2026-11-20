@@ -1,7 +1,7 @@
 ---
 id: P6-T006
 kind: task
-title: Agent tools: pit data tools, FinRobot operators, untrusted wrapping and the (instrument, as_of) cache
+title: Agent tools: pit data tools, valuation desk, untrusted wrapping and the (instrument, as_of) cache
 phase: 6
 type: BUILD
 status: backlog
@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T004, P0-T027, P4-T025, P4-T032]
+depends_on: [P6-T004, P6-T074, P0-T027, P4-T025, P4-T032]
 requirements: [R6.01, R6.02, R6.N1]
 roadmap_todos: [T6.20]
 modules: [M8, M9]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, nats, tei-embed, tei-rerank]
 branch: p6/P6-T006-agent-tools-pit-finrobot-cache
 pr: ""
-doc_sync: [docs/03-build-spec.md, third_party/LICENSES.md, docs/roadmap/phase-6-ai-models-treasury.md]
+doc_sync: [docs/03-build-spec.md, docs/19-third-party-register.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P6-T006 · Agent tools: pit data tools, FinRobot operators, untrusted wrapping and the (instrument, as_of) cache
+# P6-T006 · Agent tools: pit data tools, valuation desk, untrusted wrapping and the (instrument, as_of) cache
 
 ## Goal / expected outcome
 
-A read-only tool belt for the debate graph: `pit` tools (bars, features, documents via RAG, filings, calendar/events, tier-B scores), vendored FinRobot V2 valuation operators, a memory-recall tool hook, all wrapping untrusted text and cached per `(instrument, as_of)`.
+A read-only tool belt for the debate graph: `pit` tools (bars, features, documents via RAG, filings, calendar/events, tier-B scores), the **valuation desk** (FinRobot-style DCF/WACC/DDM/comps operators rebuilt as deterministic Rust, the LLM writes only the narrative), a memory-recall tool hook, all wrapping untrusted text and cached per `(instrument, as_of)`.
 
 ## Context & references
 
@@ -50,20 +50,20 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 
 ## Requirements
 
-- Tools (LangGraph tool specs): `get_bars(instrument, spec, as_of, lookback)`, `get_features(...)`, `search_docs(query, tickers, as_of)`, `get_filing_sections(...)`, `get_calendar(window, as_of)`, `get_events(...)`, `get_tierb_scores(subject, as_of)`, `recall_memory(bank, query, as_of)` (bound in P6-T012), FinRobot operators (DCF, WACC, DDM, comps, Monte Carlo, SOTP).
-- Every tool reads only via `pit(as_of)` (the `mt_store` Python binding of the Rust `mt-store`, 18 §2.1); no tool can write, place orders or call `mt-api` commands.
+- Tools (implementations of the `mt-agents` `Tool` trait, P6-T074, in `crates/mt-agents/src/tools/`): `get_bars(instrument, spec, as_of, lookback)`, `get_features(...)`, `search_docs(query, tickers, as_of)`, `get_filing_sections(...)`, `get_calendar(window, as_of)`, `get_events(...)`, `get_tierb_scores(subject, as_of)`, `recall_memory(bank, query, as_of)` (bound in P6-T012), valuation-desk operators (DCF, WACC, DDM, comps, Monte Carlo, SOTP).
+- Every tool reads only via `pit(as_of)` (the Rust `mt-store` crate, 18 §2.1); no tool can write, place orders or call `mt-api` commands.
 - Every tool result returns `sources[]` entries matching the Signal schema (03 M8).
 - Untrusted text (documents, filings, social) is wrapped `<untrusted source=… id=…>…</untrusted>` and stripped of tool-call-like syntax; rows with `model_input_ok=false` are refused.
 - Cache: key `sha256(tool, args, instrument, as_of_bucket)` in Postgres `ops.tool_cache` (or NATS KV) with TTL; hit-rate metric.
-- FinRobot V2 operators vendored under `third_party/finrobot_ops/` (Apache-2.0 + NOTICE; no "FinRobot" in product naming) with pinned commit.
+- Valuation desk in `crates/mt-agents/src/valuation/`: rebuilt in Rust from FinRobot's Apache-2.0 design ([19 §3](../../../docs/19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime)); no FinRobot code in the runtime, NOTICE kept for any adapted text, the FinRobot name not used; SEC XBRL inputs from `mt-connectors` (`companyfacts` JSON) read through `pit`.
 
 ## ToDo
 
-- [ ] Create `packages/mt_agents/mt_agents/tools/` with the tool specs above.
-- [ ] Vendor FinRobot V2 deterministic operators (`engine/compute/operators/`) with licence + NOTICE in `third_party/LICENSES.md`; grep for telemetry/network calls.
+- [ ] Create `crates/mt-agents/src/tools/` with the tools above on the P6-T074 `Tool` trait.
+- [ ] Rebuild the valuation operators in Rust from the published formulas; design source and any adapted text recorded in `crates/mt-agents/NOTICE`.
 - [ ] Untrusted wrapper + provenance gate (`model_input_ok`).
 - [ ] Tool cache with as_of bucketing (bars: bar close; docs: 1 min) and Prometheus hit-rate metric.
-- [ ] Unit/golden tests for operators vs FinRobot reference outputs.
+- [ ] Unit/golden tests for operators vs recorded FinRobot reference outputs (`cargo test -p mt-agents valuation`).
 - [ ] Docs.
 
 ## Verification
@@ -72,7 +72,7 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 - Unit: each tool calls `pit` with the given `as_of` (mock asserts); provenance populated.
 - Golden: DCF/WACC operator outputs equal the upstream examples to 1e-9.
 - Integration: `search_docs` with `as_of` before a document's `ingested_at` never returns it.
-- CI `pit` bypass test includes `mt_agents`.
+- CI `pit` bypass test includes `mt-agents`; `cargo test -p mt-agents tools` and `cargo clippy`.
 
 ### Scenarios
 - Given a Telegram-derived row in the document store, when `search_docs` matches it, then it is excluded and a refusal counter increments.
@@ -86,7 +86,7 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 
 - [ ] All tools read via `pit`; CI bypass check green.
 - [ ] Cache hit rate visible in Grafana.
-- [ ] Vendored code licence-logged and telemetry-free.
+- [ ] Valuation desk is our own Rust (no vendored FinRobot code); NOTICE present.
 
 ## Exceptions & edge cases
 
@@ -105,13 +105,13 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 ## Doc sync on completion
 
 - `docs/03-build-spec.md` M8: tool list.
-- `third_party/LICENSES.md`: FinRobot operators entry.
+- `docs/19-third-party-register.md` §3: confirm the FinRobot row (design only).
 - `docs/roadmap/phase-6-ai-models-treasury.md`: tick T6.20 (and note this task ID) once all items covering it are done.
 
 ## Branch & PR
 
 - Branch: `p6/P6-T006-agent-tools-pit-finrobot-cache`
-- PR title: `P6-T006: Agent tools: pit data tools, FinRobot operators, untrusted wrapping and the (instrument, as_of) cache`
+- PR title: `P6-T006: Agent tools: pit data tools, valuation desk, untrusted wrapping and the (instrument, as_of) cache`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P6-T006` run
 
 ## Progress log
@@ -119,3 +119,4 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (sources[] per 03 M8; R6.N1 untrusted wrapping; cross-phase deps P0-T027/P4-T025/P4-T032; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`pit(as_of)` via the `mt_store` Python binding of the Rust `mt-store`; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tools on the `mt-agents` Tool trait; FinRobot operators rebuilt in Rust as the valuation desk, nothing vendored; `pit` via the `mt-store` crate; depends on P6-T074; tools cargo)

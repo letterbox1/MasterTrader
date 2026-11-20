@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T013, P2-T150, P3-T034, P6-T075]
+depends_on: [P7-T013, P2-T150, P3-T034, P6-T075, P6-T080]
 requirements: [R7.03]
 roadmap_todos: [T7.05]
 modules: [M16, M18, M7]
@@ -120,3 +120,4 @@ Every Monday 07:00 Australia/Sydney a weekly review pack is generated per strate
 - 2026-11-19 00:00 · coordinator · llm-trading-lab added as reading for weekly reviews (17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (review-pack builders in the Rust `mt-journal` crate as a scheduled job (no Prefect); SQL migration in `supabase/`; tools cargo/supabase)
 - 2026-11-20 00:00 · aligner · Rust-max per 17 §H (R7.03: section (6) scenario-twin report per bot from P6-T075 (+dep), labelled Simulated, informational, not a gate (16 §2.14b))
+- 2026-11-20 00:00 · main · depends on P6-T080 (scenario simulator / weekly twin run) per 17 §H.

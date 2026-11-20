@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md]
 doc_sync_status: done
 found_in: docs/03-build-spec.md M14; docs/research/mirofish.md
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: 2026-10-22
 blocked_reason: ""
@@ -104,3 +104,4 @@ The docs agree and are specific enough to build from: M14 states the allowed pat
 - 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · verified: decided in docs/17 (17 §D P6-B009); docs updated: 03 M14, roadmap R6.32/T6.30, 04 Phase 6 optional bullet; implementation owned by P6-T050, P6-T003
 - 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · done
 - 2026-10-22 02:20 · cloud:vm:be04b6ae61f8 · doc sync done: docs already updated in this wave
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (superseded: M14 is now the go-live simulator `mt-crowdsim`, clean-room Rust with no MiroFish/OASIS code and no Zep; "otherwise skip" no longer applies; built by P6-T050)

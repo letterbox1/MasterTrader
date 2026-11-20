@@ -15,7 +15,7 @@ requirements: [R6.11]
 roadmap_todos: [T6.61]
 modules: [M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [decision-svc]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-6-ai-models-trea
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 
 ## ToDo
 
-- [ ] Script `tools/verify/flip_rate.py`.
+- [ ] Flip-rate check `crates/mt-models/tests/flip_rate.rs` (`cargo test -p mt-models --test flip_rate`).
 - [ ] Backtest reproducibility test in CI (small window) + full run once.
 - [ ] Record results.
 
@@ -100,3 +100,4 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (flip-rate default 16 §2.10, prefix caching off (17 §A); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (flip-rate check on every available profile (CPU always, GPU when present); nvidia-smi/gpu preconditions removed)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (flip-rate check in the Rust `mt-models` crate; tools cargo)

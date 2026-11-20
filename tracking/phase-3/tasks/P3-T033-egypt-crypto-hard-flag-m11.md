@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ While the residency timeline says Egypt, crypto is blocked through the **venue r
 ## Context & references
 
 - Roadmap: [R3.09, R3.16, T3.26](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 key findings: Egypt](../../../docs/09-journal-and-tax.md#️-key-findings-that-shape-the-design) (M11 fails closed until the registry has recomputed; loosening C3) · [12 §1 moving countries](../../../docs/12-policy-and-compliance.md#1-australian-boundary-the-load-bearing-assumption) · [12 §2 venue registry](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) · D15 rules (Egypt red flag) [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Decision: [17 §D P3-B006/B007](../../../docs/17-decisions-register.md#d-other-decisions) (event + registry recompute; replaces the earlier KV `compliance_state` proposal)
 - Cross-phase prerequisites (depends_on): P2-T016 (M11 venue-registry check), P2-T017 (default-deny pre-trade RiskGate); P5 mandates consume the same registry status
@@ -116,3 +116,4 @@ While the residency timeline says Egypt, crypto is blocked through the **venue r
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Egypt block now via `tax.residency.changed` → venue-registry recompute (P3-T055) + existing M11 registry check; dropped KV `compliance_state` proposal (P3-B007 closed); explicit P2 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-risk` crate check)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

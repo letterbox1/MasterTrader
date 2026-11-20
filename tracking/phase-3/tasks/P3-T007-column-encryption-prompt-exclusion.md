@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 ## Context & references
 
 - Roadmap: [R3.N1, T3.41](../../../docs/roadmap/phase-3-journal-and-tax.md) · verified by P3-T050 (prompt audit)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [07 §8](../../../docs/07-security-notes.md#8-data-protection-backups--audit) · provenance mechanism [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
 - Cross-phase prerequisites (depends_on): P0-T025 (provenance columns), P0-T018 (`mt-obs` logging for the redaction layer); P6 agents will read journal summaries only through allowed views
 - Decision: [17 §D P3-B009](../../../docs/17-decisions-register.md#d-other-decisions) (envelope encryption, rotation re-wraps keys only)
@@ -118,3 +118,4 @@ Tax-sensitive fields (TFN, postal/residential address, raw statement payloads, c
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (encryption helpers use FY data keys wrapped by the master key (P3-B009); explicit P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust `mt_journal::crypto`; `tracing` redaction in `mt-obs`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

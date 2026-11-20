@@ -1,7 +1,7 @@
 ---
 id: P6-T012
 kind: task
-title: mt_memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API
+title: mt-memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API
 phase: 6
 type: BUILD
 status: backlog
@@ -15,7 +15,7 @@ requirements: [R6.04]
 roadmap_todos: [T6.21]
 modules: [M9, M8]
 dashboards: [D10, D09]
-tools: [git, uv, python>=3.12, docker, cargo]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [hindsight, supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P6-T012 · mt_memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API
+# P6-T012 · mt-memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API
 
 ## Goal / expected outcome
 
-`mt_memory.agent_memory` wraps Hindsight with the five banks, provenance-checked retain, **point-in-time recall** (every memory carries `observed_at`/`ingested_at`; derived memories carry their latest source time; memory-off and frozen-snapshot modes for backtests) and the `recall_memory` agent tool, plus `/memory/search`, `/memory/banks` and `memory.delete`.
+`mt-memory` (Rust, Hindsight HTTP client, 18 §2.1) wraps Hindsight with the five banks, provenance-checked retain, **point-in-time recall** (every memory carries `observed_at`/`ingested_at`; derived memories carry their latest source time; memory-off and frozen-snapshot modes for backtests) and the `recall_memory` agent tool, plus `/memory/search`, `/memory/banks` and `memory.delete`.
 
 ## Context & references
 
@@ -52,7 +52,7 @@ review_result: ""
 
 - Banks: `decisions`, `strategies`, `market-regimes`, `user`, `ops`; created idempotently at startup.
 - Retain: every item carries `source`, `observed_at` (when the fact or event happened), `ingested_at` (when we stored it, Postgres `now()`), `sources[]`, `model_input_ok`; items derived from rows with `model_input_ok=false` or Telegram are refused.
-- PIT recall: at `as_of`, a memory is visible only if `observed_at ≤ as_of` **and** `ingested_at ≤ as_of`. Consolidated/reflection memories (observations, mental models) carry the **latest** `observed_at`/`ingested_at` of their sources (lineage recorded at consolidation) and are excluded when that is > `as_of`. `mt_memory` enforces this by over-fetch ×3 then post-filter with the lineage check, since Hindsight's own API may not filter on these times (U).
+- PIT recall: at `as_of`, a memory is visible only if `observed_at ≤ as_of` **and** `ingested_at ≤ as_of`. Consolidated/reflection memories (observations, mental models) carry the **latest** `observed_at`/`ingested_at` of their sources (lineage recorded at consolidation) and are excluded when that is > `as_of`. `mt-memory` enforces this by over-fetch ×3 then post-filter with the lineage check, since Hindsight's own API may not filter on these times (U).
 - Backtest memory modes (lab setting per run): `filtered` (default, above), `frozen` (recall only from a per-`as_of` snapshot exported by `mt-memory snapshot --as-of`), `off`. If the PIT recall test (P6-T055) fails for `filtered`, the lab default becomes `off` and run reports say so.
 - Live recall (no `as_of`) uses now; backtests must pass `as_of` (assertion).
 - `recall_memory` tool returns memory ids, bank, timestamps as provenance for the Signal.
@@ -61,7 +61,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement the client (`packages/mt_memory/mt_memory/agent_memory.py`) on Hindsight's HTTP API.
+- [ ] Implement the client in `crates/mt-memory/src/agent_memory.rs` on Hindsight's HTTP API.
 - [ ] PIT filter on `observed_at`/`ingested_at` + derived-memory lineage (latest source time); frozen-snapshot export and `off` mode for the lab.
 - [ ] Bind `recall_memory` into the P6-T006 tool belt.
 - [ ] `mt-api` (Rust) queries + `memory.delete` command + tombstones.
@@ -70,7 +70,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- `cargo test -p mt-api` (memory queries, `memory.delete`); `uv run pytest` for the client.
+- `cargo test -p mt-api` (memory queries, `memory.delete`); `cargo test -p mt-memory` for the client and PIT filter.
 - Unit: PIT filter with synthetic timestamps, lineage exclusion of consolidated memories.
 - Integration (compose): retain at t1, t2, t3; recall with as_of=t2 returns only t1/t2 items.
 - API tests: delete is C1, audited, tombstoned.
@@ -114,7 +114,7 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p6/P6-T012-memory-client-banks-pit-recall`
-- PR title: `P6-T012: mt_memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API`
+- PR title: `P6-T012: mt-memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P6-T012` run
 
 ## Progress log
@@ -122,3 +122,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (PIT per 17 §A P6-B016: observed_at/ingested_at, derived memories carry latest source time, frozen-snapshot/off backtest modes; dep P0-T034; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (memory queries and `memory.delete` in Rust `mt-api`; client stays Python; tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Hindsight client in the Rust `mt-memory` crate; tools cargo)

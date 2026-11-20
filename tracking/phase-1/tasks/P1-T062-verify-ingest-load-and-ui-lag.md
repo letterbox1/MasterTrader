@@ -15,7 +15,7 @@ requirements: [R1.N2, R1.02, R1.N1, R1.17]
 roadmap_todos: []
 modules: [M1, M16, M15]
 dashboards: [D02, D07]
-tools: [git, cargo, uv, docker, pnpm, node>=20]
+tools: [git, cargo, docker, pnpm, node>=20]
 mcp: []
 env: []
 services: [nats, supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -75,7 +75,7 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 ## Acceptance criteria
 
 - [ ] All thresholds met at 10× (or the highest multiple that meets them recorded with the bottleneck named)
-- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -101,3 +101,4 @@ Replaying a volatile market day at 10× through the live pipeline shows the reco
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (stale SLO ≤ 250 ms p99 after the data-age threshold (P1-B001))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (replay tool in Rust `mt-recorder`; runs on the workstation (rerun on the runtime host at the P7 shift); services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (no Python in this task: CI line and tools drop ruff/mypy/pytest/uv)

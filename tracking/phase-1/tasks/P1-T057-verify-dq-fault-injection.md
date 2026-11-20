@@ -15,7 +15,7 @@ requirements: [R1.10, R1.N1, R1.17]
 roadmap_todos: [T1.61]
 modules: [M16]
 dashboards: [D07]
-tools: [git, cargo, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres, mt-api, ntfy]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -47,7 +47,7 @@ On the running stack, killing a feed, injecting a bad tick, skewing the clock an
 
 ## Requirements
 
-- Test plan `tests/e2e/dq_fault_injection.py` (`uv run pytest tests/e2e/dq_fault_injection.py`, driving the Rust `mt_monitor::testing::FaultInjector`) runnable against the workstation stack (`make e2e-dq`)
+- Test plan in the Rust e2e crate (`tests/e2e`, package `mt-e2e`, test `dq_fault_injection`; `cargo test -p mt-e2e --test dq_fault_injection -- --ignored`, driving `mt_monitor::testing::FaultInjector`) runnable against the workstation stack (`just e2e-dq`)
 - Cases: (1) kill a live crypto WS (container network cut), and separately silence one symbol on an open socket → `stale` ≤ 250 ms p99 after its data-age threshold (fast 2 s default; plus one slow 60 s case); (2) inject a bad tick via the harness proxy → flagged, bar unaffected; (3) skew exchange timestamps +1 s and fake chrony offset → skew incident + critical alert; (4) drop sequence IDs → gap incident and book `bad` until resync; (5) crossed book; (6) divergence offset; (7) closed session (FX weekend replay) → `closed`, never stale
 - For each: assert NATS status, `audit.dq_event` rows (open + resolve), D07 visible within the live-update budget (p95 < 500 ms) of publish, alert through the one fan-out on the enabled channels
 - Report: reaction times per case (p50/p99 over ≥ 100 runs for the stale cases, measured as publish − (last receive + threshold))
@@ -77,7 +77,7 @@ On the running stack, killing a feed, injecting a bad tick, skewing the clock an
 ## Acceptance criteria
 
 - [ ] Stale reaction p99 ≤ 250 ms after the threshold over ≥ 100 runs; all seven cases pass; report stored
-- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ On the running stack, killing a feed, injecting a bad tick, skewing the clock an
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (SLO now ≤ 250 ms p99 after the data-age threshold (P1-B001, R1.17); closed-session case)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (drives the Rust `mt-monitor` fault injector from a Python e2e harness; tools cargo+uv; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python e2e harness → Rust integration tests in the `mt-e2e` crate (`tests/e2e`) with the same cases; tools drop uv)

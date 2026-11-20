@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T006, P1-T007, P1-T008]
+depends_on: [P1-T005, P1-T006, P1-T007, P1-T008, P1-T078]
 requirements: [R1.09, R1.08]
 roadmap_todos: [T1.34, T1.26]
 modules: [M1]
 dashboards: [D07]
-tools: [git, uv, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T029-coingecko-defillama-enrichment
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, docs/12-policy-and-compliance.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,7 +45,7 @@ Crypto enrichment (market cap, supply, categories from CoinGecko Demo; TVL from 
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Enrichment: CoinGecko Demo, DefiLlama) · terms [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (CoinGecko: one key, cache ≤ 24 h, encrypted, deleted on exit, attribution; DefiLlama: `api.llama.fi` only) · [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list) (CoinGecko not a price archive)
 - Roadmap ToDo T1.34 now names the CoinGecko/DefiLlama enrichment with the ≤ 24 h encrypted cache (gap P1-B004 closed); 12 §4 records pgcrypto with a key from the sops file and purge on shutdown
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): CoinGecko is built keyless against recorded fixtures (rows written through the real tagged write path so P1-T059 can test retention); the live call with your CoinGecko Demo key (P0-T010) runs in P1-T073. DefiLlama (`api.llama.fi`) is keyless and runs live here
-- Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T008
+- Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T008, P1-T078 (`mt-connectors` base; CoinGecko and DefiLlama clients per [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates))
 
 ## Requirements
 
@@ -57,7 +57,7 @@ Crypto enrichment (market cap, supply, categories from CoinGecko Demo; TVL from 
 
 ## ToDo
 
-- [ ] Implement both adapters and the encrypted cache table
+- [ ] Implement both provider modules in `mt-connectors` (`providers::{coingecko,defillama}`) and the encrypted cache table (Supabase migration + pgTAP)
 - [ ] Wire retention + shutdown purge
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -66,7 +66,7 @@ Crypto enrichment (market cap, supply, categories from CoinGecko Demo; TVL from 
 
 ### Tests
 
-- Unit: provenance defaults; encryption round-trip
+- `cargo test -p mt-connectors coingecko defillama`: provenance defaults; encryption round-trip
 - Integration: rows older than 24 h removed by retention; shutdown purge empties the cache
 
 ### Scenarios
@@ -80,7 +80,7 @@ Crypto enrichment (market cap, supply, categories from CoinGecko Demo; TVL from 
 ## Acceptance criteria
 
 - [ ] No CoinGecko row older than 24 h + one retention interval exists (checked by P1-T059)
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -113,3 +113,4 @@ Crypto enrichment (market cap, supply, categories from CoinGecko Demo; TVL from 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (traced to new T1.34 (P1-B004 closed); keyless build, live CoinGecko in P1-T073; cross-check only per 16 §4.1)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python Prefect flow → Rust provider modules in `mt-connectors`; cache purge hooks unchanged; deps +P1-T078; tools cargo/supabase; services drop prefect-server)

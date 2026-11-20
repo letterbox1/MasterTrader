@@ -15,7 +15,7 @@ requirements: [R6.21, R6.22, R6.23, R6.24, R6.20]
 roadmap_todos: [T6.64]
 modules: [M22, M11]
 dashboards: [D18]
-tools: [git, uv, python>=3.12, docker, anvil, solana-test-validator]
+tools: [git, cargo, docker, anvil, solana-test-validator]
 mcp: []
 env: []
 services: [anvil, signer, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-6-ai-mode
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -113,3 +113,4 @@ On forks/testnets: an uneconomic move is rejected by the cost gate with numbers 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (HLP both bounds, venue 25% L1, depeg reduce from P6 (17 §B); test policy so no wait on USER P6-T034; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (treasury code under test is Rust (`mt-treasury`, `mt-onchain`); tools cargo)

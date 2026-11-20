@@ -15,7 +15,7 @@ requirements: [R1.01, R1.02, R1.04, R1.05, R1.06, R1.15]
 roadmap_todos: []
 modules: [M1, M16, M15]
 dashboards: [D02, D07]
-tools: [git, uv, docker, pnpm, node>=20]
+tools: [git, cargo, docker, pnpm, node>=20]
 mcp: []
 env: []
 services: [nats, supabase-postgres, mt-api, grafana]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -48,7 +48,7 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 
 ## Requirements
 
-- Script `tests/e2e/f1_flow.py` (`uv run pytest tests/e2e/f1_flow.py` + `pnpm playwright` captures) that, per asset class instrument, asserts: live `md.*` within the last minute (in session), recorder file for today, 1s bars, every stored size (1m … 1W) in `market.bar_*`, a `date_bin` size (e.g. 7m), `dq.status ok` (or `closed` out of session), `/markets/{id}/bars` for each spec, D02 chart renders (Playwright)
+- E2E test `f1_flow` in the Rust e2e crate (`tests/e2e`, package `mt-e2e`; `cargo test -p mt-e2e --test f1_flow -- --ignored` + `pnpm playwright` captures) that, per asset class instrument, asserts: live `md.*` within the last minute (in session), recorder file for today, 1s bars, every stored size (1m … 1W) in `market.bar_*`, a `date_bin` size (e.g. 7m), `dq.status ok` (or `closed` out of session), `/markets/{id}/bars` for each spec, D02 chart renders (Playwright)
 - Futures and macro: daily bars/obs present and shown on D02 at 1D
 - Grafana Markets board shows the same last price (± one bar) as D02
 - Report with screenshots per class under `reports/verify/P1-T061/`
@@ -76,7 +76,7 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 ## Acceptance criteria
 
 - [ ] All classes pass every F1 step; report stored
-- [ ] CI green (`cargo clippy`, `cargo test`, ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -103,3 +103,4 @@ A scripted walk-through proves F1 for every asset class: venue → `md.*` → Pa
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tick → 1W; depends on live connector check P1-T073 instead of the keyless builds)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (bars from the partitioned tables written by `mt-recorder` (no CAGGs); stays a live VERIFY (needs P1-T073); services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python e2e harness → Rust integration tests in the `mt-e2e` crate (`tests/e2e`) with the same cases; tools drop uv; daily futures/stocks come from the terms-checked `mt-connectors` sources (P1-T023))

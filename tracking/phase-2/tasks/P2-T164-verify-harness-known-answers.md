@@ -15,7 +15,7 @@ requirements: [R2.41, R2.42, R2.44]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
-tools: [uv, docker]
+tools: [cargo, uv, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,14 +54,14 @@ An independent test pack proving the harness rejects what it should: random stra
 
 ## ToDo
 
-- [ ] Write `tests/harness/` scenarios with synthetic data generators
+- [ ] Write `crates/mt-lab-core/tests/harness/` scenarios with synthetic data generators (Rust); the overfit-sweep case drives an Optuna sweep in `mt_research` through the binding
 - [ ] Run and record results
 - [ ] File bugs for any wrong verdict
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k known_answer`.
+- Commands: `cargo test -p mt-lab-core known_answer -- --ignored`, `uv run pytest packages/mt_research -k known_answer` (sweep case).
 - The scenarios above as CI-slow tests (nightly).
 
 ### Scenarios
@@ -100,3 +100,4 @@ An independent test pack proving the harness rejects what it should: random stra
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [nats, postgres] → [nats, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (known-answer pack runs against `mt-lab-core` (Rust), sweep case via `mt_research`; same cases; tools [uv, docker] → [cargo, uv, docker])

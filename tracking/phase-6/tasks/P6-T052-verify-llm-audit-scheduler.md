@@ -15,7 +15,7 @@ requirements: [R6.02, R6.03]
 roadmap_todos: [T6.67]
 modules: [M8, M17]
 dashboards: [D09, D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker, supabase]
 mcp: []
 env: []
 services: [litellm, supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 
 ## ToDo
 
-- [ ] Write the reconciliation script `tools/verify/llm_audit_recon.py`.
+- [ ] Write the reconciliation check as a Rust integration test (`crates/mt-agents/tests/llm_audit_recon.rs`, SQL in `tools/verify/llm_audit_recon.sql`).
 - [ ] Run the tick-storm test in the staging compose profile.
 - [ ] Run the WORM suite.
 - [ ] Attach results to the progress log.
@@ -107,3 +107,4 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.67; audit.llm_call from P0 (17 §D P6-B010); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (reconciliation check in Rust; tools cargo)

@@ -15,17 +15,17 @@ requirements: [R6.01, R6.04, R6.14, R6.40]
 roadmap_todos: []
 modules: [M8, M9, M21, M15]
 dashboards: [D09, D10]
-tools: [git, uv, pnpm, playwright]
+tools: [git, cargo, pnpm, playwright]
 mcp: []
 env: []
-services: [agents, hindsight, mt-api, prefect]
+services: [agents, hindsight, mt-api, mt-scheduler]
 branch: p6/P6-T062-verify-e2e-f4-analysis-to-distillation
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-6-ai-models-treasury.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -104,3 +104,4 @@ The whole F4 flow works on the real stack: you ask for an analysis of an arbitra
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (sample runs moved to P6-T067 (T6.66); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation instead of host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect → `mt-scheduler`; tools cargo)

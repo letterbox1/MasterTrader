@@ -15,7 +15,7 @@ requirements: [R6.06]
 roadmap_todos: [T6.23]
 modules: [M0, M8]
 dashboards: [D09]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An `llm_signal` template in `mt_strategy` turns `sig.agent.*` Signals into sized `OrderIntent`s through M11, runs unchanged in backtest (replaying stored Signals via `pit`), `paper` and `hitl` modes.
+An `llm_signal` built-in Rust template (`crates/mt-engine/src/strategy/`, Rust strategies by default, 18 §2.1) turns `sig.agent.*` Signals into sized `OrderIntent`s through M11, runs unchanged in backtest (replaying stored Signals via `pit`), `paper` and `hitl` modes.
 
 ## Context & references
 
@@ -57,7 +57,7 @@ An `llm_signal` template in `mt_strategy` turns `sig.agent.*` Signals into sized
 
 ## ToDo
 
-- [ ] Template class `strategies/templates/llm_signal.py` + parameter schema + manifest validator rules.
+- [ ] Template `crates/mt-engine/src/strategy/llm_signal.rs` + parameter schema + manifest validator rules.
 - [ ] Signal replay source for backtests reading `audit.signal` via `pit`.
 - [ ] D03 template form entry (template registry metadata).
 - [ ] Tests; docs.
@@ -65,6 +65,7 @@ An `llm_signal` template in `mt_strategy` turns `sig.agent.*` Signals into sized
 ## Verification
 
 ### Tests
+- `cargo test -p mt-engine llm_signal` and `cargo clippy`.
 - Unit: filtering by confidence/edge; Signal→OrderIntent mapping; exit plan attached.
 - Backtest: replay of 20 recorded Signals gives the same trades in screening and Nautilus truth paths.
 - PIT test: a Signal ingested at t is not visible at t−1s in the backtest.
@@ -112,3 +113,4 @@ An `llm_signal` template in `mt_strategy` turns `sig.agent.*` Signals into sized
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (modes paper/hitl/autonomous (17 §B); Signal fields ts/confidence/edge per 03 M8; deps trimmed to P6-T004 + P2-T003/T004/T033; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; LLM-signal template stays Python (`mt_strategy`))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (LLM-signal template is a Rust built-in strategy in `mt-engine` (Rust strategies by default); tools cargo)

@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P3-T008, P3-T011, P3-T012, P1-T006]
+depends_on: [P3-T008, P3-T011, P3-T012, P1-T006, P1-T077]
 requirements: [R3.01]
 roadmap_todos: [T3.20]
 modules: [M18]
@@ -18,14 +18,14 @@ dashboards: [D14]
 tools: [git, uv, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres, mt-scheduler]
 branch: p3/P3-T014-ingest-ccxt-ledgers
 pr: ""
 doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,23 +42,23 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 ## Context & references
 
 - Roadmap: [R3.01, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 1 (funding payments)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · keys policy [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys)
 - Cross-phase prerequisite (depends_on): P1-T006 (shared quota tracker); context: P1-T041 (ccxt reconciliation clients), P1-T002 (read-only keys, used only by P3-T061 and the RUN P3-T053)
 
 ## Requirements
 
 - Venues: those in the venue registry with status `allowed` or `read_only` and an account in `ops.wallets` (initially Binance testnet, Bybit testnet, plus any AU spot venue used).
-- Schedule: Prefect flow `journal-ccxt-ledger` every 15 min per account + EOD full sweep; cursor per account in `journal.ingest_cursor`; respects the P1 quota tracker.
+- Schedule: `mt-scheduler` job `journal-ccxt-ledger` (runs the `mt_ledger_import` container) every 15 min per account + EOD full sweep; cursor per account in `journal.ingest_cursor`; respects the P1 quota tracker.
 - Mapping: `funding` → `funding_payment` (sign preserved), `fee` → `fee_only`, `transfer` between own sub-accounts → `internal_transfer` candidate, `deposit`/`withdrawal` → candidates for P3-T018, `rebate`/`interest` → `interest`.
 - `source = ccxt_ledger`, `source_ref = venue ledger id`; dedupe against fill-fee events (a fee already on a fill is not double counted: match on trade id).
 - At runtime keys are read from the sops file (`<VENUE>_TESTNET_READONLY_KEY` / `_SECRET`), never logged; the build needs none.
 
 ## ToDo
 
-- [ ] Implement the Python adapter `packages/mt_journal_adapters/ccxt_ledger.py` (ccxt is Python-only here, 18 §2.2) with a per-venue quirks map; it publishes normalised `JournalEvent`s (the `mt-core` types from the PyO3 module) to the `mt-journal` writer and never computes tax or writes SQL
+- [ ] Implement the Python package `packages/mt_ledger_import` (one of the five Python packages, 18 §2.2: ccxt's ledger/statement endpoints) with `ccxt_ledger.py` with a per-venue quirks map; it publishes normalised `JournalEvent`s (the `mt-core` types from the PyO3 module) to the `mt-journal` writer and never computes tax or writes SQL
 - [ ] Fee de-duplication against nautilus fill events
-- [ ] Prefect deployment + quota tracker integration
+- [ ] `mt-scheduler` job definition + quota tracker integration
 - [ ] Golden fixtures (recorded ledger responses, secrets scrubbed) for Binance and Bybit testnet
 - [ ] Tests; docs
 
@@ -68,7 +68,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 
 - Golden: recorded ledger JSON → expected events (funding sign, fee dedupe).
 - Unit: venue paging/cursor edge (same timestamp, multiple entries).
-- Integration (`uv run pytest packages/mt_journal_adapters`): recorded HTTP cassettes (secrets scrubbed) replayed through ccxt; the real testnet run is P3-T061.
+- Integration (`uv run pytest packages/mt_ledger_import`): recorded HTTP cassettes (secrets scrubbed) replayed through ccxt; the real testnet run is P3-T061.
 
 ### Scenarios
 
@@ -97,7 +97,7 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 - Do NOT use keys with trade or withdrawal permission for ledger reads.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Keys stay read-only/trade-only, IP-locked, withdrawals disabled; no live money before the P7 gates.
 - Do NOT use paid data/APIs or scraping that breaks terms; free tiers only (03 §1).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -117,3 +117,4 @@ Funding payments, trading fees not on fills, deposits, withdrawals, transfers be
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: recorded fixtures only, live testnet pull moved to P3-T061; explicit P1-T006 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (ccxt adapter stays Python (Python-only library) and hands normalised events to `mt-journal`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (adapter package renamed `packages/mt_journal_adapters` → `packages/mt_ledger_import` (18 §2.2); Prefect flow → `mt-scheduler` job running its container; depends_on + P1-T077; services prefect-server → mt-scheduler; Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

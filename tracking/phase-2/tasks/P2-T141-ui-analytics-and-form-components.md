@@ -25,7 +25,7 @@ doc_sync: [docs/ui/components.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ The analytics (ECharts) and form components D03/D04 need — `EquityCurve`, `Dis
 - `Distribution(bins, markers)`: MC permutation histogram with observed-Sharpe marker and p-value label; bootstrap CI band.
 - `Heatmap(matrix, scale)`: monthly returns and parameter-stability slices; scrolls inside its own box < md; colour + numeric text (never colour alone).
 - `ParamForm(schema)`: renders types/ranges/defaults/conditional params from the manifest JSON schema; zod validation; shows sweep-range mode for D04.
-- `CodeEditor`: Monaco, lazy-loaded; read-only on phones with a 'continue on desktop' note; code/manifest diffs reuse part A's `DiffView` (Monaco diff mode for code).
+- `CodeEditor`: Monaco, lazy-loaded, Rust syntax by default (strategies are Rust, 18 §2.1; YAML for manifests); read-only on phones with a 'continue on desktop' note; code/manifest diffs reuse part A's `DiffView` (Monaco diff mode for code).
 - ECharts throttled to ≤ 4 Hz updates; reduced-motion respected.
 - Every tile implements the [data states](../../../docs/ui/README.md#31-data-states-every-tile-implements-all-of-them) (loading skeleton ≤ 300 ms, live, stale chip, degraded, error card with retry → D16, empty with primary action, PAPER/LIVE markers, unconfirmed hatching).
 
@@ -110,3 +110,4 @@ The analytics (ECharts) and form components D03/D04 need — `EquityCurve`, `Dis
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; cross-phase component library dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`CodeEditor` defaults to Rust syntax (strategies and generated code are Rust))

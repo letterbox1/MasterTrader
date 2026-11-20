@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ The 15 §2.4 WORM tests run against every `journal.*` table: app-role UPDATE/DEL
 ## Context & references
 
 - Roadmap: [R3.02, T3.41](../../../docs/roadmap/phase-3-journal-and-tax.md) · [15 §2.4 tests](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · [SPEC NN7](../../../SPEC.md#non-negotiable-requirements)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Cross-phase prerequisites (depends_on): P0-T055 (WORM test suite framework), P0-T038 (`audit.verify` and incident path); P0-T040 (monthly immutable WORM export) for the restore drill
 - Integrity action: [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity) · decision [17 §A P0-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
 
@@ -106,3 +106,4 @@ The 15 §2.4 WORM tests run against every `journal.*` table: app-role UPDATE/DEL
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity action `block_new_entries` + C3 ack per 16 §2.11 (was halt); insert p99 < 5 ms; key table not WORM (P3-B009); explicit P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (pgTAP WORM suite (`supabase test db`))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python boundary named (`mt_ledger_import` only))

@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/ui/dashboards/D02-m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,7 +51,7 @@ review_result: ""
 
 - Watchlists from `/markets/instruments?watchlist=` with add/remove (`intel.watchlist.update`, C0)
 - Quadrant cards: last, Δ 24 h/session, spread bps vs normal (from `cost`), funding/swap where applicable, volume, feed status chip, sparkline; WS `md.quote`, `cost`, `dq.status` at ≤ 1 Hz
-- Macro strip (P1): policy rates, 10Y yields, DXY proxy (computed from recorded FX quotes), VIX (yfinance), gold, oil; nowcasts show the "Arrives in Phase 4" empty state naming the source
+- Macro strip (P1): policy rates, 10Y yields, DXY proxy (computed from recorded FX quotes), VIX (daily via `mt-connectors` from a terms-checked source, P1-T023; FRED `VIXCLS` fallback), gold, oil; nowcasts show the "Arrives in Phase 4" empty state naming the source
 - Positioning widget: CFTC COT in P1; retail sentiment (Myfxbook/IG/OANDA books) and Kalshi/Polymarket show the "Arrives in Phase 4" empty state (no placeholder or sample data, DESIGN §10)
 - Correlation heatmap from daily returns of the watchlist (ECharts `Heatmap`); cross-venue spreads table (info only, no arb button)
 - Tier layouts: ≥ 2xl watchlist + quadrants; xl/lg tabs + drawer; md 2-col cards; ≤ ph segmented control + instrument cards
@@ -110,3 +110,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 ("Arrives in Phase 4" states for P4-fed widgets (P1-B012); P0 UI deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change beyond `mt-api` (Rust) as the backend; web CI via `pnpm test` / `pnpm playwright`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (VIX source no longer yfinance)

@@ -8,7 +8,7 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-11-20
 ---
 
 # Phase 2 · Strategy framework, risk manager & research lab
@@ -18,6 +18,8 @@ updated: 2026-10-22
 Phase 2 makes MasterTrader a trading platform: you can create **any strategy type on any timeframe**, backtest it with **measured costs**, validate it, and run it on **paper behind the risk manager**, controlled from the web UI and Telegram. The P1 paper clock starts at the end of the phase. ([roadmap](../../docs/roadmap/phase-2-strategies-risk-lab.md))
 
 Aligned on 2026-10-22 with [16](../../docs/16-configuration-and-safety-model.md) and [17](../../docs/17-decisions-register.md) (all decisions ratified, 17 §E): layered configuration L0–L4 with strictest-wins and 16 defaults (nothing hard-coded); two-stage sleeve (10%/15%) and system (10%/25% + lock) drawdowns; three-layer dead-man; inline safety-state checks; modes `paper`/`hitl`/`autonomous` per bot (paper → HITL C2, → autonomous C3); DSR ≥ 0.95 and the per-strategy gate profile; client order ID `{bot}-{engine_epoch}-{seq}`; `stp: n/a (netting)` for netting brokers; `paper_ok`; Telegram `/kill` via NATS credentials limited to `kill.set`; `risk.sleeve.restart` C3. **Build first, keys last:** every venue integration is built and tested keyless (fixtures, emulators, sandbox venue); the one keyed check is P2-T071 (T2.72) after your keys (P2-T001).
+
+**Rust-max (2026-11-20, [17 §H](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** strategies and templates are Rust (`crates/mt-engine/src/strategy/`); Python strategies are ML research on paper only, ported via ONNX before live (P2-T205). The lab is split into `mt-lab-core` (Rust: jobs on `mt-scheduler`, datasets, costs, truth backtests, metrics, validation, clean-room bias analysers, gates, setup odds, weekly report) and `mt_research` (Python: screener, Optuna, tier-A training/export) joined by a PyO3 binding (P2-T203, parity P2-T206). Features (`mt-features`), tier-A inference (`mt-models`, `ort`) and the MasterTradingBot libraries (`mt-signals`, `mt-risk`) are Rust. The generator emits Rust compiled in the sandbox and runs on `mt-agents` (P6-T074). The vendored freqtrade analysers are replaced and removed (P2-T112, P2-T204).
 
 The phase was planned in two parts that now share one board:
 - **Part A (P2-T001–T099, P2-B001–B049):** M0 strategy framework, M11 risk manager (layers, ceilings, limits, sizing, sleeves, venue registry, RiskGate, safety-state checks, ladder, change control, kill, three-layer dead-man, modes, decay/health), M12 execution (engine, STP, adapters, client IDs + reconciliation, algos, TCA, shadow), bots/HITL/Telegram, D06 + D03 Bots/settings, ops, verification, USER items, runbooks.
@@ -47,8 +49,9 @@ Evidence for every criterion is collected by the exit demo P2-T199.
 
 | Workstream | Tasks |
 |---|---|
-| Your actions (USER) | P2-T001 keys (keyed check only) · P2-T002 MasterTradingBot inputs · P2-T048 review defaults, set values + L0 ceilings · P2-T049 sleeves · P2-T050 first manifests · P2-T064 kill drill · P2-T065 C3 loosening + retire break-glass · P2-T066 first bots + HITL approval · P2-T067 start paper clock |
-| Build · M0 strategy framework | P2-T003 base classes · P2-T004 manifest (proposals) · P2-T005 never-build · P2-T006 registry · P2-T007 lifecycle, mode ceiling, gate profile · P2-T008, P2-T009 templates · P2-T030 shadow mode |
+| Your actions (USER) | P2-T001 keys (keyed check only) · P2-T002 MasterTradingBot inputs · P2-T064 kill drill · P2-T065 C3 loosening + retire break-glass · P2-T066 first bots + HITL approval (drills/walkthroughs: before go-live, nothing waits on them) |
+| Seeded defaults (agent, approved once in the go-live pack) | P2-T048 risk values + L0 ceilings · P2-T049 sleeves · P2-T050 first manifests · P2-T067 paper clock starts automatically (OPS) |
+| Build · M0 strategy framework (Rust by default) | P2-T003 `MtStrategy` traits (+ paper-only Python research base) · P2-T004 manifest (proposals) · P2-T005 never-build · P2-T006 registry · P2-T007 lifecycle, mode ceiling, gate profile · P2-T008, P2-T009 templates · P2-T030 shadow mode |
 | Build · M11 configuration & limits | P2-T010 layered policy store · P2-T011 L0 ceilings · P2-T069 layer merge + effective limits · P2-T012 defaults, two-stage drawdowns · P2-T013 sizing · P2-T014 sleeves/netting · P2-T015 portfolio · P2-T016 venue registry + 2× + `paper_ok` · P2-T019 change control · P2-T020 `mt-api` surface · P2-T202 `mt-risk` PyO3 binding |
 | Build · M11 order path & safety | P2-T017 RiskGate · P2-T070 inline safety-state checks · P2-T018 ladder · P2-T031 kill · P2-T032 dead-man layer 1 · P2-T072 `deadman` sidecar (layer 2) · P2-T073 venue timers + resting stops (layer 3) · P2-T074 restart flat, bots paused · P2-T033 modes/approvals · P2-T034 decay/health |
 | Build · M12 execution (keyless) | P2-T200, P2-T201 RESEARCH: Nautilus Rust node/adapter readiness · P2-T021 engine (Rust or Python node per venue) · P2-T022 STP / netting rule · P2-T023 testnet configs + sandbox · P2-T024 Alpaca · P2-T025 OANDA · P2-T026 IG · P2-T027 client IDs + reconcile · P2-T028 maker-first/TWAP · P2-T029 TCA |
@@ -57,19 +60,19 @@ Evidence for every criterion is collected by the exit demo P2-T199.
 | Ops | P2-T044 containers + gVisor + `deadman` · P2-T045 secrets + key audit tool · P2-T046 MLflow · P2-T047 Grafana |
 | Verify · Part A | P2-T051 golden/property · P2-T052 no-bypass · P2-T053 C3 matrix · P2-T054 kill + layer-1 drills · P2-T055 restart-duplicate · P2-T056 STP audit · P2-T057 adapter conformance · P2-T058 latency (risk, kill) · P2-T059 degraded modes · P2-T060 decay/ladder/downgrade · P2-T061 bot scenarios · P2-T062 viewport (D06, Bots, settings) · P2-T063 Part A flows · P2-T075 kill-the-engine drill · P2-T076 safety-state goldens · **P2-T071 keyed testnet end-to-end (last)** |
 | Docs | P2-T068 runbooks |
-| Lab core (M7) | P2-T101, P2-T102, P2-T103, P2-T104, P2-T105, P2-T106, P2-T107, P2-T117 |
-| Validation harness (M7) | P2-T108, P2-T109, P2-T110, P2-T111, P2-T112 (vendored analysers), P2-T113, P2-T114 (gate profile), P2-T115 |
-| Sandbox + generator | P2-T116 |
+| Lab core (M7: `mt-lab-core` Rust + `mt_research` Python) | P2-T101 `mt-lab-core` crate + jobs on `mt-scheduler`, P2-T102, P2-T103, P2-T104 (screener, `mt_research`), P2-T105, P2-T106, P2-T107, P2-T117, P2-T203 `mt_research` + PyO3 binding, P2-T205 ONNX port path for Python research strategies |
+| Validation harness (M7) | P2-T108, P2-T109, P2-T110, P2-T111, P2-T112 (clean-room Rust analysers), P2-T204 (remove vendored GPL copy), P2-T113, P2-T114 (gate profile), P2-T115 (Optuna in `mt_research`) |
+| Sandbox + generator (emits Rust; LLM loop on `mt-agents`, P6-T074) | P2-T116 |
 | Core features (M6) | P2-T120, P2-T121, P2-T122, P2-T123 |
 | Tier A (M21) | P2-T125, P2-T126, P2-T127, P2-T128 |
 | MasterTradingBot libraries | P2-T130, P2-T131, P2-T132 |
 | UI (D01, D03, D04, D05) | P2-T140, P2-T141, P2-T142, P2-T143, P2-T144, P2-T145, P2-T146, P2-T147, P2-T148, P2-T149, P2-T150 |
-| Verify · Part B | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168 |
+| Verify · Part B | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T206 (lab binding parity, Python stays on paper) |
 | Run | P2-T180 (paper clock; completion checked in P7 T7.80), P2-T182 |
 | Phase exit demo | P2-T199 |
 | Gaps | Closed 2026-10-22: P2-B001–B014, P2-B050–B060. Open (doc wording, S3/S4): P2-B015–B020 |
 
-Totals: 128 tasks (85 BUILD, 27 VERIFY, 9 USER, 4 OPS, 2 RUN, 1 DOC); sizes 18 L, 74 M, 31 S, 5 XS; no XL.
+Totals: 137 tasks (93 BUILD, 29 VERIFY, 5 USER, 5 OPS, 2 RESEARCH, 2 RUN, 1 DOC); sizes 20 L, 76 M, 36 S, 5 XS; no XL.
 
 ## Critical path
 
@@ -117,11 +120,11 @@ Parallel spines:
 | R2.40 | P2-T101, P2-T102, P2-T104, P2-T105, P2-T106, P2-T117, P2-T145, P2-T146, P2-T161, P2-T166, P2-T167, P2-T199 |
 | R2.41 | P2-T102, P2-T103, P2-T104, P2-T105, P2-T164 |
 | R2.42 | P2-T102, P2-T106, P2-T108, P2-T109, P2-T110, P2-T111, P2-T114, P2-T143, P2-T146, P2-T164, P2-T166, P2-T199 |
-| R2.43 | P2-T112, P2-T113, P2-T114, P2-T146, P2-T160, P2-T199 |
-| R2.44 | P2-T046, P2-T101, P2-T107, P2-T115, P2-T117, P2-T145, P2-T164, P2-T167 |
+| R2.43 | P2-T112, P2-T113, P2-T114, P2-T146, P2-T160, P2-T199, P2-T204 |
+| R2.44 | P2-T046, P2-T101, P2-T107, P2-T115, P2-T117, P2-T145, P2-T164, P2-T167, P2-T203 |
 | R2.45 | P2-T044, P2-T116, P2-T144, P2-T146, P2-T165, P2-T166, P2-T167, P2-T199 |
 | R2.46 | P2-T120, P2-T121, P2-T122, P2-T123 |
-| R2.47 | P2-T046, P2-T125, P2-T126, P2-T127, P2-T128, P2-T162, P2-T199 |
+| R2.47 | P2-T046, P2-T125, P2-T126, P2-T127, P2-T128, P2-T162, P2-T199, P2-T205 |
 | R2.48 | P2-T002, P2-T130, P2-T131, P2-T132, P2-T133, P2-T199 |
 | R2.50 | P2-T041, P2-T042, P2-T043, P2-T062, P2-T117, P2-T140, P2-T141, P2-T142, P2-T143, P2-T144, P2-T145, P2-T146, P2-T147, P2-T148, P2-T163, P2-T166, P2-T168, P2-T199 |
 | R2.51 | P2-T035, P2-T038, P2-T039, P2-T140, P2-T149, P2-T168, P2-T199 |
@@ -133,6 +136,7 @@ Parallel spines:
 | R2.57 | P2-T043 |
 | R2.58 | P2-T070, P2-T076, P2-T199 |
 | R2.59 | P2-T077, P2-T078, P2-T199 |
+| R2.60 | P2-T003, P2-T101, P2-T203, P2-T205, P2-T206, P2-T199 |
 | R2.N1 | P2-T017, P2-T031, P2-T047, P2-T054, P2-T058, P2-T128, P2-T162, P2-T199 |
 | R2.N2 | P2-T051, P2-T076 |
 | R2.N3 | P2-T001, P2-T023, P2-T044, P2-T045, P2-T071 |
@@ -171,6 +175,8 @@ Parallel spines:
 | T2.38 | P2-T043 |
 | T2.39 | P2-T070 |
 | T2.43 | P2-T077 |
+| T2.44 | P2-T112, P2-T204 |
+| T2.45 | P2-T203, P2-T205 |
 | T2.40 | P2-T044, P2-T045 |
 | T2.41 | P2-T046 |
 | T2.42 | P2-T047 |
@@ -188,6 +194,7 @@ Parallel spines:
 | T2.71 | P2-T076 |
 | T2.72 | P2-T071 |
 | T2.73 | P2-T078 |
+| T2.74 | P2-T206 |
 | T2.80 | P2-T180 |
 | T2.81 | P2-T150, P2-T182 |
 | T2.90 | P2-T068 |
@@ -215,12 +222,14 @@ Now explicit `depends_on` entries on existing P0/P1 tasks (only real preconditio
 |---|---|---|
 | P0 | P0-T002 Telegram bot + user id (USER) | P2-T064, P2-T066 |
 | P0 | P0-T009 demo/paper/testnet accounts (USER) | P2-T001 |
-| P0 | P0-T014 monorepo · P0-T016 `mt-core` types · P0-T018 `mt-obs` · P0-T071 `mt_store` PyO3 module (`mt-core` types + `pit` for Python) | P2-T004 · P2-T003, P2-T010 · P2-T032 · P2-T003, P2-T101, P2-T103, P2-T202 |
+| P0 | P0-T014 monorepo · P0-T016 `mt-core` types · P0-T018 `mt-obs` · P0-T071 `mt_store` PyO3 module (`mt-core` types + `pit` for Python) | P2-T004 · P2-T003, P2-T010 · P2-T032 · P2-T202, P2-T203 |
 | P0 | P0-T020 compose (NATS, MLflow) · P0-T021 networks · P0-T022 sops → tmpfs | P2-T044, P2-T046, P2-T101 · P2-T044 · P2-T001, P2-T044, P2-T045 |
 | P0 | P0-T024 schemas/Supabase migrations · P0-T025 venue registry table · P0-T027 `pit(as_of)` | P2-T006, P2-T010, P2-T101 · P2-T016 · P2-T101, P2-T103 |
 | P0 | P0-T029 WORM layer · P0-T031 WORM audit tables · P0-T038 `audit.verify` + `audit.integrity` | P2-T007, P2-T010, P2-T113 · P2-T021 · P2-T070 |
 | P0 | P0-T033 TOTP · P0-T034 command bus · P0-T035 confirmation levels + break-glass · P0-T036 WS hub | P2-T035 · P2-T006, P2-T020, P2-T117 · P2-T007, P2-T019, P2-T020, P2-T031, P2-T117 · P2-T020, P2-T038, P2-T117 |
-| P0 | P0-T039 backups · P0-T042 LiteLLM gateway · P0-T045 Grafana provisioning | P2-T046 · P2-T113, P2-T116 · P2-T047 |
+| P0 | P0-T039 backups · P0-T042 LiteLLM gateway · P0-T045 Grafana provisioning · P0-T074 licence audit | P2-T046 · P2-T113, P2-T116 · P2-T047 · P2-T204 |
+| P1 | P1-T077 `mt-scheduler` (lab queue, monthly cost snapshot, weekly review) | P2-T101, P2-T102, P2-T150 |
+| P6 (built early, dependency gating) | P6-T074 `mt-agents` runtime + gateway client | P2-T113 (leakage review), P2-T116 (generator) |
 | P0 | P0-T048 API client · P0-T049 component library · P0-T050 app shell · P0-T053 viewport harness · P0-T062 your TOTP (USER) | P2-T038, P2-T140 · P2-T038, P2-T041, P2-T042, P2-T140, P2-T141 · P2-T041, P2-T042, P2-T142 · P2-T062 · P2-T064, P2-T065 |
 | P1 | P1-T004 NATS streams · P1-T009 instrument master · P1-T012/T013 Parquet + bars | P2-T021, P2-T031 · P2-T003, P2-T103 · P2-T103 |
 | P1 | P1-T016 OANDA · P1-T017 IG · P1-T021 Alpaca stream clients | P2-T025 · P2-T026 · P2-T024 |

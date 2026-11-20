@@ -8,7 +8,7 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-11-20
 ---
 
 # Phase 3 · Journal & tax
@@ -16,6 +16,8 @@ updated: 2026-10-22
 ## Summary
 
 Every economic event (fills, fees, funding, transfers, statements, on-chain events) is journalled automatically into WORM `journal.*` tables in **native, USD and AUD** with rate provenance: RBA F11 for AUD (last published business day on gaps; non-F11 currencies via USD) and crypto values from the **valuation hierarchy** of 16 §4.1 (fill price → VWAP of our recorded trades → on-chain pool price; aggregators cross-check only). A lot engine (specific-ID → FIFO, FX-cash lots for Div 775, Decimal everywhere) feeds a dated jurisdiction-plugin engine: **AU_2026** (CGT discount, revenue CFDs/futures/perps (U), Div 775, crypto income, wash-sale flags at 30 days either side (16 §4.4, flag only), myTax worksheet, **PAYG estimator computing both ATO methods**), reported **both ways** (investor vs trader-in-business) until the tax agent decides; **AU_2027_REFORM** behind a flag plus the **30 June 2027 snapshot job** using the 16 §4.2 per-asset-class price convention; a residency timeline with CGT event I1 whose changes emit `tax.residency.changed` (venue registry recomputes; loosening is C3; Egypt blocks crypto via the registry); and AE / EG / CY / GENERIC stubs. The phase also delivers `ops.wallets` with a minimal D16 **Accounts page**, a minimal `curation.task` table for `TAX_QUESTION`s, the commands `tax.fy.lock`/`unlock` (C3), `task.answer` (C1) and `journal.manual_event.add` (C2), envelope encryption (master key in sops, yearly data keys re-wrapped on rotation in a non-WORM key table), a bounded JetStream buffer for the Postgres-down write path (1 GB / 24 h; new entries stop at 80%), exports (Beancount + Fava, accountant pack, Koinly/Syla CSV, CARF from venue statements when available), daily journal↔venue reconciliation, and D14 / D15. You engage a tax agent now: the investor-vs-trader answer gates P7.
+
+**Rust-max (2026-11-20, [17 §H](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** `mt-journal` (Rust) owns everything; the only Python is the ccxt ledger importer `mt_ledger_import` (P3-T014), which hands normalised events to `mt-journal`. Every scheduled journal job (`journal-*`) is an `mt-scheduler` job (P1-T077), not a Prefect flow; RBA/FX source fetches stay in the Rust `mt-connectors` clients (P1). Beancount checks use the pinned Fava image.
 
 **Build first, keys last:** every importer and statement parser is built and tested against recorded responses and sample files. Your real statements and the read-only practice/testnet keys are used only by the late check P3-T061 and the RUN item P3-T053. Cross-phase prerequisites are explicit `depends_on` entries (replacing the old phase gate).
 
@@ -150,7 +152,7 @@ Explicit `depends_on` entries (they replace the old `opens_after` phase gate onc
 | P0-T018 `mt_obs` logging | P3-T007 |
 | P0-T020 compose stack · P0-T021 networks · P0-T023 observability | P3-T009, P3-T057 |
 | P0-T022 sops + age → tmpfs | P3-T006 |
-| P0-T024 schemas/roles/Alembic | P3-T005, P3-T006, P3-T012, P3-T038 |
+| P0-T024 schemas/roles (`supabase/migrations/`) | P3-T005, P3-T006, P3-T012, P3-T038 |
 | P0-T025 provenance columns | P3-T007 |
 | P0-T027 `pit(as_of)` | P3-T010, P3-T011 |
 | P0-T029 WORM triggers · P0-T030 hash chain · P0-T031 WORM audit tables | P3-T005, P3-T057 |
@@ -166,6 +168,7 @@ Explicit `depends_on` entries (they replace the old `opens_after` phase gate onc
 | P1-T021 recorded US trades · P1-T023 daily closes | P3-T030 |
 | P1-T027 ABS CPI | P3-T029 |
 | P1-T041/T042 reconciliation clients | P3-T034 |
+| P1-T077 `mt-scheduler` (Postgres-backed jobs + cron, replaces Prefect) | P3-T009, P3-T010, P3-T011, P3-T014, P3-T015, P3-T027, P3-T030, P3-T034, P3-T050 |
 | P2-T001 testnet keys (USER) | P3-T051 |
 | P2-T016 M11 venue-registry check · P2-T017 RiskGate | P3-T033, P3-T055, P3-T057 |
 | P2-T019 change-control service (C3) | P3-T055 |

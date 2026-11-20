@@ -15,7 +15,7 @@ requirements: [R1.12]
 roadmap_todos: [T1.67]
 modules: [M16]
 dashboards: [D07]
-tools: [git, uv, docker, sops]
+tools: [git, cargo, docker, sops]
 mcp: []
 env: [BINANCE_TESTNET_READONLY_API_KEY, BINANCE_TESTNET_READONLY_API_SECRET, BYBIT_TESTNET_READONLY_API_KEY, BYBIT_TESTNET_READONLY_API_SECRET, OANDA_PRACTICE_API_TOKEN, OANDA_PRACTICE_PAPER_ACCOUNT_ID, IG_DEMO_API_KEY, IG_DEMO_USERNAME, IG_DEMO_PASSWORD, ALPACA_PAPER_API_KEY, ALPACA_PAPER_API_SECRET]
 services: [nats, supabase-postgres, binance-testnet, bybit-testnet, oanda-practice, ig-demo, alpaca-paper]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -115,3 +115,4 @@ With your keys loaded, reconciliation runs against every practice/testnet venue 
 
 - 2026-10-22 00:00 · aligner · created for T1.67 (docs/16–17 alignment: live reconciliation split from T1.29)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (live recon via the Rust `mt-monitor` (`--features live`); still depends on P0-T009/P1-T002 (allowed: live VERIFY); services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (checks are `cargo test -p mt-monitor --features live`; tools uv → cargo)

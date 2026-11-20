@@ -25,7 +25,7 @@ doc_sync: [docs/09-journal-and-tax.md, docs/roadmap/phase-3-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R3.01, R3.02, T3.20](../../../docs/roadmap/phase-3-journal-and-tax.md)
-- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only where a Python-only library forces it) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
+- Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [09 journal event](../../../docs/09-journal-and-tax.md#journal-event-captured-per-transaction) · [02 §6 NATS](../../../docs/02-v1-architecture.md#6-messaging-nats) (`journal.event.new`) · [02 F9](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Cross-phase prerequisite (depends_on): P0-T016 (`mt-core` domain types and versioned message schemas)
 - Write path when Postgres is down: [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) (buffer in JetStream; bounds and M11 hook in P3-T057)
@@ -62,7 +62,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `crates/mt-journal/src/model.rs`, `normalise.rs` (`Adapter` trait), `writer.rs`, `cursor.rs`; Python adapters (only where a Python-only library is needed, e.g. P3-T014) publish normalised events to the writer's ingest subject and never write SQL
+- [ ] Implement `crates/mt-journal/src/model.rs`, `normalise.rs` (`Adapter` trait), `writer.rs`, `cursor.rs`; the one Python adapter, `mt_ledger_import` (ccxt, P3-T014), publishes normalised events to the writer's ingest subject and never write SQL
 - [ ] Implement correction logic + `current_event` usage in readers
 - [ ] NATS publisher for `journal.event.new` (schema in `mt_core::schemas`)
 - [ ] Unit/property tests; adapter test harness (`crates/mt-journal/tests/harness/mod.rs`) that every adapter reuses with golden files
@@ -104,7 +104,7 @@ review_result: ""
 - Do NOT write journal rows outside the writer; do NOT let adapters open their own DB sessions.
 - Do NOT commit secrets or paste them into chats/issues; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT UPDATE or DELETE `journal.*` (WORM) rows; corrections are new rows referencing the superseded row ([15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)).
-- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`Decimal` in any Python adapter) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
+- Do NOT use floats for money, quantities, FX rates or tax; `rust_decimal::Decimal` in Rust (`decimal.Decimal` in the one Python adapter, `mt_ledger_import`) and `numeric` in Postgres only ([02 §5.2](../../../docs/02-v1-architecture.md#52-key-conventions)).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
 
 ## Doc sync on completion
@@ -123,3 +123,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (manual events only via `journal.manual_event.add` C2 (P3-B006); valuation hierarchy 16 §4.1; locked-FY holding; Postgres-down buffer 16 §3.3; explicit P0 depends_on; tools/services filled)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (serde + `rust_decimal` model and writer in `mt-journal`; buffer in `mt-obs`; proptest)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python adapters narrowed to `mt_ledger_import` (18 §2.2); Decimal rule names `mt_ledger_import`; Python boundary named (`mt_ledger_import` only))

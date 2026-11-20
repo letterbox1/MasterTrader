@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ The DQ monitor measures **data age** per instrument stream (now on the workstati
 
 - Data age = `monotonic_now − last_receive_monotonic` per (venue, instrument, stream); `ingest_time` is the wall-clock record of the same receive; the exchange timestamp is never used (its gap is the clock-skew check, P1-T035)
 - Thresholds: freshness profiles `fast` (default 2 s) and `slow` (default 60 s), configurable ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)); each stream is evaluated against every distinct threshold of the bots that use it (P1: the profiles set per instrument in `config/dq_checks.yaml`; from P2 the bot registry supplies per-bot thresholds). `dq.status` carries `age_ms` and the thresholds exceeded, so a slow bot is never paused by a fast bot's threshold
-- Session-aware: outside the instrument's session (`exchange_calendars`, FX weekend, venue maintenance) the status is `closed`, never `stale`; crypto is 24/7
+- Session-aware: outside the instrument's session (`market.session_calendar` generated from `exchange_calendars` by the `mt_research` job in P1-T009, FX weekend, venue maintenance) the status is `closed`, never `stale`; crypto is 24/7
 - Connection-level signals (socket closed, venue heartbeat missed, `feed_status=disconnected`) mark the stream `stale` immediately for every threshold, without waiting for the age to cross
 - Reaction SLO: `stale` published ≤ 250 ms p99 after the threshold is crossed (deadline timers from P1-T030); metrics `mt_dq_stale_reaction_seconds` (publish time − (last receive + threshold), histogram) and `mt_dq_data_age_seconds{venue,symbol}`
 - SLO alert: reaction p99 > 250 ms over 1 h → `alert.warning.slo_stale` (window configurable)
@@ -123,3 +123,4 @@ The DQ monitor measures **data age** per instrument stream (now on the workstati
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (rewritten for data age = now − our receive time, per-bot thresholds 2 s/60 s, closed sessions, ≤ 250 ms p99 reaction (P1-B001, R1.17))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (check implemented in Rust `mt-monitor` (module `dq::stale`); tools cargo; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (session source is the `market.session_calendar` table read by `mt-monitor`)

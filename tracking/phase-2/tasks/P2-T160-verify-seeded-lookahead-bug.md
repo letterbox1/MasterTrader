@@ -15,7 +15,7 @@ requirements: [R2.43]
 roadmap_todos: [T2.64]
 modules: [M7]
 dashboards: [D04]
-tools: [uv, docker]
+tools: [cargo, uv, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ Evidence that a strategy with a deliberately planted look-ahead bug is blocked t
 
 ## ToDo
 
-- [ ] Add seeded fixtures under `tests/fixtures/strategies/seeded_lookahead_*`
+- [ ] Add seeded fixtures under `tests/fixtures/strategies/seeded_lookahead_*` (Rust strategy crates, plus one Python research strategy run through the binding)
 - [ ] Run suite; capture reports
 - [ ] Assert lifecycle refusal via part A's promote path
 - [ ] Record evidence in the progress log
@@ -61,7 +61,7 @@ Evidence that a strategy with a deliberately planted look-ahead bug is blocked t
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k seeded_lookahead`.
+- Commands: `cargo test -p mt-lab-core seeded_lookahead -- --ignored`, `uv run pytest packages/mt_research -k seeded_lookahead` (binding path).
 - Integration (CI, recorded LLM): three seeded variants fail, clean passes.
 - Manual: one live-gateway run with spend logged.
 
@@ -103,3 +103,4 @@ Evidence that a strategy with a deliberately planted look-ahead bug is blocked t
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [nats, postgres] → [nats, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (seeded bug caught by the clean-room Rust analysers (`mt-lab-core`) and the leakage review; commands → `cargo test` (+ binding path in `mt_research`); same cases; tools [uv, docker] → [cargo, uv, docker])

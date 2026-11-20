@@ -15,7 +15,7 @@ requirements: [R6.06]
 roadmap_todos: [T6.23]
 modules: [M7, M0, M21]
 dashboards: [D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ The lab enforces gate §8 item 4: any strategy whose inputs include an LLM (M8 S
 
 ## ToDo
 
-- [ ] Lineage resolver in `mt_lab.gates.llm_cutoff`.
+- [ ] Lineage resolver in `mt-lab-core` (`crates/mt-lab-core/src/gates/llm_cutoff.rs`).
 - [ ] Gate wiring into the P2 gate runner.
 - [ ] Seed cutoffs for configured gateway models (from provider docs; marked (U) if unverified).
 - [ ] Tests; docs.
@@ -66,6 +66,7 @@ The lab enforces gate §8 item 4: any strategy whose inputs include an LLM (M8 S
 ## Verification
 
 ### Tests
+- `cargo test -p mt-lab-core llm_cutoff` and `cargo clippy`.
 - Unit: lineage with nested models; max cutoff; unknown cutoff fails closed.
 - Integration: an LLM-signal strategy with a window starting before cutoff is rejected; after cutoff+embargo is accepted.
 
@@ -111,3 +112,4 @@ The lab enforces gate §8 item 4: any strategy whose inputs include an LLM (M8 S
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (embargo/min-OOS as gate-profile settings (16 §2.4, loosen C3); dep P2-T114; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (post-cutoff gate in the Rust `mt-lab-core` harness; tools cargo)

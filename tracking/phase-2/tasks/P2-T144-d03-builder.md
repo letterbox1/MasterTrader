@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/roadmap/phase-2-strategies
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`/strategies/new` lets you create a strategy three ways — template + `ParamForm`, code (manifest + class skeleton in `CodeEditor`), or 'describe it' via the sandboxed generator — with the common sections (universe, data subscriptions, features, decision, sizing, risk policy, schedule, review) and saves as `draft` via `strategy.create`.
+`/strategies/new` lets you create a strategy three ways — template + `ParamForm`, code (manifest + Rust strategy crate skeleton in `CodeEditor`; saved code is compiled, tested and checked by the never-build validator and bias analysers in the sandbox runner (P2-T116) before it's registered), or 'describe it' via the sandboxed generator — with the common sections (universe, data subscriptions, features, decision, sizing, risk policy, schedule, review) and saves as `draft` via `strategy.create`.
 
 ## Context & references
 
@@ -115,3 +115,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (template list per 17 §D P2-B054; registry/validator deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; `pnpm test`/`pnpm playwright` commands; CI line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H ('from code' means a Rust strategy crate, compiled and checked in the sandbox before registration; the generator emits Rust)

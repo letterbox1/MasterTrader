@@ -10,7 +10,7 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T068, P7-T014, P6-T075]
+depends_on: [P7-T068, P7-T014, P6-T075, P6-T050]
 requirements: [R7.16]
 roadmap_todos: [T7.66]
 modules: [M11, M7]
@@ -110,3 +110,4 @@ Before any money is funded (P7-T057), each bot going live is replayed through th
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.16/T7.66: stress replay before the first funding at the per-bot starting allocation, results attached to the gate report)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
 - 2026-11-20 00:00 · aligner · Rust-max per 17 §H (R7.03/R7.16/T7.66: simulated `mt-crowdsim` scenarios from the twin run alongside the four historical shocks (+P6-T075), reported, not gating; title; tools uv → cargo)
+- 2026-11-20 00:00 · main · depends on P6-T050 (scenario simulator / weekly twin run) per 17 §H.

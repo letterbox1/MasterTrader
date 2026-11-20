@@ -15,7 +15,7 @@ requirements: [R6.06]
 roadmap_todos: [T6.69]
 modules: [M0, M7]
 dashboards: [D03, D10]
-tools: [git, uv, python>=3.12, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-6-ai-
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ A sample LLM-signal strategy is run through the full gate set; the cutoff gate r
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (maps to new T6.69; modes paper/hitl/autonomous (17 §B); run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services `postgres` → `supabase-postgres`; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (gate under test is in the Rust `mt-lab-core`; tools cargo)

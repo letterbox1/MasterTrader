@@ -10,7 +10,7 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P6-T020, P2-T046]
+depends_on: [P6-T020, P2-T046, P1-T077]
 requirements: [R6.10]
 roadmap_todos: [T6.24]
 modules: [M21, M7]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, third_party/LICENSES.md, docs/roadm
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_models.tierb.train` fine-tunes **Qwen3-0.6B or 1.7B** (dense, ONNX-exportable) with LoRA (rank 8–64) and a classification head (`Qwen3ForSequenceClassification` + PEFT `SEQ_CLS`, `modules_to_save=["score"]`), or a Clef-style joint schema head, using CE + λ·Brier, logged to MLflow.
+`mt_research.tierb.train` (Python, training side, 18 §2.2) fine-tunes **Qwen3-0.6B or 1.7B** (dense, ONNX-exportable) with LoRA (rank 8–64) and a classification head (`Qwen3ForSequenceClassification` + PEFT `SEQ_CLS`, `modules_to_save=["score"]`), or a Clef-style joint schema head, using CE + λ·Brier, logged to MLflow.
 
 ## Context & references
 
@@ -61,7 +61,7 @@ review_result: ""
 - [ ] Trainer module + config schema (`configs/tierb/<question>.yaml`).
 - [ ] Joint-schema-head variant (adapted from the clef-finetune pattern; licence checked; never run on real Clef weights).
 - [ ] Optuna study + MLflow logging (metrics per fold: log-loss, Brier, accuracy).
-- [ ] Prefect task wrapper for use by P6-T031/P6-T032.
+- [ ] `mt-scheduler` job definition (container/subprocess) for use by P6-T031/P6-T032.
 - [ ] Tests; docs.
 
 ## Verification
@@ -114,3 +114,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase dep P2-T046; run fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (GPU precondition removed: `models.gpu_profile: auto` (GPU when detected, CPU otherwise); no nvidia-smi/gpu requirement)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (trainer in `mt_research`; run as an `mt-scheduler` job instead of a Prefect task)
