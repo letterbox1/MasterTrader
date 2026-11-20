@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/runbooks/rss-bridge.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-An `rss-bridge` container, pinned by digest, runs only on the `scrape` network with an explicit `enabled_bridges[]` whitelist, HTTP auth on, a 15-min–3-h cache, and no route to Postgres, NATS core or the signer. `ingest-text` reads it with `?format=Json`.
+An `rss-bridge` container, pinned by digest, runs only on the `scrape` network with an explicit `enabled_bridges[]` whitelist, HTTP auth on, a 15-min–3-h cache, and no route to Postgres, NATS core or the signer. The `ingest-text` services read it with `?format=Json`: the Rust `mt-feeds` client (P4-T012) for sites, and `mt-telegram-reader` for the Telegram bridge only (P4-T019).
 
 ## Context & references
 
@@ -48,8 +48,8 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 
 ## Requirements
 
-- `services/rss-bridge/config.ini.php`: `enabled_bridges[]` limited to the whitelist (e.g. `CssSelectorBridge`, `XPathBridge`, `TelegramBridge` (fallback only; its output goes only to the posture extractor, P4-T019, never to `nlp`), `MastodonBridge`, `FilterBridge`, `MrssBridge`) plus any bridge P4-T012 requests; everything else off.
-- Auth on (`[authentication] enable = true`), credentials from secrets; `ingest-text` is the only client.
+- `services/rss-bridge/config.ini.php`: `enabled_bridges[]` limited to the whitelist (e.g. `CssSelectorBridge`, `XPathBridge`, `TelegramBridge` (fallback only; its output goes only to the posture extractor, P4-T019, never to `mt-feeds` or `nlp`), `MastodonBridge`, `FilterBridge`, `MrssBridge`) plus any bridge P4-T012 requests; everything else off.
+- Auth on (`[authentication] enable = true`), credentials from secrets; `mt-feeds` and `mt-telegram-reader` are the only clients.
 - Cache 15 min minimum per bridge (context only, not latency signals); max 3 h.
 - Container: read-only root FS, non-root user, no published ports, `scrape` network only, egress allowed to the internet; memory limit 256 MB.
 - No Reddit bridge (Reddit RSS ends 2026-11-13).
@@ -80,7 +80,7 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 - [ ] Image pinned by digest; trivy/grype clean of criticals
 - [ ] Isolation test passes (no DB/signer route)
 - [ ] Whitelist + auth + cache verified by integration tests
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`docker compose config`, trivy image scan, network test, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -111,3 +111,4 @@ An `rss-bridge` container, pinned by digest, runs only on the `scrape` network w
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on (P0-T020/T021/T022); TelegramBridge output limited to the posture extractor (17 §A P4-B001))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (rss-bridge added to the workstation compose file under `infra/`; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (clients named: Rust `mt-feeds` for sites, `mt-telegram-reader` for the Telegram bridge; CI line without Python tools)

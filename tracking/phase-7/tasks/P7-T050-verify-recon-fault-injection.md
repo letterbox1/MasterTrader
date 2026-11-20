@@ -15,7 +15,7 @@ requirements: [R7.09]
 roadmap_todos: [T7.23]
 modules: [M16, M12, M18]
 dashboards: [D07, D05]
-tools: [git, uv, docker, toxiproxy]
+tools: [git, cargo, docker, toxiproxy]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ A fault-injection suite proves the three-way reconciliation and unconfirmed-stat
 ## ToDo
 
 - [ ] Fault injector (toxiproxy for network, venue mock for 5xx/partial fills).
-- [ ] Cases in `tests/sim/test_recon_faults.py`.
+- [ ] Cases in `crates/mt-monitor/tests/sim_recon_faults.rs` (`cargo test -p mt-monitor --test sim_recon_faults`).
 - [ ] Generate and attach the recon report.
 
 ## Verification
@@ -99,3 +99,4 @@ A fault-injection suite proves the three-way reconciliation and unconfirmed-stat
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cadence and 24 h rule per 16 §2.9; tunnel-down fault)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (recon fault cases as a Rust integration test (same cases); tools uv → cargo)

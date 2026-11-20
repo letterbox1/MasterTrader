@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, nats, prefect-server]
+services: [supabase-postgres, nats]
 branch: p0/P0-T034-mt-api-command-bus
 pr: ""
 doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,12 +56,12 @@ review_result: ""
 - Audit: `accepted` row written **before** the handler runs (if it fails to write → 503, handler never runs); terminal row (`applied|failed|rejected`) after; `source` from the authenticated principal (`web` = a Supabase Auth `aal2` JWT, `telegram` = a command session, `mcp` = a scoped token, `system` for internal; P0-T033).
 - Args redaction before audit; `args_hash` = sha256 of canonical args (unredacted) for idempotency comparison.
 - Every command publishes `audit.command.{status}` on NATS for the WS `notifications`/`system` topics.
-- Handler timeout default 10 s; long jobs return `202` with a job id and finish via Prefect.
+- Handler timeout default 10 s; long jobs return `202` with a job id. In P0 the only long handler, `audit.verify`, runs as a background task inside `mt-api` (the verifier is the linked `mt-obs` crate, P0-T038) and records its run in `audit.verify_run`. `system.backup.run` and `system.restore.test` are registered with their levels but answer `503` problem+json `job_runner_unavailable` (naming the `just backup-now` / `just restore-test` recipe) until P1-T077 wires them to `mt-scheduler` jobs; there is no Prefect (17 §H).
 
 ## ToDo
 
 - [ ] Implement registry, endpoint, idempotency store, audit integration and NATS publish.
-- [ ] Register the P0 commands with stub/real handlers (kill → NATS KV `kill`; backup/restore → Prefect deployment run; verify → P0-T038).
+- [ ] Register the P0 commands with stub/real handlers (kill → NATS KV `kill`; verify → P0-T038, in-process; backup/restore → `job_runner_unavailable` stub until `mt-scheduler`, P1-T077).
 - [ ] Add `GET /audit/log` basic query (paged) used by D16 (filters in P0-T046).
 - [ ] Tests below.
 
@@ -116,3 +116,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (settings levels per 02 §7.2, restart via docker-proxy (17 §D P0-B012), audit.integrity.ack registered, Kill recorded via JetStream buffer, command-bus SLO; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust command registry (trait/macro with serde + utoipa schemas) replaces the Python decorator; principal from the Supabase JWT / command session)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect removed: `audit.verify` runs in-process in `mt-api`; `system.backup.run`/`system.restore.test` are registered with a `job_runner_unavailable` stub until P1-T077 wires them to `mt-scheduler` jobs)

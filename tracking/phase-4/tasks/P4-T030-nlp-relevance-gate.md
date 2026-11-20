@@ -15,7 +15,7 @@ requirements: [R4.06, R4.12, R4.N2]
 roadmap_todos: [T4.23, T4.28]
 modules: [M2, M21]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats, supabase-postgres, decision-svc]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `nlp` pipeline asks `relevance{yes,no}` ("is this about a tradable instrument or macro event in my universe?") before FinBERT/embeddings, keeps only documents above the gate threshold for scoring and RAG, enforces per-source caps, and tracks each source's **relevance hit-rate** for D08 Sources and source tuning.
+The `nlp` pipeline (Rust `mt-nlp`, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) asks `relevance{yes,no}` ("is this about a tradable instrument or macro event in my universe?") before FinBERT/embeddings, keeps only documents above the gate threshold for scoring and RAG, enforces per-source caps, and tracks each source's **relevance hit-rate** for D08 Sources and source tuning.
 
 ## Context & references
 
@@ -60,7 +60,7 @@ The `nlp` pipeline asks `relevance{yes,no}` ("is this about a tradable instrumen
 
 - [ ] Gate stage + pre-filter.
 - [ ] Caps + overflow accounting.
-- [ ] Hit-rate aggregation job.
+- [ ] Hit-rate aggregation job (`mt-scheduler` job).
 - [ ] Fallback mode.
 - [ ] Tests.
 
@@ -82,7 +82,7 @@ The `nlp` pipeline asks `relevance{yes,no}` ("is this about a tradable instrumen
 
 - [ ] Gate active; hit-rate visible per source
 - [ ] Fallback mode tested
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-nlp`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ The `nlp` pipeline asks `relevance{yes,no}` ("is this about a tradable instrumen
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (R4.N2 latency target + queued/off order path (17 §A P4-B010); defaults made configurable and linked to 16 §2.10)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (gate stage in Rust `mt-nlp`; hit-rate job on `mt-scheduler`; tools uv → cargo)

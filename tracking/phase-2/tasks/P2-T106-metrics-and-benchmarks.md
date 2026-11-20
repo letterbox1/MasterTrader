@@ -15,7 +15,7 @@ requirements: [R2.40, R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04, D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A single `mt_lab.metrics` module that turns any result into the D04 Summary metrics plus a benchmark series for the strategy's asset class, so 'beats the passive alternative after costs' is computed the same way everywhere.
+A single `mt_lab_core::metrics` module (Rust; the same code serves notebooks through the binding) that turns any result into the D04 Summary metrics plus a benchmark series for the strategy's asset class, so 'beats the passive alternative after costs' is computed the same way everywhere.
 
 ## Context & references
 
@@ -56,8 +56,8 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 
 ## ToDo
 
-- [ ] Implement `mt_lab/metrics.py` with the metric set and stated annualisation
-- [ ] Implement `mt_lab/benchmarks.py` with the six benchmark builders using P2-T103 datasets
+- [ ] Implement `crates/mt-lab-core/src/metrics.rs` with the metric set and stated annualisation
+- [ ] Implement `crates/mt-lab-core/src/benchmarks.rs` with the six benchmark builders using P2-T103 datasets
 - [ ] Persist metrics JSON + series artefacts (Parquet) linked to the backtest row and MLflow (P2-T107)
 - [ ] Golden tests vs hand-computed values
 - [ ] Doc benchmark definitions in 14 §1
@@ -65,7 +65,7 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k metrics`.
+- Commands: `cargo test -p mt-lab-core metrics`, `cargo clippy -p mt-lab-core`.
 - Golden: metrics on a fixture equity curve equal hand-computed values to 1e-9.
 - Unit: Sharpe of a zero-variance series returns NaN with a reason, not inf.
 - Unit: benchmark series for BTC hold matches the dataset close series.
@@ -81,7 +81,7 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 
 - [ ] All D04 Summary metrics produced for screener and truth results
 - [ ] Benchmarks selectable and defaulting from the manifest
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -91,7 +91,7 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 ## Cardinal rules (do NOT)
 
 - Do NOT annualise Sharpe before passing it to deflated Sharpe (it needs per-period values).
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT add paid data/APIs or services; free tiers and self-hosted components only (03 §1).
 - Do NOT skip, weaken or delete a test to get green.
 
@@ -111,3 +111,4 @@ A single `mt_lab.metrics` module that turns any result into the D04 Summary metr
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_lab.metrics`/`benchmarks` → `mt-lab-core` (Rust); same golden cases (1e-9) under `cargo test`; tools [uv] → [cargo])

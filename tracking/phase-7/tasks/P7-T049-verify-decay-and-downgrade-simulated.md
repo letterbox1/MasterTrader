@@ -15,7 +15,7 @@ requirements: [R7.07, R7.08]
 roadmap_todos: [T7.22, T7.61]
 modules: [M11, M16]
 dashboards: [D03, D06]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/15-bots-hitl-and-wo
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ Injected performance decay triggers the rolling-stat and CUSUM alerts, the daily
 ## ToDo
 
 - [ ] Synthetic trade-stream generator with controllable drift.
-- [ ] Implement the cases in `tests/sim/test_decay.py`.
+- [ ] Implement the cases in `crates/mt-monitor/tests/sim_decay.rs` (`cargo test -p mt-monitor --test sim_decay`).
 - [ ] Observed run with two autonomous paper bots; record evidence.
 - [ ] File bugs for deviations.
 
@@ -100,3 +100,4 @@ Injected performance decay triggers the rolling-stat and CUSUM alerts, the daily
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cases per 16 §2.6 incl. 5 losses and the 26-week window; the health check halts the bot)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (decay/downgrade sims as a Rust integration test (same cases); tools uv → cargo)

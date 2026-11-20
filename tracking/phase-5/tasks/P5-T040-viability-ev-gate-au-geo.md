@@ -15,7 +15,7 @@ requirements: [R5.14]
 roadmap_todos: [T5.27]
 modules: [M4]
 dashboards: [D12]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Each risk-passed opportunity gets a viability score (opportunity strength, cost 
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/score/viability.py` and `ev.py` with config `config/airdrop_ev.yaml`.
+- [ ] Implement `crates/mt-airdrop/src/score/` (`viability`, `ev`, `rust_decimal`) with config `config/airdrop_ev.yaml` (`cargo test -p mt-airdrop score`).
 - [ ] Geo/KYC parser: terms-page keywords + CryptoRank/launchpad restricted-country fields; unknown → flagged.
 - [ ] Write `opportunity_score` rows with breakdown; tests; doc sync.
 
@@ -105,3 +105,4 @@ Each risk-passed opportunity gets a viability score (opportunity strength, cost 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (EV hurdle default 5% p.a. from settings per 16 §2.7/P5-B012)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (viability and EV in Rust `crates/mt-airdrop/src/score/`; tools uv → cargo)

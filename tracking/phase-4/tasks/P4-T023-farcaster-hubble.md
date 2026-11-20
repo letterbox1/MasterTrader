@@ -15,7 +15,7 @@ requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git, docker]
+tools: [cargo, git, docker]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub endpoint if disk is tight) syncs casts, and `mt_data.text.farcaster` subscribes to its event stream, filtering casts on cashtags/keywords/channels into `raw.text.farcaster` (useful for crypto launch chatter feeding P5).
+A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub endpoint if disk is tight) syncs casts, and the Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) subscribes to its event stream, filtering casts on cashtags/keywords/channels into `raw.text.farcaster` (useful for crypto launch chatter feeding P5).
 
 ## Context & references
 
@@ -74,7 +74,7 @@ A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub 
 
 - [ ] Hubble synced; filtered casts ingesting for 24 h
 - [ ] Disk alert tested
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `docker compose config`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ A self-hosted Farcaster **Hubble** node (digest-pinned container, or a free hub 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T008 dependency (Hubble container on the scrape network))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Hubble subscriber in Rust `mt-feeds`; Hubble runs unmodified; tools uv → cargo)

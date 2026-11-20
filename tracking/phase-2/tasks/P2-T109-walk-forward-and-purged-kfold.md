@@ -15,7 +15,7 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04, D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_lab.validation.wf` and `.purged_kfold` produce out-of-sample fold results judged on the share of positive folds and the worst fold (never the average), using purging and an embargo so no label overlaps leak across folds.
+`mt_lab_core::validation::wf` and `::purged_kfold` (Rust) produce out-of-sample fold results judged on the share of positive folds and the worst fold (never the average), using purging and an embargo so no label overlaps leak across folds.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ review_result: ""
 
 ## Requirements
 
-- Walk-forward: anchored and rolling modes; configurable train/test lengths (defaults: 24 months train / 3 months test for daily/4h strategies; scaled by bar spec); re-optimisation per fold optional (Optuna inside the train window only).
+- Walk-forward: anchored and rolling modes; configurable train/test lengths (defaults: 24 months train / 3 months test for daily/4h strategies; scaled by bar spec); re-optimisation per fold optional (driven from `mt_research` with Optuna inside the train window only, calling these fold generators through the binding).
 - Outputs per fold: OOS return, Sharpe, max DD, trade count, after measured costs; summary: share of positive folds, worst-fold Sharpe/return/drawdown, fold dispersion; the worst-fold comparison uses the strategy's sleeve halt drawdown from the layered policy, never a constant.
 - Purged K-fold (López de Prado): K default 5, purge observations whose label horizon overlaps the test fold, embargo default 1% of observations after each test fold.
 - Fold boundaries align to bar closes (P2-T103 convention); each fold's data hash recorded.
@@ -57,7 +57,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement fold generators (anchored, rolling, purged K-fold with embargo) in `mt_lab/validation/folds.py`
+- [ ] Implement fold generators (anchored, rolling, purged K-fold with embargo) in `crates/mt-lab-core/src/validation/folds.rs`
 - [ ] Implement fold executor that runs truth backtests per fold via `JobRunner` sub-jobs (parallel up to the job's worker cap)
 - [ ] Compute summary (positive share, worst fold) and persist to `strategy.experiment` + MLflow
 - [ ] Known-answer tests incl. a leakage fixture
@@ -66,7 +66,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k folds`.
+- Commands: `cargo test -p mt-lab-core folds`, `cargo clippy -p mt-lab-core`.
 - Unit: purged K-fold drops exactly the overlapping observations on a synthetic label-horizon fixture; embargo size correct.
 - Unit: worst fold equals min over folds; positive share counts folds with OOS return > 0 after costs.
 - Integration: walk-forward of an EMA template over a 3-year fixture produces N folds with stored data hashes.
@@ -83,7 +83,7 @@ review_result: ""
 
 - [ ] Fold summaries expose share of positive folds and worst fold
 - [ ] Purge/embargo leakage test passes
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -94,7 +94,7 @@ review_result: ""
 
 - Do NOT judge walk-forward on the mean fold.
 - Do NOT optimise on test-fold data.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -113,3 +113,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (walk-forward gate default from 16 §2.4 (≥ 60% positive, worst fold ≥ −sleeve halt DD))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (walk-forward/purged K-fold → `mt-lab-core` (Rust); per-fold Optuna stays in `mt_research` via the binding; same tests; tools [uv] → [cargo])

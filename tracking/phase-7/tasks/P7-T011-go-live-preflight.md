@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D16-system.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,7 +61,7 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 - [ ] Paper/HITL-period calculator (weeks and trades per the gate profile) reading `strategy.run`/`audit.fill` with gap detection.
 - [ ] Hook preflight into the commands listed; problem+json `preflight_failed` with failing checks.
 - [ ] Query `/system/preflight?strategy=&venue=`; D16 'Go-live preflight' card; D03 Gates tab shows the same rows.
-- [ ] **Settings pack** (D16 card + `mt preflight --pack`): every effective L0–L3 value, sleeve and manifest, each with its default and changes since seed; the pack also lists the other seeded values when present (P1-T001 universe, P1-T066 DQ thresholds, P4-T003 keywords/feeds, P5-T007 disposal rule and EV hurdle, P5-T065 wallet/signer/gas limits, P6-T001 LLM budgets, P6-T003 optional modules, P6-T033 treasury policy); command `ops.golive_pack.approve` (C3) writes a WORM approval row naming the policy and manifest versions; check (8) "settings pack approved" reads that row and fails on any loosening since
+- [ ] **Settings pack** (D16 card + `mt preflight --pack`): every effective L0–L3 value, sleeve and manifest, each with its default and changes since seed; the pack also lists the other seeded values when present (P1-T001 universe, P1-T066 DQ thresholds, P4-T003 keywords/feeds, P5-T007 disposal rule and EV hurdle, P5-T065 wallet/signer/gas limits, P6-T001 LLM budgets, P6-T003 optional modules, P6-T033 treasury policy, the `crowdsim.*` settings seeded from 16 §2.14b); command `ops.golive_pack.approve` (C3) writes a WORM approval row naming the policy and manifest versions; check (8) "settings pack approved" reads that row and fails on any loosening since
 - [ ] CLI `mt preflight --strategy <id>` for drills and the exit demo.
 - [ ] Tests; docs.
 
@@ -119,3 +119,4 @@ A single preflight (`/system/preflight`, D16 card, `mt preflight` CLI) evaluates
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper/HITL period per the 16 §2.4 gate profile; wallet-drained drill only if a hot/burner wallet exists (P7-B011); egress check (16 §3.2); deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (preflight in Rust `crates/mt-risk/src/preflight/`; checks for the go-live pack (`ops.golive_pack.approve`, C3), the YubiKey identity store and the shift's verification run; egress IP may be the runtime host's; tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (settings pack also lists the seeded `crowdsim.*` values (16 §2.14b); the scenario twin is not a preflight check (not a gate))

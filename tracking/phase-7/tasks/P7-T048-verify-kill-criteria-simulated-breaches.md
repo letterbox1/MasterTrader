@@ -15,7 +15,7 @@ requirements: [R7.06]
 roadmap_todos: [T7.61]
 modules: [M11, M16]
 dashboards: [D06]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, nats, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ Each kill criterion is breached in simulation (paper venues + injected data) and
 
 - Cases: shortfall 1.6× (warning → week not clean, allocation back one step); shortfall > 2× (sleeve halt → starting allocation after review); sleeve 60-trade Sharpe < p5 (sleeve halt); recon unexplained 24 h (all); system drawdown stage 1 at 10% (no new entries anywhere, exits continue); stage 2 at 25% (flatten + 30-day lock); second stage-2 event (programme ended).
 - For each: halt scope correct, other sleeves unaffected (sleeve cases), cancels < 1 s, critical alert on 3 channels, WORM rows present, restart refused without C3/conditions.
-- Runs as an automated suite `tests/sim/test_kill_criteria.py` against paper venues with clock and data injection, plus one manual run you observe on the phone.
+- Runs as an automated Rust suite `crates/mt-risk/tests/sim_kill_criteria.rs` (`cargo test -p mt-risk --test sim_kill_criteria`) against paper venues with clock and data injection, plus one manual run you observe on the phone.
 
 ## ToDo
 
@@ -105,3 +105,4 @@ Each kill criterion is breached in simulation (paper venues + injected data) and
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cases per the 16 §2.1 two-stage system drawdown and 16 §2.5 step-down; memecoin cases moved to P7-T021 (P5 dep))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (kill-criteria sim suite as a Rust integration test (same 7 cases); tools uv → cargo)

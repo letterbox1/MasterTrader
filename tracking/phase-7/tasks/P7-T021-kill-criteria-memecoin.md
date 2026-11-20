@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,7 +67,7 @@ The memecoin sleeve has its four kill criteria implemented on the P7-T020 framew
 - `cargo test -p mt-risk kill_criteria::memecoin` and `cargo clippy`.
 - Unit: each criterion at boundary values (30.0% vs 30.1%; 199 vs 200 trades; 5/100 vs 6/100; loss 0.99% vs 1.01%).
 - Integration: injected rug labels breach the sleeve and halt only memecoin bots.
-- Sim (`tests/sim/test_kill_memecoin.py`): the four criteria breached on paper venues with injected fills and rug labels; scope, alerts, WORM rows and C3 restart gating asserted (the memecoin half of R7.06's simulated breach).
+- Sim (`crates/mt-risk/tests/sim_kill_memecoin.rs`, `cargo test -p mt-risk --test sim_kill_memecoin`): the four criteria breached on paper venues with injected fills and rug labels; scope, alerts, WORM rows and C3 restart gating asserted (the memecoin half of R7.06's simulated breach).
 
 ### Scenarios
 - Given one trade loses 1.2% of total equity, then the memecoin sleeve halts immediately even though sleeve DD is 8%.
@@ -108,3 +108,4 @@ The memecoin sleeve has its four kill criteria implemented on the P7-T020 framew
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on P5-T036 rug labels per 17 §D P7-B011; memecoin simulated breaches moved here from P7-T048; settings per 14 §7/16 §2.1)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (memecoin kill criteria in Rust `mt-risk`; tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (memecoin sim suite as a Rust integration test (same cases))

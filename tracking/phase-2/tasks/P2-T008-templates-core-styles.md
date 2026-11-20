@@ -15,7 +15,7 @@ requirements: [R2.02, R2.03]
 roadmap_todos: [T2.21]
 modules: [M0]
 dashboards: [D03]
-tools: [uv, cargo]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roa
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (vol-targeted), mean reversion, breakout and swing/position exist under `packages/mt_strategy/templates/` (Python), with Rust versions of the deterministic ones (EMA/MA crossover, trend on majors, mean reversion, breakout) under `crates/mt-engine/src/strategy/templates/` sharing the same manifest and parameter schema, each with a parameter schema that drives the UI `ParamForm` and Optuna.
+Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (vol-targeted), mean reversion, breakout and swing/position exist as **Rust** templates under `crates/mt-engine/src/strategy/templates/` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)), each with a manifest and a parameter schema that drives the UI `ParamForm` and Optuna.
 
 ## Context & references
 
@@ -67,7 +67,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_strategy/templates`, `cargo test -p mt-engine templates`.
+- Commands: `cargo test -p mt-engine templates`, `cargo clippy -p mt-engine`.
 - Template tests: each creates a valid manifest and runs a backtest to completion on fixture data (D03 acceptance 1).
 - Unit: regime filter (trend long only above slow MA) blocks entries below it.
 - Unit: exit plan present on every emitted intent.
@@ -85,7 +85,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 - [ ] 7 templates with schemas and READMEs
 - [ ] Each passes the template test
 - [ ] Evidence and priority visible via `/strategies/templates`
-- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -117,3 +117,4 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (horizon class proposes 16 §2.2/§2.3/§2.8 defaults (deadline, stale class, TTL, event_sensitive))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; Rust versions of the deterministic templates; tools [uv] → [uv, cargo])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (all 7 templates are Rust in `crates/mt-engine/src/strategy/templates/` (no Python template copies); `uv run pytest` dropped, same template test cases under `cargo test`; tools [uv, cargo] → [cargo])

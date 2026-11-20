@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, minio, prefect-server]
+services: [supabase-postgres, minio]
 branch: p0/P0-T040-monthly-immutable-worm-export
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-On the 1st of each month the `mt-obs export` job (Rust, `arrow-rs`/`parquet`; scheduled by Prefect or pg_cron) exports every WORM table's previous-month rows to Parquet with a manifest (row counts, first/last seq, per-file SHA-256, the month's seal roots) and uploads both to the Object-Locked `mt-worm-seal` bucket with ≥ 7-year retention.
+On the 1st of each month the `mt-obs export` job (Rust, `arrow-rs`/`parquet`; scheduled by a host timer in P0, `infra/timers/` from P0-T037; P1-T077 moves it onto `mt-scheduler`, roadmap T1.35) exports every WORM table's previous-month rows to Parquet with a manifest (row counts, first/last seq, per-file SHA-256, the month's seal roots) and uploads both to the Object-Locked `mt-worm-seal` bucket with ≥ 7-year retention.
 
 ## Context & references
 
@@ -53,13 +53,13 @@ On the 1st of each month the `mt-obs export` job (Rust, `arrow-rs`/`parquet`; sc
 - Parquet schema mirrors the table incl. chain columns; `numeric` as decimal128 or string (no float), timestamps µs UTC.
 - Upload with compliance retention 2557 days; verify by re-download hash.
 - A `verify-export` mode recomputes the chain from Parquet alone and checks the manifest + seal roots (used by P0-T055 and auditors).
-- Export reads via `mt_flows_rw` with a consistent snapshot (`REPEATABLE READ`).
+- Export reads via `mt_jobs_rw` with a consistent snapshot (`REPEATABLE READ`).
 
 ## ToDo
 
 - [ ] Implement `mt-obs export` + manifest + upload (reusing the `AnchorStore` trait from P0-T037).
 - [ ] Implement `mt-obs verify-export`.
-- [ ] Schedule monthly at 01:30 UTC on the 1st.
+- [ ] Add `just worm-export` and schedule it monthly at 01:30 UTC on the 1st with the host timer `mt-worm-export` (time from settings).
 - [ ] Tests below.
 
 ## Verification
@@ -76,7 +76,7 @@ On the 1st of each month the `mt-obs export` job (Rust, `arrow-rs`/`parquet`; sc
 
 ## Acceptance criteria
 
-- [ ] Monthly export flow scheduled and run once on fixture data
+- [ ] Monthly export job scheduled and run once on fixture data
 - [ ] Manifest + Parquet locked for 7 years
 - [ ] `verify-export` detects tampering
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
@@ -109,3 +109,4 @@ On the 1st of each month the `mt-obs export` job (Rust, `arrow-rs`/`parquet`; sc
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: MinIO in CI/dev, real anchoring checked in the soak P0-T063; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (export is a Rust `mt-obs` job writing Parquet with arrow-rs; Prefect/pg_cron only schedule it)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect/pg_cron replaced by a host timer in P0 (pg_cron can't upload to object storage); P1-T077 moves it onto `mt-scheduler` (T1.35); role `mt_jobs_rw`)

@@ -15,7 +15,7 @@ requirements: [R7.14, R7.11]
 roadmap_todos: [T7.42]
 modules: [M16, M12, M17]
 dashboards: [D16, D06]
-tools: [git, docker, tailscale, wireguard-tools, uv]
+tools: [git, docker, tailscale, wireguard-tools, cargo]
 mcp: []
 env: []
 services: [tailscale, egress exit-node VM (P7-T065), monitor, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md, docs/ui/dashbo
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -123,3 +123,4 @@ All exchange traffic (engine, `deadman` sidecar, monitor reconciliation, `ib-gat
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.14/T7.42: exit-node tunnel on both links, no-leak routing, egress check on the static IP, 16 §3.1–3.2)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (conditional: not needed if P7-T071 picks a static-IP Sydney VM as the runtime host (state it, not cancelled); the host → the runtime host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (heartbeat publisher and egress check are Rust; tools uv → cargo)

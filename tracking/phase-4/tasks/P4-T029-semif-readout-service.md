@@ -15,7 +15,7 @@ requirements: [R4.12, R4.N2]
 roadmap_todos: [T4.28]
 modules: [M21]
 dashboards: [D01, D02, D08]
-tools: [uv, git, docker]
+tools: [cargo, git, docker]
 mcp: []
 env: []
 services: [decision-svc, nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`decision-svc` answers registry questions by reading **option-token logits** from Qwen3.5-4B (SemIf pattern, no text generation): it consumes `text.doc.new` and `models.tierb.ask`, returns normalised option probabilities, publishes `dec.tierb.{question}.{subject}`, updates KV `tierb_scores`, and logs every decision with `prompt_hash`, `model_revision`, `question_version` under the determinism controls.
+`decision-svc` (the tier-B service of the Rust `mt-models` crate, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) answers registry questions by reading **option-token logits** over HTTP from Qwen3.5-4B on the P4-T009 server (SemIf pattern, no text generation): it consumes `text.doc.new` and `models.tierb.ask`, returns normalised option probabilities, publishes `dec.tierb.{question}.{subject}`, updates KV `tierb_scores`, and logs every decision with `prompt_hash`, `model_revision`, `question_version` under the determinism controls.
 
 ## Context & references
 
@@ -62,7 +62,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Readout core (`mt_models.tierb.semif`) + option-token validator.
+- [ ] Readout core (`mt_models::tierb::semif`, Rust) + option-token validator.
 - [ ] Consumers for `text.doc.new` and `models.tierb.ask`; publisher + KV writer.
 - [ ] Audit writer to `audit.tierb_decision`.
 - [ ] Load-shedding + CPU-mode policy.
@@ -94,7 +94,7 @@ review_result: ""
 - [ ] Determinism logging present on 100% of decisions
 - [ ] Flip-rate probe reported in metrics (target ≤ 0.1%, 16 §2.10)
 - [ ] Offline shared-prefix scores never reach decisions, KV or backtests (test)
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -128,3 +128,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (P4-B010 decision: prefix caching off, shared-prefix offline-only + non-deterministic tag; R4.N2 latency target and queueing; 16 §2.10 thresholds)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (readout service in Rust `mt-models` calling the unmodified vLLM/llama-server; tools uv → cargo)

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/ui/dashboards/D06-risk.md, docs/ui/d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,7 +63,7 @@ Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock 
 
 - [ ] `/risk/kill-criteria` endpoint + OpenAPI schema; `/risk/state` lock fields.
 - [ ] `/risk/capital-steps` read model wiring (from P7-T018 tables) + OpenAPI.
-- [ ] Contract test suite `tests/api/test_phase7_catalogue.py` covering all Phase 7 queries/commands and their confirmation levels.
+- [ ] Contract test suite as a Rust integration test `crates/mt-api/tests/phase7_catalogue.rs` (`cargo test -p mt-api --test phase7_catalogue`) covering all Phase 7 queries/commands and their confirmation levels.
 - [ ] D06 Live tab route and panels, composing `CapitalStepCard` (P7-T019) and the kill-criteria panel (P7-T020).
 - [ ] D03 Go-live tab (starting allocation setting via `risk.policy.update` on L4, step, kill criteria, review link, preflight).
 - [ ] Playwright for both tabs on the §6.8 viewport matrix + axe; phone ≤ 3 taps to the C3 confirmation for a step.
@@ -124,3 +124,4 @@ Every piece of Phase 7 state (capital steps, kill-criteria state, kill and lock 
 - 2026-10-22 02:12 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (R7.15/T7.26: Phase 7 API catalogue + D06 Live / D03 Go-live, 17 §D P7-B008, starting allocation per bot default A$2,000)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Phase 7 API in Rust `mt-api`; tools cargo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (contract suite as a Rust integration test, same cases; `/journal/reviews` returns packs incl. the scenario-twin section from P7-T015)

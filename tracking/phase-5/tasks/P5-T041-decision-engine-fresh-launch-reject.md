@@ -15,7 +15,7 @@ requirements: [R5.15, R5.17, R5.14]
 roadmap_todos: [T5.27]
 modules: [M4, M19]
 dashboards: [D12, D13]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/02-v1-architecture.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,10 +55,10 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/decide/engine.py` with a rules table and versioning.
+- [ ] Implement `crates/mt-airdrop/src/decide/` engine with a rules table and versioning; calls the `never_automated` policy in `mt-core` directly (P5-T042).
 - [ ] Task generator per type with step templates and verified links.
 - [ ] `airdrop.reject` (C1) and `airdrop.rescore` (C0) handlers.
-- [ ] Decision-table tests; doc sync.
+- [ ] Decision-table tests (`cargo test -p mt-airdrop decide`, `cargo clippy`); doc sync.
 
 ## Verification
 
@@ -110,3 +110,4 @@ A deterministic decision engine turns risk, corroboration, viability/EV, eligibi
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (auto-claims from the identity wallet per P5-B017; canonical task types)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (decision engine in Rust `crates/mt-airdrop/src/decide/`, policy linked directly; tools uv → cargo)

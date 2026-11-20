@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T012, P7-T013, P2-T143]
+depends_on: [P7-T012, P7-T013, P2-T143, P1-T077]
 requirements: [R7.01, R7.02, R7.15]
 roadmap_todos: [T7.20, T7.26]
 modules: [M0, M15, M17]
 dashboards: [D03]
-tools: [git, uv, pnpm, node>=20, cargo, supabase]
+tools: [git, pnpm, node>=20, cargo, supabase]
 mcp: []
 env: []
-services: [supabase-postgres, mlflow, prefect-server, mt-api]
+services: [supabase-postgres, mlflow, mt-scheduler, mt-api]
 branch: p7/P7-T014-gate-report-render-and-store
 pr: ""
 doc_sync: [docs/ui/dashboards/D03-strategies.md, docs/02-v1-architecture.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,8 +56,8 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 ## ToDo
 
 - [ ] SQL migration (`supabase/migrations/`) `strategy.gate_report` (WORM).
-- [ ] Renderer (Jinja → HTML; WeasyPrint → PDF, licence-clean) in `packages/mt_lab/gates/render.py`.
-- [ ] `mt-api` (Rust) query + command; nightly Prefect flow calling the Python renderer.
+- [ ] Renderer in `crates/mt-lab-core/src/gates/render/` (HTML templates; PDF export licence-clean (U), reusing the P2-T114 report renderer).
+- [ ] `mt-api` (Rust) query + command; nightly `mt-scheduler` job (P1-T077) calling the `mt-lab-core` renderer.
 - [ ] D03 Gates tab component consuming `/strategies/{id}/gate-report` (+ viewport matrix).
 - [ ] Hook report id into promotion/mode commands.
 - [ ] Tests; docs.
@@ -65,7 +65,7 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 ## Verification
 
 ### Tests
-- `supabase test db` (WORM on `strategy.gate_report`); `cargo test -p mt-api`; `uv run pytest` (renderer); `pnpm test` and `pnpm playwright` (Gates tab).
+- `supabase test db` (WORM on `strategy.gate_report`); `cargo test -p mt-api`; `cargo test -p mt-lab-core render` (renderer snapshots); `pnpm test` and `pnpm playwright` (Gates tab).
 - Unit: renderer snapshot (HTML) for pass and fail fixtures.
 - Integration: promotion refused with a stale (8-day-old) report; accepted with a fresh passing one; audit row carries `gate_report_id`.
 - WORM: report rows cannot be updated; regenerated report is a new row.
@@ -115,3 +115,4 @@ Each evaluation is stored as an immutable `strategy.gate_report` row (WORM, hash
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (R7.15/T7.26 share (gate-report API); stress-replay section (R7.16); deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (query and command in Rust `mt-api`; WORM migration in `supabase/`; renderer stays Python; tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (renderer moves to Rust `mt-lab-core`; nightly Prefect flow → `mt-scheduler` job (+P1-T077); services prefect-server → mt-scheduler; tools −uv)

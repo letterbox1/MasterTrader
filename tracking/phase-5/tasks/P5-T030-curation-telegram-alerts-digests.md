@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T029, P2-T035, P1-T045]
+depends_on: [P5-T029, P2-T035, P1-T045, P1-T077]
 requirements: [R5.20, R5.22]
 roadmap_todos: [T5.30]
 modules: [M19, M15]
 dashboards: [D13]
-tools: [uv, cargo, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/ui/mobile-and-telegram.md, docs/08-airdrops-and-token-launches.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · 🔍 Details · 🚫 Never` buttons (Rust `mt-telegram-bot`, teloxide) mapped to the same `mt-api` commands as the UI; digests are composed by the Python `mt_curation` package; instant alerts fire for eligible claims live, deadlines < 48 h and phishing warnings; a morning daily digest and a weekly curation/review digest are composed and sent in Australian time with quiet hours.
+Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · 🔍 Details · 🚫 Never` buttons (Rust `mt-telegram-bot`, teloxide) mapped to the same `mt-api` commands as the UI; digests are composed by the Rust `mt-curation` crate; instant alerts fire for eligible claims live, deadlines < 48 h and phishing warnings; a morning daily digest and a weekly curation/review digest are composed and sent in Australian time with quiet hours.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 
 ## ToDo
 
-- [ ] Implement digest composer (Jinja templates) and scheduler (Prefect, DST-aware Australia/Sydney).
+- [ ] Implement digest composer (Rust templates in `crates/mt-curation/src/digest/`) and its `mt-scheduler` cron jobs (DST-aware Australia/Sydney; P1-T077).
 - [ ] Implement instant-alert rules consuming `task.new`, `airdrop.*`, monitor events.
 - [ ] Extend the P2 Telegram bot with task cards and callback handlers.
 - [ ] Preview endpoint `/system/settings?section=digests&preview=1`; tests; doc sync.
@@ -110,3 +110,4 @@ Tasks reach you on Telegram with `✅ Done · ⏭ Skip · 💤 Snooze 1d/1w · �
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Details button per P5-B014; mocked Telegram in CI; P2 bot and P1 alerts as deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (digests in Rust `mt-curation`; Prefect → `mt-scheduler` jobs (+P1-T077); tools −uv)

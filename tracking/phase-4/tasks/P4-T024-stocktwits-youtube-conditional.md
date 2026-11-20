@@ -15,7 +15,7 @@ requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D08]
-tools: [uv, git, supabase]
+tools: [cargo, git, supabase, yt-dlp]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metadata; yt-dlp subtitles for earnings calls) connectors exist **behind feature flags** that are switched on only when their reachability/terms checks pass: StockTwits from P1-T056 (T1.60), YouTube from the Phase 4 check P4-T066 (T4.65), which runs after this build and flips the flag. If a check fails, the source shows as disabled with the reason in D08.
+StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metadata; yt-dlp subtitles for earnings calls) connectors exist in the Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates); yt-dlp runs as its pinned standalone CLI, unmodified) **behind feature flags** that are switched on only when their reachability/terms checks pass: StockTwits from P1-T056 (T1.60), YouTube from the Phase 4 check P4-T066 (T4.65), which runs after this build and flips the flag. If a check fails, the source shows as disabled with the reason in D08.
 
 ## Context & references
 
@@ -79,7 +79,7 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 
 - [ ] StockTwits flag set from the P1-T056 result; YouTube stays off until P4-T066 records a pass; connectors enabled only if checks pass
 - [ ] Disabled reasons visible in D08 Sources
-- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -111,3 +111,4 @@ StockTwits (`streams/symbol/{SYM}`) and YouTube (channel RSS + Data API v3 metad
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (YouTube check moved to new VERIFY P4-T066 (17 §D P4-B005, T4.65); depends on P1-T056 for StockTwits)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))
 - 2026-11-19 00:00 · main · no longer waits on P1-T056 (which needs your practice accounts): built behind feature flags that read the P1-T056 result at runtime; until that check passes the source shows disabled with the reason. Build first, keys last.
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (StockTwits/YouTube connectors in Rust `mt-feeds`, yt-dlp as a pinned CLI; tools uv → cargo, +yt-dlp)

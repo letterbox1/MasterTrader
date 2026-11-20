@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/18-platform-and-deployment.md, README.md,
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,8 +50,8 @@ The canonical layout of [18 §3](../../../docs/18-platform-and-deployment.md#3-r
 ## Requirements
 
 - **Rust:** root `Cargo.toml` with `[workspace] members = ["crates/*"]`, `resolver = "2"`, shared `[workspace.package]` (edition 2021, MSRV pinned in `rust-toolchain.toml`) and `[workspace.dependencies]` (tokio, serde, thiserror, tracing, sqlx, pyo3, axum pinned); `Cargo.lock` committed.
-- Crate stubs (one `lib.rs`/`main.rs` + one test each), exactly the 18 §2.1 list: `mt-core, mt-api, mt-risk, mt-deadman, mt-engine, mt-recorder, mt-monitor, mt-store, mt-obs, mt-signer, mt-journal, mt-events, mt-telegram-bot, mt-mcp, mt-onchain, mt-treasury, mt-airdrop-exec, mt-intel-writer`.
-- **Python 3.12, uv:** root `pyproject.toml` with `[tool.uv.workspace] members = ["packages/*"]`; `uv.lock` committed **with hashes**. Package stubs (`__init__.py`, `py.typed`, one smoke test) for the 18 §2.2 list only: `mt_strategy, mt_lab, mt_features, mt_models, mt_anomaly, mt_agents, mt_memory, mt_data, mt_airdrop, mt_curation, mt_social, mt_journal` (parsers only). No Python package duplicates a Rust crate; the `mt_store` Python module is built from `crates/mt-store` by maturin (P0-T071), not a separate package.
+- Crate stubs (one `lib.rs`/`main.rs` + one test each), exactly the 33 crates of the 18 §2.1 list: `mt-core, mt-api, mt-risk, mt-deadman, mt-engine, mt-recorder, mt-connectors, mt-scheduler, mt-features, mt-nlp, mt-agents, mt-memory, mt-models, mt-anomaly, mt-lab-core, mt-crowdsim, mt-airdrop, mt-airdrop-exec, mt-curation, mt-social, mt-onchain, mt-treasury, mt-signer, mt-journal, mt-feeds, mt-events, mt-intel-writer, mt-monitor, mt-store, mt-obs, mt-telegram-bot, mt-mcp, mt-mm-adapter`. Strategies are not a stub crate: built-in templates live in `crates/mt-engine/src/strategy/`, and each `strategies/<name>/` crate joins the workspace (`members` also globs `strategies/*`) when it is created (18 §2.1).
+- **Python 3.12, uv:** root `pyproject.toml` with `[tool.uv.workspace] members = ["packages/*"]`; `uv.lock` committed **with hashes**. Package stubs (`__init__.py`, `py.typed`, one smoke test) for the five packages of the 18 §2.2 list only: `mt_research` (training, exploration, offline batch reports), `mt_extract` (trafilatura), `mt_telegram_reader` (Telethon), `mt_ledger_import` (ccxt ledger import), `mt_mt5_bridge` (optional; the Windows-only `MetaTrader5` dependency sits behind an optional extra so the stub imports on Linux/macOS). No Python package duplicates a Rust crate (agents, memory, features, anomaly, models runtime, NLP, airdrop, curation, social, connectors, scheduling and the lab harness are Rust, 17 §H); the `mt_store` Python module is built from `crates/mt-store` by maturin (P0-T071), not a separate package.
 - Top level per 03 §3: `apps/web/`, `supabase/`, `infra/`, `services/`, `strategies/`, `third_party/` (+ `LICENSES.md`: name, upstream URL, pinned commit, licence, telemetry check date), `tests/`, `notebooks/`, `docs/runbooks/`.
 - Lints: `cargo clippy --workspace --all-targets -- -D warnings`, `cargo fmt --check`, `cargo deny` (licences, advisories); ruff (lint + format, line length 110, rules E,F,I,B,UP,S,ASYNC), mypy `--strict` on Python packages touched in P0, pytest; coverage ≥ 80 % on P0 crates (`cargo llvm-cov`) and packages.
 - `justfile` with `fmt`, `lint`, `type`, `test`, `check` (all of them), `db-reset`, `db-test` (wired in P0-T070) recipes; CI calls `just check`.
@@ -60,8 +60,8 @@ The canonical layout of [18 §3](../../../docs/18-platform-and-deployment.md#3-r
 
 ## ToDo
 
-- [ ] Create root `Cargo.toml`, `rust-toolchain.toml` and the 18 crate stubs; `cargo build --workspace`.
-- [ ] Create root `pyproject.toml`, the uv workspace and the 12 package stubs; run `uv lock`.
+- [ ] Create root `Cargo.toml`, `rust-toolchain.toml` and the 33 crate stubs; `cargo build --workspace`.
+- [ ] Create root `pyproject.toml`, the uv workspace and the 5 package stubs; run `uv lock`.
 - [ ] Create top-level folders with one-line READMEs; add `third_party/LICENSES.md` with the table header and vendoring rules (07 §7).
 - [ ] Configure clippy, rustfmt, `deny.toml`, ruff, mypy, pytest and coverage.
 - [ ] Add `.pre-commit-config.yaml` with pinned revs incl. gitleaks; `.gitleaks.toml` allow-lists only `tests/fixtures/fake_secrets/`.
@@ -85,7 +85,7 @@ The canonical layout of [18 §3](../../../docs/18-platform-and-deployment.md#3-r
 ## Acceptance criteria
 
 - [ ] `just check` passes on a clean clone (`cargo build --locked`, `uv sync --locked`)
-- [ ] All 18 crates compile and all 12 Python packages import; clippy `-D warnings` and mypy strict clean
+- [ ] All 33 crates compile and all 5 Python packages import; clippy `-D warnings` and mypy strict clean
 - [ ] `pre-commit run --all-files` clean; gitleaks blocks a planted secret
 - [ ] `third_party/LICENSES.md` exists with the table and rules
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, gitleaks, `pit` check)
@@ -99,7 +99,7 @@ The canonical layout of [18 §3](../../../docs/18-platform-and-deployment.md#3-r
 
 - Do NOT install anything with `curl | sh`; use pinned toolchains and packages only (07 §7).
 - Do NOT add runtime dependencies to stubs beyond what P0 needs.
-- Do NOT create a Python package for something 18 §2.1 puts in Rust.
+- Do NOT create a Python package for something 18 §2.1 puts in Rust (no `mt_agents`, `mt_memory`, `mt_features`, `mt_models`, `mt_anomaly`, `mt_lab`, `mt_airdrop`, `mt_curation`, `mt_social`, no LangGraph, Prefect or OpenBB dependency; 17 §H).
 - Do NOT commit secrets or paste them into chats, issues, PRs or logs; secrets live only in the sops/age file ([07 §2](../../../docs/07-security-notes.md#2-secrets)).
 - Do NOT skip, weaken or delete a test to get CI green.
 - Pin every image by digest (no `:latest` or floating tags); no telemetry or referral IDs in vendored code.
@@ -121,3 +121,4 @@ The canonical layout of [18 §3](../../../docs/18-platform-and-deployment.md#3-r
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (03 §3 is the canonical layout (17 §B P0-B006), adds mt_onchain (23 packages); run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Cargo workspace with the 18 crates of 18 §2.1 + uv workspace with only the 12 Python packages of 18 §2.2; `supabase/` replaces `migrations/`; `just` entry point; clippy/cargo deny added)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (workspace now lists the 33 crates of 18 §2.1 (adds mt-connectors, mt-scheduler, mt-features, mt-nlp, mt-agents, mt-memory, mt-models, mt-anomaly, mt-lab-core, mt-crowdsim, mt-airdrop, mt-curation, mt-social, mt-feeds, mt-mm-adapter) and only the 5 Python packages of 18 §2.2 (mt_research, mt_extract, mt_telegram_reader, mt_ledger_import, mt_mt5_bridge); strategies/* joins the workspace)

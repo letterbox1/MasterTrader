@@ -15,7 +15,7 @@ requirements: [R4.07]
 roadmap_todos: [T4.24]
 modules: [M9]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, tei-embed, tei-rerank]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_memory.rag.search(query, as_of, filters)` returns provenance-carrying chunks using vector top-50 + keyword top-50, **RRF** in SQL (`Σ 1/(60+rank)`), cross-encoder rerank of the top 30–50 via TEI `/rerank` (bge-reranker-v2-m3), recency decay, and a mandatory `ingested_at <= :as_of AND published_at <= :as_of` filter; exposed as `/rag/search` (incl. `?similar=` for D08 related docs) with embedding and retrieval caches.
+`mt_memory::rag::search(query, as_of, filters)` in the Rust `mt-memory` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) returns provenance-carrying chunks using vector top-50 + keyword top-50, **RRF** in SQL (`Σ 1/(60+rank)`), cross-encoder rerank of the top 30–50 via TEI `/rerank` (bge-reranker-v2-m3), recency decay, and a mandatory `ingested_at <= :as_of AND published_at <= :as_of` filter; exposed as `/rag/search` (incl. `?similar=` for D08 related docs) with embedding and retrieval caches.
 
 ## Context & references
 
@@ -84,7 +84,7 @@ review_result: ""
 - [ ] PIT property test green
 - [ ] Latency recorded vs target
 - [ ] `/rag/search` used by D08 related docs
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-memory`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -115,3 +115,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P0-T043 (tei-rerank))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (hybrid retrieval in Rust `mt-memory`; tools uv → cargo)

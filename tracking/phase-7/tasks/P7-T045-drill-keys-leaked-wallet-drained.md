@@ -15,7 +15,7 @@ requirements: [R7.04]
 roadmap_todos: [T7.60]
 modules: [M17, M22]
 dashboards: [D16, D18]
-tools: [git, uv, sops]
+tools: [git, cargo, sops]
 mcp: []
 env: []
 services: [venue testnet/practice accounts]
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -102,3 +102,4 @@ The keys-leaked runbook is drilled on testnet/practice keys, and the wallet-drai
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (wallet drained only if a hot/burner wallet exists (17 §D P7-B011); no P5 dependency)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (no stack change)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (drills use the Rust key audit and signer freeze; tools uv → cargo)

@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, cargo, supabase, docker, just]
 mcp: []
 env: []
-services: [supabase-postgres, nats, prefect-server, minio]
+services: [supabase-postgres, nats, minio]
 branch: p0/P0-T066-worm-insert-benchmark
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -45,7 +45,7 @@ A repeatable benchmark (`just wormbench`) proves the WORM write-path SLO on the 
 - SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) (WORM insert p99 < 5 ms; the order path never waits on seals)
 - [15 §2.2 Write path](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers), [15 §2.4 tests](../../../docs/15-bots-hitl-and-worm-audit.md#24-tests-part-of-every-phase-that-adds-a-worm-table)
 - [16 §3.3 write path vs integrity check](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)
-- Implementation under test: P0-T030 (chain trigger), P0-T031 (writer + JetStream buffer), P0-T037 (seal flow), P0-T038 (verify)
+- Implementation under test: P0-T030 (chain trigger), P0-T031 (writer + JetStream buffer), P0-T037 (seal job), P0-T038 (verify)
 - Depends on: P0-T031, P0-T037
 
 ## Requirements
@@ -119,3 +119,4 @@ A repeatable benchmark (`just wormbench`) proves the WORM write-path SLO on the 
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for R0.N7 / T0.67, decided in 17 §D P0-B004)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust benchmark (tokio + hdrhistogram) replaces the asyncio script; gate runs on the always-on workstation and again at the shift; make → just)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`prefect-server` dropped from services (the seal runs from a host timer in P0))

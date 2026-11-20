@@ -10,22 +10,22 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P4-T014, P1-T024, P1-T026, P1-T009]
+depends_on: [P4-T010, P4-T014, P1-T024, P1-T026, P1-T009, P1-T077]
 requirements: [R4.10]
 roadmap_todos: [T4.26]
 modules: [M5]
 dashboards: [D08, D06]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [supabase-postgres, nats, prefect-server]
+services: [supabase-postgres, nats, mt-scheduler]
 branch: p4/P4-T037-calendar-sources
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,13 +37,13 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.calendar` fills `text.calendar_event` from FRED/ALFRED release dates, the ForexFactory weekly JSON (consensus/previous/actual, cached), central-bank meeting schedules (Fed, ECB, BoE, BoJ, SNB, RBA, BoC, RBNZ), CFTC COT / EIA (petroleum + natgas storage) / USDA WASDE / Baker Hughes days, EDGAR + Finnhub (+ FMP cross-check) earnings and IPO dates, and `exchange_calendars` holidays/sessions; actuals update as new rows and publish `cal.{kind}`.
+Calendar clients in the Rust `mt-connectors` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), run as `mt-scheduler` jobs (P1-T077), fill `text.calendar_event` from FRED/ALFRED release dates, the ForexFactory weekly JSON (consensus/previous/actual, cached), central-bank meeting schedules (Fed, ECB, BoE, BoJ, SNB, RBA, BoC, RBNZ), CFTC COT / EIA (petroleum + natgas storage) / USDA WASDE / Baker Hughes days, EDGAR + Finnhub (+ FMP cross-check) earnings and IPO dates, and exchange holidays/sessions from the `exchange_calendars` tables that the nightly `mt_research` job writes to Postgres ([18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); actuals update as new rows and publish `cal.{kind}`.
 
 ## Context & references
 
 - Roadmap: [R4.10](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.26](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar) · [06 §3 calendars & reports](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · research [forex-macro](../../../docs/research/forex-macro-market-providers.md) (`nfs.faireconomy.media/ff_calendar_thisweek.json`, ToS-grey, personal use, cached)
-- Cross-phase (`depends_on`): P1-T024 (FRED/ALFRED), P1-T026 (EIA, USDA, COT, Baker Hughes), P1-T009 (instrument master with `exchange_calendars` sessions).
+- Cross-phase (`depends_on`): P1-T024 (FRED/ALFRED), P1-T026 (EIA, USDA, COT, Baker Hughes), P1-T009 (instrument master with `exchange_calendars` sessions), P1-T077 (`mt-scheduler`).
 - Blackout defaults that read `importance`: [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts).
 
 ## Requirements
@@ -80,7 +80,7 @@ review_result: ""
 
 - [ ] Next 14 days of high-importance events present for USD, EUR, GBP, JPY, CHF, AUD, CAD, NZD
 - [ ] DST tests green
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-connectors`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T024/T026/T009; importance feeds 16 §2.8 blackouts)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_data.calendar` → Rust `mt-connectors` on `mt-scheduler` (depends_on +P1-T077; services prefect-server → mt-scheduler); `exchange_calendars` read from the `mt_research` tables; tools uv → cargo)

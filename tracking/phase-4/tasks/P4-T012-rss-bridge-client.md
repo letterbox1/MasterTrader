@@ -15,7 +15,7 @@ requirements: [R4.01, R4.N1]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git, docker]
+tools: [cargo, git, docker]
 mcp: []
 env: []
 services: [nats, rss-bridge]
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/rss-bridge.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.rssbridge` reads whitelisted bridges from the internal RSS-Bridge sidecar with `?format=Json` and auth, for each `kind: site` entry in `feeds.yaml` (CssSelector/XPath bridges for AP, Reuters, Economist WIB, Substack, Bundesbank, Binance blog, …), and publishes items on `raw.text.rss_bridge` marked context-only.
+The Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) reads whitelisted bridges from the internal RSS-Bridge sidecar with `?format=Json` and auth, for each `kind: site` entry in `feeds.yaml` (CssSelector/XPath bridges for AP, Reuters, Economist WIB, Substack, Bundesbank, Binance blog, …), and publishes items on `raw.text.rss_bridge` marked context-only.
 
 ## Context & references
 
@@ -50,7 +50,7 @@ review_result: ""
 
 - One bridge definition per site in `config/intel/bridges.yaml` (bridge name + params); CI checks each bridge is in the sidecar whitelist.
 - Items flagged `latency_class = context` (15-min–3-h cache): never used as latency signals.
-- Client uses the auth credentials scoped to `ingest-text`.
+- Client uses the auth credentials scoped to `mt-feeds`. Telegram bridges are never read here: `mt-telegram-reader` reads `TelegramBridge` itself (P4-T019), so Telegram text stays in that process.
 
 ## ToDo
 
@@ -77,7 +77,7 @@ review_result: ""
 
 - [ ] All example `kind: site` sources bridged or explicitly rejected with a reason
 - [ ] Context-only flag set on every bridged item
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Telegram bridge output routed only to postures (17 §A P4-B001); site list from P4-T003 handled in P4-T060)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (RSS-Bridge client in Rust `mt-feeds`; Telegram bridge read only by `mt-telegram-reader`; tools uv → cargo)

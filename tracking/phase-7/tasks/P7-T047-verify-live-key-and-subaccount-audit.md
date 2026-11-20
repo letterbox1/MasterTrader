@@ -15,7 +15,7 @@ requirements: [R7.04, R7.14]
 roadmap_todos: [T7.65, T7.40]
 modules: [M12, M17]
 dashboards: [D16, D05]
-tools: [git, uv, docker, sops]
+tools: [git, cargo, docker, sops]
 mcp: []
 env: [INDEPENDENT_RESERVE_LIVE_HITL_API_KEY, INDEPENDENT_RESERVE_LIVE_HITL_API_SECRET, INDEPENDENT_RESERVE_LIVE_DEADMAN_API_KEY, INDEPENDENT_RESERVE_LIVE_DEADMAN_API_SECRET, INDEPENDENT_RESERVE_LIVE_READONLY_API_KEY, INDEPENDENT_RESERVE_LIVE_READONLY_API_SECRET]
 services: [live venue sub-accounts (P7-T006/T007), egress IP (P7-T065/T066 exit node or the static-IP runtime host)]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ A recorded key audit (T7.65, after P7-T007 and P7-T065) shows every live key is 
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (T7.65 live key audit: allow-list = exit-node IP (16 §3.2/17 §A P7-B004), deadman keys (16 §3.1); carries the live env names; deps P7-T066)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (allow-list = the egress IP (exit node or static-IP runtime host); added dep P7-T073 (audit runs on the final runtime host))
 - 2026-11-20 00:00 · main · env names now follow `.env.example`: the live keys are `<VENUE>_LIVE_{HITL,AUTO,DEADMAN,READONLY}_API_KEY/_API_SECRET` (+ `_API_PASSPHRASE` for OKX). Front matter lists Independent Reserve, the expected first venue; the audit runs over every venue with live names set.
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (key audit and probes are Rust (`mt-obs` key audit); tools uv → cargo)

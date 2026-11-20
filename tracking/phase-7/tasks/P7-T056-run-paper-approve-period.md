@@ -15,7 +15,7 @@ requirements: [R7.02]
 roadmap_todos: [T7.80]
 modules: [M0, M11]
 dashboards: [D03]
-tools: [git, uv]
+tools: [git]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ Each candidate bot's paper/HITL period is confirmed from the gate report against
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper/HITL period per 16 §2.4 (≥ 8 weeks and ≥ 50 trades; 26-week low-frequency); dep P2-T180)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (RUN item reads gate reports only; tools −uv)

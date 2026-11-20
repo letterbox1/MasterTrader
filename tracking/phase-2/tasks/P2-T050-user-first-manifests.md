@@ -15,7 +15,7 @@ requirements: [R2.04]
 roadmap_todos: [T2.05]
 modules: [M0]
 dashboards: [D03]
-tools: [git, cargo, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ Manifests exist under `strategies/` for the P1 candidates (trend on majors, and 
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (manifest risk values are proposals (16 §1), paper_ok carry, links to lab tasks)
 
 - 2026-11-19: Converted from a USER task to an agent task (17 §G): configurable values are seeded from the 16/14 defaults and approved once in the go-live pack (P7-T070), never asked during the build.
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (manifests are YAML validated by the Rust `mt strategy validate` CLI; no Python needed; tools [git, cargo, uv] → [git, cargo])

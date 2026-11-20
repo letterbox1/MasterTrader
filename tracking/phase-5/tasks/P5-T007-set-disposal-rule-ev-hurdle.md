@@ -15,7 +15,7 @@ requirements: [R5.14, R5.17]
 roadmap_todos: [T5.06]
 modules: [M4]
 dashboards: [D12]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,7 +66,7 @@ The airdrop settings section holds the **disposal rule** (default: sell 50% on c
 ## Verification
 
 ### Tests
-- Seeded values match the defaults file; re-running the seed changes nothing; a value you edited keeps your value after a re-seed (`uv run pytest`).
+- Seeded values match the defaults file; re-running the seed changes nothing; a value you edited keeps your value after a re-seed (`cargo test -p mt-api settings_seed`).
 - An opportunity's EV breakdown in D12 shows the seeded hurdle and time value.
 
 ### Scenarios
@@ -106,3 +106,4 @@ The airdrop settings section holds the **disposal rule** (default: sell 50% on c
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (EV hurdle default 5% p.a. per 16 §2.7/P5-B012; disposal = manual-sale task until P7 per P5-B010; loosening C3)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (converted from a USER task to an agent seed task per 17 §G: disposal 50% and hurdle 5% p.a. seeded from 08 / 16 §2.7 through `mt-api` with source `seed`; time value and haircut have no doc default, drafted conservatively and raised as gap P5-B018; you review in the go-live pack P7-T070; services `supabase-postgres`, `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (seed test in Rust (`cargo test -p mt-api`); tools uv → cargo)

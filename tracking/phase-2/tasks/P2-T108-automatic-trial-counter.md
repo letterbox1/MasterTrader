@@ -15,7 +15,7 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D03, D04]
-tools: [uv, supabase]
+tools: [cargo, supabase]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,14 +54,14 @@ Every distinct parameter set / code version evaluated for a strategy family incr
 ## ToDo
 
 - [ ] Migration for `strategy.trial` with INSERT/SELECT-only grants
-- [ ] Hook into `tracked_run` so screener, truth and sweep trials register automatically
+- [ ] Hook into `tracked_run` (Rust and the `mt_research` wrapper, P2-T107) so screener, truth and sweep trials register automatically through one Rust function exposed by the binding
 - [ ] Family resolution incl. `strategy.clone` lineage
 - [ ] Tests + doc
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k trials`, `supabase test db`.
+- Commands: `cargo test -p mt-lab-core trials`, `supabase test db`.
 - Unit: identical trial → no increment; param tweak → +1; clone → inherits count.
 - Integration: app role UPDATE/DELETE on `strategy.trial` fails.
 
@@ -76,7 +76,7 @@ Every distinct parameter set / code version evaluated for a strategy family incr
 
 - [ ] Counter increments automatically on every tweak and never decreases
 - [ ] Count + Sharpe variance exposed to DSR
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ Every distinct parameter set / code version evaluated for a strategy family incr
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields (no decision change))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; tools [uv] → [uv, supabase]; services [postgres] → [supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (trial counter in `mt-lab-core` (Rust), called by Python sweeps through the binding; same tests; tools [uv, supabase] → [cargo, supabase])

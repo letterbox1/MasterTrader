@@ -13,9 +13,9 @@ claimed_by: ""
 depends_on: [P0-T020, P0-T022, P0-T031, P0-T071]
 requirements: [R0.09, R0.13]
 roadmap_todos: [T0.45, T0.41, T0.28]
-modules: [M21, mt_models, mt-obs]
+modules: [M21, mt-models, mt-obs]
 dashboards: []
-tools: [git, docker, uv, python>=3.12, supabase]
+tools: [git, docker, cargo, maturin, supabase]
 mcp: []
 env: []
 services: [litellm, supabase-postgres, tei-embed]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-0-foundations.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,13 +57,13 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 - `infra/litellm/config.yaml`: `research-primary` (Anthropic Claude, prompt caching on), `research-custom` (OpenAI-compatible base URL from secrets; disabled if absent), `local-advisor` (`llm-local`, P0-T044), `local-embed` (`tei-embed`, bge-small, P0-T043); `router_settings.routing_strategy: latency-based-routing`; `fallbacks: [{research-primary: [research-custom, local-advisor]}]`; `context_window_fallbacks: [{local-advisor: [research-primary]}]`.
 - Virtual keys per role with the [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) defaults read from settings (never literals): debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30 per day (`budget_duration: 1d`) and a monthly cap of US$40. Whichever runs out first routes the call to `local-advisor`, marked `fallback_used`, instead of failing (10 §5; custom router hook or per-key `model` fallback, document the mechanism). Raising a budget is C3 (`system.settings.update`).
 - LiteLLM DB: database `litellm` on the Supabase Postgres (P0-T020/P0-T070) with its own role, outside the MasterTrader schemas; master key from tmpfs; UI disabled or bound internal only; `telemetry: false`.
-- Callbacks (LiteLLM is Python, so the callback is Python by necessity, 18 §2.2): success/failure → `mt_models.gateway.audit_callback` calling the one Rust audit writer through the `mt_store` binding (P0-T031, P0-T071) to write `audit.llm_call` (hashes + text + tokens + cost + latency + `trace_id`); Prometheus callback for spend (`litellm_spend_metric`).
+- Callbacks (LiteLLM is a third-party Python service, so its callback is a Python plugin by necessity; there is no `mt_models` Python package any more, 17 §H): success/failure → a LiteLLM `CustomLogger` plugin `infra/litellm/mt_audit_callback.py`, baked into the derived LiteLLM image and not a uv workspace package, calling the one Rust audit writer through the `mt_store` binding (`mt_store.obs`, P0-T031, P0-T071; the wheel is built by maturin and installed in the image) to write `audit.llm_call` (hashes + text + tokens + cost + latency + `trace_id`); Prometheus callback for spend (`litellm_spend_metric`).
 - Only LLM keys are mounted (07 §2); no broker keys; `core` network only; outbound to `api.anthropic.com` and the custom endpoint host.
 
 ## ToDo
 
 - [ ] Add the service, config, DB and secrets mounts.
-- [ ] Implement `mt_models.gateway.audit_callback` (via the `mt_store` binding) and a derived LiteLLM image (pinned base digest) that installs it.
+- [ ] Implement `infra/litellm/mt_audit_callback.py` (via the `mt_store` binding) and a derived LiteLLM image (pinned base digest) that installs it and the `mt_store` wheel.
 - [ ] Create the six virtual keys (script `infra/litellm/bootstrap_keys` via the LiteLLM admin API, keys stored in tmpfs secrets for consumers).
 - [ ] Add the version guard to CI.
 - [ ] Mock-provider smoke tests below (live calls are P0-T068).
@@ -121,3 +121,4 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build vs a mock provider, live smoke split to P0-T068 (T0.69); budgets = 16 §2.10 defaults incl. shadow + US$40 cap; audit.llm_call from P0 (R0.13, T0.28); run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (callback lives in `mt_models` and writes through the Rust audit writer via the `mt_store` binding (depends on P0-T071); LiteLLM DB on the Supabase Postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (callback moves from the retired `mt_models` Python package to a LiteLLM plugin file in the derived image (`infra/litellm/mt_audit_callback.py`) writing through `mt_store.obs`; module `mt-models`; tools cargo/maturin instead of uv)

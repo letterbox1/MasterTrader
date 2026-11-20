@@ -15,7 +15,7 @@ requirements: [R4.05]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats, rss-bridge]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.mastodon` uses Mastodon.py against public hashtag timelines and followed accounts on configured instances (or RSS-Bridge's MastodonBridge where signed fetch blocks API access), publishing `raw.text.mastodon` items.
+The Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) reads the Mastodon REST API for public hashtag timelines and followed accounts on configured instances (or RSS-Bridge's MastodonBridge where signed fetch blocks API access), publishing `raw.text.mastodon` items.
 
 ## Context & references
 
@@ -71,7 +71,7 @@ review_result: ""
 ## Acceptance criteria
 
 - [ ] Configured hashtags/accounts ingest for 24 h
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -100,3 +100,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T012 dependency (bridge fallback is a true precondition))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Mastodon.py → Rust REST client in `mt-feeds`; tools uv → cargo)

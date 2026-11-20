@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D02-markets.md, docs/ui/dashboards/D01-cockpit.md,
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -74,7 +74,7 @@ D01 'Signals & decisions' lists tier-B decisions (question, probability, model v
 ## Acceptance criteria
 
 - [ ] Chips + overlays render per spec on all tiers
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, `pnpm test`, `pnpm playwright` viewport matrix + axe)
+- [ ] CI green (`pnpm test`, `pnpm playwright` viewport matrix + axe, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -104,3 +104,4 @@ D01 'Signals & decisions' lists tier-B decisions (question, probability, model v
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (uncalibrated badge tied to 16 §2.10 thresholds; explicit depends_on P2-T142, P1-T050)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (CI line limited to the web checks; no Python in this task)

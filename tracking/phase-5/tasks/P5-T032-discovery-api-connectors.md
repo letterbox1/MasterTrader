@@ -1,7 +1,7 @@
 ---
 id: P5-T032
 kind: task
-title: mt_airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)
+title: mt-airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)
 phase: 5
 type: BUILD
 status: backlog
@@ -10,12 +10,12 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T009, P5-T011, P5-T018, P1-T006]
+depends_on: [P5-T009, P5-T011, P5-T018, P1-T006, P1-T077, P1-T078]
 requirements: [R5.10]
 roadmap_todos: [T5.25]
 modules: [M4]
 dashboards: [D12]
-tools: [uv, docker]
+tools: [cargo, docker, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T032 · mt_airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)
+# P5-T032 · mt-airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)
 
 ## Goal / expected outcome
 
-The `airdrop` service discovers candidates from free APIs within quotas — DefiLlama tokenless protocols with rising TVL, CryptoRank Sandbox (ICO/IDO calendars, launchpads, funding), CoinGecko Demo (new listings, categories, `links`), DexScreener (new pairs/profiles by address), Galxe GraphQL (read-only), Snapshot GraphQL and Discourse `/latest.json` — writing raw `source_observation` rows with provenance.
+The `airdrop` service (Rust `mt-airdrop`, 18 §2.1) discovers candidates from free APIs within quotas — DefiLlama tokenless protocols with rising TVL, CryptoRank Sandbox (ICO/IDO calendars, launchpads, funding), CoinGecko Demo (new listings, categories, `links`), DexScreener (new pairs/profiles by address), Galxe GraphQL (read-only), Snapshot GraphQL and Discourse `/latest.json` — writing raw `source_observation` rows with provenance.
 
 ## Context & references
 
@@ -56,9 +56,9 @@ The `airdrop` service discovers candidates from free APIs within quotas — Defi
 
 ## ToDo
 
-- [ ] Implement adapters in `packages/mt_airdrop/discover/` (one module per source) with httpx, retries, quota registration.
-- [ ] Prefect deployments with cadences; `airdrop` container on `core` (digest-pinned).
-- [ ] Recorded-fixture tests per adapter; quota tests.
+- [ ] Implement adapters in `crates/mt-airdrop/src/discover/` (one module per source) on the `mt-connectors` HTTP client, retry and quota harness (P1-T078); reuse its CoinGecko and DefiLlama clients rather than duplicating them.
+- [ ] `mt-scheduler` cron jobs with the cadences (P1-T077); `airdrop` container on `core` (digest-pinned).
+- [ ] Recorded-fixture tests per adapter; quota tests (`cargo test -p mt-airdrop discover`, `cargo clippy`).
 - [ ] Doc sync.
 
 ## Verification
@@ -100,7 +100,7 @@ The `airdrop` service discovers candidates from free APIs within quotas — Defi
 ## Branch & PR
 
 - Branch: `p5/P5-T032-discovery-api-connectors`
-- PR title: `P5-T032: mt_airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)`
+- PR title: `P5-T032: mt-airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums)`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T032` run
 
 ## Progress log
@@ -108,3 +108,4 @@ The `airdrop` service discovers candidates from free APIs within quotas — Defi
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live keys in P5-T068; P1 quota tracker dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`packages/mt_airdrop` → Rust `crates/mt-airdrop/`; adapters on the `mt-connectors` harness (+P1-T078); Prefect → `mt-scheduler` (+P1-T077); title; tools uv → cargo)

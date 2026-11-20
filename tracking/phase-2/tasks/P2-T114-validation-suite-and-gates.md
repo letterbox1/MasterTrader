@@ -15,7 +15,7 @@ requirements: [R2.42, R2.43, R2.06]
 roadmap_todos: [T2.27]
 modules: [M7, M0]
 dashboards: [D03, D04]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roa
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,16 +57,16 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `mt_lab/validation/suite.py` orchestrating sections as sub-jobs with a dependency graph
-- [ ] Implement `mt_lab/gates.py` evaluator with per-strategy thresholds from the gate profile (P2-T007) and reasons; no threshold hard-coded
-- [ ] Implement report rendering (JSON + HTML via Jinja; PDF via WeasyPrint)
+- [ ] Implement `crates/mt-lab-core/src/validation/suite.rs` orchestrating sections as sub-jobs with a dependency graph
+- [ ] Implement `crates/mt-lab-core/src/gates.rs` evaluator (linked into `mt-api` for the lifecycle) with per-strategy thresholds from the gate profile (P2-T007) and reasons; no threshold hard-coded
+- [ ] Implement report rendering (JSON + HTML via `minijinja`; PDF via a Rust renderer, e.g. `typst` (U))
 - [ ] Expose evaluator to part A's lifecycle (`can_promote(strategy_version, target_stage)`)
 - [ ] Tests + docs
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k validation`.
+- Commands: `cargo test -p mt-lab-core validation`, `cargo clippy -p mt-lab-core`.
 - Unit: gate evaluator on synthetic section results covers every pass/fail branch and reason text.
 - Integration: full suite on the EMA template fixture produces a report with every section present.
 - Contract test: lifecycle (part A) refuses `validated` when any required gate fails.
@@ -84,7 +84,7 @@ review_result: ""
 - [ ] Report contains all harness sections listed above
 - [ ] Gate evaluator used by lifecycle and D03
 - [ ] Exportable HTML/PDF
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -115,3 +115,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (gate profile per 16 §2.4 (DSR ≥ 0.95, 2× cost gate, worst fold, paper ≥ 8 weeks and ≥ 50 trades, safety drills), thresholds from P2-T007)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [postgres, mlflow] → [supabase-postgres, mlflow])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (suite + gate evaluator → `mt-lab-core` (Rust), report via `minijinja` + a Rust PDF renderer (U); same tests; tools [uv] → [cargo])

@@ -15,7 +15,7 @@ requirements: [R4.07]
 roadmap_todos: [T4.24]
 modules: [M9]
 dashboards: [D08]
-tools: [uv, git, supabase]
+tools: [cargo, git, supabase]
 mcp: []
 env: []
 services: [supabase-postgres, tei-embed]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_at, ingested_at, valid_from, section, text, tsv tsvector GENERATED, emb halfvec(384))` with HNSW/GIN/trigram/B-tree indexes, and an indexer chunks relevant documents (filings by Item/section with context headers, news one chunk per article) and inserts chunks with TEI embeddings, never updating in place.
+The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_at, ingested_at, valid_from, section, text, tsv tsvector GENERATED, emb halfvec(384))` with HNSW/GIN/trigram/B-tree indexes, and an indexer in the Rust `mt-memory` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) chunks relevant documents (filings by Item/section with context headers, news one chunk per article) and inserts chunks with TEI embeddings, never updating in place.
 
 ## Context & references
 
@@ -57,7 +57,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 ## ToDo
 
 - [ ] SQL migrations in `supabase/migrations/` (`rag.doc_chunk` table and indexes in the P0 `rag` schema; extension checks for pgvector/pg_trgm).
-- [ ] Chunkers (`mt_memory.rag.chunk_filing`, `chunk_news`).
+- [ ] Chunkers in `mt-memory` (`rag::chunk_filing`, `rag::chunk_news`; token counts via the `tokenizers` crate).
 - [ ] Indexer consumer on `text.doc.new` (relevant only) + backfill command.
 - [ ] Tests.
 
@@ -79,7 +79,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 
 - [ ] Indexes created as specified; chunkers pass golden tests
 - [ ] Guard enforced at indexer boundary
-- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-memory`, `cargo clippy`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (rag schema from P0 per 17 §B (P4-B006); explicit depends_on P0-T024)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (chunkers and indexer in Rust `mt-memory`; tools uv → cargo)

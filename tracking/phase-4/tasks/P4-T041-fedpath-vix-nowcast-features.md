@@ -15,7 +15,7 @@ requirements: [R4.11]
 roadmap_todos: [T4.27]
 modules: [M6]
 dashboards: [D08, D02]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,13 +37,13 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Versioned features exist for: **Fed-path probabilities** per FOMC meeting computed from ZQ futures (implied rate = 100 − price, meeting-weighted step-ups), **VIX regime** (percentile bands + term-structure if available), nowcast surprises (GDPNow/NY Fed/Cleveland vs consensus), retail positioning (net long %, contrarian z per FX/metal pair), COT net positioning z, BIS effective exchange rates changes, and prediction-market probabilities.
+Versioned features in the Rust `mt-features` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) exist for: **Fed-path probabilities** per FOMC meeting computed from ZQ futures (implied rate = 100 − price, meeting-weighted step-ups), **VIX regime** (percentile bands + term-structure if available), nowcast surprises (GDPNow/NY Fed/Cleveland vs consensus), retail positioning (net long %, contrarian z per FX/metal pair), COT net positioning z, BIS effective exchange rates changes, and prediction-market probabilities.
 
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M6 sentiment, positioning and macro features](../../../docs/03-build-spec.md#m6-features--mt_features) · [06 §3 Fed-path from ZQ](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
-- Cross-phase: P2-T120 (feature registry) is a `depends_on` entry; P1 COT and BIS (`sdmx1`) flows (P1-T025, P1-T026) are reused. P4-T037 provides the FOMC meeting calendar.
+- Cross-phase: P2-T120 (feature registry) is a `depends_on` entry; P1 COT and BIS flows (P1-T025, P1-T026; Rust `mt-connectors` clients, `sdmx1` dropped) are reused. P4-T037 provides the FOMC meeting calendar.
 
 ## Requirements
 
@@ -77,7 +77,7 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 ## Acceptance criteria
 
 - [ ] Features registered and populated daily; golden Fed-path test green
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-features`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ Versioned features exist for: **Fed-path probabilities** per FOMC meeting comput
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (added P4-T037 (meeting calendar) and P2-T120 dependencies)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (feature writers in Rust `mt-features`; BIS via `mt-connectors` not `sdmx1`; tools uv → cargo)

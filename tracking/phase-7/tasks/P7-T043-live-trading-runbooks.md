@@ -15,7 +15,7 @@ requirements: [R7.06, R7.09, R7.11, R7.14]
 roadmap_todos: [T7.60]
 modules: [M11, M16]
 dashboards: [D06, D16]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/, docs/07-security-notes.md, docs/roadmap/phase-7-prove
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -104,3 +104,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (system-drawdown-stages runbook (16 §2.1), egress-tunnel-down runbook (16 §3.2), wallet drained only if a hot/burner wallet exists (P7-B011); deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt-api` naming; runbooks refer to the runtime host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (alert-to-runbook mapping test is Rust (`mt-obs` alert kinds); tools uv → cargo)

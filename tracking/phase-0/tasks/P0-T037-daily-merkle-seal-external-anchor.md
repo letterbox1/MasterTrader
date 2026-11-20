@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server, minio]
+services: [supabase-postgres, minio]
 branch: p0/P0-T037-daily-merkle-seal-external-anchor
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,13 +37,14 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The `mt-obs seal` job (Rust, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), scheduled daily (00:15 UTC) by Prefect (a flow that runs the binary) or pg_cron, writes, per WORM table per UTC day, a Merkle root over that day's `row_hash`es into `audit.seal`, then anchors the seal outside the database: (1) an object in the Object-Locked `mt-worm-seal` bucket (or append-only rest-server), (2) an optional OpenTimestamps proof, (3) a Telegram witness message to you.
+The `mt-obs seal` job (Rust, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), scheduled daily (00:15 UTC) by a host timer (`infra/timers/`: a systemd timer on a Linux workstation, the launchd or Task Scheduler equivalent elsewhere; installed by `just timers-install`), writes, per WORM table per UTC day, a Merkle root over that day's `row_hash`es into `audit.seal`, then anchors the seal outside the database: (1) an object in the Object-Locked `mt-worm-seal` bucket (or append-only rest-server), (2) an optional OpenTimestamps proof, (3) a Telegram witness message to you.
 
 ## Context & references
 
 - [Roadmap P0 R0.07](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Daily seal)
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
+- Scheduling: a host timer, because P0 needs it before `mt-scheduler` exists and pg_cron can only run SQL inside Postgres, not upload to object storage or call Telegram; P1-T077 moves it onto `mt-scheduler` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), 17 §H). The seal job is idempotent per table and day, so the move is a re-registration only.
 - Related: P0-T006 (real bucket), P0-T002 (real bot), P0-T038 (consumes seals), P0-T063 (soak: first real anchors and witnesses)
 - Depends on: P0-T031. Build first, keys last: built and tested against MinIO with Object Lock and a mocked Telegram Bot API (no real keys); the real bucket and bot are exercised in the soak (P0-T063).
 
@@ -55,16 +56,16 @@ The `mt-obs seal` job (Rust, [18 §2.1](../../../docs/18-platform-and-deployment
 - OpenTimestamps (free, optional, `ots_enabled` setting): `ots stamp` the seal file hash; upgrade proofs after ~24 h in the next run.
 - Telegram witness: one message per day listing `table: root[:16]… rows` + link-free text; sent with the bot token from tmpfs to `owner_chat_id`; message id stored.
 - The seal for day D runs only after D closes (UTC) and waits for late inserts with a 10 min grace (default, [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)); rows inserted for D after sealing are counted into D+1's chain summary and flagged (`late_rows`).
-- Never on the order path: sealing reads replicas of data via `mt_flows_rw` with `statement_timeout` 5 min; inserts never wait on seals (15 §2.4).
+- Never on the order path: sealing reads replicas of data via `mt_jobs_rw` with `statement_timeout` 5 min; inserts never wait on seals (15 §2.4).
 - Failure handling: any anchor step failing → seal row still written with `anchor_status=partial`, alert `alert.critical.seal_anchor_failed`, retry hourly for 24 h (default, [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
 
 ## ToDo
 
-- [ ] Implement `mt_obs::worm::merkle` (pure Rust, tested) and the `mt-obs seal --day` command; a thin Prefect flow `seal_daily` runs it on schedule.
+- [ ] Implement `mt_obs::worm::merkle` (pure Rust, tested) and the `mt-obs seal --day` command, wrapped by `just seal`.
 - [ ] Implement S3 (`aws-sdk-s3` or `object_store`, B2 endpoint) and rest-server uploaders behind one `AnchorStore` trait.
 - [ ] Implement the OTS step (the pinned `opentimestamps-client` CLI in the job image, called as a subprocess) behind a flag.
 - [ ] Implement the Telegram witness via Bot API `sendMessage` (`reqwest`, no bot framework yet; `mt-telegram-bot` comes in P1).
-- [ ] Schedule in Prefect; expose last seal status to `/system/backups` and D16 Audit.
+- [ ] Schedule it with the host timer `mt-seal` (time from settings, catch-up on missed runs); create `infra/timers/` and `just timers-install` if no other P0 job has yet; expose last seal status to `/system/backups` and D16 Audit.
 - [ ] Tests below.
 
 ## Verification
@@ -93,6 +94,7 @@ The `mt-obs seal` job (Rust, [18 §2.1](../../../docs/18-platform-and-deployment
 
 - OTS calendars down: skip with `ots_status=pending`; never block the seal.
 - Telegram rate limits: one message per day, so never near 30 msg/s.
+- Workstation asleep or off at 00:15: the timer runs on wake (`Persistent=true` or the platform equivalent) and the job seals every closed, unsealed day in order.
 
 ## Cardinal rules (do NOT)
 
@@ -120,3 +122,4 @@ The `mt-obs seal` job (Rust, [18 §2.1](../../../docs/18-platform-and-deployment
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless: MinIO + mocked Bot API, live anchors/witness move to P0-T063; seals never block inserts (R0.N7); run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Merkle seal is Rust in `mt-obs` (Prefect only schedules it); boto3/httpx/respx → aws-sdk-s3/reqwest/wiremock)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect removed: the seal runs from a host timer in P0 (pg_cron can't upload or call Telegram; `mt-scheduler` comes in P1-T077, which moves it); role `mt_jobs_rw`; catch-up on missed runs)

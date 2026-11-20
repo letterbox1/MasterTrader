@@ -15,7 +15,7 @@ requirements: [R4.01]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.finnhub` pulls Finnhub general market news (forex, crypto, general) and company news for the equity watchlist within the free 60 calls/min limit, with provenance flags set from `source_terms.yaml` (conservative default `model_input_ok = false` until your P4-T005 decision; if the ML clause forbids model use it stays false). Built and tested on recorded fixtures without a key; the live run with your key is P4-T067.
+The Finnhub client in the Rust `mt-connectors` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) pulls Finnhub general market news (forex, crypto, general) and company news for the equity watchlist within the free 60 calls/min limit, with provenance flags set from `source_terms.yaml` (conservative default `model_input_ok = false` until your P4-T005 decision; if the ML clause forbids model use it stays false). Built and tested on recorded fixtures without a key; the live run with your key is P4-T067.
 
 ## Context & references
 
@@ -74,7 +74,7 @@ review_result: ""
 
 - [ ] Recorded-fixture replay of a 24-h schedule with zero over-budget calls (the live 24-h run is P4-T067)
 - [ ] Provenance flags match `source_terms.yaml`
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-connectors`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -106,3 +106,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first, keys last: fixtures only, live run moved to P4-T067; dropped P4-T005 dependency (conservative default flags))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Finnhub news client in Rust `mt-connectors`, publishing `raw.text.finnhub`; tools uv → cargo)

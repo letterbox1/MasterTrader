@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P0-T027, P1-T009, P1-T012, P1-T013, P0-T071]
+depends_on: [P2-T101, P0-T027, P1-T009, P1-T012, P1-T013]
 requirements: [R2.41]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-One `mt_lab.data` layer that every backtest, feature job and tier-A training job uses to get bars/ticks/L2 for a data range and `as_of`, with survivorship-free universes, a single UTC bar-close convention and a content hash, so all results are point-in-time and reproducible.
+One `mt_lab_core::data` layer (Rust, `crates/mt-lab-core/src/data/`; exposed to `mt_research` through the binding, P2-T203) that every backtest, feature job and tier-A training job uses to get bars/ticks/L2 for a data range and `as_of`, with survivorship-free universes, a single UTC bar-close convention and a content hash, so all results are point-in-time and reproducible.
 
 ## Context & references
 
@@ -49,15 +49,15 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 ## Requirements
 
 - `DatasetSpec(instruments|universe_rule, bar_specs, start, end, as_of, resolution)` → `Dataset` with a SHA-256 `data_hash` over the exact rows/files read.
-- All reads through `mt_store.pit(as_of)` (the Python binding of the `mt-store` crate, P0-T071: Supabase Postgres bars, `date_bin` for other sizes, older bars from Parquet, 18 §4.3) and catalog helpers (Parquet ticks/L2); anything with `ingest_time > as_of` is excluded and counted for the D04 point-in-time audit.
+- All reads through `pit(as_of)` in the `mt-store` crate (Supabase Postgres bars, `date_bin` for other sizes, older bars from Parquet, 18 §4.3) and catalog helpers (Parquet ticks/L2); anything with `ingest_time > as_of` is excluded and counted for the D04 point-in-time audit.
 - Universe rules resolve membership as of each rebalance date, keeping delisted, rugged and dead instruments (14 §6); a universe that silently drops them fails a test.
-- One timezone (UTC) and one bar-close convention: bars are labelled by close time; daily bars for 24/7 markets cut at 00:00 UTC; session markets use `exchange_calendars`.
+- One timezone (UTC) and one bar-close convention: bars are labelled by close time; daily bars for 24/7 markets cut at 00:00 UTC; session markets use the session tables generated from `exchange_calendars` by the `mt_research` nightly job and stored in Postgres (18 §2.2), read through `pit`.
 - Multi-timeframe requests are aligned so a higher-timeframe bar is visible only after its close (no partial-bar leakage).
 - Rows with `display_ok`/`train_ok` flags are carried through so tier-A training (P2-T125) can refuse `train_ok = false` rows.
 
 ## ToDo
 
-- [ ] Implement `mt_lab/data.py`: `DatasetSpec`, `Dataset`, hashing, pit + catalog readers
+- [ ] Implement `crates/mt-lab-core/src/data/`: `DatasetSpec`, `Dataset`, hashing, pit + Parquet catalog readers (Arrow/`parquet` crate, streaming)
 - [ ] Implement universe resolver using `market.instrument` listed/delisted dates and venue status history
 - [ ] Implement bar-close alignment helper for multi-timeframe and the UTC daily cut
 - [ ] Record PIT audit counts (rows excluded by as_of) on the dataset for D04 'Bias checks'
@@ -67,10 +67,10 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k dataset` (reads through the `mt_store` binding).
+- Commands: `cargo test -p mt-lab-core dataset`, `cargo clippy -p mt-lab-core`; the binding path is covered by P2-T206 (parity).
 - Unit: hash stable across runs; alignment helper never exposes the 1D bar before 00:00 UTC close.
 - Integration: fixture with an instrument delisted mid-range stays in the universe until delisting and its final loss is counted.
-- `pit` CI bypass test covers `mt_lab.data`.
+- `pit` CI bypass test covers `mt_lab_core::data`.
 
 ### Scenarios
 - Given a top-20 momentum universe for 2022, when resolved, then LUNA/FTT-style delisted names appear until their delisting date.
@@ -86,7 +86,7 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 - [ ] Survivorship and alignment fixtures pass
 - [ ] Every backtest stores `data_hash`; same spec → same hash
 - [ ] PIT exclusion count exposed for D04
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -98,7 +98,7 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 
 - Do NOT drop delisted/rugged instruments from historical universes.
 - Do NOT fill forward across a data gap without marking it.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -118,3 +118,4 @@ One `mt_lab.data` layer that every backtest, feature job and tier-A training job
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase data deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; continuous aggregates/Timescale → monthly partitions + `date_bin` via `mt_store.pit` (18 §4.3); dep P0-T071; depends_on + P0-T071; services [postgres] → [supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_lab.data` → `mt_lab_core::data` (Rust) reading `pit` directly; `exchange_calendars` via the Postgres session tables from `mt_research`; depends_on − P0-T071 (no Python here); same tests under `cargo test`; tools [uv] → [cargo])

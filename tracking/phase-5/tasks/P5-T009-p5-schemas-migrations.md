@@ -15,7 +15,7 @@ requirements: [R5.05, R5.18, R5.20, R5.11, R5.25]
 roadmap_todos: [T5.22, T5.25, T5.29, T5.30]
 modules: [M4, M19, M22]
 dashboards: []
-tools: [supabase, docker, cargo, uv, git]
+tools: [supabase, docker, cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/02-v1-architecture.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -63,7 +63,7 @@ All non-WORM Phase 5 tables exist via SQL migrations in `supabase/migrations/` (
 - [ ] Extend the P3 `curation.task` table additively (new columns and the canonical type check constraint).
 - [ ] Extend the P3 `ops.wallets` table additively (new nullable columns or safe defaults; no rename, no drop).
 - [ ] Add `ops.*` wallet-indexer, cost-gate and sweep tables; partition `ops.wallet_balance_snapshot` by month (pg_partman where available, else the `mt-store` partition job; no TimescaleDB).
-- [ ] Add Rust row types (sqlx, `rust_decimal`) in `crates/mt-store` for the `ops.*` wallet tables used by the Rust crates, and Python models for the `curation` tables used by `mt_airdrop`/`mt_curation`; Decimal for all amounts.
+- [ ] Add Rust row types (sqlx, `rust_decimal`) in `crates/mt-store` for the `ops.*` wallet tables used by the Rust crates, and for the `curation` tables used by the Rust `mt-airdrop`/`mt-curation` crates (no Python models: both are Rust, 18 §2.1); `rust_decimal` for all amounts.
 - [ ] Add retention jobs entries for CoinGecko-sourced columns (≤ 1 day) to the existing retention runner.
 - [ ] Write pgTAP tests (`supabase test db`): `supabase db reset` on an empty DB; migrate up on a P3-populated fixture DB.
 - [ ] Update the docs listed under Doc sync.
@@ -121,3 +121,4 @@ All non-WORM Phase 5 tables exist via SQL migrations in `supabase/migrations/` (
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (extend P3 `curation.task` and `ops.wallets` additively; `curation.community` replaces discord/community_curation; canonical 03 M19 task types; P0/P3 deps added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Alembic → `supabase/migrations/` + pgTAP; hypertable → monthly partitions; Rust row types; services postgres → supabase-postgres; tools +cargo +git +supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (curation row types in Rust for `mt-airdrop`/`mt-curation`, no Python models; tools −uv)

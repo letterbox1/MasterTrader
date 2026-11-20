@@ -1,7 +1,7 @@
 ---
 id: P5-T029
 kind: task
-title: mt_curation task queue: types, verified links, ranking, expiry and feedback
+title: mt-curation task queue: types, verified links, ranking, expiry and feedback
 phase: 5
 type: BUILD
 status: backlog
@@ -15,7 +15,7 @@ requirements: [R5.20]
 roadmap_todos: [T5.30]
 modules: [M19, M4, M11, M18]
 dashboards: [D13]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/08-airdrops-and-token-launches.md, docs/r
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P5-T029 · mt_curation task queue: types, verified links, ranking, expiry and feedback
+# P5-T029 · mt-curation task queue: types, verified links, ranking, expiry and feedback
 
 ## Goal / expected outcome
 
-`packages/mt_curation` provides one queue for everything that needs a human: typed rows in the P3 `curation.task` table (extended additively by P5-T009) with numbered steps, **official verified links only**, deadline, estimated minutes, risk/viability/EV with top-3 reasons and standing warnings; ranking by urgency × value with feedback learning; automatic expiry; `task.done|skip|snooze|never` commands.
+The Rust `mt-curation` crate (`crates/mt-curation/`, 18 §2.1) provides one queue for everything that needs a human: typed rows in the P3 `curation.task` table (extended additively by P5-T009) with numbered steps, **official verified links only**, deadline, estimated minutes, risk/viability/EV with top-3 reasons and standing warnings; ranking by urgency × value with feedback learning; automatic expiry; `task.done|skip|snooze|never` commands.
 
 ## Context & references
 
@@ -57,10 +57,10 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement models/repo, `TaskFactory` API used by other services, link verifier (uses blocklists from P5-T031 and official-domain data from P5-T034 when available).
+- [ ] Implement models/repo (sqlx) in `crates/mt-curation/src/queue/`, `TaskFactory` API used by other services (Rust crate API; NATS for other processes), link verifier (uses blocklists from P5-T031 and official-domain data from P5-T034 when available).
 - [ ] Implement ranking + feedback weights (persisted, explainable) and expiry job.
 - [ ] Command handlers and queries `/tasks`, `/tasks/{id}`, `/tasks?opportunity=`, `/tasks?status=closed`.
-- [ ] Read P3 `TAX_QUESTION` rows in place (same table, no copy); tests; doc sync.
+- [ ] Read P3 `TAX_QUESTION` rows in place (same table, no copy); `cargo test -p mt-curation` and `cargo clippy`; doc sync.
 
 ## Verification
 
@@ -104,7 +104,7 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p5/P5-T029-curation-task-queue-core`
-- PR title: `P5-T029: mt_curation task queue: types, verified links, ranking, expiry and feedback`
+- PR title: `P5-T029: mt-curation task queue: types, verified links, ranking, expiry and feedback`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P5-T029` run
 
 ## Progress log
@@ -112,3 +112,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical 03 M19 task types incl. REG_CHANGE, no TAX_RECORD alias; rows in P3 `curation.task`)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`packages/mt_curation` → Rust `crates/mt-curation/`; title `mt-curation`; tests `cargo test -p mt-curation`; tools uv → cargo, +git)

@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T024]
+depends_on: [P1-T005, P1-T024, P1-T077, P1-T078]
 requirements: [R4.11]
 roadmap_todos: [T4.32]
 modules: [M1, M6]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres, mt-scheduler]
 branch: p4/P4-T039-positioning-macro-inputs
 pr: ""
 doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,13 +37,13 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Community Outlook (100 calls/day, poll 15–30 min), IG client sentiment, OANDA order/position books (if T1.60 confirmed), GDPNow, NY Fed Staff Nowcast, Cleveland Fed inflation nowcast, Fed SEP/dot plot, Cboe VIX history, and ZQ (30-day Fed funds) futures settlement prices.
+Clients in the Rust `mt-connectors` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), run as `mt-scheduler` jobs, land the raw series that P4-T040/T041 turn into features: Myfxbook Community Outlook (100 calls/day, poll 15–30 min), IG client sentiment, OANDA order/position books (if T1.60 confirmed), GDPNow, NY Fed Staff Nowcast, Cleveland Fed inflation nowcast, Fed SEP/dot plot, Cboe VIX history, and ZQ (30-day Fed funds) futures settlement prices.
 
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.32](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) (positioning and nowcast ingestion so the P1 "arrives in P4" D02 widgets go live, 17 §D P1-B003/B004/B012; the widgets themselves are P4-T065)
 - Providers: [06 §3 retail sentiment, reports & nowcasts](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · research [forex-macro](../../../docs/research/forex-macro-market-providers.md)
-- Cross-phase (`depends_on`): P1-T024 (FRED/macro storage), P1-T005 (connector framework + quota hooks). Reads the P1-T056 (T1.60) OANDA books / IG sentiment check results at runtime: each source is behind a flag that turns on only when its check passed; built and tested against recorded fixtures.
+- Cross-phase (`depends_on`): P1-T024 (FRED/macro storage), P1-T005 (connector framework + quota hooks), P1-T077 (`mt-scheduler`), P1-T078 (`mt-connectors` skeleton). Reads the P1-T056 (T1.60) OANDA books / IG sentiment check results at runtime: each source is behind a flag that turns on only when its check passed; built and tested against recorded fixtures.
 - **Build first, keys last:** Myfxbook (login), IG and OANDA are built and tested on recorded fixtures; the live run with your credentials is P4-T067.
 
 ## Requirements
@@ -56,7 +56,7 @@ Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Co
 
 ## ToDo
 
-- [ ] Connectors + schedules (Prefect).
+- [ ] Connectors (Rust, `mt-connectors`) + `mt-scheduler` job schedules.
 - [ ] Vintage-aware storage in `market.macro_series` / `features` raw tables.
 - [ ] Fixtures + tests.
 
@@ -76,7 +76,7 @@ Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Co
 ## Acceptance criteria
 
 - [ ] Keyless inputs (GDPNow, NY Fed, Cleveland Fed, Fed SEP, Cboe VIX, ZQ) flowing on schedule; Myfxbook/IG/OANDA proven on fixtures (live in P4-T067); quotas respected
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-connectors`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ Connectors land the raw series that P4-T040/T041 turn into features: Myfxbook Co
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (remapped to new roadmap ToDo T4.32 (ingestion); build first, keys last (Myfxbook/IG/OANDA live in P4-T067); explicit P1 depends_on)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
 - 2026-11-19 00:00 · main · no longer waits on P1-T056 (which needs your practice accounts): built behind feature flags that read the P1-T056 result at runtime; until that check passes the source shows disabled with the reason. Build first, keys last.
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (positioning/nowcast clients in Rust `mt-connectors`; Prefect → `mt-scheduler` (depends_on +P1-T077, +P1-T078; services prefect-server → mt-scheduler); tools uv → cargo)

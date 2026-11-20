@@ -15,7 +15,7 @@ requirements: [R4.12]
 roadmap_todos: [T4.28]
 modules: [M21]
 dashboards: [D10]
-tools: [uv, git, supabase]
+tools: [cargo, git, supabase]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/03-build-spec.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_models` has a versioned question registry (`models.question`), a stage-1 model registry entry type, and the WORM `audit.tierb_decision` table; v1 questions are defined: `relevance{yes,no}`, `news_direction{bull,bear,neutral}`, `event_type{guidance_cut,M&A,hack,listing,regulation,macro_release,cb_policy,other}`, `veto{yes,no}`, plus first flags `regime_hint{trend,range,crisis}`.
+The Rust `mt-models` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) has a versioned question registry (`models.question`), a stage-1 model registry entry type, and the WORM `audit.tierb_decision` table; v1 questions are defined: `relevance{yes,no}`, `news_direction{bull,bear,neutral}`, `event_type{guidance_cut,M&A,hack,listing,regulation,macro_release,cb_policy,other}`, `veto{yes,no}`, plus first flags `regime_hint{trend,range,crisis}`.
 
 ## Context & references
 
@@ -58,7 +58,7 @@ review_result: ""
 
 - [ ] SQL migrations in `supabase/migrations/` for `models.registry`, `models.question` and `audit.tierb_decision` (tables only; schemas exist from P0; WORM triggers from P0-T029/T030). `models.label` is added by P4-T062.
 - [ ] Question YAMLs in `config/models/questions/*.yaml` + loader.
-- [ ] State builders + token-budget enforcer (tokenizer of the pinned model).
+- [ ] State builders + token-budget enforcer (tokenizer of the pinned model via the `tokenizers` crate).
 - [ ] Tests.
 
 ## Verification
@@ -79,7 +79,7 @@ review_result: ""
 
 - [ ] v1 questions registered and loadable
 - [ ] WORM + budget tests pass
-- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (schemas created in P0 per 17 §B (P4-B006); tier-B threshold defaults linked to 16 §2.10; explicit P0 depends_on)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +supabase; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (registry, loader and state builders in Rust `mt-models`; tools uv → cargo)

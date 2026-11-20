@@ -1,7 +1,7 @@
 ---
 id: P2-T077
 kind: task
-title: "Setup-odds simulator ('time machine') in mt_lab and on approval cards"
+title: Setup-odds simulator ('time machine') in mt-lab-core and on approval cards
 phase: 2
 type: BUILD
 status: backlog
@@ -15,7 +15,7 @@ requirements: [R2.59]
 roadmap_todos: [T2.43]
 modules: [M7, M15]
 dashboards: [D04, D05]
-tools: [uv, cargo, pnpm, git]
+tools: [cargo, pnpm, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.odds` replays N continuations (default 10,000, configurable) bootstrapped from the instrument's own recent bars, plus every past occurrence of the same setup found point-in-time, and returns win rate, R-multiple distribution, MAE/MFE and time to target/stop. The odds appear in the lab (D04) and as an odds block on the ApprovalCard (web) and the Telegram approval card. Idea from day-trader-skill's "Time Machine" (MIT); no code copied unless kept with its licence.
+For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab_core::odds` (Rust, `crates/mt-lab-core/src/odds/`, 18 §2.1) replays N continuations (default 10,000, configurable) bootstrapped from the instrument's own recent bars, plus every past occurrence of the same setup found point-in-time, and returns win rate, R-multiple distribution, MAE/MFE and time to target/stop. The odds appear in the lab (D04) and as an odds block on the ApprovalCard (web) and the Telegram approval card. Idea from day-trader-skill's "Time Machine" (MIT), rebuilt in Rust ([19 §3](../../../docs/19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime)); any text copied keeps its MIT notice in `NOTICE`. Notebooks reach the same engine through the `mt-lab-core` binding (P2-T203).
 
 ## Context & references
 
@@ -51,13 +51,13 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 - Seeded and reproducible: same inputs + seed → same odds; seed and data range recorded with the result.
 - Block bootstrap of intraday returns (session-aware; block length configurable) plus historical analogues (same setup id detected in past data); both reported separately and combined.
 - Outputs: win rate, expected R, R quantiles (p5/p25/p50/p75/p95), MAE/MFE, median time to target/stop, sample size; a low-sample warning below a configurable minimum (default 30 analogues).
-- Runs as a lab job with a time budget (default 2 s for the card path, configurable); if it can't finish in time the card shows "odds pending", never blocks approval.
+- Runs in-process in `mt-api` for the card path (the crate is linked, no job hop) and as a lab job for D04, with a time budget (default 2 s for the card path, configurable); if it can't finish in time the card shows "odds pending", never blocks approval.
 - Informational only: never changes M11's verdict, sizing or limits.
 - Tools & access: listed in the front matter (`tools`, `mcp`, `env`, `services`); `./kanban preflight P2-T077` checks them before start.
 
 ## ToDo
 
-- [ ] Odds engine (bootstrap + analogue search) with seed handling
+- [ ] Odds engine (bootstrap + analogue search) with seed handling in `crates/mt-lab-core/src/odds/` (seeded `rand_chacha` RNG so results are reproducible across platforms)
 - [ ] Lab API endpoint + D04 view
 - [ ] Odds block on ApprovalCard and Telegram card (with the low-sample warning)
 - [ ] Write tests (see Verification)
@@ -66,7 +66,7 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k odds`, `cargo test -p mt-api odds`, `pnpm test`.
+- Commands: `cargo test -p mt-lab-core odds`, `cargo test -p mt-api odds`, `pnpm test`.
 - Unit: fixed seed → identical output; block bootstrap preserves session boundaries.
 - Unit: analogue search with a synthetic series containing 40 planted setups finds all 40 and nothing after `as_of`.
 - Integration: approval card renders odds within the time budget, or "odds pending".
@@ -83,7 +83,7 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 - [ ] Odds reproducible from the recorded seed
 - [ ] Leak test proves no post-`as_of` data is used
 - [ ] Odds never alter M11 decisions (test)
-- [ ] CI green (ruff, mypy, `uv run pytest`, `cargo test -p mt-api`, `pit` bypass check)
+- [ ] CI green (`cargo clippy -- -D warnings`, `cargo test -p mt-lab-core -p mt-api`, `pnpm test`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -117,3 +117,4 @@ For a proposed entry (instrument, side, entry, stop, target, setup id), `mt_lab.
 
 - 2026-11-19 00:00 · coordinator · created from the 2026-11-19 repository vetting (01 §8, 17 §F)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [uv, pnpm, git] → [uv, cargo, pnpm, git]; services [postgres] → [supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_lab.odds` (Python) → `mt_lab_core::odds` (Rust) per 18 §2.1/R2.59, linked into `mt-api` for the card path; same tests under `cargo test`; title updated; tools [uv, cargo, pnpm, git] → [cargo, pnpm, git])

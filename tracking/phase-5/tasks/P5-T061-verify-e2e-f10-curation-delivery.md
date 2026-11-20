@@ -15,7 +15,7 @@ requirements: [R5.20, R5.21, R5.22]
 roadmap_todos: []
 modules: [M19, M2]
 dashboards: [D13]
-tools: [uv, pnpm]
+tools: [cargo, pnpm]
 mcp: []
 env: [TELEGRAM_BOT_TOKEN, DISCORD_BOT_TOKEN]
 services: [discord, telegram, supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (
 
 ## ToDo
 
-- [ ] Write `tests/scenarios/f10/` automated flow.
+- [ ] Write `tests/scenarios/f10/` automated flow as a Rust integration test (`cargo test --test f10_curation`) plus Playwright.
 - [ ] Set up a second private Discord server with an announcement channel to act as the "project"; follow it into `#mt-inbox`.
 - [ ] Run and record.
 
@@ -101,3 +101,4 @@ The F10 loop is proven: sources create tasks → instant/daily/weekly delivery (
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day re-prompt default per 16 §2.13; Details button; live part needs the P0 Telegram/Discord bots)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (F10 flow as a Rust integration test; tools uv → cargo)

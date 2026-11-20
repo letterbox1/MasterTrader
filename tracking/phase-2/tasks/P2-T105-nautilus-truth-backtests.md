@@ -15,7 +15,7 @@ requirements: [R2.40, R2.41, R2.01]
 roadmap_todos: [T2.27]
 modules: [M7, M0]
 dashboards: [D04]
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_lab.truth` runs the unchanged M0 Nautilus strategy class in a `BacktestEngine` over L1/L2/tick replay from the Parquet catalog, with fill, fee, latency and funding/swap models built from measured M16 costs, deterministic seeds and a stored reproduction record; these are the only results that count for gates.
+`mt_lab_core::truth` (Rust) runs the unchanged M0 Rust strategy in Nautilus's Rust `BacktestEngine` over L1/L2/tick replay from the Parquet catalog, with fill, fee, latency and funding/swap models built from measured M16 costs, deterministic seeds and a stored reproduction record; these are the only results that count for gates.
 
 ## Context & references
 
@@ -48,7 +48,7 @@ review_result: ""
 
 ## Requirements
 
-- Load the strategy by id/version from the registry and run it with zero code changes in `BacktestEngine` (same class used by `engine` for paper).
+- Load the strategy by id/version from the registry and run it with zero code changes in `BacktestEngine` (the same strategy crate the `engine` uses for paper). Python research strategies (paper-only) are run by `mt_research` on Nautilus's Python `BacktestEngine` with the same fill/fee/latency models through the binding and risk through the `mt-risk` binding (P2-T202), labelled `lang=python`.
 - Data: Nautilus catalog replay of ticks/quotes/trades/book deltas or bars from P2-T103 datasets; L2 replay where recorded.
 - Fill model: fills only at prices/sizes that existed (book walk on L2; L1 with size cap otherwise), optional queue-position model, latency from the cost snapshot; venue fees and funding/swap applied at their timestamps.
 - Risk: route orders through the M11 pre-trade layer in backtest mode (P2-T017 API) so effective limits (strictest across L0–L4, as of the run's policy version), two-stage drawdowns, collars, DQ blocks, data age on the simulated clock, decision deadlines and the 2× cap apply identically; live-only states (`audit.integrity`, `egress.status`) are treated as `ok` and recorded as such.
@@ -58,7 +58,7 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `mt_lab/truth/runner.py` building `BacktestEngine` venues, instruments and data from a `Dataset`; risk checks through the `mt-risk` binding (P2-T202) so backtests apply the same rules as the engine
+- [ ] Implement `crates/mt-lab-core/src/truth/runner.rs` building `BacktestEngine` venues, instruments and data from a `Dataset`; risk checks through the linked `mt-risk` crate so backtests apply the same rules as the engine; the Python research path calls the same models through the binding and `mt-risk` through P2-T202
 - [ ] Implement `FillModel`/`FeeModel`/latency adapters from P2-T102 and funding/swap event injection
 - [ ] Wire the M11 pre-trade layer in backtest mode (integration with part A's `mt-risk` API) and record rejections
 - [ ] Register `truth` `JobRunner`; store the reproduction record (code SHA, manifest hash, data snapshot ids, seed, engine version)
@@ -68,7 +68,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k truth`.
+- Commands: `cargo test -p mt-lab-core truth`, `cargo clippy -p mt-lab-core`; Python research path: `uv run pytest packages/mt_research -k truth`.
 - Unit: fill model never fills beyond displayed L2 size at that timestamp; funding applied every interval for perps.
 - Integration: EMA template on a 1-week BTC fixture produces a stored golden trade list; second run identical.
 - Integration: an order breaching the max-position limit is rejected by M11 in backtest exactly as in paper.
@@ -87,7 +87,7 @@ review_result: ""
 - [ ] Same strategy class runs unchanged here and in part A's paper engine
 - [ ] Determinism test passes (identical trade hashes)
 - [ ] M11 rejections visible in the result
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, ruff, mypy, `uv run pytest packages/mt_research`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -100,7 +100,7 @@ review_result: ""
 - Do NOT fork or patch Nautilus (LGPL) in-tree; wrap it.
 - Do NOT bypass the M11 layer in backtests to 'speed up' runs.
 - Do NOT bypass `mt-api`, the risk manager (M11) or `pit(as_of)`; every order goes through M11.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -119,3 +119,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (M11 in backtest mode applies layered limits, drawdown stages, data age on the simulated clock; deps on base classes and RiskGate)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; risk via the `mt-risk` binding (dep P2-T202); depends_on + P2-T202; services [postgres] → [supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_lab.truth` → `mt_lab_core::truth` (Rust, Nautilus Rust `BacktestEngine`, `mt-risk` linked); Python research strategies via `mt_research` + bindings; same tests; tools [uv] → [cargo, uv])

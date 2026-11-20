@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P4-T010, P1-T028, P1-T009]
+depends_on: [P4-T010, P1-T028, P1-T009, P1-T077]
 requirements: [R4.01]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.edgar` follows SEC EDGAR current-filings Atom and per-CIK submissions JSON for the watchlist (8-K, 10-Q, 10-K, S-1, 424B, 13D/G, Form 4), downloads primary documents with edgartools, and publishes them as filing documents with form/period/section metadata for section-aware RAG chunking.
+The SEC EDGAR client in the Rust `mt-connectors` crate (the P1-T028 client; edgartools is gone, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) follows EDGAR current-filings Atom and per-CIK submissions JSON for the watchlist (8-K, 10-Q, 10-K, S-1, 424B, 13D/G, Form 4) as an `mt-scheduler` job (P1-T077), downloads primary documents, and publishes them as filing documents with form/period/section metadata for section-aware RAG chunking.
 
 ## Context & references
 
@@ -56,8 +56,8 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Shared EDGAR rate limiter (token bucket, process-wide; Redis-free, NATS KV or in-proc).
-- [ ] Atom poller + submissions JSON fetcher.
+- [ ] Reuse the `mt-connectors` EDGAR rate limiter (token bucket shared with the P1-T028 client; NATS KV when more than one process calls SEC).
+- [ ] Atom poller + submissions JSON fetcher (Rust), publishing `raw.text.edgar`.
 - [ ] Primary-document fetch + text extraction (HTML → text, tables kept as markdown).
 - [ ] Fixtures for 8-K/10-K/10-Q/S-1.
 - [ ] Tests.
@@ -80,7 +80,7 @@ review_result: ""
 
 - [ ] Watchlist filings appear within 5 min of acceptance during a test day
 - [ ] Limiter test proves ≤ 10 req/s
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-connectors`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -112,3 +112,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T028, P1-T009)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (EDGAR feed in Rust `mt-connectors` (edgartools dropped), polled as an `mt-scheduler` job (depends_on +P1-T077); tools uv → cargo)

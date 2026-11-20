@@ -15,7 +15,7 @@ requirements: [R5.03, R5.07]
 roadmap_todos: [T5.90]
 modules: [M22, M4]
 dashboards: [D18, D12]
-tools: [uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [telegram]
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/wallet-drained.md, docs/07-security-notes.md, docs/road
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -100,3 +100,4 @@ review_result: ""
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (kill sweep default on per P5-B007; P2 runbook format dep)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (testnet dry run uses the Rust signer/`mt` CLI; tools uv → git, cargo)

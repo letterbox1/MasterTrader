@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,7 +76,7 @@ review_result: ""
 - Given entry 100, stop 95, capital 10,000, risk 1%, when stop-distance sizing, then 20 units (rounded down to lot).
 
 ### Stress / failure injection
-- Hypothesis 10k cases per model in CI; runtime < 1 s; per-call p99 < 20 µs.
+- proptest 10k cases per model in CI (same properties as the earlier Hypothesis plan); runtime < 1 s; per-call p99 < 20 µs.
 
 ## Acceptance criteria
 
@@ -115,3 +115,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (risk-per-trade default and multipliers from policy (16 §2.1); MTB link)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Hypothesis → proptest (Rust), same properties and case count)

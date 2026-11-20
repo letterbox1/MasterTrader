@@ -15,7 +15,7 @@ requirements: [R5.05, R5.12, R5.13]
 roadmap_todos: [T5.66]
 modules: [M22, M4]
 dashboards: [D18, D07]
-tools: [cargo, uv, docker, sops, git]
+tools: [cargo, docker, sops, git]
 mcp: []
 env: [HELIUS_API_KEY, ALCHEMY_API_KEY, GOPLUS_APP_KEY, CRYPTORANK_API_KEY]
 services: [helius, alchemy, goplus, cryptorank, supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-5-air
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -113,3 +113,4 @@ The keyless builds (RPC pools, wallet indexer, discovery, enrichment and risk cl
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T5.66: keys-last live check after P0-T010 and P5-T005)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git; "host" → workstation (18 §9))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (live smoke suite drives the Rust clients (`mt-airdrop`, `mt-onchain`, `mt-treasury`); tools −uv)

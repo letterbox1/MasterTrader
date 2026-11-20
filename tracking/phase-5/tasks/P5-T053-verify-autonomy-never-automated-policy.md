@@ -15,7 +15,7 @@ requirements: [R5.15, R5.16]
 roadmap_todos: []
 modules: [M4, M19, M15]
 dashboards: [D12, D13]
-tools: [cargo, uv, pnpm, git]
+tools: [cargo, pnpm, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ An integration suite proves the autonomy boundary: only read-only work, mandated
 
 ## ToDo
 
-- [ ] Write `tests/policy/test_autonomy_matrix.py` and Playwright checks for absent controls.
+- [ ] Write the matrix as a Rust integration test `crates/mt-api/tests/autonomy_matrix.rs` (`cargo test -p mt-api --test autonomy_matrix`) and Playwright checks for absent controls; same ≥ 56 cells.
 - [ ] Add to CI as a required check; record the matrix.
 
 ## Verification
@@ -99,3 +99,4 @@ An integration suite proves the autonomy boundary: only read-only work, mandated
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (matrix adds manual disposal P5-B010, identity-only claims P5-B017, depeg alert-only P5-B009)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (autonomy matrix as a Rust integration test (same cells); tools −uv)

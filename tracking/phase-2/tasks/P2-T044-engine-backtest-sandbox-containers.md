@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,8 +52,8 @@ review_result: ""
 
 - `engine`: built from `crates/mt-engine` (multi-stage `cargo` build; the Python-node image adds the uv environment for venues on the Python node), network `core`, egress allow-list to testnet/practice venue hosts only; secrets = venue trade keys for its modes; limits e.g. 4 CPU / 8 GB (tune); `restart: unless-stopped`; healthcheck on heartbeat freshness.
 - `deadman`: `mt-deadman` static binary, separate container on `core`, its **own** trade-only keys (`venues.<venue>.deadman`, used only to cancel and flatten) and its own venue connections; 0.5 CPU / 256 MB; `restart: always`; healthcheck on its own heartbeat.
-- `backtest-worker`: `core` (Supabase Postgres read via the `pit` Python binding, MLflow), **no venue keys**, limits e.g. 6 CPU / 16 GB, scalable replicas.
-- `sandbox`: `runtime: runsc`, `network_mode: none`, no secrets, `read_only: true`, tmpfs `/tmp` 512 MB, `pids_limit`, CPU/mem/time limits (e.g. 2 CPU / 4 GB / 10 min wall), non-root user, seccomp default; code + data passed via a mounted job dir; results written back to that dir only.
+- `backtest-worker`: `core` (Supabase Postgres read through `pit`, MLflow); runs `mt-lab-core` jobs (Rust binary) taken from the `mt-scheduler` queue, plus `mt_research` (Python) exploration/training jobs as separate job containers that read only through the `pit` binding; **no venue keys**, limits e.g. 6 CPU / 16 GB, scalable replicas.
+- `sandbox`: Rust toolchain image with a vendored crate registry (offline `cargo build`, the generator emits Rust, P2-T116), `runtime: runsc`, `network_mode: none`, no secrets, `read_only: true`, tmpfs `/tmp` 512 MB, `pids_limit`, CPU/mem/time limits (e.g. 2 CPU / 4 GB / 10 min wall), non-root user, seccomp default; code + data passed via a mounted job dir; results written back to that dir only.
 - All images pinned by digest; trivy/grype scan in CI.
 
 ## ToDo
@@ -116,3 +116,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (deadman container with its own trade-only keys (16 §3.1), egress note, cross-phase deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording, `infra/` paths, CI line; engine/deadman images from Rust builds; gVisor on the workstation (`infra/host/`))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (backtest-worker runs `mt-lab-core` jobs from `mt-scheduler` plus separate `mt_research` job containers; sandbox image carries an offline Rust toolchain and vendored crates for generated Rust strategies)

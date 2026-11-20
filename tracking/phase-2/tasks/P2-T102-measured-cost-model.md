@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P1-T038, P1-T039, P1-T040]
+depends_on: [P2-T101, P1-T038, P1-T039, P1-T040, P1-T077]
 requirements: [R2.40, R2.41, R2.42]
 roadmap_todos: [T2.27]
 modules: [M7, M16]
 dashboards: [D04]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
-services: [supabase-postgres]
+services: [supabase-postgres, mt-scheduler]
 branch: p2/P2-T102-measured-cost-model
 pr: ""
 doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees by tier, spread by instrument × hour-of-week, size-dependent slippage/impact, latency, funding/swap) that both backtest engines use, with cost multipliers for stress tests and a refresh path for realised TCA from paper fills.
+A `mt_lab_core::costs::CostModel` (Rust, `crates/mt-lab-core/src/costs/`) built from a named, immutable M16 cost snapshot (fees by tier, spread by instrument × hour-of-week, size-dependent slippage/impact, latency, funding/swap) that both backtest engines use (the Rust truth runner directly, the Python screener in `mt_research` through the binding, P2-T203), with cost multipliers for stress tests and a refresh path for realised TCA from paper fills.
 
 ## Context & references
 
@@ -57,17 +57,17 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 
 ## ToDo
 
-- [ ] Implement `mt_lab/costs.py`: `CostSnapshot` loader (pit), `CostModel` with fee/spread/impact/latency/funding/swap components
+- [ ] Implement `crates/mt-lab-core/src/costs/`: `CostSnapshot` loader (pit), `CostModel` with fee/spread/impact/latency/funding/swap components
 - [ ] Implement impact curve fitting from recorded L2 depth and 1-min volume; fallback order when data is missing (instrument → asset-class median → refuse)
 - [ ] Implement `scaled(k)`, custom override and `unrealistic_costs` flag
-- [ ] Prefect flow (Python, `mt_lab`) `lab-cost-snapshot-monthly` creating a new snapshot incl. realised TCA ratios
+- [ ] `mt-scheduler` job `lab-cost-snapshot-monthly` (Rust, in-process) creating a new snapshot incl. realised TCA ratios
 - [ ] Adapters exposing the model to the screener (per-trade cost function) and to Nautilus (`FeeModel`, `FillModel`, latency model)
 - [ ] Tests and docs
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k costs`.
+- Commands: `cargo test -p mt-lab-core costs`, `cargo clippy -p mt-lab-core`.
 - Unit: fee/spread lookup by hour-of-week; impact monotonic in size; `scaled(3)` triples every component; zero-cost flag.
 - Golden: a fixed snapshot fixture produces byte-identical cost totals for a fixed trade list.
 - Integration: snapshot built from P1 cost tables via `pit(as_of)`; `ingest_time > as_of` rows excluded.
@@ -85,8 +85,8 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 
 - [ ] Every backtest row carries a `cost_snapshot_id`; screener and truth use the same model
 - [ ] Zero/custom costs flagged; missing costs fail loudly
-- [ ] Monthly snapshot flow scheduled in Prefect
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] Monthly snapshot job scheduled in `mt-scheduler`
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -97,7 +97,7 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 ## Cardinal rules (do NOT)
 
 - Do NOT default to zero or fixed-bps costs silently; costs are measured or the run is flagged/failed.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT add paid data/APIs or services; free tiers and self-hosted components only (03 §1).
 - Do NOT skip, weaken or delete a test to get green.
 
@@ -117,3 +117,4 @@ A `mt_lab.costs.CostModel` built from a named, immutable M16 cost snapshot (fees
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase cost-service deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [postgres] → [supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_lab.costs` → `mt_lab_core::costs` (Rust); Prefect flow → `mt-scheduler` job; depends_on + P1-T077; same tests under `cargo test`; tools [uv] → [cargo]; services + mt-scheduler)

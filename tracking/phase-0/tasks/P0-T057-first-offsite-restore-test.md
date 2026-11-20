@@ -18,14 +18,14 @@ dashboards: []
 tools: [docker, supabase, pgbackrest, restic, sops]
 mcp: []
 env: [B2_PGBACKREST_KEY_ID, B2_PGBACKREST_APPLICATION_KEY, MT_PGBACKREST_CIPHER_PASSWORD, MT_RESTIC_PASSWORD, B2_RESTIC_KEY_ID, B2_RESTIC_APPLICATION_KEY]
-services: [backblaze-b2, supabase-postgres, prefect-server]
+services: [backblaze-b2, supabase-postgres]
 branch: p0/P0-T057-first-offsite-restore-test
 pr: ""
 doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-On the always-on workstation stack (self-hosted Supabase, [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path)), the backups are pointed at the real Object-Locked target from P0-T006 for the first time (first full + incremental + WAL; delete probe fails), and then the restore-test flow restores the latest **off-site** backup into a scratch DB, all checks pass (including `audit.verify` against external seals), and the result is visible in D16 Backups — the evidence for exit criterion 3.
+On the always-on workstation stack (self-hosted Supabase, [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path)), the backups are pointed at the real Object-Locked target from P0-T006 for the first time (first full + incremental + WAL; delete probe fails), and then the restore-test job (P0-T041) restores the latest **off-site** backup into a scratch DB, all checks pass (including `audit.verify` against external seals), and the result is visible in D16 Backups — the evidence for exit criterion 3.
 
 ## Context & references
 
@@ -45,7 +45,7 @@ On the always-on workstation stack (self-hosted Supabase, [18 §9](../../../docs
 - [Roadmap P0 T0.63](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
 - [Roadmap P0 §6 exit criteria](../../../docs/roadmap/phase-0-foundations.md#6-exit-criteria-demo) (3)
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
-- Flow: P0-T041; backup config: P0-T039 (built keyless on MinIO)
+- Job: P0-T041; backup config: P0-T039 (built keyless on MinIO)
 - This is the late live check for the backup target (build first, keys last): it carries the env names (values only in the secrets file) and depends on the USER task that provides them.
 - Depends on: P0-T041, P0-T006 (real target + keys, USER), P0-T019 (workstation baseline), P0-T022 (secrets on the workstation). Re-run on the runtime host at the shift (P7-T073).
 
@@ -60,15 +60,15 @@ On the always-on workstation stack (self-hosted Supabase, [18 §9](../../../docs
 ## ToDo
 
 - [ ] Point the workstation stanza/restic repo at the real target; run the first full + incremental; run the delete probe (must fail).
-- [ ] Trigger `system.restore.test` from D16 (C1).
-- [ ] Watch the Prefect run; collect logs (no secrets).
+- [ ] Run `just restore-test` on the workstation (the runbook path; triggering `system.restore.test` from D16 arrives with `mt-scheduler`, P1-T077).
+- [ ] Follow the job output; collect logs (no secrets).
 - [ ] Record results here and attach the D16 screenshot.
 - [ ] File a bug for any failure.
 
 ## Verification
 
 ### Tests
-- The restore-test flow checks (row counts, `supabase_migrations` version, pgTAP invariants, `pit` sample, `audit.verify` full).
+- The restore-test job checks (row counts, `supabase_migrations` version, pgTAP invariants, `pit` sample, `audit.verify` full).
 
 ### Scenarios
 - Given the local disk is lost, when restoring from B2 only, then the scratch DB matches the workstation database as of the target time.
@@ -111,3 +111,4 @@ On the always-on workstation stack (self-hosted Supabase, [18 §9](../../../docs
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys-last: now the late live check for the real backup target (after P0-T006) with env names; size S→M; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (runs on the workstation's self-hosted Supabase Postgres (production host → workstation; repeated at the shift, P7-T073); Alembic head → `supabase_migrations` version; keeps USER P0-T006 as the late live check)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect run → `just restore-test` from the runbook (the D16 trigger arrives with `mt-scheduler`, P1-T077))

@@ -15,7 +15,7 @@ requirements: [R2.02, R2.03]
 roadmap_todos: [T2.21]
 modules: [M0]
 dashboards: [D03]
-tools: [uv, cargo]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (regime-gated), cross-sectional momentum, token-unlock positioning and memecoin momentum (paper-only) exist with parameter schemas; the deterministic rule-based template slot is registered for Part B's MasterTradingBot libraries.
+Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (regime-gated), cross-sectional momentum, token-unlock positioning and memecoin momentum (paper-only) exist as **Rust** templates in `crates/mt-engine/src/strategy/templates/` with parameter schemas (18 §2.1); the ML-signal template runs tier-A models in-process via ONNX/`ort` (`mt-models`, P2-T128); the deterministic rule-based template slot is registered for Part B's MasterTradingBot libraries.
 
 ## Context & references
 
@@ -53,7 +53,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 - Cross-sectional momentum: top-20 liquid, survivorship-free universe input (dynamic selection rule).
 - Token-unlock: short into large team cliffs, needs a perp (paper-only under current registry).
 - Event-driven: entry windows keyed on `cal.*`/`evt.*` events (blackout-aware: 15 min before to 15 min after high-importance events for `event_sensitive` bots by default, 16 §2.8; calendars land in P4, so P2 uses manual event lists).
-- ML-signal: consumes a tier-A model id from the MLflow registry via an interface (`ModelSignalProvider`).
+- ML-signal: consumes a tier-A model id from the MLflow registry via a Rust trait (`ModelSignalProvider`) backed by the ONNX runtime in `mt-models`; ML research variants written in Python stay on paper in `mt_research` until ported.
 - Grid/DCA and pairs/stat-arb (P3 evidence) with explicit inventory caps.
 
 ## ToDo
@@ -67,7 +67,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_strategy/templates`, `cargo test -p mt-engine templates`.
+- Commands: `cargo test -p mt-engine templates`, `cargo clippy -p mt-engine`.
 - Template tests: valid manifest + backtest completes for each (D03 acceptance 1).
 - Unit: carry entry blocked when trailing funding < fees + 8%.
 - Unit: memecoin template refuses averaging down and entries < 5 min after launch.
@@ -85,7 +85,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 - [ ] 8 templates + rule-based slot registered
 - [ ] Paper-only enforcement tested
 - [ ] Regime gates tested
-- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -118,3 +118,4 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper_ok rule for blocked perps, memecoin ≥ 300 trades gate, blackout defaults)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; Rust versions where sensible; tools [uv] → [uv, cargo])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (all 8 templates are Rust; ML-signal via `ModelSignalProvider` on `mt-models` ONNX; same test cases under `cargo test`; tools [uv, cargo] → [cargo])

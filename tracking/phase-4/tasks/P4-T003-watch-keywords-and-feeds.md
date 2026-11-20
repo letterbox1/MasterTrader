@@ -15,7 +15,7 @@ requirements: [R4.01, R4.05]
 roadmap_todos: [T4.03]
 modules: [M2]
 dashboards: [D08]
-tools: [git, uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -61,14 +61,14 @@ review_result: ""
 
 - [ ] Draft `config/intel/watchlist.yaml` from the P1 universe and the 16 §2.8 / 03 M2 keywords; draft `config/intel/feeds.yaml` from 06 §2
 - [ ] Add a doc-parse test that checks every 06 §2 central bank and feed-less site appears (or is listed as excluded with the reason)
-- [ ] `mt intel seed` command: validate both files with the `mt_data.text.config` schemas and seed them through `mt-api` with source `seed`
+- [ ] `mt-feeds seed` command (Rust): validate both files with the `mt-feeds` config types (serde schemas) and seed them through `mt-api` with source `seed`
 - [ ] Run it; D08 Sources lists the seeded sources with their provenance flags
 - [ ] Tests; progress log; `./kanban done P4-T003`
 
 ## Verification
 
 ### Tests
-- Both files validate with the `mt_data.text.config` schemas (no duplicate URLs, valid cashtags, every entry has a terms entry): `uv run pytest`.
+- Both files validate with the `mt-feeds` config types (no duplicate URLs, valid cashtags, every entry has a terms entry): `cargo test -p mt-feeds`.
 - Re-running the seed changes nothing; a source you edited in D08 keeps your value after a re-seed.
 
 ### Scenarios
@@ -109,3 +109,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (connectors no longer wait for this list (build on fixtures); optional YouTube channel list for P4-T066)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (converted from a USER task to an agent seed task per 17 §G: the lists are drafted from 06 §2 / 12 §4–5 / 16 §2.8 defaults and seeded through `mt-api` with source `seed`; you review them in the go-live pack P7-T070; services `supabase-postgres`, `mt-api`; depends on P4-T010, P4-T043, P1-T001)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (seed command and config schemas in the Rust `mt-feeds` crate; tools uv → cargo)

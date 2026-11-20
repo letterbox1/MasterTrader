@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrop
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ The `mt-onchain` crate (rpc module) exposes per-chain RPC pools (Solana: Helius 
 
 - [ ] Implement `crates/mt-onchain/src/rpc/pool.rs` with provider adapters, credit-cost tables per method, circuit breaker.
 - [ ] Register budgets in the P1 quota tracker; Grafana panel + alerts.
-- [ ] Health probe job in `mt-onchain` every 5 min (block height freshness; interval in `config/rpc/pools.yaml`). Python callers (`mt_airdrop` enrichment) read the same pool config and quota counters (P1-T006) through a thin client.
+- [ ] Health probe job in `mt-onchain` every 5 min (block height freshness; interval in `config/rpc/pools.yaml`). Rust callers (`mt-airdrop` enrichment, `mt-treasury`, `mt-signer` simulation) use the pool and quota counters (P1-T006) directly through the `mt-onchain` API.
 - [ ] Tests with mocked providers; doc sync.
 
 ## Verification
@@ -107,3 +107,4 @@ The `mt-onchain` crate (rpc module) exposes per-chain RPC pools (Solana: Helius 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build: no dependency on P5-T003 keys, live probe moved to P5-T068; RPC error pause per 16 §2.1; P1 quota tracker dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (RPC pools in Rust `mt-onchain`; tools +cargo +git −uv)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (enrichment caller is Rust `mt-airdrop`, uses the `mt-onchain` pool API directly (no Python thin client))

@@ -15,7 +15,7 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04, D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 
 ## ToDo
 
-- [ ] Implement `mt_lab/validation/stats.py`: permutation test, block bootstrap, PSR/DSR
+- [ ] Implement `crates/mt-lab-core/src/validation/stats.rs`: permutation test, block bootstrap, PSR/DSR (seeded `rand_chacha`; Vibe-Trading's MIT `validation.py` as a reference only, NOTICE kept if any formula text is copied)
 - [ ] Wire inputs from metrics + trial counter; persist results
 - [ ] Known-answer tests against published DSR examples and a random-signal fixture
 - [ ] Doc formulas and defaults
@@ -64,7 +64,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k stats`.
+- Commands: `cargo test -p mt-lab-core stats`, `cargo clippy -p mt-lab-core`.
 - Known-answer: DSR reproduces the worked example in Bailey & López de Prado (2014) to 1e-4.
 - Property: on 200 random-signal strategies the permutation p-values are ~uniform (KS test p > 0.01).
 - Unit: DSR decreases monotonically as N (trial count) increases, all else equal.
@@ -80,7 +80,7 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 
 - [ ] Permutation, bootstrap CI and DSR stored per validation run
 - [ ] Known-answer and uniformity tests pass
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ Robustness statistics for every validated strategy: a Monte Carlo permutation p-
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (DSR ≥ 0.95 decided (17 §A P2-B050), thresholds from the gate profile)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (statistics → `mt-lab-core` (Rust); same known-answer tests; tools [uv] → [cargo])

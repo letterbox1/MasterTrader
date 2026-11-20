@@ -15,7 +15,7 @@ requirements: [R5.20, R5.23, R5.15, R5.05]
 roadmap_todos: [T5.28, T5.30, T5.31]
 modules: [M4, M19, M22, M15]
 dashboards: [D12, D13, D18]
-tools: [cargo, uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-cur
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Versioned `mt-core` types (Rust, serde; exposed to Python through the PyO3 module) for every P5 subject and typed `mt-api` commands/queries with their confirmation levels are registered (handlers may be stubs), so the services and the UI can be built in parallel against one contract.
+Versioned `mt-core` types (Rust, serde; used directly by the Rust `mt-airdrop`, `mt-airdrop-exec`, `mt-curation` and `mt-treasury` crates) for every P5 subject and typed `mt-api` commands/queries with their confirmation levels are registered (handlers may be stubs), so the services and the UI can be built in parallel against one contract.
 
 ## Context & references
 
@@ -60,7 +60,7 @@ Versioned `mt-core` types (Rust, serde; exposed to Python through the PyO3 modul
 
 ## ToDo
 
-- [ ] Define `mt-core` structs and subject constants (Rust, serde) with schema version fields; expose them to Python (`mt_airdrop`, `mt_curation`) through the PyO3 module.
+- [ ] Define `mt-core` structs and subject constants (Rust, serde) with schema version fields; `mt-airdrop` and `mt-curation` are Rust (18 §2.1), so P5 types need no Python binding.
 - [ ] Register commands and queries in `mt-api` with stub handlers returning 501 until the owning task lands (axum; utoipa OpenAPI regenerated for the web client).
 - [ ] Add a `NeverAutomated` problem type and a denylist of command names (shared with P5-T042).
 - [ ] Add WS topics with throttling (`wallet`, `alert` as listed in 02 §7.3).
@@ -70,7 +70,7 @@ Versioned `mt-core` types (Rust, serde; exposed to Python through the PyO3 modul
 ## Verification
 
 ### Tests
-- Unit: serde encode/decode round-trip for every type (`cargo test -p mt-core`) and the same payloads through the Python binding (`uv run pytest`); backward-compat test (v1 payload accepted by v1.1 decoder).
+- Unit: serde encode/decode round-trip for every type (`cargo test -p mt-core`); backward-compat test (v1 payload accepted by v1.1 decoder).
 - Integration: calling `airdrop.mandate.create` without Telegram approve + TOTP never applies (C3), reusing the P0 confirmation tests.
 - Snapshot: OpenAPI diff reviewed.
 
@@ -113,3 +113,4 @@ Versioned `mt-core` types (Rust, serde; exposed to Python through the PyO3 modul
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (WS topics per 02 §7.3/P5-B005; canonical task types per P5-B004; limits via risk.policy.update; P0/P1 contract deps added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (serde round-trip tests + Python binding; `mt-core` Rust types with PyO3 binding; Rust `mt-api`; services postgres → supabase-postgres; tools +cargo +git; `mt_api` → `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (P5 consumers `mt-airdrop`/`mt-curation` are Rust, so no PyO3 exposure or Python round-trip for P5 types; tools −uv)

@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,8 +49,8 @@ CI fails the build if any research-side code, **Rust or Python**, reads raw tabl
 
 ## Requirements
 
-- Research-side code: Python packages `mt_lab`, `mt_features`, `mt_strategy`, `mt_agents`, `mt_memory`, `mt_models`, `mt_anomaly`, plus `notebooks/` and `strategies/` (Python and Rust strategies); Rust strategy crates and any crate marked `research` in its `Cargo.toml` metadata.
-- **Python static check** (`tools/pitcheck`, AST-based): in those paths, fail on imports of `sqlalchemy`, `psycopg`, `asyncpg`, `duckdb`, `supabase` or `polars.read_database`; fail on string literals matching `\b(FROM|JOIN)\s+(market|text|features|journal|audit|curation|strategy|risk)\.`; fail on `revisions='latest'`. import-linter contract: research packages may import `mt_store.pit` and `mt_store.catalog` only.
+- Research-side code: the Python package `mt_research` (the only Python research package, 18 §2.2) plus `notebooks/` and any Python research strategy; the Rust crates `mt-lab-core`, `mt-features`, `mt-agents`, `mt-memory`, `mt-models`, `mt-anomaly`, `mt-crowdsim`, the strategy crates (`strategies/*`, `crates/mt-engine/src/strategy/`) and any crate marked `research` in its `Cargo.toml` metadata (18 §2.1).
+- **Python static check** (`tools/pitcheck`, AST-based): in those paths, fail on imports of `sqlalchemy`, `psycopg`, `asyncpg`, `duckdb`, `supabase` or `polars.read_database`; fail on string literals matching `\b(FROM|JOIN)\s+(market|text|features|journal|audit|curation|strategy|risk)\.`; fail on `revisions='latest'`. import-linter contract: `mt_research` may import `mt_store.pit` and `mt_store.catalog` only.
 - **Rust static check**: research crates may depend on `mt-store` (`pit`, `catalog` modules) but not on `sqlx`, `tokio-postgres`, `postgres` or `duckdb` (`cargo deny` bans per crate + a `cargo metadata` script); a source scan for the same SQL pattern and `As::Latest`.
 - Allow-list file with justification + expiry only.
 - Runtime check: an integration test (pgTAP + a Rust test) logs in as `mt_research_ro` and asserts `SELECT` on each fact table raises `insufficient_privilege`, while pit functions work.
@@ -110,3 +110,4 @@ CI fails the build if any research-side code, **Rust or Python**, reads raw tabl
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no decision changes (note: roadmap T0.28 is the LiteLLM callback, not this task); run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (guard covers Rust research crates (cargo deny bans + source scan) and Python (AST + import-linter); runtime test via pgTAP; depends on P0-T071; make → just)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (research paths follow 18 §2: Python is `mt_research` only; the Rust research crates (mt-lab-core, mt-features, mt-agents, mt-memory, mt-models, mt-anomaly, mt-crowdsim, strategies) are listed by name)

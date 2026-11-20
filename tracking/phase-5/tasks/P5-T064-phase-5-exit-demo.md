@@ -15,7 +15,7 @@ requirements: [R5.01, R5.02, R5.03, R5.04, R5.05, R5.06, R5.07, R5.10, R5.11, R5
 roadmap_todos: []
 modules: [M4, M19, M22, M18]
 dashboards: [D12, D13, D18]
-tools: [cargo, uv, pnpm, git]
+tools: [cargo, pnpm, git]
 mcp: []
 env: []
 services: [telegram]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -105,3 +105,4 @@ A recorded demo walks every exit criterion: (1) a weekly digest of vetted airdro
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new deps P5-T003/T065/T066/T068/T069; R5.24/R5.25 covered)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (evidence list: limits seed (P5-T065) + your mainnet confirmation (P5-T004); live P5-T060 run here; tools +cargo +git)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (exit demo runs Rust suites (+ the `mt_research` notebook evidence from P5-T055); tools −uv)

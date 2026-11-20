@@ -15,7 +15,7 @@ requirements: [R7.01, R7.02, R7.03, R7.04, R7.05, R7.06, R7.07, R7.08, R7.09, R7
 roadmap_todos: []
 modules: [M11, M12, M16, M18]
 dashboards: [D01, D03, D06, D14]
-tools: [git, uv, pnpm]
+tools: [git, cargo, pnpm]
 mcp: []
 env: []
 services: [supabase-postgres, nats, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/README.md, docs/04-plan-of-action.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -58,7 +58,7 @@ A recorded walkthrough proves every exit criterion: at least one strategy is liv
 
 - [ ] Run `mt preflight` and `audit.verify`; capture output.
 - [ ] Walk through D03/D06/D14 on desktop and phone; capture redacted screenshots.
-- [ ] Link CI runs for P7-T048/T049/T050/T055/T067 and the P7-T021 memecoin suite; attach P7-T052 and P7-T069 evidence.
+- [ ] Link CI runs for P7-T048/T049/T050/T055/T067 and the P7-T021 memecoin suite; attach P7-T052 and P7-T069 evidence (P7-T069 includes the simulated `mt-crowdsim` scenarios, reported alongside the historical replay); link the scenario-twin sections of the weekly packs (P7-T015) as informational evidence.
 - [ ] Tick PHASE.md exit criteria with evidence links.
 - [ ] Run `./kanban validate --phase 7`.
 
@@ -106,3 +106,4 @@ A recorded walkthrough proves every exit criterion: at least one strategy is liv
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (R7.14–R7.16 added (P7-T052, P7-T067, P7-T069); P7-T062 cancelled → recurring review; exit 4 per roadmap §6)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (exit demo links the simulated stress results and twin sections as informational evidence; tools uv → cargo)

@@ -15,7 +15,7 @@ requirements: [R5.13, R5.18]
 roadmap_todos: [T5.26]
 modules: [M4]
 dashboards: [D12]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,8 +54,8 @@ Our own wallet-cluster detection builds a funding graph of early buyers/holders 
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/risk/clusters/` (tracer, cluster rules, supply share).
-- [ ] Implement `risk/blacklist.py` with add (C1 command `airdrop.reject` with `blacklist=true`) and link-propagation checks.
+- [ ] Implement `crates/mt-airdrop/src/risk/clusters/` (tracer, cluster rules, supply share).
+- [ ] Implement `risk::blacklist` with add (C1 command `airdrop.reject` with `blacklist=true`) and link-propagation checks.
 - [ ] CEX hot-wallet label list (curated, versioned).
 - [ ] Build and test on recorded traces (fixtures); the live RPC budget is measured after P5-T068.
 - [ ] Tests on fixture graphs + one real recorded launch; doc sync.
@@ -108,3 +108,4 @@ Our own wallet-cluster detection builds a funding graph of early buyers/holders 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; keyless recorded traces)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (cluster graph and blacklist in Rust `crates/mt-airdrop/src/risk/`; tools uv → cargo)

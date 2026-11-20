@@ -9,7 +9,7 @@ hard_gate: true
 started: 2026-10-22
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-11-20
 ---
 
 # Phase 7 · Prove it, then go small-live
@@ -21,13 +21,13 @@ Only strategies that pass every gate on paper reach live money, in small sub-acc
 The work is organised in nine workstreams:
 
 1. **Entry checks and your pre-live actions:** tax decision, advice, venue checks, accounts, keys, Travel Rule, UPS/4G, the egress VM.
-2. **Evidence:** the gate report (gate profile, 16 §2.4), paper/HITL tracking, reference distributions, weekly review pack and sign-off.
+2. **Evidence:** the gate report (gate profile, 16 §2.4), paper/HITL tracking, reference distributions, weekly review pack and sign-off (the pack carries the scenario-twin report per bot from P6-T075, labelled Simulated, informational, not a gate).
 3. **Money rules:** the capital-step state machine and C3 approvals; kill criteria (sleeve, memecoin, recon 24 h); two-stage system drawdown (10% no new entries, 25% flatten + 30-day lock).
 4. **Live monitoring:** decay (rolling 60-trade / 26-week vs p5, CUSUM, 5 losses → HITL), daily health check (halt the bot), auto-downgrade.
 5. **Reconciliation hardening:** three-way recon at the 16 §2.9 defaults, unconfirmed state, 24 h halt.
 6. **Execution:** MT5 bridge/adapter and/or cTrader, MasterTradingBot port, resting venue stops, live config, Windows VPS hardening.
 7. **Continuity, egress and mobile:** exit-node tunnel, three-layer dead-man with UPS, failover and pull-the-plug drills, approvals/PWA polish.
-8. **Phase 7 API/UI and stress:** the Phase 7 catalogue in `mt_api`, D06 Live / D03 Go-live, the D06 Stress tab and the pre-funding stress replay.
+8. **Phase 7 API/UI and stress:** the Phase 7 catalogue in `mt-api`, D06 Live / D03 Go-live, the D06 Stress tab and the pre-funding stress replay (four historical shocks plus simulated `mt-crowdsim` scenarios; only the historical replay gates).
 9. **Verification and RUN windows:** drills, simulated breaches, parity, E2E scenario, micro-live windows, the exit demo.
 
 ## Entry criteria
@@ -70,7 +70,7 @@ These come from roadmap §2. They are enforced in code by the go-live preflight 
 
 P7-T010 → P7-T011 (preflight) ┐
 P7-T012 → P7-T013 → P7-T014 (gate report) → P7-T056 (paper confirmed) ┤
-P2 stress placeholder → P7-T068 → P7-T069 (stress replay) ┤
+P2 stress placeholder → P7-T068 → P7-T069 (stress replay; simulated scenarios from P6-T075) ┤
 P7-T043 → P7-T044 / P7-T045 (drills) ┤
 P7-T003 → P7-T046; P7-T003 → P7-T006 → P7-T065 → P7-T007 → P7-T047 (live key audit, also needs P7-T031/T032/T066) ┤
 P7-T009 → P7-T066 (tunnel); P7-T009 + P7-T030 → P7-T033 → P7-T052 (failover) → P7-T053 ┤
@@ -153,16 +153,17 @@ These are now explicit `depends_on` entries (existing task IDs) in the Phase 7 t
 | From | Tasks | Used by |
 |---|---|---|
 | P0 | P0-T012 (UPS/4G ordered), P0-T025 (`ops.venue_registry`), P0-T050 (app shell), P0-T052 (D16 security/keys) | P7-T009, T010, T040, T032 |
-| P1 | P1-T041/T042 (venue recon), P1-T045 (alert fan-out), P1-T071 (egress check) | P7-T025, T031, T011, T066 |
+| P1 | P1-T041/T042 (venue recon), P1-T045 (alert fan-out), P1-T071 (egress check), P1-T077 (`mt-scheduler`) | P7-T025, T031, T011, T066, T010/T013/T014/T042 |
 | P2 | P2-T010 (layered policy), P2-T012 (system drawdown stages), P2-T015 (portfolio risk), P2-T016 (registry check), P2-T021 (engine), P2-T027 (epoch IDs + restart recon), P2-T029 (TCA), P2-T031 (kill switch), P2-T032 (dead-man layer 1), P2-T072/T073/T074 (dead-man layers 2–3, clean restart), P2-T033 (modes), P2-T034 (decay/health on paper), P2-T035 (Telegram C3), P2-T037 (bot modes + auto-downgrade), P2-T039 / P2-T149 (approval cards/queue), P2-T042 (D06 venues), P2-T043 (Stress placeholder), P2-T068 (runbooks), P2-T103 (PIT datasets), P2-T108/T110/T114 (trial counter, DSR, gate evaluator), P2-T132/T133 (MasterTradingBot template + golden files), P2-T143 (D03 Gates), P2-T150 (weekly five-worst report), P2-T180 (paper clock) | P7-T003, T010–T015, T018–T026, T028–T031, T033, T036–T039, T043, T056, T068 |
 | P3 | P3-T001 (tax agent), P3-T012 (`ops.wallets`), P3-T034 (journal ↔ venue recon), P3-T038 (minimal `curation.task`) | P7-T001, T008, T015, T025, T010 |
 | P5 | P5-T036 (`token_risk_report` rug labels) | P7-T021 only (memecoin sleeve) |
-| P6 | none required: hold-and-earn falls back to stables on the venue + a USER task; LLM post-cutoff results (P6-T017) are read only when an LLM strategy exists | — |
+| P6 | P6-T075 (scenario twin: weekly per-bot report and exported `mt-crowdsim` scenarios, R6.33) — informational inputs, not gates (16 §2.14b). Otherwise none: hold-and-earn falls back to stables on the venue + a USER task; LLM post-cutoff results (P6-T017) are read only when an LLM strategy exists | P7-T015 (twin section of the weekly pack), P7-T069 (simulated scenarios in the pre-funding stress replay) |
 
 P2 R2.56 is now P2-T072 (deadman sidecar), P2-T073 (venue timers + resting stops) and P2-T074 (clean restart), `depends_on` of P7-T030, P7-T033 and P7-T026.
 
 ## Planning notes & risks
 
+- **Rust-max (2026-11-20, [18 §2](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), [17 §H](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** gate evaluators, paper tracking, reference distributions, the report renderer and the 12-month report move to the Rust `mt-lab-core` crate (P7-T012/T013/T014/T017/T042); scheduled work runs as `mt-scheduler` jobs (P1-T077), not Prefect; MasterTradingBot strategies are Rust crates (P7-T038); VERIFY suites are Rust integration tests in the owning crate. Python stays only for the MT5 bridge (`mt_mt5_bridge`, P7-T034/T035). The scenario twin (P6-T075) feeds the weekly pack (P7-T015) and its simulated scenarios join the stress tests (P7-T068/T069); both are reported, never gating (16 §2.14b).
 - **Decisions applied (2026-10-22 alignment):** gate profile and paper/HITL period (16 §2.4), clean week and capital steps from a per-bot starting allocation (16 §2.5, default A$2,000), decay/kill meanings (16 §2.6), two-stage system drawdown (16 §2.1), reconciliation defaults (16 §2.9), three-layer dead-man (16 §3.1), static AU egress via the exit node (16 §3.2), modes `paper`/`hitl`/`autonomous` per bot (17 §B), Windows VPS baseline (07 §5.1). All gaps P7-B001–B016 are closed with doc evidence.
 - **RUN items that outlast the phase:**
   - P7-T056 closes when one P1 sleeve passes paper (others keep running).

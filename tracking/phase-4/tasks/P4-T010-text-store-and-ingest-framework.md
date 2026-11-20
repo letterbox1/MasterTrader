@@ -1,7 +1,7 @@
 ---
 id: P4-T010
 kind: task
-title: Build the mt_data.text store, source registry and ingest framework
+title: Build the text store, source registry and mt-feeds ingest framework
 phase: 4
 type: BUILD
 status: backlog
@@ -10,12 +10,12 @@ size: L
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T024, P0-T025, P0-T027, P1-T005, P1-T006, P1-T007, P1-T046]
+depends_on: [P0-T024, P0-T025, P0-T027, P1-T005, P1-T006, P1-T007, P1-T046, P1-T078]
 requirements: [R4.01, R4.03, R4.06]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git, docker, supabase]
+tools: [cargo, uv, git, docker, supabase]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,18 +33,18 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P4-T010 · Build the mt_data.text store, source registry and ingest framework
+# P4-T010 · Build the text store, source registry and mt-feeds ingest framework
 
 ## Goal / expected outcome
 
-`mt_data.text` has the shared pieces every connector uses: SQL migrations in `supabase/migrations/` (tables only; the `text` schema exists from P0) for `text.source`, `text.document`, `text.document_dup`, `text.telegram_mention`, `text.telegram_posture`; a source registry with per-source provenance defaults (from `source_terms.yaml`); a text `Connector` base built on the P1 connector framework (P1-T005) with quota tracking, polite fetch, retries and `feed_status` reporting to D07; and the normalised `RawTextItem` schema published on `raw.text.{source}`.
+The `text` store and the Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) have the shared pieces every text source uses: SQL migrations in `supabase/migrations/` (tables only; the `text` schema exists from P0) for `text.source`, `text.document`, `text.document_dup`, `text.telegram_mention`, `text.telegram_posture`; a source registry with per-source provenance defaults (from `source_terms.yaml`); a text `Connector` trait in `mt-feeds` built on the P1 connector framework (P1-T005) and the `mt-connectors` HTTP client skeleton (P1-T078) with quota tracking, polite fetch, retries and `feed_status` reporting to D07; and the normalised `RawTextItem` schema published on `raw.text.{source}`, shared with the two Python scrape-side packages (`mt_extract`, `mt_telegram_reader`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) through the `mt_store` PyO3 module.
 
 ## Context & references
 
 - Roadmap: [R4.01, R4.03, R4.06](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) · [03 §4 data model](../../../docs/03-build-spec.md#4-data-model-overview) · [02 §4 M2 row](../../../docs/02-v1-architecture.md#4-logical-components)
 - Provenance: [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (`source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`)
-- Cross-phase (`depends_on`): P0-T024 (schemas, all 13 created in P0 per 17 §B), P0-T025 (seven provenance columns), P0-T027 (`pit`), P1-T005 (connector framework), P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T046 (`/data/feeds`). P1-T008 (retention job) and P1-T030 (`feed_status`) are reused.
+- Cross-phase (`depends_on`): P0-T024 (schemas, all 13 created in P0 per 17 §B), P0-T025 (seven provenance columns), P0-T027 (`pit`), P1-T005 (connector framework), P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T046 (`/data/feeds`), P1-T078 (`mt-connectors` HTTP client, quotas, provenance, fixture harness). P1-T008 (retention job) and P1-T030 (`feed_status`) are reused.
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B003): postures live in `text.telegram_posture`, subject `posture.telegram.*`, consumers M4/M11 rules only ([02 §4–§6](../../../docs/02-v1-architecture.md#4-logical-components)).
 
 ## Requirements
@@ -53,19 +53,19 @@ review_result: ""
 - `text.source`: id, kind (rss/rss_bridge/gdelt/edgar/cb/finnhub/cryptopanic/telegram/discord/bluesky/mastodon/farcaster/stocktwits/youtube), config, status, muted, quota, provenance defaults, relevance hit-rate counters.
 - `text.telegram_mention` (structured only: channel_id hash, message_id, ts, extracted `address`/`ticker`, chain; the posture calculator's input, never text) and `text.telegram_posture` (subject, window, mention_velocity, channel_count, new_channel_share, time_since_first_call) with **`model_input_ok=false`, `train_ok=false` enforced by a CHECK constraint**. Both are written only by the core-side `intel-writer` (P4-T008).
 - Telegram sources: the CHECK constraint makes `model_input_ok=true` impossible for `source.kind='telegram'`.
-- `Connector` base (extends P1-T005): async httpx client with declared User-Agent, robots.txt respect, ETag/If-Modified-Since, exponential backoff, quota tracker hook (throttle before the free limit), heartbeat, `feed_status` KV update (ok/degraded/stale/bad).
+- `Connector` trait (Rust, extends P1-T005; reuses the P1-T078 `mt-connectors` HTTP client: tokio + reqwest) with declared User-Agent, robots.txt respect, ETag/If-Modified-Since, exponential backoff, quota tracker hook (throttle before the free limit), heartbeat, `feed_status` KV update (ok/degraded/stale/bad).
 - Approximate timestamps: parser sets `published_approx=true` for date-only feed values or relative times ('2h ago').
-- All writes via the `mt_store` Python binding of the Rust `mt-store` crate; research reads via `pit(as_of)` on `ingested_at`. RLS on with no policies for `anon`/`authenticated` ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)).
+- Scrape-side code never writes the DB (it publishes to NATS); the core-side writers (`mt-nlp`, `mt-intel-writer`) write through the Rust `mt-store` crate; research reads via `pit(as_of)` on `ingested_at` (Python through the `mt_store` binding). RLS on with no policies for `anon`/`authenticated` ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)).
 
 ## ToDo
 
 - [ ] SQL migrations in `supabase/migrations/` for the tables above, incl. CHECK constraints and indexes (`canonical_url`, `content_hash`, `(published_at)`, GIN on `tickers`).
-- [ ] `mt-core` text types `RawTextItem`, `TextDocNew`, `TelegramMention`, `TelegramPosture` (Rust, serde, versioned), exposed to Python through the `mt_store` PyO3 module so `mt-intel-writer` and the Python connectors share one definition ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
-- [ ] `mt_data.text.registry`: load `feeds.yaml`, `watchlist.yaml`, `source_terms.yaml`; seed `text.source`.
-- [ ] `mt_data.text.connector.Connector` base + timestamp normaliser + `feed_status` reporter.
+- [ ] `mt-core` text types `RawTextItem`, `TextDocNew`, `TelegramMention`, `TelegramPosture` (Rust, serde, versioned), exposed to Python through the `mt_store` PyO3 module so `mt-feeds`, `mt-intel-writer`, `mt-nlp` and the two Python packages (`mt_extract`, `mt_telegram_reader`) share one definition ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
+- [ ] `mt-feeds` registry (Rust): load `feeds.yaml`, `watchlist.yaml`, `source_terms.yaml` (serde config types reused by P4-T003); `text.source` rows are written on the core side through `mt-api` (P4-T003 seed).
+- [ ] `mt-feeds` `Connector` trait + timestamp normaliser + `feed_status` reporter; package skeletons for `packages/mt_extract` and `packages/mt_telegram_reader` (uv) that import the shared types.
 - [ ] Register text sources in `/data/feeds?kind=text` so D07 shows them.
 - [ ] Example config files under `config/intel/*.example.yaml` used by P4-T001–T003.
-- [ ] Tests (below) and module docs in `packages/mt_data/text/README.md`.
+- [ ] Tests (below) and crate docs in `crates/mt-feeds/README.md`.
 
 ## Verification
 
@@ -88,7 +88,7 @@ review_result: ""
 - [ ] Migrations apply cleanly with `supabase db reset`; CHECK constraints proven by pgTAP tests
 - [ ] Connector base used by at least one real connector in a follow-up PR without changes
 - [ ] Text sources visible in D07 with status and quota
-- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds -p mt-core`, `cargo clippy`, `uv run pytest` (shared-type import in `mt_extract`/`mt_telegram_reader`), `supabase test db`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -112,7 +112,7 @@ review_result: ""
 ## Branch & PR
 
 - Branch: `p4/P4-T010-text-store-and-ingest-framework`
-- PR title: `P4-T010: Build the mt_data.text store, source registry and ingest framework`
+- PR title: `P4-T010: Build the text store, source registry and mt-feeds ingest framework`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P4-T010` run
 
 ## Progress log
@@ -120,3 +120,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (canonical names text.telegram_posture / posture.telegram.* (17 §D P4-B003); schemas exist from P0 (17 §B); extends the P1 connector framework; explicit P0/P1 depends_on)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Alembic → `supabase/migrations/` + pgTAP; `mt-core` text types with PyO3 binding; RLS deny-all; services postgres → supabase-postgres; tools +supabase; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_data.text` → Rust `mt-feeds` framework on the P1-T078 `mt-connectors` client (depends_on +P1-T078); shared types reach `mt_extract`/`mt_telegram_reader` via the `mt_store` PyO3 module; title updated; tools +cargo)

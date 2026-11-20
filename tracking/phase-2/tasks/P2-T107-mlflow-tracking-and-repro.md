@@ -15,7 +15,7 @@ requirements: [R2.44]
 roadmap_todos: [T2.27]
 modules: [M7]
 dashboards: [D04]
-tools: [uv]
+tools: [cargo, uv]
 mcp: []
 env: []
 services: [mlflow, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,8 +54,8 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 
 ## ToDo
 
-- [ ] Implement `mt_lab/tracking.py` (MLflow client wrapper, buffering, tags)
-- [ ] Hook all `JobRunner`s through a common `tracked_run` context manager
+- [ ] Implement `crates/mt-lab-core/src/tracking.rs` (MLflow REST client, buffering, tags) for Rust runners, and the matching `mt_research.tracking` wrapper on the MLflow Python client for screener/sweep/tier-A jobs, sharing one tag schema
+- [ ] Hook all `JobRunner`s through a common `tracked_run` guard (Rust) / context manager (Python)
 - [ ] Implement re-run path and reproduction comparison
 - [ ] Tests incl. MLflow-down buffering
 - [ ] Docs
@@ -63,7 +63,7 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k tracking`.
+- Commands: `cargo test -p mt-lab-core tracking`, `uv run pytest packages/mt_research -k tracking`.
 - Integration: a truth run appears in MLflow with every required field.
 - Integration: re-run of a fixture backtest → identical trade hash, `reproduced=true`.
 - Unit: dirty git tree → job refused with a clear message.
@@ -80,7 +80,7 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 - [ ] Required fields present on every run type
 - [ ] Re-run reproduces fixture results
 - [ ] MLflow-down buffering test passes
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, ruff, mypy, `uv run pytest packages/mt_research`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (MLflow storage dep (P2-T046))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [mlflow, postgres] → [mlflow, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (tracking split: MLflow REST client in `mt-lab-core` (Rust) + MLflow Python client in `mt_research`, one tag schema; same tests incl. MLflow-down buffering on both; tools [uv] → [cargo, uv])

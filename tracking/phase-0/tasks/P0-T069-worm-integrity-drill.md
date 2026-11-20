@@ -18,14 +18,14 @@ dashboards: [D16]
 tools: [git, cargo, supabase, docker, psql]
 mcp: []
 env: []
-services: [supabase-postgres, supabase-auth, nats, mt-api, minio, prefect-server]
+services: [supabase-postgres, supabase-auth, nats, mt-api, minio]
 branch: p0/P0-T069-worm-integrity-drill
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -121,3 +121,4 @@ An end-to-end drill on a scratch copy of the full stack proves the integrity res
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for R0.12 / T0.66, decided in 17 §A P0-B001 and 16 §2.11)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (drill automated as Rust integration tests against the Supabase CLI stack; `mt_risk::integrity_gate`; workstation run with the seeded test account (no wait on P0-T062))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`prefect-server` dropped from services (seal/verify run from host timers in P0, `mt-scheduler` from P1-T077))

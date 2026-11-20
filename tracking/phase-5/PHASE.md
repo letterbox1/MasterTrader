@@ -8,7 +8,7 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-11-19
+updated: 2026-11-20
 ---
 
 # Phase 5 · Airdrops, launches, wallets & curation
@@ -166,7 +166,8 @@ The exit demo P5-T064 covers every requirement and is omitted from the table bel
 - **Telegram:** only postures enter M4, and never as model features (P5-T033/T037). The P4 provenance gate is reused.
 - **WORM:** mandates, the exec log and the signer ledger (`audit.signer_ledger`) are append-only (P5-T010); income rows are WORM `journal.event` rows. Revocations, expiries and corrections are new rows.
 - **Long-running items:** P5-T059 (7 clean days) and P5-T063 (2 weeks) need elapsed time. Start P5-T063 as soon as the digests (P5-T030) land and P5-T059 as soon as P5-T068 passes.
-- **Stack (2026-11-19, [18](../../docs/18-platform-and-deployment.md), 17 §G):** Rust crates `mt-signer`, `mt-onchain` (RPC pools, cost gate), `mt-treasury` (custody, registry, proof of control, indexer, recon, monitors, sweeps), `mt-airdrop-exec` (mandates, eligibility, claims, flows), `mt-core` (types, never-automated policy) and `mt-api`; Python stays for `mt_airdrop` discovery/scoring/decision and `mt_curation`. Supabase Postgres with SQL migrations in `supabase/migrations/` and pgTAP tests; `ops.wallet_balance_snapshot` uses monthly partitions (no TimescaleDB).
+- **Stack (2026-11-19, [18](../../docs/18-platform-and-deployment.md), 17 §G):** Rust crates `mt-signer`, `mt-onchain` (RPC pools, cost gate), `mt-treasury` (custody, registry, proof of control, indexer, recon, monitors, sweeps), `mt-airdrop-exec` (mandates, eligibility, claims, flows), `mt-core` (types, never-automated policy) and `mt-api`. Supabase Postgres with SQL migrations in `supabase/migrations/` and pgTAP tests; `ops.wallet_balance_snapshot` uses monthly partitions (no TimescaleDB).
+- **Rust-max (2026-11-20, [18 §2](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), [17 §H](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** airdrop discovery, enrichment, risk scoring, EV and the decision engine are the Rust `mt-airdrop` crate (P5-T032–T041, T046); the task queue, digests, blocklists and community curation are the Rust `mt-curation` crate (P5-T029–T031, T047); claims stay in `mt-airdrop-exec`. HTTP clients sit on the `mt-connectors` harness (P1-T078) and scheduled work runs as `mt-scheduler` jobs (P1-T077), not Prefect. Python is left only for the calibration notebook (`mt_research`, P5-T039/T055), which evaluates the Rust scorer's batch output. Phase 5 makes no LLM calls, so nothing here needs `mt-agents` (P6-T074).
 - **USER inputs (17 §G):** the limits (P5-T065) and the disposal rule/EV inputs (P5-T007) are seeded by the agent; enabling mainnet signing is your C3 confirmation in P5-T004; money items (P5-T001, T002, T004, T006) stay yours and testnet/Anvil work never waits on them.
 - **Open gaps:** P5-B013 (research note still cites Tenderly) and P5-B017 (02 §2 diagram label "hot-wallet claims only") wait for a doc fix; both S3/S4, implementation already aligned. P5-B018 (S4, 2026-11-19): 16 §2.7 has no default EV time value or haircut; P5-T007 drafts conservative values.
 - **Out of scope:** hold-and-earn and treasury allocation (P6), the automated depeg reduce (P6), social drafts (P6), DEX trading strategies, the memecoin template and automated disposal sales (P7). The wallet-drained runbook drill is P7 (T7.60).
@@ -175,7 +176,7 @@ The exit demo P5-T064 covers every requirement and is omitted from the table bel
 
 These are explicit `depends_on` entries on the tasks that need them (they replace the old phase gate):
 - **P0:** P0-T002 (Telegram bot) and P0-T008 (Discord bot) → P5-T061; P0-T010 (free API keys) → P5-T003, P5-T068; P0-T020/T021/T022 (Compose, networks, sops) → P5-T017, P5-T054; P0-T024/T025 (schemas, provenance columns) → P5-T009; P0-T029/T030/T037 (WORM triggers, hash chain, seal) → P5-T010; P0-T034/T035/T036 (command bus, confirmation levels, WS hub) → P5-T011; P0-T050 (app shell) → P5-T048, P5-T049, P5-T050.
-- **P1:** P1-T004 (NATS streams) → P5-T011; P1-T006 (quota tracker) → P5-T018, P5-T032; P1-T043 (venue health) → P5-T027; P1-T045 (alert fan-out) → P5-T025, P5-T026, P5-T030.
+- **P1:** P1-T077 (`mt-scheduler` skeleton) → P5-T030, P5-T031, P5-T032, P5-T039, P5-T054; P1-T078 (`mt-connectors` skeleton) → P5-T031, P5-T032, P5-T035, P5-T036; P1-T004 (NATS streams) → P5-T011; P1-T006 (quota tracker) → P5-T018, P5-T032; P1-T043 (venue health) → P5-T027; P1-T045 (alert fan-out) → P5-T025, P5-T026, P5-T030.
 - **P2:** P2-T010/T019 (policy store, change control C3) → P5-T012; P2-T015 (portfolio concentration) → P5-T027; P2-T031 (kill switch) → P5-T013, P5-T028; P2-T035 (Telegram C3 + TOTP) → P5-T030, P5-T043, P5-T004; P2-T046 (MLflow) → P5-T039; P2-T068 (runbook format) → P5-T051.
 - **P3:** P3-T008 (journal writer) → P5-T046; P3-T010 (FX) → P5-T019; P3-T011 (crypto rates) → P5-T022, P5-T046; P3-T012 (`ops.wallets`) → P5-T009, P5-T021; P3-T017/T018 (on-chain adapter, internal-transfer matcher) → P5-T023; P3-T034 (recon) → P5-T024; P3-T038 (`curation.task`) → P5-T009; P3-T042 (your P3 account registration) → P5-T005.
 - **P4:** P4-T019 (Telegram postures), P4-T020 (Discord ingest), P4-T025 (provenance gate), P4-T028 (tier B registry) → P5-T033; P4-T020 → P5-T047.

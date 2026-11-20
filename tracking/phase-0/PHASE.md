@@ -8,14 +8,14 @@ force_open: false
 started: 2026-10-29
 completed: ""
 doc_sync_status: n/a
-updated: 2026-11-19
+updated: 2026-11-20
 ---
 
 # Phase 0 · Foundations & security baseline
 
 ## Summary
 
-Phase 0 delivers a secure, reproducible stack **on your workstation** that every later phase plugs into ([roadmap](../../docs/roadmap/phase-0-foundations.md), [18 §9](../../docs/18-platform-and-deployment.md#9-workstation-first-build-path)): the workstation profile (CPU/GPU, `models.gpu_profile: auto`) and baseline (deny-inbound, localhost-only; Tailscale optional, LUKS a warning until P7); the **Cargo + uv monorepo** with a `just` entry point; the **Supabase stack** (CLI for tests, self-hosted on the workstation; pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP; Data API and Realtime off; RLS deny-all) and a Compose stack pinned by digest (NATS JetStream, Prefect, MLflow, Caddy, observability, LiteLLM ≥ 1.83, `tei-embed` + `tei-rerank`, `llm-local`, `docker-proxy`); all **13 canonical schemas** as SQL migrations in `supabase/migrations/` with pgTAP tests, provenance columns, `ops.venue_registry` (seeded from 12 §2) and monthly bar partitions (no TimescaleDB); `pit(as_of)` implemented once in the Rust `mt-store` crate with the `mt_store` PyO3 binding (which also carries the `mt-core` types) and a CI bypass guard for Rust and Python; the **WORM audit layer** (offline `worm_owner`, blocking triggers, per-row hash chain, daily Merkle seal anchored to Object-Locked storage + OpenTimestamps + Telegram witness, hourly incremental + daily full `audit.verify`, JetStream write buffer, insert p99 < 5 ms) with the **integrity response** (KV `audit.integrity`, default `block_new_entries`, `mt_risk::integrity_gate` hook, cleared only by `audit.integrity.ack` C3); the Rust **`mt-api`** skeleton (axum + utoipa OpenAPI, **Supabase Auth** with password + TOTP MFA and sign-ups off, JWT/JWKS verification with `aal2` required for commands, command bus with idempotency and `audit.command`, server-side C0–C3/Kill with `confirm_token`, C2 risk-preview hash + 12 h TOTP freshness, C3 via the break-glass `mtctl approve` + TOTP + cool-down until Telegram C3 in P2, WebSocket `seq`); `system.service.restart` only through the allow-listed `docker-proxy`; `audit.llm_call` from day one; and the web shell + D16 System on the DESIGN.md v2 preset (served by Caddy, `vercel.json` ready), proven by the Playwright viewport matrix.
+Phase 0 delivers a secure, reproducible stack **on your workstation** that every later phase plugs into ([roadmap](../../docs/roadmap/phase-0-foundations.md), [18 §9](../../docs/18-platform-and-deployment.md#9-workstation-first-build-path)): the workstation profile (CPU/GPU, `models.gpu_profile: auto`) and baseline (deny-inbound, localhost-only; Tailscale optional, LUKS a warning until P7); the **Cargo + uv monorepo** (the 33 crates of 18 §2.1, only the 5 Python packages of 18 §2.2) with a `just` entry point and a licence audit (`just licence-audit`, P0-T074); the **Supabase stack** (CLI for tests, self-hosted on the workstation; pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP; Data API and Realtime off; RLS deny-all) and a Compose stack pinned by digest (NATS JetStream, MLflow, Caddy, observability, LiteLLM ≥ 1.83, `tei-embed` + `tei-rerank`, `llm-local`, `docker-proxy`); all **13 canonical schemas** as SQL migrations in `supabase/migrations/` with pgTAP tests, provenance columns, `ops.venue_registry` (seeded from 12 §2) and monthly bar partitions (no TimescaleDB); `pit(as_of)` implemented once in the Rust `mt-store` crate with the `mt_store` PyO3 binding (which also carries the `mt-core` types) and a CI bypass guard for Rust and Python; the **WORM audit layer** (offline `worm_owner`, blocking triggers, per-row hash chain, daily Merkle seal anchored to Object-Locked storage + OpenTimestamps + Telegram witness, hourly incremental + daily full `audit.verify`, JetStream write buffer, insert p99 < 5 ms) with the **integrity response** (KV `audit.integrity`, default `block_new_entries`, `mt_risk::integrity_gate` hook, cleared only by `audit.integrity.ack` C3); the Rust **`mt-api`** skeleton (axum + utoipa OpenAPI, **Supabase Auth** with password + TOTP MFA and sign-ups off, JWT/JWKS verification with `aal2` required for commands, command bus with idempotency and `audit.command`, server-side C0–C3/Kill with `confirm_token`, C2 risk-preview hash + 12 h TOTP freshness, C3 via the break-glass `mtctl approve` + TOTP + cool-down until Telegram C3 in P2, WebSocket `seq`); `system.service.restart` only through the allow-listed `docker-proxy`; `audit.llm_call` from day one; and the web shell + D16 System on the DESIGN.md v2 preset (served by Caddy, `vercel.json` ready), proven by the Playwright viewport matrix.
 
 Aligned to [16](../../docs/16-configuration-and-safety-model.md) and [17](../../docs/17-decisions-register.md) on 2026-10-22 and **re-platformed to [18](../../docs/18-platform-and-deployment.md) on 2026-11-19** ([17 §G](../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)): every number is a configurable default linked to 16; **build first, keys last**: integrations are built and tested keyless (mocks, MinIO, mocked Bot API, throwaway age/`worm_owner` credentials, a seeded Supabase test user) and the live checks with your keys/accounts are late VERIFY tasks (P0-T057 backup target, P0-T073 seal target + bot, P0-T068 LLM gateway). 73 tasks (13 USER · 27 BUILD · 16 OPS · 14 VERIFY · 2 DOC · 1 RUN; P0-T005 moved from USER to OPS, P0-T070–P0-T073 added); gap items P0-B001–P0-B018 closed with evidence, P0-B019 (S4) open.
 
@@ -40,7 +40,7 @@ Aligned to [16](../../docs/16-configuration-and-safety-model.md) and [17](../../
 | Your actions (USER), any time; they gate only late live checks | P0-T001, P0-T002, P0-T003 (optional before P7), P0-T004, P0-T006, P0-T007, P0-T008, P0-T009, P0-T010, P0-T011 (refines the venue seed), P0-T012 |
 | Your actions (USER), later | P0-T062 (create your login + TOTP; exit demo), P0-T013 (offline `worm_owner` ceremony, before live money) |
 | Workstation profile & baseline (OPS) | P0-T005, P0-T019 |
-| Repo, CI & core libraries (BUILD/OPS) | P0-T014, P0-T015, P0-T016, P0-T017, P0-T018, P0-T071 |
+| Repo, CI & core libraries (BUILD/OPS) | P0-T014, P0-T015, P0-T016, P0-T017, P0-T018, P0-T071, P0-T074 |
 | Supabase stack, Compose, networks, secrets (OPS) | P0-T070, P0-T020, P0-T021, P0-T022, P0-T023, P0-T065 |
 | Data store, provenance, venue registry, partitions, `pit` (BUILD) | P0-T024, P0-T025, P0-T026, P0-T072, P0-T027, P0-T071, P0-T028 |
 | WORM audit layer + integrity response (BUILD) | P0-T029, P0-T030, P0-T031, P0-T037, P0-T038, P0-T040 |
@@ -85,7 +85,7 @@ In elapsed time the real gate is the **72-hour soak** (P0-T063), which runs keyl
 | R0.N2 | P0-T003, P0-T012, P0-T019, P0-T056, P0-T060, P0-T064 |
 | R0.N3 | P0-T021, P0-T056, P0-T064 |
 | R0.N4 | P0-T006, P0-T039, P0-T040, P0-T041, P0-T057, P0-T060, P0-T063, P0-T064, P0-T073 |
-| R0.N5 | P0-T004, P0-T014, P0-T015, P0-T056, P0-T064 |
+| R0.N5 | P0-T004, P0-T014, P0-T015, P0-T056, P0-T074, P0-T064 |
 | R0.N6 | P0-T049, P0-T050, P0-T053, P0-T064 |
 | R0.N7 | P0-T030, P0-T031, P0-T037, P0-T055, P0-T059, P0-T064, P0-T066 |
 
@@ -113,6 +113,7 @@ In elapsed time the real gate is the **72-hour soak** (P0-T063), which runs keyl
 | T0.26 | P0-T046, P0-T047, P0-T048, P0-T049, P0-T050, P0-T051, P0-T052 |
 | T0.27 | P0-T035, P0-T038 |
 | T0.28 | P0-T031, P0-T042, P0-T043, P0-T044 |
+| T0.29 | P0-T074 |
 | T0.40 | P0-T019 |
 | T0.41 | P0-T070, P0-T020, P0-T023, P0-T042, P0-T043, P0-T044, P0-T059, P0-T065 |
 | T0.42 | P0-T021 |
@@ -155,6 +156,7 @@ Every R0.xx and T0.xx is covered. P0-T013 (offline `worm_owner` credential) is a
 - **Shell placeholders**: engine version, feed summary and mode badge show `n/a`/`PAPER` until P1/P2 provide data; modes are only `paper` / `hitl` / `autonomous` (17 §B); no fake data (DESIGN §10).
 - Layout follows 03 §3 / 18 §3 (canonical; 02 §11 points to it, P0-B006); all 13 schemas are created in P0 (P0-B005).
 - **Re-platform (2026-11-19, 18 / 17 §G)**: Rust first (`mt-api`, `mt-store`, `mt-obs`, `mt-risk`, `mt-core`), Python only where necessary (via the `mt_store` binding); Supabase migrations + pgTAP replace Alembic; Supabase Auth replaces the hand-built login; native monthly partitions replace TimescaleDB (P0-T072); workstation-first, so LUKS, Tailscale and the YubiKey are P7 items (P7-T072, P7-T073). Open (U) checks carried by tasks: pg_partman on the pinned Postgres 17 (P0-T070), Supabase Auth lockout knobs (P0-T033), pgBackRest with the Supabase Postgres image (P0-T039), file-by-file WORM migrations with the Supabase CLI (P0-T029).
+- **Rust-max (2026-11-20, 17 §H)**: no Prefect: P0's scheduled jobs (seal, verify, backups, restore test, WORM export) are idempotent `mt-obs`/`just` jobs on host timers (`infra/timers/`; systemd on Linux, launchd/Task Scheduler elsewhere), because they must run before `mt-scheduler` exists and pg_cron can only run SQL (no object-storage upload, Telegram or scratch container). P1-T077 (`mt-scheduler` skeleton) moves them onto the scheduler and wires `system.backup.run` / `system.restore.test`, which answer `job_runner_unavailable` until then (P0-T034, P0-T051). The uv workspace holds only `mt_research`, `mt_extract`, `mt_telegram_reader`, `mt_ledger_import`, `mt_mt5_bridge`; the LiteLLM audit callback is a plugin file in the derived LiteLLM image (P0-T042). The licence audit (P0-T074, R0.N5/T0.29) joins the exit demo.
 - **Venue registry** (17 §G USER-blocker rule): P0-T026 seeds from 12 §2 with nothing `allowed` for live without a check date; your AUSTRAC checks (P0-T011) load on top as source `user` and are reviewed in the go-live pack (P7-T070).
 
 ## Cross-phase prerequisites

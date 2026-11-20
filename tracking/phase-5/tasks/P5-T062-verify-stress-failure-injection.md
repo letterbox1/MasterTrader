@@ -15,7 +15,7 @@ requirements: [R5.02, R5.04, R5.05, R5.N2]
 roadmap_todos: []
 modules: [M22, M4, M19]
 dashboards: [D07, D18]
-tools: [cargo, uv, docker, toxiproxy, git]
+tools: [cargo, docker, toxiproxy, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats, anvil]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-5-airdrops-wallets-cur
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -101,3 +101,4 @@ A chaos suite proves P5 degrades safely: every on-chain path fails **closed** (n
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (signing-disabled state added to the fail-closed expectations)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; tools +cargo +git)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (chaos suite drives Rust services only; tools −uv)

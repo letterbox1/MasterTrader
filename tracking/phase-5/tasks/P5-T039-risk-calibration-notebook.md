@@ -10,7 +10,7 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T037, P5-T038, P2-T046]
+depends_on: [P5-T037, P5-T038, P2-T046, P1-T077]
 requirements: [R5.13]
 roadmap_todos: [T5.26]
 modules: [M4, M7]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A reproducible notebook (`notebooks/m4_risk_calibration.ipynb` + `mt_airdrop.risk.calibrate`) evaluates the rule-based score on the **SoK** rug-pull dataset (2,391 labelled ETH/BSC contracts) plus SolRPDS, the Pump.fun corpus and MemeTrans (private), fits an advisory calibrated model, and registers it in MLflow with provenance flags.
+A reproducible notebook (`notebooks/m4_risk_calibration.ipynb` + `mt_research.airdrop_calibrate`, Python research side, 18 §2.2) evaluates the rule-based score on the **SoK** rug-pull dataset (2,391 labelled ETH/BSC contracts) plus SolRPDS, the Pump.fun corpus and MemeTrans (private), fits an advisory calibrated model, and registers it in MLflow with provenance flags.
 
 ## Context & references
 
@@ -53,8 +53,8 @@ A reproducible notebook (`notebooks/m4_risk_calibration.ipynb` + `mt_airdrop.ris
 
 ## ToDo
 
-- [ ] Write dataset loaders + licence manifests in `packages/mt_airdrop/risk/calibrate/`.
-- [ ] Build the PIT feature replay over archived data; notebook with evaluation.
+- [ ] Write dataset loaders + licence manifests in `packages/mt_research/airdrop_calibrate/` (`uv run pytest`).
+- [ ] Build the PIT feature replay over archived data by running the Rust `mt-airdrop` feature extractors and scorer (P5-T037) in batch mode as an `mt-scheduler` job that writes features and rule scores to Parquet; the notebook reads them through `pit` and evaluates. If the advisory model is ever used at runtime it is exported to ONNX and run in `mt-airdrop` via `ort`.
 - [ ] MLflow registration; tests for loaders and leakage; doc sync.
 
 ## Verification
@@ -85,6 +85,7 @@ A reproducible notebook (`notebooks/m4_risk_calibration.ipynb` + `mt_airdrop.ris
 
 - Do NOT commit any dataset or redistribute labels.
 - Do NOT let the advisory model override the rule-based decision.
+- Do NOT re-implement the rule score in Python; the notebook evaluates the Rust scorer's output so research and production use one implementation.
 - Do NOT train on rows with `train_ok=false`.
 - Do NOT let Telegram text reach any model, RAG index or training set; Telegram contributes deterministic postures only (12 §4–5).
 - Do NOT skip, weaken or delete a test to get green; pin images by digest; no telemetry or referral IDs in vendored code.
@@ -104,3 +105,4 @@ A reproducible notebook (`notebooks/m4_risk_calibration.ipynb` + `mt_airdrop.ris
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; MLflow registry P2-T046 as an explicit dep)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (calibration stays Python in `mt_research` (18 §2.2); +P1-T077 for the batch job; features and rule scores come from the Rust `mt-airdrop` scorer in batch; runtime use only via ONNX)

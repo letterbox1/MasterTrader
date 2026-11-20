@@ -11,8 +11,8 @@ severity: ""
 owner: agent
 claimed_by: ""
 depends_on: [P0-T014]
-requirements: [R0.N1]
-roadmap_todos: []
+requirements: [R0.N5]
+roadmap_todos: [T0.29]
 modules: [M17]
 dashboards: []
 tools: [git, cargo, uv]
@@ -40,13 +40,14 @@ One command, `just licence-audit`, lists the licence of every Rust crate, Python
 
 ## Context & references
 
+- Roadmap: [R0.N5](../../../docs/roadmap/phase-0-foundations.md#3-requirements) · [T0.29](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
 - Register: [19](../../../docs/19-third-party-register.md) · decision [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) · supply chain [07 §7](../../../docs/07-security-notes.md#7-supply-chain)
 - Builds on P0-T014 (repo skeleton, gitleaks); runs in the pre-push hook as a warning and in the manual CI job.
 
 ## Requirements
 
 - `cargo deny check licenses` with an allow-list (MIT, Apache-2.0, BSD-2/3, ISC, Zlib, MPL-2.0, Unicode, CC0) and explicit ⚑ exceptions mirroring 19 §4 (NautilusTrader LGPL-3.0).
-- `pip-licenses` over the uv workspace (vectorbt Commons Clause and MetaTrader5 flagged ⚑).
+- `pip-licenses` over the uv workspace, i.e. the five packages of 18 §2.2 and their dependencies (vectorbt Commons Clause and MetaTrader5 flagged ⚑; no LangGraph, Prefect or OpenBB may appear, 17 §H).
 - Container images: licence label or a maintained map in `infra/licences/images.yaml` (Grafana/Loki AGPL ⚑ marked "unmodified, separate").
 - `third_party/`: every folder has a LICENSE; copyleft only under `third_party/copyleft/`; NOTICE entries for MIT/Apache text we adapted (TradingAgents, FinRobot, Vibe-Trading, Anthropic skills).
 - Output: a Markdown report `reports/licence-audit.md` with a ⚑ section; exit non-zero on an unregistered ⚑.
@@ -99,3 +100,4 @@ One command, `just licence-audit`, lists the licence of every Rust crate, Python
 ## Progress log
 
 - 2026-11-20 00:53 · cloud:vm:be04b6ae61f8 · created
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (requirements → R0.N5, roadmap_todos → T0.29; pip-licenses scope is the 5 Python packages of 18 §2.2)

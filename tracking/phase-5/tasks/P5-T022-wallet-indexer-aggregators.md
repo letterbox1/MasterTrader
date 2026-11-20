@@ -25,7 +25,7 @@ doc_sync: [docs/13-wallets-treasury-and-onchain.md, docs/roadmap/phase-5-airdrop
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ The `wallet-indexer` service (Rust `mt-treasury` crate, indexer module; [18 §2.
 
 ## ToDo
 
-- [ ] Create the indexer in `crates/mt-treasury/src/indexer/` with adapters: helius_das, evm_blockscout, evm_positions (adapter pattern inspired by DefiLlama logic for core Aave/Spark/Kamino/LST reads), hyperliquid_info, exchange_readonly (venue read-only REST in Rust; where only a Python ccxt client exists, a small Python reader publishes balances to NATS (U)).
+- [ ] Create the indexer in `crates/mt-treasury/src/indexer/` with adapters: helius_das, evm_blockscout, evm_positions (adapter pattern inspired by DefiLlama logic for core Aave/Spark/Kamino/LST reads), hyperliquid_info, exchange_readonly (venue read-only REST in Rust per venue; ccxt stays only in `mt_ledger_import` for historical statements, 18 §2.2, never for live balances).
 - [ ] Pricing per 16 §4.1: our recorded trades/VWAP (M1) → on-chain pool price at the block via our RPC for long-tail tokens; CoinGecko (≤ 24 h cache) only as a display cross-check, never the stored value.
 - [ ] Rollup query endpoints `/wallets?group=` and `/wallets/{id}`.
 - [ ] Compose service `wallet-indexer` on `core` with digest; heartbeat.
@@ -113,3 +113,4 @@ The `wallet-indexer` service (Rust `mt-treasury` crate, indexer module; [18 §2.
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (valuation per 16 §4.1, CoinGecko cross-check only; keyless fixtures, live run in P5-T068; P3 crypto-rate dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`wallet-indexer` = Rust `mt-treasury`; services postgres → supabase-postgres; tools +cargo +git −uv)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (exchange balances via Rust read-only clients only; ccxt limited to `mt_ledger_import`)

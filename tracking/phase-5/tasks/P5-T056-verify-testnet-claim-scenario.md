@@ -15,7 +15,7 @@ requirements: [R5.15, R5.18, R5.02]
 roadmap_todos: [T5.61]
 modules: [M4, M22, M18]
 dashboards: [D12]
-tools: [cargo, uv, forge, anvil, solana, solana-test-validator, git]
+tools: [cargo, forge, anvil, solana, solana-test-validator, git]
 mcp: []
 env: []
 services: [sepolia-rpc, solana-devnet, telegram]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ On a public testnet (Sepolia for EVM, Solana devnet), a test Merkle distributor 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keys last: testnet keys and mandate created here instead of depending on P5-T006/real funds; signing needs P5-T065; manual disposal task asserted)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (signing uses seeded limits (P5-T065, now an agent task); tools +cargo +git)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (no Python in the testnet scenario; tools −uv)

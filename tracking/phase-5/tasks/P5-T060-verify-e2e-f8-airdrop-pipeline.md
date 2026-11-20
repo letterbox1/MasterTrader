@@ -15,7 +15,7 @@ requirements: [R5.10, R5.11, R5.12, R5.13, R5.14, R5.17]
 roadmap_todos: []
 modules: [M4, M19]
 dashboards: [D12, D13]
-tools: [cargo, uv, pnpm, anvil, git]
+tools: [cargo, pnpm, anvil, git]
 mcp: []
 env: [GOPLUS_APP_KEY, CRYPTORANK_API_KEY, COINGECKO_DEMO_API_KEY, HELIUS_API_KEY, ALCHEMY_API_KEY]
 services: [supabase-postgres, nats, goplus, cryptorank, coingecko, helius, alchemy]
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -102,3 +102,4 @@ A scenario suite drives the whole F8 flow from discovery to journal with recorde
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (live run after P5-T068 with env names only; identity wallet + manual disposal asserted)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed P5-T068 dep: CI on fixtures; the live-API run moved to the exit demo; services postgres → supabase-postgres; tools +cargo +git; depends_on removed P5-T068)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (pipeline under test is Rust end to end; tools −uv)

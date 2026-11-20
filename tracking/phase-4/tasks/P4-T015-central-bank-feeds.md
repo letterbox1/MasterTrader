@@ -15,7 +15,7 @@ requirements: [R4.01]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SNB, RBA, BoC and RBNZ (plus regulators you choose) are ingested via their official RSS feeds (or RSS-Bridge where none exists), tagged with `cb` and `doc_type`, and high-priority so policy statements reach D08 and the brief quickly.
+Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SNB, RBA, BoC and RBNZ (plus regulators you choose) are ingested by the Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) via their official RSS feeds (or RSS-Bridge where none exists; page text for speeches through `mt_extract`, P4-T011), tagged with `cb` and `doc_type`, and high-priority so policy statements reach D08 and the brief quickly.
 
 ## Context & references
 
@@ -56,7 +56,7 @@ Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SN
 ## ToDo
 
 - [ ] Write `central_banks.yaml` with verified feed URLs.
-- [ ] Speaker/doc_type parsing per bank.
+- [ ] Speaker/doc_type parsing per bank (Rust).
 - [ ] Calendar-aware poll cadence hook (stub until P4-T037 lands, then wired).
 - [ ] Fixtures + tests.
 
@@ -76,7 +76,7 @@ Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SN
 ## Acceptance criteria
 
 - [ ] All 8 banks ingesting; statements tagged correctly in a 1-week run
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SN
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (front-matter run fields added; no decision changes)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (central-bank feeds in Rust `mt-feeds` (page text via `mt_extract`); tools uv → cargo)

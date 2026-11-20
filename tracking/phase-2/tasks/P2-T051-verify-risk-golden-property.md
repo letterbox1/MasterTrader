@@ -25,7 +25,7 @@ doc_sync: [docs/04-plan-of-action.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,7 +64,7 @@ A consolidated `crates/mt-risk/tests/golden/` suite (sizing, limits, sleeves/net
 ## Verification
 
 ### Tests
-- Commands: `cargo test -p mt-risk --test golden`, `cargo test -p mt-risk` (proptest), `uv run pytest packages/mt_strategy -k risk_binding` (binding parity).
+- Commands: `cargo test -p mt-risk --test golden`, `cargo test -p mt-risk` (proptest), `uv run pytest packages/mt_research -k risk_binding` (binding parity for the paper-only Python research path, P2-T202).
 - The suite itself; plus a mutation-testing run (cargo-mutants on `mt-risk` `limits` and `gate`) with ≥ 80% mutants killed, recorded.
 
 ### Scenarios
@@ -106,3 +106,4 @@ A consolidated `crates/mt-risk/tests/golden/` suite (sizing, limits, sleeves/net
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (goldens for two-stage drawdowns, layering strictest-wins and 16 defaults; safety-state goldens joined from P2-T076)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; goldens in `crates/mt-risk/tests/golden/`, proptest, cargo-mutants; binding parity (P2-T202); depends_on + P2-T202; tools [uv] → [cargo, uv])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (binding-parity test moves from `packages/mt_strategy` to `packages/mt_research` (the only Python strategy home))

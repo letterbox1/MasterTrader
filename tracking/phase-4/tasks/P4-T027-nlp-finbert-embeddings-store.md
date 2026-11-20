@@ -15,7 +15,7 @@ requirements: [R4.06]
 roadmap_todos: [T4.23]
 modules: [M2, M9]
 dashboards: [D08]
-tools: [uv, git, docker]
+tools: [cargo, uv, git, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres, tei-embed]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/neutral probabilities) and a bge-small-en-v1.5 384-d embedding from TEI, are written to `text.document` (approximate timestamps flagged), handed to the RAG indexer (P4-T031), and announced on `text.doc.new` with id, tickers and scores.
+In the Rust `mt-nlp` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)), relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/neutral probabilities) and a bge-small-en-v1.5 384-d embedding from TEI, are written to `text.document` (approximate timestamps flagged), handed to the RAG indexer (P4-T031), and announced on `text.doc.new` with id, tickers and scores.
 
 ## Context & references
 
@@ -47,15 +47,15 @@ Relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/
 
 ## Requirements
 
-- FinBERT (ProsusAI/finbert, pinned revision) via ONNX Runtime CPU, batch 16; sentence-windowed for long docs, aggregated by length-weighted mean.
+- FinBERT (ProsusAI/finbert, pinned revision) exported to ONNX by `mt_research` and run in `mt-nlp` through the `ort` crate on CPU (tokenizer via the `tokenizers` crate), batch 16; sentence-windowed for long docs, aggregated by length-weighted mean.
 - Embeddings from TEI (`/embed`), cached by `sha256(model||text)` in `rag.emb_cache`.
 - `text.doc.new` payload: `{id, source, tickers, published_at, published_approx, sentiment, relevance, dup_cluster}` (schema versioned).
 - End-to-end ingest → `text.doc.new` p95 < 3 s (so D08 can show within 5 s).
 
 ## ToDo
 
-- [ ] FinBERT ONNX export + runner.
-- [ ] TEI client with cache + retry + circuit breaker.
+- [ ] FinBERT ONNX export script in `mt_research` (Python; pinned revision, sha256 of the exported file) + `ort` runner in `mt-nlp` (Rust). Rust/Python parity is verified by P4-T072.
+- [ ] TEI client (Rust, HTTP) with cache + retry + circuit breaker.
 - [ ] Writer + publisher.
 - [ ] Metrics (stage latencies, cache hit rate).
 - [ ] Tests.
@@ -78,7 +78,7 @@ Relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/
 
 - [ ] p95 ingest→`text.doc.new` < 3 s under normal load
 - [ ] Sentiment + embedding present on ≥ 99% of eligible docs in a 24-h run
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-nlp`, `cargo clippy`, ruff, mypy, `uv run pytest` (export script), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -109,3 +109,4 @@ Relevant, provenance-cleared documents get FinBERT sentiment (positive/negative/
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P0-T043 (tei-embed))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (FinBERT via ONNX/`ort` and the TEI client in Rust `mt-nlp`; export script in `mt_research`; parity in new P4-T072; tools +cargo)

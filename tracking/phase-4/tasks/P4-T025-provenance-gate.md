@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/02-v1-architecture.md, docs/ro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-One shared guard, implemented once in the Rust `mt-store` crate and called from Python as `mt_store.provenance.require_model_input(rows)` (and `require_train_ok`) through the PyO3 binding, is the **first** step of the `nlp` service and is called at every model boundary (FinBERT, TEI embeddings, SemIf/tier B question boundary, RAG indexer and retriever, agent context builder). Rows with `model_input_ok = false`, and every row whose source kind is `telegram`, are refused and audited as a WORM `audit.dq_event` row of kind `provenance_refusal` (canonical audit names, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
+One shared guard, implemented once in the Rust `mt-store` crate (`require_model_input` / `require_train_ok`, returning a `ModelInput<T>` wrapper that only the guard can build) and exposed to Python as `mt_store.provenance` through the PyO3 binding for the `mt_research` training and export jobs, is the **first** step of the `nlp` service (Rust `mt-nlp`) and is called at every model boundary (FinBERT and entity models in `mt-nlp`, TEI embeddings, the SemIf/tier B question boundary in `mt-models`, the RAG indexer and retriever in `mt-memory`, the agent context builder in `mt-agents`; [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Rows with `model_input_ok = false`, and every row whose source kind is `telegram`, are refused and audited as a WORM `audit.dq_event` row of kind `provenance_refusal` (canonical audit names, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
 
 ## Context & references
 
@@ -50,24 +50,24 @@ One shared guard, implemented once in the Rust `mt-store` crate and called from 
 
 ## Requirements
 
-- Guard is a pure function + decorator `@model_input` for any callable that sends data to a model; raises/filters and emits an `audit.dq_event` row (`kind = provenance_refusal`; WORM insert) with row id, source, boundary name.
+- Guard is a pure function. In Rust every model client (`ort` sessions, TEI client, tier-B client, LiteLLM client, RAG writer) accepts only `ModelInput<_>`, so an unguarded call does not compile; in Python (`mt_research`) the decorators `@model_input` / `@train_ok` wrap any callable that sends data to a model or a training set. Both raise/filter and emit an `audit.dq_event` row (`kind = provenance_refusal`; WORM insert) with row id, source, boundary name.
 - Double check: flag check **and** source-kind check (`telegram` refused even if a flag were mis-set).
 - The `nlp` consumer of `raw.text.>` drops `raw.text.telegram*` subjects at subscribe level (never subscribes), never subscribes to `posture.telegram.>`, and applies the guard to everything else.
-- Static check (CI): any call into `transformers`, TEI client, decision-svc client, LiteLLM client or RAG writer outside a `@model_input`-guarded function fails the build (AST lint rule in `tools/lint/provenance_lint.py`).
+- Static checks (CI): Rust: `clippy.toml` `disallowed-methods` bans raw model-client constructors outside the guarded wrappers, and a test asserts each client API takes `ModelInput<_>`; Python (`mt_research`): any call into `transformers`, `onnxruntime`, the TEI client, the LiteLLM client or a dataset exporter outside a `@model_input`/`@train_ok`-guarded function fails the build (AST lint rule in `tools/lint/provenance_lint.py`).
 - Overhead < 50 µs per row.
 
 ## ToDo
 
-- [ ] Implement the provenance guard in `crates/mt-store` (Rust), its `mt_store.provenance` Python binding and decorator, and the refusal audit writer (`audit.dq_event`, kind `provenance_refusal`).
-- [ ] AST lint rule + CI wiring.
-- [ ] `nlp` service skeleton (`mt_features.text.service`): durable consumer on `raw.text.>` excluding Telegram, guard first, then stage pipeline hooks (P4-T026/T027/T030).
+- [ ] Implement the provenance guard in `crates/mt-store` (Rust), the `ModelInput<T>` wrapper, its `mt_store.provenance` Python binding and decorators (for `mt_research`), and the refusal audit writer (`audit.dq_event`, kind `provenance_refusal`).
+- [ ] Clippy `disallowed-methods` config + Python AST lint rule + CI wiring.
+- [ ] `nlp` service skeleton in `crates/mt-nlp` (Rust): durable consumer on `raw.text.>` excluding Telegram, guard first, then stage pipeline hooks (P4-T026/T027/T030).
 - [ ] Document the boundaries list in `crates/mt-store/README.md` (provenance section).
 
 ## Verification
 
 ### Tests
 - Unit: rows with each flag combination; telegram source with forged `model_input_ok=true` still refused.
-- Lint test: a fixture module calling the TEI client unguarded fails the lint.
+- Lint test: a fixture crate passing raw rows to the TEI client fails to compile/clippy, and a fixture Python module calling an exporter unguarded fails the AST lint.
 - Integration: `raw.text.telegram` message published by a test producer is never consumed by `nlp`.
 
 ### Scenarios
@@ -82,7 +82,7 @@ One shared guard, implemented once in the Rust `mt-store` crate and called from 
 - [ ] Guard + lint in CI; all known model boundaries decorated
 - [ ] Telegram never consumed by `nlp` (test)
 - [ ] Refusals audited in `audit.dq_event` (WORM)
-- [ ] CI green (`cargo test -p mt-store`, `cargo clippy`, ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-store -p mt-nlp`, `cargo clippy`, ruff, mypy, `uv run pytest` (binding + AST lint), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -114,3 +114,4 @@ One shared guard, implemented once in the Rust `mt-store` crate and called from 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (refusals audited in canonical audit.dq_event (17 §B); F3 provenance-first per 17 §A P4-B001; added P4-T008 and P1-T030 dependencies)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (provenance guard implemented once in Rust `mt-store`, called from Python via the `mt_store` binding; services postgres → supabase-postgres; tools +cargo; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`nlp` skeleton in Rust `mt-nlp` (was `mt_features.text.service`); Rust boundary enforced by the `ModelInput<T>` type + clippy, Python decorators/AST lint kept for `mt_research`)

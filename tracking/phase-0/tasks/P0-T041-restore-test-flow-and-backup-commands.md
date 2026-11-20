@@ -1,7 +1,7 @@
 ---
 id: P0-T041
 kind: task
-title: Build the monthly restore-test Prefect flow
+title: Build the monthly restore-test job
 phase: 0
 type: OPS
 status: backlog
@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, docker, supabase, pgbackrest, cargo]
 mcp: []
 env: []
-services: [supabase-postgres, minio, prefect-server]
+services: [supabase-postgres, minio]
 branch: p0/P0-T041-restore-test-flow-and-backup-commands
 pr: ""
 doc_sync: [docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -33,11 +33,11 @@ checkpoint: ""
 review_result: ""
 ---
 
-# P0-T041 · Build the monthly restore-test Prefect flow
+# P0-T041 · Build the monthly restore-test job
 
 ## Goal / expected outcome
 
-A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target time) into a throwaway `postgres-restore` container (the same Supabase Postgres image digest), runs integrity checks including `audit.verify` against the external seals, records the result in `ops.restore_test`, tears down, and alerts on failure. It runs monthly and on demand via `system.restore.test` (C1).
+A restore-test job (`just restore-test`: the `restore` compose profile, pgBackRest restore, then the Rust `mt-obs restore-check`) restores the latest off-site pgBackRest backup (+ WAL to a target time) into a throwaway `postgres-restore` container (the same Supabase Postgres image digest), runs integrity checks including `audit.verify` against the external seals, records the result in `ops.restore_test`, tears down, and alerts on failure. In P0 it runs monthly from a host timer (`infra/timers/`, P0-T037) and on demand with `just restore-test` from the runbook (roadmap T0.44); P1-T077 moves it onto `mt-scheduler` (T1.35) and wires the `system.restore.test` (C1) command to it.
 
 ## Context & references
 
@@ -54,19 +54,19 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 - Scratch target: `postgres-restore` service (same digest as the Supabase Postgres image, P0-T070), on `core` network, data in a temp volume, destroyed after.
 - Checks: Postgres starts; the latest version in `supabase_migrations.schema_migrations` == the newest file in `supabase/migrations/`; `supabase test db`-equivalent pgTAP invariants pass against the restored DB; row counts per schema within tolerance of prod snapshot taken at backup time; `audit.verify` (full mode) on the restored DB against external seals = ok; a sample `pit(as_of)` query (`mt-store`) returns.
 - Result in `ops.restore_test` (started, finished, duration, backup label, checks, status) and metric `mt_restore_test_last_success_timestamp`; alert if > 35 days since last pass.
-- Schedule: 1st Sunday of the month 04:00 Australia/Sydney; on-demand via `system.restore.test`.
+- Schedule: 1st Sunday of the month 04:00 Australia/Sydney (setting) via the host timer `mt-restore-test`; on demand `just restore-test`; `system.restore.test` (C1) through `mt-scheduler` from P1-T077.
 
 ## ToDo
 
-- [ ] Write the flow and the compose profile for `postgres-restore`.
-- [ ] Implement the checks; reuse the verifier from P0-T038.
-- [ ] Wire the command handler and D16 data (`/system/backups`).
+- [ ] Write the `just restore-test` job and the `restore` compose profile for `postgres-restore`.
+- [ ] Implement the checks in `mt-obs restore-check` (Rust); reuse the verifier from P0-T038.
+- [ ] Feed D16 data (`/system/backups`) and add the host timer; the `system.restore.test` handler is wired to `mt-scheduler` in P1-T077.
 - [ ] Tests below; the first real off-site run is P0-T057.
 
 ## Verification
 
 ### Tests
-- Integration (CI with MinIO): backup fixture DB → restore → all checks pass; corrupt one WAL file → flow fails and alerts.
+- Integration (CI with MinIO): backup fixture DB → restore → all checks pass; corrupt one WAL file → job fails and alerts.
 - Unit: check result aggregation and status rules.
 
 ### Scenarios
@@ -77,15 +77,15 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 
 ## Acceptance criteria
 
-- [ ] Flow runs end to end on CI fixtures
+- [ ] Job runs end to end on CI fixtures
 - [ ] Results visible via `/system/backups` and metrics
 - [ ] Alert on failure and on > 35 days without a pass
-- [ ] Scheduled monthly
+- [ ] Scheduled monthly (host timer; `mt-scheduler` from P1-T077)
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
 
-- Disk space for the scratch restore: flow checks free space ≥ 1.5× backup size first and fails early with a clear message.
+- Disk space for the scratch restore: job checks free space ≥ 1.5× backup size first and fails early with a clear message.
 
 ## Cardinal rules (do NOT)
 
@@ -97,13 +97,13 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 
 ## Doc sync on completion
 
-- `docs/runbooks/README.md`: link the restore-test flow from the backup & restore runbook.
+- `docs/runbooks/README.md`: link the restore-test job from the backup & restore runbook.
 - `docs/roadmap/phase-0-foundations.md`: tick T0.44 when every item mapped to it is done.
 
 ## Branch & PR
 
 - Branch: `p0/P0-T041-restore-test-flow-and-backup-commands`
-- PR title: `P0-T041: Build the monthly restore-test Prefect flow`
+- PR title: `P0-T041: Build the monthly restore-test job`
 - PR checklist: tests added · docs synced · task file ticked · `./kanban done P0-T041` run
 
 ## Progress log
@@ -111,3 +111,4 @@ A Prefect flow restores the latest off-site pgBackRest backup (+ WAL to a target
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response wording (16 §2.11); keyless on MinIO, real target in P0-T057; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (restore target uses the Supabase Postgres image; Alembic head check → `supabase_migrations` version + pgTAP invariants)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect flow → `just restore-test` job (Rust checks in `mt-obs restore-check`) on a host timer in P0, as roadmap T0.44 says; P1-T077 moves it onto `mt-scheduler` and wires `system.restore.test`; title no longer says Prefect)

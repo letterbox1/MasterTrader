@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ The six networks of 02 §3.1 exist with the right members: `edge`, `core`, `scra
 
 ## Requirements
 
-- `edge` (caddy, mt-api); `core` (mt-api, the Supabase services (db, auth, storage, kong, meta, studio; P0-T070), nats, prefect-*, mlflow, litellm, tei-embed, tei-rerank, llm-local); `scrape` (only a probe in P0; egress yes); `signer` (`internal: true`, empty in P0); `ctl` (`internal: true`; only mt-api and `docker-proxy`, which P0-T065 deploys; R0.14, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012); `obs` (grafana, loki, prometheus, vector, alertmanager, exporters).
+- `edge` (caddy, mt-api); `core` (mt-api, the Supabase services (db, auth, storage, kong, meta, studio; P0-T070), nats, mlflow, litellm, tei-embed, tei-rerank, llm-local); `scrape` (only a probe in P0; egress yes); the `scheduler` container (`mt-scheduler`, P1-T077) joins `core` when it lands; `signer` (`internal: true`, empty in P0); `ctl` (`internal: true`; only mt-api and `docker-proxy`, which P0-T065 deploys; R0.14, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012); `obs` (grafana, loki, prometheus, vector, alertmanager, exporters).
 - The Supabase stack (P0-T070; its compose project joins the external `core` network) attached to `core` only; NATS to `core` and `scrape`, with the `SCRAPE` account publish-limited — the only cross-network path.
 - Egress allow-list for `core` documented (venues/LLM APIs); P0 either enforces it with a host nftables egress set or documents it for P2 (log decision).
 - Exporters join `core` + `obs`; no obs container joins `scrape`.
@@ -108,3 +108,4 @@ The six networks of 02 §3.1 exist with the right members: `edge`, `core`, `scra
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (six networks incl. ctl for docker-proxy (02 §3.1, R0.14); llm-local/tei-embed/tei-rerank names; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the Supabase stack (P0-T070) replaces the postgres container on `core`; probe targets updated)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`prefect-*` dropped from the `core` network; `scheduler` (`mt-scheduler`, P1-T077) noted as a later `core` member)

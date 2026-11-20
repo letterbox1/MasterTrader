@@ -15,7 +15,7 @@ requirements: [R7.10]
 roadmap_todos: [T7.24]
 modules: [M0, M7, M11, M18]
 dashboards: [D03]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow, backtest-worker]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,12 +50,12 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 
 - One manifest per strategy: counterparty sentence, sleeve, benchmark (FX/indices buy-and-hold or carry; gold buy-and-hold), kill criteria, venue `fp_markets_mt5|ctrader`, timeframe, sessions.
 - Sizing via the shared sizing library (vol-targeting / stop-distance), not fixed lots; per-trade risk ≤ the bot's setting (default 1% of sleeve equity, [16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
-- Indicator/signal code only from `mt_core`/`mt_strategy` shared libraries (golden-tested); no copied MasterTradingBot source.
+- Strategies are Rust (18 §2.1, 14 §8): indicator/signal code only from the shared Rust indicator/signal library (P2-T130) and sizing library (P2-T131; rules in `mt-risk`), golden-tested; no copied MasterTradingBot source.
 - Each strategy passes through `lab.validate.run` and gets a gate report (P7-T014) before paper on the new adapter.
 
 ## ToDo
 
-- [ ] `strategies/mastertradingbot/<name>/` manifests + strategy classes.
+- [ ] `strategies/mastertradingbot/<name>/` manifests + Rust strategy crates (`cargo test -p <strategy>` against the golden outputs).
 - [ ] Backtests with measured FP costs (spreads/swaps from M16).
 - [ ] Prepare a paper bot definition per strategy (started on the demo account in P7-T051 once the chosen adapter is ready).
 - [ ] Tests; docs.
@@ -104,3 +104,4 @@ Each permitted MasterTradingBot strategy exists as an M0 strategy (template 'det
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (per-trade risk default per 16 §2.1; paper start moved to P7-T051; deps P2-T132/T133)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; port follows P2-T132's template language (deterministic strategies may be Rust, 18 §9 step 4))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (MasterTradingBot strategies are Rust crates by default (no Python strategy classes); tools uv → cargo)

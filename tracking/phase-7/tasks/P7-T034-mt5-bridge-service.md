@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A small, licence-clean Python service runs next to the MT5 terminal on Windows, wraps the official `MetaTrader5` Python package and exposes a narrow, authenticated, idempotent API (orders, positions, history, ticks/bars, account) over Tailscale to the `engine`.
+A small, licence-clean Python service (`mt_mt5_bridge`, one of the five Python packages in 18 §2.2) runs next to the MT5 terminal on Windows, wraps the official `MetaTrader5` Python package and exposes a narrow, authenticated, idempotent API (orders, positions, history, ticks/bars, account) over Tailscale to the `engine`.
 
 ## Context & references
 
@@ -113,3 +113,4 @@ A small, licence-clean Python service runs next to the MT5 terminal on Windows, 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (build first: fake-backed tests, demo run moved to P7-T035; 07 §5.1 baseline; dep P7-T004)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (bridge stays Python on Windows (`MetaTrader5` is Python-only, 18 §2.2); the host → the runtime host)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (package name `mt_mt5_bridge` (18 §2.2); stays Python, executes only orders that already passed `mt-risk`)

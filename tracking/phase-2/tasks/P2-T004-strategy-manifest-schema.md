@@ -15,7 +15,7 @@ requirements: [R2.04]
 roadmap_todos: [T2.20]
 modules: [M0]
 dashboards: [D03]
-tools: [cargo, uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/ui/dashboards/D03-strategies.md, docs/roa
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,7 +44,7 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 - Roadmap: [R2.04](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
 - Spec: [03 M0 manifest](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [14 §3 counterparty rule + priorities](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §5 kill criteria](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
 - UI: [D03 builder + manifest fields](../../../docs/ui/dashboards/D03-strategies.md)
-- Related: P2-T005 never-build, P2-T006 registry, P2-T050 your first manifests; Part B consumes the param schema for Optuna.
+- Related: P2-T005 never-build, P2-T006 registry, P2-T050 first manifests; Part B consumes the param schema for Optuna (in `mt_research`, through the binding). The same manifest loads a Rust strategy crate (`strategies/<name>/`) or, for ML research on paper only, a Python research strategy.
 
 ## Requirements
 
@@ -65,7 +65,7 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 ## Verification
 
 ### Tests
-- Commands: `cargo test -p mt-core manifest`, `cargo clippy -p mt-core`, `uv run pytest packages/mt_strategy -k manifest` (through the PyO3 binding).
+- Commands: `cargo test -p mt-core manifest`, `cargo clippy -p mt-core`; the PyO3 exposure is checked in `cargo test -p mt-store-py manifest` (pyo3 test harness), so no Python package is needed here.
 - Unit: each required field missing → specific error code.
 - Unit: param ranges (min ≤ default ≤ max), types, enums.
 - Property (proptest): any generated valid manifest round-trips YAML → model → YAML unchanged.
@@ -84,7 +84,7 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 - [ ] Schema covers every field listed in 03 M0 and 14 §3/§5
 - [ ] JSON Schema export versioned and CI-checked
 - [ ] CLI + pre-commit hook in place
-- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -116,3 +116,4 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (manifest mode and risk values become proposals (16 §1), modes paper/hitl/autonomous, failure policy and event_sensitive proposals)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; manifest models move to `mt-core` (serde/schemars) with PyO3 exposure; proptest; tools [uv] → [cargo, uv])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (manifest is Rust-only (`mt-core`); `uv run pytest packages/mt_strategy` replaced by a pyo3 binding test under cargo; CI line Rust-only; tools [cargo, uv] → [cargo])

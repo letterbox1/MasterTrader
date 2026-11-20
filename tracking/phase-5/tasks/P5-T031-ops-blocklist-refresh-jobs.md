@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T009]
+depends_on: [P5-T009, P1-T077, P1-T078]
 requirements: [R5.13]
 roadmap_todos: [T5.42]
 modules: [M4, M19]
 dashboards: [D12]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Scheduled Prefect flows refresh `curation.blocklist_domain` and `curation.blocklist_address` from MetaMask eth-phishing-detect, ScamSniffer scam-database, polkadot-js/phishing and the Chainabuse API, with provenance and licence tags, so risk scoring, link rendering and the signer all check the same fresh lists.
+Scheduled `mt-scheduler` jobs refresh `curation.blocklist_domain` and `curation.blocklist_address` from MetaMask eth-phishing-detect, ScamSniffer scam-database, polkadot-js/phishing and the Chainabuse API, with provenance and licence tags, so risk scoring, link rendering and the signer all check the same fresh lists.
 
 ## Context & references
 
@@ -49,12 +49,12 @@ Scheduled Prefect flows refresh `curation.blocklist_domain` and `curation.blockl
 - Cadence: git-based lists every 6 h (shallow fetch of pinned repos), Chainabuse incremental hourly within 5,000 calls/hour. Built and tested on fixture repos and recorded Chainabuse responses; if Chainabuse needs an API key, its live feed is enabled only once you provide one (raise a USER task then; the git-based lists never wait on it).
 - Normalise domains (punycode, lowercase, eTLD+1 plus full host) and addresses (checksum/base58).
 - Each row: `source`, `licence`, `first_seen`, `last_seen`; removal from a source sets `delisted_at` (keep history).
-- Lookup API `mt_curation.blocklist.check(domain|address)` with in-memory bloom/set cache, p99 < 1 ms.
+- Lookup API `mt_curation::blocklist::check(domain|address)` (Rust, linked by `mt-airdrop`, `mt-curation` and `mt-signer`) with in-memory bloom/set cache, p99 < 1 ms.
 - Failure: last good list kept; staleness > 24 h alerts and marks link rendering as "verification degraded".
 
 ## ToDo
 
-- [ ] Write Prefect flows in `packages/mt_curation/blocklists/` with source adapters.
+- [ ] Write `mt-scheduler` jobs (P1-T077) in `crates/mt-curation/src/blocklists/` with source adapters (Chainabuse client on the `mt-connectors` HTTP/quota harness, P1-T078).
 - [ ] Add cache + lookup API; publish refresh metrics to Prometheus.
 - [ ] Record licences in `third_party/LICENSES.md` notes (data use only, no redistribution).
 - [ ] Tests; doc sync.
@@ -104,3 +104,4 @@ Scheduled Prefect flows refresh `curation.blocklist_domain` and `curation.blockl
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures; Chainabuse key, if needed, handled keys-last)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect flows → `mt-scheduler` jobs in Rust `crates/mt-curation/src/blocklists/`; lookup API is a Rust function shared with the signer; +P1-T077, +P1-T078; tools uv → cargo)

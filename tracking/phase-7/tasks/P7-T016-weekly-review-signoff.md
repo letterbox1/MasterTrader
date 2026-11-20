@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D14-journal.md, docs/02-v1-architecture.md, docs/r
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -49,7 +49,7 @@ You can review a pack and sign it off from web or phone; sign-offs are WORM jour
 
 - Command `journal.review.signoff {pack_id, notes, actions[]}` (C1); actions are follow-ups that become `curation.task` items.
 - Table `journal.weekly_review` (WORM): pack id, signed_at, notes, per-trade review tags ('followed plan?', mistake type), actions.
-- D14 → Reviews tab: list of weeks with status (pending/signed/overdue); review page shows the pack and a sign-off form; phone flow ≤ 3 taps from the Telegram digest to sign-off.
+- D14 → Reviews tab: list of weeks with status (pending/signed/overdue); review page shows the pack (including its scenario-twin section, labelled Simulated, when present: P7-T015, reusing the P6 twin report view) and a sign-off form; phone flow ≤ 3 taps from the Telegram digest to sign-off.
 - Reminder: Telegram nudge Monday 18:00 and Wednesday 18:00 if unsigned (configurable); overdue after 7 days → shown as overdue in D14 and as a warning on any capital-step proposal covering that week. Making a signed review part of the clean-week rule is an optional tightening (C1), off by default (16 §2.5).
 
 ## ToDo
@@ -108,3 +108,4 @@ You can review a pack and sign it off from web or phone; sign-offs are WORM jour
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (clean week per 16 §2.5: an unsigned review is a warning, not a dirty week; R7.15 share)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (sign-off command and query in Rust `mt-api`; SQL migration in `supabase/`; tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (review page shows the pack's scenario-twin section labelled Simulated (R7.03/T7.26); sign-off unchanged)

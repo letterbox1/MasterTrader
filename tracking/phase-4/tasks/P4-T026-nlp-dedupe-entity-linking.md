@@ -15,7 +15,7 @@ requirements: [R4.06]
 roadmap_todos: [T4.23]
 modules: [M2]
 dashboards: [D08]
-tools: [uv, git]
+tools: [cargo, uv, git]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + content hash exact match, then MinHash/cosine > 0.95 near-duplicate clustering for wire copies, keeping a `dup_count`) and **entity/ticker linking** (cashtags, symbol-master names/aliases, CIK, country/central-bank entities) producing `tickers[]` and `entities` on each document.
+Two `nlp` stages in the Rust `mt-nlp` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) run after the provenance gate: **dedupe** (canonical URL + content hash exact match, then MinHash/cosine > 0.95 near-duplicate clustering for wire copies, keeping a `dup_count`) and **entity/ticker linking** (cashtags, symbol-master names/aliases, CIK, country/central-bank entities) producing `tickers[]` and `entities` on each document.
 
 ## Context & references
 
@@ -49,7 +49,7 @@ Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + cont
 
 - Exact dedupe by `canonical_url` and `content_hash` (sha256 of normalised text).
 - Near-dup: MinHash LSH (128 perms, Jaccard ≥ 0.9 on 5-shingles) within a 72-h window; cluster id stored; `+N similar` count exposed to D08.
-- Linker: deterministic dictionary + rules first (cashtags, exact names, aliases, CIK), optional spaCy NER for ORG/GPE; ambiguous short tickers (e.g. `ON`, `IT`) require a cashtag or company-name co-occurrence.
+- Linker: deterministic dictionary + rules first (cashtags, exact names, aliases, CIK), optional GLiNER NER for ORG/GPE, exported to ONNX by `mt_research` and run through `ort` (U: GLiNER export quality; the stage stays off until the P4-T072 parity check passes); ambiguous short tickers (e.g. `ON`, `IT`) require a cashtag or company-name co-occurrence.
 - Country/region entities feed the exposure map (P4-T035).
 - Stage latency p95 < 50 ms/document on CPU.
 
@@ -57,6 +57,7 @@ Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + cont
 
 - [ ] Dedupe stage + `text.document_dup` cluster writes.
 - [ ] Linker with alias tables built from the symbol master; ambiguity rules.
+- [ ] GLiNER ONNX export script in `mt_research` (Python; pinned revision, sha256 of the exported file) and the optional `ort` NER stage in `mt-nlp` behind a flag (default off until P4-T072 passes).
 - [ ] Evaluation set of 300 hand-checked headlines (built from public news, committed as fixtures).
 - [ ] Tests + metrics (dup rate, link precision).
 
@@ -78,7 +79,7 @@ Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + cont
 
 - [ ] Precision/recall targets met on the fixture set
 - [ ] D08 dedup count available via `/intel/documents`
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-nlp`, `cargo clippy`, ruff, mypy, `uv run pytest` (export script), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -108,3 +109,4 @@ Two `nlp` stages run after the provenance gate: **dedupe** (canonical URL + cont
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit cross-phase depends_on P1-T009)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (dedupe/linking in Rust `mt-nlp`; spaCy → GLiNER via ONNX/`ort` (U), export in `mt_research`, parity in new P4-T072; tools +cargo)

@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P7-T012, P2-T029]
+depends_on: [P7-T012, P2-T029, P1-T077]
 requirements: [R7.02, R7.01]
 roadmap_todos: [T7.20]
 modules: [M7, M16, M18]
 dashboards: [D03]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server, backtest-worker]
+services: [supabase-postgres, mt-scheduler, backtest-worker]
 branch: p7/P7-T013-gate-report-paper-tracking
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,8 +56,8 @@ The gate report includes a paper/HITL section per strategy version: elapsed peri
 
 ## ToDo
 
-- [ ] `packages/mt_lab/gates/paper.py`: period clock, trade counter, replay-vs-paper comparison.
-- [ ] Prefect flow `paper_replay_daily` that replays yesterday per paper strategy and stores `strategy.paper_tracking` rows.
+- [ ] `crates/mt-lab-core/src/gates/paper.rs`: period clock, trade counter, replay-vs-paper comparison (`cargo test -p mt-lab-core paper`).
+- [ ] `mt-scheduler` job `paper_replay_daily` (P1-T077) that replays yesterday per paper strategy (Nautilus Rust backtest driven by `mt-lab-core`) and stores `strategy.paper_tracking` rows.
 - [ ] Expose results to the gate evaluator as gate `paper_tracking`.
 - [ ] Tests; docs.
 
@@ -111,3 +111,4 @@ The gate report includes a paper/HITL section per strategy version: elapsed peri
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (paper/HITL period per 16 §2.4 incl. ≥ 50 trades and the 26-week low-frequency window; cost ratio from 16 §2.1; deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; paper tracking stays Python (`mt_lab`))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (paper tracking moves to Rust `mt-lab-core`; Prefect → `mt-scheduler` (+P1-T077); services prefect-server → mt-scheduler; tools uv → cargo)

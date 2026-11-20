@@ -25,7 +25,7 @@ doc_sync: [docs/ui/components.md, docs/02-v1-architecture.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -84,7 +84,7 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 - [ ] API + component + sheet live
 - [ ] TTL countdown matches server ±1 s
 - [ ] Viewport matrix passes (covered in P2-T062)
-- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, `pnpm test`, `pnpm playwright` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -117,3 +117,4 @@ Web approvals work end to end: `/approvals?status=pending`, `/bots/{id}/approval
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no bulk approve except batched dynamic card (17 §D), large-order hold-to-confirm per 16 §2.3, cross-phase UI deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; `aal2` for commands; tools [uv, pnpm] → [cargo, pnpm]; services [nats] → [nats, supabase-auth])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (CI line matches the languages used (Rust + web; no Python))

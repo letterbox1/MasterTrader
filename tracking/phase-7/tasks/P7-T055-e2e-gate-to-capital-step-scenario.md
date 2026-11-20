@@ -15,17 +15,17 @@ requirements: [R7.05, R7.01, R7.08, R7.03]
 roadmap_todos: [T7.21]
 modules: [M11, M7, M18, M15]
 dashboards: [D03, D06, D14, D01]
-tools: [git, uv, docker, toxiproxy]
+tools: [git, cargo, docker, toxiproxy]
 mcp: []
 env: []
-services: [supabase-postgres, nats, mt-api, prefect-server]
+services: [supabase-postgres, nats, mt-api, mt-scheduler]
 branch: p7/P7-T055-e2e-gate-to-capital-step-scenario
 pr: ""
 doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ A staging run with a simulated clock exercises the whole Phase 7 flow on paper v
 
 ## ToDo
 
-- [ ] Scenario script `tests/e2e/test_phase7_flow.py`.
+- [ ] Scenario as a Rust integration test `crates/mt-api/tests/e2e_phase7_flow.rs` (`cargo test -p mt-api --test e2e_phase7_flow`).
 - [ ] Test clock provider wiring (test-only).
 - [ ] Audit-trail assertions + `audit.verify` call.
 - [ ] Nightly CI job.
@@ -101,3 +101,4 @@ A staging run with a simulated clock exercises the whole Phase 7 flow on paper v
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (scenario per 16 §2.5: A$2,000 start, +25% of current, a warning steps back one step, an unsigned review is a warning)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (E2E scenario as a Rust integration test; services prefect-server → mt-scheduler; tools uv → cargo)

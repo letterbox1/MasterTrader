@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -66,7 +66,7 @@ Free keys for NASA FIRMS (`MAP_KEY`) and ACLED (research account) are in the sec
 ## Verification
 
 ### Tests
-- Agent: `mt_data.text.config` loads `source_terms.yaml`; every enabled source has an entry (CI check).
+- Agent: the `mt-feeds` config loader (Rust) reads `source_terms.yaml`; every enabled source has an entry (CI check).
 
 ### Scenarios
 - Given Finnhub terms bar ML use, when its rows are ingested, then `model_input_ok = false` and the provenance gate (P4-T025) skips FinBERT/RAG for them.
@@ -104,3 +104,4 @@ Free keys for NASA FIRMS (`MAP_KEY`) and ACLED (research account) are in the sec
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mapped to new roadmap ToDo T4.06 (17 §D P4-B008); keys last: unblocks live check P4-T067, not the builds; optional YouTube key for P4-T066; secrets file outside the repo)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (terms loader is the Rust `mt-feeds` config loader)

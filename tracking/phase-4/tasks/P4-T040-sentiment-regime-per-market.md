@@ -15,7 +15,7 @@ requirements: [R4.11]
 roadmap_todos: [T4.27]
 modules: [M6]
 dashboards: [D08, D02]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_features.sentiment` runs separate pipelines for **crypto, FX, gold/silver/metals, energy and equities/indices** plus a shared **macro layer** (USD, rates, calendar, risk-on/off). Each outputs, per instrument and per market type, a sentiment score, a fear/greed gauge, news-impact flags and a **regime label**, written as versioned `features.value` series (PIT) for strategies, D08 and the morning brief.
+The Rust `mt-features` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates); `sentiment` module) runs separate pipelines for **crypto, FX, gold/silver/metals, energy and equities/indices** plus a shared **macro layer** (USD, rates, calendar, risk-on/off). Each outputs, per instrument and per market type, a sentiment score, a fear/greed gauge, news-impact flags and a **regime label**, written as versioned `features.value` series (PIT) for strategies, D08 and the morning brief.
 
 ## Context & references
 
@@ -50,7 +50,7 @@ review_result: ""
 ## Requirements
 
 - Inputs: FinBERT doc sentiment (relevance-weighted, dedup-cluster-weighted), GDELT tone, CryptoPanic votes, event scores, positioning (P4-T039), and for crypto: Fear & Greed index (alternative.me free), funding, OI, liquidations, Binance free long/short ratios.
-- **Excluded:** Telegram postures (`posture.telegram.*` / `text.telegram_posture` are consumed only by M4/M11 rules; never features, 12 §4, 17 §D). CI check: `mt_features` never imports or subscribes to them.
+- **Excluded:** Telegram postures (`posture.telegram.*` / `text.telegram_posture` are consumed only by M4/M11 rules; never features, 12 §4, 17 §D). CI check: `mt-features` never depends on or subscribes to them.
 - Sentiment index per instrument: EWMA over 1 h / 24 h / 7 d; z-scored vs 90-day history; mention volume series.
 - Regime label per market type: `{risk_on, risk_off, neutral}` macro and `{trend, range, crisis}` market regimes from deterministic rules (vol percentile, trend strength, sentiment z, VIX regime), versioned, thresholds configurable. The per-asset **bull/bear/chop** label is the 16 §2.4.1 definition (200-day average and ±10% 90-day return, configurable per asset class); it's published as a feature from the shared implementation, never redefined here.
 - Features registered in `features.def` with version, inputs, PIT semantics; computed incrementally every 5 min and backfilled for history.
@@ -60,7 +60,7 @@ review_result: ""
 - [ ] Pipeline per market type sharing a common aggregator.
 - [ ] Macro layer (USD index proxy, rates, calendar proximity, risk-on/off).
 - [ ] Regime rules + versioning.
-- [ ] Backfill job (PIT-safe).
+- [ ] Backfill job (PIT-safe; an `mt-scheduler` job).
 - [ ] Tests.
 
 ## Verification
@@ -81,7 +81,7 @@ review_result: ""
 
 - [ ] Five market-type pipelines + macro layer producing features every 5 min
 - [ ] PIT test green; features registered with versions
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-features`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -111,3 +111,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (postures excluded from features (17 §D P4-B003); bull/bear/chop regime from 16 §2.4.1; explicit depends_on P2-T120)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (pipelines in Rust `mt-features`; backfill on `mt-scheduler`; tools uv → cargo)

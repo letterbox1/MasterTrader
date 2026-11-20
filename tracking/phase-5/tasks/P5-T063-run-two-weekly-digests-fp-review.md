@@ -15,7 +15,7 @@ requirements: [R5.22, R5.13]
 roadmap_todos: [T5.80]
 modules: [M4, M19]
 dashboards: [D12, D13]
-tools: [uv]
+tools: [git]
 mcp: []
 env: [TELEGRAM_BOT_TOKEN, COINGECKO_DEMO_API_KEY, CRYPTORANK_API_KEY, GOPLUS_APP_KEY]
 services: [telegram, coingecko, cryptorank, goplus]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -99,3 +99,4 @@ Two consecutive weekly digests (with the daily digests between them) go out on s
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (live digests after the keys-last check P5-T068; loosening is C3)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (removed P5-T068 dep (keyed sources join when it passes); FP/TP labelled by the agent, your review optional; depends_on removed P5-T068)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (RUN item uses the digests and D13 only; tools uv → git)

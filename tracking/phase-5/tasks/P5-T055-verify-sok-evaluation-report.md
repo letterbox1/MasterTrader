@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ A written evaluation report (`docs/reports/p5-sok-risk-evaluation.md`, numbers o
 
 ## ToDo
 
-- [ ] Run the notebook from a clean environment; export metrics.
+- [ ] Run the notebook (`mt_research`, P5-T039) from a clean environment on the Rust scorer's batch output; export metrics.
 - [ ] Write the report with tables and recommendations.
 - [ ] Apply recommended thresholds via a config PR (tighten freely; loosening needs your C3 approval, 16 §1).
 
@@ -97,3 +97,4 @@ A written evaluation report (`docs/reports/p5-sok-risk-evaluation.md`, numbers o
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (threshold loosening is C3)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (notebook stays in `mt_research` (Python, 18 §2.2) and evaluates the Rust scorer's output; tools unchanged)

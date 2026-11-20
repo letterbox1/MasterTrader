@@ -15,7 +15,7 @@ requirements: [R4.01]
 roadmap_todos: [T4.20]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git, docker]
+tools: [cargo, uv, git, docker]
 mcp: []
 env: []
 services: [nats, crawl4ai]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.rss` polls every feed in `feeds.yaml` (feedparser), fetches article pages and extracts main text with **trafilatura**, falling back to **crawl4ai** only for JS-rendered pages; it respects robots.txt and paywalls and publishes `RawTextItem`s on `raw.text.rss`.
+The Rust `mt-feeds` crate polls every feed in `feeds.yaml` (Rust RSS/Atom parser) and hands article URLs to `mt_extract` (Python, the only place trafilatura runs, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)), which fetches the page and extracts main text with **trafilatura**, falling back to the **crawl4ai** container only for JS-rendered pages; it respects robots.txt and paywalls and publishes `RawTextItem`s on `raw.text.rss`.
 
 ## Context & references
 
@@ -48,15 +48,16 @@ review_result: ""
 ## Requirements
 
 - Poll interval per feed (default 5 min, min 2 min) with ETag/Last-Modified; jittered schedule.
-- Extraction order: feed `content:encoded` → trafilatura on the page → crawl4ai (headless, no cookies, 20 s timeout) only for `js: true` feeds.
+- Hand-off: `mt-feeds` publishes items whose feed carries full content itself; for the rest it sends an extraction job to `mt-extract` over a scrape-network-local HTTP call, and `mt-extract` publishes the finished `RawTextItem` (it publishes `raw.text.*` only, 18 §2.2).
+- Extraction order: feed `content:encoded` (in `mt-feeds`) → trafilatura on the page (`mt_extract`) → crawl4ai (headless, no cookies, 20 s timeout) only for `js: true` feeds.
 - Paywalled feeds (`paywalled: true`): store title + summary + link only, `display_ok` full text false.
 - robots.txt checked and cached 24 h; disallowed paths are not fetched (headline only).
 - Max page size 2 MB; non-HTML content types skipped.
 
 ## ToDo
 
-- [ ] Implement `RssConnector` on the P4-T010 base (feedparser + httpx).
-- [ ] Implement `extract.py` (trafilatura with `favor_precision`, crawl4ai client over the `scrape` network).
+- [ ] Implement the RSS/Atom connector in `mt-feeds` on the P4-T010 `Connector` trait (Rust feed parser, licence checked per [19](../../../docs/19-third-party-register.md)).
+- [ ] Implement `packages/mt_extract` (trafilatura with `favor_precision`, crawl4ai client over the `scrape` network, local extraction endpoint for `mt-feeds`).
 - [ ] Approx-timestamp handling via the shared normaliser.
 - [ ] Record fixtures (10 real feeds, saved responses) for offline tests.
 - [ ] Feed-level metrics: items/day, extraction failures, bytes.
@@ -64,7 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- Unit: fixtures → expected title/body/published/approx flags.
+- Unit: feed fixtures → expected title/published/approx flags (`cargo test -p mt-feeds`); page fixtures → expected body (`uv run pytest`, `mt_extract`).
 - Unit: robots.txt disallow → no page fetch.
 - Integration: local HTTP fixture server + crawl4ai container extracts a JS-only page.
 
@@ -80,7 +81,7 @@ review_result: ""
 - [ ] Every RSS source in `feeds.example.yaml` (and in your `feeds.yaml` if P4-T003 is done) ingests in a 24-h run; your full list is exercised in P4-T060
 - [ ] Paywall + robots rules covered by tests
 - [ ] D07 shows each feed's status
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, ruff, mypy, `uv run pytest` (`mt_extract`), `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -113,3 +114,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (no longer waits for your feed list (P4-T003): built on fixtures + example feeds, your list runs in P4-T060)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (feed polling in Rust `mt-feeds`; page extraction in Python `mt_extract` (trafilatura) + crawl4ai; feedparser/httpx dropped; tools +cargo)

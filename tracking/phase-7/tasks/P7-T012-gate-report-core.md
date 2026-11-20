@@ -15,7 +15,7 @@ requirements: [R7.01]
 roadmap_todos: [T7.20]
 modules: [M7, M0]
 dashboards: [D03, D04]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow, backtest-worker]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_lab.gates.evaluate(strategy_version)` produces a structured, versioned gate result covering every 03 §8 gate and every 14 §6 harness extension, with pass/fail, the measured value, the threshold and the evidence run id for each.
+`mt_lab_core::gates::evaluate(strategy_version)` in the Rust `mt-lab-core` crate (18 §2.1) produces a structured, versioned gate result covering every 03 §8 gate and every 14 §6 harness extension, with pass/fail, the measured value, the threshold and the evidence run id for each.
 
 ## Context & references
 
@@ -55,11 +55,11 @@ review_result: ""
 
 ## ToDo
 
-- [ ] `packages/mt_lab/gates/` with one evaluator per gate reading MLflow runs and `strategy.backtest` via `pit(as_of)`.
+- [ ] `crates/mt-lab-core/src/gates/` with one evaluator per gate reading MLflow runs (REST) and `strategy.backtest` via `pit(as_of)` (`mt-store`); exposed to notebooks through the `mt-lab-core` PyO3 binding (read-only).
 - [ ] Gate-profile settings in the layered policy (P2-T010) with change control via `risk.policy.update` (tighten C1 / loosen C3).
 - [ ] Benchmark resolver per asset class (BTC + stablecoin yield; FX/indices buy-and-hold or carry; equities index ETF) from the manifest `benchmark` field.
 - [ ] Waiver model: waiver row (WORM) with reason and approver; only leakage-review/look-ahead findings may be waived, via `lab.leakage.waive` (C2, audited).
-- [ ] Golden tests with a fixture strategy that passes and variants that fail exactly one gate each.
+- [ ] Golden tests with a fixture strategy that passes and variants that fail exactly one gate each (`cargo test -p mt-lab-core gates`, `cargo clippy`); same cases as any earlier Python suite.
 - [ ] Docs.
 
 ## Verification
@@ -114,3 +114,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (DSR ≥ 0.95, walk-forward ≥ 60% and worst fold, regime_v1, safety drills, gate profile in the layered policy (16 §2.4); deps on the P2 harness)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres; gate evaluators stay Python (`mt_lab`, 18 §2.2))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (gate evaluators move from Python `mt_lab` to Rust `mt-lab-core` (18 §2.1: gate reports are production harness); same golden cases; tools uv → cargo)

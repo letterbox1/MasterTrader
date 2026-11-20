@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/README.md, docs/07-security-notes.md, docs/roadmap/phas
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,8 +52,8 @@ review_result: ""
 ## Requirements
 
 - Format per runbook: purpose, when to use, prerequisites (keys, access), numbered steps with exact commands, verification, rollback, measured duration (RTO/RPO), last tested date.
-- Backup & restore: schedule per 17 §B P0-B011 (continuous WAL, nightly incremental, weekly full, monthly restore test, monthly WORM export); PITR to a timestamp, full-cluster restore of the Supabase Postgres to a new machine, single-table inspection via scratch restore, restic file restore; RPO target ≤ 1 min (WAL `archive_timeout=60`); RTO measured from P0-T057.
-- Workstation/host rebuild: OS install (full-disk encryption optional before P7, required in the live profile, P7-T073), `infra/host` workstation baseline (P0-T019), Tailscale join only if used, secrets file restore from restic to `~/.config/mastertrader/` (outside the repo, 17 §D P0-B018) + the age identity from its store (`secrets.age_identity_store`: keychain now, YubiKey from P7), `just up` (self-hosted Supabase + compose), `just db-migrate`, restore DB, verify (`audit.verify`, `supabase test db`-equivalent invariants, health), re-enable schedules. A section notes what changes on a cloud VM or with Supabase cloud (P7-T073, [18 §4.7](../../../docs/18-platform-and-deployment.md#47-backups)).
+- Backup & restore: schedule per 17 §B P0-B011 (continuous WAL, nightly incremental, weekly full, monthly restore test, monthly WORM export); PITR to a timestamp, full-cluster restore of the Supabase Postgres to a new machine, single-table inspection via scratch restore, restic file restore; the P0 jobs run from host timers in `infra/timers/` (`just backup-now`, `just restore-test`, `just worm-export` by hand) until `mt-scheduler` takes them over (P1-T077); RPO target ≤ 1 min (WAL `archive_timeout=60`); RTO measured from P0-T057.
+- Workstation/host rebuild: OS install (full-disk encryption optional before P7, required in the live profile, P7-T073), `infra/host` workstation baseline (P0-T019), Tailscale join only if used, secrets file restore from restic to `~/.config/mastertrader/` (outside the repo, 17 §D P0-B018) + the age identity from its store (`secrets.age_identity_store`: keychain now, YubiKey from P7), `just up` (self-hosted Supabase + compose), `just db-migrate`, restore DB, verify (`audit.verify`, `supabase test db`-equivalent invariants, health), re-enable schedules (`just timers-install` for the P0 host timers; from P1 the `mt-scheduler` jobs resume with the stack). A section notes what changes on a cloud VM or with Supabase cloud (P7-T073, [18 §4.7](../../../docs/18-platform-and-deployment.md#47-backups)).
 - No secrets in the runbooks; reference secret **names** only.
 - `docs/runbooks/README.md` index listing all runbooks (P0 + placeholders for later phases: keys leaked, server down with positions, bad data, wallet drained).
 
@@ -105,3 +105,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (backup schedule (P0-B011) and secrets location (P0-B018); deps trimmed; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (rebuild targets the workstation first (LUKS, Tailscale, YubiKey optional before P7); self-hosted Supabase restore and `just` recipes)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (runbooks name the P0 host timers and `just` recipes, and `mt-scheduler` from P1-T077 (no Prefect))

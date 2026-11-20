@@ -15,7 +15,7 @@ requirements: [R5.13]
 roadmap_todos: [T5.26]
 modules: [M4]
 dashboards: [D12]
-tools: [uv, docker]
+tools: [cargo, docker, git]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,10 +55,10 @@ A deterministic, explainable risk score 0–100 combines re-implemented solana-r
 
 ## ToDo
 
-- [ ] Implement feature extractors in `packages/mt_airdrop/risk/features/` (evm.py, solana.py, liquidity.py, distribution.py, deployer.py, offchain.py).
-- [ ] Implement `risk/score.py` composition with explanation output and config versioning.
+- [ ] Implement feature extractors in `crates/mt-airdrop/src/risk/features/` (`evm`, `solana`, `liquidity`, `distribution`, `deployer`, `offchain`).
+- [ ] Implement `risk::score` composition with explanation output and config versioning.
 - [ ] Optional `risk/deep_scan/` worker container definition (disabled).
-- [ ] Golden tests per feature and end-to-end score snapshots; doc sync.
+- [ ] Golden tests per feature and end-to-end score snapshots (`cargo test -p mt-airdrop risk`, `cargo clippy`); doc sync.
 
 ## Verification
 
@@ -107,3 +107,4 @@ A deterministic, explainable risk score 0–100 combines re-implemented solana-r
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; content already matches 08 risk score)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (feature extractors and score in Rust `crates/mt-airdrop/src/risk/`; same golden cases; tools uv → cargo)

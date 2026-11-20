@@ -15,7 +15,7 @@ requirements: [R4.04]
 roadmap_todos: [T4.22]
 modules: [M2]
 dashboards: [D07, D08]
-tools: [uv, git]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/06-aggregators-and-market-providers.md, docs/roadmap/phase-4-int
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A discord.py bot (your bot application, added by you as admin to your own feeds server) with the Message Content intent ingests cross-posted announcements from the receiving channels in `discord_follows.yaml`, maps each post back to its source server/channel, and publishes `raw.text.discord` items. Built and tested with discord.py test doubles and recorded gateway fixtures; the live run on your feeds server is P4-T068 (keys last).
+A Rust Discord bot in the `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates); gateway client crate pinned and licence-checked per [19](../../../docs/19-third-party-register.md)) (your bot application, added by you as admin to your own feeds server) with the Message Content intent ingests cross-posted announcements from the receiving channels in `discord_follows.yaml`, maps each post back to its source server/channel, and publishes `raw.text.discord` items. Built and tested with gateway test doubles and recorded gateway fixtures; the live run on your feeds server is P4-T068 (keys last).
 
 ## Context & references
 
@@ -56,11 +56,11 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 
 ## ToDo
 
-- [ ] Bot service in `ingest-text` (discord.py pinned).
+- [ ] Bot service in `mt-feeds` (Rust Discord gateway crate pinned in `Cargo.lock`).
 - [ ] Follow-map loader + crosspost source resolver.
 - [ ] Guild allow-list guard.
 - [ ] Backfill + live listener; heartbeat; `feed_status`.
-- [ ] Tests with discord.py test doubles.
+- [ ] Tests with gateway test doubles.
 
 ## Verification
 
@@ -81,7 +81,7 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 - [ ] Recorded gateway fixtures replay end to end (live 48-h ingest is P4-T068)
 - [ ] Guild allow-list guard proven by test
 - [ ] No user token anywhere in the code path
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-feeds`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -114,3 +114,4 @@ A discord.py bot (your bot application, added by you as admin to your own feeds 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day delivery default per 16 §2.13; build first, keys last: live 48-h ingest moved to P4-T068; dropped P4-T006/P4-T002 dependencies)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (discord.py → Rust Discord bot in `mt-feeds`; tools uv → cargo)

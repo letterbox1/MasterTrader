@@ -15,7 +15,7 @@ requirements: [R2.56, R2.18]
 roadmap_todos: [T2.70]
 modules: [M11, M12]
 dashboards: [D06]
-tools: [cargo, uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-r
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,7 +56,7 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 
 ## ToDo
 
-- [ ] Drill script `tests/drills/test_kill_engine_drill.py` (emulator setup, kill, measure, restart, resume)
+- [ ] Drill test `tests/drills/kill_engine_drill.rs` in the Rust `mt-e2e` workspace test crate (emulator setup, kill, measure, restart, resume)
 - [ ] Run drills A and B 3× each; record timings and audit IDs
 - [ ] Add results to `docs/runbooks/kill-switch-drill.md`
 - [ ] Record results (numbers, run IDs) in the progress log and tick the roadmap ToDo box
@@ -64,7 +64,7 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest tests/drills/test_kill_engine_drill.py` against the compose stack (engine and `deadman` built with `cargo`).
+- Commands: `cargo test -p mt-e2e --test kill_engine_drill -- --ignored` against the compose stack (engine and `deadman` built with `cargo`).
 - Drills A and B × 3 runs with timings; restart flow assertions.
 
 ### Scenarios
@@ -111,3 +111,4 @@ A scripted drill SIGKILLs the engine while paper positions and orders are open o
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.70: R2.56, R2.18)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; drill script → `tests/drills/`; host → workstation; tools [uv, docker] → [cargo, uv, docker]; services [nats, postgres] → [nats, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (drill harness in Rust (`mt-e2e` test crate), same steps and timings; tools [cargo, uv, docker] → [cargo, docker])

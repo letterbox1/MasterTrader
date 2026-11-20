@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D08-intel.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -83,7 +83,7 @@ review_result: ""
 - [ ] All D08 Feed/Detail/Sources widgets per spec
 - [ ] D08 acceptance 1 (≤ 5 s) and 3 (1,000+ items smooth) met
 - [ ] No Telegram text rendered anywhere (test)
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, `pnpm test`, `pnpm playwright` viewport matrix + axe)
+- [ ] CI green (`pnpm test`, `pnpm playwright` viewport matrix + axe, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -113,3 +113,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (postures panel from /intel/postures, Telegram never in the Feed (17 §D P4-B002); explicit depends_on P0-T049)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (`mt_api` → `mt-api`; CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (CI line limited to the web checks; no Python in this task)

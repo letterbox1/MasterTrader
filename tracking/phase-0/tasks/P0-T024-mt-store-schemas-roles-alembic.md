@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/02-v1-architecture.md, docs/roadmap/phase
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ Plain SQL migrations in `supabase/migrations/` create all 13 canonical schemas `
 
 ## Requirements
 
-- Roles: `mt_owner` (NOLOGIN, owns non-WORM schemas), `mt_migrator` (member of `mt_owner`, runs non-WORM migrations), `worm_owner` (LOGIN, password set offline via P0-T013; throwaway in dev/CI/paper; owns WORM tables), app roles per service (`mt_api_rw`, `mt_obs_rw`, `mt_flows_rw`, `mt_research_ro`), `mt_monitor_ro` (exporters).
+- Roles: `mt_owner` (NOLOGIN, owns non-WORM schemas), `mt_migrator` (member of `mt_owner`, runs non-WORM migrations), `worm_owner` (LOGIN, password set offline via P0-T013; throwaway in dev/CI/paper; owns WORM tables), app roles per service (`mt_api_rw`, `mt_obs_rw`, `mt_jobs_rw` (scheduled jobs: P0 host-timer jobs, then `mt-scheduler`), `mt_research_ro`), `mt_monitor_ro` (exporters).
 - Default privileges: app roles get `SELECT, INSERT, UPDATE, DELETE` only on **non-WORM** tables of the schemas they need; `mt_research_ro` gets **no** direct `SELECT` on fact tables (only on the `pit` functions/views from P0-T027).
 - **Supabase roles** (`anon`, `authenticated`, `service_role`): no privileges on any MasterTrader schema; **RLS enabled on every table** with no policies for `anon`/`authenticated` (deny all), enforced by an event trigger or a migration helper so new tables can't miss it ([18 §4.5](../../../docs/18-platform-and-deployment.md#45-access-rules)).
 - Conventions enforced by pgTAP tests over `information_schema`/`pg_catalog`: every fact table has `event_time timestamptz NOT NULL`, `ingest_time timestamptz NOT NULL DEFAULT clock_timestamp()`; PKs are `uuid` (UUIDv7 generated app-side; a `uuid_generate_v7()` SQL function as fallback); money columns are `numeric`, never `real/double`; RLS on.
@@ -126,3 +126,4 @@ Plain SQL migrations in `supabase/migrations/` create all 13 canonical schemas `
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (all 13 canonical schemas in P0 (17 §B P0-B005); run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Alembic → forward-only SQL in `supabase/migrations/` with pgTAP (`supabase test db`); RLS deny-all + no access for Supabase roles; sqlx pools in `mt-store`; `ops.session` → `ops.command_session` (logins live in Supabase Auth); depends on P0-T070 instead of P0-T020; bars moved to P0-T072)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (role `mt_flows_rw` (Prefect flows) renamed `mt_jobs_rw` for scheduled jobs (`mt-scheduler`))

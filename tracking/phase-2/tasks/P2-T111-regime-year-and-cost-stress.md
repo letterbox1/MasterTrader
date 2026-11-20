@@ -15,7 +15,7 @@ requirements: [R2.42]
 roadmap_todos: [T2.27]
 modules: [M7, M6]
 dashboards: [D04, D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -59,8 +59,8 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 
 ## ToDo
 
-- [ ] Implement `regime_v1` labeller in `mt_features` (registered + versioned) and tests
-- [ ] Implement per-year/per-regime breakdown in `mt_lab/validation/breakdown.py`
+- [ ] Implement `regime_v1` labeller in `mt-features` (Rust, registered + versioned) and tests
+- [ ] Implement per-year/per-regime breakdown in `crates/mt-lab-core/src/validation/breakdown.rs`
 - [ ] Implement cost-stress sub-jobs (2×, 3×, plus 0.5×/1× sensitivity) and stress-window replays
 - [ ] Benchmark comparison output
 - [ ] Doc regime definition in 14 §6
@@ -68,7 +68,7 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k breakdown`.
+- Commands: `cargo test -p mt-lab-core breakdown`, `cargo test -p mt-features regime`.
 - Unit: regime labeller on a synthetic up/down/flat series labels each segment correctly.
 - Integration: a strategy profitable at 2× but losing at 3× passes the cost gate and shows the 3× loss in the report; one losing at 2× fails.
 - Golden: per-year table for a fixture.
@@ -85,7 +85,7 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 
 - [ ] Per-year, per-regime, cost stress (2×, 3×) and benchmark sections produced
 - [ ] `regime_v1` registered and versioned
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -95,7 +95,7 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 ## Cardinal rules (do NOT)
 
 - Do NOT tune the regime definition per strategy to make it pass; it is a versioned global feature.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -114,3 +114,4 @@ The harness extensions from 14 §6: results broken down by calendar year and by 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (regime_v1 per 16 §2.4.1, cost gate 2× (3× reported), D06 stress tab distinction)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (breakdown → `mt-lab-core`, `regime_v1` → `mt-features` (both Rust); same tests; tools [uv] → [cargo])

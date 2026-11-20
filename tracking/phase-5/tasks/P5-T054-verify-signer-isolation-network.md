@@ -10,12 +10,12 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T017, P5-T013, P0-T021]
+depends_on: [P5-T017, P5-T013, P0-T021, P1-T077]
 requirements: [R5.N1]
 roadmap_todos: [T5.40]
 modules: [M22, M17]
 dashboards: []
-tools: [docker, uv]
+tools: [docker, cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-5-airdrops-wallets-curation.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -46,7 +46,7 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 
 ## Requirements
 
-- From each container on `core`, `scrape`, `obs`, `edge` (and `agents`/`litellm`/`decision-svc` if present): TCP/Unix-socket connect to signer, anvil, openbao → fail.
+- From each container on `core`, `scrape`, `obs`, `edge` (and `agents` (`mt-agents`)/`litellm`/`decision-svc`/`crowdsim`/`scenario-twin` if present): TCP/Unix-socket connect to signer, anvil, openbao → fail.
 - From `airdrop-exec`: signer reachable with a valid client cert; without cert → refused.
 - From signer: only allow-listed RPC hosts reachable.
 - Filesystem: no container other than signer mounts the secrets tmpfs/key volume (compose inspection).
@@ -54,9 +54,9 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 
 ## ToDo
 
-- [ ] Write `tests/network/test_signer_isolation.py` driving `docker compose exec` probes.
+- [ ] Write the Rust integration test `crates/mt-signer/tests/network_isolation.rs` (`cargo test -p mt-signer --test network_isolation`) driving `docker compose exec` probes.
 - [ ] Compose-inspection check for volumes/networks.
-- [ ] Schedule the weekly run on the workstation (Prefect) with alert on failure.
+- [ ] Schedule the weekly run on the workstation as an `mt-scheduler` job (P1-T077) with alert on failure.
 
 ## Verification
 
@@ -100,3 +100,4 @@ An automated network test proves the signer and Anvil sit on the isolated `signe
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (policy service as the signer's only caller per P5-B003; P0 networks dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (probe suite as a Rust integration test; weekly run as an `mt-scheduler` job (+P1-T077); probe list adds `crowdsim`/`scenario-twin`; tools uv → cargo)

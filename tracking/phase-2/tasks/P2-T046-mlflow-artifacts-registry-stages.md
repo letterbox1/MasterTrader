@@ -15,7 +15,7 @@ requirements: [R2.44, R2.47]
 roadmap_todos: [T2.41]
 modules: [M7, M21]
 dashboards: []
-tools: [docker, uv]
+tools: [docker, cargo, uv]
 mcp: []
 env: []
 services: [mlflow, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 
 - Backend store: the Supabase Postgres (`mlflow` schema), artefact root `/data/mlflow/artifacts` (local volume), included in restic backups.
 - Registry aliases: `candidate` → `staging` → `production`, `archived`; promotion to `production` only via `models.promote` command (mt-api, audited) — not via MLflow UI (UI bound to localhost, read-mostly; Tailscale only for optional phone access, 18 §8).
-- Service tokens: backtest-worker read/write runs; engine read-only for `production` models.
+- Service tokens: backtest-worker (`mt-lab-core` and `mt_research` jobs) read/write runs; engine and `mt-models` read-only for `production` models (ONNX artefacts).
 - Retention: artefacts forever (02 §5.1).
 
 ## ToDo
@@ -64,7 +64,7 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k mlflow` against the compose stack.
+- Commands: `cargo test -p mt-lab-core mlflow` (REST client used by the production harness) and `uv run pytest packages/mt_research -k mlflow` (Python client used by notebooks and training) against the compose stack.
 - Smoke: log a run with params/metrics/artefact; register model; set alias; engine token can read but not write.
 - Restore test: artefact restored from restic matches hash.
 
@@ -108,3 +108,4 @@ MLflow (running since P0) stores artefacts on the NVMe volume with restic backup
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cross-phase deps; consumers named)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (workstation wording, `infra/` paths, CI line; MLflow backend on Supabase Postgres; Tailscale optional; services [mlflow, postgres] → [mlflow, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (MLflow clients are `mt-lab-core` (REST, Rust) and `mt_research` (Python); `packages/mt_lab` → those two; tools [docker, uv] → [docker, cargo, uv])

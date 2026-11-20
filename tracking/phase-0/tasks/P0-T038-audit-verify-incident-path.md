@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, nats, prefect-server, minio]
+services: [supabase-postgres, nats, minio]
 branch: p0/P0-T038-audit-verify-incident-path
 pr: ""
 doc_sync: [docs/15-bots-hitl-and-worm-audit.md, docs/runbooks/README.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`audit.verify` (command, C1) and a daily scheduled `mt-obs verify` job (Rust; Prefect or pg_cron only schedules it) recompute every WORM chain and compare each day's Merkle root against the **externally anchored** seal (fetched from the Object-Locked store, not from `audit.seal`). Any mismatch is a critical incident and triggers the **integrity response** (R0.12, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)): an `audit.integrity_incident` row, the NATS KV status `audit.integrity` set to the configured action (default `block_new_entries`; options `alert_only` / `halt_all`), alerts on every available channel and a red D16 banner. M11 reads the status before every trade through the `mt_risk::integrity_gate` hook point built here in the `mt-risk` crate (one implementation, linked into `mt-api`, the engine and `mt-deadman`); it clears only with `audit.integrity.ack` (C3), itself a new WORM row.
+`audit.verify` (command, C1) and a daily scheduled `mt-obs verify` job (Rust; scheduled by a host timer in P0 for the same reason as the seal, P0-T037, and moved onto `mt-scheduler` by P1-T077) recompute every WORM chain and compare each day's Merkle root against the **externally anchored** seal (fetched from the Object-Locked store, not from `audit.seal`). Any mismatch is a critical incident and triggers the **integrity response** (R0.12, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity)): an `audit.integrity_incident` row, the NATS KV status `audit.integrity` set to the configured action (default `block_new_entries`; options `alert_only` / `halt_all`), alerts on every available channel and a red D16 banner. M11 reads the status before every trade through the `mt_risk::integrity_gate` hook point built here in the `mt-risk` crate (one implementation, linked into `mt-api`, the engine and `mt-deadman`); it clears only with `audit.integrity.ack` (C3), itself a new WORM row.
 
 ## Context & references
 
@@ -58,11 +58,11 @@ review_result: ""
 - **Hook point** `mt_risk::integrity_gate(intent, status) -> Decision::{Allow, Reject(reason)}`: `ok` / `alert_only` → allow; `block_new_entries` → reject entries and risk-increasing orders, allow exits and protective orders (reduce-only, stops); `halt_all` → reject everything except Kill. A pure function + KV reader with a golden test table; P2's M11 calls it inline.
 - The action is a setting: tightening (towards `halt_all`) is immediate; loosening (towards `alert_only`) is C3. While an incident is open, no other risk loosening is accepted (C3 changes other than the ack are refused).
 - Clearing: `audit.integrity.ack` (C3; via the break-glass `mtctl approve` + TOTP until Telegram C3, P0-T035) writes a new `audit.integrity_incident` row (kind `ack`, referencing the incident; nothing is updated in place) and resets the KV status to `ok`.
-- Schedule (defaults, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity), configurable): an **hourly incremental** chain check from the last good checkpoint per chain (stored in `audit.verify_run`), plus the **daily full verify** against the external seals (01:00 UTC, after the seal); also on demand from D16 ('verify now'); full verify of 10 M rows < 10 min.
+- Schedule (defaults, [16 §2.11](../../../docs/16-configuration-and-safety-model.md#211-worm-integrity), configurable): an **hourly incremental** chain check from the last good checkpoint per chain (stored in `audit.verify_run`), plus the **daily full verify** against the external seals (01:00 UTC, after the seal); in P0 these are host timers (`mt-verify-incr`, `mt-verify-full` in `infra/timers/`); also on demand from D16 ('verify now', run in-process by `mt-api`); full verify of 10 M rows < 10 min.
 
 ## ToDo
 
-- [ ] Implement the verifier in `mt-obs` + the scheduled job + the `audit.verify` handler in `mt-api`.
+- [ ] Implement the verifier in `mt-obs` + the scheduled job (`just verify`, host timers; P1-T077 moves it onto `mt-scheduler`) + the `audit.verify` handler in `mt-api` (runs the verifier in-process as a background task, `202` + run id).
 - [ ] Implement incident creation, alert publishing and the `audit.integrity` KV write per the configured action.
 - [ ] Implement `mt_risk::integrity_gate` (hook point) in the `mt-risk` crate with golden tests (`cargo test -p mt-risk integrity_gate`).
 - [ ] Implement the `audit.integrity.ack` handler (C3; appends an ack row, resets KV) and expose the status at `/audit/integrity` + WS `system`; refuse other loosening while an incident is open.
@@ -86,7 +86,7 @@ review_result: ""
 
 ## Acceptance criteria
 
-- [ ] `audit.verify` command and daily flow implemented
+- [ ] `audit.verify` command and the scheduled verify job implemented
 - [ ] External-seal comparison (not DB-only) proven
 - [ ] Mismatch → incident + alert + `audit.integrity` status (default `block_new_entries`) + D16 banner data
 - [ ] `integrity_gate` golden tests pass (entries blocked, exits and protective orders pass)
@@ -125,3 +125,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (integrity response per 17 §A P0-B001 / 16 §2.11 (KV audit.integrity, block_new_entries default, M11 hook point, audit.integrity.ack C3) replaces trading_halt/risk.halt.clear; hourly incremental + daily full verify; roadmap T0.27; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (verifier in Rust `mt-obs`, scheduled by Prefect/pg_cron; `integrity_gate` lives in the `mt-risk` crate (one implementation for `mt-api`, engine and dead-man))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect/pg_cron scheduling replaced by host timers in P0 (moved onto `mt-scheduler` by P1-T077); 'verify now' runs in-process in `mt-api`)

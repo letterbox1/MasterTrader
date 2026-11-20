@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T035, P5-T031]
+depends_on: [P5-T035, P5-T031, P1-T078]
 requirements: [R5.13]
 roadmap_todos: [T5.26]
 modules: [M4]
 dashboards: [D12]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,8 +54,8 @@ Provider clients for **GoPlus** (EVM primary + approval/phishing checks), **Hone
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/risk/providers/` (goplus.py, honeypot_is.py, rugcheck.py) with quota registration.
-- [ ] Implement `risk/hard_fail.py` rule set with reason codes.
+- [ ] Implement `crates/mt-airdrop/src/risk/providers/` (`goplus`, `honeypot_is`, `rugcheck`) on the `mt-connectors` HTTP/quota harness (P1-T078).
+- [ ] Implement `risk::hard_fail` rule set with reason codes (`cargo test -p mt-airdrop hard_fail`).
 - [ ] Fixture tests incl. known honeypot and known clean tokens; doc sync.
 
 ## Verification
@@ -105,3 +105,4 @@ Provider clients for **GoPlus** (EVM primary + approval/phishing checks), **Hone
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live run in P5-T068)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (provider clients and hard fails in Rust `crates/mt-airdrop/src/risk/` (+P1-T078); tools uv → cargo)

@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T101, P0-T042, P0-T029]
+depends_on: [P2-T101, P0-T042, P0-T029, P6-T074]
 requirements: [R2.43]
 roadmap_todos: [T2.27]
 modules: [M7, M21]
 dashboards: [D04, D03]
-tools: [uv, cargo, supabase]
+tools: [cargo, supabase]
 mcp: []
 env: []
 services: [litellm, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/02-v1-architecture.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,8 +57,8 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 
 ## ToDo
 
-- [ ] Write `leakage_checklist_v1` prompt + JSON schema in `mt_lab/review/`
-- [ ] Implement gateway client (OpenAI-compatible) using the role virtual key from secrets; budget-exhausted fallback to local model
+- [ ] Write `leakage_checklist_v1` prompt + JSON schema in `crates/mt-lab-core/prompts/` and the review section in `crates/mt-lab-core/src/review/`
+- [ ] Use the shared Rust gateway client from `mt-agents` (P6-T074; OpenAI-compatible, role virtual key from secrets, budget-exhausted fallback to local model); no second client
 - [ ] Implement quote verification against the source file
 - [ ] Implement the `lab.leakage.waive` command handler in `mt-api` (Rust) and the `audit.leakage_waiver` SQL migration in `supabase/migrations/` (insert-only, pgTAP WORM test)
 - [ ] Register as a validation section; store review + waivers for D03/D04
@@ -67,7 +67,7 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k leakage`, `cargo test -p mt-api leakage`, `supabase test db`.
+- Commands: `cargo test -p mt-lab-core leakage`, `cargo test -p mt-api leakage`, `supabase test db`.
 - Unit: quote verification marks a mismatched quote `unsure`.
 - Unit: JSON schema violations → retry once, then `unsure` for all items.
 - Integration (recorded responses): seeded look-ahead fixture → 'look-ahead: present' quoting the `shift(-1)` line.
@@ -86,7 +86,7 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 - [ ] Every checklist item answered with verified quotes or `unsure`
 - [ ] Waivers audited (WORM) and scoped to one code version
 - [ ] No live LLM calls in CI
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core -p mt-api`, `supabase test db`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -119,3 +119,4 @@ An adversarial leakage checklist is run by a model through the LiteLLM gateway o
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (leakage waiver is C2 (17 §D P2-B056), strategy-gen budget per 16 §2.10, cross-phase gateway/WORM deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; `mt-api` handler in Rust; SQL migration + pgTAP; tools [uv] → [uv, cargo, supabase]; services [litellm, postgres] → [litellm, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (leakage review in `mt-lab-core` (Rust) using the `mt-agents` gateway client; depends_on + P6-T074; same recorded-response tests; tools [uv, cargo, supabase] → [cargo, supabase])

@@ -15,7 +15,7 @@ requirements: [R7.07, R7.06, R7.01]
 roadmap_todos: [T7.20, T7.22]
 modules: [M7, M11]
 dashboards: [D03]
-tools: [git, uv, supabase]
+tools: [git, cargo, supabase]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow, backtest-worker]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ At gate-report time each strategy version stores frozen reference distributions 
 
 ## ToDo
 
-- [ ] `packages/mt_lab/gates/reference.py` (bootstrap, percentiles).
+- [ ] `crates/mt-lab-core/src/gates/reference.rs` (stationary block bootstrap, percentiles; seeded RNG).
 - [ ] SQL migration (`supabase/migrations/`) `strategy.reference_dist` (WORM).
 - [ ] Call from gate evaluation; expose `/strategies/{id}/reference`.
 - [ ] Tests; docs.
@@ -62,7 +62,7 @@ At gate-report time each strategy version stores frozen reference distributions 
 ## Verification
 
 ### Tests
-- `uv run pytest` (bootstrap, percentiles); `supabase test db` (WORM on `strategy.reference_dist`).
+- `cargo test -p mt-lab-core reference` (bootstrap, percentiles) and `cargo clippy`; `supabase test db` (WORM on `strategy.reference_dist`).
 - Unit: bootstrap percentiles on a known normal series within tolerance; fixed seed → identical output.
 - Property: p5 ≤ p50 ≤ p95; block length ≥ 5.
 
@@ -107,3 +107,4 @@ At gate-report time each strategy version stores frozen reference distributions 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (26-week low-frequency window and weekly P&L band per 16 §2.5–2.6 (P7-B016))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (SQL migration in `supabase/`; reference distributions stay Python (`mt_lab`); tools supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (reference distributions move from Python `mt_lab` to Rust `mt-lab-core`; same cases; tools uv → cargo)

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/07-security-notes.md, docs/ui/dashbo
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
   - Image: a socket proxy that supports **path allow-lists** (e.g. `wollomatic/socket-proxy` with `-allowGET`/`-allowPOST` regexes; (U) verify licence, no telemetry, and that it rejects everything not allow-listed), pinned by digest in `infra/images.lock`, recorded in `third_party/LICENSES.md` if vendored.
   - Only `docker-proxy` mounts `/var/run/docker.sock`. It joins `ctl` (`internal: true`) only; no published port, no other network.
   - Allowed calls: `GET /containers/json` (status for D16) and `POST /containers/{name}/restart` where `{name}` is in the allow-list; every other method/path → 403 at the proxy.
-  - Allow-list is configuration, not code: `infra/docker-proxy/allowlist.yaml`, loaded as a setting (default: `caddy`, `prefect-worker`, `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager`). The Supabase stack containers (`db`, `auth`, `kong`, `storage`, `meta`, `studio`), `nats`, `mt-api` and `docker-proxy` itself are never on it by default ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)). Adding a container is a loosening (C3 via `system.settings.update`); removing one is C1.
+  - Allow-list is configuration, not code: `infra/docker-proxy/allowlist.yaml`, loaded as a setting (default: `caddy`, `scheduler` (the `mt-scheduler` container from P1-T077, replacing `prefect-worker`), `mlflow`, `litellm`, `tei-embed`, `tei-rerank`, `llm-local`, `grafana`, `loki`, `prometheus`, `vector`, `alertmanager`). The Supabase stack containers (`db`, `auth`, `kong`, `storage`, `meta`, `studio`), `nats`, `mt-api` and `docker-proxy` itself are never on it by default ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)). Adding a container is a loosening (C3 via `system.settings.update`); removing one is C1.
   - mt-api handler for `system.service.restart` (C2): validates the name against the allow-list **before** calling the proxy; non-allow-listed → 403 problem+json `not_restartable` and an `audit.command` row `rejected`; allow-listed → preview lists dependents (from compose `depends_on`), then restart via the proxy, wait for health, audit `applied` (or `failed` with the reason).
   - `/system/services` returns `restartable: true|false` per container from the allow-list (consumed by P0-T046/P0-T051).
 - Non-functional:
@@ -134,3 +134,4 @@ A digest-pinned `docker-proxy` container sits on the internal `ctl` network and 
 - 2026-10-22 02:01 · cloud:vm:be04b6ae61f8 · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (new task for R0.14 / T0.47, decided in 17 §D P0-B012)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Supabase containers replace `postgres` on the never-restartable list; handler and tests in Rust `mt-api`)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (restart allow-list default: `prefect-worker` → `scheduler` (`mt-scheduler`); 16 §2.14 still names `prefect-worker`, reported for doc alignment)

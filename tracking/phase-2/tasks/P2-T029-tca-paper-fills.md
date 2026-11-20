@@ -15,7 +15,7 @@ requirements: [R2.34]
 roadmap_todos: [T2.26]
 modules: [M16, M12]
 dashboards: [D05]
-tools: [cargo, uv]
+tools: [cargo]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -65,7 +65,7 @@ review_result: ""
 ## Verification
 
 ### Tests
-- Commands: `cargo test -p mt-monitor tca`, `cargo clippy -p mt-monitor`, `uv run pytest packages/mt_lab -k costs`.
+- Commands: `cargo test -p mt-monitor tca`, `cargo clippy -p mt-monitor`, `cargo test -p mt-lab-core costs` (the lab cost-model loader, P2-T102, reads `market.cost_model`).
 - Unit: IS decomposition on hand-worked examples.
 - Integration: sandbox fills → cost events → ratio over 20 fills → bot paused at 1.6×; other bots on the same venue keep trading.
 - Unit: funding accrual for a held perp position.
@@ -81,7 +81,7 @@ review_result: ""
 - [ ] Every paper/testnet order has a cost event
 - [ ] Ratio-based pause works
 - [ ] Measured costs available to the lab
-- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test`, ruff, mypy, `uv run pytest` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test` (and the `mt-risk` golden suite, `pit` check, viewport matrix where relevant)
 
 ## Exceptions & edge cases
 
@@ -112,3 +112,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (cost blow-out per 16 §2.1 (1.5× over 20 fills → pause the bot), cross-phase cost deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; tools [uv] → [cargo, uv]; services [nats, postgres] → [nats, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (lab cost-model consumer is `mt-lab-core` (Rust): `uv run pytest packages/mt_lab` → `cargo test -p mt-lab-core costs`; CI line Rust-only; tools [cargo, uv] → [cargo])

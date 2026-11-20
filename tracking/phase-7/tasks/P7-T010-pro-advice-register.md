@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P0-T025, P2-T016, P3-T038]
+depends_on: [P0-T025, P2-T016, P3-T038, P1-T077]
 requirements: [R7.13]
 roadmap_todos: [T7.07]
 modules: [M19, M11]
 dashboards: [D13, D06, D15]
-tools: [git, cargo, uv, pnpm, supabase]
+tools: [git, cargo, pnpm, supabase]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server, mt-api]
+services: [supabase-postgres, mt-scheduler, mt-api]
 branch: p7/P7-T010-pro-advice-register
 pr: ""
 doc_sync: [docs/12-policy-and-compliance.md, docs/ui/dashboards/D13-tasks-curation.md, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -51,22 +51,22 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 - Seed migration creates idempotently: lawyer ×3 (spot-token manipulation reach, Hyperliquid, private/non-commercial boundary), tax ×2 (investor vs trader; 2027 CGT reform), venue ×4 (AUSTRAC by ABN; OKX AU derivatives; venue conduct/STP/rate-limit terms; FP Markets algo clauses).
 - New table `curation.pro_advice_link(task_id, venue, product, created_at)` (WORM: insert-only; unlinking = new row with `supersedes_id`).
 - Registry guard: `venue.registry.update` to `allowed` for a linked product is rejected while the task is `open`/`deferred`; tightening is always allowed (C1).
-- `deferred` requires `reason` and `revisit_on`; a Prefect flow re-opens deferred items on `revisit_on` and posts a Telegram task.
+- `deferred` requires `reason` and `revisit_on`; an `mt-scheduler` job re-opens deferred items on `revisit_on` and posts a Telegram task.
 - Query `/tasks?type=PRO_ADVICE` returns state, links and revisit date; counted by preflight.
 
 ## ToDo
 
 - [ ] SQL migration in `supabase/migrations/`: `curation.pro_advice_link` + WORM grants/triggers (reuse the P0 WORM helper).
-- [ ] Seed data module `packages/mt_curation/seeds/pro_advice.py` with the 9 items and default links (Hyperliquid perps/HLP, OKX AU perps, FP Markets CFDs).
+- [ ] Idempotent SQL seed (`supabase/migrations/`) with the 9 items and default links (Hyperliquid perps/HLP, OKX AU perps, FP Markets CFDs); no Python seed module.
 - [ ] Registry guard in `crates/mt-api/src/commands/venue.rs`: reject `allowed` while linked advice not `answered` (problem+json `pending_advice`).
-- [ ] Prefect flow `pro_advice_revisit` (daily).
+- [ ] `mt-scheduler` job `pro_advice_revisit` (daily, P1-T077).
 - [ ] D13 task detail: state selector (answered/deferred), reason, revisit date, linked products list.
 - [ ] Tests (below); update docs.
 
 ## Verification
 
 ### Tests
-- `cargo test -p mt-api` (registry guard); `supabase test db` (WORM grants on `curation.pro_advice_link`); `uv run pytest` (seed module).
+- `cargo test -p mt-api` (registry guard); `supabase test db` (WORM grants on `curation.pro_advice_link`; seed idempotency); `cargo test -p mt-scheduler pro_advice_revisit`.
 - Unit: state machine open → answered/deferred → open (revisit); deferred without reason rejected.
 - Integration: linked product cannot be set `allowed` (command returns 409 `pending_advice`); unlinked product can (C3 path).
 - Migration test: seed is idempotent (run twice → 9 items).
@@ -115,3 +115,4 @@ Every 12 §6 advice item exists as a `PRO_ADVICE` task with state `open | answer
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (curation.task from P3 not P5 per P7-B011; cross-phase deps; fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (registry guard in Rust `mt-api`; SQL migration in `supabase/`; seeds stay Python (`mt_curation`); tools cargo/supabase)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (seeds as an idempotent SQL seed (no Python `mt_curation`); Prefect → `mt-scheduler` (+P1-T077); services prefect-server → mt-scheduler; tools −uv)

@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 ## ToDo
 
 - [ ] Migrations for the three tables + insert-only grants on `strategy.versions`
-- [ ] `crates/mt-api/src/strategies/registry.rs` service (create, new_version, get_pinned); Python templates and the lab read it through `mt-api`
+- [ ] `crates/mt-api/src/strategies/registry.rs` service (create, new_version, get_pinned); the Rust templates, the lab (`mt-lab-core`, `mt_research`) and the generator read it through `mt-api`
 - [ ] `mt-api` axum routes for the queries and commands; utoipa OpenAPI updated
 - [ ] Hash code by module file contents + git SHA
 - [ ] Tests
@@ -114,3 +114,4 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (update_params levels per 16 §1 (loosen = C3), cross-phase deps)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; registry in `mt-api` (Rust); Alembic → `supabase/migrations`; tools [uv] → [cargo, supabase]; services [postgres] → [supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (registry consumers are the Rust templates, `mt-lab-core`/`mt_research` and the generator)

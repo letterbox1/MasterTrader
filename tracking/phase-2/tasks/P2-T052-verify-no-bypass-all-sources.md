@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 
 - Sources: strategy `submit_intent`; bot; agent stub publishing `sig.agent.*` → strategy; `order.place` via mt-api; Telegram command; raw NATS publish on `ord.intent.*` and on any venue-ish subject.
 - For each: a policy that rejects everything → zero venue submissions (adapter spy) and a `ord.risk.reject` per intent.
-- Static: import-linter contracts for Python (only `mt_strategy.base` and the Python-node wrapper touch Nautilus exec clients) and a Rust module-visibility check (only `mt_engine::node` reaches the exec clients); grep test for adapter calls outside allowed modules; NATS account permissions deny `ord.*` publish to non-engine accounts except `ord.intent.*`; the `telegram` account can publish `kill.set` only; the `deadman` sidecar has no path to submit new entries (cancel/flatten only).
+- Static: import-linter contracts for Python (only `mt_research.strategy.base` and the Python-node wrapper touch Nautilus exec clients) and a Rust module-visibility check (only `mt_engine::node` reaches the exec clients); grep test for adapter calls outside allowed modules; NATS account permissions deny `ord.*` publish to non-engine accounts except `ord.intent.*`; the `telegram` account can publish `kill.set` only; the `deadman` sidecar has no path to submit new entries (cancel/flatten only).
 
 ## ToDo
 
@@ -63,7 +63,7 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 ## Verification
 
 ### Tests
-- Commands: `cargo test -p mt-risk -p mt-engine -p mt-api bypass`, `uv run pytest -k bypass` (Python node and strategies).
+- Commands: `cargo test -p mt-risk -p mt-engine -p mt-api bypass`, `uv run pytest packages/mt_research -k bypass` (Python node and research strategies).
 - As described; runs in CI on every PR.
 
 ### Scenarios
@@ -103,3 +103,4 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Telegram NATS creds kill.set only and deadman cancel/flatten-only asserted)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; Rust visibility check + Python import-linter; dep P2-T202; depends_on + P2-T202; tools [uv, docker] → [cargo, uv, docker])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python strategy base is `mt_research.strategy.base` (paper-only research path); bypass command scoped to `packages/mt_research`)

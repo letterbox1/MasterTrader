@@ -15,7 +15,7 @@ requirements: [R7.10]
 roadmap_todos: [T7.62]
 modules: [M12, M0]
 dashboards: [D03, D05]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [FP Markets MT5 or cTrader demo, mt5-bridge (MT5 route), supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-7-pro
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -57,7 +57,7 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 ## ToDo
 
 - [ ] Start the ported paper bots (P7-T038) on the demo account via the chosen adapter and run MasterTradingBot in parallel (cTrader route: uses `FPMARKETS_CTRADER_CLIENT_ID`/`FPMARKETS_CTRADER_CLIENT_SECRET` from P7-T004, read from the sops file).
-- [ ] Collect signals/orders; write `tools/parity/mtb_parity.py` comparison.
+- [ ] Collect signals/orders; write the `mtb_parity` comparison as a Rust binary in `crates/mt-lab-core/src/bin/mtb_parity.rs`.
 - [ ] Produce and attach the parity report.
 - [ ] File bugs for unexplained mismatches.
 
@@ -104,3 +104,4 @@ Over a 2-week paper window on the FP Markets demo account, ported strategies run
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (demo runs for the adapters happen here (build first, keys last); fields)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (parity comparison in Rust `mt-lab-core`; MT5 route still through `mt_mt5_bridge`; tools uv → cargo)

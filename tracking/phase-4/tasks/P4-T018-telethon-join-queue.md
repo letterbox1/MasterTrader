@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/runbooks/social-accounts.md, docs/roadmap
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`mt_data.text.telegram` runs a pinned Telethon client on the dedicated account, joins channels from `telegram_channels.yaml` through a persistent, rate-limited join queue that honours `FLOOD_WAIT` exactly, never exceeds 500 joined channels, and streams new messages **in memory only** to the posture extractor (P4-T019). Built and tested against a fake Telethon client and a fixture channel list; joining real channels on your account is the live check P4-T068 (keys last).
+The Python `mt_telegram_reader` package (container `mt-telegram-reader`; Telethon has no audited Rust equivalent, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) runs a pinned Telethon client on the dedicated account, joins channels from `telegram_channels.yaml` through a persistent, rate-limited join queue that honours `FLOOD_WAIT` exactly, never exceeds 500 joined channels, and streams new messages **in memory only** to the posture extractor (P4-T019). Built and tested against a fake Telethon client and a fixture channel list; joining real channels on your account is the live check P4-T068 (keys last).
 
 ## Context & references
 
@@ -49,7 +49,7 @@ review_result: ""
 
 ## Requirements
 
-- Join queue persisted in a local SQLite state file on the `ingest-text` volume (`/data/ingest-text/telegram_join_queue.db`: handle, priority, state, attempts, next_attempt_at, last_error), because the scrape network has no route to Supabase Postgres ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); queue state (joined count, paused-until) is published in the Telegram `feed_status` entry for D08 Sources.
+- Join queue persisted in a local SQLite state file on the `mt-telegram-reader` volume (`/data/mt-telegram-reader/telegram_join_queue.db`: handle, priority, state, attempts, next_attempt_at, last_error), because the scrape network has no route to Supabase Postgres ([02 §3.1](../../../docs/02-v1-architecture.md#31-networks)); queue state (joined count, paused-until) is published in the Telegram `feed_status` entry for D08 Sources.
 - Join pacing (configurable defaults in `config/intel/telegram.yaml`): at most 1 join per 10–20 min (jittered) and ≤ 20 per day; on `FloodWaitError(seconds)` sleep **exactly** `seconds` + jitter and pause the whole queue.
 - Hard cap: refuse to join when joined count ≥ 500; leaving a channel is manual (or on ban/private).
 - Read-only: no sending, forwarding, reacting, read-receipt manipulation or member-list calls; client wrapper exposes only the allowed methods.
@@ -121,3 +121,4 @@ review_result: ""
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (F3b postures-only per 17 §A P4-B001; built on a fake client, live joins moved to P4-T068; dropped P4-T006/P4-T001 dependencies)
 - 2026-10-22 00:00 · aligner · join-queue state moved from `ops.tg_join_queue` to a local state file (scrape side has no DB route, 02 §3.1)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_data.text.telegram` → Python `mt_telegram_reader` (Telethon stays Python per 18 §2.2))

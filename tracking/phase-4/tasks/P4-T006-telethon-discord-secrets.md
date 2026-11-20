@@ -15,7 +15,7 @@ requirements: [R4.02, R4.04]
 roadmap_todos: [T4.42]
 modules: [M2]
 dashboards: [D16]
-tools: [docker, sops, age, uv, git]
+tools: [docker, sops, age, uv, cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/runbooks/social-accounts.md, docs/roa
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The Telethon `.session` file is created once interactively, encrypted with sops/age and decrypted into tmpfs only for `ingest-text`; the Discord bot token, Telegram `api_id`/`api_hash` and Bot API token are scoped to `ingest-text` only. No social credential exists on disk in plaintext or in git. This task builds and tests the mechanism with a fake session and fake tokens; you run the real login yourself in P4-T001 (keys last).
+The Telethon `.session` file is created once interactively, encrypted with sops/age and decrypted into tmpfs only for the Telegram reader (`mt-telegram-reader`, the Python `mt_telegram_reader` package: Telethon, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); the Telegram `api_id`/`api_hash` and ingest Bot API token are scoped to that reader only, and the Discord bot token to the Rust `mt-feeds` service only ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). No social credential exists on disk in plaintext or in git. This task builds and tests the mechanism with a fake session and fake tokens; you run the real login yourself in P4-T001 (keys last).
 
 ## Context & references
 
@@ -48,16 +48,16 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 ## Requirements
 
-- Session bootstrap script `ops/scripts/telethon_login.py` runs once on your workstation (phone code + 2FA password typed by you), writes the session to tmpfs, then `sops --encrypt` to `/etc/mastertrader/telethon.session.sops` (outside the repo, next to the main secrets file, backed up by restic).
-- At stack start `infra/scripts/secrets-up.sh` (P0-T022) decrypts it to `/run/secrets/ingest-text/telethon.session` (tmpfs, mode 0400, uid of the service).
-- Secrets scoped per service: only `ingest-text` gets `telegram.*` and `discord.bot_token`; `telegram-bot` keeps its own alerts token.
+- Session bootstrap script `packages/mt_telegram_reader/scripts/telethon_login.py` (Telethon, so Python) runs once on your workstation (phone code + 2FA password typed by you), writes the session to tmpfs, then `sops --encrypt` to `/etc/mastertrader/telethon.session.sops` (outside the repo, next to the main secrets file, backed up by restic).
+- At stack start `infra/scripts/secrets-up.sh` (P0-T022) decrypts it to `/run/secrets/mt-telegram-reader/telethon.session` (tmpfs, mode 0400, uid of the service).
+- Secrets scoped per service (the `ingest-text` group runs each process as its own container, P4-T008): only `mt-telegram-reader` gets `telegram.*`, only `mt-feeds` gets `discord.bot_token`; the Rust `mt-telegram-bot` keeps its own alerts token.
 - Session file never leaves tmpfs unencrypted; on shutdown the tmpfs copy is gone.
 
 ## ToDo
 
-- [ ] Write `ops/scripts/telethon_login.py` (interactive, prints no secrets).
-- [ ] Add the sops creation rule for `/etc/mastertrader/telethon.session.sops` to `infra/secrets/.sops.yaml` and its decrypt step to `infra/scripts/secrets-up.sh` (scope `ingest-text`).
-- [ ] Add `discord.bot_token`, `TELEGRAM_READER_API_ID`, `TELEGRAM_READER_API_HASH`, `telegram.ingest_bot_token` key names to `.env.example` (names only) and the `ingest-text` scope.
+- [ ] Write `packages/mt_telegram_reader/scripts/telethon_login.py` (interactive, prints no secrets).
+- [ ] Add the sops creation rule for `/etc/mastertrader/telethon.session.sops` to `infra/secrets/.sops.yaml` and its decrypt step to `infra/scripts/secrets-up.sh` (scope `mt-telegram-reader`).
+- [ ] Add `discord.bot_token`, `TELEGRAM_READER_API_ID`, `TELEGRAM_READER_API_HASH`, `telegram.ingest_bot_token` key names to `.env.example` (names only) and the per-service scopes (Telegram names → `mt-telegram-reader`, Discord token → `mt-feeds`).
 - [ ] Add gitleaks custom rules for Telethon session strings and Discord token format.
 - [ ] Document the bootstrap + rotation in `docs/runbooks/social-accounts.md`.
 
@@ -65,22 +65,22 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 
 ### Tests
 - Integration: container starts with the session in tmpfs; `stat` shows mode 0400 and tmpfs mount.
-- Unit: secrets loader refuses to start `ingest-text` if the session is world-readable.
+- Unit: the `mt_telegram_reader` secrets loader refuses to start if the session is world-readable (`uv run pytest`); the `mt-feeds` loader refuses a world-readable Discord token file (`cargo test -p mt-feeds`).
 - CI: gitleaks catches a planted fake session string and fake Discord token.
 
 ### Scenarios
-- Given the session is revoked from the phone, when `ingest-text` starts, then Telegram ingest goes `degraded` with an alert and other sources keep running.
-- Given another service (e.g. `nlp`) inspects its env/tmpfs, then no Telegram/Discord secret is visible.
+- Given the session is revoked from the phone, when `mt-telegram-reader` starts, then Telegram ingest goes `degraded` with an alert and other sources keep running.
+- Given another service (e.g. `mt-nlp`, or `mt-feeds` for the Telegram secrets) inspects its env/tmpfs, then no secret outside its own scope is visible.
 
 ### Stress / failure injection
-- Restart `ingest-text` 20× in a loop: session decrypts every time; no plaintext copy appears on persistent disk (`find / -name '*.session'` outside tmpfs is empty).
+- Restart `mt-telegram-reader` 20× in a loop: session decrypts every time; no plaintext copy appears on persistent disk (`find / -name '*.session'` outside tmpfs is empty).
 
 ## Acceptance criteria
 
 - [ ] Encrypted-session path proven end to end with a fake session (the real session is created by you in P4-T001 and never committed); plaintext never written to persistent disk
-- [ ] Only `ingest-text` can read Telegram/Discord secrets (per-service scope test)
+- [ ] Only `mt-telegram-reader` can read Telegram secrets and only `mt-feeds` the Discord token (per-service scope test)
 - [ ] Runbook written
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (ruff, mypy, `uv run pytest` (`mt_telegram_reader`), `cargo test -p mt-feeds`, `cargo clippy`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -110,3 +110,4 @@ The Telethon `.session` file is created once interactively, encrypted with sops/
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (secrets outside the repo per 17 §D (P0-B018) and P0-T022 paths; keys last: built with fake session/tokens, real login in P4-T001; depends on P0-T022)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres; "host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (login script in Python `mt_telegram_reader`; Telegram secrets scoped to `mt-telegram-reader`, Discord token to Rust `mt-feeds`; tools +cargo)

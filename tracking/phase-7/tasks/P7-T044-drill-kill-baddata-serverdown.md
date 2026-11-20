@@ -15,7 +15,7 @@ requirements: [R7.06, R7.11]
 roadmap_todos: [T7.60]
 modules: [M11, M16]
 dashboards: [D06, D07, D16]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
 services: [supabase-postgres, nats, mt-api, monitor, grafana]
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/, docs/roadmap/phase-7-prove-and-go-live.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -108,3 +108,4 @@ The kill, bad-data and server-down-with-open-positions runbooks are each drilled
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (timings per 16 §2.2/§3.1; dead-man + restart drills count for the 16 §2.4 safety-drills gate; kill actions per 17 §B)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (drills use the Rust `mt` CLI and the `mt-monitor` fault injector; tools uv → cargo)

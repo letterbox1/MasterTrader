@@ -15,7 +15,7 @@ requirements: [R2.10, R2.20, R2.18, R2.19, R2.34]
 roadmap_todos: [T2.60, T2.61]
 modules: [M0, M11, M12, M15, M16]
 dashboards: [D06, D03]
-tools: [cargo, uv, docker, pnpm]
+tools: [cargo, docker, pnpm]
 mcp: []
 env: []
 services: [nats, supabase-postgres, grafana, supabase-auth]
@@ -25,7 +25,7 @@ doc_sync: [docs/02-v1-architecture.md, docs/roadmap/phase-2-strategies-risk-lab.
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -54,7 +54,7 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 
 ## ToDo
 
-- [ ] Scenario script `tests/scenarios/part_a_flows.py`
+- [ ] Scenario test `tests/scenarios/part_a_flows.rs` in the Rust `mt-e2e` workspace test crate
 - [ ] Run, capture evidence (screenshots, audit ids)
 - [ ] Report in progress log
 - [ ] Record results (numbers, run IDs, screenshots) in the progress log and tick the roadmap ToDo box
@@ -62,7 +62,7 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest tests/scenarios/part_a_flows.py`, `pnpm playwright`.
+- Commands: `cargo test -p mt-e2e --test part_a_flows -- --ignored` against the compose stack, `pnpm playwright`.
 - The scripted scenario (repeatable).
 
 ### Scenarios
@@ -103,3 +103,4 @@ One scripted run proves the Part A side of exit criteria 2 and 3 on the real pap
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless scripted run (fake Telegram, test TOTP), safety-state checks in F2, L0 loosen in F5, on_system_failure in F6)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; scenario script → `tests/scenarios/`; tools [uv, docker, pnpm] → [cargo, uv, docker, pnpm]; services [nats, postgres, grafana] → [nats, supabase-postgres, grafana, supabase-auth])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (scenario harness in Rust (`mt-e2e` test crate), same scenarios; tools [cargo, uv, docker, pnpm] → [cargo, docker, pnpm])

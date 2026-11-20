@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P2-T104, P2-T105, P2-T108]
+depends_on: [P2-T104, P2-T105, P2-T108, P2-T203]
 requirements: [R2.44, R2.07]
 roadmap_todos: [T2.27, T2.37]
 modules: [M7, M0]
 dashboards: [D04]
-tools: [uv]
+tools: [uv, cargo]
 mcp: []
 env: []
 services: [supabase-postgres, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/roadmap/phase-2-strategies-risk-lab.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-`lab.sweep.run` optimises a strategy's parameters with Optuna over the manifest's parameter schema, penalising complexity, logging every trial to MLflow and the trial counter, and the lab can run A/B comparisons of two strategy versions on byte-identical data.
+`lab.sweep.run` optimises a strategy's parameters with Optuna in `mt_research` (Python, an `mt-scheduler` job container) calling the `mt-lab-core` harness through the binding (P2-T203) over the manifest's parameter schema, penalising complexity, logging every trial to MLflow and the trial counter, and the lab can run A/B comparisons of two strategy versions on byte-identical data.
 
 ## Context & references
 
@@ -56,16 +56,16 @@ review_result: ""
 
 ## ToDo
 
-- [ ] Implement `mt_lab/optimise/sweep.py` (Optuna study, penalty, pruning, Postgres storage)
+- [ ] Implement `packages/mt_research/optimise/sweep.py` (Optuna study, penalty, pruning, Postgres storage; each trial runs the Rust screener/truth path through the binding)
 - [ ] Implement stability-slice computation
-- [ ] Implement `mt_lab/optimise/ab.py` paired comparison
-- [ ] Register `sweep` and `ab` JobRunners; MLflow + trial counter hooks
+- [ ] Implement the A/B paired comparison in `crates/mt-lab-core/src/ab.rs` (Rust; a gate-relevant harness function)
+- [ ] Register `sweep` (external `mt_research` job kind) and `ab` (Rust `JobRunner`); MLflow + trial counter hooks
 - [ ] Tests + docs
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_lab -k optimise`.
+- Commands: `uv run pytest packages/mt_research -k optimise`, `cargo test -p mt-lab-core ab`.
 - Unit: penalty lowers the score of a 6-parameter variant vs a 2-parameter variant with equal raw Sharpe.
 - Integration: 30-trial sweep on the screener completes; 30 MLflow runs; trial count +30.
 - Integration: A/B on identical data asserts equal data hashes and returns a paired CI.
@@ -81,7 +81,7 @@ review_result: ""
 
 - [ ] Sweeps penalise complexity and log every trial
 - [ ] A/B uses byte-identical inputs
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-lab-core`, ruff, mypy, `uv run pytest packages/mt_research`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -92,7 +92,7 @@ review_result: ""
 
 - Do NOT optimise on out-of-sample or test-fold data.
 - Do NOT auto-promote sweep winners.
-- Do NOT read research/backtest data except through `mt_store.pit(as_of=…)` (the Python binding of the Rust `mt-store` crate); the `pit` CI bypass test must stay green.
+- Do NOT read research/backtest data except through `pit(as_of)` (the `mt-store` crate; the `mt_store` binding on the Python side); the `pit` CI bypass test must stay green.
 - Do NOT skip, weaken or delete a test to get green.
 
 ## Doc sync on completion
@@ -111,3 +111,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (mapped to roadmap T2.37 (sweeps + A/B))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; services [postgres, mlflow] → [supabase-postgres, mlflow])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Optuna sweeps stay Python in `mt_research` via the binding; A/B comparison → `mt-lab-core` (Rust); depends_on + P2-T203; same tests; tools [uv] → [uv, cargo])

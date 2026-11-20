@@ -25,7 +25,7 @@ doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md, docs/roadmap/p
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -111,3 +111,4 @@ The Windows VPS is hardened to the 07 §5.1 baseline (Tailscale-only, inbound de
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (T7.43: VPS hardened to 07 §5.1 / 17 §D P7-B010 (Tailscale-only, only the MT5 trade-only login); demo round-trip moved here from P7-T034)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (the host → the runtime host (Loki and Tailscale ACL point at the runtime host))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (checked: the VPS runs the Python `mt_mt5_bridge` (18 §2.2), so `uv` stays; no other change)

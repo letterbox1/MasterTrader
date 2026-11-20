@@ -25,7 +25,7 @@ doc_sync: [docs/ui/dashboards/D16-system.md, docs/roadmap/phase-0-foundations.md
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -53,7 +53,7 @@ review_result: ""
 - Layout ≥ xl: service grid (including the Supabase services) + workstation panel + SLO panel; ≤ ph: workstation summary card → service cards → SLOs (D16 table).
 - Live via WS `system`/`heartbeat`; every tile implements all data states; stale after 15 s without updates.
 - Logs: filters service, level, text, time range; virtualised `LogStream`; clicking a `trace_id` filters by it.
-- Backups: KPIs (backup age, size, WAL lag, last restore test pass/fail + date), seal/verify last status, schedule (defaults: nightly incremental, weekly full, monthly restore test, monthly WORM export, 17 §B P0-B011); actions `system.backup.run` (C1), `system.restore.test` (C1) via `ConfirmSheet`; results toast with audit link.
+- Backups: KPIs (backup age, size, WAL lag, last restore test pass/fail + date), seal/verify last status, schedule (defaults: nightly incremental, weekly full, monthly restore test, monthly WORM export, 17 §B P0-B011); actions `system.backup.run` (C1), `system.restore.test` (C1) via `ConfirmSheet`; results toast with audit link. Until `mt-scheduler` runs these jobs (P1-T077) the API answers `job_runner_unavailable` (P0-T034): the buttons render disabled with a hint naming `just backup-now` / `just restore-test`, and the schedule panel shows the host timers' next run.
 - Restart action (`system.service.restart`, C2 via `ConfirmSheet` showing dependents) enabled only for allow-listed containers (`restartable` from `/system/services`); the rest show the button disabled with the reason (D16, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P0-B012).
 - Loads with Postgres down (read-only; D16 acceptance 1).
 
@@ -79,7 +79,7 @@ review_result: ""
 
 - [ ] Health + Backups pages implemented per D16
 - [ ] Read-only on Postgres outage
-- [ ] C1 actions work end to end with audit links
+- [ ] C1 actions work end to end with audit links (backup/restore show the `job_runner_unavailable` state until P1-T077)
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `pnpm test`, gitleaks, `pit` check, Playwright viewport matrix)
 
 ## Exceptions & edge cases
@@ -109,3 +109,4 @@ review_result: ""
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (restart via docker-proxy allow-list (17 §D P0-B012, R0.14); backup schedule per P0-B011; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (service grid includes the Supabase services; host panel → workstation panel; GPU optional)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (backup/restore actions show the `job_runner_unavailable` state until `mt-scheduler` (P1-T077) runs them; no Prefect)

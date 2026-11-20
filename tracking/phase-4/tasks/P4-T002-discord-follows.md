@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-10-22
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -64,7 +64,7 @@ Your private "MasterTrader Feeds" Discord server receives cross-posts from the p
 ## Verification
 
 ### Tests
-- Agent runs `python -m mt_data.text.discord.validate_follows` (schema, ≤ 15 per receiving channel).
+- Agent runs `cargo run -p mt-feeds -- validate-follows` (the Discord bot is in the Rust `mt-feeds` crate, [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)) (schema, ≤ 15 per receiving channel).
 
 ### Scenarios
 - Given a receiving channel has 16 follows, when validated, then it warns and suggests a new category channel.
@@ -103,3 +103,4 @@ Your private "MasterTrader Feeds" Discord server receives cross-posts from the p
 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (7-day delivery check per 16 §2.13; depends on P0-T002→P0-T008 (T0.07); unblocks the live check P4-T068 instead of the build)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (follow validator moves to the Rust `mt-feeds` crate)

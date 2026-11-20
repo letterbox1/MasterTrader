@@ -15,7 +15,7 @@ requirements: [R5.21, R5.20]
 roadmap_todos: [T5.30]
 modules: [M19, M2]
 dashboards: [D13]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres, nats]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ The curation queue proposes at most 3 new servers a week (default, configurable)
 
 ## ToDo
 
-- [ ] Implement `packages/mt_curation/community/` (invite discovery from observations, verifier, ranker, delivery watcher, leave-when scheduler), entries stored in `curation.community`.
+- [ ] Implement `crates/mt-curation/src/community/` (invite discovery from observations, verifier, ranker, delivery watcher, leave-when scheduler), entries stored in `curation.community`.
 - [ ] Map P4 Discord follow-webhook metadata to curation entries.
 - [ ] Tests with recorded invite/webhook fixtures; doc sync.
 
@@ -109,3 +109,4 @@ The curation queue proposes at most 3 new servers a week (default, configurable)
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (Discord 7 days / ≤ 3 servers per week defaults per 16 §2.13/P5-B011; `curation.community`; P4 Discord dep)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (community curation in Rust `crates/mt-curation/src/community/`; tools uv → cargo)

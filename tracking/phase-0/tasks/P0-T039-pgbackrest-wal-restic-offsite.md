@@ -18,14 +18,14 @@ dashboards: []
 tools: [git, docker, supabase, pgbackrest, restic, just]
 mcp: []
 env: []
-services: [supabase-postgres, minio, prefect-server]
+services: [supabase-postgres, minio]
 branch: p0/P0-T039-pgbackrest-wal-restic-offsite
 pr: ""
 doc_sync: [docs/07-security-notes.md, docs/02-v1-architecture.md, docs/roadmap/phase-0-foundations.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The Supabase Postgres (self-hosted on the workstation, P0-T070; [18 §4.7](../../../docs/18-platform-and-deployment.md#47-backups)) is continuously protected: pgBackRest with WAL archiving to the Object-Locked `mt-pgbackrest` bucket (encrypted), weekly full + nightly incremental backups, and restic snapshots of the non-DB state (MLflow artifacts, Prefect/Grafana config, the encrypted secrets file copy, `infra/seed`) to `mt-restic`. Failures alert; `/system/backups` shows age, size and WAL lag.
+The Supabase Postgres (self-hosted on the workstation, P0-T070; [18 §4.7](../../../docs/18-platform-and-deployment.md#47-backups)) is continuously protected: pgBackRest with WAL archiving to the Object-Locked `mt-pgbackrest` bucket (encrypted), weekly full + nightly incremental backups, and restic snapshots of the non-DB state (MLflow artifacts, Grafana config, the encrypted secrets file copy, `infra/seed`) to `mt-restic`. Failures alert; `/system/backups` shows age, size and WAL lag.
 
 ## Context & references
 
@@ -53,12 +53,12 @@ The Supabase Postgres (self-hosted on the workstation, P0-T070; [18 §4.7](../..
 ## Requirements
 
 - pgBackRest stanza `mt`: `repo1-type=s3` (B2 endpoint) or `repo1-type=posix` on a mounted rest-server alternative; `repo1-cipher-type=aes-256-cbc` with pass from tmpfs; `compress-type=zst`; `archive-async=y`; `process-max=4`.
-- Schedule (Prefect or systemd timers): **full weekly** (Sun 02:00 Australia/Sydney), **incremental nightly** (02:00 other days), WAL continuous (`archive_timeout=60`); times are settings, not literals ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
+- Schedule (host timers in `infra/timers/`, P0-T037: pgBackRest is run from the database host by design and P0 needs backups before `mt-scheduler` exists; P1-T077 moves them onto `mt-scheduler`, which then owns run history and the on-demand path): **full weekly** (Sun 02:00 Australia/Sydney), **incremental nightly** (02:00 other days), WAL continuous (`archive_timeout=60`); times are settings, not literals ([16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations)).
 - Retention: `repo1-retention-full=4` (≈ 4 weeks); bucket Object Lock 35 days ≥ effective retention so expire never hits a locked object prematurely — document the arithmetic in the PR.
-- restic: repo `s3:…/mt-restic` (or `rest:` append-only), password from tmpfs; nightly 03:00; paths: the MLflow and Prefect volumes under the data root (P0-T020), the Supabase Storage volume (private buckets), `~/.config/mastertrader/secrets.sops.env` (already encrypted), `infra/` config; `restic forget` policy `--keep-daily 7 --keep-weekly 8 --keep-monthly 24` run **only** from a separate admin machine or credential (the workstation's backup key has no delete rights in append-only mode).
+- restic: repo `s3:…/mt-restic` (or `rest:` append-only), password from tmpfs; nightly 03:00; paths: the MLflow volume under the data root (P0-T020), the Supabase Storage volume (private buckets), `~/.config/mastertrader/secrets.sops.env` (already encrypted), `infra/` config; `restic forget` policy `--keep-daily 7 --keep-weekly 8 --keep-monthly 24` run **only** from a separate admin machine or credential (the workstation's backup key has no delete rights in append-only mode).
 - Metrics: pgBackRest `info --output=json` and restic `snapshots --json` scraped into Prometheus via a small exporter job (`mt_backup_last_success_timestamp{kind}`, `mt_backup_size_bytes`, `mt_wal_archive_lag_seconds`).
 - Alerts (P0-T045): no successful backup in 26 h, WAL archive lag > 15 min, restic failure.
-- `ops.backup_run` rows (non-WORM ops table) for D16 history; `system.backup.run` (C1) triggers an on-demand incremental.
+- `ops.backup_run` rows (non-WORM ops table) for D16 history; on demand, `just backup-now` runs an incremental; the `system.backup.run` (C1) command runs the same job through `mt-scheduler` once P1-T077 wires it (P0-T034 registers it with a `job_runner_unavailable` stub).
 
 ## ToDo
 
@@ -66,7 +66,7 @@ The Supabase Postgres (self-hosted on the workstation, P0-T070; [18 §4.7](../..
 - [ ] Create the stanza against MinIO (CI/dev), run a full + incremental, check `pgbackrest check`.
 - [ ] Configure restic and the first snapshot.
 - [ ] Write the exporter job and Prometheus scrape.
-- [ ] Wire `system.backup.run` handler (Prefect deployment).
+- [ ] Add `just backup-now` and the host timers (`mt-backup-full`, `mt-backup-incr`, `mt-restic`, times from settings); the `system.backup.run` handler is wired to `mt-scheduler` in P1-T077.
 - [ ] Record bucket, schedule and retention in the runbook draft for P0-T060.
 
 ## Verification
@@ -88,7 +88,7 @@ The Supabase Postgres (self-hosted on the workstation, P0-T070; [18 §4.7](../..
 - [ ] Full + incremental + continuous WAL to a MinIO Object-Lock target (pgBackRest info attached, no secrets); the real target is P0-T057
 - [ ] restic snapshot present; delete with the workstation's backup key fails (MinIO lock)
 - [ ] Backup metrics + alerts live
-- [ ] `system.backup.run` works from the API
+- [ ] `just backup-now` runs an on-demand incremental and the host timers run the full, incremental and restic schedule (the `system.backup.run` API path lands with `mt-scheduler`, P1-T077)
 - [ ] CI green (clippy, cargo test, ruff, mypy, pytest, `supabase test db`, gitleaks, `pit` check)
 
 ## Exceptions & edge cases
@@ -121,3 +121,4 @@ The Supabase Postgres (self-hosted on the workstation, P0-T070; [18 §4.7](../..
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (schedule per 17 §B P0-B011 (nightly incremental, weekly full); keyless build on MinIO, real target in P0-T057; run fields added)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (pgBackRest runs against the Supabase Postgres container (derived image or TLS-server sidecar, U); restic adds the Supabase Storage volume; depends on P0-T070; host → workstation)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Prefect removed: schedules are host timers in P0 (moved onto `mt-scheduler` by P1-T077); on-demand is `just backup-now` until P1-T077 wires `system.backup.run` to a scheduler job; Prefect volume dropped from restic paths)

@@ -15,7 +15,7 @@ requirements: [R4.12]
 roadmap_todos: [T4.41]
 modules: [M21]
 dashboards: [D10, D16]
-tools: [docker, uv, git]
+tools: [docker, cargo, git]
 mcp: []
 env: []
 services: [decision-svc, mlflow]
@@ -25,7 +25,7 @@ doc_sync: [docs/10-memory-rag-and-models.md, docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or llama.cpp CPU fallback) serves Qwen3.5-4B at a pinned model revision, exposing next-token **logits** for option tokens, bound to `127.0.0.1`/the internal network with an API key, ready for `decision-svc` (P4-T029).
+A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or llama.cpp CPU fallback) serves Qwen3.5-4B at a pinned model revision, exposing next-token **logits** for option tokens, bound to `127.0.0.1`/the internal network with an API key, ready for `decision-svc` (P4-T029), whose Rust client in `mt-models` reads the option logits over HTTP ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). The server itself is third-party and runs unmodified ([19](../../../docs/19-third-party-register.md)).
 
 ## Context & references
 
@@ -59,15 +59,15 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 ## ToDo
 
 - [ ] Add the SemIf model backend for `decision-svc` to Compose (vLLM GPU profile or llama-server CPU/Vulkan profile), digest-pinned image.
-- [ ] Download weights to the models volume via a script that verifies the pinned revision + sha256.
+- [ ] Download weights to the models volume via `infra/scripts/fetch-model.sh` (verifies the pinned revision + sha256; no Python needed).
 - [ ] Configure determinism flags and API key; document GPU vs CPU profiles.
-- [ ] Benchmark: latency p50/p95 for one document × 5 binary questions, and relevance-only p95 against the stage-1 target (≤ 300 ms GPU / ≤ 3 s CPU), on the workstation; record in MLflow (the formal check is P4-T069).
+- [ ] Benchmark: latency p50/p95 for one document × 5 binary questions, and relevance-only p95 against the stage-1 target (≤ 300 ms GPU / ≤ 3 s CPU), on the workstation with the `mt-models` bench binary (`cargo run -p mt-models --bin semif-bench`); record in MLflow over its REST API (the formal check is P4-T069).
 - [ ] Register the model in `models.registry` (tier B stage 1, revision, backend, benchmark).
 
 ## Verification
 
 ### Tests
-- Smoke: a fixed prompt returns identical option-token logits on 50 repeated calls (flip rate 0 at the API level).
+- Smoke: a fixed prompt returns identical option-token logits on 50 repeated calls through the `mt-models` client (flip rate 0 at the API level; `cargo test -p mt-models`).
 - Security: request without API key → 401; from scrape network → unreachable.
 
 ### Scenarios
@@ -82,7 +82,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - [ ] Model served at the pinned revision with determinism flags on
 - [ ] Benchmark recorded (p50/p95 per document × 5 questions) and registered
 - [ ] API key + internal binding verified
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check)
+- [ ] CI green (`cargo test -p mt-models`, `cargo clippy`, `docker compose config`, `pit` bypass check)
 
 ## Exceptions & edge cases
 
@@ -113,3 +113,4 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (determinism + shared-prefix rule and stage-1 latency target per 17 §A P4-B010 / 10 §4.3; backend named as the decision-svc backend (02 §3.2); depends on P0-T005, P0-T020, P2-T046, P4-T028)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9); CI commands per 18 (cargo/uv/supabase/pnpm))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Rust `mt-models` client + bench binary against the unmodified vLLM/llama-server; weights script in shell; tools uv → cargo)

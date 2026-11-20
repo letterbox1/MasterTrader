@@ -15,7 +15,7 @@ requirements: [R5.10]
 roadmap_todos: [T5.25]
 modules: [M4, M2]
 dashboards: [D12]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/roadmap/phase-5-airdrops
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,8 +55,8 @@ Airdrop candidates also arrive from the P4 Discord inbox (followed announcement 
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/discover/intake_discord.py`, `intake_telegram_postures.py`, `intake_news.py`, `add_url.py`.
-- [ ] Rule-based classifier + tier B question `airdrop_announce_type` registered in the P4 question registry.
+- [ ] Implement `crates/mt-airdrop/src/discover/` modules `intake_discord`, `intake_telegram_postures`, `intake_news`, `add_url` (Rust; tests `cargo test -p mt-airdrop intake`).
+- [ ] Rule-based classifier + tier B question `airdrop_announce_type` registered in the P4 question registry (called through the Rust `mt-models` tier B client; no LLM agent involved).
 - [ ] Command handler `airdrop.add_url` (C0) and Telegram `/add`.
 - [ ] Provenance gate test (Telegram rows never passed to tier B); doc sync.
 
@@ -108,3 +108,4 @@ Airdrop candidates also arrive from the P4 Discord inbox (followed announcement 
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (explicit P4 deps; Telegram postures only per 02 F3/P4-B001)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (intake modules in Rust `crates/mt-airdrop/src/discover/`; tier B via `mt-models` client; tools uv → cargo)

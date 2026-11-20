@@ -15,7 +15,7 @@ requirements: [R7.13, R7.05]
 roadmap_todos: [T7.63]
 modules: [M11]
 dashboards: [D06, D16]
-tools: [git, uv]
+tools: [git, cargo]
 mcp: []
 env: []
 services: [supabase-postgres, mt-api]
@@ -25,7 +25,7 @@ doc_sync: [docs/12-policy-and-compliance.md, docs/roadmap/phase-7-prove-and-go-l
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -52,7 +52,7 @@ Tests and a recorded check prove that funding confirmation, capital steps and li
 
 ## ToDo
 
-- [ ] Write the integration test matrix in `tests/integration/test_registry_gate.py`.
+- [ ] Write the integration test matrix as `crates/mt-api/tests/registry_gate.rs` (`cargo test -p mt-api --test registry_gate`).
 - [ ] Run `mt preflight` for the real targets; attach redacted output.
 - [ ] File a bug for any path that is not gated.
 
@@ -100,3 +100,4 @@ Tests and a recorded check prove that funding confirmation, capital steps and li
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (tools/mcp/env/services; 90-day re-check per 12 §2 unchanged)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (registry-gate matrix as a Rust integration test (same 36 cases); tools uv → cargo)

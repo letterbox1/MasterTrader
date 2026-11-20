@@ -9,14 +9,14 @@ hard_gate: true
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-10-22
+updated: 2026-11-20
 ---
 
 # Phase 8 · MCP control plane (last, optional)
 
 ## Summary
 
-This phase lets you talk to and control MasterTrader from Claude (Desktop/Code) or another MCP client. You can read and analyse, ask the agents (incl. `anomaly.explain`), trade and adjust positions, and manage strategies, bots, risk and curation. Every action goes through `mt_api`, the risk manager (M11) and the WORM audit log. `mt_mcp` (M20) is a **thin adapter**: its tools are generated from the `mt_api` OpenAPI. All policy lives server-side in `mt_api` ([16 §2.3, §2.12](../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8), [02 §7.4](../../docs/02-v1-architecture.md#74-telegram--mcp), [17 §A](../../docs/17-decisions-register.md#a-s2-items-all-resolved)):
+This phase lets you talk to and control MasterTrader from Claude (Desktop/Code) or another MCP client. You can read and analyse, ask the agents (incl. `anomaly.explain`), trade and adjust positions, and manage strategies, bots, risk and curation. Every action goes through `mt-api`, the risk manager (M11) and the WORM audit log. `mt-mcp` (M20) is a **thin adapter**: its tools are generated from the `mt-api` OpenAPI. All policy lives server-side in `mt-api` ([16 §2.3, §2.12](../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8), [02 §7.4](../../docs/02-v1-architecture.md#74-telegram--mcp), [17 §A](../../docs/17-decisions-register.md#a-s2-items-all-resolved)):
 - a tool registry with the locked 16 §2.12 never-exposed set (incl. `approval.*` and `mcp.*`: MCP can never approve);
 - C0 reads run; C1 per token scope; **every MCP order creates your approval card** (Telegram/web, TTL default 5 min, expiry = reject), with no skip-approval option; C3 via Telegram + TOTP + cool-down;
 - loosening risk is never a scope (always C3 out of band); MCP may tighten, L0 included;
@@ -30,7 +30,7 @@ The phase is **hard-gated** ([17 §E](../../docs/17-decisions-register.md#e-rati
 
 **How the work is organised:**
 1. Decision gate.
-2. Server foundations: tokens, `mt_mcp` + transports, registry, order policy, response guard, audit, limits, OAuth, subscriptions.
+2. Server foundations: tokens, `mt-mcp` + transports, registry, order policy, response guard, audit, limits, OAuth, subscriptions.
 3. One task per tool group: read & analyse, agents, trade & adjust, strategies + bots, risk, curation.
 4. Approval cards, container, D17 and docs.
 5. Keyless verification.
@@ -39,15 +39,15 @@ The phase is **hard-gated** ([17 §E](../../docs/17-decisions-register.md#e-rati
 
 ## Entry criteria
 
-- [ ] Phase 6 done (`opens_after: [6]`, hard gate): agents (M8), Hindsight memory (M9), anomaly explain agent (M10) callable via `mt_api`
+- [ ] Phase 6 done (`opens_after: [6]`, hard gate): agents (M8), Hindsight memory (M9), anomaly explain agent (M10) callable via `mt-api`; M8 is the Rust `mt-agents` runtime (`rig-core`, state-machine graph; P6-T074), with no LangGraph (17 §H)
 - [ ] P2 command layer, M11, C3 change control, approvals queue + Telegram approval/TOTP and bots in daily use
-- [ ] P0 `mt_api` with versioned OpenAPI, confirmation engine (C0–C3/Kill), `audit.command`, WORM layer and sops secrets in place
+- [ ] P0 `mt-api` with versioned OpenAPI, confirmation engine (C0–C3/Kill), `audit.command`, WORM layer and sops secrets in place
 - [ ] **Decision gate (T8.01, P8-T001):** you've used the web UI and Telegram daily for ≥ 4 weeks and still want MCP
 
 ## Exit criteria
 
 - [ ] **Exit demo (roadmap §6):** from Claude, "how are my strategies doing, tighten BTC max position to X, and close half my EURUSD" → the tighten applies instantly, the close waits for your Telegram approval, and both appear in D17, `audit.mcp_call` and `audit.command` (P8-T029)
-- [ ] R8.01 thin adapter confirmed by code review + import-linter contract (P8-T003, P8-T023)
+- [ ] R8.01 thin adapter confirmed by code review + the Cargo dependency allow-list check (P8-T003, P8-T023)
 - [ ] R8.02 / R8.08 auth + transport tests green: tokens shown once and stored as HMAC, revocation < 1 s, expiry enforced and indefinite needs C3, Streamable HTTP resume + stdio (+ legacy if enabled), OAuth 2.1, `/mcp` only via Caddy on Tailscale/TLS (P8-T020); live client check passed (P8-T035)
 - [ ] R8.03 tool tests green for all six tool groups incl. `anomaly.explain`, `/bots`, `/approvals`, `source=` filters (P8-T008–T013, P8-T026)
 - [ ] R8.04 bypass tests green: no MCP order skips M11 or its approval card; MCP can't call `approval.*` or `mcp.*`; prompt-injection scenario passes keyless and with Claude (P8-T021, P8-T024, P8-T035)
@@ -65,7 +65,7 @@ The phase is **hard-gated** ([17 §E](../../docs/17-decisions-register.md#e-rati
 | Workstream | Tasks |
 |---|---|
 | Your actions (USER) | P8-T001 decision gate · P8-T018 pepper + client + first token · P8-T019 scopes/expiry per client + enable write tools |
-| Build: foundations | P8-T002 tokens · P8-T003 `mt_mcp` + Streamable HTTP/stdio · P8-T004 registry + never-exposed · P8-T005 order policy · P8-T006 response guard (T8.23) · P8-T007 MCP call audit · P8-T030 limits + cap · P8-T031 OAuth 2.1 · P8-T032 subscriptions + legacy HTTP+SSE |
+| Build: foundations | P8-T002 tokens · P8-T003 `mt-mcp` + Streamable HTTP/stdio · P8-T004 registry + never-exposed · P8-T005 order policy · P8-T006 response guard (T8.23) · P8-T007 MCP call audit · P8-T030 limits + cap · P8-T031 OAuth 2.1 · P8-T032 subscriptions + legacy HTTP+SSE |
 | Build: tool groups | P8-T008 read & analyse · P8-T009 agents · P8-T010 trade & adjust · P8-T011 strategies + bots · P8-T012 risk · P8-T013 curation |
 | Build: UI | P8-T014 MCP approval cards + badges · P8-T016 D17 MCP Console |
 | Ops | P8-T015 `mcp` container (`edge`, Caddy `/mcp`, Tailscale, pepper in sops) |
@@ -84,7 +84,7 @@ In parallel off P8-T002: P8-T003 → (P8-T015, P8-T031, P8-T032); P8-T006 and P8
 
 | Requirement | Tasks |
 |---|---|
-| R8.01 Thin adapter over `mt_api` | P8-T003, P8-T008, P8-T023, P8-T029 |
+| R8.01 Thin adapter over `mt-api` | P8-T003, P8-T008, P8-T023, P8-T029 |
 | R8.02 Transport + scoped revocable tokens | P8-T002, P8-T003, P8-T015, P8-T017, P8-T018, P8-T020, P8-T027, P8-T029, P8-T031, P8-T035 |
 | R8.03 Tool groups (incl. `anomaly.explain`, `/bots`, `/approvals`, `source=`) | P8-T003, P8-T004, P8-T006, P8-T008, P8-T009, P8-T010, P8-T011, P8-T012, P8-T013, P8-T026, P8-T029, P8-T032 |
 | R8.04 Every MCP order through M11 and your approval card; MCP can never approve | P8-T005, P8-T010, P8-T014, P8-T019, P8-T021, P8-T024, P8-T026, P8-T027, P8-T028, P8-T029, P8-T035 |
@@ -100,7 +100,7 @@ In parallel off P8-T002: P8-T003 → (P8-T015, P8-T031, P8-T032); P8-T006 and P8
 | T8.01 `USER` Decide whether to build MCP | P8-T001 |
 | T8.02 `USER` Configure MCP client + scoped token | P8-T018 (guide: P8-T017) |
 | T8.03 `USER` Choose token scopes and expiry per client | P8-T019 |
-| T8.20 `BUILD` `mt_mcp` server, OpenAPI tool schemas, token auth | P8-T003, P8-T008, P8-T009, P8-T010, P8-T011, P8-T012, P8-T013, P8-T026 |
+| T8.20 `BUILD` `mt-mcp` server, OpenAPI tool schemas, token auth | P8-T003, P8-T008, P8-T009, P8-T010, P8-T011, P8-T012, P8-T013, P8-T026 |
 | T8.21 `BUILD` Policy layer (confirmation mapping, never-exposed filter, rate limits, response cap) | P8-T004, P8-T005, P8-T014, P8-T026, P8-T030 |
 | T8.22 `BUILD` D17 MCP Console | P8-T007, P8-T016, P8-T025 |
 | T8.23 `BUILD` Response guard | P8-T006 |
@@ -117,7 +117,7 @@ In parallel off P8-T002: P8-T003 → (P8-T015, P8-T031, P8-T032); P8-T006 and P8
 ## Planning notes & risks
 
 **Design choices:**
-- **Policy lives in `mt_api`, not `mt_mcp`.** An MCP token calling `mt_api` directly (skipping `mt_mcp`) hits the same registry, policy, guard, limits and audit. The bypass (P8-T021), guard (P8-T033) and limit (P8-T034) suites test exactly this.
+- **Policy lives in `mt-api`, not `mt-mcp`.** An MCP token calling `mt-api` directly (skipping `mt-mcp`) hits the same registry, policy, guard, limits and audit. The bypass (P8-T021), guard (P8-T033) and limit (P8-T034) suites test exactly this.
 - **Write tools ship disabled.** `read`, `analyse` and `curation` tools are enabled by default; trade, strategy and risk tools stay off until you enable them in D17 (C3, P8-T019). Write-scope tokens are C3 to create.
 - **Claude counts as a model.** MCP responses and notifications pass the response guard (P8-T006).
 - **Reads are audited too** in WORM `audit.mcp_call` (17 §D P8-B012).
@@ -129,7 +129,7 @@ In parallel off P8-T002: P8-T003 → (P8-T015, P8-T031, P8-T032); P8-T006 and P8
 - **Self-escalation** (MCP approving its own orders or changing its own policy/tokens). Mitigated by the never-exposed set (`approval.*`, `mcp.*`) (P8-T004, P8-T021).
 - **Indefinite tokens** widen exposure. Mitigated by C3, the red warning and the monthly reminder (P8-T002), and reviewed in the RUN (P8-T028).
 - **Chaos testing must not touch the stack running the P7 paper clock or live accounts** (P8-T027 rule).
-- **SDK / OAuth library supply chain:** pin `mcp` 2.3.0 or FastMCP 4.1.3 and the OAuth library by hash and check for telemetry (P8-T003, P8-T031).
+- **SDK / OAuth library supply chain:** pin the Rust `rmcp` SDK and the OAuth crates in `Cargo.lock` (checksums), review them with `cargo deny` and check for telemetry (P8-T003, P8-T031). No Python SDK is used.
 
 ## Cross-phase prerequisites
 
@@ -137,7 +137,7 @@ These are explicit `depends_on` entries in the task files.
 
 | Phase | Tasks relied on |
 |---|---|
-| P0 | P0-T007 (LLM gateway credentials; live check only), P0-T014 (workspace), P0-T020 (compose + Caddy), P0-T021 (networks), P0-T022 (sops), P0-T023 (observability), P0-T025 (provenance columns), P0-T029/T030/T031/T037 (WORM layer, chain, audit tables, seal), P0-T032 (mt_api + OpenAPI), P0-T033 (auth), P0-T034 (command bus + `audit.command`), P0-T035 (confirmation engine), P0-T036 (WebSocket hub), P0-T042 (LiteLLM), P0-T044 (local model), P0-T046 (audit queries), P0-T049/T050 (components, shell) |
+| P0 | P0-T007 (LLM gateway credentials; live check only), P0-T014 (workspace), P0-T020 (compose + Caddy), P0-T021 (networks), P0-T022 (sops), P0-T023 (observability), P0-T025 (provenance columns), P0-T029/T030/T031/T037 (WORM layer, chain, audit tables, seal), P0-T032 (`mt-api` + OpenAPI), P0-T033 (auth), P0-T034 (command bus + `audit.command`), P0-T035 (confirmation engine), P0-T036 (WebSocket hub), P0-T042 (LiteLLM), P0-T044 (local model), P0-T046 (audit queries), P0-T049/T050 (components, shell) |
 | P2 | P2-T006 (strategy commands), P2-T011 (L0 ceilings in settings), P2-T020 (risk/order command surface), P2-T021 (engine), P2-T023 (testnet + sandbox venue), P2-T031 (kill switch), P2-T033 (modes + approval routing), P2-T035 (Telegram C3 TOTP), P2-T036/T037 (bots), P2-T038/T039/T149 (approvals API, Telegram cards, web queue), P2-T043 (D06 changes), P2-T117 (lab API) |
 | P4 | P4-T019 (Telegram postures), P4-T025 (provenance gate), P4-T032 (RAG retrieval), P4-T043 (intel queries/commands) |
 | P5 | P5-T029 (task queue), P5-T033 (discovery intake / add URL) |

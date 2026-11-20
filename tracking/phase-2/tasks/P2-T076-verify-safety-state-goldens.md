@@ -25,7 +25,7 @@ doc_sync: [docs/04-plan-of-action.md, docs/roadmap/phase-2-strategies-risk-lab.m
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-22
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -76,7 +76,7 @@ Golden tests in the mandatory `risk-golden` CI job prove that an order on data o
 - Given `egress.status = mismatch`, when any entry arrives, then it is rejected `egress_block`.
 
 ### Stress / failure injection
-- Hypothesis: 20k random state combinations in nightly CI (2k per PR); zero approved entries under any blocking state.
+- proptest: 20k random state combinations in nightly CI (2k per PR), the same properties as the earlier Hypothesis plan; zero approved entries under any blocking state.
 
 ## Acceptance criteria
 
@@ -114,3 +114,4 @@ Golden tests in the mandatory `risk-golden` CI job prove that an order on data o
 
 - 2026-10-22 00:00 · aligner · created for docs/16–17 (T2.71: R2.58, R2.N2)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust crate paths, `cargo` test/clippy commands, CI line; tools [uv] → [cargo])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Hypothesis → proptest (Rust), same case counts)

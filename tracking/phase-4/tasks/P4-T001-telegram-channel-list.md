@@ -25,7 +25,7 @@ doc_sync: [docs/roadmap/phase-4-intel.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -67,7 +67,7 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 ## Verification
 
 ### Tests
-- Agent runs `python -m mt_data.text.telegram.validate_list config/intel/telegram_channels.yaml` (schema, ≤ 500, no duplicates) once P4-T018 lands.
+- Agent runs `uv run python -m mt_telegram_reader.validate_list config/intel/telegram_channels.yaml` (Telethon side stays Python, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) (schema, ≤ 500, no duplicates) once P4-T018 lands.
 
 ### Scenarios
 - Given the list has 520 entries, when validated, then it fails with 'cap 500 exceeded' and you trim it.
@@ -111,3 +111,4 @@ A reviewed list of up to 500 public Telegram channels/supergroups (crypto calls,
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (posture table/subject names per 17 §D; session login moved here as your step; depends on P0-T002 + P4-T006; build tasks no longer wait for this list)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 ("host" → workstation (18 §9))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (list validator lives in the Python `mt_telegram_reader` package)

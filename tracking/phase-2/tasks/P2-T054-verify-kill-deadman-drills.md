@@ -15,7 +15,7 @@ requirements: [R2.18, R2.N1]
 roadmap_todos: [T2.61]
 modules: [M11, M12]
 dashboards: [D06]
-tools: [cargo, uv, docker]
+tools: [cargo, docker]
 mcp: []
 env: []
 services: [nats, supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/runbooks/kill-switch-drill.md, docs/roadmap/phase-2-strategies-r
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 
 ## ToDo
 
-- [ ] Drill script `tests/drills/test_kill_drill.py` (seeds orders, triggers, measures from `mt_kill_to_cancels_seconds` + audit timestamps)
+- [ ] Drill test `tests/drills/kill_drill.rs` in the Rust `mt-e2e` workspace test crate (seeds orders, triggers, measures from `mt_kill_to_cancels_seconds` + audit timestamps)
 - [ ] Dead-man drill script
 - [ ] Run each drill 5×, record p50/max
 - [ ] Store drill report in `docs/runbooks/drill-reports/`
@@ -64,7 +64,7 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest tests/drills/test_kill_drill.py` against the compose stack (engine and `deadman` built with `cargo`).
+- Commands: `cargo test -p mt-e2e --test kill_drill -- --ignored` against the compose stack (engine and `deadman` built with `cargo`).
 - Drills A, B, C × 5 runs; dead-man drills × 3 runs.
 
 ### Scenarios
@@ -109,3 +109,4 @@ Scripted drills on the sandbox venue and mock venues (no keys) prove kill → al
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless drills (sandbox/mock venues, fake Bot API), layer-1 timers 5 s/10 s with per-bot on_system_failure; engine-death drill moved to P2-T075)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (Rust/Python split per 18 §2; `cargo` + `uv run pytest` commands; drill script → `tests/drills/`; tools [uv, docker] → [cargo, uv, docker]; services [nats, postgres] → [nats, supabase-postgres])
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (drill harness in Rust (`mt-e2e` test crate, `cargo test -p mt-e2e --test kill_drill`), same steps and timings; tools [cargo, uv, docker] → [cargo, docker])

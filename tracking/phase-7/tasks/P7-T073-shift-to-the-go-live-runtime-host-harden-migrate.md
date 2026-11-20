@@ -25,7 +25,7 @@ doc_sync: [docs/18-platform-and-deployment.md, docs/02-v1-architecture.md, docs/
 doc_sync_status: n/a
 found_in: ""
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -103,3 +103,4 @@ The system that was built and paper-traded on the workstation runs on the runtim
 
 - 2026-11-19 09:16 · cloud:vm:be04b6ae61f8 · created
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (requirements R7.18, R7.04 / ToDo T7.44; added dep P7-T066 (egress; cancelled counts as done when the runtime host is a static-IP VM); egress check points at the exit node or the runtime host's static IP)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (checked: shift deploys the Rust crates, the five Python packages (incl. `mt_mt5_bridge`) and `mt-scheduler`/`crowdsim`/`scenario-twin` containers; tools unchanged)

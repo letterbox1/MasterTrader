@@ -10,12 +10,12 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P5-T034, P5-T018]
+depends_on: [P5-T034, P5-T018, P1-T078]
 requirements: [R5.12]
 roadmap_todos: [T5.25]
 modules: [M4]
 dashboards: [D12]
-tools: [uv]
+tools: [cargo, git]
 mcp: []
 env: []
 services: [supabase-postgres]
@@ -25,7 +25,7 @@ doc_sync: [docs/08-airdrops-and-token-launches.md, docs/12-policy-and-compliance
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -56,8 +56,8 @@ Each opportunity is enriched with contract facts from **Blockscout/own RPC** (ve
 
 ## ToDo
 
-- [ ] Implement `packages/mt_airdrop/enrich/` adapters and the `EnrichmentReport` model.
-- [ ] Add CI source-audit check (no `api.etherscan.io` or Birdeye in `packages/mt_airdrop` or `crates/mt-treasury`).
+- [ ] Implement `crates/mt-airdrop/src/enrich/` adapters (on the `mt-connectors` HTTP/quota harness, P1-T078, and the `mt-onchain` RPC pool) and the `EnrichmentReport` type.
+- [ ] Add CI source-audit check (no `api.etherscan.io` or Birdeye in `crates/mt-airdrop` or `crates/mt-treasury`).
 - [ ] Fixture tests; doc sync.
 
 ## Verification
@@ -107,3 +107,4 @@ Each opportunity is enriched with contract facts from **Blockscout/own RPC** (ve
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless fixtures, live run in P5-T068)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (services postgres → supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`packages/mt_airdrop/enrich/` → Rust `crates/mt-airdrop/src/enrich/` on the `mt-connectors` harness (+P1-T078); source audit path updated; tools uv → cargo)
