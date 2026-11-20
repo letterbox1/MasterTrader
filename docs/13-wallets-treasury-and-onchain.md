@@ -39,7 +39,7 @@ Tightening is immediate; loosening is C3. The defaults only prefill the form: **
 
 ## 2. Signer service (the only process that sees hot keys)
 
-The signer is the Rust crate and service **`mt-signer`** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): alloy for EVM, the Solana SDK for Solana. Python services (`mt_airdrop` discovery and scoring, `mt_social`, agents) never sign; they send intents through the policy service. The signer runs on a host you control, never on Vercel ([18 §6](18-platform-and-deployment.md#6-what-cant-run-on-vercel-and-why)).
+The signer is the Rust crate and service **`mt-signer`** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)): alloy for EVM, the Solana SDK for Solana. Other services (`mt-airdrop` discovery and scoring, `mt-social`, `mt-agents`) never sign; they send intents through the policy service. No Python code signs or places orders. The signer runs on a host you control, never on Vercel ([18 §6](18-platform-and-deployment.md#6-what-cant-run-on-vercel-and-why)).
 
 - **Keys:**
   - stored in **OpenBao** (MPL-2.0 fork of Vault) or as sops-encrypted files, whose age identity sits in the OS keychain until Phase 7 and on a YubiKey before live money ([07 §2](07-security-notes.md#2-secrets));
@@ -91,7 +91,7 @@ Wallet apps (MetaMask, Trust Wallet, Phantom, Rabby, Ledger, Ellipal) have no po
 
 ## 4. Hold-and-earn module (M22, `mt_treasury`)
 
-M22 is the Rust crate **`mt-treasury`** (indexer, allocator, cost-gate use; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Yield research and scoring that need Python data tooling stay in Python and hand results to it.
+M22 is the Rust crate **`mt-treasury`** (indexer, allocator, cost-gate use; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Yield scoring is Rust too. Exploratory yield research may use the Python research package (`mt_research`); it never moves funds and only hands reviewed results to `mt-treasury`.
 
 Idle capital earns while it waits.
 - Every position is scored on **net yield after gas, lock-up and smart-contract risk**.
@@ -183,7 +183,7 @@ The gate is one library, `mt_onchain::costgate` in the Rust `mt-onchain` crate (
 
 ## 8. Social participation (M23, `mt_social`)
 
-M23 stays Python (`mt_social`, LLM drafting tooling, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); it never signs or posts by itself.
+M23 is the Rust crate **`mt-social`** (drafts through `mt-agents` and the LiteLLM gateway, credibility and shill-burst posture; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); it never signs or posts by itself.
 
 Social tasks run from **your real accounts, with you approving every post**. The system removes the grind (finding tasks, drafting, tracking) without pretending to be anyone.
 

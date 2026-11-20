@@ -7,6 +7,8 @@ _Date: 2026-10-21. Extends [01-repo-vetting-report.md](01-repo-vetting-report.md
 
 _(U) = unverified._
 
+**How these sources are fetched (2026-11-20, [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** every batch provider here is a typed Rust client in **`mt-connectors`**, run as jobs by **`mt-scheduler`** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). That replaces OpenBB, fredapi, sdmx1, edgartools and yfinance. Library names below are references for formats and endpoints, not dependencies. Python stays only for trafilatura extraction (`mt_extract`) and the Telethon reader (`mt_telegram_reader`) ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)).
+
 ---
 
 ## 0. ⚠️ Time-sensitive actions
@@ -41,17 +43,17 @@ _(U) = unverified._
 
 | Tier | Source | Tool | Risk | Notes |
 |---|---|---|---|---|
-| **Core: news** | Wire, financial and crypto news RSS; central banks (Fed, ECB, BoE, BoJ, SNB, RBA, BoC, RBNZ); regulators | feedparser + **trafilatura**, **crawl4ai** for JS pages | Low | Respect paywalls and robots.txt |
+| **Core: news** | Wire, financial and crypto news RSS; central banks (Fed, ECB, BoE, BoJ, SNB, RBA, BoC, RBNZ); regulators | Feed fetch in Rust (`mt-connectors`) + **trafilatura** extraction (`mt_extract`, Python); **crawl4ai** (container) for JS pages | Low | Respect paywalls and robots.txt |
 | **Core: news** | Sites without feeds (AP, Reuters, Economist WIB, Substack, Bundesbank, Binance blog, any page) | **RSS-Bridge** (whitelisted; CssSelector/XPath for custom pages) | Low | 15-min to 3-h cache, so context only, not latency signals |
 | **Core: news** | Global news volume and tone | **GDELT** | None | — |
-| **Core: filings** | SEC EDGAR | edgartools / official JSON and Atom (declared User-Agent, ≤10 req/s) | None | Prefer this over RSS-Bridge's StockFilings bridge |
+| **Core: filings** | SEC EDGAR | `mt-connectors` SEC client: official submissions JSON, XBRL `companyfacts` JSON and Atom (declared User-Agent, ≤10 req/s) | None | Prefer this over RSS-Bridge's StockFilings bridge |
 | **Core: social** | Telegram channels and groups | **Telethon** client API (pinned, secondary number) + **Bot API** for channels where your bot is admin; RSS-Bridge Telegram bridge as fallback | Low–moderate | Real-time, free. **Postures only:** Telegram API ToS §1.5 bars AI training/deployment on Telegram data, so text never reaches models, RAG or training. Only regex-extracted addresses/tickers and counts feed deterministic postures (`text.telegram_posture`, subject `posture.telegram.*`, consumed by M4/M11 rules only; [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
-| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own **discord.py** bot (Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** Follow works only for **Community-server announcement channels the project actually publishes**; each receiving channel takes ~10–15 follower webhooks, so spread follows over category channels. Message Content intent is self-serve for apps in < 10k servers (U, policy as of Jun 2026) |
-| **Core: social** | Bluesky | **Jetstream firehose + atproto SDK**, filtered on cashtags and keywords | None | Free and explicitly permitted |
-| Core: social | Mastodon / fediverse | Mastodon.py or the RSS-Bridge Mastodon bridge | Low | Low volume |
+| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own bot (Rust client, Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** Follow works only for **Community-server announcement channels the project actually publishes**; each receiving channel takes ~10–15 follower webhooks, so spread follows over category channels. Message Content intent is self-serve for apps in < 10k servers (U, policy as of Jun 2026) |
+| **Core: social** | Bluesky | **Jetstream firehose** (JSON over WebSocket, Rust client), filtered on cashtags and keywords | None | Free and explicitly permitted |
+| Core: social | Mastodon / fediverse | Mastodon streaming/REST API (Rust client) or the RSS-Bridge Mastodon bridge | Low | Low volume |
 | Core: social | **Farcaster** | Self-hosted **Hubble** node or a free hub endpoint | None | Crypto-native; useful for airdrop/launch chatter |
 | Core: news | **CryptoPanic** (free tier) | REST | Low | Crypto headline aggregation with votes; attribution required |
-| **Pending (access requested 2026-10-29)** | Reddit | (PRAW, official OAuth, read-only) | Low | Aggregates only, raw text ≤ 24 h, no training, local model only ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). In or out on Reddit's decision. Closing to new apps 2026-10-31, sunset 2027 (U). Stays optional: if access is ever granted, a connector is an optional item, and not worth building once the public Data API closes |
+| **Pending (access requested 2026-10-29)** | Reddit | (official OAuth API, read-only) | Low | Aggregates only, raw text ≤ 24 h, no training, local model only ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). In or out on Reddit's decision. Closing to new apps 2026-10-31, sunset 2027 (U). Stays optional: if access is ever granted, a connector is an optional item, and not worth building once the public Data API closes |
 | Conditional | StockTwits | v2 REST `streams/symbol/{SYM}` (U) | Low–moderate | Most finance-relevant social source if still reachable; checked in Phase 1 (open checks, §3) |
 | Conditional | YouTube | Channel RSS + Data API v3; yt-dlp for subtitles and transcripts | Low | Finance channels, earnings calls. Checked in **Phase 4** (P4-T066; connector P4-T024), not Phase 1 (open checks, §3) |
 | **Deferred** | X / Twitter | (Official API v2 is pay-per-use, ~$0.005 per post read (U)) | — | Revisit if budget allows; scraping (twscrape) not in v1 |
@@ -63,7 +65,7 @@ _(U) = unverified._
 2. Dedupe (canonical URL + content hash).
 3. **Local-LLM relevance gate** ("is this about a tradable instrument / macro event?", the OpenMagpie idea).
 4. Ticker/entity linking.
-5. FinBERT sentiment.
+5. FinBERT sentiment (ONNX in `mt-nlp`, [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
 6. Embeddings.
 7. Store in `document` with `ts_ingest` from our clock. `ts_published` is flagged `approx=true` when it comes from coarse feed dates or relative times ("2h ago").
 
@@ -76,9 +78,9 @@ _(U) = unverified._
 ### Execution / broker adapters (M12)
 | Provider | Why | Lib | Priority |
 |---|---|---|---|
-| **IG** (REST + Lightstreamer) | FX/indices/commodities CFDs, free demo, **client-sentiment endpoint** | `trading-ig` (BSD-3, active 2026-08) | High |
-| **cTrader Open API / FIX** | Free; works with any cTrader broker | `ctrader-open-api` (MIT, official) | Medium |
-| Saxo OpenAPI | Multi-asset; free SIM (24-h tokens) | Thin httpx client (the library is stale) | Optional |
+| **IG** (REST + Lightstreamer) | FX/indices/commodities CFDs, free demo, **client-sentiment endpoint** | Own Rust adapter; `trading-ig` (BSD-3, active 2026-08) as the reference | High |
+| **cTrader Open API / FIX** | Free; works with any cTrader broker | Own Rust adapter; `ctrader-open-api` (MIT, official) as the reference | Medium |
+| Saxo OpenAPI | Multi-asset; free SIM (24-h tokens) | Thin Rust client (the library is stale) | Optional |
 | FOREX.com / GAIN | REST + streaming | AppKey requested via support | Low |
 | OANDA, IBKR, MT5, Alpaca | Already planned. IBKR needs a running **IB Gateway**: an `ib-gateway` container (IBC-managed login and re-auth, digest-pinned) is added when IBKR is used | — | — |
 | ~~FXCM~~ | API deprecated | — | Skip |
@@ -88,7 +90,7 @@ _(U) = unverified._
 - **TrueFX** / **HistData** tick and M1 data to cross-check Dukascopy (test TrueFX availability).
 - **Twelve Data** free tier (800/day) for backup bars.
 - **Binance data.binance.vision** for free bulk crypto history (top pick).
-- **akshare** (MIT, very active) for China/Asia futures and commodities.
+- **akshare** (MIT, very active) for China/Asia futures and commodities: research use in `mt_research`; a Rust client only if a strategy needs the data live.
 - **FinanceDatabase** (MIT) as the symbol master.
 - Tardis monthly free samples (U) for order-book research.
 
@@ -101,9 +103,9 @@ _(U) = unverified._
 ### Calendars & central banks (M5 / M3)
 - **US calendar backbone:** FRED/ALFRED release dates (point-in-time).
 - **Consensus forecasts:** ForexFactory weekly JSON. It's the only practical free source; ToS-grey, so personal use only, cached, and polled politely.
-- **One SDMX client, `sdmx1` (Apache-2.0):** ECB, IMF (SDMX 3.0), OECD, BIS, Eurostat.
+- **One SDMX client** in `mt-connectors` (replaces `sdmx1`): ECB, IMF (SDMX 3.0), OECD, BIS, Eurostat.
 - **Direct fetchers:** BoE IADB, BoC Valet, RBA, SNB, BoJ.
-- **Catch-all:** **DBnomics** (its library is AGPL, fine for personal use).
+- **Catch-all:** **DBnomics** through its REST API (`mt-connectors`); its AGPL Python library isn't used.
 - **Event feeds:** central-bank RSS for statements, minutes and speeches.
 - **ABS CPI (tax input):** **All groups CPI, weighted average of eight capital cities**, quarterly, series **A2325846C** (U, verify the ID). This is the series the 2027 cost-base indexation uses ([09](09-journal-and-tax.md#️-key-findings-that-shape-the-design)); other ABS CPI series (e.g. the monthly indicator) are display-only. Stored point-in-time with release dates, so revisions never rewrite an earlier value.
 
@@ -128,7 +130,7 @@ _Phase 4 sources (CFTC COT is already ingested in Phase 1)._
 ### Prediction markets as macro-event probabilities (M3 / M6)
 
 _Phase 4 sources._
-- **Kalshi:** public reads, no auth. CFTC-regulated Fed/CPI/NFP/GDP markets. Use httpx; the official library has a proprietary licence.
+- **Kalshi:** public reads, no auth. CFTC-regulated Fed/CPI/NFP/GDP markets. Use a thin Rust client (`mt-events`); the official library has a proprietary licence.
 - **Polymarket:** Gamma + CLOB, public reads.
 - Manifold and Metaculus are optional (weak signal / restrictive terms).
 
@@ -154,7 +156,7 @@ _Phase 4 sources._
 | FXCM | API deprecated |
 | investpy / investiny / Investing.com | Dead, and scraping is banned |
 | tvdatafeed / TradingView data | No official data API; ToS bans extraction |
-| `duka` | Dead since 2016; use dukascopy-node or our own bi5 parser |
+| `duka` | Dead since 2016; use our own `bi5` parser in `mt-connectors` |
 | **LBMA gold/silver fixes** | IBA licence required, even for history; use broker spot XAU/XAG + COMEX GC/SI instead |
 | CME FedWatch scraping | ToS; use the paid API or compute from ZQ futures |
 | Kitco scraping, Trading Economics guest access | ToS / discontinued |
@@ -162,7 +164,7 @@ _Phase 4 sources._
 | Glassnode | No free API |
 | exchangerate.host (100/month), Alpha Vantage (25/day) | Free tiers too small |
 | MT4 ZMQ bridges | Unmaintained; MT4 is end-of-life |
-| Stale libraries: pandasdmx, oandapyV20, saxo_openapi, coinpaprika | Use `sdmx1` or thin httpx clients |
+| Stale libraries: pandasdmx, oandapyV20, saxo_openapi, coinpaprika | Use thin Rust clients in `mt-connectors` |
 | **Birdeye** | Terms ban storage and say "not intended for actual trading" |
 | **Etherscan as a decision input** | Terms bar use as a basis for financial gain; manual lookups only → Blockscout / own RPC |
 | **Tenderly** | Not used, on any plan (the free plan has no simulation API) → Anvil fork / `simulateTransaction` |
@@ -190,7 +192,7 @@ Official pages and feeds that can change the rules or a venue's standing ([16 §
 
 **Venue health inputs (M16, [12 §2](12-policy-and-compliance.md#2-venue-access-registry)):**
 - **Our own measured withdrawal and deposit times** from journal transfers (the primary signal).
-- Deposit/withdraw-enabled flags per asset from venue APIs (e.g. ccxt `fetchCurrencies`).
+- Deposit/withdraw-enabled flags per asset from each venue's currency/status API.
 - Venue status pages and incident feeds, and proof-of-reserve pages, via the watch above.
 - Your own notes on a venue.
 - **AUSTRAC register re-check: a quarterly USER task**, not automated (the register has no API). Until the task queue (M19) exists in Phase 5, the reminder goes out as a Telegram/notification alert.
@@ -225,7 +227,7 @@ Official pages and feeds that can change the rules or a venue's standing ([16 §
 - Public-domain government and central-bank data, and GDELT.
 
 **Must be replaced or dropped:**
-- **Personal-use-only sources:** ForexFactory, Myfxbook, Twelve Data individual plans, yfinance, finviz.
+- **Personal-use-only sources:** ForexFactory, Myfxbook, Twelve Data individual plans, Yahoo Finance data (formerly via yfinance), finviz.
 - **Scrapers:** twscrape and any cookie-based scraper.
 - **AGPL components** if you modify them: RSSHub, DBnomics' library.
 

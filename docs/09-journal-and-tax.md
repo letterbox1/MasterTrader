@@ -47,13 +47,13 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 
 **Where the code lives** ([18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)):
 - The **lot engine, FX/valuation, jurisdiction rules, reports and exports** are the Rust crate **`mt-journal`** (`rust_decimal` for every amount). The tax golden tests run against the crate (`cargo test -p mt-journal`).
-- **Ingestion adapters** are Rust where the format is simple (CSV, JSON, REST ledgers). A statement format that needs a Python-only parser stays in a small Python adapter that hands normalised events to `mt-journal`; it never computes tax.
+- **Ingestion adapters** are Rust (`mt-journal`): fills, CSV, JSON and REST statements. The one Python exception is **`mt_ledger_import`** ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)): ccxt's ledger and statement history across many exchanges. It hands normalised events to `mt-journal` and never computes tax.
 - The journal schema and its WORM rules are SQL in `supabase/migrations/`.
 
 ```
 NautilusTrader fills/positions ─┐
 Broker statements (IBKR Flex, OANDA, IG…; CommSec optional/later) ─┤→ Ingestion adapters (own code; importer formats from InvestIQ/LibreFolio/BittyTax)
-Exchange REST (ccxt ledgers) / on-chain (own indexer or Rotki sidecar) ─┤
+Exchange REST (ccxt ledgers via `mt_ledger_import`) / on-chain (own indexer or Rotki sidecar) ─┤
 Airdrop module (M4) / staking / funding / swaps / manual events ─┘
         ↓
 Append-only JOURNAL (Supabase Postgres `journal` schema, main table `journal.event`; WORM; raw payload + normalised event; hash chain; corrections via supersedes_event_id)

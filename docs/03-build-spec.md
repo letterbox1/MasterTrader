@@ -256,7 +256,7 @@ Module headings keep their original package names so existing links still work. 
 - FinanceDatabase as the symbol master.
 
 **Futures/commodities:**
-- No free real-time feed, so daily data only (Yahoo `GC=F`, `CL=F` via `mt-connectors` (U); akshare for Asia is a Python library outside the 18 §2.2 list, so it needs a Rust client or is dropped (U)).
+- No free real-time feed, so daily data only (Yahoo `GC=F`, `CL=F` via `mt-connectors` (U); akshare for Asia runs as an optional `mt_research` offline batch job, 18 §2.2).
 - EIA, USDA (WASDE report files keyless; QuickStats API with a free key from T0.10), CFTC COT, Baker Hughes.
 - **Futures-like exposure is traded via crypto perps or FX/CFDs** (OANDA/IG).
 
