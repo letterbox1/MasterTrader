@@ -133,6 +133,7 @@ There's one registry table, `ops.venue_registry`. The risk manager blocks **live
   - Models trained on MemeTrans are flagged `commercial_ok = false`.
 - **Inference paths** (tier B, agents, RAG retrieval, **MCP responses**) refuse rows with `model_input_ok = false`. This covers Telegram.
   - MCP tool results go into an external model's context, so `mt-api` filters every `source = mcp` response like any model input: no Telegram text (postures only), no `model_input_ok = false` rows, PII (TFN, addresses, statements) redacted, untrusted text wrapped and marked.
+- **Synthetic rows** (the scenario & crowd simulator, [18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)) carry `synthetic = true` with `train_ok = false` and `model_input_ok = false`, so training, features, RAG and MCP refuse them like Telegram text.
 - **Retention jobs** enforce `retention_days` (e.g. CoinGecko ≤ 1 day).
 - **The licence tag on each source** (06) is the default for its rows. A SaaS pivot becomes a retrain on `commercial_ok` rows, not a redesign.
 

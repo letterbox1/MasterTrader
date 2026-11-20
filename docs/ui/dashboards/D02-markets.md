@@ -32,7 +32,7 @@ See every tradable market at a glance, then drill into one instrument with:
 |---|---|---|
 | Watchlists | User lists (pinned, positions, custom); add/remove; sort | `/markets/instruments?watchlist=`, WS `md.quote` |
 | Quadrant cards | Per instrument: last price, Δ (24h / session), spread (bps) vs normal, funding/swap (if applicable), volume, feed status chip, sparkline, tier-B regime chip | `/markets/matrix`, WS `md.quote`, `cost`, `dq.status`, `tierb` |
-| Macro strip | **Phase 1:** policy rates, 10Y yields, DXY proxy (computed from recorded FX quotes), VIX (yfinance), gold, oil. **Arrives in P4:** nowcasts (GDPNow, Cleveland inflation) | `/markets/matrix?group=macro` |
+| Macro strip | **Phase 1:** policy rates, 10Y yields, DXY proxy (computed from recorded FX quotes), VIX (Cboe daily history via `mt-connectors`), gold, oil. **Arrives in P4:** nowcasts (GDPNow, Cleveland inflation) | `/markets/matrix?group=macro` |
 | Positioning | **Phase 1:** COT net positioning. **Arrives in P4:** retail sentiment (Myfxbook / IG / OANDA books), Kalshi/Polymarket event probabilities | `/markets/matrix?group=positioning` |
 | Correlation heatmap | Rolling correlations (selectable window) across the watchlist | `/markets/matrix?group=correlation` |
 | Cross-venue spreads | Same instrument across venues: mid difference, fees, net edge (info only; not an auto-arb button) | `/data/costs?compare=1` |

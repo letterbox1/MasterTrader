@@ -181,7 +181,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - **Universe:** **delisted, rugged and dead instruments stay in the universe.**
 - **Conventions:** one timezone and bar-close convention.
 - **Trial counter:** every run records its parameter set and a **trial counter, incremented automatically on every tweak** (it feeds deflated Sharpe).
-- **Data:** backtests read only through `pit(as_of)`: the Rust `mt-store` implementation, through its Python binding in the lab ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). 
+- **Data:** backtests read only through `pit(as_of)`: the Rust `mt-store` implementation, directly in the harness and through its Python binding in notebooks ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
 - **Lab split:** the production harness (walk-forward and validation, gate reports, cost models, bias analysers, setup odds) is the Rust crate **`mt-lab-core`**, which drives Nautilus Rust backtests. Exploration and training stay in Python (**`mt_research`**: notebooks, Optuna, model training), which calls the same harness through a PyO3 binding, so a notebook result and a gate result come from one implementation ([18 §2.1–2.2](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
 - **Strategy language:** strategies are **Rust by default** (built-in templates in `crates/mt-engine/src/strategy/`, your own in `strategies/<name>/`). Python strategies are allowed only for ML-driven research on paper, and are ported to Rust (ONNX inference via `ort`) before live.
 - **Generated strategies:** the LLM strategy generator emits Rust strategies against our templates; each is compiled and tested in the sandbox (no network, no secrets) before it reaches the registry.
@@ -250,7 +250,7 @@ You have an existing **deterministic** system (EMA, scalping and rule-based stra
    - A **sizing/risk library** (vol-targeting, per-asset caps, correlation buckets).
    - These live in our own licence-clean code: Rust crates, like every strategy by default ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); sizing/risk rules go in `mt-risk`.
 2. **Execution stays on FP Markets** at first:
-   - **Primary:** the MT5 Python API on a Windows VPS near FP's MT5 servers (LD4 vs NY4 is settled by your client-area server name). The VPS is hardened, reachable over Tailscale only, holds only the MT5 trade-only login and no other secrets ([07](07-security-notes.md)).
+   - **Primary:** the MT5 Python API (`mt_mt5_bridge`, which executes only orders that already passed `mt-risk`, [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) on a Windows VPS near FP's MT5 servers (LD4 vs NY4 is settled by your client-area server name). The VPS is hardened, reachable over Tailscale only, holds only the MT5 trade-only login and no other secrets ([07](07-security-notes.md)).
    - **Linux route:** FP Markets' **cTrader Open API**, the M12 cTrader adapter to prototype.
    - NautilusTrader has no official MT5/cTrader adapter, and the community ones are immature, so **none touches live money until tested in paper**.
 3. **Merging:** once merged, MasterTradingBot strategies appear as M0 strategies (template "deterministic rule-based"). They share the risk manager, journal, tax and UI, and their execution adapter is MT5 or cTrader.

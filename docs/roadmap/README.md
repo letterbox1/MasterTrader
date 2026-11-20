@@ -123,6 +123,7 @@ flowchart LR
 - **Build first, keys last:** integrations are built and tested against mocks, recorded fixtures, emulators, testnets and paper accounts without secrets. Live checks that need your keys, accounts or money are separate, late `VERIFY` ToDos that depend on the `USER` ToDo providing them.
 - **Configurable values are settings, not decisions:** every number in the phase docs that comes from [16](../16-configuration-and-safety-model.md) is a default you change in settings. Agents seed the values a task needs (risk values, ceilings, sleeves, manifests) from the documented defaults; you approve them once in the go-live pack (T7.12, [17 §G](../17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)). No build task waits on you for a value.
 - **Workstation first:** everything runs on your workstation until the Phase 7 shift ([18 §9](../18-platform-and-deployment.md#9-workstation-first-build-path)). Host hardening for live, the YubiKey and Tailscale for the egress node are Phase 7 items; GPU checks run only when a GPU is present.
+- **Rust-max** ([17 §H](../17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)): everything we write is Rust, strategies included by default; Python only for the five packages in [18 §2.2](../18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required). Prefect, LangGraph, OpenBB and the Python data SDKs give way to `mt-scheduler`, `mt-agents` and `mt-connectors`. The scenario & crowd simulator (M14) is a go-live tool: built in P6, used in the P7 weekly reviews and pre-live stress tests.
 
 ## 4. Fixed external dates
 
@@ -143,8 +144,8 @@ flowchart LR
 |---|---|---|---|---|---|---|---|---|---|
 | **Security** ([07](../07-security-notes.md)) | Workstation baseline, secrets (age key in the OS keychain), backups, segmentation, Supabase Auth + RLS deny-all | Read-only keys, alert channels | Trade-only keys, C3, hard ceilings, sandbox | Column encryption | Untrusted text, RSS-Bridge isolation | Signer, hard blocks, seed backup | Prompt injection, local model auth | Live hardening at the shift, YubiKey, live keys, fail-flat, drills | MCP never-exposed list |
 | **Compliance & data terms** ([12](../12-policy-and-compliance.md)) | Venue registry table + seed | Provenance tags + retention, venue health | Registry check, 2× cap, STP | Tax agent engaged | Telegram postures only, Polymarket read-only | Never-automated list, no sybil | Label provenance | Advice items closed, quarterly re-check | Audit source = mcp |
-| **UI** ([ui](../ui/README.md)) | Shell, D16 | D07, D02 | D01, D03–D06 | D14, D15 | D08 | D12, D13, D18 view | D09, D10, D11, D18 earn | Mobile/approvals polish, go-live pack (D16) | D17 |
-| **Testing** | `pit` (Rust + Python binding), hash chain, pgTAP, viewport matrix | DQ fault injection | Risk golden, kill drill, latency | Tax golden, property | Telegram gate, RAG `as_of` | Drainer suite | Determinism, bake-off | Kill-criteria sims, full suite on the shift target | Bypass + injection |
+| **UI** ([ui](../ui/README.md)) | Shell, D16 | D07, D02, D16 jobs | D01, D03–D06 | D14, D15 | D08 | D12, D13, D18 view | D09, D10, D11, D18 earn, scenario-twin report (D14) | Mobile/approvals polish, go-live pack (D16), simulated scenarios (D06 Stress) | D17 |
+| **Testing** | `pit` (Rust + Python binding), hash chain, pgTAP, viewport matrix, licence audit | DQ fault injection, scheduler retries | Risk golden, kill drill, latency, lab binding parity | Tax golden, property | Telegram gate, RAG `as_of` | Drainer suite | Determinism, bake-off, simulator isolation | Kill-criteria sims, simulated-scenario stress, full suite on the shift target | Bypass + injection |
 | **Runbooks** (`docs/runbooks/`) | Backup/restore, host rebuild, secret rotation | Bad data | Keys leaked, server down with positions, kill drill | — | — | Wallet drained | — | All drilled | — |
 
 ## 6. `USER` action register (all phases)
@@ -274,7 +275,7 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | M11 Risk manager | P2 | P4 (blackouts), P5 (on-chain), P7 (capital steps, kill criteria) |
 | M12 Execution | P2 (paper) | P5 (DEX path), P7 (live, MT5/cTrader) |
 | M13 MM sidecar | P6 (optional) | — |
-| M14 Crowd-sim | P6 (optional) | — |
+| M14 Scenario & crowd simulator | P6 (`mt-crowdsim`, scenario twin) | P7 (weekly reviews, pre-live stress tests) |
 | M15 UI & alerts | P0 (shell) | Every phase |
 | M16 Cost & DQ monitor | P1 | P2 (TCA), P5 (on-chain monitors), P7 (recon hardening) |
 | M17 Observability & audit | P0 | Every phase |
@@ -302,7 +303,7 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | Document | Used mainly in |
 |---|---|
 | [GOAL](../../GOAL.md), [SPEC](../../SPEC.md) | All (scope and non-negotiables) |
-| [01 Repo vetting](../01-repo-vetting-report.md) | P0 (vendoring), P2 (Nautilus, freqtrade analysers), P6 (TradingAgents, FinRobot, Hummingbot) |
+| [01 Repo vetting](../01-repo-vetting-report.md) | P0 (vendoring), P2 (Nautilus, freqtrade analyser ideas), P6 (TradingAgents, FinRobot, Hummingbot designs) |
 | [02 Architecture](../02-v1-architecture.md) | All (containers, subjects, API, flows, SLOs, degraded modes) |
 | [03 Build spec](../03-build-spec.md) | All (module behaviour, gates) |
 | [04 Plan of action](../04-plan-of-action.md) | Summary of this roadmap |
@@ -316,8 +317,9 @@ Everything only you can do, in order. The phase documents hold the detail. This 
 | [12 Policy & compliance](../12-policy-and-compliance.md) | P0 (registry), P1 (provenance), P2 (registry, STP), P4 (Telegram), P7 (advice) |
 | [13 Wallets & on-chain](../13-wallets-treasury-and-onchain.md) | P5, P6 |
 | [14 Strategy evidence](../14-strategy-evidence-and-validation.md) | P2 (templates, risk defaults, harness), P7 (capital steps) |
-| [16 Configuration](../16-configuration-and-safety-model.md), [17 Decisions](../17-decisions-register.md) | All (defaults and decisions; 17 §G the re-platform) |
-| [18 Platform & deployment](../18-platform-and-deployment.md) | All (stack, repository layout, database, auth); P0 (workstation stack), P1 (bars without TimescaleDB), P7 (the shift) |
+| [16 Configuration](../16-configuration-and-safety-model.md), [17 Decisions](../17-decisions-register.md) | All (defaults and decisions; 17 §G the re-platform, §H Rust-max) |
+| [18 Platform & deployment](../18-platform-and-deployment.md) | All (stack, crate and package lists, repository layout, database, auth); P0 (workstation stack), P1 (bars without TimescaleDB, scheduler, connectors), P2 (lab split), P6 (simulator), P7 (the shift) |
+| [19 Third-party register](../19-third-party-register.md) | P0 (licence audit), any release work |
 | [DESIGN](../../DESIGN.md), [UI scope](../ui/README.md) | Every phase with UI work |
 
 ## 8. Definition of done (every phase)
@@ -340,7 +342,7 @@ These recur for as long as the platform runs. They are calendar tasks, not phase
 
 | Operation | Cadence | Owner | Source |
 |---|---|---|---|
-| Weekly review (tracking error, costs, DQ incidents, recon, five worst trades) | Weekly, from the first live week | You (T7.05) | [P7](phase-7-prove-and-go-live.md) |
+| Weekly review (tracking error, costs, DQ incidents, recon, five worst trades, scenario-twin report) | Weekly, from the first live week | You (T7.05) | [P7](phase-7-prove-and-go-live.md) |
 | Capital steps after P7 closes (+25% of current allocation after 4 consecutive clean weeks; C3) | When earned | You + system | [16 §2.5](../16-configuration-and-safety-model.md#25-capital-steps-per-sleevebot) |
 | **12-month review** (keep only sleeves with positive live net P&L, live Sharpe > 0.5, beating the benchmark) | Yearly from the first live funding | You (T7.10, T7.82) | [14 §7](../14-strategy-evidence-and-validation.md#7-phase-capital-steps--kill-criteria-refines-04-phase-7) |
 | AUSTRAC register re-check per venue | Quarterly (and < 90 days before each funding) | You (T1.06, T7.63) | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry) |

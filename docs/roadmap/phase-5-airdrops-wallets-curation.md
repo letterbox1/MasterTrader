@@ -7,7 +7,7 @@
 | **Depends on** | P3 (journal, wallet registry), P4 (Discord/Telegram discovery, text pipeline) |
 | **Unlocks** | P6 (hold-and-earn uses the signer, cost gate and wallet view), P7 (DEX execution path) |
 | **Modules** | M4 airdrops/launches, M19 task queue & curation, M22 (custody tiers, signer, unified wallet view, monitors), M18 airdrop/staking income |
-| **Containers** | `airdrop` (Python discovery and scoring), `airdrop-exec` (`mt-airdrop-exec`, Rust) + `signer` (`mt-signer`, Rust), `anvil`, `wallet-indexer` (`mt-treasury`, Rust), `curation` (Python) ([18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
+| **Containers** | `airdrop` (`mt-airdrop`, Rust: discovery and scoring), `airdrop-exec` (`mt-airdrop-exec`, Rust) + `signer` (`mt-signer`, Rust), `anvil`, `wallet-indexer` (`mt-treasury`, Rust), `curation` (`mt-curation`, Rust) ([18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
 | **Dashboards** | [D12](../ui/dashboards/D12-airdrops.md) Airdrops & Launches, [D13](../ui/dashboards/D13-tasks-curation.md) Tasks & Curation, [D18](../ui/dashboards/D18-wallets-treasury.md) Wallets & Treasury (view) |
 | **Primary docs** | [08](../08-airdrops-and-token-launches.md) · [13 §1](../13-wallets-treasury-and-onchain.md#1-custody-tiers) · [13 §2](../13-wallets-treasury-and-onchain.md#2-signer-service-the-only-process-that-sees-hot-keys) · [13 §3](../13-wallets-treasury-and-onchain.md#3-unified-wallet-view) · [13 §6](../13-wallets-treasury-and-onchain.md#6-monitors-feed-m16-and-m11) · [13 §7](../13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) · [03 M4](../03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop) · [03 M19](../03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) · [07 §4](../07-security-notes.md#4-crypto-wallets-airdrops-on-chain-claims) · [02 F8/F10](../02-v1-architecture.md#8-end-to-end-flows) |
 
@@ -79,12 +79,12 @@
 - [ ] **T5.22** `BUILD` `wallet-indexer`: additive `ops.wallets` extensions, aggregators, transfer classifier (internal tagging into M18), reconciliation, rotki export. → R5.05
 - [ ] **T5.23** `BUILD` Monitors: approvals, nonce authority, depeg (alert + task until P6), exploit/TVL, venue health, bridge policy, concentration → M16/M11. → R5.06
 - [ ] **T5.24** `BUILD` Sweep scheduler + kill-switch sweep. → R5.07, R5.N2
-- [ ] **T5.25** `BUILD` `mt_airdrop` discovery, normalisation + corroboration, enrichment. → R5.10–R5.12
-- [ ] **T5.26** `BUILD` Risk scoring: provider clients, heuristics, blocklists, wallet-cluster graph, blacklist; SoK/SolRPDS/Pump.fun calibration notebook. → R5.13
+- [ ] **T5.25** `BUILD` `mt-airdrop` (Rust) discovery, normalisation + corroboration, enrichment. → R5.10–R5.12
+- [ ] **T5.26** `BUILD` Risk scoring: provider clients, heuristics, blocklists, wallet-cluster graph, blacklist; SoK/SolRPDS/Pump.fun calibration notebook (`mt_research`). → R5.13
 - [ ] **T5.27** `BUILD` Viability + EV gate; decision engine (reject / task / watch / auto-claim). → R5.14, R5.15
 - [ ] **T5.28** `BUILD` Mandates + claim executor (`mt-airdrop-exec`) + burner-first/identity flow + disposal rule (manual-sale USER task until P7; automated via M11 only after the P7 gates). → R5.15–R5.17
 - [ ] **T5.29** `BUILD` Campaign records, dossiers, income journal linking. → R5.18
-- [ ] **T5.30** `BUILD` `mt_curation`: canonical task types (03 M19) on the P3 `curation.task` table, queue, ranking, expiry, digests, Telegram buttons (incl. Details), Discord delivery verification (7-day re-prompt). → R5.20–R5.22
+- [ ] **T5.30** `BUILD` `mt-curation` (Rust): canonical task types (03 M19) on the P3 `curation.task` table, queue, ranking, expiry, digests, Telegram buttons (incl. Details), Discord delivery verification (7-day re-prompt). → R5.20–R5.22
 - [ ] **T5.31** `BUILD` UI: D12, D13, D18 (view). → R5.23
 - [ ] **T5.32** `BUILD` Proof-of-control: one-time challenge generation and verification of wallet-app signatures (EIP-4361-style / Solana `signMessage`) or a self-transfer. → R5.25
 

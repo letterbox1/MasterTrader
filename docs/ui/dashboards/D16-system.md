@@ -25,6 +25,7 @@ Operate the system wherever it runs (your workstation, or the runtime host after
 | Services | Every container from architecture §3.2: status, image digest, uptime, restarts, heartbeat, health checks | `/system/services`, WS `system` |
 | Host | The machine the services run on (the workstation by default): CPU, RAM, disk (NVMe/HDD), GPU util/VRAM (only when a GPU is present; the model profile in use, `models.gpu_profile`), network, NTP/chrony offset | `/system/health` |
 | Deployment | Deployment mode (`deploy.mode`: workstation / hybrid / regional), where the web app is served (`web.host`: local Caddy or Vercel), the database (`db.target`: local self-hosted Supabase or Supabase cloud, with region), API exposure (`api.exposure`: tailnet / public), engine regions, age-key store (`secrets.age_identity_store`). Read-only here: changing the mode is an OPS task, and `api.exposure: public` or a new region is C3 ([16 §2.15](../../16-configuration-and-safety-model.md#215-platform-deployment-and-regions), [18 §5](../../18-platform-and-deployment.md#5-deployment-modes)) | `/system/deployment` _(added)_ |
+| Jobs | `mt-scheduler` job status (from Phase 1; replaces Prefect's UI): each scheduled job (batch connectors, backfills, rollups, retention, restore test, WORM export, training runs, scenario twin) with last run, result, duration, next run and retries, and a link to its run history; a failed job raises an alert | `/system/jobs` _(added)_, WS `system` |
 | SLOs | Each SLO from architecture §9.2 with the current value and status | `/system/health?slo=1` |
 | Logs | Loki-backed search: service, level, text, time range, `trace_id` jump | `/system/logs` |
 | Grafana | Deep links to dashboards | — |
@@ -34,6 +35,7 @@ Operate the system wherever it runs (your workstation, or the runtime host after
 | Control | Command | Level |
 |---|---|---|
 | Restart service | `system.service.restart` | C2 (shows dependents; engine restart warns about open positions). mt-api never holds the Docker socket: restarts go through a restricted Docker-socket proxy that allows restarting only allow-listed containers; others show the button disabled |
+| Re-run a failed job (Phase 1) | `system.job.run` _(added)_ | C1 |
 | Run preflight (Phase 7) | `/system/preflight` (read): live keys trade-only/IP-locked, egress IP, venue timers, resting stops, backups, drills | C0 |
 | Record a safety drill (Phase 7) | `ops.drill.record` (kill switch, dead-man, restart drills per venue; feeds the D03 safety-drills gate) | C1 |
 
@@ -68,7 +70,7 @@ A card on `/system` ([P7-T011](../../../tracking/phase-7/tasks/P7-T011-go-live-p
 | Preferences | Theme, density, timezone (default Australia/Sydney), base currency (AUD), number formats |
 | Notifications | Channels (Telegram, web), severity routing, quiet hours |
 | Digests | (Shared with D13) |
-| Schedules | Agent analysis cadence, backfills, retraining, reports |
+| Schedules | Agent analysis cadence, backfills, retraining, reports (all `mt-scheduler` jobs) |
 | DQ thresholds | Stale/gap/divergence thresholds (defaults 2 s fast / 60 s slow stale, spread 3× normal; loosening = C3) |
 | Budgets | LLM gateway budgets (default monthly cap US$40; raising = C3) |
 | Failure behaviour | Audit-integrity action (default `block_new_entries`), NATS buffer bound (default 1 GB or 24 h; new entries stop above 80%), reconciliation cadence ([16 §2.9](../../16-configuration-and-safety-model.md#29-reconciliation)) |
@@ -102,6 +104,6 @@ A card on `/system` ([P7-T011](../../../tracking/phase-7/tasks/P7-T011-go-live-p
 
 ## Backend contract
 
-- **Queries:** `/system/health` (+ `slo`), `/system/services`, `/system/logs`, `/system/settings`, `/system/keys`, `/system/backups`, `/system/deployment` _(added)_, `/system/preflight` (P7, incl. the Settings pack), `/wallets?kind=account` (P3 Accounts), `/audit/log`.
+- **Queries:** `/system/health` (+ `slo`), `/system/services`, `/system/logs`, `/system/settings`, `/system/keys`, `/system/backups`, `/system/deployment` _(added)_, `/system/jobs` _(added)_, `/system/preflight` (P7, incl. the Settings pack), `/wallets?kind=account` (P3 Accounts), `/audit/log`.
 - **WebSocket topics:** `system`, `heartbeat`.
-- **Commands:** `system.service.restart`, `system.settings.update`, `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `audit.verify`, `audit.integrity.ack`, `wallet.register`, `wallet.tag`, `ops.drill.record` _(added)_, Settings pack approval (C3, P7) _(added)_.
+- **Commands:** `system.service.restart`, `system.settings.update`, `system.backup.run`, `system.restore.test`, `system.key.rotate_reminder`, `system.job.run` _(added)_, `audit.verify`, `audit.integrity.ack`, `wallet.register`, `wallet.tag`, `ops.drill.record` _(added)_, Settings pack approval (C3, P7) _(added)_.

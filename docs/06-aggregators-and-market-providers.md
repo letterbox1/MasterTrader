@@ -7,7 +7,7 @@ _Date: 2026-10-21. Extends [01-repo-vetting-report.md](01-repo-vetting-report.md
 
 _(U) = unverified._
 
-**How these sources are fetched (2026-11-20, [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** every batch provider here is a typed Rust client in **`mt-connectors`**, run as jobs by **`mt-scheduler`** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). That replaces OpenBB, fredapi, sdmx1, edgartools and yfinance. Library names below are references for formats and endpoints, not dependencies. Python stays only for trafilatura extraction (`mt_extract`) and the Telethon reader (`mt_telegram_reader`) ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)).
+**How these sources are fetched (2026-11-20, [17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** every batch provider here is a typed Rust client in **`mt-connectors`**, run as jobs by **`mt-scheduler`**; the news and social sources (RSS/Atom incl. RSS-Bridge output, the Discord bot, Bluesky, Mastodon, Farcaster, GDELT) are Rust clients in **`mt-feeds`** ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). That replaces OpenBB, fredapi, sdmx1, edgartools and yfinance. Library names below are references for formats and endpoints, not dependencies. Python stays only for trafilatura extraction (`mt_extract`), the Telethon reader (`mt_telegram_reader`) and a few offline batch jobs in `mt_research` ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)).
 
 ---
 
@@ -43,14 +43,14 @@ _(U) = unverified._
 
 | Tier | Source | Tool | Risk | Notes |
 |---|---|---|---|---|
-| **Core: news** | Wire, financial and crypto news RSS; central banks (Fed, ECB, BoE, BoJ, SNB, RBA, BoC, RBNZ); regulators | Feed fetch in Rust (`mt-connectors`) + **trafilatura** extraction (`mt_extract`, Python); **crawl4ai** (container) for JS pages | Low | Respect paywalls and robots.txt |
+| **Core: news** | Wire, financial and crypto news RSS; central banks (Fed, ECB, BoE, BoJ, SNB, RBA, BoC, RBNZ); regulators | Feed fetch in Rust (`mt-feeds`) + **trafilatura** extraction (`mt_extract`, Python); **crawl4ai** (container) for JS pages | Low | Respect paywalls and robots.txt |
 | **Core: news** | Sites without feeds (AP, Reuters, Economist WIB, Substack, Bundesbank, Binance blog, any page) | **RSS-Bridge** (whitelisted; CssSelector/XPath for custom pages) | Low | 15-min to 3-h cache, so context only, not latency signals |
 | **Core: news** | Global news volume and tone | **GDELT** | None | — |
 | **Core: filings** | SEC EDGAR | `mt-connectors` SEC client: official submissions JSON, XBRL `companyfacts` JSON and Atom (declared User-Agent, ≤10 req/s) | None | Prefer this over RSS-Bridge's StockFilings bridge |
 | **Core: social** | Telegram channels and groups | **Telethon** client API (pinned, secondary number) + **Bot API** for channels where your bot is admin; RSS-Bridge Telegram bridge as fallback | Low–moderate | Real-time, free. **Postures only:** Telegram API ToS §1.5 bars AI training/deployment on Telegram data, so text never reaches models, RAG or training. Only regex-extracted addresses/tickers and counts feed deterministic postures (`text.telegram_posture`, subject `posture.telegram.*`, consumed by M4/M11 rules only; [12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)) |
-| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own bot (Rust client, Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** Follow works only for **Community-server announcement channels the project actually publishes**; each receiving channel takes ~10–15 follower webhooks, so spread follows over category channels. Message Content intent is self-serve for apps in < 10k servers (U, policy as of Jun 2026) |
-| **Core: social** | Bluesky | **Jetstream firehose** (JSON over WebSocket, Rust client), filtered on cashtags and keywords | None | Free and explicitly permitted |
-| Core: social | Mastodon / fediverse | Mastodon streaming/REST API (Rust client) or the RSS-Bridge Mastodon bridge | Low | Low volume |
+| **Core: social** | Discord | Your own private server + Discord's **"Follow" on public announcement channels** (cross-posted into your server) + your own bot (Rust, `mt-feeds`, Message Content intent) | Low | Free and within Discord's terms. **No self-bots / user tokens.** Follow works only for **Community-server announcement channels the project actually publishes**; each receiving channel takes ~10–15 follower webhooks, so spread follows over category channels. Message Content intent is self-serve for apps in < 10k servers (U, policy as of Jun 2026) |
+| **Core: social** | Bluesky | **Jetstream firehose** (JSON over WebSocket, `mt-feeds`), filtered on cashtags and keywords | None | Free and explicitly permitted |
+| Core: social | Mastodon / fediverse | Mastodon streaming/REST API (`mt-feeds`) or the RSS-Bridge Mastodon bridge | Low | Low volume |
 | Core: social | **Farcaster** | Self-hosted **Hubble** node or a free hub endpoint | None | Crypto-native; useful for airdrop/launch chatter |
 | Core: news | **CryptoPanic** (free tier) | REST | Low | Crypto headline aggregation with votes; attribution required |
 | **Pending (access requested 2026-10-29)** | Reddit | (official OAuth API, read-only) | Low | Aggregates only, raw text ≤ 24 h, no training, local model only ([12 §4](12-policy-and-compliance.md#4-per-platform-data--automation-rules)). In or out on Reddit's decision. Closing to new apps 2026-10-31, sunset 2027 (U). Stays optional: if access is ever granted, a connector is an optional item, and not worth building once the public Data API closes |
@@ -90,7 +90,7 @@ _(U) = unverified._
 - **TrueFX** / **HistData** tick and M1 data to cross-check Dukascopy (test TrueFX availability).
 - **Twelve Data** free tier (800/day) for backup bars.
 - **Binance data.binance.vision** for free bulk crypto history (top pick).
-- **akshare** (MIT, very active) for China/Asia futures and commodities: research use in `mt_research`; a Rust client only if a strategy needs the data live.
+- **akshare** (MIT, very active) for China/Asia futures and commodities: optional daily backfill as an `mt_research` offline batch job ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)).
 - **FinanceDatabase** (MIT) as the symbol master.
 - Tardis monthly free samples (U) for order-book research.
 

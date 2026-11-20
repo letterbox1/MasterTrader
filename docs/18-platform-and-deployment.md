@@ -92,6 +92,7 @@ NATS JetStream, Supabase stack, Caddy, LiteLLM, MLflow, TEI, llama-server / vLLM
   - Its data is flagged `synthetic = true` and never enters features, model training or RAG.
   - It runs isolated with no route to the signer.
   - LLM calls use the local model by default, inside the budget.
+- **Build early:** its tasks depend only on the paper engine (P2), the local model and gateway (P0) and the event feeds, not on the rest of Phase 6, so with dependency gating it's built alongside Phase 2 and can join the 8-week paper period from its first weeks. Paper weeks that run before it's ready simply have no twin report.
 - **Why clean-room Rust:** MiroFish is AGPL-3.0, needs Zep Cloud and ships insecure defaults (01 §3.9). We take the idea, not the code.
 
 ## 3. Repository layout
@@ -187,7 +188,7 @@ pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U). **
 |---|---|
 | Engine, `deadman`, `mt-recorder` | Must run continuously and hold venue WebSockets. Vercel Functions scale to zero and have a maximum duration (300 s default, 800 s max on paid plans, (U) for container functions); WebSockets are limited by the same duration |
 | Anything that calls an exchange | Exchange keys are IP-locked; Vercel functions and containers don't get a static egress IP on standard plans (U) |
-| NATS JetStream, Prefect workers, `mt-monitor`, ingest | Stateful and always on |
+| NATS JetStream, `mt-scheduler`, `mt-monitor`, ingest | Stateful and always on |
 | Local models (TEI, llama-server, vLLM), backtest workers | Need a GPU or long CPU runs and local disk |
 | Signer | Keys must stay on a host you control |
 
@@ -246,7 +247,7 @@ If the disk or a backup is stolen, the secrets stay encrypted, because the key t
    5. rerun the full verification suite on the target.
 
    Live money only starts after that suite passes on the target.
-4. **Rust vs Python per strategy:** deterministic strategies may be written in Rust from the start. ML-driven ones start in Python and are ported only when profiling shows a need.
+4. **Strategies are Rust by default** (§2.1). An ML-driven strategy may start in Python for research and paper; before live its model is exported to ONNX and the strategy runs in Rust.
 
 ## 10. Sources
 

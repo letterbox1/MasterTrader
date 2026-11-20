@@ -4,7 +4,7 @@
 |---|---|
 | **Route** | `/risk` (tabs: Overview · Policy · Events · Stress · Changes · Live (Phase 7)) |
 | **Modules** | M11 risk manager, M16 monitor, M5 calendar (blackouts) |
-| **Phase** | 2 (Stress tab placeholder per R2.57, replay R7.16 in 7; Live tab: capital steps, kill criteria, weekly reviews in 7) |
+| **Phase** | 2 (Stress tab placeholder per R2.57, historical replay + simulated scenarios R7.16 in 7; Live tab: capital steps, kill criteria, weekly reviews in 7) |
 | **Mock-up reference** | `autonomous-risk-governor-kill-switch-hub.png` (fix: status-bar overlap, full-height sidebar, native `confirm()` → `ConfirmSheet`) |
 
 ## Purpose
@@ -86,7 +86,8 @@ Every number on this page is a **configurable default** from [16](../../16-confi
 ## Stress tab
 
 - **Phase:** Phase 2 ships the tab as a **placeholder** (empty state: "Stress tests aren't available yet", no sample numbers) until the stress engine lands. The historical shock replay (May 2022, Nov 2022, Aug 2024, Feb–Mar 2026) is planned as [R7.16](../../roadmap/phase-7-prove-and-go-live.md) (Phase 7); R2.57 is the Phase 2 placeholder. Custom/preset hypothetical shocks are optional and come later; the historical replay is what must pass before live capital.
-- **Scenarios:** historical replays; later, presets (e.g. −15% crypto in 60 s, USD +3%, gap-down at open, venue outage, stablecoin de-peg) or custom shocks per asset class/instrument.
+- **Scenarios:** historical replays; **simulated scenarios** from the scenario & crowd simulator (M14, `mt-crowdsim`, [18 §2.4](../../18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)): the latest scenarios with their source event, sentiment path and shocks (capped by `crowdsim.max_shock`, [16 §2.14b](../../16-configuration-and-safety-model.md#214b-scenario--crowd-simulator-m14)), run before live capital alongside the historical replays (P7-T069); later, presets (e.g. −15% crypto in 60 s, USD +3%, gap-down at open, venue outage, stablecoin de-peg) or custom shocks per asset class/instrument.
+- **Simulated results** are labelled Simulated and shown next to, never mixed into, the historical replay results. The historical replay is what must pass; simulated results don't gate unless 16 says so.
 - **Run:** `risk.stress.run` (C1), enabled once available.
 - **Results:** P&L impact by position/bot/sleeve/venue, limits breached, liquidation distances, hedge coverage.
 - **History** of runs.
@@ -108,7 +109,7 @@ The live-capital state from [16 §2.5–§2.6](../../16-configuration-and-safety
 | **Kill criteria** | Per sleeve/bot: each criterion (written in the manifest before deployment) with observed vs threshold and state (ok / warning / halted). Decay signals with one meaning each ([16 §2.6](../../16-configuration-and-safety-model.md#26-decay-and-kill-signals-one-meaning-each)): rolling 60-trade Sharpe/hit rate or CUSUM → downgrade to HITL; daily health check fail → halt the bot; kill criterion → halt the sleeve + step down; unexplained reconciliation mismatch > 24 h → halts everything | `/risk/kill-criteria`, WS `risk.event` |
 | **Kill and lock state** | Current kill state and reason; system drawdown stage; the 30-day review lock countdown after a stage-2 system drawdown; count of stage-2 events (two end the trading programme; capital moves to hold-and-earn) | `/risk/state`, WS `kill` |
 | **Gate reports** | Latest gate report per strategy/bot going live (link to D03 Gates) | `/strategies/{id}/gate-report` |
-| **Weekly reviews** | The weekly review per live sleeve: tracking error vs backtest, realised vs modelled costs, DQ incidents, journal reconciliation, five worst trades; open/closed status; your sign-off (recorded in D14) | `/journal/reviews` |
+| **Weekly reviews** | The weekly review per live sleeve: tracking error vs backtest, realised vs modelled costs, DQ incidents, journal reconciliation, five worst trades, scenario-twin report (D14); open/closed status; your sign-off (recorded in D14) | `/journal/reviews` |
 
 | Control | Command | Level |
 |---|---|---|
@@ -154,6 +155,6 @@ Commands: `risk.ladder.set` (down = C1, up = C3), `venue.registry.update` (tight
 
 ## Backend contract
 
-- **Queries:** `/risk/policy` (effective values with layer and default), `/risk/state` (+ `breakdown`, `ladder`), `/risk/events`, `/risk/changes`, `/risk/stress`, `/venues/registry`; Phase 7: `/risk/capital-steps`, `/risk/kill-criteria`, `/strategies/{id}/gate-report`, `/journal/reviews`.
+- **Queries:** `/risk/policy` (effective values with layer and default), `/risk/state` (+ `breakdown`, `ladder`), `/risk/events`, `/risk/changes`, `/risk/stress`, `/sim/scenarios` _(added)_, `/venues/registry`; Phase 7: `/risk/capital-steps`, `/risk/kill-criteria`, `/strategies/{id}/gate-report`, `/journal/reviews`.
 - **WebSocket topics:** `kill`, `heartbeat`, `risk.state`, `risk.event`, `dq.status`, `cal`.
 - **Commands:** `risk.kill.on|off`, `risk.deadman.ack`, `risk.policy.update` (all layers incl. L0), `risk.stress.run`, `risk.ladder.set`, `venue.registry.update`, `audit.integrity.ack`, `risk.sleeve.restart` (C3; from Phase 2, where sleeve halts first happen); Phase 7: `risk.capital.fund`, `risk.capital_step.approve`, `risk.review.close`, `journal.review.signoff`.

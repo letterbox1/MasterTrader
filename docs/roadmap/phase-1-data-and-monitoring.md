@@ -6,10 +6,10 @@
 | **Duration** | Weeks 3–6 |
 | **Depends on** | P0 (stack, schemas, `pit`, provenance columns, alerts plumbing) |
 | **Unlocks** | P2 (strategies need data, measured costs and DQ status), P3 (RBA FX, ABS CPI), P4 (store and monitor patterns) |
-| **Modules** | M1 market & macro data, M16 live cost & data-quality monitor, quota tracker, provenance tagging, M17 alerts |
-| **Containers** | `ingest-market` (`mt-recorder`, Rust), `ingest-batch` (Python Prefect flows), `monitor` (`mt-monitor`, Rust), `ntfy`, `telegram-bot` (`mt-telegram-bot`, Rust; alerts only), `ib-gateway` (only when IBKR is used) |
+| **Modules** | M1 market & macro data (`mt-recorder`, `mt-connectors`), batch orchestration (`mt-scheduler`), M16 live cost & data-quality monitor, quota tracker, provenance tagging, M17 alerts |
+| **Containers** | `ingest-market` (`mt-recorder`, Rust), `ingest-batch` (`mt-connectors` jobs, Rust), `scheduler` (`mt-scheduler`, Rust; replaces Prefect), `monitor` (`mt-monitor`, Rust), `ntfy`, `telegram-bot` (`mt-telegram-bot`, Rust; alerts only), `ib-gateway` (only when IBKR is used) |
 | **Dashboards** | [D07](../ui/dashboards/D07-data-quality.md) Data & Quality, [D02](../ui/dashboards/D02-markets.md) Markets, notifications |
-| **Primary docs** | [18 §4.3](../18-platform-and-deployment.md#43-bars-without-timescaledb) · [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) · [03 M16](../03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) · [03 §6](../03-build-spec.md#6-smallest-free-timeframe-by-asset-class) · [06 §3](../06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · [12 §5](../12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) · [02 F1](../02-v1-architecture.md#8-end-to-end-flows) |
+| **Primary docs** | [18 §2.1](../18-platform-and-deployment.md#21-rust-cargo-workspace-crates) · [18 §4.3](../18-platform-and-deployment.md#43-bars-without-timescaledb) · [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) · [03 M16](../03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) · [03 §6](../03-build-spec.md#6-smallest-free-timeframe-by-asset-class) · [06 §3](../06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · [12 §5](../12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) · [02 F1](../02-v1-architecture.md#8-end-to-end-flows) |
 
 ## 1. Scope
 
@@ -26,16 +26,16 @@
 
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
-| R1.01 | **Crypto real-time:** public WS trades, L1 and L2 (Binance, Bybit, OKX, Coinbase, Kraken) via Nautilus/ccxt → NATS `md.*`. L2 diffs are recorded at native speed only for symbols whose bots need order-book data (default ≤ 3 symbols, configurable); the rest get 1 s book snapshots | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [02 §6](../02-v1-architecture.md#6-messaging-nats), [17 §D](../17-decisions-register.md#d-other-decisions) | Live feed |
+| R1.01 | **Crypto real-time:** public WS trades, L1 and L2 (Binance, Bybit, OKX, Coinbase, Kraken) via Nautilus data clients (Rust where available (U)) → NATS `md.*`. L2 diffs are recorded at native speed only for symbols whose bots need order-book data (default ≤ 3 symbols, configurable); the rest get 1 s book snapshots | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [02 §6](../02-v1-architecture.md#6-messaging-nats), [17 §D](../17-decisions-register.md#d-other-decisions) | Live feed |
 | R1.02 | **Recording:** `mt-recorder` writes the Parquet catalog (1–5 min files, daily compaction) and builds bars from ticks, writing every standard size (1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W) into monthly native partitions of `market.bar_*` in Supabase Postgres (no TimescaleDB); backfills and corrections re-run an idempotent rollup job that rebuilds the higher sizes from 1m; timeframes run tick → 1W; other sizes via `date_bin()` inside `pit(as_of)` at read time; 1s bars move to Parquet after `db.bars_1s_hot_days` (default 90 days) and other bars after `db.bars_hot_months` (workstation default: keep 1m and larger); `pit` reads both | [18 §4.3](../18-platform-and-deployment.md#43-bars-without-timescaledb), [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [02 F1](../02-v1-architecture.md#8-end-to-end-flows), [17 §D](../17-decisions-register.md#d-other-decisions) | Bar parity test |
 | R1.03 | **Crypto history:** data.binance.vision trades/aggTrades/1s klines backfill | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Backfill report |
 | R1.04 | **FX & metals:** OANDA practice stream, IG demo stream, Dukascopy ticks, ECB/Frankfurter, **RBA F11** daily FX; broker XAU/XAG (no LBMA) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [06 §3](../06-aggregators-and-market-providers.md#market-data-m1) | Live feed |
-| R1.05 | **Stocks/ETFs:** Alpaca IEX real-time (30 symbols), yfinance daily, FinanceDatabase symbol master, `exchange_calendars` | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Live feed |
-| R1.06 | **Futures/commodities (daily), rates & macro:** yfinance futures, EIA, USDA, CFTC COT, Baker Hughes; FRED/ALFRED vintages, US Treasury, `sdmx1`, BoE/BoC/RBA/SNB/BoJ, DBnomics, **ABS CPI** (All groups CPI, weighted average of eight capital cities, series A2325846C (U), verified in T1.60) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Batch flows |
-| R1.07 | **Fundamentals:** SEC EDGAR via edgartools (declared User-Agent, ≤ 10 req/s) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Batch flow |
+| R1.05 | **Stocks/ETFs:** Alpaca IEX real-time (30 symbols), daily bars via `mt-connectors` from free sources whose terms allow automated personal use (replaces yfinance; Yahoo only if its terms allow (U)), FinanceDatabase symbol master, `exchange_calendars` (tables generated by an `mt_research` batch job) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Live feed |
+| R1.06 | **Futures/commodities (daily), rates & macro:** daily futures via `mt-connectors` (same terms rule), EIA, USDA, CFTC COT, Baker Hughes; FRED/ALFRED vintages, US Treasury, SDMX (ECB/IMF/OECD/BIS/Eurostat), BoE/BoC/RBA/SNB/BoJ, DBnomics, **ABS CPI** (All groups CPI, weighted average of eight capital cities, series A2325846C (U), verified in T1.60) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Batch jobs |
+| R1.07 | **Fundamentals:** SEC EDGAR submissions and XBRL `companyfacts` JSON via `mt-connectors` (replaces edgartools; declared User-Agent, ≤ 10 req/s) | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket), [18 §2.1](../18-platform-and-deployment.md#21-rust-cargo-workspace-crates) | Batch job |
 | R1.08 | **Quota tracker** per connector that throttles before each free limit | [03 §1](../03-build-spec.md#1-ground-rules) | Quota panel in D07 |
 | R1.09 | **Provenance:** every ingested row tagged (`source`, `licence`, use flags); retention jobs enforce `retention_days` (e.g. CoinGecko ≤ 24 h) | [12 §5](../12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms), [12 §4](../12-policy-and-compliance.md#4-per-platform-data--automation-rules) | Provenance test |
-| R1.10 | **DQ monitor:** stale feed, gaps, bad ticks, cross-source divergence, clock skew, book integrity, nightly Pandera + Evidently → `dq.status.*` + `audit.dq_event`; an incident acknowledgement is a new WORM row (`audit.dq_ack`), never an update; loosening a DQ threshold is C3 (via the break-glass CLI, R0.12, until Telegram C3 lands in P2) | [03 M16](../03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) | Fault injection |
+| R1.10 | **DQ monitor:** stale feed, gaps, bad ticks, cross-source divergence, clock skew, book integrity, nightly Pandera + Evidently reports (`mt_research` batch job) → `dq.status.*` + `audit.dq_event`; an incident acknowledgement is a new WORM row (`audit.dq_ack`), never an update; loosening a DQ threshold is C3 (via the break-glass CLI, R0.12, until Telegram C3 lands in P2) | [03 M16](../03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) | Fault injection |
 | R1.11 | **Cost monitor:** fee tiers, funding (predicted + realised), swap/financing, `spread_bps` by instrument × hour-of-week → `cost.*` | [03 M16](../03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) | Cost panels |
 | R1.12 | **Reconciliation:** vs each practice/testnet venue: positions and open orders every 60 s, balances every 5 min, full EOD (defaults, configurable, [16 §2.9](../16-configuration-and-safety-model.md#29-reconciliation)); mismatch = incident in `audit.recon` | [03 M16](../03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) | Recon report |
 | R1.13 | **Venue-health monitor:** our own measured withdrawal times, PoR/incident notes, venue status pages/feeds (via the regulatory & venue watch, R4.15, once P4 lands) and a quarterly AUSTRAC register check (USER task T1.06) → `ops.venue_registry` health | [12 §2](../12-policy-and-compliance.md#2-venue-access-registry), [13 §6](../13-wallets-treasury-and-onchain.md#6-monitors-feed-m16-and-m11) | D07 panel |
@@ -46,6 +46,8 @@
 | R1.N3 | Storage within budget (~0.3–1 TB/year for ~10 liquid crypto symbols at trades + L1 + 1 s book snapshots, native L2 diffs only for the default ≤ 3 order-book symbols; recalculated from the soak, T1.80); cold Parquet to HDD | [03 M1](../03-build-spec.md#m1-market--macro-data--mt_datamarket) | Disk metrics |
 | R1.16 | **Egress check:** every minute, confirm exchange traffic leaves via the allow-listed static IP and the IP's country matches your configured residency (free GeoIP DB, e.g. DB-IP Lite); mismatch blocks new orders + alerts. Safety only; never a tax input | [16 §3.2](../16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) | Fault test |
 | R1.17 | **Data age definition:** age = now − our receive time per stream; per-bot thresholds (default 2 s fast / 60 s slow, configurable, session-aware); monitor flips status ≤ 250 ms p99 after crossing (M11's inline order-time check lands in P2) | [16 §2.2](../16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) | Fault injection |
+| R1.18 | **Batch orchestration:** `mt-scheduler` (Rust; replaces Prefect): Postgres-backed job queue and cron, retries, backfills, run history in Postgres, job status on D16/D07; runs Rust jobs in-process and Python training jobs (`mt_research`) as containers/subprocesses; schedules respect quotas and source update times (AEST/AEDT aware) | [18 §2.1](../18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [17 §H](../17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) | Scheduler tests |
+| R1.19 | **Batch connectors:** every batch source is a typed Rust client in `mt-connectors` (replacing OpenBB, fredapi, sdmx1, edgartools and yfinance) that writes through `pit` with provenance and uses the quota tracker | [18 §2.1](../18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [17 §H](../17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) | Connector tests on recorded fixtures |
 
 ## 4. ToDo sets
 
@@ -60,23 +62,25 @@
 ### B. Build (`BUILD`, code)
 - [ ] **T1.20** `BUILD` `mt-recorder` crypto WS clients via Nautilus data clients (Rust where available (U), [18 §2.1](../18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); publish `md.*`. → R1.01
 - [ ] **T1.21** `BUILD` Parquet recorder + daily compaction; bar builder in `mt-recorder` writing every standard size (1s, 1m, 5m, 15m, 1h, 4h, 1D, 1W) to monthly partitions; rollup job for backfills and corrections; `date_bin` reads in `pit`; tick/volume/value bar support. → R1.02 · [18 §4.3](../18-platform-and-deployment.md#43-bars-without-timescaledb)
-- [ ] **T1.22** `BUILD` Backfill flows: data.binance.vision, Dukascopy (dukascopy-node or own bi5 parser), Alpaca history, yfinance. → R1.03–R1.05
-- [ ] **T1.23** `BUILD` FX/metals streaming: OANDA v20 practice, IG Lightstreamer demo; Frankfurter self-hosted; RBA F11 flow. → R1.04
-- [ ] **T1.24** `BUILD` Macro/rates/fundamentals Prefect flows: FRED/ALFRED (vintages), Treasury, `sdmx1`, central banks, EIA/USDA/COT/Baker Hughes, ABS CPI, EDGAR. → R1.06, R1.07
+- [ ] **T1.22** `BUILD` Backfill jobs in `mt-connectors`: data.binance.vision, Dukascopy (own `bi5` parser), Alpaca history, daily stock/ETF/futures bars (terms permitting). → R1.03–R1.05, R1.19
+- [ ] **T1.23** `BUILD` FX/metals streaming: OANDA v20 practice, IG Lightstreamer demo; Frankfurter self-hosted; RBA F11 job. → R1.04
+- [ ] **T1.24** `BUILD` Macro/rates/fundamentals clients in `mt-connectors`: FRED/ALFRED (vintages), Treasury, SDMX (ECB/IMF/OECD/BIS/Eurostat), central banks, EIA/USDA/COT/Baker Hughes, ABS CPI, SEC EDGAR (submissions + XBRL `companyfacts`). → R1.06, R1.07, R1.19
 - [ ] **T1.25** `BUILD` Quota tracker (per-connector budgets from live headers where available) shared by all connectors. → R1.08
 - [ ] **T1.26** `BUILD` Provenance tagging at write time (defaults from each source's licence tag in 06) + retention job. → R1.09
 - [ ] **T1.27** `BUILD` `mt-monitor` DQ service: per-instrument rolling state, checks table, `dq.status.*`, incidents, `audit.dq_ack` acknowledgement rows. → R1.10, R1.17
 - [ ] **T1.28** `BUILD` `mt-monitor` cost service: fees/tiers, funding, financing, spreads by hour-of-week; TCA scaffolding for P2. → R1.11
-- [ ] **T1.29** `BUILD` Reconciliation jobs (ccxt read-only, OANDA, IG, Alpaca, IBKR paper), built and tested against recorded fixtures; mismatches → `audit.recon` (live run in T1.67). → R1.12
+- [ ] **T1.29** `BUILD` Reconciliation jobs (read-only Rust venue clients: crypto testnets, OANDA, IG, Alpaca, IBKR paper), built and tested against recorded fixtures; mismatches → `audit.recon` (live run in T1.67). → R1.12
 - [ ] **T1.30** `BUILD` Venue-health collector writing to `ops.venue_registry` health fields from our own withdrawal-time measurements; quarterly AUSTRAC re-check reminder (T1.06). → R1.13
 - [ ] **T1.31** `BUILD` Telegram bot (`mt-telegram-bot`, Rust/teloxide; alerts only) + ntfy + email notifier behind one `alert.{severity}.{kind}` consumer; Grafana alerts reach it by webhook (single fan-out). → R1.14
 - [ ] **T1.32** `BUILD` UI: D07 Data & Quality, D02 Markets (lightweight-charts, matrix, instrument detail, "arrives in P4" states for P4-fed widgets), notifications centre. → R1.15 · [D07](../ui/dashboards/D07-data-quality.md) · [D02](../ui/dashboards/D02-markets.md)
 - [ ] **T1.33** `BUILD` Egress IP/country check with GeoIP DB; `egress.status` → M11 + alerts. → R1.16
 - [ ] **T1.34** `BUILD` Alpaca real-time stream, FinanceDatabase symbol master and `exchange_calendars` integration; CoinGecko/DefiLlama enrichment with ≤ 24 h encrypted cache. → R1.05, R1.09
+- [ ] **T1.35** `BUILD` `mt-scheduler` skeleton (Rust): Postgres-backed job queue and cron, retries, backfill runs, run history, job-status API for D16/D07; Rust jobs in-process, Python training jobs as containers/subprocesses; move the P0 restore-test and WORM-export jobs onto it. → R1.18
+- [ ] **T1.36** `BUILD` `mt-connectors` crate skeleton: shared HTTP client, quota-tracker hook, provenance tagging, `pit` writer and the recorded-fixture test harness that every provider client in T1.22–T1.24 and T1.34 uses. → R1.19, R1.08, R1.09
 
 ### C. Ops & config (`OPS`)
 - [ ] **T1.40** `OPS` Storage layout: NVMe hot Parquet, HDD cold tier, compaction schedule, disk alerts. → R1.N3
-- [ ] **T1.41** `OPS` Prefect schedules for batch flows (respecting quotas and source update times, AEST/AEDT aware). → R1.06
+- [ ] **T1.41** `OPS` `mt-scheduler` schedules for the batch jobs (respecting quotas and source update times, AEST/AEDT aware). → R1.06, R1.18
 - [ ] **T1.42** `OPS` Grafana boards: live prices by timeframe, spreads/funding/swaps, DQ incidents, quota usage. → R1.10, R1.11
 - [ ] **T1.43** `OPS` ntfy container (self-hosted, auth on, private: reached from the phone over Tailscale; upstream relay allowed for iOS push, message ID only). → R1.14
 - [ ] **T1.44** `OPS` `ib-gateway` container (IBC-managed, digest-pinned, read-only API for reconciliation) when IBKR is used. → R1.12
@@ -88,15 +92,16 @@
 - [ ] **T1.63** `VERIFY` Provenance/retention test: CoinGecko rows deleted after 24 h; untagged rows rejected. → R1.09
 - [ ] **T1.64** `VERIFY` Alert path test on all three channels. → R1.14
 - [ ] **T1.65** `VERIFY` Egress fault test: wrong egress IP or country → new orders blocked and alerted. → R1.16
-- [ ] **T1.66** `VERIFY` Live connector check with your credentials and keys (after T0.09, T0.10, T1.02): OANDA/IG/Alpaca streams and keyed batch flows (FRED, EIA, CoinGecko Demo) deliver, and the quota tracker reads live headers. → R1.01, R1.04–R1.06, R1.08
+- [ ] **T1.66** `VERIFY` Live connector check with your credentials and keys (after T0.09, T0.10, T1.02): OANDA/IG/Alpaca streams and keyed batch jobs (FRED, EIA, CoinGecko Demo) deliver, and the quota tracker reads live headers. → R1.01, R1.04–R1.06, R1.08
 - [ ] **T1.67** `VERIFY` Live reconciliation on practice/testnet accounts with your keys (after T1.02): a clean run, then a seeded mismatch raises an incident. → R1.12
+- [ ] **T1.68** `VERIFY` Scheduler test: a failing job retries per its policy, a backfill resumes after a scheduler restart, cron runs land in the run history, and D16 shows job status. → R1.18
 
 ### E. Run / soak (`RUN`)
 - [ ] **T1.80** `RUN` 7-day continuous recording soak; gap report per instrument; disk growth vs budget. → R1.N3
 
 ## 5. Deliverables
 
-Connectors + recorder + bar builder · batch flows · quota tracker · provenance + retention · DQ/cost/recon monitor · venue-health monitor · alerts on 3 channels · D07 + D02.
+Connectors + recorder + bar builder · `mt-scheduler` + `mt-connectors` batch jobs · quota tracker · provenance + retention · DQ/cost/recon monitor · venue-health monitor · alerts on 3 channels · D07 + D02.
 
 ## 6. Exit criteria (demo)
 

@@ -6,7 +6,7 @@
 | **Duration** | Weeks 12–15 (can overlap P4 if time allows) |
 | **Depends on** | P1 (RBA F11 FX, ABS CPI), P2 (paper fills and venue ledgers) |
 | **Unlocks** | P5 (airdrop/staking income), P7 (live trading needs tax records and the tax agent's answer) |
-| **Modules** | M18 journal & tax (`mt-journal` crate for the lot engine and tax rules, `rust_decimal`; Python only for statement parsers that need a Python-only library, [18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
+| **Modules** | M18 journal & tax (`mt-journal` crate for the lot engine and tax rules, `rust_decimal`; Python only for ccxt ledger import (`mt_ledger_import`), [18 §2](../18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)) |
 | **Containers** | `journal` |
 | **Dashboards** | [D14](../ui/dashboards/D14-journal.md) Journal, [D15](../ui/dashboards/D15-tax.md) Tax & Reports |
 | **Primary docs** | [09](../09-journal-and-tax.md) · [03 M18](../03-build-spec.md#m18-trading-journal--tax--mt_journal) · [02 F9](../02-v1-architecture.md#8-end-to-end-flows) · [12 §6](../12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) |
@@ -25,7 +25,7 @@
 
 | ID | Requirement | Source | Verified by |
 |---|---|---|---|
-| R3.01 | Journal ingestion: Nautilus fills, ccxt ledgers (funding, fees, transfers), broker statements (IBKR Flex, OANDA, IG; CommSec optional), on-chain events | [09 architecture](../09-journal-and-tax.md#architecture), [02 F9](../02-v1-architecture.md#8-end-to-end-flows) | Ingest tests |
+| R3.01 | Journal ingestion: Nautilus fills, ccxt ledgers via the Python `mt_ledger_import` (funding, fees, transfers), broker statements (IBKR Flex, OANDA, IG; CommSec optional), on-chain events | [09 architecture](../09-journal-and-tax.md#architecture), [02 F9](../02-v1-architecture.md#8-end-to-end-flows) | Ingest tests |
 | R3.02 | Append-only journal; corrections supersede, never edit; ≥ 7-year retention | [09 quality](../09-journal-and-tax.md#quality), [SPEC NN7](../../SPEC.md#non-negotiable-requirements) | Audit tests |
 | R3.03 | Every event stored in **native, USD and AUD** with rate source + timestamp (RBA F11 for AUD; a day with no publication uses the last published business day; currencies not in F11 go via USD) | [09 goals](../09-journal-and-tax.md#goals) | Unit tests |
 | R3.04 | **Account/wallet registry `ops.wallets`** (accounts and on-chain addresses; created here, extended by the P5 wallet-indexer): internal transfers tagged and never disposals; `investment` vs `trading` tags | [09 goals](../09-journal-and-tax.md#goals), [13 §3](../13-wallets-treasury-and-onchain.md#3-unified-wallet-view), [17 §B](../17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) | Unit tests |
@@ -58,12 +58,12 @@
 - [ ] **T3.06** `USER` Diary hard date: **30 June 2027** snapshot must run (end of day AEST). → R3.08
 
 ### B. Build (`BUILD`, code)
-- [ ] **T3.20** `BUILD` `mt-journal` event model + ingestion adapters (fills, ccxt ledgers, IBKR Flex, OANDA, IG, on-chain stub). → R3.01, R3.02
+- [ ] **T3.20** `BUILD` `mt-journal` event model + ingestion adapters (fills, ccxt ledgers via `mt_ledger_import`, IBKR Flex, OANDA, IG, on-chain stub). → R3.01, R3.02
 - [ ] **T3.21** `BUILD` FX service (RBA F11 for AUD with the last-business-day and via-USD rules; crypto values from the valuation service, R3.15; USD), three-currency storage; CoinGecko values are never persisted. → R3.03
 - [ ] **T3.22** `BUILD` `ops.wallets` account/wallet registry with internal-transfer matching and tags. → R3.04
 - [ ] **T3.23** `BUILD` Lot engine in `mt-journal` (rp2/ledger ideas, `rust_decimal`): specific-ID, FIFO, FX-cash lots. → R3.05
 - [ ] **T3.24** `BUILD` AU_2026 plugin, PAYG estimator (both methods), wash-sale flags (30-day default), myTax worksheet; regime switch with dual reporting. → R3.06, R3.07
-- [ ] **T3.25** `BUILD` AU_2027_REFORM scaffold behind a flag; snapshot job (Prefect, idempotent, price source recorded). → R3.08
+- [ ] **T3.25** `BUILD` AU_2027_REFORM scaffold behind a flag; snapshot job (`mt-scheduler`, idempotent, price source recorded). → R3.08
 - [ ] **T3.26** `BUILD` Residency timeline + AE/EG/CY/GENERIC stubs; Egypt crypto hard flag wired to M11. → R3.09
 - [ ] **T3.27** `BUILD` Exports: Beancount + Fava, accountant pack, Koinly/Syla CSV. → R3.10
 - [ ] **T3.28** `BUILD` Reconciliation job journal ↔ venues. → R3.11

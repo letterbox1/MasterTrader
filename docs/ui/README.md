@@ -13,7 +13,7 @@ This is the complete frontend scope, ready for implementation. It defines what e
 - [../../DESIGN.md](../../DESIGN.md): visuals and responsive rules.
 - [../02-v1-architecture.md §7](../02-v1-architecture.md#7-api-contract-mt_api): API, WebSocket topics and confirmation levels.
 - [../03-build-spec.md](../03-build-spec.md): module behaviour.
-- [../18-platform-and-deployment.md](../18-platform-and-deployment.md): stack, hosting (local or Vercel), Supabase Auth and deployment modes.
+- [../18-platform-and-deployment.md](../18-platform-and-deployment.md): stack, hosting (local or Vercel), Supabase Auth and deployment modes; the scenario & crowd simulator (§2.4).
 - [../16-configuration-and-safety-model.md](../16-configuration-and-safety-model.md): every limit, threshold, timer and allocation the UI shows or edits. These are **defaults you change in settings**, never fixed values in the UI (§3.7).
 
 **Where it runs:** one React + TypeScript SPA (`apps/web`), built once. It's served locally by Caddy on your workstation, or deployed to Vercel if you choose that at the Phase 7 shift (`web.host`, [16 §2.15](../16-configuration-and-safety-model.md#215-platform-deployment-and-regions); [18 §5](../18-platform-and-deployment.md#5-deployment-modes)). Either way the browser talks only to `mt-api` (REST + WebSocket), never to the database. When the page is on Vercel and `api.exposure` is `tailnet` (default), your device needs Tailscale on to reach `mt-api`.
@@ -31,7 +31,7 @@ Visual references are in [../../ui-examples/](../../ui-examples/README.md). Wher
 | D03 | [Strategies](dashboards/D03-strategies.md) | `/strategies`, `/strategies/new`, `/strategies/:id`, `/strategies/bots`, `/strategies/settings` | M0, M11 | 2 (gate reports, capital steps in 7) | — (new) |
 | D04 | [Research Lab](dashboards/D04-research-lab.md) | `/lab`, `/lab/backtests/:id`, `/lab/experiments/:id` | M7, M6 | 2 | Strategy Lab |
 | D05 | [Execution](dashboards/D05-execution.md) | `/execution` | M12, M11, M16 (TCA) | 2 | Order Execution Hub |
-| D06 | [Risk](dashboards/D06-risk.md) | `/risk` | M11, M16 | 2 (capital steps, kill criteria, weekly reviews in 7) | Risk Governor & Kill-Switch Hub |
+| D06 | [Risk](dashboards/D06-risk.md) | `/risk` | M11, M16, M14 | 2 (capital steps, kill criteria, weekly reviews, historical + simulated stress in 7) | Risk Governor & Kill-Switch Hub |
 | D07 | [Data & Quality](dashboards/D07-data-quality.md) | `/data` | M1, M16 | 1 | Free Data Pipeline Sentinel |
 | D08 | [Intel](dashboards/D08-intel.md) | `/intel` | M2, M3, M5, M21 | 4 | Social/Macro/Geopolitical Firehose |
 | D09 | [Agents & Decisions](dashboards/D09-agents.md) | `/agents`, `/agents/runs/:id` | M8, M9, M21 | 6 | Multi-Agent Debate |
@@ -39,9 +39,9 @@ Visual references are in [../../ui-examples/](../../ui-examples/README.md). Wher
 | D11 | [Market Making](dashboards/D11-market-making.md) | `/mm` | M13 | 6 (optional) | Hummingbot MM Terminal |
 | D12 | [Airdrops & Launches](dashboards/D12-airdrops.md) | `/airdrops`, `/airdrops/:id` | M4 | 5 | Launch Radar |
 | D13 | [Tasks & Curation](dashboards/D13-tasks-curation.md) | `/tasks` | M19 | 5 | Launch Radar (manual queue) |
-| D14 | [Journal](dashboards/D14-journal.md) | `/journal`, `/journal/trades/:id` | M18 | 3 | — (new) |
+| D14 | [Journal](dashboards/D14-journal.md) | `/journal`, `/journal/trades/:id`, `/journal/reviews` | M18, M14 | 3 (scenario-twin report in 6, weekly reviews in 7) | — (new) |
 | D15 | [Tax & Reports](dashboards/D15-tax.md) | `/tax` | M18 | 3 | AU EOFY Tax Ledger |
-| D16 | [System](dashboards/D16-system.md) | `/system` (+ `/system/audit`, `/system/settings`, `/system/security`, `/system/backups`) | M17, ops | 0 (Accounts settings in 3; go-live preflight and Settings pack in 7) | — (new) |
+| D16 | [System](dashboards/D16-system.md) | `/system` (+ `/system/audit`, `/system/settings`, `/system/security`, `/system/backups`) | M17, ops | 0 (job status from `mt-scheduler` in 1; Accounts settings in 3; go-live preflight and Settings pack in 7) | — (new) |
 | D17 | [MCP Console](dashboards/D17-mcp-console.md) | `/mcp` | M20 | 8 (optional) | Claude MCP Control |
 | D18 | [Wallets & Treasury](dashboards/D18-wallets-treasury.md) | `/wallets`, `/wallets/:walletId`, `/wallets/treasury`, `/wallets/earn` | M22, M4, M12, M16 | 5 / 6 | — (new) |
 
