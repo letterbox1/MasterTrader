@@ -75,6 +75,8 @@ This doc is canonical for **which language each service is written in, where eac
 
 **Also Python, but not ours to run:** LiteLLM loads its callbacks as Python, so the `audit.llm_call` writer is a small plugin file mounted into the unmodified LiteLLM container (P0-T042). It only writes audit rows through the `mt_store.obs` binding.
 
+**The one Python exception on the live path is NautilusTrader's own adapter layer**, which is third-party, not ours. If a venue's adapter isn't production-ready in Rust yet (P2-T200 decides per venue), that venue runs on Nautilus's Python node. Our Rust strategies and `mt-risk` are still loaded into it through PyO3, so every decision and risk check is still our Rust code. The venue moves to the Rust node when its adapter is ready.
+
 **Rules:** Python never places orders, signs, or runs on the live decision path. It publishes to NATS or calls `mt-api`; reads only through `pit`; writes audit rows through the `mt-obs` binding (`mt_store.obs`), so the hash chain has one implementation.
 
 ### 2.3 Third-party services (any language, run unmodified as pinned containers)

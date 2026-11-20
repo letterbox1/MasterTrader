@@ -8,20 +8,22 @@ force_open: false
 started: ""
 completed: ""
 doc_sync_status: n/a
-updated: 2026-11-19
+updated: 2026-11-20
 ---
 
 # Phase 1 · Market data, recording & live monitoring
 
 ## Summary
 
-Free, clean, point-in-time market and macro data for every asset class at every timeframe from ticks to 1W, plus an always-on data-quality, cost and reconciliation monitor that alerts you through one fan-out to Telegram, ntfy and (if on) email ([roadmap](../../docs/roadmap/phase-1-data-and-monitoring.md)). Containers added: `ingest-market` (`mt-recorder`, Rust), `ingest-batch` (`mt_data`, Python Prefect flows), `monitor` (`mt-monitor`, Rust), `ntfy`, `telegram-bot` (`mt-telegram-bot`, Rust; alerts only), `ib-gateway` (only when IBKR is used). Dashboards: D07 Data & Quality, D02 Markets, the notification centre and the D16 egress tile.
+Free, clean, point-in-time market and macro data for every asset class at every timeframe from ticks to 1W, plus an always-on data-quality, cost and reconciliation monitor that alerts you through one fan-out to Telegram, ntfy and (if on) email ([roadmap](../../docs/roadmap/phase-1-data-and-monitoring.md)). Containers added: `ingest-market` (`mt-recorder`, Rust), `scheduler` and `research-worker` (`mt-scheduler`, Rust; replaces Prefect), `ingest-batch` (`mt-connectors` jobs on `mt-scheduler`, Rust), `monitor` (`mt-monitor`, Rust), `ntfy`, `telegram-bot` (`mt-telegram-bot`, Rust; alerts only), `ib-gateway` (only when IBKR is used). Dashboards: D07 Data & Quality, D02 Markets, the notification centre and the D16 egress tile.
 
 Aligned on 2026-10-22 with [16](../../docs/16-configuration-and-safety-model.md) and [17](../../docs/17-decisions-register.md): every number is a configurable default linked to 16; stale means **data age** (now − our receive time) over per-bot thresholds (2 s fast / 60 s slow), flipped ≤ 250 ms p99 after the threshold; reconciliation runs at 60 s / 5 min / EOD; alerts use one fan-out; timeframes run tick → 1W; C3 completes via the break-glass CLI until Telegram C3 lands in P2. **Build first, keys last:** every keyed integration is built and tested keyless (fixtures, mocks, public endpoints); the live checks with your keys are the late VERIFY tasks P1-T073 (connectors) and P1-T074 (reconciliation), plus P1-T056 (provider checks) and P1-T060 (alert path).
 
 Re-platformed on 2026-11-19 per [18](../../docs/18-platform-and-deployment.md) ([17 §G](../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)): streaming, bars, DQ/cost/recon/egress and the alert bot are Rust (`mt-recorder`, `mt-monitor`, `mt-telegram-bot`, `mt-api`, `mt-store`); batch flows that need Python-only SDKs (Prefect, OpenBB, edgartools, fredapi, sdmx1, yfinance, FinanceDatabase, Pandera/Evidently) stay Python; the database is Supabase Postgres with **no TimescaleDB**: `mt-recorder` writes 1s and every standard bar size into monthly partitions (P1-T013), a partition job keeps them ahead and exports old bars to Parquet (P1-T075), a rebuild/rollup job handles backfills and corrections (P1-T076), and other sizes are `date_bin` reads in `pit`. Everything runs on the workstation; Tailscale is optional until go-live, so the phone ntfy subscription (P1-T003) is a pre-go-live USER step no agent task waits on. The universe (P1-T001) and DQ tuning (P1-T066, tightening only) are now agent tasks reviewed in the go-live pack (P7-T070).
 
-76 tasks (4 USER · 50 BUILD · 7 OPS · 1 DOC · 13 VERIFY · 1 RUN) and 20 gaps (17 closed in the alignment, 3 open S3).
+Rust-max on 2026-11-20 per [18 §2](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) and [17 §H](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20): Prefect is replaced by **`mt-scheduler`** (P1-T077 skeleton, P1-T079 VERIFY for T1.68, P1-T080 moves the P0 host-timer jobs and wires `system.backup.run`/`system.restore.test`, P1-T053 schedules); OpenBB, fredapi, sdmx1, edgartools and yfinance are replaced by typed Rust clients in **`mt-connectors`** (P1-T078 base; SEC XBRL via `companyfacts` JSON; own Rust Dukascopy `bi5` parser); daily stock/ETF/futures bars come only from sources whose terms allow automated personal use (P1-T023 re-scoped: terms check first, Yahoo only if allowed (U)). Python stays only as `mt_research` offline jobs run by `mt-scheduler`: the nightly Pandera/Evidently report (P1-T037), the `exchange_calendars` session tables (P1-T009) and the independent bar-parity checker (P1-T058). E2E suites are Rust (`tests/e2e`, `mt-e2e` crate) with the same cases.
+
+80 tasks (4 USER · 52 BUILD · 8 OPS · 1 DOC · 14 VERIFY · 1 RUN) and 20 gaps (17 closed in the alignment, 3 open S3).
 
 ## Entry criteria
 
@@ -48,6 +50,7 @@ With `phase_gating: "dependencies"` each task waits only for its own `depends_on
 | Your actions (USER) | P1-T002 (keys), P1-T068 (SMTP password or email off), P1-T069 (quarterly AUSTRAC check), P1-T003 (phone ntfy, before go-live) |
 | Agent seeds and tuning (were USER) | P1-T001 (seed the universe), P1-T066 (tune DQ thresholds, tightening only) |
 | Platform & plumbing (OPS/BUILD) | P1-T004, P1-T005, P1-T006, P1-T007, P1-T008, P1-T009 |
+| Batch platform: scheduler & connectors | P1-T077 (`mt-scheduler`), P1-T078 (`mt-connectors`), P1-T080 (P0 timer jobs → scheduler), P1-T053 (schedules + `ingest-batch`), P1-T079 (VERIFY) |
 | Crypto real-time & recording | P1-T010, P1-T011, P1-T012, P1-T013, P1-T014, P1-T015, P1-T075 (partitions + Parquet export), P1-T076 (rebuild/rollup) |
 | FX & metals | P1-T016, P1-T017, P1-T018, P1-T019, P1-T020 |
 | Stocks/ETFs & daily futures | P1-T021, P1-T022, P1-T023 |
@@ -58,7 +61,7 @@ With `phase_gating: "dependencies"` each task waits only for its own `depends_on
 | Alerts (M17) | P1-T044, P1-T045 |
 | API & UI (D07, D02, notifications) | P1-T046, P1-T047, P1-T048, P1-T049, P1-T050, P1-T051 |
 | Ops (storage, schedules, Grafana) & docs | P1-T052, P1-T053, P1-T054, P1-T055 |
-| Verify (keyless) | P1-T057, P1-T058, P1-T059, P1-T062, P1-T063 |
+| Verify (keyless) | P1-T057, P1-T058, P1-T059, P1-T062, P1-T063, P1-T079 |
 | Verify (live, with your keys) | P1-T056, P1-T060, P1-T061, P1-T064, P1-T073, P1-T074, P1-T067 (exit demo) |
 | Run | P1-T065 |
 | Gaps | Closed: P1-B001…P1-B015, P1-B017, P1-B018 · Open: P1-B016, P1-B019, P1-B020 |
@@ -67,7 +70,7 @@ With `phase_gating: "dependencies"` each task waits only for its own `depends_on
 
 P0 platform (P0-T014/T016/T018/T020–T022) → P1-T004 → P1-T005 → P1-T007 → P1-T009 → P1-T010 → P1-T013 → P1-T075/P1-T076 → P1-T065 (7 elapsed days) → P1-T066 → P1-T067; the UI lane P1-T013 → P1-T046 → P1-T047 → P1-T049 → P1-T050 → P1-T061 joins at the exit demo
 
-The live branch joins at the exit demo: your keys (P0-T009, P0-T010, P1-T002) → P1-T073/P1-T074 → P1-T061/P1-T064 → P1-T067. The soak (P1-T065) runs on the agent-seeded universe (P1-T001) and never waits for your keys; keyed feeds without credentials run as `credentials_missing`. Do P1-T002 early so the live checks aren't the last thing left. Parallel lanes that must also finish before P1-T065/T067: recorder + bars (P1-T012/T013/T075/T076), DQ checks (P1-T031…T036) → P1-T057, alerts (P1-T044/T045) → P1-T060, reconciliation (P1-T041/T042) → P1-T074 → P1-T064, egress (P1-T071) → P1-T072, D07 (P1-T048), storage/schedules/Grafana (P1-T052/T053/T054).
+The live branch joins at the exit demo: your keys (P0-T009, P0-T010, P1-T002) → P1-T073/P1-T074 → P1-T061/P1-T064 → P1-T067. The soak (P1-T065) runs on the agent-seeded universe (P1-T001) and never waits for your keys; keyed feeds without credentials run as `credentials_missing`. Do P1-T002 early so the live checks aren't the last thing left. Parallel lanes that must also finish before P1-T065/T067: recorder + bars (P1-T012/T013/T075/T076), DQ checks (P1-T031…T036) → P1-T057, alerts (P1-T044/T045) → P1-T060, reconciliation (P1-T041/T042) → P1-T074 → P1-T064, egress (P1-T071) → P1-T072, D07 (P1-T048), storage/schedules/Grafana (P1-T052/T053/T054), and the batch lane P1-T005 → P1-T006/T007 → P1-T078 → the `mt-connectors` providers → P1-T053 (with P1-T077) → P1-T079; P1-T080 follows P1-T077 once the P0 timer jobs exist.
 
 ## Traceability
 
@@ -79,9 +82,9 @@ The live branch joins at the exit demo: your keys (P0-T009, P0-T010, P1-T002) �
 | R1.02 | Recording: `mt-recorder` Parquet catalog (1–5 min files, daily compaction); bars at every standard size in monthly partitions… | P1-T012, P1-T013, P1-T014, P1-T050, P1-T058, P1-T061, P1-T062, P1-T065, P1-T067, P1-T075, P1-T076 |
 | R1.03 | Crypto history: data.binance.vision trades/aggTrades/1s klines backfill | P1-T015, P1-T067 |
 | R1.04 | FX & metals: OANDA practice stream, IG demo stream, Dukascopy ticks, ECB/Frankfurter, RBA… | P1-T001, P1-T016, P1-T017, P1-T018, P1-T019, P1-T020, P1-T056, P1-T061, P1-T067, P1-T073 |
-| R1.05 | Stocks/ETFs: Alpaca IEX real-time (30 symbols), yfinance daily, FinanceDatabase symbol ma… | P1-T001, P1-T009, P1-T021, P1-T022, P1-T023, P1-T056, P1-T061, P1-T067, P1-T073 |
-| R1.06 | Futures/commodities (daily), rates & macro: yfinance futures, EIA, USDA, CFTC COT, Baker… | P1-T001, P1-T023, P1-T024, P1-T025, P1-T026, P1-T027, P1-T053, P1-T056, P1-T061, P1-T067, P1-T073 |
-| R1.07 | Fundamentals: SEC EDGAR via edgartools (declared User-Agent, ≤ 10 req/s) | P1-T028, P1-T067 |
+| R1.05 | Stocks/ETFs: Alpaca IEX real-time (30 symbols), daily bars via `mt-connectors` from terms-checked sources, FinanceDatabase… | P1-T001, P1-T009, P1-T021, P1-T022, P1-T023, P1-T056, P1-T061, P1-T067, P1-T073 |
+| R1.06 | Futures/commodities (daily), rates & macro: daily futures via `mt-connectors`, EIA, USDA, CFTC COT, Baker… | P1-T001, P1-T023, P1-T024, P1-T025, P1-T026, P1-T027, P1-T053, P1-T056, P1-T061, P1-T067, P1-T073 |
+| R1.07 | Fundamentals: SEC EDGAR submissions and XBRL `companyfacts` JSON via `mt-connectors` (declared User-Agent, ≤ 10 req/s) | P1-T028, P1-T067 |
 | R1.08 | Quota tracker per connector that throttles before each free limit | P1-T005, P1-T006, P1-T029, P1-T046, P1-T048, P1-T053, P1-T054, P1-T067, P1-T073 |
 | R1.09 | Provenance: every ingested row tagged (`source`, `licence`, use flags); retention jobs en… | P1-T005, P1-T007, P1-T008, P1-T029, P1-T059, P1-T067 |
 | R1.10 | DQ monitor: stale feed, gaps, bad ticks, cross-source divergence, clock skew, book integr… | P1-T004, P1-T030, P1-T031, P1-T032, P1-T033, P1-T034, P1-T035, P1-T036, P1-T037, P1-T046, P1-T048, P1-T054, P1-T055, P1-T057, P1-T065, P1-T066, P1-T067 |
@@ -94,6 +97,8 @@ The live branch joins at the exit demo: your keys (P0-T009, P0-T010, P1-T002) �
 | R1.N2 | UI live update lag p95 < 500 ms; server throttles ≤ 4 Hz charts, ≤ 1 Hz tables | P1-T047, P1-T062, P1-T067 |
 | R1.N3 | Storage within budget (~0.3–1 TB/year for ~10 liquid crypto symbols at trades + L1 + 1 s… | P1-T012, P1-T052, P1-T055, P1-T065, P1-T067, P1-T075 |
 | R1.16 | Egress check: every minute, confirm exchange traffic leaves via the allow-listed static I… | P1-T067, P1-T071, P1-T072 |
+| R1.18 | Batch orchestration: `mt-scheduler` (Rust; replaces Prefect): Postgres-backed jobs and cron, retries, backfills, run history, D16/D07 status | P1-T037, P1-T053, P1-T077, P1-T079, P1-T080 |
+| R1.19 | Batch connectors: typed Rust clients in `mt-connectors` (replacing OpenBB, fredapi, sdmx1, edgartools, yfinance) writing through `pit` with provenance | P1-T023, P1-T053, P1-T078 |
 | R1.17 | Data age definition: age = now − our receive time per stream; per-bot thresholds (default… | P1-T030, P1-T031, P1-T057, P1-T062, P1-T067 |
 
 ### Roadmap ToDos → tasks
@@ -108,21 +113,23 @@ The live branch joins at the exit demo: your keys (P0-T009, P0-T010, P1-T002) �
 | T1.06 | `USER` Each quarter, when the reminder arrives, check every venue you use on the AUSTR… | P1-T069 |
 | T1.20 | `BUILD` `mt-recorder` crypto WS clients via Nautilus Rust data clients (where available (U)); publish `md.*` | P1-T004, P1-T005, P1-T010, P1-T011 |
 | T1.21 | `BUILD` Parquet recorder + daily compaction; bar builder writing every standard size to monthly partitions; rollup job; `date_bin` reads | P1-T012, P1-T013, P1-T014, P1-T075, P1-T076 |
-| T1.22 | `BUILD` Backfill flows: data.binance.vision, Dukascopy (dukascopy-node or own bi5 parse… | P1-T015, P1-T018, P1-T022, P1-T023 |
+| T1.22 | `BUILD` Backfill jobs in `mt-connectors`: data.binance.vision, Dukascopy (own `bi5` parser), Alpaca history, daily bars (terms permitting) | P1-T015, P1-T018, P1-T022, P1-T023 |
 | T1.23 | `BUILD` FX/metals streaming: OANDA v20 practice, IG Lightstreamer demo; Frankfurter sel… | P1-T016, P1-T017, P1-T019, P1-T020 |
-| T1.24 | `BUILD` Macro/rates/fundamentals Prefect flows: FRED/ALFRED (vintages), Treasury, `sdmx… | P1-T024, P1-T025, P1-T026, P1-T027, P1-T028 |
+| T1.24 | `BUILD` Macro/rates/fundamentals clients in `mt-connectors`: FRED/ALFRED (vintages), Treasury, SDMX, central banks, EIA/USDA/COT/Baker Hughes, ABS CPI, SEC EDGAR | P1-T024, P1-T025, P1-T026, P1-T027, P1-T028 |
 | T1.25 | `BUILD` Quota tracker (per-connector budgets from live headers where available) shared… | P1-T006 |
 | T1.26 | `BUILD` Provenance tagging at write time (defaults from each source's licence tag in 06… | P1-T007, P1-T008, P1-T029 |
 | T1.27 | `BUILD` `mt-monitor` DQ service: per-instrument rolling state, checks table, `dq.status… | P1-T004, P1-T030, P1-T031, P1-T032, P1-T033, P1-T034, P1-T035, P1-T036, P1-T037 |
 | T1.28 | `BUILD` `mt-monitor` cost service: fees/tiers, funding, financing, spreads by hour-of-w… | P1-T038, P1-T039, P1-T040, P1-T064 |
-| T1.29 | `BUILD` Reconciliation jobs (ccxt read-only, OANDA, IG, Alpaca, IBKR paper), built and… | P1-T041, P1-T042, P1-T064 |
+| T1.29 | `BUILD` Reconciliation jobs (read-only Rust venue clients: crypto testnets, OANDA, IG, Alpaca, IBKR paper), built and… | P1-T041, P1-T042, P1-T064 |
 | T1.30 | `BUILD` Venue-health collector writing to `ops.venue_registry` health fields from our o… | P1-T043 |
 | T1.31 | `BUILD` Telegram bot (`mt-telegram-bot`, alerts only) + ntfy + email notifier behind one `alert.{severity}… | P1-T004, P1-T045 |
 | T1.32 | `BUILD` UI: D07 Data & Quality, D02 Markets (lightweight-charts, matrix, instrument det… | P1-T009, P1-T046, P1-T047, P1-T048, P1-T049, P1-T050, P1-T051, P1-T063 |
 | T1.33 | `BUILD` Egress IP/country check with GeoIP DB; `egress.status` → M11 + alerts | P1-T071 |
 | T1.34 | `BUILD` Alpaca real-time stream, FinanceDatabase symbol master and `exchange_calendars`… | P1-T009, P1-T021, P1-T029 |
 | T1.40 | `OPS` Storage layout: NVMe hot Parquet, HDD cold tier, compaction schedule, disk aler… | P1-T052 |
-| T1.41 | `OPS` Prefect schedules for batch flows (respecting quotas and source update times, A… | P1-T053 |
+| T1.35 | `BUILD` `mt-scheduler` skeleton: Postgres-backed jobs and cron, retries, backfills, run history, job-status API; move the P0 jobs onto it | P1-T077, P1-T080 |
+| T1.36 | `BUILD` `mt-connectors` crate skeleton: shared HTTP client, quota hook, provenance, `pit` writer, fixture harness | P1-T078 |
+| T1.41 | `OPS` `mt-scheduler` schedules for the batch jobs (respecting quotas and source update times, A… | P1-T053 |
 | T1.42 | `OPS` Grafana boards: live prices by timeframe, spreads/funding/swaps, DQ incidents,… | P1-T054 |
 | T1.43 | `OPS` ntfy container (self-hosted, auth on, private: localhost on the workstation, Tailscale once it exists; upstream relay for iOS) | P1-T044 |
 | T1.44 | `OPS` `ib-gateway` container (IBC-managed, digest-pinned, read-only API for reconcili… | P1-T070 |
@@ -133,10 +140,11 @@ The live branch joins at the exit demo: your keys (P0-T009, P0-T010, P1-T002) �
 | T1.64 | `VERIFY` Alert path test on all three channels. | P1-T060, P1-T067 |
 | T1.65 | `VERIFY` Egress fault test: wrong egress IP or country → new orders blocked and alerted | P1-T072 |
 | T1.66 | `VERIFY` Live connector check with your credentials and keys (after T0.09, T0.10, T1.02)… | P1-T073 |
+| T1.68 | `VERIFY` Scheduler test: retries, backfill resume after restart, cron run history, D16 job status | P1-T079, P1-T067 |
 | T1.67 | `VERIFY` Live reconciliation on practice/testnet accounts with your keys (after T1.02):… | P1-T074 |
 | T1.80 | `RUN` 7-day continuous recording soak; gap report per instrument; disk growth vs budg… | P1-T065, P1-T067 |
 
-All requirements (R1.01–R1.17, R1.N1–R1.N3) and ToDos (T1.01–T1.80) are covered. Tasks without a roadmap ToDo of their own (traced by requirement): P1-T055 (runbooks), P1-T061 (F1 end-to-end), P1-T062 (load + UI lag).
+All requirements (R1.01–R1.19, R1.N1–R1.N3) and ToDos (T1.01–T1.80, incl. T1.35, T1.36, T1.68) are covered. Tasks without a roadmap ToDo of their own (traced by requirement): P1-T055 (runbooks), P1-T061 (F1 end-to-end), P1-T062 (load + UI lag).
 
 ## Planning notes & risks
 
@@ -153,7 +161,7 @@ All requirements (R1.01–R1.17, R1.N1–R1.N3) and ToDos (T1.01–T1.80) are co
 - **Open gaps:** P1-B016 (ABS CPI series ID A2325846C is (U); verified in P1-T056), P1-B019 (USDA QuickStats key not in T0.10; QuickStats ships disabled meanwhile), P1-B020 (alert consumer network placement; interim placement in P1-T045).
 - **IEX ≠ NBBO:** flagged on every Alpaca message and in D02; no scalping-cost conclusions from IEX data.
 - **Order surfaces:** D02's order ticket is present but disabled; no P1 code places orders.
-- **Language split ([18 §2](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)):** Rust for streaming connectors, recorder, bars, DQ/cost/recon/egress, the alert bot and the API; Python only for Prefect batch flows with Python-only SDKs. No ccxt in the Rust path: venue REST via Nautilus Rust clients where available (U) or thin GET-only `reqwest` clients. Open (U) checks are the first ToDo of the task that relies on them: Nautilus Rust data clients (P1-T010/T011), Rust Lightstreamer (P1-T017), Rust TWS client (P1-T042), pg_partman on Postgres 17 (P1-T075).
+- **Language split ([18 §2](../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary), Rust-max [17 §H](../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)):** Rust for streaming connectors, recorder, bars, batch connectors (`mt-connectors`), the scheduler (`mt-scheduler`), DQ/cost/recon/egress, the alert bot and the API; Python only for `mt_research` offline jobs run by `mt-scheduler` (Pandera/Evidently report, `exchange_calendars` tables, the independent bar-parity checker). Every batch source has a `terms` verdict in `config/sources.yaml` before it can run (Yahoo (U), P1-T023). No ccxt in the Rust path: venue REST via Nautilus Rust clients where available (U) or thin GET-only `reqwest` clients. Open (U) checks are the first ToDo of the task that relies on them: Nautilus Rust data clients (P1-T010/T011), Rust Lightstreamer (P1-T017), Rust TWS client (P1-T042), pg_partman on Postgres 17 (P1-T075).
 - **Soak timing:** P1-T065 needs 7 elapsed days with frozen config; plan the exit demo for a window when US equities, FX and crypto are all open.
 
 ## Cross-phase prerequisites
@@ -167,12 +175,14 @@ These are explicit `depends_on` entries on the tasks (no phase gate):
 | P0-T009 practice/testnet accounts (your T0.09) | P1-T002, P1-T056, P1-T073, P1-T074 |
 | P0-T010 free API keys (your T0.10) | P1-T073 |
 | P0-T014 monorepo skeleton · P0-T017 settings + clock | P1-T005 |
+| P0-T018 `mt-obs` · P0-T024 migrations/roles (`mt_jobs_rw`) · P0-T034 command bus · P0-T051 D16 page | P1-T077 |
+| P0-T037 seal · P0-T038 verify · P0-T039 backups · P0-T040 WORM export · P0-T041 restore test (host timers) | P1-T080 |
 | P0-T016 `mt-core` schemas · P0-T018 `mt-obs` · P0-T020 Compose core (incl. Supabase stack) · P0-T021 networks · P0-T022 sops → tmpfs | P1-T004 (P0-T020/T021 also P1-T044, P1-T070; P0-T022 also P1-T070) |
 | P0-T019 workstation baseline (chrony metric; no Tailscale precondition) | P1-T035 |
 | P0-T023 Alertmanager/Grafana · P0-T045 Grafana provisioning | P1-T045, P1-T054 |
 | P0-T024 schemas/roles/Supabase migrations baseline · P0-T025 provenance columns + `ops.venue_registry` | P1-T007, P1-T043 |
 | P0-T026 venue registry seeded | P1-T069 |
-| P0-T027 `pit` (`mt-store` + Python binding) + Parquet catalog helpers | P1-T008, P1-T012, P1-T020, P1-T024, P1-T075 |
+| P0-T027 `pit` (`mt-store` + Python binding) + Parquet catalog helpers | P1-T008, P1-T012, P1-T020, P1-T024, P1-T075, P1-T078 |
 | P0-T029 WORM privileges · P0-T030 hash chain | P1-T030, P1-T038, P1-T041 |
 | P0-T032 `mt-api` (Rust, axum) · P0-T034 command bus · P0-T035 confirmation levels + break-glass | P1-T046 (P0-T035 also P1-T030, P1-T071) |
 | P0-T036 WS hub · P0-T048 typed clients | P1-T047 |
