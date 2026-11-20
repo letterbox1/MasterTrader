@@ -10,22 +10,22 @@ size: S
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T024]
+depends_on: [P1-T024, P1-T025]
 requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T027-abs-cpi-flow
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/09-journal-and-tax.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,18 +44,18 @@ The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (ABS CPI, needed for the 2027 tax indexation) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) · consumer [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B016 (All groups CPI, eight-capital weighted average, A2325846C (U)); [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (other ABS CPI series are display-only); the series ID check is P1-T056 (T1.60); the as-of rule is a tax-agent question ([09](../../../docs/09-journal-and-tax.md), question 9)
-- Depends on (this phase): P1-T024
+- Depends on (this phase): P1-T024, P1-T025 (the Rust SDMX client in `mt-connectors`)
 
 ## Requirements
 
-- ABS Data API (SDMX) via `sdmx1` (ABS provider) or the ABS SDMX REST endpoint; dataflow for CPI
+- ABS Data API (SDMX REST) via the `mt-connectors` SDMX client from P1-T025 (ABS agency config); dataflow for CPI
 - Store each release as a vintage (`event_time` = ABS release timestamp, 11:30 am Canberra time); revisions add rows
 - Primary series `A2325846C`, set in `config/universe.yaml` `macro.abs_cpi_series` (a corrected ID is a config change, not code) and flagged `tax_input=true`; the monthly CPI indicator is loaded with `tax_input=false` (display only)
 - Provenance `source=abs`, `licence=CC BY 4.0`, `commercial_ok=true`
 
 ## ToDo
 
-- [ ] Implement the ABS adapter and daily check for new releases
+- [ ] Add the ABS agency to the SDMX client and the daily release-check job
 - [ ] Load full history
 - [ ] Pit test; docs
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
@@ -64,7 +64,7 @@ The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of
 
 ### Tests
 
-- Unit: SDMX parsing of CPI dataflow fixture
+- `cargo test -p mt-connectors abs_cpi`: SDMX parsing of the CPI dataflow fixture
 - Integration: pit query before a release returns the previous quarter
 
 ### Scenarios
@@ -78,7 +78,7 @@ The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of
 ## Acceptance criteria
 
 - [ ] A2325846C history (or the corrected ID from P1-T056) loaded with vintages; monthly indicator loaded as display-only; release check running
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -107,3 +107,4 @@ The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (ABS CPI series A2325846C (U) per P1-B016 decision; monthly display-only)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; pit reads through the Rust `mt-store` binding; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (sdmx1 → the Rust SDMX client in `mt-connectors` (dep +P1-T025, which carries P1-T078); release check is an `mt-scheduler` job; tools cargo; services drop prefect-server)

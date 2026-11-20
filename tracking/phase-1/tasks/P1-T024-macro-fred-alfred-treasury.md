@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T005, P1-T006, P1-T007, P0-T027]
+depends_on: [P1-T005, P1-T006, P1-T007, P0-T027, P1-T078]
 requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, supabase, docker]
+tools: [git, cargo, supabase, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T024-macro-fred-alfred-treasury
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,7 +44,8 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (US Treasury, FRED/ALFRED vintages) · point-in-time rule [03 §4](../../../docs/03-build-spec.md#4-data-model-overview) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) NN1
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): FRED/ALFRED is built keyless against recorded fixtures; the live load with your FRED key (P0-T010) runs in P1-T073. The Treasury feed is keyless and runs live here
-- Depends on (this phase): P1-T005, P1-T006, P1-T007
+- Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T078 (`mt-connectors` base)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors` FRED/ALFRED and US Treasury clients replace fredapi/OpenBB)
 - Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)
 
 ## Requirements
@@ -58,22 +59,22 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 ## ToDo
 
 - [ ] Supabase migration for macro tables (if not in P0) with pit-friendly indexes; pgTAP test
-- [ ] FRED/ALFRED client (fredapi, Python-only SDK per 18 §2.2, or thin httpx) with vintage paging
-- [ ] Treasury curve loader
-- [ ] `pit` query tests proving no look-ahead (through the `mt-store` Python binding, the one Rust implementation)
+- [ ] FRED/ALFRED client in `mt-connectors` (`providers::fred`, typed Rust over the FRED/ALFRED API; replaces fredapi) with vintage paging
+- [ ] Treasury curve client (`providers::treasury`)
+- [ ] `pit` query tests proving no look-ahead (`assert_no_lookahead` from the P1-T078 harness, against the one `mt-store` implementation)
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
 ## Verification
 
 ### Tests
 
-- Unit: vintage mapping; revision creates a new row
+- `cargo test -p mt-connectors fred`: vintage mapping; revision creates a new row
 - Integration: CPIAUCSL vintages fixture → `pit(as_of=2024-01-15)` returns the value published before that date, not the revised one
 
 ### Scenarios
 
-- Given a series is revised, when the daily flow runs, then a new row appears and older `as_of` queries are unchanged
-- Given FRED is down, when the flow runs, then it retries with backoff and marks the feed degraded in D07
+- Given a series is revised, when the daily job runs, then a new row appears and older `as_of` queries are unchanged
+- Given FRED is down, when the job runs, then it retries with backoff and marks the feed degraded in D07
 
 ### Stress / failure injection
 
@@ -82,7 +83,7 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 ## Acceptance criteria
 
 - [ ] Treasury curve loaded live; FRED/ALFRED vintage loading proven on fixtures (live load in P1-T073); pit look-ahead test passes in CI
-- [ ] CI green (ruff, mypy, `uv run pytest`, `supabase test db`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `supabase test db`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -112,3 +113,4 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, FRED live load in P1-T073; P0 dep on pit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow (fredapi); Supabase migration + pgTAP; pit tests through the Rust `mt-store` binding; tools uv+supabase; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (fredapi → typed Rust FRED/ALFRED and Treasury clients in `mt-connectors`; look-ahead tests via the P1-T078 harness (same cases); deps +P1-T078; tools cargo; services drop prefect-server)

@@ -10,22 +10,22 @@ size: M
 severity: ""
 owner: agent
 claimed_by: ""
-depends_on: [P1-T024]
+depends_on: [P1-T024, P1-T078]
 requirements: [R1.06]
 roadmap_todos: [T1.24]
 modules: [M1]
 dashboards: [D02]
-tools: [git, uv, docker]
+tools: [git, cargo, docker]
 mcp: []
 env: []
-services: [supabase-postgres, prefect-server]
+services: [supabase-postgres]
 branch: p1/P1-T026-commodities-eia-usda-cot-baker-hughes
 pr: ""
 doc_sync: [docs/roadmap/phase-1-data-and-monitoring.md, docs/03-build-spec.md]
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -44,7 +44,8 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Futures/commodities: EIA, USDA, CFTC COT, Baker Hughes) · [06 §3 Reports, nowcasts & forecasts](../../../docs/06-aggregators-and-market-providers.md#reports-nowcasts--forecasts-m6-features-m5-release-events)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): EIA is built keyless against fixtures (live with your EIA key from P0-T010 in P1-T073); CFTC COT, Baker Hughes and USDA WASDE files are keyless and run live here. USDA QuickStats uses a free key from P0-T010 (T0.10, P1-B019): built and tested against fixtures here, live in P1-T073
-- Depends on (this phase): P1-T024
+- Depends on (this phase): P1-T024, P1-T078 (`mt-connectors` base)
+- Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (EIA, USDA NASS, CFTC COT clients in `mt-connectors`)
 
 ## Requirements
 
@@ -56,7 +57,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 ## ToDo
 
-- [ ] Implement four adapters and their schedules hooks (P1-T053)
+- [ ] Implement four provider modules in `mt-connectors` (`providers::{eia,usda,cftc_cot,baker_hughes}`) and their job definitions for P1-T053
 - [ ] Write the tests listed under Verification
 - [ ] Update the docs listed under Doc sync and tick the roadmap ToDo box(es)
 
@@ -64,12 +65,12 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 
 ### Tests
 
-- Unit: COT as-of vs release date mapping; WASDE table parser
+- `cargo test -p mt-connectors commodities`: COT as-of vs release date mapping; WASDE table parser
 - Integration: fixtures → macro tables; pit query before release returns the previous week
 
 ### Scenarios
 
-- Given a US federal holiday delays COT, when the flow runs on Friday, then it retries Monday and `event_time` is the actual release time
+- Given a US federal holiday delays COT, when the job runs on Friday, then it retries Monday and `event_time` is the actual release time
 
 ### Stress / failure injection
 
@@ -78,7 +79,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 ## Acceptance criteria
 
 - [ ] COT, Baker Hughes and WASDE loaded live with history and on schedule; EIA proven on fixtures (live in P1-T073); QuickStats proven on fixtures (live in P1-T073); COT pit test passes
-- [ ] CI green (ruff, mypy, `uv run pytest`, `pit` bypass check, gitleaks)
+- [ ] CI green (`cargo clippy`, `cargo test`, `pit` bypass check, gitleaks)
 
 ## Exceptions & edge cases
 
@@ -107,3 +108,4 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (keyless build, EIA live in P1-T073; USDA QuickStats key gap P1-B019)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays a Python Prefect flow; services supabase-postgres)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (Python Prefect flow → four Rust provider modules in `mt-connectors`, scheduled by `mt-scheduler` (P1-T053); deps +P1-T078; tools cargo; services drop prefect-server)
