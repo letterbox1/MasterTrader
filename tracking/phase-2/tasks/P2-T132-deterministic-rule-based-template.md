@@ -15,7 +15,7 @@ requirements: [R2.48, R2.02]
 roadmap_todos: [T2.31]
 modules: [M0]
 dashboards: [D03]
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/03-build-spec.md, docs/14-strategy-evidence-and-validation.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -55,7 +55,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 
 ## ToDo
 
-- [ ] Implement `packages/mt_strategy/templates/rule_based.py` + rule DSL schema
+- [ ] Implement `crates/mt-engine/src/strategy/templates/rule_based.rs` on `mt-signals` and `mt_risk::sizing::helpers`, + rule DSL schema (in `mt-core`)
 - [ ] Port the first MTB rule set as an example strategy
 - [ ] Template tests (screener, truth, paper smoke via part A engine)
 - [ ] Docs
@@ -63,7 +63,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_strategy/templates -k rule_based`.
+- Commands: `cargo test -p mt-engine rule_based`, `cargo clippy -p mt-engine`.
 - Template test: example manifest validates, backtests on screener and truth, results equal on a fixture where both apply.
 - Unit: DSL schema rejects unknown signals and missing stops.
 
@@ -77,7 +77,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 
 - [ ] Template registered with evidence/priority display fields
 - [ ] Example MTB strategy runs in all three modes available in P2
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-engine`, `pit` check
 
 ## Exceptions & edge cases
 
@@ -108,3 +108,4 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (template slot and base-class deps explicit)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (rule-based template is a Rust template in `crates/mt-engine/src/strategy/templates/`; same template tests; tools [uv] → [cargo])

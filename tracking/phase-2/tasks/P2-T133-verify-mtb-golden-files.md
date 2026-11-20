@@ -15,7 +15,7 @@ requirements: [R2.48]
 roadmap_todos: [T2.67]
 modules: [M0]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -50,7 +50,7 @@ Proof that the shared libraries reproduce MasterTradingBot exactly: every provid
 - Golden sets cover at least: one EMA rule, one scalper trigger, one ATR-stop rule, across ≥ 2 asset classes (e.g. gold and an FX pair) and ≥ 6 months each.
 - Match criteria: signals and trade entry/exit timestamps identical; indicator values ≤ 1e-8 abs diff; sizes identical after lot rounding.
 - Any mismatch is triaged as library bug vs MT5 convention (documented) — never by loosening tolerance.
-- Golden job runs on every PR touching `mt_strategy/lib` and nightly.
+- Golden job runs on every PR touching `crates/mt-signals` or `crates/mt-risk/src/sizing` and nightly.
 
 ## ToDo
 
@@ -62,7 +62,7 @@ Proof that the shared libraries reproduce MasterTradingBot exactly: every provid
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_strategy -k golden`.
+- Commands: `cargo test -p mt-signals --test golden`, `cargo test -p mt-risk --test mtb_golden`, `cargo test -p mt-engine rule_based_golden`.
 - Golden suite (P2-T130 harness) over all provided sets.
 
 ### Scenarios
@@ -106,3 +106,4 @@ Proof that the shared libraries reproduce MasterTradingBot exactly: every provid
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (depends on the USER golden inputs (P2-T002))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line; USER dep P2-T002 kept (your MasterTradingBot files))
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (golden harness runs against the Rust crates (`mt-signals`, `mt-risk`, `mt-engine`); same golden sets and mutation check; tools [uv] → [cargo])

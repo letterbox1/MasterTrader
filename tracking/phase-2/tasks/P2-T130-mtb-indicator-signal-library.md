@@ -15,7 +15,7 @@ requirements: [R2.48]
 roadmap_todos: [T2.31]
 modules: [M0]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/03-build-spec.md, d
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers and the MasterTradingBot rule primitives) in `mt_strategy.lib.signals`, plus a golden-file harness that replays MasterTradingBot's historical inputs and compares outputs exactly.
+A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers and the MasterTradingBot rule primitives) in the Rust crate `crates/mt-signals` ([14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration): shared libraries are Rust crates), plus a golden-file harness that replays MasterTradingBot's historical inputs and compares outputs exactly.
 
 ## Context & references
 
@@ -56,8 +56,8 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 
 ## ToDo
 
-- [ ] Create `packages/mt_strategy/lib/signals.py` and streaming state classes
-- [ ] Golden-file loader + comparator (`mt_strategy.testing.golden`) with tolerance 0 for signals and ≤ 1e-8 for indicator values
+- [ ] Create `crates/mt-signals/src/lib.rs` (pure functions) and streaming state structs
+- [ ] Golden-file loader + comparator (`mt_signals::testing::golden`) with tolerance 0 for signals and ≤ 1e-8 for indicator values
 - [ ] Implement primitives from the T2.04 rule descriptions
 - [ ] Unit tests vs TA-Lib for overlapping indicators while golden files are pending
 - [ ] Doc conventions
@@ -65,10 +65,10 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_strategy/lib -k signals`.
+- Commands: `cargo test -p mt-signals`, `cargo clippy -p mt-signals`.
 - Unit: EMA/ATR equal TA-Lib on fixtures (where conventions match).
 - Golden: harness runs whatever golden sets exist; CI fails on any mismatch.
-- Property: streaming == batch for random inputs (hypothesis).
+- Property: streaming == batch for random inputs (proptest, same property as the earlier Hypothesis plan).
 
 ### Scenarios
 - Given MT5 broker-time bars (UTC+2/+3), when converted, then daily boundaries match the fixed UTC cut documented for porting.
@@ -79,10 +79,10 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 
 ## Acceptance criteria
 
-- [ ] Library is pure (import-linter rule forbids I/O modules)
+- [ ] Library is pure: the crate has no I/O dependencies (a `cargo deny` ban list forbids `tokio`, `std::fs`/`std::net` use is denied by a clippy `disallowed-methods` config)
 - [ ] Golden harness in CI
 - [ ] Conventions documented
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-signals`
 
 ## Exceptions & edge cases
 
@@ -113,3 +113,4 @@ A pure-function, I/O-free indicator/signal library (EMA, ATR, scalper triggers a
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; golden inputs from P2-T002 are checked in P2-T133)
 - 2026-10-22 00:00 · coordinator · depends on P0-T014 (code lives in the uv monorepo; dependency gating)
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_strategy.lib.signals` (Python) → `crates/mt-signals` (Rust, 14 §8); import-linter purity rule → `cargo deny` + clippy disallowed-methods; Hypothesis → proptest; same golden tolerances; tools [uv] → [cargo])

@@ -188,7 +188,7 @@ Configurable per bot and per event type.
 | Calibration | ECE ≤ 0.05 |
 | Determinism | Flip rate ≤ 0.1% |
 | Shadow period before promotion | ≥ 14 days in shadow (scored, never acting) and meeting the thresholds above |
-| ONNX parity (a Python-trained model served from Rust) | Max absolute difference ≤ 1e-4 on logits, ≤ 1e-3 on probabilities, over the fixture set; otherwise the model keeps running in `mt_research` | `config/models/parity.yaml` (P4-T072/T073) |
+| ONNX parity (a Python-trained model served from Rust) | Max absolute difference ≤ 1e-4 on logits, ≤ 1e-3 on probabilities, over the fixture set; otherwise the model keeps running in `mt_research` (`config/models/parity.yaml`, P4-T072/T073) |
 | LLM spend | Monthly cap US$40. Daily per-role budgets: debate $1.00, strategy-gen $0.50, explain $0.30, memory $0.30, chat $0.40, shadow $0.30. Over budget → local model fallback |
 
 ### 2.11 WORM integrity

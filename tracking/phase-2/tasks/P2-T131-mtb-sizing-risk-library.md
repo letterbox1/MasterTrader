@@ -15,7 +15,7 @@ requirements: [R2.48]
 roadmap_todos: [T2.31]
 modules: [M0, M11]
 dashboards: []
-tools: [uv]
+tools: [cargo]
 mcp: []
 env: []
 services: []
@@ -25,7 +25,7 @@ doc_sync: [docs/14-strategy-evidence-and-validation.md, docs/roadmap/phase-2-str
 doc_sync_status: n/a
 found_in: ""
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-20
 started: ""
 completed: ""
 blocked_reason: ""
@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A pure sizing/risk helper library in `mt_strategy.lib.sizing` (vol targeting, stop-distance units, per-asset caps, correlation buckets) that MasterTradingBot-derived strategies use to propose sizes, while M11 remains the authority that checks and can cut them.
+A pure sizing/risk helper module in the `mt-risk` crate (`mt_risk::sizing::helpers`; [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration): sizing/risk rules go in `mt-risk`) (vol targeting, stop-distance units, per-asset caps, correlation buckets) that MasterTradingBot-derived strategies use to propose sizes, while M11 remains the authority that checks and can cut them.
 
 ## Context & references
 
@@ -55,14 +55,14 @@ A pure sizing/risk helper library in `mt_strategy.lib.sizing` (vol targeting, st
 
 ## ToDo
 
-- [ ] Implement `packages/mt_strategy/lib/sizing.py`
+- [ ] Implement `crates/mt-risk/src/sizing/helpers.rs` (pure functions, `rust_decimal`)
 - [ ] Golden + unit tests
 - [ ] Doc how M11 interacts (proposal vs enforcement)
 
 ## Verification
 
 ### Tests
-- Commands: `uv run pytest packages/mt_strategy/lib -k sizing`.
+- Commands: `cargo test -p mt-risk sizing_helpers`, `cargo clippy -p mt-risk`.
 - Unit: stop-distance formula on worked examples; rounding never exceeds caps.
 - Golden: MTB historical sizes reproduced (when T2.04 data present).
 
@@ -76,7 +76,7 @@ A pure sizing/risk helper library in `mt_strategy.lib.sizing` (vol targeting, st
 
 - [ ] Formulas match 14 §4
 - [ ] Never rounds past caps
-- [ ] CI green (lint, types, tests, `pit` check)
+- [ ] CI green: `cargo clippy -- -D warnings`, `cargo test -p mt-risk` (incl. the `mt-risk` golden suite)
 
 ## Exceptions & edge cases
 
@@ -105,3 +105,4 @@ A pure sizing/risk helper library in `mt_strategy.lib.sizing` (vol targeting, st
 - 2026-10-21 00:00 · planner · created
 - 2026-10-22 00:00 · aligner · updated for docs/16–17 (run fields; integration with M11 sizing (P2-T013))
 - 2026-11-19 00:00 · aligner · re-platformed per docs/18 (stays Python (uv); `pit` via the `mt_store` binding of `mt-store`; Supabase Postgres; commands line)
+- 2026-11-20 00:00 · aligner · Rust-max per 17 §H (`mt_strategy.lib.sizing` (Python) → `mt_risk::sizing::helpers` (Rust, 14 §8); same tests under `cargo`; tools [uv] → [cargo])
