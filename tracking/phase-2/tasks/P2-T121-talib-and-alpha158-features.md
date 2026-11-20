@@ -42,7 +42,7 @@ The core market feature library: TA-Lib indicators and the Qlib Alpha158 factor 
 ## Context & references
 
 - Roadmap: [R2.46](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.29
-- [03 M6 market and factor features](../../../docs/03-build-spec.md#m6-features--mt_features) · licences in [01](../../../docs/01-repo-vetting-report.md) (Qlib MIT; Vibe-Trading MIT bundles Qlib factors under Apache-2.0 — keep NOTICE; TA-Lib BSD)
+- [03 M6 market and factor features](../../../docs/03-build-spec.md#m6-features) · licences in [01](../../../docs/01-repo-vetting-report.md) (Qlib MIT; Vibe-Trading MIT bundles Qlib factors under Apache-2.0 — keep NOTICE; TA-Lib BSD)
 - Vibe-Trading factor zoo is optional/out of P2 scope; tracked for later
 
 ## Requirements

@@ -136,7 +136,7 @@ pgvector, pg_trgm, pgcrypto, pg_cron, pgTAP, and pg_partman if available (U). **
 
 | Was (TimescaleDB) | Now |
 |---|---|
-| Hypertables | Native range partitioning by month on `market.bar_*`; partitions created ahead by pg_partman where available, otherwise by an `mt-store` partition job scheduled with pg_cron (U: check pg_partman on the target Postgres 17) |
+| Hypertables | Native range partitioning by month on `market.bar_*`; partitions created ahead by pg_partman where available, otherwise by an `mt-store` partition job run by `mt-scheduler`, with a pg_cron SQL backstop that creates next month's partitions if the job hasn't (U: check pg_partman on the target Postgres 17) |
 | 1s bars + continuous aggregates 1m, 5m, 15m, 1h, 4h, 1D, 1W | `mt-recorder` writes 1s bars and every standard size directly as it builds bars from ticks. Backfills and corrections re-run a rollup job that rebuilds the affected higher sizes from 1m (idempotent, upsert by key) |
 | `time_bucket` for other sizes | `date_bin()` at read time, inside `pit(as_of)` |
 | Native compression | Raw ticks and L2 already live in the Parquet catalog. Bars older than `db.bars_hot_months` (16 §2.15) are exported to Parquet and dropped from Postgres partitions; `pit(as_of)` reads both transparently. Defaults: 1s bars stay in Postgres for `db.bars_1s_hot_days` (90 days) and then live only in Parquet; 1m and larger stay in Postgres for good on the workstation, 24 months of 1m bars in the cloud |

@@ -185,7 +185,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **Wallet floats, signer caps and gas budgets** are seeded by the agent from [16 §2.7](16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13); mainnet signing stays disabled until you confirm them (C3). **USER:** prove control of each address by signing a challenge in your own wallet app.
 - [ ] **Wallet-indexer + unified wallet view** (D18) extending `ops.wallets`, internal-transfer tagging into the journal, approval/nonce/depeg monitors (depeg: alert + task until the P6 treasury exists). Kill switch sweep of hot trading balances to the vault (default on).
 - [ ] **M4 additions:** corroboration score, EV gate, burner-first + one identity wallet per chain, campaign record, project dossier, blacklist, wallet-cluster detection, disposal rule ([08](08-airdrops-and-token-launches.md#additions-from-the-cryptotrader-review-see-11-13)).
-- [ ] **M19 task queue:** canonical task types ([03 M19](03-build-spec.md#m19-user-task-queue--community-curation--mt_curation)), extending the P3 `curation.task` table; Telegram Done/Skip/Snooze/Details/Never; daily and weekly digests. Airdrop disposal is a USER task until Phase 7.
+- [ ] **M19 task queue:** canonical task types ([03 M19](03-build-spec.md#m19-user-task-queue--community-curation)), extending the P3 `curation.task` table; Telegram Done/Skip/Snooze/Details/Never; daily and weekly digests. Airdrop disposal is a USER task until Phase 7.
 - [ ] **M19 community curation:** Discord servers + announcement channels to follow, Telegram channels, Galxe spaces.
 - [ ] **M4 discovery:** DefiLlama tokenless protocols, CryptoRank, CoinGecko, DexScreener, Galxe (read-only), Snapshot/forums, Discord inbox.
 - [ ] **M4 risk scoring:**
@@ -204,7 +204,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 **Demo:** a weekly digest of vetted airdrops/launches with step-by-step tasks; eligible claims executed automatically from the identity wallet with simulation proof; scams rejected with reasons.
 
 ## Phase 6 — AI decision layer, memory & anomalies (weeks 24–28)
-- [ ] **M8 decision graph** (`mt-agents`, Rust on `rig-core`: explicit state-machine graph, Postgres checkpoints): the TradingAgents-style debate rebuilt in Rust, with the FinRobot-style valuation desk (deterministic DCF/WACC/comps, LLM only for narrative) and a macro/events analyst; structured `Signal` ([03 M8](03-build-spec.md#m8-ai-decision-layer--mt_agents) fields).
+- [ ] **M8 decision graph** (`mt-agents`, Rust on `rig-core`: explicit state-machine graph, Postgres checkpoints): the TradingAgents-style debate rebuilt in Rust, with the FinRobot-style valuation desk (deterministic DCF/WACC/comps, LLM only for narrative) and a macro/events analyst; structured `Signal` ([03 M8](03-build-spec.md#m8-ai-decision-layer) fields).
 - [ ] **M9 memory:**
   - **Hindsight** self-hosted (slim, our Postgres schema, TEI embeddings/rerank, LLM via gateway);
   - memory banks;
@@ -229,7 +229,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 - [ ] **Evaluation and cost:** evaluate on post-training-cutoff data; monthly LLM cap + per-role daily budgets with local fallback ([16 §2.10](16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)) and spend panel; `audit.llm_call` (live since P0) extended with the prompt registry and training cutoff.
 - [ ] **M14 scenario & crowd simulator** (`mt-crowdsim`, clean-room Rust, [18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)): persona crowds turn an event into simulated shocks; the **scenario twin**, a second paper engine, runs the same bots under them during the paper period (weekly report per bot), and the scenarios join the pre-live stress tests. It never trades, and its synthetic data never reaches features, training or RAG ([16 §2.14b](16-configuration-and-safety-model.md#214b-scenario--crowd-simulator-m14)).
 - [ ] **Optional:** Hummingbot MM sidecar (run unmodified, driven by the Rust `mt-mm-adapter`).
-- [ ] **M22 hold-and-earn + treasury** with the on-chain cost gate ([13 §4–7](13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury)); automated depeg reduction; HLP cap.
+- [ ] **M22 hold-and-earn + treasury** with the on-chain cost gate ([13 §4–7](13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury)); automated depeg reduction; HLP cap.
 - [ ] **Optional M23 social drafts** (approval → web intent; nothing auto-posts).
 - [ ] **Decision-model operating rules:** 5% shadow checks, labels endpoint + D10 labelling queue tab, per-question thresholds, monthly fine-tune ([10 §4.3](10-memory-rag-and-models.md#43-design)).
 
@@ -259,7 +259,7 @@ Full scope: [roadmap phase 0](roadmap/phase-0-foundations.md).
 Phase 7 closes once micro-live is stable. The **12-month keep/kill review** is a recurring calendar review (a scheduled task), not a phase item.
 
 ## Phase 8 — MCP control plane (last; only if you want it)
-- [ ] **`mt-mcp` adapter (Rust, `rmcp`) over `mt-api`:** read & analyse, talk to agents, trade & adjust positions, strategies, risk, curation. See [build spec M20](03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted).
+- [ ] **`mt-mcp` adapter (Rust, `rmcp`) over `mt-api`:** read & analyse, talk to agents, trade & adjust positions, strategies, risk, curation. See [build spec M20](03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted).
 - [ ] **Safeguards** ([16 §2.12](16-configuration-and-safety-model.md#212-mcp-phase-8)):
   - every MCP order creates your approval card (TTL default 5 min); MCP can never approve anything;
   - loosening risk is C3 (Telegram + TOTP), never a token scope;

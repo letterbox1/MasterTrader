@@ -42,7 +42,7 @@ Every connector shares one base: streaming connectors in `mt-recorder` (Rust) im
 ## Context & references
 
 - Roadmap: requirements [R1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.08](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.09](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.20](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) · [03 §1](../../../docs/03-build-spec.md#1-ground-rules) (free only, quota tracker per connector) · [03 §9](../../../docs/03-build-spec.md#9-future-proof-hygiene) (source tags `license`, `cost`) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) · [03 §1](../../../docs/03-build-spec.md#1-ground-rules) (free only, quota tracker per connector) · [03 §9](../../../docs/03-build-spec.md#9-future-proof-hygiene) (source tags `license`, `cost`) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
 - Source list and licences: [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1), [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list)
 - UI: [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Feeds tab shows licence/cost tags; acceptance 2 ("a paid feed can't be enabled")
 - Depends on (this phase): P1-T004

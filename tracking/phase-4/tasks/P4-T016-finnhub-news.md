@@ -42,7 +42,7 @@ The Finnhub client in the Rust `mt-connectors` crate ([18 §2.1](../../../docs/1
 ## Context & references
 
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Risk 'Free-API terms change'
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
 - Related: P4-T005 (terms, your USER task), P4-T067 (live check with your key), P4-T037 (Finnhub IPO/earnings calendar).
 
 ## Requirements

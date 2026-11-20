@@ -42,8 +42,8 @@ The Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.m
 ## Context & references
 
 - Roadmap: [R4.01, R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDos [T4.20, T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
-- Events: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
+- Events: [03 M3](../../../docs/03-build-spec.md#m3-global-events)
 - Related: P4-T034 (conflict events consume the GDELT events stream), P4-T040 (tone into sentiment).
 
 ## Requirements

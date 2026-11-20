@@ -42,7 +42,7 @@ A versioned `Signal` schema in the `mt-core` crate (serde; exposed to Python thr
 ## Context & references
 
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.20
-- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M8 owns `audit.decision_run`, `audit.signal`; publishes `sig.agent.*`) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (`sig.{source}.{strategy}`) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (agents' only output is a structured Signal)
+- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M8 owns `audit.decision_run`, `audit.signal`; publishes `sig.agent.*`) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (`sig.{source}.{strategy}`) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (agents' only output is a structured Signal)
 - UI fields: [D09](../../../docs/ui/dashboards/D09-agents.md) (direction, conviction, horizon, provenance count, risk outcome) · [ui components](../../../docs/ui/components.md) `ProvenanceList`
 - WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · tests [15 §2.4](../../../docs/15-bots-hitl-and-worm-audit.md#24-tests-part-of-every-phase-that-adds-a-worm-table)
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B014: `Signal` fields defined in 03 M8)

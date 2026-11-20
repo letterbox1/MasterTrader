@@ -42,7 +42,7 @@ A `mt_lab_core::costs::CostModel` (Rust, `crates/mt-lab-core/src/costs/`) built 
 ## Context & references
 
 - Roadmap: [R2.40–R2.42](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (`market.spread_*`, `audit.cost_event`, `cost.{venue}.{symbol}`) · [14 §4 costs](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (re-measured monthly) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (no fixed-bps slippage for illiquid assets)
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (`market.spread_*`, `audit.cost_event`, `cost.{venue}.{symbol}`) · [14 §4 costs](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) (re-measured monthly) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) (no fixed-bps slippage for illiquid assets)
 - Cross-phase (`depends_on`): P1 cost service (T1.28): fees/tiers (P1-T038), funding/swap (P1-T039), spreads by hour-of-week (P1-T040). Realised TCA comes from P2-T029 (T2.26) for the monthly refresh (not a precondition for the first snapshot).
 - D04 'Cost model' field and Costs tab: [D04](../../../docs/ui/dashboards/D04-research-lab.md)
 

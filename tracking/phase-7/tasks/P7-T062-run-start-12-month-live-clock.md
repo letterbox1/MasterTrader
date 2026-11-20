@@ -48,7 +48,7 @@ The 12-month live review clock is started per sleeve at its first live funding, 
 ## Requirements
 
 - `risk.capital_step` row with `live_started_at` per sleeve (already written at funding) is the clock start.
-- Prefect schedules: monthly interim 12-month report; day-365 reminder task (`curation.task` type `REVIEW_12M`) with Telegram notification.
+- `mt-scheduler` jobs: monthly interim 12-month report; day-365 reminder task (`curation.task` type `REVIEW_12M`) with Telegram notification.
 - This item is done when the clock and schedules exist; completion of the review is out of phase scope (see P7-B012).
 
 ## ToDo

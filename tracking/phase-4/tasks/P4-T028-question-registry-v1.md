@@ -42,7 +42,7 @@ The Rust `mt-models` crate ([18 §2.1](../../../docs/18-platform-and-deployment.
 ## Context & references
 
 - Roadmap: [R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.28](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (typed, versioned questions; ~320-token state budget; binary/low-option only) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (typed, versioned questions; ~320-token state budget; binary/low-option only) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - Architecture: [02 §4 M21 row](../../../docs/02-v1-architecture.md#4-logical-components) (`models.registry`, `models.question`, `audit.tierb_decision`)
 - Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P4-B006): all 13 schemas incl. `models` and `rag` are created in P0 (P0-T024); this task only adds tables. Cross-phase `depends_on`: P0-T024 (schemas), P0-T029/P0-T030 (WORM triggers and hash chain for `audit.tierb_decision`).
 - UI: [D10 Decision questions](../../../docs/ui/dashboards/D10-models-memory.md) (full UI in P6).

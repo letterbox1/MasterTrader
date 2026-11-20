@@ -41,12 +41,12 @@ A ToDo owns the enrichment connector and the encrypted, purge-on-exit cache
 
 ## Context & references
 
-- Found in: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) lists CoinGecko Demo + DefiLlama enrichment; T1.63 tests "CoinGecko rows deleted after 24 h"; [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) also requires the cache to be **encrypted** and **deleted on exit**, which no mechanism describes
+- Found in: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) lists CoinGecko Demo + DefiLlama enrichment; T1.63 tests "CoinGecko rows deleted after 24 h"; [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) also requires the cache to be **encrypted** and **deleted on exit**, which no mechanism describes
 - Related items: P1-T008, P1-T029, P1-T059
 
 ## Requirements
 
-- **Where:** [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) lists CoinGecko Demo + DefiLlama enrichment; T1.63 tests "CoinGecko rows deleted after 24 h"; [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) also requires the cache to be **encrypted** and **deleted on exit**, which no mechanism describes
+- **Where:** [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) lists CoinGecko Demo + DefiLlama enrichment; T1.63 tests "CoinGecko rows deleted after 24 h"; [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) also requires the cache to be **encrypted** and **deleted on exit**, which no mechanism describes
 - **Expected:** A ToDo owns the enrichment connector and the encrypted, purge-on-exit cache
 - **Actual:** No ToDo; T1.63 would have nothing to test
 - **Suggested fix:** Add the connector to T1.26 or a new ToDo; describe the encryption (pgcrypto with a sops key) and shutdown purge in 12 §4/§5. P1-T029 implements this meanwhile

@@ -36,7 +36,7 @@ The docs acknowledge an interim P4 labelling mode (D08 Label mode, P4-T048) and 
 
 ## Context & references
 
-- Found in: [T4.04](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) needs ~200 labels in P4 · [D10](../../../docs/ui/dashboards/D10-models-memory.md) labelling queue is P6 · [02 §7.2](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) has no `models.label.add`
+- Found in: [T4.04](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) needs ~200 labels in P4 · [D10](../../../docs/ui/dashboards/D10-models-memory.md) labelling queue is P6 · [02 §7.2](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) has no `models.label.add`
 - Related: P4-T048, P4-T049.
 
 ## Requirements

@@ -42,7 +42,7 @@ You own the only login on the workstation stack: a strong password and a TOTP fa
 ## Context & references
 
 - [Roadmap P0 T0.12](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
-- [18 §4.6 auth](../../../docs/18-platform-and-deployment.md#46-auth) · [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt_api)
+- [18 §4.6 auth](../../../docs/18-platform-and-deployment.md#46-auth) · [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt-api)
 - [ui §3.6 sessions](../../../docs/ui/README.md#36-permissions--sessions)
 - Implementation: P0-T033 (`mtctl auth create-owner`), P0-T050 (screens)
 - Depends on: P0-T050 (brings in P0-T033 and P0-T070)

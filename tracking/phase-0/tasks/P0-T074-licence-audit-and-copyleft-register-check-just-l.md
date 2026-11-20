@@ -4,7 +4,7 @@ kind: task
 title: Licence audit and copyleft register check (just licence-audit)
 phase: 0
 type: BUILD
-status: ready
+status: backlog
 priority: medium
 size: S
 severity: ""

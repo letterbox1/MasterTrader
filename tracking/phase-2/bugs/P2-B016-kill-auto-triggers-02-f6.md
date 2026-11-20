@@ -42,7 +42,7 @@ The automatic kill triggers are listed the same way everywhere.
 ## Context & references
 
 - [02 F6 step 1](../../../docs/02-v1-architecture.md#8-end-to-end-flows): "an automatic breach (daily loss, system drawdown stage 2, DQ, error rate, cost blow-out)".
-- [03 M11 kill switch](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp): automatic only on system drawdown stage 2 and unexplained reconciliation mismatches; smaller breaches act narrowly (daily loss halts the sleeve, API errors pause the venue, cost blow-out pauses the bot) per 16 §2.1.
+- [03 M11 kill switch](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp): automatic only on system drawdown stage 2 and unexplained reconciliation mismatches; smaller breaches act narrowly (daily loss halts the sleeve, API errors pause the venue, cost blow-out pauses the bot) per 16 §2.1.
 - Affects P2-T031.
 
 ## Requirements

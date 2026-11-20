@@ -43,7 +43,7 @@ review_result: ""
 
 - [Roadmap P0 R0.08](../../../docs/roadmap/phase-0-foundations.md#3-requirements) · [T0.24](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
 - [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-api` row) · [18 §4.5 access rules](../../../docs/18-platform-and-deployment.md#45-access-rules) (the browser reads only through `mt-api`)
-- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt_api)
+- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt-api)
 - [02 §9.3 degraded modes](../../../docs/02-v1-architecture.md#93-degraded-modes) (mt-api / Postgres down)
 - [D16 System](../../../docs/ui/dashboards/D16-system.md) (acceptance 1: read-only on outage)
 - Depends on: P0-T018 (tracing layer), P0-T024 (DB roles, `mt-store` pools)

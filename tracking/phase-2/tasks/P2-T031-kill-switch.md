@@ -42,9 +42,9 @@ A global and per-sleeve kill switch lives in NATS KV `kill`; it can be set from 
 ## Context & references
 
 - Roadmap: [R2.18, R2.N1](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.23
-- Flow: [02 F6 kill & dead-man](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · Spec: [03 M11 kill switch](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)
+- Flow: [02 F6 kill & dead-man](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · Spec: [03 M11 kill switch](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp)
 - SLO: [02 §9.2 kill → all cancels < 1 s](../../../docs/02-v1-architecture.md#92-observability--slos) · [mob §4 /kill within 1 s](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria)
-- Decisions: [17 §B P2-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (kill actions; no sweep in P2) · [17 §D P2-B012](../../../docs/17-decisions-register.md#d-other-decisions) (Telegram NATS credentials limited to `kill.set`; the engine writes the WORM kill event with source `telegram`) · [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) (`on_system_failure` per bot, default `flatten`) · triggers per [03 M11 kill switch](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp).
+- Decisions: [17 §B P2-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (kill actions; no sweep in P2) · [17 §D P2-B012](../../../docs/17-decisions-register.md#d-other-decisions) (Telegram NATS credentials limited to `kill.set`; the engine writes the WORM kill event with source `telegram`) · [16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) (`on_system_failure` per bot, default `flatten`) · triggers per [03 M11 kill switch](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp).
 - Cross-phase (`depends_on`): kill confirmation level (single confirm, never blocked) in the P0 confirmation engine (P0-T035); NATS accounts/streams (P1-T004).
 - Related: P2-T035 Telegram `/kill` NATS path, P2-T054 drill, P2-T018 ladder rung 6; P5 R5.07 adds the hot-wallet sweep.
 

@@ -42,7 +42,7 @@ With your keys loaded, reconciliation runs against every practice/testnet venue 
 ## Context & references
 
 - Roadmap: requirement [R1.12](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.67](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets) (split from T1.29)
-- Defaults: [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation) (60 s / 5 min / EOD; positions exact, balances within 0.01% or dust; unexplained after 24 h halts everything) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) reconciliation
+- Defaults: [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation) (60 s / 5 min / EOD; positions exact, balances within 0.01% or dust; unexplained after 24 h halts everything) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) reconciliation
 - Keys: [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys) · [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B008 (practice/paper accounts use normal credentials; read-only keys where offered)
 - IBKR: only when you use it; then P1-T070's `ib-gateway` must be up with `IBKR_PAPER_USERNAME`/`IBKR_PAPER_PASSWORD` in the sops file (not listed in `env` because IBKR is optional)
 - Cross-phase prerequisite: P0-T009 (the accounts)

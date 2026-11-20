@@ -42,7 +42,7 @@ The P2 IC evaluator produces an IC / rank-IC / decay report for every new P4 fea
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.64](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M6 evaluator](../../../docs/03-build-spec.md#m6-features--mt_features)
+- Spec: [03 M6 evaluator](../../../docs/03-build-spec.md#m6-features)
 - Cross-phase: P2-T123 (R2.46 IC evaluator) is a `depends_on` entry.
 
 ## Requirements

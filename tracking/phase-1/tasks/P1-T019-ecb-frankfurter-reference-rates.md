@@ -42,7 +42,7 @@ A self-hosted Frankfurter container serves ECB euro reference rates internally, 
 ## Context & references
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (ECB reference rates + self-hosted Frankfurter) · [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1) (Frankfurter, MIT)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (ECB reference rates + self-hosted Frankfurter) · [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1) (Frankfurter, MIT)
 - Depends on (this phase): P1-T005, P1-T007, P1-T078 (`mt-connectors` base)
 
 ## Requirements

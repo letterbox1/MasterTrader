@@ -42,7 +42,7 @@ One command (`models.bakeoff.run`, C1) evaluates every contender — own Qwen-Lo
 ## Context & references
 
 - Roadmap: [R6.12](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.25
-- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (contenders, data, metrics, promotion only via gates) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (contenders, data, metrics, promotion only via gates) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Bake-off tab (`/models/benchmarks`)
 - Exit: [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 3
 - Kev: included only if P6-T068 cleared it ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P6-B003)

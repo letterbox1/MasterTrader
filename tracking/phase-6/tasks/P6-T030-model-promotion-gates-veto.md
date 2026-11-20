@@ -42,7 +42,7 @@ Models move candidate → shadow → production only through `models.promote` wi
 ## Context & references
 
 - Roadmap: [R6.14](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.12](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.27
-- Spec: [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) (promoted only through §8 gates, teacher in shadow) · [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (veto above calibrated threshold)
+- Spec: [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) (promoted only through §8 gates, teacher in shadow) · [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (veto above calibrated threshold)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Actions (promote C2/C3, rollback C1; promotion impossible without gates)
 - Roadmap risk: worst-fold promotion vs a frozen baseline
 - Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) ([17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) P6-B015)

@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.20
-- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) · [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–3 · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md) (TradingAgents v0.7.0 graph, Pydantic schemas, quick/deep tiers)
+- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) · [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–3 · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md) (TradingAgents v0.7.0 graph, Pydantic schemas, quick/deep tiers)
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) `/agents/runs/:id` stage timeline
 - Security: [07 §6](../../../docs/07-security-notes.md#6-application-controls), [02 §9.1](../../../docs/02-v1-architecture.md#91-security)
 - Cross-phase: P0-T042 (gateway roles, `audit.llm_call` writer), P0-T044 (`local-advisor` for keyless runs)

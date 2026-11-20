@@ -42,7 +42,7 @@ After each Signal's horizon an `mt-scheduler` job settles it (realised return, a
 ## Context & references
 
 - Roadmap: [R6.04](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.14](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.21
-- Spec: [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 3–4 · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory) (settlement + reflection, teacher logs into `decisions`) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (labels corrected against realised outcomes: forward returns / barrier hits) · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md) (TradingAgents 5-day settlement + reflection)
+- Spec: [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 3–4 · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag) (settlement + reflection, teacher logs into `decisions`) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (labels corrected against realised outcomes: forward returns / barrier hits) · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md) (TradingAgents 5-day settlement + reflection)
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) Settlement panel, Outcome scorecard
 - Depends on (this phase): P6-T007, P6-T012
 

@@ -181,7 +181,7 @@ Raw ticks, quotes and L2 live in the **Parquet catalog**.
 
 Module headings keep their original package names so existing links still work. The **Package** line under each heading is current: Rust crates in `crates/`, Python packages in `packages/` ([18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary)).
 
-### M0 Strategy framework — `mt_strategy` (strategy-agnostic, any timeframe)
+### M0 Strategy framework (strategy-agnostic, any timeframe)
 
 **Package:** **Rust by default**: built-in templates in `crates/mt-engine/src/strategy/`, your own strategies in `strategies/<name>/` (a Rust crate + manifest). The registry, lifecycle and bots live in `crates/mt-api`; the manifest and parameter schemas in `crates/mt-core`. Python strategies (Nautilus's Python strategy API, in `packages/mt_research`) are allowed only for ML-driven research on paper and are ported to Rust (ONNX inference via `ort`) before live [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -230,7 +230,7 @@ Module headings keep their original package names so existing links still work. 
   - A/B comparisons on identical data;
   - shadow mode (a live strategy runs in parallel paper mode for comparison).
 
-### M1 Market & macro data — `mt_data.market`
+### M1 Market & macro data
 
 **Package:** `crates/mt-recorder` (Rust) for streaming and bar building; `crates/mt-connectors` (Rust) for batch history, macro and fundamentals, run as `crates/mt-scheduler` jobs. The connectors replace OpenBB, fredapi, sdmx1, edgartools and yfinance; every client writes with provenance [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -281,7 +281,7 @@ Module headings keep their original package names so existing links still work. 
 
 **Storage budget:** about 0.3–1 TB/year for about 10 liquid crypto symbols at trades + L1 + L2 on that basis (U; re-measured in the Phase 1 soak).
 
-### M2 News & social — `mt_data.text`
+### M2 News & social
 
 **Package:** ingest-text: feed clients in Rust (RSS, Discord bot, Bluesky, Mastodon, Farcaster, GDELT; API news via `crates/mt-connectors`; streaming feeds in `crates/mt-feeds`), article extraction in `packages/mt_extract` (Python, trafilatura; crawl4ai container for JS pages), Telegram reading in `packages/mt_telegram_reader` (Python, Telethon; postures only). The nlp service is `crates/mt-nlp` (Rust: entity linking with GLiNER via ONNX (U), FinBERT via `ort`, embeddings and rerank via TEI over HTTP) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -315,7 +315,7 @@ See [06 §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-inge
 5. Local embeddings.
 6. Store in `document` (approximate timestamps are flagged).
 
-### M3 Global events — `mt_data.events`
+### M3 Global events
 
 **Package:** `crates/mt-events` (Rust pollers) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -329,7 +329,7 @@ See [06 §2](06-aggregators-and-market-providers.md#2-final-m2-social--news-inge
 
 **Event score:** severity × exposure × novelty.
 
-### M4 Airdrops, token launches & ICOs — `mt_airdrop`
+### M4 Airdrops, token launches & ICOs
 
 **Package:** `crates/mt-airdrop` (Rust: discovery, enrichment, scoring) + `crates/mt-airdrop-exec` (Rust policy service: mandated claims, simulation, revokes, sweeps). Signing only via `crates/mt-signer` [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -357,9 +357,9 @@ All signing goes through the signer, which accepts intents only from the policy 
 
 **Everything else**, including all social engagement and ICO/IDO participation, becomes a **user task** with step-by-step instructions.
 
-### M5 Calendars — `mt_data.calendar`
+### M5 Calendars
 
-**Package:** `crates/mt-connectors` (Rust calendar clients, run as `mt-scheduler` jobs). `exchange_calendars` is Python, so its session/holiday data is loaded as data files or a Rust calendar crate is used (U) [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
+**Package:** `crates/mt-connectors` (Rust calendar clients, run as `mt-scheduler` jobs). `exchange_calendars` is Python, so an `mt_research` offline job on `mt-scheduler` writes its session/holiday tables to Postgres, and the Rust services read those tables [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
 - **Sources:**
   - FRED/ALFRED release dates;
@@ -371,7 +371,7 @@ All signing goes through the signer, which accepts intents only from the policy 
 - **Strategy and risk uses:** strategies and the risk manager can query "event within N minutes", e.g. to pause scalpers around NFP.
 - **Default blackout:** for high-importance events, bots marked `event_sensitive` (scalping/intraday templates by default) block new entries from 15 min before to 15 min after; exits and protective orders continue. Configurable per bot and event type ([16 §2.8](16-configuration-and-safety-model.md#28-calendar-blackouts)).
 
-### M6 Features — `mt_features`
+### M6 Features
 
 **Package:** `crates/mt-features` (Rust: feature library and evaluator; incremental in the engine, batch via `mt-scheduler`). Feature exploration and forecast-model training run in `packages/mt_research` (Python); promoted features are rebuilt in Rust and promoted models run via ONNX (`ort`) [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -395,7 +395,7 @@ All signing goes through the signer, which accepts intents only from the policy 
 - **Forecast models:** Chronos / TimesFM / Kronos for volatility and volume (run in `mt_research`; ONNX in Rust where they export cleanly (U)).
 - **Versioning and evaluation:** features are versioned, and an evaluator measures IC, rank-IC and decay.
 
-### M7 Research lab — `mt_lab`
+### M7 Research lab
 
 **Package:** split in two [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates):
 - `crates/mt-lab-core` (Rust, production side): walk-forward and validation harness, **bias analysers**, **setup-odds simulator** (R2.59), cost models and gate reports; drives Nautilus Rust backtests. Python reaches it through a PyO3 binding.
@@ -420,7 +420,7 @@ Strategies are Rust by default (M0).
 - **Setup-odds simulator** (R2.59): replays bootstrapped continuations from the instrument's own recent bars plus past occurrences of the same setup, all through `pit(as_of)` (day-trader-skill idea, rebuilt in Rust). Informational only: never overrides M11.
 - **Sandboxed LLM strategy generation:** a Vibe-Trading-style research → strategy loop (in `mt-agents`) that emits **Rust** strategies against our templates; they are compiled and tested in the sandbox. No network, no secrets.
 
-### M8 AI decision layer — `mt_agents`
+### M8 AI decision layer
 
 **Package:** `crates/mt-agents` (Rust agent runtime on `rig-core` (MIT), replacing LangGraph): an explicit state-machine graph with Postgres checkpoints. All model calls go through the LiteLLM gateway [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -441,7 +441,7 @@ Strategies are Rust by default (M0).
 - **How strategies use it:** an *LLM-signal* strategy (M0) or any strategy can consume these signals as a feature.
 - **Versioning:** prompts and models are versioned and every call is audited (`audit.llm_call`, written from P0, M17).
 
-### M9 Memory & RAG — `mt_memory`
+### M9 Memory & RAG
 
 **Package:** `crates/mt-memory` (Rust: document RAG, the Hindsight HTTP client, the point-in-time filter, decision settlement). Hindsight itself runs unmodified as its own container [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -472,7 +472,7 @@ Full design: [10](10-memory-rag-and-models.md).
 
 **Decision settlement and reflection** go into Hindsight, and teacher logs go into `decisions` (feeding M21 distillation).
 
-### M10 Anomaly monitor — `mt_anomaly`
+### M10 Anomaly monitor
 
 **Package:** `crates/mt-anomaly` (Rust: streaming detectors; the explain agent runs on `mt-agents`) [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -483,7 +483,7 @@ Full design: [10](10-memory-rag-and-models.md).
   - correlation breaks.
 - **Explain agent:** writes a brief and sends it to Telegram. It also runs on request (`anomaly.explain`, C1, from the UI or MCP).
 
-### M11 Risk manager — `mt_risk` (built in; user inputs via UI/Telegram, later MCP)
+### M11 Risk manager (built in; user inputs via UI/Telegram, later MCP)
 
 **Package:** `crates/mt-risk` (Rust, **one implementation**): linked into `mt-api` (policy, previews), the engine (pre-trade checks; a PyO3 binding where the strategy or node is Python) and `crates/mt-deadman` (dead-man layer 2). Risk golden tests run against the crate [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -546,7 +546,7 @@ Full design: [10](10-memory-rag-and-models.md).
 
 **Trading bots:** a bot deploys one strategy version onto a market scope (single instrument, list or dynamic selection) with its own venue account, sleeve, mode and approval policy. You set each bot to **autonomous** or **HITL**; HITL bots send approval cards to Telegram; protective exits never wait for approval; autonomous needs C3 and auto-downgrades to HITL on decay/DQ/ladder events. Full design: [15 §1](15-bots-hitl-and-worm-audit.md#1-trading-bots).
 
-### M12 Execution — `mt_engine`
+### M12 Execution
 
 **Package:** `crates/mt-engine` (Rust). NautilusTrader **Rust live node** where the venue's Rust adapter is production-ready (U, per venue), otherwise the Python node with the same `mt-risk` binding. Custom adapters (Alpaca, OANDA, IG, cTrader) are written in Rust against Nautilus's adapter traits [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -572,7 +572,7 @@ Full design: [10](10-memory-rag-and-models.md).
 - **Hummingbot** with telemetry off and broker IDs stripped.
 - It's treated as a venue behind M11.
 
-### M14 Crowd simulation (optional)
+### M14 Scenario & crowd simulator (go-live tool)
 
 _Heading kept for links. M14 is now the **go-live scenario & crowd simulator**, not an optional experiment ([17 §H](17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20); supersedes P6-B009's "otherwise skip")._
 
@@ -588,7 +588,7 @@ _Heading kept for links. M14 is now the **go-live scenario & crowd simulator**, 
   - LLM calls use the local model by default, inside the LLM budget.
 - **Defaults** ([16 §2.14b](16-configuration-and-safety-model.md#214b-scenario--crowd-simulator-m14)): scenario twin on during the paper period and before live; 3 scenarios a week; 200 persona agents × 10 rounds; `local-advisor` route; shock caps price ±15%, volatility ×3, spread ×5, liquidity ÷5.
 
-### M15 UI & alerts — `mt_ui` (calls `mt_api`)
+### M15 UI & alerts (calls `mt-api`)
 
 **Package:** `apps/web` (React + TypeScript, `pnpm`) and `crates/mt-telegram-bot` (Rust, teloxide); both call `crates/mt-api` (Rust, axum). The old `mt_ui` package is retired [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -615,7 +615,7 @@ _Heading kept for links. M14 is now the **go-live scenario & crowd simulator**, 
   - task Done/Skip/Snooze;
   - `/kill` (published on NATS `kill.set` with credentials limited to that subject; the engine writes the WORM record with source `telegram`), `/status`, `/pnl`, `/pause <strategy>`.
 
-### M16 Live cost & data-quality monitor — `mt_monitor` (always on, autonomous)
+### M16 Live cost & data-quality monitor (always on, autonomous)
 
 **Package:** `crates/mt-monitor` (Rust) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -629,7 +629,7 @@ _Heading kept for links. M14 is now the **go-live scenario & crowd simulator**, 
 | Cross-source divergence | Mid-price difference in bps between two free sources (Binance vs Bybit/OKX/Coinbase; OANDA vs Dukascopy/IG); default alert at 25 bps crypto / 5 bps FX majors, configurable |
 | Clock skew | `recv_ts − exchange_ts` p99; chrony offset |
 | Book integrity | Venue checksums; periodic REST snapshot reconciliation |
-| Batch | Nightly validation of Parquet (Rust checks in `mt-monitor`, replacing Pandera) and drift reports (Evidently, Python-only, run as an `mt_research` job on `mt-scheduler` (U)) |
+| Batch | Nightly Parquet validation (Pandera) and drift reports (Evidently): Python-only, so they run as `mt_research` offline jobs on `mt-scheduler` ([18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)); the live checks stay Rust in `mt-monitor` |
 
 **Costs, always measured from free APIs:**
 - **Fees:**
@@ -656,7 +656,7 @@ _Heading kept for links. M14 is now the **go-live scenario & crowd simulator**, 
 - A mismatch matched to a known journal event within 24 h is explained; otherwise it's **unexplained**, which halts everything (a kill criterion).
 - Results go to `audit.recon` (WORM) and `recon.*`. All values are defaults ([16 §2.9](16-configuration-and-safety-model.md#29-reconciliation)).
 
-### M17 Observability & audit — `mt_obs`
+### M17 Observability & audit
 
 **Package:** `crates/mt-obs` (Rust: WORM writer, hash chain, daily seal, integrity response, tracing/metrics) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -695,7 +695,7 @@ These tables are WORM (append-only, hash-chained, sealed daily outside the DB) a
 
 **Backups** (per mode, [18 §4.7](18-platform-and-deployment.md#47-backups)): on the workstation, pgBackRest against the Supabase Postgres container + restic to an encrypted off-site target: continuous WAL archive, nightly incremental, weekly full. On Supabase cloud, its managed daily backups plus our nightly logical dump to restic. In every mode, a monthly automated restore test and a monthly immutable WORM export.
 
-### M18 Trading journal & tax — `mt_journal`
+### M18 Trading journal & tax
 
 **Package:** `crates/mt-journal` (Rust, `rust_decimal`; lot engine, tax rules, reports; tax golden tests against the crate). Exchange ledger/statement history via ccxt stays in `packages/mt_ledger_import` (Python), which hands normalised events to `mt-journal` [18 §2.2](18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required).
 
@@ -717,7 +717,7 @@ Full design: [09](09-journal-and-tax.md).
   - CARF reconciliation.
 - **Optional sidecars:** Rotki (on-chain decoding), TaxHacker (expense receipts, local LLM), Ghostfolio (portfolio view).
 
-### M19 User task queue & community curation — `mt_curation`
+### M19 User task queue & community curation
 
 **Package:** `crates/mt-curation` (Rust) [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
@@ -745,7 +745,7 @@ Full design: [09](09-journal-and-tax.md).
   - **weekly** curation and review digest.
 - **Telegram buttons:** Done / Skip / Snooze / Details / Never. Feedback tunes ranking, and tasks expire automatically.
 
-### M21 Decision One & model serving — `mt_models`
+### M21 Decision One & model serving
 
 **Package:** `crates/mt-models` (Rust runtime: tier A inference via ONNX/`ort` inside the engine, tier B client (SemIf readout via the vLLM server; own head via ONNX), model registry, question registry, labels). Training, calibration and distillation run in `packages/mt_research` (Python) as `mt-scheduler` jobs and export ONNX [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -785,7 +785,7 @@ Full design: [10 §4–5](10-memory-rag-and-models.md#4-decision-one-decision-mo
 - **Model registry in MLflow:** version, training data range, calibration, benchmark latency.
 - **Latency SLOs** per tier, monitored in M17.
 
-### M22 Wallets, treasury & hold-and-earn — `mt_treasury`
+### M22 Wallets, treasury & hold-and-earn
 
 **Package:** `crates/mt-treasury` (Rust: wallet-indexer, unified view, hold-and-earn) + `crates/mt-onchain` (cost gate) + `crates/mt-signer` [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 
@@ -809,11 +809,11 @@ Full design: [13](13-wallets-treasury-and-onchain.md).
   - exploit/oracle/TVL-drop, venue health, bridge policy.
 - **Treasury:** floats per sleeve, daily profit sweeps to the vault, stablecoin concentration caps, a 20–40% reserve.
 
-### M23 Social participation — `mt_social`
+### M23 Social participation
 
 **Package:** `crates/mt-social` (Rust) [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates).
 
-Full design: [13 §8](13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social).
+Full design: [13 §8](13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt-social).
 
 - **Drafts:**
   - written by a local model in your voice, grounded in real activity;
@@ -824,7 +824,7 @@ Full design: [13 §8](13-wallets-treasury-and-onchain.md#8-social-participation-
   - a **shill-burst posture** (mentions vs on-chain unique-buyer growth) as a dump-risk signal.
 - **Not built:** extra accounts, auto-posting, engagement pods, pay-to-post.
 
-### M20 MCP control plane — `mt_mcp` (built LAST, Phase 8, only if wanted)
+### M20 MCP control plane (built LAST, Phase 8, only if wanted)
 
 **Package:** `crates/mt-mcp` (Rust, official MCP SDK `rmcp`) [18 §2](18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary).
 

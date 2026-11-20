@@ -42,7 +42,7 @@ Every LLM call already lands in `audit.llm_call` from Phase 0 (the LiteLLM callb
 ## Context & references
 
 - Roadmap: [R6.03](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.31
-- Spec: [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) (every LLM call: model, prompt/response hash + text, tokens, cost, latency) · [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) (prompts/models versioned; `audit.llm_call` written from P0) · [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (audit from P0; P6 only extends it with the prompt registry and training cutoff)
+- Spec: [03 M17](../../../docs/03-build-spec.md#m17-observability--audit) (every LLM call: model, prompt/response hash + text, tokens, cost, latency) · [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) (prompts/models versioned; `audit.llm_call` written from P0) · [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (audit from P0; P6 only extends it with the prompt registry and training cutoff)
 - Decisions: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B010: `audit.llm_call` is written from P0 via the LiteLLM callback, not P6) · [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (canonical audit names) · [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B001: R6.03 now has ToDo T6.31)
 - WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - Cross-phase: P0-T042 (LiteLLM + callback writer), P0-T031 (`audit.llm_call` table, NATS buffer), P4-T028 (`models.registry`)

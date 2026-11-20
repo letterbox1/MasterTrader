@@ -43,7 +43,7 @@ A scenario suite (`crates/mt-mcp/tests/scenarios/mcp_e2e/`, `rmcp` client agains
 
 - Roadmap: [R8.03–R8.05, R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDos [T8.20, T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
-- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
+- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [15 §1](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [02 §8 flows](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Decisions: [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) · [17 §A P8-B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved)
 
 ## Requirements

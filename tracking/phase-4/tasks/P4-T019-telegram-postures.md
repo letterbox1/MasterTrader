@@ -44,7 +44,7 @@ Telegram messages are reduced, in memory, to regex-extracted contract addresses/
 - Roadmap: [R4.02, R4.03](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.21](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Policy: [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (allowed: regex-extracted addresses/tickers and counts → postures used by code/policy only; no Telegram-derived feature in a model input) · [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
 - UI: [D08 Additions](../../../docs/ui/dashboards/D08-intel.md) (Telegram shown as postures only)
-- Decisions: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B001: F3 split, F3b) and [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B002/B003: table `text.telegram_posture`, subject `posture.telegram.*`, consumers M4/M11 rules only) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [03 M2/M6](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Decisions: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B001: F3 split, F3b) and [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B002/B003: table `text.telegram_posture`, subject `posture.telegram.*`, consumers M4/M11 rules only) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [03 M2/M6](../../../docs/03-build-spec.md#m2-news--social)
 - Cross-phase: P5 R5.10 consumes postures for discovery.
 
 ## Requirements

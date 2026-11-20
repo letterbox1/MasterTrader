@@ -42,7 +42,7 @@ Provisioned Grafana dashboards show risk state, ladder rung, kill and dead-man s
 ## Context & references
 
 - Roadmap: [R2.N1, R2.34](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.42
-- SLOs: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [03 M16 TCA](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous)
+- SLOs: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [03 M16 TCA](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous)
 - Cross-phase (`depends_on`): Grafana provisioning + baseline alert rules (P0-T045, T0.46); one alert fan-out Grafana → webhook → `alert.*` → Telegram/ntfy/email (P1-T045, 17 §D P1-B007).
 
 ## Requirements

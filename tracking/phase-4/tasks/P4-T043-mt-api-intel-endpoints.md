@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R4.13](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.29](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- API: [02 §7](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [D08 backend contract](../../../docs/ui/dashboards/D08-intel.md)
+- API: [02 §7](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) · [D08 backend contract](../../../docs/ui/dashboards/D08-intel.md)
 - Cross-phase (`depends_on`): P0-T034 (R0.08 command bus, `audit.command`), P0-T036 (WS hub with `seq` gap detection).
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B002/B003): Telegram appears only as postures (`/intel/postures` reads `text.telegram_posture`; WS from `posture.telegram.*`). `models.label.add` and the label endpoints are added by P4-T062.
 

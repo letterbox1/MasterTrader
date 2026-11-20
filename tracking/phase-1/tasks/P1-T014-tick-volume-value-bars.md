@@ -42,7 +42,7 @@ Information-driven bars (every N trades, every V units, every X notional) are av
 ## Context & references
 
 - Roadmap: requirements [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.21](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Roadmap T1.21 ("tick/volume/value bar support") · [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) · UI [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) (`PriceChart` incl. tick/volume bars)
+- Roadmap T1.21 ("tick/volume/value bar support") · [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) · UI [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) (`PriceChart` incl. tick/volume bars)
 - Depends on (this phase): P1-T013, P1-T012
 
 ## Requirements

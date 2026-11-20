@@ -42,7 +42,7 @@ Automated tests prove that orders from strategies, bots, an agent-style signal s
 ## Context & references
 
 - Roadmap: [R2.10](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.60
-- Spec: [SPEC NN2](../../../SPEC.md#non-negotiable-requirements) · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)
+- Spec: [SPEC NN2](../../../SPEC.md#non-negotiable-requirements) · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp)
 - MCP is Phase 8; its adapter will reuse this test (MCP orders always create approval cards, 16 §2.3).
 - Decision: the Telegram bot's NATS credentials may publish only `kill.set` ([17 §D P2-B012](../../../docs/17-decisions-register.md#d-other-decisions)), asserted here.
 

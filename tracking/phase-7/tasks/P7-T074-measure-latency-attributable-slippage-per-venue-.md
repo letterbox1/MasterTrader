@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Platform: [18 §7](../../../docs/18-platform-and-deployment.md#7-latency-and-regions) (the four conditions for Mode 3) · defaults [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions) (`deploy.region_min_benefit_bps` 2 bps, `deploy.region_eval_trades` 200, `deploy.engine_regions: [syd]`)
-- Data: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) TCA (implementation shortfall, time-to-ack per venue)
+- Data: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) TCA (implementation shortfall, time-to-ack per venue)
 - Depends on: P7-T059 (micro-live windows produce the live fills). Regional engines themselves are out of scope for Phase 7; no task builds them.
 - Related: P7-T073 (runtime host and region), P7-T071 (host choice)
 

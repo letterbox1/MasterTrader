@@ -42,7 +42,7 @@ An `mt-connectors` job (Rust; replaces edgartools) pulls filing metadata from ED
 ## Context & references
 
 - Roadmap: requirements [R1.07](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Fundamentals: SEC EDGAR) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors`: SEC EDGAR submissions + XBRL `companyfacts` JSON) · [19 §3](../../../docs/19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime) (FinRobot's XBRL use rebuilt here; its valuation desk consumes these facts in P6) · [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) (EDGAR official JSON/Atom, declared User-Agent, ≤ 10 req/s)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (Fundamentals: SEC EDGAR) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors`: SEC EDGAR submissions + XBRL `companyfacts` JSON) · [19 §3](../../../docs/19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime) (FinRobot's XBRL use rebuilt here; its valuation desk consumes these facts in P6) · [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) (EDGAR official JSON/Atom, declared User-Agent, ≤ 10 req/s)
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T078 (`mt-connectors` base)
 
 ## Requirements

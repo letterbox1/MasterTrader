@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 70 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/5 |
+| 72 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/5 |
 
 Roadmap: [phase-4-intel.md](../../docs/roadmap/phase-4-intel.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -30,7 +30,7 @@ _None._
 |---|---|---|---|---|---|---|
 | [P4-T005](tasks/P4-T005-event-keys-and-terms.md) | Register free event-source keys and read news API terms | USER | high | S | user | — |
 
-## Backlog (70)
+## Backlog (72)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -40,13 +40,13 @@ _None._
 | [P4-T004](tasks/P4-T004-reddit-decision.md) | Confirm whether Reddit API access was granted | USER | low | XS | user | P0-T001 |
 | [P4-T006](tasks/P4-T006-telethon-discord-secrets.md) | Encrypt the Telethon session and store the Discord bot token | OPS | critical | S | agent | P0-T022 |
 | [P4-T007](tasks/P4-T007-rss-bridge-container.md) | Harden the RSS-Bridge sidecar (whitelist, auth, scrape network) | OPS | critical | S | agent | P0-T020, P0-T021, P0-T022 |
-| [P4-T008](tasks/P4-T008-intel-containers-networks.md) | Wire Phase 4 containers, networks and NATS accounts | OPS | high | M | agent | P0-T020, P0-T021, P1-T004 |
+| [P4-T008](tasks/P4-T008-intel-containers-networks.md) | Wire Phase 4 containers, networks and NATS accounts | OPS | high | M | agent | P0-T020, P0-T021, P1-T004, P1-T077 |
 | [P4-T009](tasks/P4-T009-semif-model-serving.md) | Serve Qwen3.5-4B for SemIf with pinned revisions | OPS | high | M | agent | P0-T005, P0-T020, P2-T046, P4-T028 |
-| [P4-T010](tasks/P4-T010-text-store-and-ingest-framework.md) | Build the mt_data.text store, source registry and ingest framework | BUILD | critical | L | agent | P0-T024, P0-T025, P0-T027, P1-T005, P1-T006, P1-T007, P1-T046 |
+| [P4-T010](tasks/P4-T010-text-store-and-ingest-framework.md) | Build the text store, source registry and mt-feeds ingest framework | BUILD | critical | L | agent | P0-T024, P0-T025, P0-T027, P1-T005, P1-T006, P1-T007, P1-T046, P1-T078 |
 | [P4-T011](tasks/P4-T011-rss-trafilatura-crawl4ai.md) | RSS/Atom ingestion with trafilatura and crawl4ai extraction | BUILD | critical | M | agent | P4-T010, P4-T008 |
 | [P4-T012](tasks/P4-T012-rss-bridge-client.md) | RSS-Bridge client and bridged-site configuration | BUILD | high | S | agent | P4-T010, P4-T007 |
 | [P4-T013](tasks/P4-T013-gdelt-connector.md) | GDELT news volume, tone and event feed connector | BUILD | high | M | agent | P4-T010 |
-| [P4-T014](tasks/P4-T014-edgar-filings-feed.md) | EDGAR filings feed connector (Atom/JSON, ≤ 10 req/s) | BUILD | high | M | agent | P4-T010, P1-T028, P1-T009 |
+| [P4-T014](tasks/P4-T014-edgar-filings-feed.md) | EDGAR filings feed connector (Atom/JSON, ≤ 10 req/s) | BUILD | high | M | agent | P4-T010, P1-T028, P1-T009, P1-T077 |
 | [P4-T015](tasks/P4-T015-central-bank-feeds.md) | Central-bank statements, minutes and speeches feeds | BUILD | high | S | agent | P4-T011 |
 | [P4-T016](tasks/P4-T016-finnhub-news.md) | Finnhub news connector (60 calls/min, terms-aware) | BUILD | medium | S | agent | P4-T010 |
 | [P4-T017](tasks/P4-T017-cryptopanic-news.md) | CryptoPanic free-tier news connector with attribution | BUILD | medium | S | agent | P4-T010 |
@@ -69,17 +69,17 @@ _None._
 | [P4-T034](tasks/P4-T034-events-conflict-sanctions.md) | Global events: ReliefWeb, UCDP, GDELT events, OpenSanctions and ACLED | BUILD | medium | M | agent | P4-T010, P4-T013 |
 | [P4-T035](tasks/P4-T035-exposure-map-event-score.md) | Exposure map and event score (severity × exposure × novelty) | BUILD | high | M | agent | P4-T033, P4-T034, P2-T120 |
 | [P4-T036](tasks/P4-T036-prediction-markets-readonly.md) | Polymarket and Kalshi read-only probability clients (lawful reach only) | BUILD | medium | S | agent | P4-T010, P2-T120 |
-| [P4-T037](tasks/P4-T037-calendar-sources.md) | Calendar sources: FRED/ALFRED releases, ForexFactory, central banks, COT/EIA/WASDE/Baker Hughes, earnings/IPOs, holidays | BUILD | critical | L | agent | P4-T010, P4-T014, P1-T024, P1-T026, P1-T009 |
+| [P4-T037](tasks/P4-T037-calendar-sources.md) | Calendar sources: FRED/ALFRED releases, ForexFactory, central banks, COT/EIA/WASDE/Baker Hughes, earnings/IPOs, holidays | BUILD | critical | L | agent | P4-T010, P4-T014, P1-T024, P1-T026, P1-T009, P1-T077 |
 | [P4-T038](tasks/P4-T038-blackout-api-m11.md) | Blackout query API ("event within N minutes") wired into M11 | BUILD | critical | M | agent | P4-T037, P2-T010, P2-T017, P2-T019, P2-T036 |
-| [P4-T039](tasks/P4-T039-positioning-macro-inputs.md) | Positioning, nowcast and macro inputs: Myfxbook, IG, OANDA books, nowcasts, Fed SEP, VIX, ZQ | BUILD | high | M | agent | P1-T005, P1-T024 |
+| [P4-T039](tasks/P4-T039-positioning-macro-inputs.md) | Positioning, nowcast and macro inputs: Myfxbook, IG, OANDA books, nowcasts, Fed SEP, VIX, ZQ | BUILD | high | M | agent | P1-T005, P1-T024, P1-T077, P1-T078 |
 | [P4-T040](tasks/P4-T040-sentiment-regime-per-market.md) | Sentiment and regime pipelines per market type plus the macro layer | BUILD | high | L | agent | P4-T027, P4-T039, P2-T120 |
 | [P4-T041](tasks/P4-T041-fedpath-vix-nowcast-features.md) | Fed-path from ZQ, VIX regime, nowcast, positioning and prediction-market features | BUILD | high | M | agent | P4-T039, P4-T036, P4-T037, P2-T120 |
-| [P4-T042](tasks/P4-T042-vol-forecast-models.md) | Volatility and volume forecasts with Chronos, TimesFM and Kronos | BUILD | medium | M | agent | P2-T120, P2-T046, P1-T013 |
+| [P4-T042](tasks/P4-T042-vol-forecast-models.md) | Volatility and volume forecasts with Chronos, TimesFM and Kronos | BUILD | medium | M | agent | P2-T120, P2-T046, P1-T013, P1-T077 |
 | [P4-T043](tasks/P4-T043-mt-api-intel-endpoints.md) | mt-api intel queries, commands and WebSocket topics | BUILD | high | M | agent | P4-T027, P4-T035, P4-T038, P4-T032, P4-T029, P4-T019, P0-T034, P0-T036 |
 | [P4-T044](tasks/P4-T044-d08-feed-detail-sources.md) | D08 Intel: Feed, Document detail and Sources tabs | BUILD | high | L | agent | P4-T043, P0-T049 |
 | [P4-T045](tasks/P4-T045-d08-events-calendar-sentiment.md) | D08 Intel: Events, Calendar (blackout markers) and Sentiment tabs | BUILD | high | M | agent | P4-T043, P4-T040 |
 | [P4-T046](tasks/P4-T046-tierb-chips-d01-d02.md) | Tier B chips on D01/D02 and calendar/event overlays on D02 charts | BUILD | medium | M | agent | P4-T043, P4-T029, P2-T142, P1-T050 |
-| [P4-T047](tasks/P4-T047-morning-brief.md) | Morning brief job on Telegram (and /brief) | BUILD | high | M | agent | P4-T043, P4-T035, P4-T038, P4-T040, P2-T035 |
+| [P4-T047](tasks/P4-T047-morning-brief.md) | Morning brief job on Telegram (and /brief) | BUILD | high | M | agent | P4-T043, P4-T035, P4-T038, P4-T040, P2-T035, P6-T074, P1-T077 |
 | [P4-T048](tasks/P4-T048-labelling-tool-threshold-calibration.md) | SemIf relevance-gate silver labels and threshold calibration (your labels optional) | BUILD | high | M | agent | P4-T062, P4-T030, P2-T046 |
 | [P4-T049](tasks/P4-T049-label-200-docs.md) | Optional - label ~200 sampled documents to refine the SemIf relevance gate | USER | low | S | user | P4-T062, P4-T030 |
 | [P4-T050](tasks/P4-T050-verify-telegram-text-gate.md) | Telegram-text gate test (never reaches FinBERT, tier B, RAG, agents or training) | VERIFY | critical | M | agent | P4-T019, P4-T025, P4-T027, P4-T029, P4-T030, P4-T032 |
@@ -93,7 +93,7 @@ _None._
 | [P4-T058](tasks/P4-T058-verify-stress-failure-injection.md) | Stress and failure injection for the intel pipeline | VERIFY | high | M | agent | P4-T057, P4-T019, P4-T018 |
 | [P4-T059](tasks/P4-T059-verify-d08-viewport-axe.md) | D08 and tier-B overlays: Playwright viewport matrix and axe | VERIFY | medium | S | agent | P4-T044, P4-T045, P4-T046, P4-T062, P4-T065 |
 | [P4-T060](tasks/P4-T060-run-two-weeks-briefs.md) | Run two weeks of morning briefs and tune sources by relevance hit-rate | RUN | high | M | agent | P4-T047, P4-T030, P4-T044, P4-T053, P4-T003 |
-| [P4-T061](tasks/P4-T061-phase-exit-demo.md) | Phase 4 exit demo | VERIFY | critical | S | agent | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071 |
+| [P4-T061](tasks/P4-T061-phase-exit-demo.md) | Phase 4 exit demo | VERIFY | critical | S | agent | P4-T050, P4-T051, P4-T052, P4-T053, P4-T054, P4-T055, P4-T056, P4-T057, P4-T058, P4-T059, P4-T060, P4-T063, P4-T064, P4-T065, P4-T066, P4-T067, P4-T068, P4-T069, P4-T071, P4-T072, P4-T073 |
 | [P4-T062](tasks/P4-T062-minimal-labelling-tool-d08-label-mode-and-models.md) | Minimal labelling tool (D08 Label mode) and models.label.add command | BUILD | high | M | agent | P4-T028, P4-T030, P4-T043, P4-T044 |
 | [P4-T063](tasks/P4-T063-regulatory-and-jurisdiction-watch-fetch-diff-and.md) | Regulatory and jurisdiction watch: fetch, diff and REG_CHANGE review tasks | BUILD | medium | M | agent | P4-T011, P4-T008, P3-T038, P3-T031, P1-T045 |
 | [P4-T064](tasks/P4-T064-venue-status-incident-and-proof-of-reserve-watch.md) | Venue status, incident and proof-of-reserve watch feeding venue health | BUILD | medium | S | agent | P4-T063, P1-T043 |
@@ -104,6 +104,8 @@ _None._
 | [P4-T069](tasks/P4-T069-stage-1-relevance-gate-latency-benchmark-p95-300.md) | Stage-1 relevance-gate latency benchmark (p95 300 ms GPU / 3 s CPU, off the order path) | VERIFY | high | S | agent | P4-T029, P4-T030, P4-T009 |
 | [P4-T070](tasks/P4-T070-congressional-disclosures.md) | Congressional trading disclosures connector (House Clerk PTRs) | BUILD | low | M | agent | P4-T010, P1-T009 |
 | [P4-T071](tasks/P4-T071-verify-congressional-disclosures.md) | Verify congressional disclosures: golden files, dates, no duplicates | VERIFY | low | S | agent | P4-T070 |
+| [P4-T072](tasks/P4-T072-onnx-export-and-rust-python-parity-for-finbert-a.md) | ONNX export and Rust/Python parity for FinBERT and the GLiNER entity model | VERIFY | high | M | agent | P4-T026, P4-T027 |
+| [P4-T073](tasks/P4-T073-onnx-export-and-rust-python-parity-for-the-chron.md) | ONNX export and Rust/Python parity for the Chronos, TimesFM and Kronos forecasters | VERIFY | medium | M | agent | P4-T042 |
 
 ## Done (0)
 

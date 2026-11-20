@@ -42,7 +42,7 @@ The default limits of [16 §2.1–§2.3](../../../docs/16-configuration-and-safe
 ## Context & references
 
 - Roadmap: [R2.14](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Spec: [14 §5 default hard limits](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [14 §4 per-trade risk, leverage](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M11 global limits](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)
+- Spec: [14 §5 default hard limits](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [14 §4 per-trade risk, leverage](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M11 global limits](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp)
 - Decisions: [17 §A P2-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (two-stage drawdowns) · [17 §C P2-B003](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (collar, deadlines, cost blow-out) · [16 §2.3 `risk.sleeve.restart` C3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl)
 - Related: P2-T048 (you review the prefilled defaults), P2-T069 (strictest-wins merge feeds the evaluators), P2-T070 (inline data age, decision deadline, integrity and egress checks), P2-T018 (ladder).
 

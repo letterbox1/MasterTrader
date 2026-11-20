@@ -42,7 +42,7 @@ A monthly model computes `net = rewards + MEV fees + commission − infra − op
 ## Context & references
 
 - Roadmap: [R6.23](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.28
-- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (formula, start only if positive, retire after two negative months, operations checklist; Solana validators: avoid)
+- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (formula, start only if positive, retire after two negative months, operations checklist; Solana validators: avoid)
 
 ## Requirements
 

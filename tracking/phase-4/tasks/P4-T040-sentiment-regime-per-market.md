@@ -42,9 +42,9 @@ The Rust `mt-features` crate ([18 §2.1](../../../docs/18-platform-and-deploymen
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M6 sentiment & regime](../../../docs/03-build-spec.md#m6-features--mt_features) (crypto adds Fear & Greed, funding, OI, liquidations, long/short ratios)
+- Spec: [03 M6 sentiment & regime](../../../docs/03-build-spec.md#m6-features) (crypto adds Fear & Greed, funding, OI, liquidations, long/short ratios)
 - Cross-phase: P2-T120 (R2.46 feature framework) is a `depends_on` entry; P1 funding/OI from crypto feeds are reused.
-- Decisions: Telegram postures are never M6 features ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P4-B003; [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features)); per-asset regime labels for validation are defined once in [16 §2.4.1](../../../docs/16-configuration-and-safety-model.md#241-regime-labels-for-per-regime-results).
+- Decisions: Telegram postures are never M6 features ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P4-B003; [03 M6](../../../docs/03-build-spec.md#m6-features)); per-asset regime labels for validation are defined once in [16 §2.4.1](../../../docs/16-configuration-and-safety-model.md#241-regime-labels-for-per-regime-results).
 - Verified by P4-T054 (IC report).
 
 ## Requirements

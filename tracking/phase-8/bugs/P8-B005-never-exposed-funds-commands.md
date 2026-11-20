@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)
+- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - Implementing tasks: P8-T004, P8-T023
 
 ## Requirements

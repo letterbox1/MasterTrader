@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.10, R2.16, R2.N1](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Spec: [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [SPEC NN2, NN3](../../../SPEC.md#non-negotiable-requirements) · SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos)
+- Spec: [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [SPEC NN2, NN3](../../../SPEC.md#non-negotiable-requirements) · SLO: [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos)
 - Flow: [02 F2 step 4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · NATS: [02 §6 `ord.intent.*` → `ord.risk.{decision}`](../../../docs/02-v1-architecture.md#6-messaging-nats)
 - Cross-phase (`depends_on`): `dq.status.*` + KV `feed_status` from the DQ monitor (P1-T030, R1.10); `cost.*` spreads by hour-of-week (P1-T040, R1.11).
 - Decisions/defaults: [16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown) (collar 2% / 0.5% / 1%, venue cap 25%) · [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) (spread > 3× normal → pause) · [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts) (blackouts) · [17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions) (client order ID `{bot}-{engine_epoch}-{seq}` + separate signal hash).

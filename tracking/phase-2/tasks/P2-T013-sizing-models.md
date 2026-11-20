@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.12](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Spec: [14 §4 sizing](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M11 sizing models](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)
+- Spec: [14 §4 sizing](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M11 sizing models](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp)
 - Related: the MasterTradingBot sizing library (P2-T131) must agree with these models (golden files).
 - Defaults: risk per trade 1% of sleeve equity [0.1–2%], Kelly quarter-Kelly ceiling ([16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)); every model parameter is an L4 setting with its 16 default.
 - Golden tests are mandatory for merge (R2.N2, P2-T051).

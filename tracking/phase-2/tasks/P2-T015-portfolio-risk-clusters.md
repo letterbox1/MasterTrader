@@ -42,7 +42,7 @@ The portfolio policy level works: exposure per correlated cluster (USD, crypto b
 ## Context & references
 
 - Roadmap: [R2.11](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Spec: [03 M11 portfolio level](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [D06 Exposure breakdown](../../../docs/ui/dashboards/D06-risk.md)
+- Spec: [03 M11 portfolio level](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [D06 Exposure breakdown](../../../docs/ui/dashboards/D06-risk.md)
 - Data: bars via `pit(as_of)` (P1). The D06 Stress tab is a placeholder in P2 (R2.57, P2-T043); the historical shock replay and `risk.stress.run` are built in P7 (R7.16, T7.27).
 - Defaults: cluster caps, concentration and the VaR confidence/horizon are L1 settings with documented defaults; venue concentration ≤ 25% of total equity is evaluated in P2-T012 ([16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)).
 

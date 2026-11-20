@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.40, R2.41, R2.01](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
-- Spec: [03 M7 truth path](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) (one class: backtest, sandbox/paper, live) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8)
+- Spec: [03 M7 truth path](../../../docs/03-build-spec.md#m7-research-lab) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) (one class: backtest, sandbox/paper, live) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8)
 - Part-A prerequisite: M0 base classes, manifest and templates (T2.20/T2.21 in part A (P2-T001–T099)); the M11 pre-trade checks (T2.22) run in-process in the engine so backtests see the same rejections as paper
 - D04 fields 'Fill model (Nautilus): L1/L2 replay, queue position, latency': [D04](../../../docs/ui/dashboards/D04-research-lab.md)
 

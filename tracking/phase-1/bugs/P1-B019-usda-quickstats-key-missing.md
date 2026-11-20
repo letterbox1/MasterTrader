@@ -41,7 +41,7 @@ The docs say whether USDA data is loaded keyless (WASDE report files only) or vi
 
 ## Context & references
 
-- Found in: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) ("USDA (WASDE/QuickStats)") vs [P0 roadmap T0.10](../../../docs/roadmap/phase-0-foundations.md) (free key list: FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic; no USDA)
+- Found in: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) ("USDA (WASDE/QuickStats)") vs [P0 roadmap T0.10](../../../docs/roadmap/phase-0-foundations.md) (free key list: FRED, EIA, Myfxbook, CoinGecko Demo, CryptoRank Sandbox, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic; no USDA)
 - Related requirement: [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo T1.24 · tasks P1-T026 (build), P1-T073 (live check)
 - Source list: [06 §3 Reports, nowcasts & forecasts](../../../docs/06-aggregators-and-market-providers.md#reports-nowcasts--forecasts-m6-features-m5-release-events) (USDA WASDE)
 

@@ -43,7 +43,7 @@ The `obs` services run digest-pinned and healthy: Prometheus (90-day retention) 
 
 - [Roadmap P0 R0.10](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [Roadmap P0 T0.41, T0.46](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
-- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs)
+- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit)
 - [02 §5.1 stores](../../../docs/02-v1-architecture.md#51-stores) (Loki/Prometheus retention)
 - [02 §3.1 networks](../../../docs/02-v1-architecture.md#31-networks) (obs network)
 - Depends on: P0-T020, P0-T021

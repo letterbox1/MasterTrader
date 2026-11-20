@@ -42,7 +42,7 @@ The optional modules of [16 §2.14a](../../../docs/16-configuration-and-safety-m
 ## Context & references
 
 - Roadmap: [R6.30](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.35](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.04
-- Spec: [03 M13](../../../docs/03-build-spec.md#m13-market-making-sidecar) · [03 M23](../../../docs/03-build-spec.md#m23-social-participation--mt_social) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory) (LightRAG optional) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) (market-making must beat HLP)
+- Spec: [03 M13](../../../docs/03-build-spec.md#m13-market-making-sidecar) · [03 M23](../../../docs/03-build-spec.md#m23-social-participation) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag) (LightRAG optional) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) (market-making must beat HLP)
 - Decisions: [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) (the crowd simulator is a go-live tool, not an optional module; supersedes P6-B009) · [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19) (configurable values are seeded, not asked)
 - Used by: P6-T046, P6-T047, P6-T048, P6-T051, P6-T072 (each checks its module flag); P6-T066 (cancels items whose module is still off at exit).
 

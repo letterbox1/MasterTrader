@@ -41,13 +41,13 @@ _None._
 | [P3-T006](tasks/P3-T006-journal-roles-and-column-keys.md) | Insert-only journal role and envelope-encryption keys (master key in sops, yearly data keys) | OPS | critical | S | agent | P3-T005, P0-T022, P0-T024 |
 | [P3-T007](tasks/P3-T007-column-encryption-prompt-exclusion.md) | pgcrypto column encryption and prompt exclusion for tax-sensitive fields | BUILD | high | M | agent | P3-T005, P3-T006, P0-T025, P0-T018 |
 | [P3-T008](tasks/P3-T008-journal-event-model-writer.md) | Journal event model, normaliser and idempotent append-only writer | BUILD | critical | M | agent | P3-T005, P0-T016 |
-| [P3-T009](tasks/P3-T009-journal-container-fava-sidecar.md) | journal container and Fava sidecar on the internal network | OPS | high | S | agent | P3-T008, P0-T020, P0-T021, P0-T023 |
-| [P3-T010](tasks/P3-T010-fx-service-rba-usd.md) | FX service core with RBA F11 AUD rates and USD cross | BUILD | critical | M | agent | P3-T005, P1-T020, P1-T019, P0-T027 |
-| [P3-T011](tasks/P3-T011-crypto-rates-three-currency-stamping.md) | Valuation service (16 §4.1 hierarchy) and three-currency stamping on every event | BUILD | critical | M | agent | P3-T008, P3-T010, P1-T012, P0-T027 |
+| [P3-T009](tasks/P3-T009-journal-container-fava-sidecar.md) | journal container and Fava sidecar on the internal network | OPS | high | S | agent | P3-T008, P0-T020, P0-T021, P0-T023, P1-T077 |
+| [P3-T010](tasks/P3-T010-fx-service-rba-usd.md) | FX service core with RBA F11 AUD rates and USD cross | BUILD | critical | M | agent | P3-T005, P1-T020, P1-T019, P0-T027, P1-T077 |
+| [P3-T011](tasks/P3-T011-crypto-rates-three-currency-stamping.md) | Valuation service (16 §4.1 hierarchy) and three-currency stamping on every event | BUILD | critical | M | agent | P3-T008, P3-T010, P1-T012, P0-T027, P1-T077 |
 | [P3-T012](tasks/P3-T012-account-wallet-registry-tags.md) | Account and wallet registry with investment and trading tags | BUILD | critical | M | agent | P3-T005, P0-T024, P0-T034, P0-T035 |
 | [P3-T013](tasks/P3-T013-ingest-nautilus-fills.md) | Ingestion adapter for Nautilus fills and positions | BUILD | critical | M | agent | P3-T008, P3-T011, P3-T012, P2-T021 |
-| [P3-T014](tasks/P3-T014-ingest-ccxt-ledgers.md) | Ingestion adapter for ccxt ledgers (funding, fees, transfers) | BUILD | critical | M | agent | P3-T008, P3-T011, P3-T012, P1-T006 |
-| [P3-T015](tasks/P3-T015-ingest-ibkr-flex.md) | Ingestion adapter for IBKR Flex statements | BUILD | high | M | agent | P3-T008, P3-T011, P3-T012 |
+| [P3-T014](tasks/P3-T014-ingest-ccxt-ledgers.md) | Ingestion adapter for ccxt ledgers (funding, fees, transfers) | BUILD | critical | M | agent | P3-T008, P3-T011, P3-T012, P1-T006, P1-T077 |
+| [P3-T015](tasks/P3-T015-ingest-ibkr-flex.md) | Ingestion adapter for IBKR Flex statements | BUILD | high | M | agent | P3-T008, P3-T011, P3-T012, P1-T077 |
 | [P3-T016](tasks/P3-T016-ingest-oanda-ig.md) | Ingestion adapters for OANDA transactions and IG statements | BUILD | high | M | agent | P3-T008, P3-T011, P3-T012 |
 | [P3-T017](tasks/P3-T017-ingest-onchain-stub.md) | On-chain event adapter stub and wallet-transfer contract | BUILD | medium | S | agent | P3-T008, P3-T011, P3-T012, P0-T016 |
 | [P3-T018](tasks/P3-T018-internal-transfer-matcher.md) | Internal-transfer matcher across own accounts and wallets | BUILD | critical | M | agent | P3-T008, P3-T012 |
@@ -59,14 +59,14 @@ _None._
 | [P3-T024](tasks/P3-T024-au2026-revenue-income-div775.md) | AU_2026 revenue, income and Div 775 forex computations | BUILD | high | M | agent | P3-T020, P3-T022 |
 | [P3-T025](tasks/P3-T025-regime-setting-dual-reporting.md) | Per-FY per-activity regime setting with dual investor and trader reporting | BUILD | critical | M | agent | P3-T023, P3-T024, P3-T038 |
 | [P3-T026](tasks/P3-T026-wash-sale-flags.md) | Wash-sale flags on loss disposals reacquired within the window | BUILD | high | S | agent | P3-T023 |
-| [P3-T027](tasks/P3-T027-payg-instalment-estimator.md) | PAYG instalment estimator (quarterly) | BUILD | critical | M | agent | P3-T025 |
+| [P3-T027](tasks/P3-T027-payg-instalment-estimator.md) | PAYG instalment estimator (quarterly) | BUILD | critical | M | agent | P3-T025, P1-T077 |
 | [P3-T028](tasks/P3-T028-mytax-worksheet-schedules.md) | myTax worksheet, CGT and income schedules with GST/BAS mode dormant | BUILD | high | M | agent | P3-T025, P3-T026 |
 | [P3-T029](tasks/P3-T029-au2027-reform-scaffold-flag.md) | AU_2027_REFORM plugin scaffold behind a feature flag | BUILD | high | M | agent | P3-T023, P1-T027 |
-| [P3-T030](tasks/P3-T030-snapshot-job-30-june-2027.md) | 30 June 2027 market-value snapshot job for every open lot | BUILD | critical | M | agent | P3-T011, P3-T019, P3-T009, P1-T012, P1-T020, P1-T021, P1-T023 |
+| [P3-T030](tasks/P3-T030-snapshot-job-30-june-2027.md) | 30 June 2027 market-value snapshot job for every open lot | BUILD | critical | M | agent | P3-T011, P3-T019, P3-T009, P1-T012, P1-T020, P1-T021, P1-T023, P1-T077 |
 | [P3-T031](tasks/P3-T031-residency-timeline-cgt-i1.md) | Residency timeline and CGT event I1 modelling | BUILD | high | M | agent | P3-T022, P3-T030, P3-T055 |
 | [P3-T032](tasks/P3-T032-plugins-ae-eg-cy-generic.md) | AE, EG, CY and GENERIC jurisdiction plugin stubs | BUILD | medium | M | agent | P3-T031 |
 | [P3-T033](tasks/P3-T033-egypt-crypto-hard-flag-m11.md) | Egypt crypto hard flag wired to the risk manager | BUILD | high | S | agent | P3-T031, P3-T055, P2-T016, P2-T017 |
-| [P3-T034](tasks/P3-T034-daily-reconciliation-journal-venues.md) | Daily reconciliation job between journal and venues | BUILD | critical | M | agent | P3-T013, P3-T014, P3-T018, P1-T041, P1-T042 |
+| [P3-T034](tasks/P3-T034-daily-reconciliation-journal-venues.md) | Daily reconciliation job between journal and venues | BUILD | critical | M | agent | P3-T013, P3-T014, P3-T018, P1-T041, P1-T042, P1-T077 |
 | [P3-T035](tasks/P3-T035-beancount-export.md) | Beancount v3 ledger export with lots for Fava | BUILD | high | M | agent | P3-T019, P3-T020, P3-T022 |
 | [P3-T036](tasks/P3-T036-accountant-pack-koinly-syla.md) | Accountant pack (CSV and PDF) and optional Koinly/Syla CSV | BUILD | medium | M | agent | P3-T028 |
 | [P3-T037](tasks/P3-T037-carf-reconciliation.md) | CARF reconciliation scaffold (venue-reported vs journal) | BUILD | low | S | agent | P3-T019, P3-T022 |
@@ -82,7 +82,7 @@ _None._
 | [P3-T047](tasks/P3-T047-verify-worm-journal-suite.md) | WORM test suite for journal tables | VERIFY | critical | S | agent | P3-T005, P3-T006, P3-T008, P0-T055, P0-T038 |
 | [P3-T048](tasks/P3-T048-verify-snapshot-dry-run.md) | Snapshot dry run on a test date | VERIFY | high | S | agent | P3-T029, P3-T030 |
 | [P3-T049](tasks/P3-T049-verify-beancount-balances-fava.md) | Beancount export balances and Fava opens it | VERIFY | medium | S | agent | P3-T035, P3-T009 |
-| [P3-T050](tasks/P3-T050-verify-prompt-audit.md) | Prompt audit proving no TFN or address reaches the LLM gateway | VERIFY | critical | S | agent | P3-T007, P3-T039, P0-T042 |
+| [P3-T050](tasks/P3-T050-verify-prompt-audit.md) | Prompt audit proving no TFN or address reaches the LLM gateway | VERIFY | critical | S | agent | P3-T007, P3-T039, P0-T042, P1-T077 |
 | [P3-T051](tasks/P3-T051-verify-e2e-scenarios-f9.md) | End-to-end scenarios for the tax flow F9 and D14/D15 | VERIFY | critical | M | agent | P3-T013, P3-T014, P3-T018, P3-T034, P3-T040, P3-T041, P3-T055, P3-T056, P2-T001 |
 | [P3-T052](tasks/P3-T052-verify-stress-failure-injection.md) | Stress and failure injection for ingestion and reconciliation | VERIFY | high | M | agent | P3-T013, P3-T014, P3-T015, P3-T016, P3-T011, P3-T034 |
 | [P3-T053](tasks/P3-T053-run-start-month-journalled-paper.md) | Start the one-month fully journalled and reconciled paper run | RUN | high | S | agent | P3-T013, P3-T014, P3-T034, P3-T009, P2-T180, P1-T002 |

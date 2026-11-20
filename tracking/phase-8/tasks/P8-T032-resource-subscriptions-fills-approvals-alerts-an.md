@@ -44,7 +44,7 @@ MCP clients can subscribe to server notifications for **fills, approvals and ale
 - Roadmap: [R8.08](../../../docs/roadmap/phase-8-mcp.md#3-requirements) ("optional legacy HTTP+SSE endpoint; server notifications via resource subscriptions") · ToDo [T8.24](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (transport + "server notifications via resource subscriptions (fills, approvals, alerts)") · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (256 KB cap, scopes)
-- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.3 WebSocket topics](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws) (`orders`, `risk.event`, `alert`, `system`) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp)
+- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.3 WebSocket topics](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws) (`orders`, `risk.event`, `alert`, `system`) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp)
 - Cross-phase (depends_on): P0-T036 (WebSocket hub with seq gap detection).
 - Related: P8-T003 (transports), P8-T006 (guard applies to notifications), P8-T007 (audit), P8-T030 (byte cap).
 

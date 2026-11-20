@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.24
-- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) stage 2 · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [research: decision models](../../../docs/research/decision-models-system-one.md) (HF + PEFT recipe; `MersivMedia/clef-finetune` CE + λ·Brier reference; TEI can't serve Qwen3 classification, issue #643)
+- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) stage 2 · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) · [research: decision models](../../../docs/research/decision-models-system-one.md) (HF + PEFT recipe; `MersivMedia/clef-finetune` CE + λ·Brier reference; TEI can't serve Qwen3 classification, issue #643)
 - Cross-phase: P2-T046 (MLflow artefact storage + registry stages); the CPU/GPU profile comes from P0-T005 (`models.gpu_profile: auto`, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions))
 - Depends on (this phase): P6-T020
 

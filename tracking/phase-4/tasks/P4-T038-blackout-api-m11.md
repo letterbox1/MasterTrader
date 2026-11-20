@@ -42,9 +42,9 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R4.10](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.26](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Exit criterion 2
-- Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar) · [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · UI [D06 Blackouts](../../../docs/ui/dashboards/D06-risk.md) · [D08 Calendar](../../../docs/ui/dashboards/D08-intel.md) (blackout windows match the risk manager's)
+- Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars) · [03 M11 pre-trade checks](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · UI [D06 Blackouts](../../../docs/ui/dashboards/D06-risk.md) · [D08 Calendar](../../../docs/ui/dashboards/D08-intel.md) (blackout windows match the risk manager's)
 - Cross-phase (`depends_on`): P2-T017 (R2.16 RiskGate blackout check), P2-T010 (R2.11 policy model), P2-T019 (C3 change control), P2-T036 (bot model, where `event_sensitive` lives).
-- Decision: [17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (P4-B004) → [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts), [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar), [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11).
+- Decision: [17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) (P4-B004) → [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts), [03 M5](../../../docs/03-build-spec.md#m5-calendars), [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11).
 
 ## Requirements
 

@@ -42,7 +42,7 @@ Versioned features in the Rust `mt-features` crate ([18 §2.1](../../../docs/18-
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M6 sentiment, positioning and macro features](../../../docs/03-build-spec.md#m6-features--mt_features) · [06 §3 Fed-path from ZQ](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
+- Spec: [03 M6 sentiment, positioning and macro features](../../../docs/03-build-spec.md#m6-features) · [06 §3 Fed-path from ZQ](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
 - Cross-phase: P2-T120 (feature registry) is a `depends_on` entry; P1 COT and BIS flows (P1-T025, P1-T026; Rust `mt-connectors` clients, `sdmx1` dropped) are reused. P4-T037 provides the FOMC meeting calendar.
 
 ## Requirements

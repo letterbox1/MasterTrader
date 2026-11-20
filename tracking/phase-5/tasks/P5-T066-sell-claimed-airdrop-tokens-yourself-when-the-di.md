@@ -42,9 +42,9 @@ Until live execution passes the Phase 7 gates, the disposal rule never sells any
 ## Context & references
 
 - Roadmap: [R5.17](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.09
-- [08 wallet discipline: disposal rule](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline) (default sell 50% on claim; before Phase 7 a USER task with the cost-gate numbers; from Phase 7 an order through M11) · [03 M4](../../../docs/03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop)
+- [08 wallet discipline: disposal rule](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline) (default sell 50% on claim; before Phase 7 a USER task with the cost-gate numbers; from Phase 7 an order through M11) · [03 M4](../../../docs/03-build-spec.md#m4-airdrops-token-launches--icos)
 - Decision P5-B010 ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)); disposal % default in [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) (set by you in P5-T007)
-- Task type `ONCHAIN_ACTION_MANUAL` ([03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation))
+- Task type `ONCHAIN_ACTION_MANUAL` ([03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation))
 - Depends on: P5-T045 (disposal flow creates the task), P5-T049 (D13), P5-T030 (Telegram task buttons incl. Details)
 
 ## Requirements

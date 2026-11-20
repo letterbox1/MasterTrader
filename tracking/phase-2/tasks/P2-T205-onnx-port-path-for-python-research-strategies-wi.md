@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A Python ML research strategy can leave paper only by being ported: its model is exported to ONNX from `mt_research`, its rules are rewritten as a Rust strategy that runs the model in-process through `mt-models` (`ort`), and a parity check proves the Rust port produces the same signals and orders as the Python original on recorded data before the Rust version may be promoted ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe)).
+A Python ML research strategy can leave paper only by being ported: its model is exported to ONNX from `mt_research`, its rules are rewritten as a Rust strategy that runs the model in-process through `mt-models` (`ort`), and a parity check proves the Rust port produces the same signals and orders as the Python original on recorded data before the Rust version may be promoted ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe)).
 
 ## Context & references
 

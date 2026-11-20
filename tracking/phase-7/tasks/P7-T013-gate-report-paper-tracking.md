@@ -42,7 +42,7 @@ The gate report includes a paper/HITL section per strategy version: elapsed peri
 ## Context & references
 
 - Roadmap: [R7.02, R7.01 · ToDo T7.20](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) item 5 (paper/HITL period, P&L and costs track the backtest) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) item 7 (≥ 8 weeks and ≥ 50 trades by default; P1 ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks; live within expected range) · [16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (realised-vs-modelled cost ratio)
+- Spec: [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) item 5 (paper/HITL period, P&L and costs track the backtest) · [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) item 7 (≥ 8 weeks and ≥ 50 trades by default; P1 ≥ 8 weeks; memecoin ≥ 300 trades; low-frequency ≥ 26 weeks; live within expected range) · [16 §2.4](../../../docs/16-configuration-and-safety-model.md#24-validation-gates-per-strategy-gate-profile) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (realised-vs-modelled cost ratio)
 - Cross-phase: P2-T029 (TCA and measured costs, `depends_on`); reads P2-T180 (paper clock) and P3-T053 (journalled paper run).
 - Related: P7-T012, P7-T015 (weekly review reuses these metrics), gap P7-B002 (resolved: 16 §2.4)
 

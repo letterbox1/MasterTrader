@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.44, R2.07](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDos T2.27 and **T2.37** (experimentation: sweeps + A/B on identical data; shadow mode is P2-T030)
-- [03 M7 optimisation](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [01 §3.3 hyperopt overfit warning](../../../docs/01-repo-vetting-report.md#33-freqtrade--reference-only)
+- [03 M7 optimisation](../../../docs/03-build-spec.md#m7-research-lab) · [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [01 §3.3 hyperopt overfit warning](../../../docs/01-repo-vetting-report.md#33-freqtrade--reference-only)
 - [D04 'Sweep space' and parameter-stability heatmap](../../../docs/ui/dashboards/D04-research-lab.md); parameter schemas from part A's templates (T2.21)
 
 ## Requirements

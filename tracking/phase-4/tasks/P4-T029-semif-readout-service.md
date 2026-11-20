@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.28](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (stage 1, determinism controls, outputs to NATS KV, veto only above calibrated threshold) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (stage 1, determinism controls, outputs to NATS KV, veto only above calibrated threshold) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - Flow: [02 F3 steps 5–7](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · degraded: [02 §9.3 GPU unavailable](../../../docs/02-v1-architecture.md#93-degraded-modes)
 - Research: [SemIf](../../../docs/research/decision-models-system-one.md) (0.81 balanced accuracy at 4B; prefix reuse flipped 5–6/777)
 - Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B010): decision path = prefix caching **off**, fixed batch; shared-prefix mode only for offline/backfill scoring, marked non-deterministic, never used for decisions or backtests. Stage-1 relevance gate latency p95 ≤ 300 ms GPU / ≤ 3 s CPU, queued, never on the order path ([R4.N2](../../../docs/roadmap/phase-4-intel.md#3-requirements), [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design), [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos)).

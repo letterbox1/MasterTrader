@@ -42,7 +42,7 @@ Macro series land point-in-time in `market.macro_series` / `market.macro_obs`: F
 ## Context & references
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (US Treasury, FRED/ALFRED vintages) · point-in-time rule [03 §4](../../../docs/03-build-spec.md#4-data-model-overview) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) NN1
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (US Treasury, FRED/ALFRED vintages) · point-in-time rule [03 §4](../../../docs/03-build-spec.md#4-data-model-overview) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) NN1
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): FRED/ALFRED is built keyless against recorded fixtures; the live load with your FRED key (P0-T010) runs in P1-T073. The Treasury feed is keyless and runs live here
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T078 (`mt-connectors` base)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors` FRED/ALFRED and US Treasury clients replace fredapi/OpenBB)

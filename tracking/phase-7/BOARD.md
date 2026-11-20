@@ -41,12 +41,12 @@ _None._
 | [P7-T007](tasks/P7-T007-live-trade-only-keys.md) | Create live trade-only, IP-locked, no-withdrawal keys per sub-account | USER | critical | S | user | P7-T006, P7-T065, P7-T071, P7-T072 |
 | [P7-T008](tasks/P7-T008-travel-rule-addresses.md) | Pre-register withdrawal addresses with proof of control (Travel Rule) | USER | high | XS | user | P7-T006, P3-T012 |
 | [P7-T009](tasks/P7-T009-ups-and-4g-failover.md) | Install the UPS and 4G failover for the host and router | USER | high | S | user | P0-T012 |
-| [P7-T010](tasks/P7-T010-pro-advice-register.md) | Professional-advice register linked to venue-registry blocks | BUILD | high | S | agent | P0-T025, P2-T016, P3-T038 |
+| [P7-T010](tasks/P7-T010-pro-advice-register.md) | Professional-advice register linked to venue-registry blocks | BUILD | high | S | agent | P0-T025, P2-T016, P3-T038, P1-T077 |
 | [P7-T011](tasks/P7-T011-go-live-preflight.md) | Go-live preflight: entry-criteria checker and runbook drill log | BUILD | critical | M | agent | P7-T010, P2-T033, P1-T071 |
 | [P7-T012](tasks/P7-T012-gate-report-core.md) | Gate report: evaluation core for all §8 gates and harness extensions | BUILD | critical | M | agent | P2-T114, P2-T110, P2-T108 |
-| [P7-T013](tasks/P7-T013-gate-report-paper-tracking.md) | Gate report: paper/HITL tracking section and period clock | BUILD | critical | M | agent | P7-T012, P2-T029 |
-| [P7-T014](tasks/P7-T014-gate-report-render-and-store.md) | Gate report: rendering, WORM storage, API and D03 Gates tab | BUILD | high | S | agent | P7-T012, P7-T013, P2-T143 |
-| [P7-T015](tasks/P7-T015-weekly-review-pack.md) | Weekly review pack generator | BUILD | high | M | agent | P7-T013, P2-T150, P3-T034 |
+| [P7-T013](tasks/P7-T013-gate-report-paper-tracking.md) | Gate report: paper/HITL tracking section and period clock | BUILD | critical | M | agent | P7-T012, P2-T029, P1-T077 |
+| [P7-T014](tasks/P7-T014-gate-report-render-and-store.md) | Gate report: rendering, WORM storage, API and D03 Gates tab | BUILD | high | S | agent | P7-T012, P7-T013, P2-T143, P1-T077 |
+| [P7-T015](tasks/P7-T015-weekly-review-pack.md) | Weekly review pack generator | BUILD | high | M | agent | P7-T013, P2-T150, P3-T034, P6-T075, P6-T080 |
 | [P7-T016](tasks/P7-T016-weekly-review-signoff.md) | Weekly review sign-off in the journal (D14 Reviews tab) | BUILD | high | S | agent | P7-T015 |
 | [P7-T017](tasks/P7-T017-backtest-reference-distributions.md) | Backtest reference distributions for live decay and kill checks | BUILD | high | S | agent | P7-T012 |
 | [P7-T018](tasks/P7-T018-capital-step-state-machine.md) | Capital-step state machine and clean-week evaluator | BUILD | critical | M | agent | P7-T017, P2-T010 |
@@ -73,7 +73,7 @@ _None._
 | [P7-T039](tasks/P7-T039-approvals-polish.md) | Approvals polish: ≤ 3-tap approve, hold-to-confirm, batching, Telegram cards | BUILD | high | M | agent | P2-T149, P2-T039 |
 | [P7-T040](tasks/P7-T040-pwa-install-and-offline.md) | PWA install prompts, offline banner and multi-channel Kill | BUILD | medium | S | agent | P0-T050 |
 | [P7-T041](tasks/P7-T041-telegram-mini-app.md) | Telegram Mini App for Cockpit, Approvals and Tasks (optional) | BUILD | low | M | agent | P7-T039 |
-| [P7-T042](tasks/P7-T042-twelve-month-review-report.md) | Recurring 12-month review: yearly review task and keep/retire report | BUILD | medium | S | agent | P7-T018 |
+| [P7-T042](tasks/P7-T042-twelve-month-review-report.md) | Recurring 12-month review: yearly review task and keep/retire report | BUILD | medium | S | agent | P7-T018, P1-T077 |
 | [P7-T043](tasks/P7-T043-live-trading-runbooks.md) | Live-trading runbooks for Phase 7 incidents | DOC | high | S | agent | P7-T022, P7-T027, P7-T033, P7-T035, P7-T066, P2-T068 |
 | [P7-T044](tasks/P7-T044-drill-kill-baddata-serverdown.md) | Drill runbooks: kill, bad data, server down with open positions | VERIFY | critical | M | agent | P7-T043, P7-T011 |
 | [P7-T045](tasks/P7-T045-drill-keys-leaked-wallet-drained.md) | Drill runbooks: keys leaked and wallet drained | VERIFY | critical | S | agent | P7-T043, P7-T011 |
@@ -98,8 +98,8 @@ _None._
 | [P7-T065](tasks/P7-T065-provision-the-sydney-egress-exit-node-vm-with-a-.md) | Provision the Sydney egress exit-node VM with a static IP | USER | critical | S | user | — |
 | [P7-T066](tasks/P7-T066-exit-node-tunnel-for-broadband-and-4g-with-the-e.md) | Exit-node tunnel for broadband and 4G with the egress check on the static IP | OPS | critical | M | agent | P7-T065, P7-T009, P1-T071 |
 | [P7-T067](tasks/P7-T067-phase-7-api-surface-and-d06-live-and-d03-go-live.md) | Phase 7 API surface and D06 Live and D03 Go-live views | BUILD | high | M | agent | P7-T011, P7-T014, P7-T016, P7-T019, P7-T020, P7-T022 |
-| [P7-T068](tasks/P7-T068-d06-stress-tab-and-risk-stress-run-historical-sh.md) | D06 Stress tab and risk.stress.run historical shock replay | BUILD | high | L | agent | P2-T043, P2-T015, P2-T103 |
-| [P7-T069](tasks/P7-T069-stress-replay-of-the-four-historical-shocks-befo.md) | Stress replay of the four historical shocks before the first funding | VERIFY | critical | S | agent | P7-T068, P7-T014 |
+| [P7-T068](tasks/P7-T068-d06-stress-tab-and-risk-stress-run-historical-sh.md) | D06 Stress tab and risk.stress.run: historical shock replay plus simulated mt-crowdsim scenarios | BUILD | high | L | agent | P2-T043, P2-T015, P2-T103 |
+| [P7-T069](tasks/P7-T069-stress-replay-of-the-four-historical-shocks-befo.md) | Stress replay of the four historical shocks plus simulated scenarios before the first funding | VERIFY | critical | S | agent | P7-T068, P7-T014, P6-T075, P6-T050 |
 | [P7-T070](tasks/P7-T070-approve-the-go-live-pack-risk-values-ceilings-sl.md) | Approve the go-live pack: risk values, ceilings, sleeves and manifests | USER | critical | S | user | P7-T011, P2-T048, P2-T049, P2-T050, P2-T066, P1-T001, P1-T066 |
 | [P7-T071](tasks/P7-T071-choose-the-go-live-runtime-host-and-cloud-option.md) | Choose the go-live runtime host and cloud options (default: stay on the workstation) | USER | high | XS | user | — |
 | [P7-T072](tasks/P7-T072-move-the-age-identities-onto-a-yubikey-before-li.md) | Move the age identities onto a YubiKey before live money | USER | high | XS | user | — |

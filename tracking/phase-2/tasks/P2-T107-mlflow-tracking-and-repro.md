@@ -42,7 +42,7 @@ Every lab run (screener, truth, validation, sweep trial, generator, tier-A train
 ## Context & references
 
 - Roadmap: [R2.44](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
-- Spec: [03 M7 optimisation/MLflow](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [D04 Reproduce tab + acceptance 4](../../../docs/ui/dashboards/D04-research-lab.md)
+- Spec: [03 M7 optimisation/MLflow](../../../docs/03-build-spec.md#m7-research-lab) · [D04 Reproduce tab + acceptance 4](../../../docs/ui/dashboards/D04-research-lab.md)
 - MLflow server from P0 (P0-T020, T0.41); artefact storage + registry stages from P2-T046 (T2.41)
 
 ## Requirements

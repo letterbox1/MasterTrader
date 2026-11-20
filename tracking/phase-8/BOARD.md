@@ -40,7 +40,7 @@ _None._
 | [P8-T006](tasks/P8-T006-mcp-response-guard.md) | MCP response guard in mt-api: provenance filter, PII redaction, secret scrub and untrusted-text wrapping | BUILD | critical | M | agent | P8-T002, P0-T025, P4-T019, P4-T025 |
 | [P8-T007](tasks/P8-T007-mcp-call-audit.md) | MCP call audit: `audit.command` source=mcp and WORM `audit.mcp_call` for every call | BUILD | critical | M | agent | P8-T002, P0-T029, P0-T030, P0-T031, P0-T037, P0-T046 |
 | [P8-T008](tasks/P8-T008-tools-read-analyse.md) | Read & analyse tool group | BUILD | high | M | agent | P8-T003, P8-T004, P8-T006, P8-T007, P2-T020, P2-T036, P2-T117, P4-T043 |
-| [P8-T009](tasks/P8-T009-tools-agents.md) | Talk-to-agents tool group (M8 analysis, M9 memory, M10 `anomaly.explain`) | BUILD | high | M | agent | P8-T003, P8-T004, P8-T006, P8-T007, P6-T007, P6-T012, P6-T015, P4-T032, P0-T042 |
+| [P8-T009](tasks/P8-T009-tools-agents.md) | Talk-to-agents tool group (M8 analysis, M9 memory, M10 `anomaly.explain`) | BUILD | high | M | agent | P8-T003, P8-T004, P8-T006, P8-T007, P6-T074, P6-T007, P6-T012, P6-T015, P4-T032, P0-T042 |
 | [P8-T010](tasks/P8-T010-tools-trade-adjust.md) | Trade & adjust tool group | BUILD | critical | M | agent | P8-T003, P8-T004, P8-T005, P8-T006, P8-T007, P2-T021, P2-T023, P2-T031 |
 | [P8-T011](tasks/P8-T011-tools-strategies-bots.md) | Strategies & bots tool group | BUILD | high | M | agent | P8-T003, P8-T004, P8-T005, P8-T006, P8-T007, P2-T006, P2-T036, P2-T037, P2-T117 |
 | [P8-T012](tasks/P8-T012-tools-risk.md) | Risk tool group: view, tighten instantly (L0 included), kill on; loosening only as C3 out of band | BUILD | critical | S | agent | P8-T003, P8-T004, P8-T005, P8-T007, P2-T011, P2-T020, P2-T031, P2-T043 |

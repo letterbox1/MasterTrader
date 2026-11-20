@@ -37,12 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A nightly (and optional intraday hourly) batch produces realised-volatility and volume forecasts per instrument from pinned Chronos (Bolt small), TimesFM and Kronos checkpoints running locally on CPU/GPU as `mt-scheduler` jobs (ONNX through `ort` in `mt-models` where a model exports cleanly, else the Python `mt_research` runner writing through the `mt_store` binding; (U) per model, [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features), [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required); export parity in P4-T073), stored as versioned PIT features with model revision, for the IC evaluator and strategies.
+A nightly (and optional intraday hourly) batch produces realised-volatility and volume forecasts per instrument from pinned Chronos (Bolt small), TimesFM and Kronos checkpoints running locally on CPU/GPU as `mt-scheduler` jobs (ONNX through `ort` in `mt-models` where a model exports cleanly, else the Python `mt_research` runner writing through the `mt_store` binding; (U) per model, [03 M6](../../../docs/03-build-spec.md#m6-features), [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required); export parity in P4-T073), stored as versioned PIT features with model revision, for the IC evaluator and strategies.
 
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M6 forecast models](../../../docs/03-build-spec.md#m6-features--mt_features)
+- Spec: [03 M6 forecast models](../../../docs/03-build-spec.md#m6-features)
 - Cross-phase (`depends_on`): P1-T013 (R1.02 bars), P2-T046 (R2.44 MLflow), P2-T120 (R2.46 feature framework), P1-T077 (`mt-scheduler`).
 
 ## Requirements

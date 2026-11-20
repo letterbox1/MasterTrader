@@ -42,7 +42,7 @@ One Rust SDMX client in `mt-connectors` (SDMX REST, JSON/CSV; replaces sdmx1) lo
 ## Context & references
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Rates & macro) · [06 §3 Calendars & central banks](../../../docs/06-aggregators-and-market-providers.md#calendars--central-banks-m5--m3) (one SDMX client, direct fetchers, DBnomics) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (the Rust `mt-connectors` SDMX client replaces sdmx1; DBnomics through its REST API, no client library)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (Rates & macro) · [06 §3 Calendars & central banks](../../../docs/06-aggregators-and-market-providers.md#calendars--central-banks-m5--m3) (one SDMX client, direct fetchers, DBnomics) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (the Rust `mt-connectors` SDMX client replaces sdmx1; DBnomics through its REST API, no client library)
 - Open checks feeding this task: IMF SDMX 3.0 base URL, BoC/BoJ keyless (P1-T056)
 - Depends on (this phase): P1-T024, P1-T078 (`mt-connectors` base)
 

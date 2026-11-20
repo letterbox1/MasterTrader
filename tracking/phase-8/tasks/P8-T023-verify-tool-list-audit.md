@@ -43,7 +43,7 @@ A CI job proves R8.06 ("Tool list audit") and supports R8.01 ("Code review"). Wi
 
 - Roadmap: [R8.06, R8.01](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.61](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
-- Spec: [03 M20 never exposed](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp)
+- Spec: [03 M20 never exposed](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp)
 - Decisions: [17 §A P8-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [17 §D P8-B005](../../../docs/17-decisions-register.md#d-other-decisions)
 - Related: P8-T004 (registry), P8-T003 (dependency allow-list check).
 

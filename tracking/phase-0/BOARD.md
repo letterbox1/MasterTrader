@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 60 | 13 | 0 | 0 | 1 | 0 | 0 | 0/0/0/0 | 0/6 |
+| 61 | 12 | 0 | 0 | 1 | 0 | 0 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-0-foundations.md](../../docs/roadmap/phase-0-foundations.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -26,7 +26,7 @@ _None._
 |---|---|---|---|
 | [P0-T001](tasks/P0-T001-reddit-api-decision.md) | Decide on Reddit and apply for API access before 2026-10-31 | USER | waiting on Reddit's decision on the 2026-10-29 Data API access request |
 
-## Ready (13)
+## Ready (12)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -42,9 +42,8 @@ _None._
 | [P0-T011](tasks/P0-T011-venue-austrac-checks.md) | Check AU venues on the AUSTRAC register and send results to refine the registry seed | USER | medium | M | user | — |
 | [P0-T012](tasks/P0-T012-ups-and-4g-failover.md) | Order a UPS and a 4G failover router | USER | low | S | user | — |
 | [P0-T014](tasks/P0-T014-monorepo-skeleton.md) | Create the Cargo + uv workspace monorepo skeleton with quality tooling and a just entry point | BUILD | high | M | agent | — |
-| [P0-T074](tasks/P0-T074-licence-audit-and-copyleft-register-check-just-l.md) | Licence audit and copyleft register check (just licence-audit) | BUILD | medium | M | agent | — |
 
-## Backlog (60)
+## Backlog (61)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -75,7 +74,7 @@ _None._
 | [P0-T038](tasks/P0-T038-audit-verify-incident-path.md) | Implement audit.verify, the daily verify flow and the incident path | BUILD | critical | M | agent | P0-T037, P0-T035 |
 | [P0-T039](tasks/P0-T039-pgbackrest-wal-restic-offsite.md) | Set up pgBackRest, WAL archiving and restic off-site backups | OPS | critical | L | agent | P0-T020, P0-T022, P0-T070 |
 | [P0-T040](tasks/P0-T040-monthly-immutable-worm-export.md) | Implement the monthly immutable export of WORM tables | BUILD | medium | M | agent | P0-T031, P0-T037 |
-| [P0-T041](tasks/P0-T041-restore-test-flow-and-backup-commands.md) | Build the monthly restore-test Prefect flow | OPS | high | M | agent | P0-T039, P0-T034, P0-T038 |
+| [P0-T041](tasks/P0-T041-restore-test-flow-and-backup-commands.md) | Build the monthly restore-test job | OPS | high | M | agent | P0-T039, P0-T034, P0-T038 |
 | [P0-T042](tasks/P0-T042-litellm-gateway-config.md) | Deploy the LiteLLM gateway with routes, per-role keys and budgets | OPS | high | M | agent | P0-T020, P0-T022, P0-T031, P0-T071 |
 | [P0-T043](tasks/P0-T043-tei-embed-and-rerank.md) | Deploy TEI for bge-small-en-v1.5 embeddings and bge-reranker-v2-m3 | OPS | medium | S | agent | P0-T020 |
 | [P0-T044](tasks/P0-T044-local-advisor-model-server.md) | Deploy a CPU local-advisor model server for the gateway fallback | OPS | medium | S | agent | P0-T020, P0-T022 |
@@ -98,7 +97,7 @@ _None._
 | [P0-T061](tasks/P0-T061-runbooks-secret-rotation-worm-incident.md) | Write runbooks: secret rotation, WORM incident and worm_owner ceremony | DOC | medium | S | agent | P0-T022, P0-T038 |
 | [P0-T062](tasks/P0-T062-set-password-enrol-totp.md) | Create your login and enrol TOTP when you first open the app | USER | high | XS | user | P0-T050 |
 | [P0-T063](tasks/P0-T063-72h-idle-soak.md) | Run the 72-hour idle soak | RUN | high | S | agent | P0-T019, P0-T045, P0-T041, P0-T040, P0-T042, P0-T043, P0-T044, P0-T051, P0-T052, P0-T065, P0-T072 |
-| [P0-T064](tasks/P0-T064-phase-exit-demo.md) | Phase 0 exit demo: run every exit criterion | VERIFY | critical | S | agent | P0-T063, P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069, P0-T070, P0-T071, P0-T072, P0-T073, P0-T062 |
+| [P0-T064](tasks/P0-T064-phase-exit-demo.md) | Phase 0 exit demo: run every exit criterion | VERIFY | critical | S | agent | P0-T063, P0-T058, P0-T057, P0-T053, P0-T055, P0-T054, P0-T028, P0-T056, P0-T026, P0-T059, P0-T060, P0-T061, P0-T066, P0-T067, P0-T068, P0-T069, P0-T070, P0-T071, P0-T072, P0-T073, P0-T062, P0-T074 |
 | [P0-T065](tasks/P0-T065-docker-proxy-restart-allow-list.md) | Deploy the restricted docker-proxy for allow-listed service restarts | OPS | medium | M | agent | P0-T021, P0-T034 |
 | [P0-T066](tasks/P0-T066-worm-insert-benchmark.md) | Benchmark WORM inserts: p99 under 5 ms, order path never waits on seals | VERIFY | high | S | agent | P0-T031, P0-T037 |
 | [P0-T067](tasks/P0-T067-restart-refusal-test.md) | Verify restart refusal outside the docker-proxy allow-list | VERIFY | medium | S | agent | P0-T065 |
@@ -108,6 +107,7 @@ _None._
 | [P0-T071](tasks/P0-T071-build-the-mt-store-python-module-pyo3-mt-core-ty.md) | Build the mt_store Python module (PyO3): mt-core types and pit bindings | BUILD | high | M | agent | P0-T016, P0-T027 |
 | [P0-T072](tasks/P0-T072-monthly-bar-partitions-and-the-mt-store-partitio.md) | Monthly bar partitions and the mt-store partition job | BUILD | high | M | agent | P0-T024, P0-T070 |
 | [P0-T073](tasks/P0-T073-live-check-of-the-real-seal-target-and-telegram-.md) | Live check of the real seal target and Telegram bot (keys last) | VERIFY | medium | S | agent | P0-T006, P0-T002, P0-T037, P0-T040, P0-T045, P0-T022 |
+| [P0-T074](tasks/P0-T074-licence-audit-and-copyleft-register-check-just-l.md) | Licence audit and copyleft register check (just licence-audit) | BUILD | medium | S | agent | P0-T014 |
 
 ## Done (0)
 

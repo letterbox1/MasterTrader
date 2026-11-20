@@ -45,7 +45,7 @@ LiteLLM has what it needs for its routes: an Anthropic API key with a monthly sp
 - [16 §2.10 LLM budgets](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) (defaults)
 - [10 §5 model gateway](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21)
 - [03 §7 LLM cost control](../../../docs/03-build-spec.md#7-llm-cost-control)
-- [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - Related: P0-T042 LiteLLM (built keyless against a mock provider), P0-T044 `llm-local`
 - Unblocks: P0-T068, the live gateway smoke with your keys (T0.69)
 

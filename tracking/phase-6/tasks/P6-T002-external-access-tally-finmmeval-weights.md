@@ -42,7 +42,7 @@ The free external accesses only you can obtain are in place: a **Tally** free AP
 ## Context & references
 
 - Roadmap: [R6.12](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.23](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting item)
-- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (Snapshot keyless, Tally free key) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) bake-off · [research: decision models](../../../docs/research/decision-models-system-one.md)
+- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (Snapshot keyless, Tally free key) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) bake-off · [research: decision models](../../../docs/research/decision-models-system-one.md)
 - Licences and the Kev (U) check: P6-T068 (agent, T6.72; owns P6-B003)
 - Unblocks: P6-T059 (FinMMEval part of the bake-off review), P6-T070 (live Tally check). P6-T040 is built keyless against recorded Snapshot/Tally fixtures.
 

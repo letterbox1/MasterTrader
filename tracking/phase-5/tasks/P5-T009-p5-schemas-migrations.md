@@ -44,7 +44,7 @@ All non-WORM Phase 5 tables exist via SQL migrations in `supabase/migrations/` (
 - Roadmap: [R5.05, R5.11, R5.18, R5.20](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDos T5.22, T5.25, T5.29, T5.30
 - Data model: [08 data model](../../../docs/08-airdrops-and-token-launches.md#data-model-postgres) · [03 §4](../../../docs/03-build-spec.md#4-data-model-overview) · [02 §5.2 conventions](../../../docs/02-v1-architecture.md#52-key-conventions)
 - Wallet registry: [13 §3](../../../docs/13-wallets-treasury-and-onchain.md#3-unified-wallet-view): one registry, `ops.wallets`, created in P3 (P3-T012) and extended additively here; there is no `treasury.wallet` (decision P5-B015, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer))
-- Task table: `curation.task`, created minimally in P3 (P3-T038, `TAX_QUESTION`) and extended additively here ([03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation)); community entries in `curation.community` ([08 data model](../../../docs/08-airdrops-and-token-launches.md#data-model-postgres))
+- Task table: `curation.task`, created minimally in P3 (P3-T038, `TAX_QUESTION`) and extended additively here ([03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation)); community entries in `curation.community` ([08 data model](../../../docs/08-airdrops-and-token-launches.md#data-model-postgres))
 - Provenance: [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms)
 - WORM tables are split out to P5-T010
 

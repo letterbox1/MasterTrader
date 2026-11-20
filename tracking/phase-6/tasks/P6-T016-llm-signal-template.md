@@ -42,7 +42,7 @@ An `llm_signal` built-in Rust template (`crates/mt-engine/src/strategy/`, Rust s
 ## Context & references
 
 - Roadmap: [R6.06](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.23
-- Spec: [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) (LLM-signal template) · [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) (strategies consume signals) · [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) item 4
+- Spec: [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) (LLM-signal template) · [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) (strategies consume signals) · [03 §8](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) item 4
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) (send signal to an LLM-signal strategy)
 - Cross-phase: P2-T003 (strategy base), P2-T004 (manifest), P2-T033 (modes and approval routing), M11 via P2-T017
 - Modes: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (`paper` / `hitl` / `autonomous`, per bot)

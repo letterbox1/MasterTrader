@@ -42,7 +42,7 @@ Our own wallet-cluster detection builds a funding graph of early buyers/holders 
 ## Context & references
 
 - Roadmap: [R5.13](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md), R5.18 · ToDo T5.26
-- [03 M4](../../../docs/03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop) (the highest-value check) · [08 fresh launches & memecoins](../../../docs/08-airdrops-and-token-launches.md#fresh-launches--memecoins) · [08 records: blacklist](../../../docs/08-airdrops-and-token-launches.md#records)
+- [03 M4](../../../docs/03-build-spec.md#m4-airdrops-token-launches--icos) (the highest-value check) · [08 fresh launches & memecoins](../../../docs/08-airdrops-and-token-launches.md#fresh-launches--memecoins) · [08 records: blacklist](../../../docs/08-airdrops-and-token-launches.md#records)
 
 ## Requirements
 

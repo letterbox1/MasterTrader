@@ -42,7 +42,7 @@ A resumable `mt-connectors` job (Rust; run as an `mt-scheduler` backfill run, sc
 ## Context & references
 
 - Roadmap: requirements [R1.03](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.22](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (History: data.binance.vision trades, aggTrades, klines down to 1s) · [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1) (top pick)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (History: data.binance.vision trades, aggTrades, klines down to 1s) · [06 §3 Market data](../../../docs/06-aggregators-and-market-providers.md#market-data-m1) (top pick)
 - Verified by: backfill report (R1.03)
 - Depends on (this phase): P1-T012, P1-T013, P1-T006, P1-T076, P1-T078 (`mt-connectors` base)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors` covers data.binance.vision)

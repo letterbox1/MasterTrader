@@ -43,7 +43,7 @@ Single-user login works end to end on **Supabase Auth** instead of a hand-built 
 
 - [Roadmap P0 R0.08](../../../docs/roadmap/phase-0-foundations.md#3-requirements) · [T0.24, T0.12](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
 - [18 §4.6 auth](../../../docs/18-platform-and-deployment.md#46-auth) · [16 §2.14](../../../docs/16-configuration-and-safety-model.md#214-platform--operations) (session limits)
-- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) (Transport and auth) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write)
+- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) (Transport and auth) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - [ui §3.6 sessions](../../../docs/ui/README.md#36-permissions--sessions) · [07 §6 application controls](../../../docs/07-security-notes.md#6-application-controls)
 - USER step: P0-T062 (create your login and enrol TOTP; tests use a seeded test account, so nothing here waits on it)
 - Depends on: P0-T032, P0-T031, P0-T070

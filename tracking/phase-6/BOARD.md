@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 70 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/1/0 | 0/6 |
+| 77 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/1/0 | 0/7 |
 
 Roadmap: [phase-6-ai-models-treasury.md](../../docs/roadmap/phase-6-ai-models-treasury.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -32,39 +32,39 @@ _None._
 | [P6-T003](tasks/P6-T003-decide-optional-modules.md) | Record the optional-module defaults (all off) in settings | BUILD | medium | XS | agent | — |
 | [P6-T068](tasks/P6-T068-kev-4b-9b-and-contender-licence-check-before-the.md) | Kev-4B/9B and contender licence check before the bake-off | VERIFY | high | XS | agent | — |
 
-## Backlog (70)
+## Backlog (77)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P6-T001](tasks/P6-T001-set-llm-budgets.md) | Seed the LLM budgets from the 16 §2.10 defaults | BUILD | high | XS | agent | P0-T042 |
 | [P6-T004](tasks/P6-T004-signal-schema-decision-tables.md) | Signal v2 schema with provenance and decision-run WORM tables | BUILD | critical | S | agent | P0-T016, P0-T030, P0-T031 |
-| [P6-T005](tasks/P6-T005-llm-call-audit-prompt-registry.md) | Prompt and model versioning on top of the P0 LLM-call audit | BUILD | critical | M | agent | P0-T042, P0-T031, P4-T028 |
-| [P6-T006](tasks/P6-T006-agent-tools-pit-finrobot-cache.md) | Agent tools: pit data tools, FinRobot operators, untrusted wrapping and the (instrument, as_of) cache | BUILD | high | M | agent | P6-T004, P0-T027, P4-T025, P4-T032 |
-| [P6-T007](tasks/P6-T007-debate-graph.md) | LangGraph debate graph producing a sourced Signal | BUILD | critical | L | agent | P6-T004, P6-T005, P6-T006, P0-T042, P0-T044 |
-| [P6-T008](tasks/P6-T008-agent-scheduler-triggers-api.md) | Agent scheduler, event triggers and the agents API | BUILD | high | M | agent | P6-T007, P6-T009, P0-T034, P0-T036 |
+| [P6-T005](tasks/P6-T005-llm-call-audit-prompt-registry.md) | Prompt and model versioning on top of the P0 LLM-call audit | BUILD | critical | M | agent | P6-T074, P0-T042, P0-T031, P4-T028 |
+| [P6-T006](tasks/P6-T006-agent-tools-pit-finrobot-cache.md) | Agent tools: pit data tools, valuation desk, untrusted wrapping and the (instrument, as_of) cache | BUILD | high | M | agent | P6-T004, P6-T074, P0-T027, P4-T025, P4-T032 |
+| [P6-T007](tasks/P6-T007-debate-graph.md) | Debate graph on mt-agents producing a sourced Signal | BUILD | critical | L | agent | P6-T004, P6-T005, P6-T006, P6-T074, P0-T042, P0-T044 |
+| [P6-T008](tasks/P6-T008-agent-scheduler-triggers-api.md) | Agent scheduler, event triggers and the agents API | BUILD | high | M | agent | P6-T007, P6-T009, P0-T034, P0-T036, P1-T077 |
 | [P6-T009](tasks/P6-T009-llm-budgets-local-fallback.md) | Enforce the monthly LLM cap, per-role budgets and local fallback | BUILD | high | M | agent | P0-T042, P0-T044, P2-T019 |
 | [P6-T010](tasks/P6-T010-grafana-spend-panel-alerts.md) | Grafana LLM spend panel and budget alerts | OPS | medium | S | agent | P6-T009, P0-T045, P1-T045 |
 | [P6-T011](tasks/P6-T011-hindsight-slim-container.md) | Hindsight slim container on our Postgres, TEI and the gateway | OPS | high | S | agent | P0-T020, P0-T022, P0-T024, P0-T042, P0-T043 |
-| [P6-T012](tasks/P6-T012-memory-client-banks-pit-recall.md) | mt_memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API | BUILD | critical | M | agent | P6-T011, P6-T006, P0-T034 |
-| [P6-T013](tasks/P6-T013-settlement-reflection-jobs.md) | Decision settlement and reflection jobs | BUILD | high | M | agent | P6-T007, P6-T012 |
-| [P6-T014](tasks/P6-T014-anomaly-detectors.md) | mt_anomaly detectors on market, sentiment and event streams | BUILD | high | L | agent | P1-T013, P4-T040, P0-T031 |
-| [P6-T015](tasks/P6-T015-anomaly-explain-agent.md) | Explain agent: anomaly briefs to Telegram | BUILD | high | M | agent | P6-T014, P6-T005, P6-T006, P6-T009, P1-T045, P0-T034 |
+| [P6-T012](tasks/P6-T012-memory-client-banks-pit-recall.md) | mt-memory Hindsight client: banks, retain/recall, point-in-time recall and the memory API | BUILD | critical | M | agent | P6-T011, P6-T006, P0-T034 |
+| [P6-T013](tasks/P6-T013-settlement-reflection-jobs.md) | Decision settlement and reflection jobs | BUILD | high | M | agent | P6-T007, P6-T012, P1-T077 |
+| [P6-T014](tasks/P6-T014-anomaly-detectors.md) | mt-anomaly detectors on market, sentiment and event streams | BUILD | high | L | agent | P1-T013, P4-T040, P0-T031, P1-T077 |
+| [P6-T015](tasks/P6-T015-anomaly-explain-agent.md) | Explain agent: anomaly briefs to Telegram | BUILD | high | M | agent | P6-T014, P6-T005, P6-T006, P6-T009, P6-T074, P1-T045, P0-T034 |
 | [P6-T016](tasks/P6-T016-llm-signal-template.md) | LLM-signal strategy template consuming M8 signals | BUILD | high | M | agent | P6-T004, P2-T003, P2-T004, P2-T033 |
 | [P6-T017](tasks/P6-T017-post-cutoff-evaluation-gate.md) | Post-training-cutoff evaluation gate for LLM strategies | BUILD | high | M | agent | P6-T016, P6-T005, P2-T114 |
 | [P6-T018](tasks/P6-T018-question-registry-v2-state-budget.md) | Question registry v2, ~320-token state builder and per-question thresholds | BUILD | critical | M | agent | P4-T028, P4-T029, P4-T025 |
-| [P6-T019](tasks/P6-T019-label-store-labelling-queue-api.md) | Label store with provenance and the labelling-queue API | BUILD | critical | M | agent | P6-T018, P4-T062 |
+| [P6-T019](tasks/P6-T019-label-store-labelling-queue-api.md) | Label store with provenance and the labelling-queue API | BUILD | critical | M | agent | P6-T018, P4-T062, P1-T077 |
 | [P6-T020](tasks/P6-T020-distillation-dataset-builder.md) | Outcome-corrected distillation dataset builder | BUILD | critical | M | agent | P6-T013, P6-T018, P6-T019, P2-T107 |
-| [P6-T021](tasks/P6-T021-tierb-trainer-qwen3-lora-head.md) | Tier B trainer: Qwen3 + LoRA + classification head (CE + λ·Brier) | BUILD | critical | L | agent | P6-T020, P2-T046 |
+| [P6-T021](tasks/P6-T021-tierb-trainer-qwen3-lora-head.md) | Tier B trainer: Qwen3 + LoRA + classification head (CE + λ·Brier) | BUILD | critical | L | agent | P6-T020, P2-T046, P1-T077 |
 | [P6-T022](tasks/P6-T022-tierb-calibration-abstention.md) | Tier B calibration, abstention thresholds and calibration report | BUILD | critical | M | agent | P6-T021 |
 | [P6-T023](tasks/P6-T023-gpu-serving-vllm-onnx.md) | GPU serving for tier B: vLLM pooling runner and ONNX Runtime | OPS | high | M | agent | P0-T005, P0-T020, P0-T022, P4-T029 |
 | [P6-T024](tasks/P6-T024-tierb-export-serving-determinism.md) | Export own heads and serve them in decision-svc with determinism controls | BUILD | critical | L | agent | P6-T022, P6-T023, P6-T018, P2-T128 |
-| [P6-T025](tasks/P6-T025-shadow-sampler-disagreement.md) | 5% teacher shadow sampler and per-question disagreement | BUILD | high | M | agent | P6-T024, P6-T019, P6-T009 |
-| [P6-T026](tasks/P6-T026-per-question-threshold-tuner.md) | Per-question threshold tuner from measured disagreement | BUILD | medium | S | agent | P6-T025, P6-T022 |
+| [P6-T025](tasks/P6-T025-shadow-sampler-disagreement.md) | 5% teacher shadow sampler and per-question disagreement | BUILD | high | M | agent | P6-T024, P6-T019, P6-T009, P6-T074 |
+| [P6-T026](tasks/P6-T026-per-question-threshold-tuner.md) | Per-question threshold tuner from measured disagreement | BUILD | medium | S | agent | P6-T025, P6-T022, P1-T077 |
 | [P6-T027](tasks/P6-T027-bakeoff-contender-containers.md) | Bake-off contender containers: Laya, Clef-flash, Kev, JSON baseline | OPS | medium | M | agent | P6-T068, P0-T020, P0-T022 |
 | [P6-T028](tasks/P6-T028-laya-finetune.md) | Fine-tune Laya on our data for the bake-off | BUILD | medium | S | agent | P6-T020, P6-T027 |
-| [P6-T029](tasks/P6-T029-bakeoff-harness-report.md) | Bake-off harness, FinMMEval check and report | BUILD | high | L | agent | P6-T022, P6-T024, P6-T027, P6-T028, P6-T068 |
+| [P6-T029](tasks/P6-T029-bakeoff-harness-report.md) | Bake-off harness, FinMMEval check and report | BUILD | high | L | agent | P6-T022, P6-T024, P6-T027, P6-T028, P6-T068, P1-T077 |
 | [P6-T030](tasks/P6-T030-model-promotion-gates-veto.md) | Model promotion gates, rollback and the veto threshold | BUILD | critical | M | agent | P6-T029 |
-| [P6-T031](tasks/P6-T031-nightly-distillation-flow.md) | Nightly distillation flow with gated promotion | BUILD | high | M | agent | P6-T020, P6-T022, P6-T030, P2-T125 |
+| [P6-T031](tasks/P6-T031-nightly-distillation-flow.md) | Nightly distillation flow with gated promotion | BUILD | high | M | agent | P6-T020, P6-T022, P6-T030, P2-T125, P1-T077 |
 | [P6-T032](tasks/P6-T032-monthly-finetune-flow.md) | Monthly fine-tune flow | BUILD | medium | S | agent | P6-T031 |
 | [P6-T033](tasks/P6-T033-treasury-policy-allow-list.md) | Treasury policy and protocol allow-list store | BUILD | critical | M | agent | P0-T024, P2-T010, P2-T011, P2-T017, P2-T019 |
 | [P6-T034](tasks/P6-T034-approve-treasury-policy.md) | Approve the treasury policy and protocol allow-list (C3); decide on HLP | USER | high | XS | user | P6-T033, P2-T035 |
@@ -83,8 +83,8 @@ _None._
 | [P6-T047](tasks/P6-T047-social-drafts-web-intent.md) | Optional: M23 social drafts → your approval → web intent | BUILD | low | M | agent | P6-T003, P5-T029, P0-T044 |
 | [P6-T048](tasks/P6-T048-credibility-shill-burst.md) | Optional: account credibility scoring and shill-burst posture | BUILD | low | M | agent | P6-T003 |
 | [P6-T049](tasks/P6-T049-approve-social-drafts.md) | Optional: approve, edit or skip social drafts and click Post yourself | USER | low | XS | user | P6-T047 |
-| [P6-T050](tasks/P6-T050-crowd-sim-experiment.md) | Optional: crowd-simulation experiment (OASIS, local, research only) | BUILD | low | M | agent | P6-T003 |
-| [P6-T051](tasks/P6-T051-lightrag-filings-graph.md) | Optional: LightRAG offline graph over filings (research path) | BUILD | low | M | agent | P6-T003, P4-T031 |
+| [P6-T050](tasks/P6-T050-crowd-sim-experiment.md) | mt-crowdsim scenario & crowd simulator (clean-room Rust, seeded, capped shocks) | BUILD | high | L | agent | P6-T074, P0-T042, P0-T044, P4-T013, P4-T033 |
+| [P6-T051](tasks/P6-T051-lightrag-filings-graph.md) | Optional: LightRAG offline graph over filings (research path) | BUILD | low | M | agent | P6-T003, P4-T031, P1-T077 |
 | [P6-T052](tasks/P6-T052-verify-llm-audit-scheduler.md) | Verify every LLM call is audited and agents never run per tick | VERIFY | high | S | agent | P6-T005, P6-T008, P6-T013, P6-T015 |
 | [P6-T053](tasks/P6-T053-verify-llm-budget-fallback.md) | Verify LLM budgets, monthly cap and local fallback (budget test) | VERIFY | high | S | agent | P6-T009, P6-T010 |
 | [P6-T054](tasks/P6-T054-verify-prompt-injection.md) | Prompt-injection test: scraped text can't trigger commands | VERIFY | critical | M | agent | P6-T007, P6-T008, P6-T015, P6-T012, P6-T024 |
@@ -99,13 +99,20 @@ _None._
 | [P6-T063](tasks/P6-T063-verify-llm-signal-post-cutoff-gate.md) | LLM-signal strategy gate check on post-cutoff data | VERIFY | high | S | agent | P6-T017, P6-T016 |
 | [P6-T064](tasks/P6-T064-verify-degraded-modes-drill.md) | Degraded-mode drill for the AI layer and treasury | VERIFY | high | M | agent | P6-T024, P6-T009, P6-T012, P6-T038, P6-T015 |
 | [P6-T065](tasks/P6-T065-run-start-distillation-paper-soak.md) | Start the 4-week nightly distillation soak and LLM-signal paper trading | RUN | high | S | agent | P6-T031, P6-T016, P6-T017, P6-T025, P6-T063 |
-| [P6-T066](tasks/P6-T066-phase-exit-demo.md) | Phase 6 exit demo | VERIFY | critical | S | agent | P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073 |
+| [P6-T066](tasks/P6-T066-phase-exit-demo.md) | Phase 6 exit demo | VERIFY | critical | S | agent | P6-T052, P6-T053, P6-T054, P6-T055, P6-T056, P6-T057, P6-T058, P6-T059, P6-T060, P6-T061, P6-T062, P6-T063, P6-T064, P6-T065, P6-T043, P6-T045, P6-T032, P6-T010, P6-T034, P6-T067, P6-T069, P6-T070, P6-T073, P6-T077, P6-T078, P6-T079, P6-T080 |
 | [P6-T067](tasks/P6-T067-sample-debate-runs-on-three-instruments-return-c.md) | Sample debate runs on three instruments return complete Signals | VERIFY | high | S | agent | P6-T004, P6-T007, P6-T008, P6-T012 |
 | [P6-T069](tasks/P6-T069-local-inference-port-check-127-0-0-1-only-and-ap.md) | Local inference port check: 127.0.0.1 only and API key required | VERIFY | high | S | agent | P6-T011, P6-T023, P6-T027, P0-T056 |
 | [P6-T070](tasks/P6-T070-live-check-with-your-keys-gateway-roles-on-anthr.md) | Live check with your keys: gateway roles on Anthropic/custom endpoint and the Tally feed | VERIFY | medium | S | agent | P0-T007, P0-T068, P6-T001, P6-T002, P6-T067, P6-T053, P6-T015, P6-T025, P6-T040 |
 | [P6-T071](tasks/P6-T071-research-workflows.md) | Research workflows: earnings preview/analysis, catalyst calendar, thesis tracker, morning note | BUILD | medium | L | agent | P6-T006, P6-T007, P4-T014, P4-T037 |
-| [P6-T072](tasks/P6-T072-investor-persona-lenses.md) | Optional investor-persona lenses as debate viewpoints (off by default) | BUILD | low | S | agent | P6-T007 |
+| [P6-T072](tasks/P6-T072-investor-persona-lenses.md) | Optional investor-persona lenses as debate viewpoints (off by default) | BUILD | low | S | agent | P6-T007, P6-T003 |
 | [P6-T073](tasks/P6-T073-verify-research-workflows.md) | Verify research workflows and persona lenses (PIT, sources, shadow comparison) | VERIFY | low | S | agent | P6-T071, P6-T072 |
+| [P6-T074](tasks/P6-T074-mt-agents-runtime-skeleton-rig-core-state-machin.md) | mt-agents runtime skeleton: rig-core, state-machine graph, Postgres checkpoints, gateway client | BUILD | high | M | agent | P0-T042 |
+| [P6-T075](tasks/P6-T075-scenario-twin-second-paper-engine-running-the-sa.md) | Scenario twin: second paper engine running the same bots under injected scenarios | BUILD | high | L | agent | P6-T050, P2-T021, P2-T023, P2-T036 |
+| [P6-T076](tasks/P6-T076-crowdsim-and-scenario-twin-containers-on-an-isol.md) | crowdsim and scenario-twin containers on an isolated network with seeded crowdsim settings | OPS | high | M | agent | P6-T050, P6-T075, P0-T020 |
+| [P6-T077](tasks/P6-T077-d14-scenario-twin-report-view-and-recent-simulat.md) | D14 scenario-twin report view and recent simulator runs | BUILD | medium | M | agent | P6-T075, P0-T048, P0-T049, P3-T040 |
+| [P6-T078](tasks/P6-T078-verify-simulator-isolation-synthetic-row-refusal.md) | Verify simulator isolation, synthetic-row refusal and seeded replay | VERIFY | high | M | agent | P6-T050, P6-T075, P6-T076 |
+| [P6-T079](tasks/P6-T079-scenario-twin-dry-run-one-replayed-week-gives-a-.md) | Scenario-twin dry run: one replayed week gives a report per bot within max_shock | VERIFY | high | M | agent | P6-T075, P6-T076 |
+| [P6-T080](tasks/P6-T080-run-the-scenario-twin-every-week-alongside-the-p.md) | Run the scenario twin every week alongside the paper bots until go-live | RUN | high | M | agent | P6-T079, P6-T077, P1-T077 |
 
 ## Done (0)
 

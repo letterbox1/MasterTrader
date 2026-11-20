@@ -42,7 +42,7 @@ A local inference server (vLLM on NVIDIA, or llama-server with Vulkan on AMD, or
 ## Context & references
 
 - Roadmap: [R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.41](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Risk 'CPU-only SemIf is slow'
-- Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (SemIf on Qwen3.5-4B; determinism controls; AMD → llama.cpp Vulkan) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- Design: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (SemIf on Qwen3.5-4B; determinism controls; AMD → llama.cpp Vulkan) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - Evidence: [decision-models research](../../../docs/research/decision-models-system-one.md) (4B balanced accuracy 0.81; 0.6B worse than chance)
 - Security: [07 §5](../../../docs/07-security-notes.md#5-network--host) (inference servers bind to 127.0.0.1 and require an API key)
 - Cross-phase: P0-T005 (T0.01 CPU/GPU profile; `models.gpu_profile: auto`, [16 §2.15](../../../docs/16-configuration-and-safety-model.md#215-platform-deployment-and-regions)), P0-T020 (Compose) and P2-T046 (MLflow, for the benchmark record) are `depends_on` entries; P4-T028 provides `models.registry`.

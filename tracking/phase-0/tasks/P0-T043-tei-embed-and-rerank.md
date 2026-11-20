@@ -43,7 +43,7 @@ Two TEI containers (`tei-embed` with `BAAI/bge-small-en-v1.5`, `tei-rerank` with
 
 - [Roadmap P0 R0.09](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [10 §2 embedders](../../../docs/10-memory-rag-and-models.md#2-local-embedders--rerankers)
-- [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) (TEI container)
+- [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) (TEI container)
 - [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) (`tei-embed`, `tei-rerank` rows)
 - Two containers (`tei-embed`, `tei-rerank`) decided in [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P0-B007, closed).
 - Depends on: P0-T020

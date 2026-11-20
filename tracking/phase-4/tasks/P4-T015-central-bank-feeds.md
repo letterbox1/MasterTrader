@@ -42,7 +42,7 @@ Statements, minutes, press releases and speeches from the Fed, ECB, BoE, BoJ, SN
 ## Context & references
 
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
 - Calendars & CBs: [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)
 - Related: P4-T037 (meeting schedules), P4-T029 (event_type flags).
 

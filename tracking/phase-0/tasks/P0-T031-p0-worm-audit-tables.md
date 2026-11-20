@@ -44,7 +44,7 @@ The P0 WORM tables exist via the helper — `audit.command`, `audit.auth_event`,
 - [Roadmap P0 R0.07, R0.08](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [15 §2.1 scope](../../../docs/15-bots-hitl-and-worm-audit.md#21-scope)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Corrections)
-- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) (every LLM call, every `mt-api` command)
+- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit) (every LLM call, every `mt-api` command)
 - [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`audit.command` source = web|telegram|mcp|system)
 - [17 §B canonical audit names](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P0-B017 closed) · [16 §3.3 write path](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check)
 - `audit.auth_event` and `audit.verify_run` follow the singular, schema-qualified convention but aren't yet in the 17 §B list: add them to 02 §4 / 03 §4 at doc sync.

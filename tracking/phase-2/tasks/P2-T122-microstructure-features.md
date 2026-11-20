@@ -42,7 +42,7 @@ Order-flow imbalance, spread, depth, trade intensity and related microstructure 
 ## Context & references
 
 - Roadmap: [R2.46](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.29
-- [03 M6 microstructure](../../../docs/03-build-spec.md#m6-features--mt_features) · data from P1 Parquet recorder ([phase 1](../../../docs/roadmap/phase-1-data-and-monitoring.md) T1.21)
+- [03 M6 microstructure](../../../docs/03-build-spec.md#m6-features) · data from P1 Parquet recorder ([phase 1](../../../docs/roadmap/phase-1-data-and-monitoring.md) T1.21)
 
 ## Requirements
 

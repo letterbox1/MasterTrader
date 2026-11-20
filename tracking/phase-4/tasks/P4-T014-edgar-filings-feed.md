@@ -42,7 +42,7 @@ The SEC EDGAR client in the Rust `mt-connectors` crate (the P1-T028 client; edga
 ## Context & references
 
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
 - RAG chunking: [10 §3 item 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres)
 - Cross-phase: P1-T028 (R1.07 EDGAR client, User-Agent, ≤ 10 req/s) and P1-T009 (symbol master for CIK → ticker) are `depends_on` entries.
 - Related: P4-T031 (filing chunker), P4-T037 (earnings/IPO calendar uses the same client).

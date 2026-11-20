@@ -36,7 +36,7 @@ The risk-policy defaults include a concrete blackout rule set so P4-T038/T052 te
 
 ## Context & references
 
-- Found in: [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar) ('event within N minutes', 'pause scalpers around NFP') · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [D06](../../../docs/ui/dashboards/D06-risk.md)
+- Found in: [03 M5](../../../docs/03-build-spec.md#m5-calendars) ('event within N minutes', 'pause scalpers around NFP') · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [D06](../../../docs/ui/dashboards/D06-risk.md)
 - Related: P4-T038 (proposes 15 min before/after, high importance, block new entries for scalper/intraday tags), P4-T052.
 
 ## Requirements

@@ -42,7 +42,7 @@ A provisioned Grafana dashboard shows LLM spend by role vs budget, month-to-date
 ## Context & references
 
 - Roadmap: [R6.07](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.41
-- Spec: [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (spend panel in Grafana) · [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (spend goes to Grafana) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs)
+- Spec: [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (spend panel in Grafana) · [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (spend goes to Grafana) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit)
 - Cross-phase: P0-T045 (Grafana provisioning), P1-T045 (alert fan-out to Telegram/ntfy/email)
 - Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) (budgets the panel compares against; read from settings, never hard-coded)
 - Depends on (this phase): P6-T009

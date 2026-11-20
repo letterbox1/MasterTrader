@@ -42,7 +42,7 @@ The RBA F11 daily AUD exchange rates are loaded in full history and updated each
 ## Context & references
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (RBA F11 daily FX, needed for tax) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) (three currencies on every event; RBA daily rate with source and timestamp)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (RBA F11 daily FX, needed for tax) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) (three currencies on every event; RBA daily rate with source and timestamp)
 - Consumer: [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md) T3.21 FX service (R3.03)
 - Depends on (this phase): P1-T005, P1-T007, P1-T078 (`mt-connectors` base)
 - Cross-phase prerequisites (depends_on): P0-T027 (`pit(as_of)` and Parquet catalog helpers)

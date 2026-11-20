@@ -43,7 +43,7 @@ Before P2-T024–P2-T026 write the custom **Alpaca, OANDA v20 and IG** adapters 
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Platform: [18 §2.1 `mt-engine`](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (custom adapters in Rust against Nautilus's adapter traits) · [18 §10](../../../docs/18-platform-and-deployment.md#10-sources)
-- Spec: [03 M12 custom adapters](../../../docs/03-build-spec.md#m12-execution--mt_engine)
+- Spec: [03 M12 custom adapters](../../../docs/03-build-spec.md#m12-execution)
 - Related: P2-T200 (built-in venues), P2-T024 Alpaca, P2-T025 OANDA, P2-T026 IG, P2-T073 (cancel-after per venue).
 
 ## Requirements

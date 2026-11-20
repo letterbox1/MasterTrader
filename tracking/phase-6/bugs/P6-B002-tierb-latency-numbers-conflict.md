@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: one set of tier-B latency 
 ## Context & references
 
 - Found in: docs/03-build-spec.md §2 (GPU row)
-- [03 §2](../../../docs/03-build-spec.md#2-target-environment) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements)
+- [03 §2](../../../docs/03-build-spec.md#2-target-environment) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) · [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements)
 - Affects: P6-T023, P6-T024, P6-T058
 
 ## Requirements

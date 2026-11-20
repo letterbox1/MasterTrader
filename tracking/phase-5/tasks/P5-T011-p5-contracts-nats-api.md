@@ -43,10 +43,10 @@ Versioned `mt-core` types (Rust, serde; used directly by the Rust `mt-airdrop`, 
 
 - Roadmap: R5.15, R5.20, R5.23 · ToDos T5.28, T5.30, T5.31
 - NATS taxonomy: [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (`task.new`, `task.updated`, `wallet.{chain}.{address}.balance|transfer|approval|nonce_authority`, `treasury.depeg`, `kill.set`)
-- API: [02 §7.1–7.3](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) (`/airdrops`, `/airdrops/{id}`, `/airdrops/mandates`, `/airdrops/wallet`, `/tasks`, `/community`, `/wallets`, `/wallets/transfers`)
+- API: [02 §7.1–7.3](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) (`/airdrops`, `/airdrops/{id}`, `/airdrops/mandates`, `/airdrops/wallet`, `/tasks`, `/community`, `/wallets`, `/wallets/transfers`)
 - Commands: `airdrop.add_url` C0, `airdrop.rescore` C0, `airdrop.reject` C1, `airdrop.mandate.create` C3, `airdrop.mandate.revoke` C1, `airdrop.claim.execute` C2, `wallet.revoke_approval` C2, `wallet.sweep` C2, `wallet.register` C1, `wallet.tag` C1, `task.done|skip|snooze` C0, `task.never` C1, `task.answer` C1; wallet/signer/gas limits through `risk.policy.update` (tighten C1, loosen and the first signing enable C3; 16 §2.7)
 - WS topics: `airdrop`, `tasks`, `alert`, `wallet` (P5); `treasury` arrives in P6 ([02 §7.3](../../../docs/02-v1-architecture.md#73-real-time-websocket-apiv1ws); decision P5-B005)
-- Task types: the canonical list in [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) (decision P5-B004)
+- Task types: the canonical list in [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation) (decision P5-B004)
 - Signer intents come only from the policy service (`airdrop-exec` in P5; decision P5-B003)
 
 ## Requirements

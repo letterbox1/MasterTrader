@@ -42,7 +42,7 @@ Evidence for R6.01 ("Sample runs"): three debate runs, on one crypto, one FX and
 ## Context & references
 
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.66
-- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) (`Signal` fields: id, ts, as_of, instrument, horizon, direction, edge, calibrated confidence, rationale summary, sources[], model/prompt versions, run id) · [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B014) · [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–3
+- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) (`Signal` fields: id, ts, as_of, instrument, horizon, direction, edge, calibrated confidence, rationale summary, sources[], model/prompt versions, run id) · [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B014) · [02 F4](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–3
 - Gateway: [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) (`local-advisor` served by `llm-local` from P0)
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) run detail
 - Depends on (this phase): P6-T004 (Signal schema), P6-T007 (debate graph), P6-T008 (`agents.run_analysis`), P6-T012 (memory recall tool)

@@ -42,7 +42,7 @@ A small, licence-clean Python service (`mt_mt5_bridge`, one of the five Python p
 ## Context & references
 
 - Roadmap: [R7.10 · ToDo T7.24](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MT5 Python API on a Windows VPS; no community adapter touches live money until tested in paper) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (custom adapters; idempotent client IDs) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
+- Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MT5 Python API on a Windows VPS; no community adapter touches live money until tested in paper) · [03 M12](../../../docs/03-build-spec.md#m12-execution) (custom adapters; idempotent client IDs) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
 - Related: P7-T004 (route choice; cancel if `ctrader` only), P7-T035 (deployment and hardening, T7.43), P7-T036 (engine adapter), P7-T051 (parity) · [07 §5.1](../../../docs/07-security-notes.md#51-optional-windows-vps-mt5-bridge) (VPS baseline, [17 §D P7-B010](../../../docs/17-decisions-register.md#d-other-decisions))
 
 ## Requirements

@@ -42,7 +42,7 @@ Perp funding (predicted and realised) and FX/CFD financing (OANDA `InstrumentFin
 ## Context & references
 
 - Roadmap: requirements [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.28](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (Funding and swaps) · [phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo) item 2
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (Funding and swaps) · [phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo) item 2
 - Depends on (this phase): P1-T038, P1-T016, P1-T017
 
 ## Requirements

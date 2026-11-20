@@ -43,7 +43,7 @@ An offline batch LightRAG graph (suppliers, customers, subsidiaries, litigation)
 
 - Roadmap: [R6.35](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.35
 - Optional module, off by default (P6-T003, 16 §2.14a); built once you enable it in settings.
-- Spec: [10 §3](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) item 7 · [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (LightRAG needs ~30B-A3B-class model for extraction) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory)
+- Spec: [10 §3](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) item 7 · [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (LightRAG needs ~30B-A3B-class model for extraction) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag)
 - Depends on (this phase): P6-T003
 - Cross-phase: P4-T031 (`rag` schema, chunker)
 

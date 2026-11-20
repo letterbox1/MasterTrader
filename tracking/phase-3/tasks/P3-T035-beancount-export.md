@@ -43,7 +43,7 @@ A yearly (and full-history) Beancount v3 ledger is exported from the journal wit
 
 - Roadmap: [R3.10, T3.27](../../../docs/roadmap/phase-3-journal-and-tax.md) · verified by P3-T049
 - Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
-- [09 goals §4](../../../docs/09-journal-and-tax.md#goals) · [09 tools vetted (hledger/Beancount + Fava, adopt)](../../../docs/09-journal-and-tax.md#tools-vetted) · [03 M18 exports](../../../docs/03-build-spec.md#m18-trading-journal--tax--mt_journal)
+- [09 goals §4](../../../docs/09-journal-and-tax.md#goals) · [09 tools vetted (hledger/Beancount + Fava, adopt)](../../../docs/09-journal-and-tax.md#tools-vetted) · [03 M18 exports](../../../docs/03-build-spec.md#m18-trading-journal--tax)
 - Related: P3-T009 (Fava sidecar), P3-T034 (balance assertions)
 
 ## Requirements

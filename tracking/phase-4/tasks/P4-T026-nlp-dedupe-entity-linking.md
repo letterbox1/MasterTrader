@@ -42,7 +42,7 @@ Two `nlp` stages in the Rust `mt-nlp` crate ([18 §2.1](../../../docs/18-platfor
 ## Context & references
 
 - Roadmap: [R4.06](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.23](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M2 processing](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) · [06 §2 processing chain](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · [10 §3 item 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) (MinHash or cosine > 0.95)
+- Spec: [03 M2 processing](../../../docs/03-build-spec.md#m2-news--social) · [06 §2 processing chain](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · [10 §3 item 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) (MinHash or cosine > 0.95)
 - Cross-phase: P1-T009 (R1.05 symbol master / instrument master) is a `depends_on` entry.
 
 ## Requirements

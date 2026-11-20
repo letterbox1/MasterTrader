@@ -42,7 +42,7 @@ One shared conformance suite runs keyless against the sandbox venue, mock server
 ## Context & references
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
-- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
+- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): no keys here; live run in P2-T071.
 - Related: P2-T023–T027, P2-T073 (resting venue stops, cancel-after timers).
 

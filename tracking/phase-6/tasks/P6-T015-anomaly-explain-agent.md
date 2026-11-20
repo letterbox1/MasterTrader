@@ -42,7 +42,7 @@ For each high/warn anomaly the explain agent gathers `pit` context (bars, news v
 ## Context & references
 
 - Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.22
-- Spec: [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor--mt_anomaly) (explain agent → Telegram) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (tier-B scores feed M10 explanations) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control)
+- Spec: [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor) (explain agent → Telegram) · [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (tier-B scores feed M10 explanations) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control)
 - UI: [D09](../../../docs/ui/dashboards/D09-agents.md) Anomaly explanations (`/notifications?kind=anomaly`)
 - Exit: [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 2
 - Depends on (this phase): P6-T014, P6-T005, P6-T009, P6-T006

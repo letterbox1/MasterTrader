@@ -42,7 +42,7 @@ A fast vectorised screener in **`mt_research` (Python, research only)**, on vect
 ## Context & references
 
 - Roadmap: [R2.40, R2.41](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
-- Spec: [03 M7 two backtest paths](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [01 §3.4 Vibe-Trading](../../../docs/01-repo-vetting-report.md#34-hkudsvibe-trading--research-and-strategy-generation-layer) (signals shifted one bar, next-open fills) · vectorbt is Apache-2.0 + Commons Clause ⚑ (research only, never in the runtime; dropped from any commercial build, 19 §2/§4)
+- Spec: [03 M7 two backtest paths](../../../docs/03-build-spec.md#m7-research-lab) · [01 §3.4 Vibe-Trading](../../../docs/01-repo-vetting-report.md#34-hkudsvibe-trading--research-and-strategy-generation-layer) (signals shifted one bar, next-open fills) · vectorbt is Apache-2.0 + Commons Clause ⚑ (research only, never in the runtime; dropped from any commercial build, 19 §2/§4)
 - [D04 acceptance 1–3](../../../docs/ui/dashboards/D04-research-lab.md): engine labelling, only truth results count for gates, costs on every result
 - Depends on P2-T102 (costs) and P2-T103 (datasets), both reached through the `mt-lab-core` binding (P2-T203); strategy signal functions from part A's Rust templates (T2.20/T2.21), exposed as a batch `signals(bars, params)` call through the binding
 

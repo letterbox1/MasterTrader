@@ -42,7 +42,7 @@ The `crates/mt-lab-core` crate (Rust, the production side of M7, [18 §2.1](../.
 ## Context & references
 
 - Roadmap: [R2.40, R2.44, R2.60](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.27
-- Spec: [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · ownership [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M7 owns `strategy.backtest`, `strategy.experiment`, publishes `lab.job.*`)
+- Spec: [03 M7](../../../docs/03-build-spec.md#m7-research-lab) · ownership [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M7 owns `strategy.backtest`, `strategy.experiment`, publishes `lab.job.*`)
 - Containers: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) `backtest-worker`; the container itself, gVisor and resource limits come from T2.40 in part A (P2-T044)
 - Dashboard consumer: [D04 job queue](../../../docs/ui/dashboards/D04-research-lab.md)
 - Cross-phase (`depends_on`): Supabase migrations baseline (P0-T024) and `pit(as_of)` (P0-T027, T0.22); compose stack with NATS JetStream + MLflow (P0-T020, T0.41); `mt-scheduler` skeleton (P1-T077: Postgres-backed queue, leases, retries, run history). The `mt-api` command bus (P0-T034, Rust) is used by P2-T117. The Python side (`mt_research` job kinds and the binding) is P2-T203.

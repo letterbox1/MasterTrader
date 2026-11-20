@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.11](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Spec: [03 M11 policy levels table](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 sleeves + defaults](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
+- Spec: [03 M11 policy levels table](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 sleeves + defaults](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
 - UI: [D06 Policy tab tree](../../../docs/ui/dashboards/D06-risk.md) · Flow: [02 F5](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Cross-phase (`depends_on`): `mt-core` `RiskPolicy` type (P0-T016, T0.21), `risk` schema + Supabase migrations (P0-T024, R0.03), WORM layer for `risk.change` (P0-T029, R0.07).
 - Related: P2-T011 L0 ceilings, P2-T012 defaults + evaluators, P2-T069 layering merge + effective-limits API, P2-T019 change control.

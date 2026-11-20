@@ -43,7 +43,7 @@ Claude can answer "how are my strategies doing?"-type questions using read-only 
 
 - Roadmap: [R8.01, R8.03](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.20](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
-- Spec: [03 M20 Read & analyse row](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.1 queries](../../../docs/02-v1-architecture.md#71-queries-rest-read) (incl. `/bots`, `/approvals?status=&source=`, `/orders?source=`)
+- Spec: [03 M20 Read & analyse row](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.1 queries](../../../docs/02-v1-architecture.md#71-queries-rest-read) (incl. `/bots`, `/approvals?status=&source=`, `/orders?source=`)
 - Decisions: [17 §D P8-B009](../../../docs/17-decisions-register.md#d-other-decisions) (`/bots`, `/approvals`, `source=` filters) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes; 60 reads/min default)
 - Bots queries: [15 §1.5](../../../docs/15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)
 - Cross-phase (depends_on): P2-T020 (risk/order queries), P2-T036 (bots queries), P2-T117 (lab queries), P4-T043 (intel queries).

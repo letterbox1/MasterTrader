@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 130 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/6 |
+| 134 | 3 | 0 | 0 | 0 | 0 | 0 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-2-strategies-risk-lab.md](../../docs/roadmap/phase-2-strategies-risk-lab.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -32,12 +32,12 @@ _None._
 | [P2-T200](tasks/P2-T200-check-nautilus-rust-live-node-adapter-readiness-.md) | Check Nautilus Rust live-node adapter readiness per venue (Binance, Bybit, IBKR) | RESEARCH | high | S | agent | — |
 | [P2-T201](tasks/P2-T201-check-nautilus-rust-adapter-traits-for-the-custo.md) | Check Nautilus Rust adapter traits for the custom Alpaca, OANDA and IG adapters | RESEARCH | high | S | agent | — |
 
-## Backlog (130)
+## Backlog (134)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
 | [P2-T001](tasks/P2-T001-testnet-trade-only-keys.md) | Create trade-only, IP-locked testnet/practice keys per mode | USER | critical | S | user | P0-T009, P0-T022 |
-| [P2-T003](tasks/P2-T003-mt-strategy-base-classes.md) | mt_strategy base classes and multi-timeframe helpers | BUILD | critical | L | agent | P0-T016, P1-T009, P0-T071 |
+| [P2-T003](tasks/P2-T003-mt-strategy-base-classes.md) | Strategy base traits (Rust) and multi-timeframe helpers | BUILD | critical | L | agent | P0-T016, P1-T009, P0-T071 |
 | [P2-T004](tasks/P2-T004-strategy-manifest-schema.md) | Strategy manifest schema and validator CLI | BUILD | critical | M | agent | P0-T014 |
 | [P2-T005](tasks/P2-T005-never-build-validator.md) | Never-build validator for X/Never strategy patterns | BUILD | high | S | agent | P2-T004 |
 | [P2-T006](tasks/P2-T006-strategy-registry-versions.md) | Strategy registry, versions and strategy commands | BUILD | critical | M | agent | P2-T004, P0-T024, P0-T034 |
@@ -111,12 +111,12 @@ _None._
 | [P2-T074](tasks/P2-T074-restart-flat-bots-paused.md) | Clean restart after an unplanned stop: reconcile, flat, bots paused until you resume | BUILD | high | S | agent | P2-T027, P2-T036, P2-T032 |
 | [P2-T075](tasks/P2-T075-verify-kill-the-engine-drill.md) | Kill-the-engine drill: sidecar cancels in 5 s, flattens in 10 s, restart flat with bots paused | VERIFY | high | S | agent | P2-T072, P2-T073, P2-T074, P2-T054 |
 | [P2-T076](tasks/P2-T076-verify-safety-state-goldens.md) | Safety-state golden tests: stale data, integrity block, bad egress and late decisions rejected | VERIFY | high | S | agent | P2-T070, P2-T017, P2-T018, P2-T051 |
-| [P2-T077](tasks/P2-T077-setup-odds-simulator.md) | Setup-odds simulator ('time machine') in mt_lab and on approval cards | BUILD | medium | L | agent | P2-T101, P0-T027, P2-T038, P1-T009 |
+| [P2-T077](tasks/P2-T077-setup-odds-simulator.md) | Setup-odds simulator ('time machine') in mt-lab-core and on approval cards | BUILD | medium | L | agent | P2-T101, P0-T027, P2-T038, P1-T009 |
 | [P2-T078](tasks/P2-T078-verify-setup-odds.md) | Verify setup odds: reproducible, leak-free, never changes M11 | VERIFY | medium | S | agent | P2-T077 |
-| [P2-T101](tasks/P2-T101-lab-job-model-and-worker.md) | mt_lab job model, tables and backtest-worker queue | BUILD | critical | M | agent | P0-T024, P0-T027, P0-T020, P0-T071 |
-| [P2-T102](tasks/P2-T102-measured-cost-model.md) | Measured cost model loader from M16 snapshots | BUILD | critical | M | agent | P2-T101, P1-T038, P1-T039, P1-T040 |
-| [P2-T103](tasks/P2-T103-pit-dataset-and-universe.md) | Point-in-time dataset builder and survivorship-free universes | BUILD | critical | M | agent | P2-T101, P0-T027, P1-T009, P1-T012, P1-T013, P0-T071 |
-| [P2-T104](tasks/P2-T104-screening-engine.md) | Vectorised screening backtest engine | BUILD | high | M | agent | P2-T102, P2-T103 |
+| [P2-T101](tasks/P2-T101-lab-job-model-and-worker.md) | mt-lab-core crate, lab job model, tables and backtest-worker queue | BUILD | critical | M | agent | P0-T024, P0-T027, P0-T020, P1-T077 |
+| [P2-T102](tasks/P2-T102-measured-cost-model.md) | Measured cost model loader from M16 snapshots | BUILD | critical | M | agent | P2-T101, P1-T038, P1-T039, P1-T040, P1-T077 |
+| [P2-T103](tasks/P2-T103-pit-dataset-and-universe.md) | Point-in-time dataset builder and survivorship-free universes | BUILD | critical | M | agent | P2-T101, P0-T027, P1-T009, P1-T012, P1-T013 |
+| [P2-T104](tasks/P2-T104-screening-engine.md) | Vectorised screening backtest engine | BUILD | high | M | agent | P2-T102, P2-T103, P2-T203 |
 | [P2-T105](tasks/P2-T105-nautilus-truth-backtests.md) | Nautilus truth backtest runner with L1/L2 replay and measured fills | BUILD | critical | L | agent | P2-T102, P2-T103, P2-T003, P2-T017, P2-T202 |
 | [P2-T106](tasks/P2-T106-metrics-and-benchmarks.md) | Backtest metrics, cost breakdown and asset-class benchmarks | BUILD | high | M | agent | P2-T104, P2-T105 |
 | [P2-T107](tasks/P2-T107-mlflow-tracking-and-repro.md) | MLflow experiment tracking and reproducible re-runs | BUILD | high | M | agent | P2-T101, P2-T106, P2-T046 |
@@ -124,19 +124,19 @@ _None._
 | [P2-T109](tasks/P2-T109-walk-forward-and-purged-kfold.md) | Walk-forward (worst fold) and purged K-fold validation | BUILD | critical | M | agent | P2-T105, P2-T106 |
 | [P2-T110](tasks/P2-T110-permutation-bootstrap-deflated-sharpe.md) | MC permutation, bootstrap Sharpe CI and deflated Sharpe | BUILD | critical | M | agent | P2-T106, P2-T108 |
 | [P2-T111](tasks/P2-T111-regime-year-and-cost-stress.md) | Per-year, per-regime, 2×/3× cost stress and benchmark checks | BUILD | high | M | agent | P2-T102, P2-T106 |
-| [P2-T112](tasks/P2-T112-lookahead-recursive-analysers.md) | Look-ahead and recursive bias analysers | BUILD | critical | M | agent | P2-T105 |
-| [P2-T113](tasks/P2-T113-llm-leakage-review.md) | LLM leakage review via the gateway with audited waivers | BUILD | high | M | agent | P2-T101, P0-T042, P0-T029 |
+| [P2-T112](tasks/P2-T112-lookahead-recursive-analysers.md) | Clean-room Rust look-ahead, recursive and repainting bias analysers | BUILD | critical | M | agent | P2-T105 |
+| [P2-T113](tasks/P2-T113-llm-leakage-review.md) | LLM leakage review via the gateway with audited waivers | BUILD | high | M | agent | P2-T101, P0-T042, P0-T029, P6-T074 |
 | [P2-T114](tasks/P2-T114-validation-suite-and-gates.md) | Validation suite orchestrator, report and gate evaluator | BUILD | critical | M | agent | P2-T109, P2-T110, P2-T111, P2-T112, P2-T113, P2-T007 |
-| [P2-T115](tasks/P2-T115-optuna-sweeps-and-ab.md) | Optuna sweeps with complexity penalty and A/B on identical data | BUILD | high | M | agent | P2-T104, P2-T105, P2-T108 |
-| [P2-T116](tasks/P2-T116-sandbox-runner-and-generator.md) | Sandbox runner and LLM strategy generator | BUILD | high | L | agent | P2-T101, P2-T104, P2-T113, P2-T044, P2-T005, P0-T042 |
+| [P2-T115](tasks/P2-T115-optuna-sweeps-and-ab.md) | Optuna sweeps with complexity penalty and A/B on identical data | BUILD | high | M | agent | P2-T104, P2-T105, P2-T108, P2-T203 |
+| [P2-T116](tasks/P2-T116-sandbox-runner-and-generator.md) | Sandbox runner and LLM strategy generator | BUILD | high | L | agent | P2-T101, P2-T105, P2-T113, P2-T044, P2-T005, P0-T042, P6-T074, P2-T008, P2-T112 |
 | [P2-T117](tasks/P2-T117-lab-api-endpoints.md) | Lab REST queries, WebSocket topic and commands in mt-api | BUILD | high | M | agent | P2-T101, P2-T107, P2-T114, P0-T034, P0-T035, P0-T036 |
-| [P2-T120](tasks/P2-T120-feature-registry-and-store.md) | mt_features registry, versioning and batch/incremental parity | BUILD | high | M | agent | P2-T103 |
+| [P2-T120](tasks/P2-T120-feature-registry-and-store.md) | mt-features registry, versioning and batch/incremental parity | BUILD | high | M | agent | P2-T103 |
 | [P2-T121](tasks/P2-T121-talib-and-alpha158-features.md) | TA-Lib and Alpha158 core feature sets | BUILD | medium | M | agent | P2-T120 |
 | [P2-T122](tasks/P2-T122-microstructure-features.md) | Microstructure features from ticks and L2 | BUILD | medium | M | agent | P2-T120 |
 | [P2-T123](tasks/P2-T123-ic-evaluator.md) | Feature IC, rank-IC and decay evaluator | BUILD | medium | S | agent | P2-T121, P2-T122 |
-| [P2-T125](tasks/P2-T125-tier-a-training-pipeline.md) | Tier A training pipeline (dataset, labels, GBDT/linear/MLP) | BUILD | high | M | agent | P2-T109, P2-T120, P2-T107 |
+| [P2-T125](tasks/P2-T125-tier-a-training-pipeline.md) | Tier A training pipeline (dataset, labels, GBDT/linear/MLP) | BUILD | high | M | agent | P2-T109, P2-T120, P2-T107, P2-T203 |
 | [P2-T126](tasks/P2-T126-tier-a-calibration.md) | Tier A calibration (isotonic/Platt) with Brier and ECE | BUILD | high | S | agent | P2-T125 |
-| [P2-T127](tasks/P2-T127-tier-a-compile-and-registry.md) | Tier A compile (ONNX/Treelite/lleaves) and MLflow registry | BUILD | high | M | agent | P2-T126 |
+| [P2-T127](tasks/P2-T127-tier-a-compile-and-registry.md) | Tier A ONNX export, ort parity and MLflow registry | BUILD | high | M | agent | P2-T126 |
 | [P2-T128](tasks/P2-T128-tier-a-inprocess-runtime.md) | Tier A in-process runtime loader and latency histogram | BUILD | high | M | agent | P2-T127, P2-T120, P2-T003, P2-T009, P2-T018 |
 | [P2-T130](tasks/P2-T130-mtb-indicator-signal-library.md) | MasterTradingBot pure indicator/signal library with golden-file harness | BUILD | high | M | agent | P0-T014 |
 | [P2-T131](tasks/P2-T131-mtb-sizing-risk-library.md) | MasterTradingBot sizing/risk library (vol targeting, caps, correlation buckets) | BUILD | high | S | agent | P2-T130, P2-T013 |
@@ -152,7 +152,7 @@ _None._
 | [P2-T147](tasks/P2-T147-d05-execution-tabs.md) | D05 Execution: positions, orders, fills, TCA and venues | BUILD | high | L | agent | P2-T140, P2-T020, P2-T029 |
 | [P2-T148](tasks/P2-T148-d05-manual-ticket-flatten-halt.md) | D05 manual ticket (manual sleeve) and flatten-and-halt with reason | BUILD | high | M | agent | P2-T140, P2-T147, P2-T020, P2-T014 |
 | [P2-T149](tasks/P2-T149-web-approvals-queue.md) | Web approvals queue: D05 Approvals tab, history, batched card and Cockpit Needs-you | BUILD | high | M | agent | P2-T140, P2-T147, P2-T038 |
-| [P2-T150](tasks/P2-T150-weekly-worst-trades-report.md) | Weekly five-worst-trades and realised-vs-modelled cost report | BUILD | medium | S | agent | P2-T102, P2-T106, P2-T029 |
+| [P2-T150](tasks/P2-T150-weekly-worst-trades-report.md) | Weekly five-worst-trades and realised-vs-modelled cost report | BUILD | medium | S | agent | P2-T102, P2-T106, P2-T029, P1-T077 |
 | [P2-T160](tasks/P2-T160-verify-seeded-lookahead-bug.md) | Verify a seeded look-ahead bug is caught by analysers and leakage review | VERIFY | critical | S | agent | P2-T112, P2-T113, P2-T114 |
 | [P2-T161](tasks/P2-T161-verify-backtest-paper-parity.md) | Verify backtest ↔ paper parity on a simple template over the same week | VERIFY | critical | M | agent | P2-T105, P2-T106, P2-T021, P2-T023, P2-T008 |
 | [P2-T162](tasks/P2-T162-verify-latency-tier-a-signal-order.md) | Verify latency: tier A p99 < 50 µs and signal → order p99 < 5 ms | VERIFY | high | M | agent | P2-T128, P2-T021, P2-T047 |
@@ -164,8 +164,12 @@ _None._
 | [P2-T168](tasks/P2-T168-verify-ui-degraded-and-realtime.md) | Verify UI real-time and degraded modes on D01/D03/D04/D05 | VERIFY | high | S | agent | P2-T142, P2-T147, P2-T149 |
 | [P2-T180](tasks/P2-T180-start-p1-paper-clock.md) | Start the P1-sleeve paper clock | RUN | critical | S | agent | P2-T114, P2-T161, P2-T143, P2-T150, P2-T067 |
 | [P2-T182](tasks/P2-T182-start-weekly-review-cadence.md) | Start the weekly worst-five-trades and cost review | RUN | medium | XS | agent | P2-T150, P2-T180 |
-| [P2-T199](tasks/P2-T199-phase-2-exit-demo.md) | Phase 2 exit demo | VERIFY | critical | M | agent | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078 |
+| [P2-T199](tasks/P2-T199-phase-2-exit-demo.md) | Phase 2 exit demo | VERIFY | critical | M | agent | P2-T133, P2-T160, P2-T161, P2-T162, P2-T163, P2-T164, P2-T165, P2-T166, P2-T167, P2-T168, P2-T180, P2-T051, P2-T062, P2-T063, P2-T064, P2-T065, P2-T066, P2-T067, P2-T075, P2-T076, P2-T078, P2-T204, P2-T206 |
 | [P2-T202](tasks/P2-T202-mt-risk-pyo3-binding-for-the-python-node-python-.md) | mt-risk PyO3 binding for the Python node, Python strategies and lab backtests | BUILD | critical | M | agent | P2-T017, P0-T071 |
+| [P2-T203](tasks/P2-T203-mt-research-package-and-the-mt-lab-core-pyo3-bin.md) | mt_research package and the mt-lab-core PyO3 binding | BUILD | high | L | agent | P2-T101, P2-T102, P2-T103, P0-T071, P2-T202 |
+| [P2-T204](tasks/P2-T204-remove-the-vendored-freqtrade-analysers-and-thei.md) | Remove the vendored freqtrade analysers and their copyleft-register row | BUILD | medium | S | agent | P2-T112, P2-T160, P0-T074 |
+| [P2-T205](tasks/P2-T205-onnx-port-path-for-python-research-strategies-wi.md) | ONNX port path for Python research strategies with Rust parity check | BUILD | medium | M | agent | P2-T203, P2-T127, P2-T128, P2-T008 |
+| [P2-T206](tasks/P2-T206-verify-lab-binding-parity-and-that-python-strate.md) | Verify lab binding parity and that Python strategies stay on paper | VERIFY | high | S | agent | P2-T203, P2-T205, P2-T105, P2-T114, P2-T007 |
 
 ## Done (0)
 

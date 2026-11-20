@@ -42,7 +42,7 @@ The full P1 stack records the agreed universe for 7 consecutive days without man
 ## Context & references
 
 - Roadmap: requirements [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.10](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.80](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Roadmap T1.80 · budget R1.N3 ([03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket)) · gap report from P1-T032 · storage metrics P1-T052
+- Roadmap T1.80 · budget R1.N3 ([03 M1](../../../docs/03-build-spec.md#m1-market--macro-data)) · gap report from P1-T032 · storage metrics P1-T052
 - Depends on (this phase): P1-T001, P1-T052, P1-T053, P1-T054, P1-T057, P1-T061
 
 ## Requirements

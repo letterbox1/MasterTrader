@@ -42,7 +42,7 @@ The Rust `mt-curation` crate (`crates/mt-curation/`, 18 §2.1) provides one queu
 ## Context & references
 
 - Roadmap: [R5.20](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md) · ToDo T5.30
-- [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) · [08 task queue](../../../docs/08-airdrops-and-token-launches.md#user-task-queue--digests) · [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)
+- [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation) · [08 task queue](../../../docs/08-airdrops-and-token-launches.md#user-task-queue--digests) · [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)
 - P3 stored `TAX_QUESTION` tasks in `curation.task` (P3-T038); [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) PRO_ADVICE/VENUE_CHECK
 - Task types: the canonical 03 M19 list (decision P5-B004, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)); flow F10 ([02 §8](../../../docs/02-v1-architecture.md#8-end-to-end-flows))
 

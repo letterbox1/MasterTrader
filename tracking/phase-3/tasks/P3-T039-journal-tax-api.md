@@ -43,7 +43,7 @@ review_result: ""
 
 - Roadmap: [R3.13, R3.14, T3.29](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
-- [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · backend contracts in [D14](../../../docs/ui/dashboards/D14-journal.md) and [D15](../../../docs/ui/dashboards/D15-tax.md)
+- [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · backend contracts in [D14](../../../docs/ui/dashboards/D14-journal.md) and [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Cross-phase prerequisites (depends_on): P0-T032 (`mt-api` skeleton), P0-T034 (command bus), P0-T035 (C-levels), P0-T036 (WS hub)
 - Commands from other tasks exposed here: `tax.fy.lock`/`unlock` (C3) and `journal.manual_event.add` (C2) from P3-T055; `task.answer` (C1) from P3-T038
 

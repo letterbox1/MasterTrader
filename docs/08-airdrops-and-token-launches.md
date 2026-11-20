@@ -127,7 +127,7 @@ The executor only acts inside an active, user-signed, expiring **mandate**: one 
 
 ## User task queue & digests
 
-**Task types** (the canonical list is in [03 M19](03-build-spec.md#m19-user-task-queue--community-curation--mt_curation); D13 and the roadmap use the same names):
+**Task types** (the canonical list is in [03 M19](03-build-spec.md#m19-user-task-queue--community-curation); D13 and the roadmap use the same names):
 - **Social and community:** `JOIN_DISCORD`, `FOLLOW_ANNOUNCEMENTS`, `JOIN_TELEGRAM`, `FOLLOW_X`, `QUEST` (Galxe/Zealy/Layer3).
 - **On-chain:**
   - `ONCHAIN_ACTION_MANUAL` (e.g. use or bridge a protocol, or a manual sale, with a step list, estimated gas and capital);

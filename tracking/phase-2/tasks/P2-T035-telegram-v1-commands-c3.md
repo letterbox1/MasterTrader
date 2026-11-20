@@ -42,8 +42,8 @@ The `telegram-bot` service (`mt-telegram-bot`, Rust, teloxide; alerts-only since
 ## Context & references
 
 - Roadmap: [R2.52, R2.51](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.33
-- Spec: [03 M15 Telegram bot](../../../docs/03-build-spec.md#m15-ui--alerts--mt_ui-calls-mt_api) · [mob §3 Telegram bot](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) · [mob §4 acceptance](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria)
-- Degraded: [02 §9.3 mt-api down](../../../docs/02-v1-architecture.md#93-degraded-modes) · API: [02 §7.4 Telegram](../../../docs/02-v1-architecture.md#7-api-contract-mt_api)
+- Spec: [03 M15 Telegram bot](../../../docs/03-build-spec.md#m15-ui--alerts-calls-mt-api) · [mob §3 Telegram bot](../../../docs/ui/mobile-and-telegram.md#3-telegram-bot) · [mob §4 acceptance](../../../docs/ui/mobile-and-telegram.md#4-acceptance-criteria)
+- Degraded: [02 §9.3 mt-api down](../../../docs/02-v1-architecture.md#93-degraded-modes) · API: [02 §7.4 Telegram](../../../docs/02-v1-architecture.md#7-api-contract-mt-api)
 - Cross-phase (`depends_on`): the P1 `telegram-bot` alerts service and fan-out (P1-T045, T1.31); TOTP verification in `mt-api` against your Supabase Auth MFA factor (P0-T033, T0.24); Telegram auth per [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth). The bot token + your user id (P0-T002, T0.06) are needed only for the live phone checks (P2-T064, P2-T066); this task is built and tested against a fake Bot API with no secrets.
 - Decisions: [17 §D P2-B012](../../../docs/17-decisions-register.md#d-other-decisions) (NATS credentials limited to publishing `kill.set`; the engine writes the kill event to WORM with source `telegram`) · [17 §D P0-B002](../../../docs/17-decisions-register.md#d-other-decisions) (Telegram C3 replaces the break-glass CLI) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (C3 cool-down 15 min).
 - Related: P2-T039/T040 bot commands, P2-T059 degraded test, P2-T019 (break-glass retirement setting).

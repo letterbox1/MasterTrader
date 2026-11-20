@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: 12 §4 names every DefiLla
 ## Context & references
 
 - Found in: docs/12-policy-and-compliance.md §4 (DefiLlama row) vs docs/13-wallets-treasury-and-onchain.md §4
-- [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (DefiLlama yields API, cached hourly)
+- [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (DefiLlama yields API, cached hourly)
 - Affects: P6-T035
 
 ## Requirements

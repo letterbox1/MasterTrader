@@ -46,7 +46,7 @@ CI runs Playwright across the full DESIGN §6.8 matrix (33 viewports, portrait +
 - [DESIGN §6.8 test matrix](../../../DESIGN.md#68-test-matrix-every-screen-must-pass)
 - [DESIGN §6.7 touch](../../../DESIGN.md#67-touch--input)
 - [DESIGN §9 accessibility](../../../DESIGN.md#9-accessibility)
-- [03 M15](../../../docs/03-build-spec.md#m15-ui--alerts--mt_ui-calls-mt_api) (Playwright matrix in CI)
+- [03 M15](../../../docs/03-build-spec.md#m15-ui--alerts-calls-mt-api) (Playwright matrix in CI)
 - [Roadmap P0 §6 exit criteria](../../../docs/roadmap/phase-0-foundations.md#6-exit-criteria-demo) (4)
 - Depends on: P0-T050, P0-T051, P0-T052, P0-T015
 

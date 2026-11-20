@@ -41,7 +41,7 @@ Every threshold the risk manager needs has a documented default (user-editable i
 
 ## Context & references
 
-- [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) · [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [15 §1.2](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots)
+- [03 M11](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) · [14 §5](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [15 §1.2](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots)
 - Affects P2-T012, P2-T017, P2-T031, P2-T032, P2-T037, P2-T048.
 
 ## Requirements

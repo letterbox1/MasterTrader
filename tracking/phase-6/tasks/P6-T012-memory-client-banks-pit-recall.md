@@ -42,9 +42,9 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R6.04](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.21
-- Spec: [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (banks, PIT recall) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory) · [02 §7.1](../../../docs/02-v1-architecture.md#71-queries-rest-read) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`memory.delete` C1, audited)
+- Spec: [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (banks, PIT recall) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag) · [02 §7.1](../../../docs/02-v1-architecture.md#71-queries-rest-read) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) (`memory.delete` C1, audited)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Memory tab · [D09](../../../docs/ui/dashboards/D09-agents.md) "Memory used"
-- Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P6-B016: `observed_at`/`ingested_at` on every memory; consolidated/reflection memories carry the latest source time and are excluded when > `as_of`; if not enforceable, backtests run with memory disabled or from a frozen per-`as_of` snapshot; PIT recall test mandatory) · [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory)
+- Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P6-B016: `observed_at`/`ingested_at` on every memory; consolidated/reflection memories carry the latest source time and are excluded when > `as_of`; if not enforceable, backtests run with memory disabled or from a frozen per-`as_of` snapshot; PIT recall test mandatory) · [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag)
 - Cross-phase: P0-T034 (command bus for `memory.delete`)
 - Depends on (this phase): P6-T011, P6-T006
 

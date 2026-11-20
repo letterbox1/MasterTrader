@@ -42,7 +42,7 @@ The Python research side exists and calls the **same** production harness as Rus
 ## Context & references
 
 - Roadmap: [R2.60, R2.44](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.45 · verified by P2-T206 (T2.74)
-- Spec: [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) (lab split) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) (Python strategies only for ML research on paper)
+- Spec: [03 M7](../../../docs/03-build-spec.md#m7-research-lab) (lab split) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) (Python strategies only for ML research on paper)
 - Built on: `mt-lab-core` job model, costs and datasets (P2-T101, P2-T102, P2-T103; later sections such as metrics, P2-T106, are added to the binding as they land); the `mt_store` PyO3 module with `mt-core` types and `pit` (P0-T071); the `mt-risk` binding (P2-T202).
 - Used by: P2-T003 (Python research base lives here), P2-T104 (screener), P2-T105 (Python truth path), P2-T107/P2-T108 (tracking, trials), P2-T109 (per-fold Optuna), P2-T112 (analysers on Python fixtures), P2-T115 (sweeps), P2-T125–T127 (tier A), P2-T205 (ONNX port path).
 - Third-party: [19 §2](../../../docs/19-third-party-register.md#2-python-libraries-we-keep-only-where-absolutely-required-18-22) (PyTorch, LightGBM, scikit-learn, Optuna, Qlib, vectorbt ⚑).

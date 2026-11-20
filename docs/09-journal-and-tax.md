@@ -41,7 +41,7 @@ _Raw evidence: [research/tax-journal.md](research/tax-journal.md). **Not tax adv
 | **Rotki** | AGPL-3.0 | Optional sidecar | Local on-chain/DeFi event decoding (airdrops, staking, LP). Ingest its decoded events; **don't** use its P&L (German defaults). |
 | Ghostfolio | AGPL-3.0 | Optional sidecar | Portfolio dashboard via `POST /api/v1/import`. Not tax. |
 
-**On log stores (Loki, Graylog, OpenObserve):** these are operational logs, not the journal of record. The journal lives in **Supabase Postgres** (append-only, hash-chained, [18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)); Loki holds the operational logs. See [03-build-spec §5 M17](03-build-spec.md#m17-observability--audit--mt_obs).
+**On log stores (Loki, Graylog, OpenObserve):** these are operational logs, not the journal of record. The journal lives in **Supabase Postgres** (append-only, hash-chained, [18 §4](18-platform-and-deployment.md#4-database-supabase-postgres)); Loki holds the operational logs. See [03-build-spec §5 M17](03-build-spec.md#m17-observability--audit).
 
 ## Architecture
 

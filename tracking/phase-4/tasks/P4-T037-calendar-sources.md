@@ -42,7 +42,7 @@ Calendar clients in the Rust `mt-connectors` crate ([18 §2.1](../../../docs/18-
 ## Context & references
 
 - Roadmap: [R4.10](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.26](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar) · [06 §3 calendars & reports](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · research [forex-macro](../../../docs/research/forex-macro-market-providers.md) (`nfs.faireconomy.media/ff_calendar_thisweek.json`, ToS-grey, personal use, cached)
+- Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars) · [06 §3 calendars & reports](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) · research [forex-macro](../../../docs/research/forex-macro-market-providers.md) (`nfs.faireconomy.media/ff_calendar_thisweek.json`, ToS-grey, personal use, cached)
 - Cross-phase (`depends_on`): P1-T024 (FRED/ALFRED), P1-T026 (EIA, USDA, COT, Baker Hughes), P1-T009 (instrument master with `exchange_calendars` sessions), P1-T077 (`mt-scheduler`).
 - Blackout defaults that read `importance`: [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts).
 

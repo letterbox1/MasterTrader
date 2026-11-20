@@ -42,7 +42,7 @@ An `mt-engine` adapter for FP Markets' cTrader Open API (protobuf over TLS) prov
 ## Context & references
 
 - Roadmap: [R7.10 · ToDo T7.24](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (cTrader Open API as the Linux route) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (optional cTrader Open API/FIX) · [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) (cTrader Open API limits open item)
+- Spec: [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (cTrader Open API as the Linux route) · [03 M12](../../../docs/03-build-spec.md#m12-execution) (optional cTrader Open API/FIX) · [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) (cTrader Open API limits open item)
 - Related: P7-T004 (route choice), P7-T030, P7-T025, P7-T051
 
 ## Requirements

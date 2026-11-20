@@ -44,7 +44,7 @@ The `litellm` container (≥ 1.83, pinned by official image digest, **never** 1.
 - [Roadmap P0 R0.09](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [Roadmap P0 T0.45](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
 - [10 §5 model gateway](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21)
-- [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) (Model gateway)
+- [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) (Model gateway)
 - [03 §7 LLM cost control](../../../docs/03-build-spec.md#7-llm-cost-control)
 - [07 §7 supply chain](../../../docs/07-security-notes.md#7-supply-chain) (LiteLLM supply chain)
 - Decisions: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P6-B010 (`audit.llm_call` from P0), P0-B008 (`llm-local`); budgets [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)

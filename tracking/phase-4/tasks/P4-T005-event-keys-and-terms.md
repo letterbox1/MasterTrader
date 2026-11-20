@@ -42,7 +42,7 @@ Free keys for NASA FIRMS (`MAP_KEY`) and ACLED (research account) are in the sec
 ## Context & references
 
 - Roadmap: [R4.01, R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · Risks table 'Free-API terms change' (§7)
-- Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) (Finnhub 60/min, read its ML clause first; CryptoPanic read its terms first) · [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents) (ACLED research account)
+- Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social) (Finnhub 60/min, read its ML clause first; CryptoPanic read its terms first) · [03 M3](../../../docs/03-build-spec.md#m3-global-events) (ACLED research account)
 - Roadmap ToDo [T4.06](../../../docs/roadmap/phase-4-intel.md#4-todo-sets). Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B008): FIRMS/ACLED keys and the OpenSanctions licence are this USER task.
 - **Build first, keys last:** the connectors (P4-T016, P4-T017, P4-T033, P4-T034, P4-T039) are built and tested on recorded fixtures without keys; the live check with your keys is P4-T067, which depends on this task.
 - Cross-phase: Finnhub, CryptoPanic and Myfxbook keys come from P0-T010 (T0.10).

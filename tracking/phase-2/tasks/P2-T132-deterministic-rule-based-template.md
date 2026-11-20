@@ -42,7 +42,7 @@ The 'deterministic rule-based' M0 template: a Nautilus strategy whose entries/ex
 ## Context & references
 
 - Roadmap: [R2.48, R2.02](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.31
-- [03 M0 templates](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [14 §8 merging](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MTB strategies appear as M0 strategies with template 'deterministic rule-based')
+- [03 M0 templates](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [14 §8 merging](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) (MTB strategies appear as M0 strategies with template 'deterministic rule-based')
 - Prerequisites (`depends_on`): M0 base classes (P2-T003) and the `deterministic_rule_based` template slot (P2-T009) that this task fills; manifest proposals per [16 §1](../../../docs/16-configuration-and-safety-model.md#1-configuration-layers-tighten-only-inheritance).
 
 ## Requirements

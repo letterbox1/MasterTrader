@@ -42,7 +42,7 @@ An integration test (and a paper-mode demo) seeds an NFP release into `text.cale
 ## Context & references
 
 - Roadmap: [R4.10](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.62](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) · Exit criterion 2
-- Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars--mt_datacalendar) ('pause scalpers around NFP') · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)
+- Spec: [03 M5](../../../docs/03-build-spec.md#m5-calendars) ('pause scalpers around NFP') · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp)
 - Cross-phase (`depends_on`): P2-T008 (scalping template), P2-T021 (paper engine), P2-T036 (bots), P2-T042 (D06 overview). P4-T045 provides the D08 calendar markers.
 - Defaults under test: [16 §2.8](../../../docs/16-configuration-and-safety-model.md#28-calendar-blackouts) (15 min before to 15 min after; `event_sensitive` bots; exits continue).
 

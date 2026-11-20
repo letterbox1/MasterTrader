@@ -41,12 +41,12 @@ The docs say whether raw 100 ms diffs are recorded (and for how many symbols) or
 
 ## Context & references
 
-- Found in: R1.01 and [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) specify L2 **diff** depth (100 ms); the budget in [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) / R1.N3 assumes "L2@1s"
+- Found in: R1.01 and [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) specify L2 **diff** depth (100 ms); the budget in [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) / R1.N3 assumes "L2@1s"
 - Related items: P1-T001, P1-T010, P1-T012, P1-T052, P1-T065
 
 ## Requirements
 
-- **Where:** R1.01 and [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) specify L2 **diff** depth (100 ms); the budget in [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) / R1.N3 assumes "L2@1s"
+- **Where:** R1.01 and [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) specify L2 **diff** depth (100 ms); the budget in [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) / R1.N3 assumes "L2@1s"
 - **Expected:** The docs say whether raw 100 ms diffs are recorded (and for how many symbols) or 1 s snapshots, and the budget is computed for that choice
 - **Actual:** Raw 100 ms diffs for ~10 symbols likely exceed 0.3–1 TB/year; the budget silently assumes 1 s
 - **Suggested fix:** Record raw diffs only for `l2: true` symbols (P1-T001) plus 1 s book snapshots for others; update the budget after the soak measures bytes/day (P1-T065)

@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Docs: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · [15 §1.5](../../../docs/15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)
+- Docs: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit) · [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · [15 §1.5](../../../docs/15-bots-hitl-and-worm-audit.md#15-api-data-and-ui)
 
 ## Requirements
 

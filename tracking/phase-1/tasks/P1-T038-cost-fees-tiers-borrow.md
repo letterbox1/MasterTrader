@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: requirements [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.28](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (Fees: commissions per fill and current fee tiers via ccxt `fetchTradingFees`, Binance commission endpoint, IBKR `commissionAndFeesReport`, Alpaca; borrow rates)
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (Fees: commissions per fill and current fee tiers via ccxt `fetchTradingFees`, Binance commission endpoint, IBKR `commissionAndFeesReport`, Alpaca; borrow rates)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built keyless against venue REST fixtures and public fee schedules (`source=public_schedule`); reading your testnet fee tiers with the read-only keys from P1-T002 is checked in P1-T073
 - Cross-phase prerequisites (depends_on): P0-T029, P0-T030 (WORM layer for `audit.cost_event`)
 - Depends on (this phase): P1-T004, P1-T005

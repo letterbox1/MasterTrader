@@ -42,7 +42,7 @@ Any running strategy version can be shadowed by another version (or itself) in p
 ## Context & references
 
 - Roadmap: [R2.07](../../../docs/roadmap/phase-2-strategies-risk-lab.md) (shadow part) · ToDo **T2.37** (added for gap P2-B014)
-- Spec: [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · command `strategy.run_shadow` (C1, [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)) via `engine.cmd.*`
+- Spec: [03 M0 experimentation](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · command `strategy.run_shadow` (C1, [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)) via `engine.cmd.*`
 - Related: P2-T115 (sweeps + A/B on identical data).
 
 ## Requirements

@@ -42,7 +42,7 @@ A reconciliation framework compares our records with each venue's own: positions
 ## Context & references
 
 - Roadmap: requirements [R1.12](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.29](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (Reconciliation: 60 s / 5 min / EOD defaults; an unexplained mismatch is an incident) · [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys)
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (Reconciliation: 60 s / 5 min / EOD defaults; an unexplained mismatch is an incident) · [07 §3](../../../docs/07-security-notes.md#3-broker--exchange-keys)
 - Defaults: [16 §2.9](../../../docs/16-configuration-and-safety-model.md#29-reconciliation) (cadence, tolerance, explained vs unexplained) · decisions [17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) P7-B007, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B008 (read-only keys where the testnet offers them)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): keyless here (fixtures/mocks); live reconciliation with your keys (P1-T002) is P1-T074 (T1.67)
 - Cross-phase prerequisites (depends_on): P0-T029, P0-T030 (WORM layer for `audit.recon`)

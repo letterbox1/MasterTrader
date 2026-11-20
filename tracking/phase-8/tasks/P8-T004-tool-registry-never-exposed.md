@@ -44,7 +44,7 @@ review_result: ""
 - Roadmap: [R8.03, R8.06](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.21](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets) (never-exposed filter)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B001](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (MCP can never approve; `approval.*`, `mcp.*` never exposed) · [17 §D P8-B005](../../../docs/17-decisions-register.md#d-other-decisions) (never-exposed list in 16 §2.12)
-- Spec: [03 M20 safeguards](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
+- Spec: [03 M20 safeguards](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
 - UI: [D17 Tool registry + Actions](../../../docs/ui/dashboards/D17-mcp-console.md) (`mcp.tool.set`: disable C1; enable read/analyse/curation C1; enable trade/strategy/risk C3; never-exposed greyed with a lock)
 - Command catalogue: [02 §7.2](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - Cross-phase (depends_on): P0-T035 (confirmation engine used for `mcp.tool.set` levels).

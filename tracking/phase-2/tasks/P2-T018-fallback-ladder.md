@@ -42,7 +42,7 @@ The 6-rung fallback ladder runs live per sleeve and system-wide, driven by confi
 ## Context & references
 
 - Roadmap: [R2.15](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.22
-- Spec: [03 M11 fallback ladder](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [D06 ladder widget](../../../docs/ui/dashboards/D06-risk.md)
+- Spec: [03 M11 fallback ladder](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [D06 ladder widget](../../../docs/ui/dashboards/D06-risk.md)
 - Decisions: six rungs, rendered from the API ([17 §D P2-B004](../../../docs/17-decisions-register.md#d-other-decisions), D06 ladder row); kill has no vault sweep in P2 ([17 §B P2-B010](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)).
 - Related: P2-T037 (auto-downgrade at rung ≥ 3), P2-T060 ladder tests, P2-T070 (a failing inline safety-state check holds the ladder).
 

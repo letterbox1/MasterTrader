@@ -41,7 +41,7 @@ The docs agree and part-B tasks can be built without guessing: a single decided 
 
 ## Context & references
 
-- [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [01 §3.3](../../../docs/01-repo-vetting-report.md#33-freqtrade--reference-only) · [SPEC](../../../SPEC.md#non-negotiable-requirements)
+- [03 M7](../../../docs/03-build-spec.md#m7-research-lab) · [01 §3.3](../../../docs/01-repo-vetting-report.md#33-freqtrade--reference-only) · [SPEC](../../../SPEC.md#non-negotiable-requirements)
 - Affects P2-T112
 
 ## Requirements

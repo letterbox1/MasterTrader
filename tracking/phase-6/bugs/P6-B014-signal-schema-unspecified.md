@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: 03 M8 (or 02 §5.3) lists 
 ## Context & references
 
 - Found in: docs/03-build-spec.md M8; docs/02-v1-architecture.md §5.3
-- [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [D09](../../../docs/ui/dashboards/D09-agents.md) (implies direction, probability/conviction, horizon, provenance)
+- [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [D09](../../../docs/ui/dashboards/D09-agents.md) (implies direction, probability/conviction, horizon, provenance)
 - Affects: P6-T004, P6-T016
 
 ## Requirements

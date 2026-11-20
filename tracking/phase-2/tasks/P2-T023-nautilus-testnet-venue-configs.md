@@ -42,7 +42,7 @@ The engine trades Binance spot/futures testnet (and Bybit testnet for paper-only
 ## Context & references
 
 - Roadmap: [R2.30, R2.N3](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
-- Spec: [03 M12 Nautilus adapters](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [07 §3 per-mode sub-accounts](../../../docs/07-security-notes.md#3-broker--exchange-keys)
+- Spec: [03 M12 Nautilus adapters](../../../docs/03-build-spec.md#m12-execution) · [07 §3 per-mode sub-accounts](../../../docs/07-security-notes.md#3-broker--exchange-keys)
 - Policy: [12 §2 registry](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) · paper/testnet orders on `blocked` products only where `paper_ok` ([17 §D P2-B008](../../../docs/17-decisions-register.md#d-other-decisions))
 - Cross-phase (`depends_on`): measured costs `cost.*` (P1-T040) feed the sandbox fill model.
 - Build first, keys last: built and tested keyless (configs, validator, sandbox venue, mock testnet servers / recorded fixtures). The live place/cancel/fill on testnet with your keys is P2-T071 (T2.72).

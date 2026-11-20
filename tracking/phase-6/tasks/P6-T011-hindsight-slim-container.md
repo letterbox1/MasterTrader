@@ -42,7 +42,7 @@ A `hindsight` service (Hindsight 1.0.0 **slim** image, pinned by digest) runs on
 ## Context & references
 
 - Roadmap: [R6.04](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.40
-- Spec: [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (deployment table, env vars, 384-d warning) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`hindsight` container, phase 6) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
+- Spec: [10 §1](../../../docs/10-memory-rag-and-models.md#1-hindsight-self-hosted-agent-memory) (deployment table, env vars, 384-d warning) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`hindsight` container, phase 6) · [07 §5](../../../docs/07-security-notes.md#5-network--host)
 - Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P0-B005/P6-B005: all 13 schemas incl. `hindsight` are created in P0 by P0-T024; this task adds the Hindsight role, grants and its tables)
 - Cross-phase: P0-T020 (Compose), P0-T022 (secrets → tmpfs), P0-T024 (`hindsight` schema), P0-T042 (LiteLLM `memory` key), P0-T043 (TEI)
 - Security: [R6.N2](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) (bind `127.0.0.1` + API key; checked by P6-T069)

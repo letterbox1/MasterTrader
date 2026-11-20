@@ -42,7 +42,7 @@ Strategies and their immutable versions live in `strategy.registry` / `strategy.
 ## Context & references
 
 - Roadmap: [R2.04, R2.06](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
-- Architecture: [02 §4 M0 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 command catalogue](../../../docs/02-v1-architecture.md#72-commands-rest-write)
+- Architecture: [02 §4 M0 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §7 API](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) · [02 §7.2 command catalogue](../../../docs/02-v1-architecture.md#72-commands-rest-write)
 - UI: [D03 registry + versions tab](../../../docs/ui/dashboards/D03-strategies.md)
 - Cross-phase (`depends_on`): Supabase migrations baseline + `strategy` schema (P0-T024, R0.03); command bus + `audit.command` (P0-T034, R0.08).
 

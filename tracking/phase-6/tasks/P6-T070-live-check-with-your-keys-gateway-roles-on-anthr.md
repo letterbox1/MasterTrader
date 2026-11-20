@@ -43,7 +43,7 @@ The last, keyed step for the Phase 6 integrations that were built and tested key
 
 - Requirements: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.07](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.03](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.23](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo none (supporting live check)
 - Decision: [17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22) (live checks needing your keys are separate final VERIFY tasks depending on the USER task that provides them) · budgets [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)
-- Spec: [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) · [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (Tally free key) · [07 §2](../../../docs/07-security-notes.md#2-secrets)
+- Spec: [10 §5](../../../docs/10-memory-rag-and-models.md#5-model-gateway-research-chat--debate-routing-m21) · [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (Tally free key) · [07 §2](../../../docs/07-security-notes.md#2-secrets)
 - Cross-phase: P0-T007 (USER: Anthropic + custom endpoint keys in sops), P0-T068 (P0 live gateway smoke)
 - Depends on (this phase): P6-T001 (budgets reviewed, endpoint confirmed), P6-T002 (USER: Tally key), P6-T067 (keyless sample runs), P6-T053 (fake-provider budget test), P6-T015 (explain), P6-T025 (shadow), P6-T040 (DAO monitor)
 

@@ -42,7 +42,7 @@ A read-only tool belt for the debate graph: `pit` tools (bars, features, documen
 ## Context & references
 
 - Roadmap: [R6.01](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.02](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.20
-- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer--mt_agents) (FinRobot V2 valuation operators, `pit` tools, memory recall) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (cache per (instrument, as_of)) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (read-only tools, untrusted wrapping) · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md)
+- Spec: [03 M8](../../../docs/03-build-spec.md#m8-ai-decision-layer) (FinRobot V2 valuation operators, `pit` tools, memory recall) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) (cache per (instrument, as_of)) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) (read-only tools, untrusted wrapping) · [research: TradingAgents/FinRobot](../../../docs/research/agents-tradingagents-finrobot.md)
 - RAG: [10 §3](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) (P4 `rag.search` with `as_of`)
 - Cross-phase: P0-T027 (`pit(as_of)`), P4-T025 (provenance gate, untrusted wrapping), P4-T032 (RAG retrieval with `as_of`); tier-B scores (P4-T029) are read from KV and mocked in tests
 - Security: [R6.N1](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) (untrusted text wrapped and marked can't trigger commands; tested by P6-T054)

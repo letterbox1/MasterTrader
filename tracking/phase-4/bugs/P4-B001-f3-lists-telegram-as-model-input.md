@@ -37,7 +37,7 @@ Flow F3 makes clear that Telegram never enters the nlp/decision-model chain: Tel
 ## Context & references
 
 - Found in: [02 §8 F3](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 1 'A feed (RSS / Telegram / Discord / Bluesky / GDELT) arrives' → step 3 relevance gate/FinBERT/TEI
-- Contradicts: [R4.03](../../../docs/roadmap/phase-4-intel.md#3-requirements) · [12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [SPEC NN10](../../../SPEC.md#non-negotiable-requirements) · [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) (no model ever sees Telegram text)
+- Contradicts: [R4.03](../../../docs/roadmap/phase-4-intel.md#3-requirements) · [12 §4–5](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) · [SPEC NN10](../../../SPEC.md#non-negotiable-requirements) · [03 M2](../../../docs/03-build-spec.md#m2-news--social) (no model ever sees Telegram text)
 - Related tasks: P4-T025, P4-T019, P4-T050.
 
 ## Requirements

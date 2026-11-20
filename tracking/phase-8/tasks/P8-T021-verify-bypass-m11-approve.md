@@ -44,7 +44,7 @@ An adversarial test suite `crates/mt-mcp/tests/security_bypass.rs`, mandatory fo
 - Roadmap: [R8.04](../../../docs/roadmap/phase-8-mcp.md#3-requirements) (verified by: bypass tests) · ToDo [T8.60](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B001/B002](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl), [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8)
-- Spec: [SPEC NN2](../../../SPEC.md#non-negotiable-requirements) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
+- Spec: [SPEC NN2](../../../SPEC.md#non-negotiable-requirements) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Precedent: P2-T052 (no-bypass tests for every order source).
 
 ## Requirements

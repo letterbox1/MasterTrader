@@ -37,12 +37,12 @@ review_result: ""
 
 ## Goal / expected outcome
 
-A versioned feature registry (`features.def`) in the Rust crate `crates/mt-features` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features)) with one definition per feature that computes identically in batch (lab, point-in-time) and incrementally (engine), stores values in `features.value` and publishes `feat.{name}.{symbol}`.
+A versioned feature registry (`features.def`) in the Rust crate `crates/mt-features` ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M6](../../../docs/03-build-spec.md#m6-features)) with one definition per feature that computes identically in batch (lab, point-in-time) and incrementally (engine), stores values in `features.value` and publishes `feat.{name}.{symbol}`.
 
 ## Context & references
 
 - Roadmap: [R2.46](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.29
-- [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features) (versioned features) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M6 owns `features.value`, `features.def`; publishes `feat.*`) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats)
+- [03 M6](../../../docs/03-build-spec.md#m6-features) (versioned features) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M6 owns `features.value`, `features.def`; publishes `feat.*`) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats)
 - Consumers: lab (P2-T104/T105), tier A (P2-T125/T128), templates (part A T2.21), MTB library (P2-T130)
 
 ## Requirements

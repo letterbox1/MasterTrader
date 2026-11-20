@@ -37,7 +37,7 @@ Every keyed or licence-bound event source has a USER step: NASA FIRMS `MAP_KEY`,
 ## Context & references
 
 - Found in: [phase-0 T0.10](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets) key list (FRED, EIA, Myfxbook, CoinGecko, CryptoRank, Helius, Alchemy, GoPlus, Finnhub, CryptoPanic)
-- Needs: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents) (FIRMS, ACLED research account, OpenSanctions)
+- Needs: [03 M3](../../../docs/03-build-spec.md#m3-global-events) (FIRMS, ACLED research account, OpenSanctions)
 - Covered in P4 by P4-T005.
 
 ## Requirements

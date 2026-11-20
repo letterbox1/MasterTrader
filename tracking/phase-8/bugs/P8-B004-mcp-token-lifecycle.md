@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Spec: [02 §7](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · [D16](../../../docs/ui/dashboards/D16-system.md) · research [MCP security](../../../docs/research/observability-storage-dataquality.md#mcp-security)
+- Spec: [02 §7](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) · [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · [D16](../../../docs/ui/dashboards/D16-system.md) · research [MCP security](../../../docs/research/observability-storage-dataquality.md#mcp-security)
 - Implementing tasks: P8-T002, P8-T020
 
 ## Requirements

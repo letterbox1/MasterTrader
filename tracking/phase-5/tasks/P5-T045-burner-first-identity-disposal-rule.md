@@ -42,7 +42,7 @@ New or untrusted dApp interactions always run first from a **burner** with minim
 ## Context & references
 
 - Roadmap: [R5.17](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md), R5.15 · ToDo T5.28 · USER P5-T007
-- [08 wallet discipline](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline) · [13 §1 rules](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers) · [03 M4 genuine-use](../../../docs/03-build-spec.md#m4-airdrops-token-launches--icos--mt_airdrop)
+- [08 wallet discipline](../../../docs/08-airdrops-and-token-launches.md#wallet-discipline) · [13 §1 rules](../../../docs/13-wallets-treasury-and-onchain.md#1-custody-tiers) · [03 M4 genuine-use](../../../docs/03-build-spec.md#m4-airdrops-token-launches--icos)
 - Disposal before P7 (decision P5-B010, [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer); 08 wallet discipline; 03 M4): a USER task (manual sale, worked in P5-T066); automated via M11 only once live execution passes the P7 gates
 
 ## Requirements

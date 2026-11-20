@@ -42,7 +42,7 @@ The Alpaca Basic (free) IEX WebSocket, in `mt-recorder` (Rust), streams trades a
 ## Context & references
 
 - Roadmap: requirements [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.34](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Alpaca Basic, real-time IEX, 30 WebSocket symbols) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (IEX ≠ NBBO: fine for swing, weak for scalping cost measurement) · [phase 1 §7 risks](../../../docs/roadmap/phase-1-data-and-monitoring.md#7-risks--open-questions)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (Alpaca Basic, real-time IEX, 30 WebSocket symbols) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (IEX ≠ NBBO: fine for swing, weak for scalping cost measurement) · [phase 1 §7 risks](../../../docs/roadmap/phase-1-data-and-monitoring.md#7-risks--open-questions)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-recorder`)
 - Roadmap ToDo T1.34 now names the Alpaca real-time stream (gap P1-B003 closed)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built keyless against fixtures in Alpaca's documented message format; the live IEX stream is checked with your paper keys in P1-T073

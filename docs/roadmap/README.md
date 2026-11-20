@@ -24,12 +24,12 @@ Calendar dates are indicative; halve the durations if you work full-time.
 | Phase | Status | Progress | Tasks done/total | Board |
 |---|---|---|---|---|
 | P0 Foundations & security baseline | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/74 | [BOARD](../../tracking/phase-0/BOARD.md) |
-| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/76 | [BOARD](../../tracking/phase-1/BOARD.md) |
-| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/133 | [BOARD](../../tracking/phase-2/BOARD.md) |
+| P1 Market data, recording & live monitoring | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/80 | [BOARD](../../tracking/phase-1/BOARD.md) |
+| P2 Strategy framework, risk manager & research lab | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/137 | [BOARD](../../tracking/phase-2/BOARD.md) |
 | P3 Journal & tax | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/61 | [BOARD](../../tracking/phase-3/BOARD.md) |
-| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/71 | [BOARD](../../tracking/phase-4/BOARD.md) |
+| P4 News, social, events & calendars | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-4/BOARD.md) |
 | P5 Airdrops, launches, wallets & curation | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/69 | [BOARD](../../tracking/phase-5/BOARD.md) |
-| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-6/BOARD.md) |
+| P6 AI decision layer, memory, models, anomalies & treasury | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/80 | [BOARD](../../tracking/phase-6/BOARD.md) |
 | P7 Prove it, then go small-live | `in_progress` | `░░░░░░░░░░░░░░░░` 0% | 0/73 | [BOARD](../../tracking/phase-7/BOARD.md) |
 | P8 MCP control plane (last, optional) | `not_started` | `░░░░░░░░░░░░░░░░` 0% | 0/35 | [BOARD](../../tracking/phase-8/BOARD.md) |
 <!-- kanban:phase-status:end -->
@@ -59,16 +59,16 @@ Calendar dates are indicative; halve the durations if you work full-time.
 <!-- kanban:roadmap-counts:start -->
 | Phase | Requirements | `USER` | `BUILD` | `OPS` | `VERIFY` | `RUN` | ToDos |
 |---|---|---|---|---|---|---|---|
-| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 21 | 12 | 10 | 9 | 10 | 1 | 42 |
-| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 20 | 4 | 17 | 5 | 8 | 1 | 35 |
-| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 46 | 5 | 25 | 4 | 14 | 2 | 50 |
+| [P0 Foundations & Security Baseline](phase-0-foundations.md) | 21 | 12 | 11 | 9 | 10 | 1 | 43 |
+| [P1 Market Data, Recording & Live Monitoring](phase-1-data-and-monitoring.md) | 22 | 4 | 19 | 5 | 9 | 1 | 38 |
+| [P2 Strategy Framework, Risk Manager & Research Lab](phase-2-strategies-risk-lab.md) | 47 | 5 | 27 | 4 | 15 | 2 | 53 |
 | [P3 Journal & Tax](phase-3-journal-and-tax.md) | 21 | 6 | 14 | 3 | 8 | 1 | 32 |
 | [P4 News, Social, Events & Calendars](phase-4-intel.md) | 19 | 5 | 15 | 3 | 9 | 1 | 33 |
 | [P5 Airdrops, Launches, Wallets & Curation](phase-5-airdrops-wallets-curation.md) | 24 | 7 | 16 | 3 | 8 | 1 | 35 |
-| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 25 | 3 | 16 | 3 | 15 | 1 | 38 |
+| [P6 AI Decision Layer, Memory, Models, Anomalies & Treasury](phase-6-ai-models-treasury.md) | 28 | 3 | 19 | 4 | 17 | 2 | 45 |
 | [P7 Prove It, Then Go Small-Live](phase-7-prove-and-go-live.md) | 19 | 14 | 8 | 5 | 7 | 3 | 37 |
 | [P8 MCP Control Plane (last, optional)](phase-8-mcp.md) | 10 | 2 | 6 | 1 | 6 | 1 | 16 |
-| **Total** | | **58** | **127** | **36** | **85** | **12** | **318** |
+| **Total** | | **58** | **135** | **37** | **89** | **13** | **332** |
 <!-- kanban:roadmap-counts:end -->
 
 ## 3. Timeline & dependencies

@@ -42,7 +42,7 @@ Strategies are **Rust by default** ([18 §2.1](../../../docs/18-platform-and-dep
 ## Context & references
 
 - Roadmap: [R2.01, R2.03](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
-- Spec: [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 §6 smallest free timeframe](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) · [02 §4 components](../../../docs/02-v1-architecture.md#4-logical-components)
+- Spec: [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [03 §6 smallest free timeframe](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) · [02 §4 components](../../../docs/02-v1-architecture.md#4-logical-components)
 - Flow: [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Cross-phase (`depends_on`): `mt-core` types `BarSpec`, `Signal`, `OrderIntent` (P0-T016, T0.21), reached from Python through the `mt_store` PyO3 module (P0-T071); instrument master with finest resolution (P1-T009, T1.22/T1.32). Bars + Parquet catalog (P1 R1.02) are only needed for replay data; tests use recorded fixtures.
 - Related: P2-T004 (manifest), P2-T017 (RiskGate), P2-T021 (engine), P2-T203 (`mt_research` package + lab binding, where the Python research base lives). Backtest↔paper parity is verified by Part B (T2.65).

@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: one HLP cap definition (bo
 ## Context & references
 
 - Found in: docs/13-wallets-treasury-and-onchain.md §4 vs docs/14-strategy-evidence-and-validation.md §3
-- [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates)
+- [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates)
 - Affects: P6-T033, P6-T034
 
 ## Requirements

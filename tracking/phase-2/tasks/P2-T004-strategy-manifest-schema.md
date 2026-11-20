@@ -42,7 +42,7 @@ A versioned manifest schema (`strategies/<name>/manifest.yaml`) with every M0 + 
 ## Context & references
 
 - Roadmap: [R2.04](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.20
-- Spec: [03 M0 manifest](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [14 §3 counterparty rule + priorities](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §5 kill criteria](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
+- Spec: [03 M0 manifest](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [14 §3 counterparty rule + priorities](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §5 kill criteria](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
 - UI: [D03 builder + manifest fields](../../../docs/ui/dashboards/D03-strategies.md)
 - Related: P2-T005 never-build, P2-T006 registry, P2-T050 first manifests; Part B consumes the param schema for Optuna (in `mt_research`, through the binding). The same manifest loads a Rust strategy crate (`strategies/<name>/`) or, for ML research on paper only, a Python research strategy.
 

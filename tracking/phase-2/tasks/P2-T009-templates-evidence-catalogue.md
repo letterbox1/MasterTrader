@@ -42,7 +42,7 @@ Templates for grid/DCA, pairs/stat-arb, event-driven, ML-signal, funding carry (
 ## Context & references
 
 - Roadmap: [R2.02, R2.03](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.21
-- Spec: [14 §3 catalogue](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §4 regime filters](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe)
+- Spec: [14 §3 catalogue](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §4 regime filters](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe)
 - Policy: [12 §2 venue registry: carry needs perps](../../../docs/12-policy-and-compliance.md#2-venue-access-registry)
 - Part B: deterministic rule-based template (T2.31) and ML-signal model loading (tier A, T2.30) plug into the slots defined here.
 

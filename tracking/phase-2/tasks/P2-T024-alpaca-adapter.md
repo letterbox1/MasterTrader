@@ -42,7 +42,7 @@ A Nautilus live data + execution client for **Alpaca**, written in Rust against 
 ## Context & references
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
-- Spec: [03 M12 custom adapters](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [12 §2 registry row](../../../docs/12-policy-and-compliance.md#2-venue-access-registry)
+- Spec: [03 M12 custom adapters](../../../docs/03-build-spec.md#m12-execution) · [12 §2 registry row](../../../docs/12-policy-and-compliance.md#2-venue-access-registry)
 - Cross-phase (`depends_on`): the P1 Alpaca stream client (P1-T021, T1.22): reuse its auth/parsers; read-only recon (P1 R1.12) shares report parsing.
 - Build first, keys last: built and tested keyless against recorded HTTP/WS cassettes; the live practice-account run with your keys is P2-T071.
 - Related: P2-T022 STP (`stp: n/a (netting)`), P2-T027 IDs/reconcile, P2-T057 conformance tests, P2-T073 venue-side stops.

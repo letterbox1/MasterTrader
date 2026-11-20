@@ -42,9 +42,9 @@ Client order IDs follow the decided format **`{bot}-{engine_epoch}-{seq}`**, wit
 ## Context & references
 
 - Roadmap: [R2.32](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
-- Spec: [03 M12 idempotent IDs](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [07 §6 IDs derived from signal ID](../../../docs/07-security-notes.md#6-application-controls)
+- Spec: [03 M12 idempotent IDs](../../../docs/03-build-spec.md#m12-execution) · [07 §6 IDs derived from signal ID](../../../docs/07-security-notes.md#6-application-controls)
 - Degraded modes: [02 §9.3 venue disconnect](../../../docs/02-v1-architecture.md#93-degraded-modes)
-- Decision: [17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions) (client order ID = `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) · defaults [16 §2.9 reconciliation](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)
+- Decision: [17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions) (client order ID = `{bot}-{engine_epoch}-{seq}`; a signal hash is stored separately for idempotency) · [03 M12](../../../docs/03-build-spec.md#m12-execution) · defaults [16 §2.9 reconciliation](../../../docs/16-configuration-and-safety-model.md#29-reconciliation)
 - Cross-phase (`depends_on`): P1 reconciliation jobs and report parsers (P1-T041 crypto testnets, P1-T042 practice brokers, T1.29).
 - Related: P2-T055 restart-duplicate test; P2-T074 restart-flat flow (bots paused, residue flattened/cancelled per policy) runs after this reconciliation.
 

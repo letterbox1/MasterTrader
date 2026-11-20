@@ -43,7 +43,7 @@ Grafana shows, from provisioning files in git, dashboards for the workstation (h
 
 - [Roadmap P0 R0.10](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [Roadmap P0 T0.46](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
-- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs)
+- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit)
 - [07 §9 monitoring & incident response](../../../docs/07-security-notes.md#9-monitoring--incident-response) (alert list)
 - [Roadmap P0 §6 exit criteria](../../../docs/roadmap/phase-0-foundations.md#6-exit-criteria-demo) (1: Grafana shows workstation/DB/NATS health and logs in Loki)
 - Depends on: P0-T023, P0-T018. Build first, keys last: the Telegram receiver is tested against a mocked Bot API; the real alert receipt is checked in the soak (P0-T063, after P0-T002).

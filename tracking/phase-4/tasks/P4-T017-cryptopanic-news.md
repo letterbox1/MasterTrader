@@ -42,7 +42,7 @@ The CryptoPanic client in the Rust `mt-connectors` crate ([18 §2.1](../../../do
 ## Context & references
 
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
 - D08: [Additions](../../../docs/ui/dashboards/D08-intel.md) (new sources: Farcaster, CryptoPanic)
 - Related: P4-T040 (crypto sentiment).
 

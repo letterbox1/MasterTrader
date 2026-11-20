@@ -61,17 +61,17 @@ _None._
 | [P5-T026](tasks/P5-T026-monitors-depeg-exploit-tvl.md) | Monitors: stablecoin depeg (alert + task until P6) and exploit/oracle/TVL drop | BUILD | high | M | agent | P5-T022, P5-T029, P1-T045 |
 | [P5-T027](tasks/P5-T027-monitors-venue-bridge-concentration.md) | Monitors: venue health, bridge policy and concentration | BUILD | medium | M | agent | P5-T022, P1-T043, P2-T015 |
 | [P5-T028](tasks/P5-T028-sweeps-kill-switch-freeze.md) | Sweep scheduler, burner refills and kill-switch sweep/freeze | BUILD | critical | M | agent | P5-T013, P5-T020, P5-T022, P5-T012, P2-T031 |
-| [P5-T029](tasks/P5-T029-curation-task-queue-core.md) | mt_curation task queue: types, verified links, ranking, expiry and feedback | BUILD | high | M | agent | P5-T009, P5-T011, P5-T031 |
-| [P5-T030](tasks/P5-T030-curation-telegram-alerts-digests.md) | Telegram task buttons, instant alerts and daily/weekly digests | BUILD | high | M | agent | P5-T029, P2-T035, P1-T045 |
-| [P5-T031](tasks/P5-T031-ops-blocklist-refresh-jobs.md) | Blocklist refresh jobs (MetaMask, ScamSniffer, polkadot-js, Chainabuse) | OPS | high | S | agent | P5-T009 |
-| [P5-T032](tasks/P5-T032-discovery-api-connectors.md) | mt_airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums) | BUILD | high | L | agent | P5-T009, P5-T011, P5-T018, P1-T006 |
+| [P5-T029](tasks/P5-T029-curation-task-queue-core.md) | mt-curation task queue: types, verified links, ranking, expiry and feedback | BUILD | high | M | agent | P5-T009, P5-T011, P5-T031 |
+| [P5-T030](tasks/P5-T030-curation-telegram-alerts-digests.md) | Telegram task buttons, instant alerts and daily/weekly digests | BUILD | high | M | agent | P5-T029, P2-T035, P1-T045, P1-T077 |
+| [P5-T031](tasks/P5-T031-ops-blocklist-refresh-jobs.md) | Blocklist refresh jobs (MetaMask, ScamSniffer, polkadot-js, Chainabuse) | OPS | high | S | agent | P5-T009, P1-T077, P1-T078 |
+| [P5-T032](tasks/P5-T032-discovery-api-connectors.md) | mt-airdrop discovery connectors (DefiLlama, CryptoRank, CoinGecko, DexScreener, Galxe, Snapshot, forums) | BUILD | high | L | agent | P5-T009, P5-T011, P5-T018, P1-T006, P1-T077, P1-T078 |
 | [P5-T033](tasks/P5-T033-discovery-intake-discord-telegram-add.md) | Discovery intake: Discord inbox classification, Telegram postures, news and /add <url> | BUILD | high | M | agent | P5-T032, P4-T019, P4-T020, P4-T025, P4-T028 |
 | [P5-T034](tasks/P5-T034-normalise-official-domain-corroboration.md) | Normalise and dedupe, verify official domain, corroboration score | BUILD | high | M | agent | P5-T032, P5-T031 |
-| [P5-T035](tasks/P5-T035-enrichment-blockscout-helius-dex.md) | Enrichment: Blockscout/own RPC, Helius, DexScreener/GeckoTerminal, CryptoRank | BUILD | high | M | agent | P5-T034, P5-T018 |
-| [P5-T036](tasks/P5-T036-risk-provider-clients-hard-fails.md) | Risk providers (GoPlus, Honeypot.is, RugCheck) and hard-fail rules | BUILD | critical | M | agent | P5-T035, P5-T031 |
+| [P5-T035](tasks/P5-T035-enrichment-blockscout-helius-dex.md) | Enrichment: Blockscout/own RPC, Helius, DexScreener/GeckoTerminal, CryptoRank | BUILD | high | M | agent | P5-T034, P5-T018, P1-T078 |
+| [P5-T036](tasks/P5-T036-risk-provider-clients-hard-fails.md) | Risk providers (GoPlus, Honeypot.is, RugCheck) and hard-fail rules | BUILD | critical | M | agent | P5-T035, P5-T031, P1-T078 |
 | [P5-T037](tasks/P5-T037-risk-heuristics-score-composition.md) | Risk heuristics (solana-rugchecker, CRPWarner concepts, EVM/Solana features) and 0–100 score | BUILD | high | L | agent | P5-T036 |
 | [P5-T038](tasks/P5-T038-wallet-cluster-graph-blacklist.md) | Wallet-cluster detection (funding graph) and entity blacklist | BUILD | high | L | agent | P5-T035 |
-| [P5-T039](tasks/P5-T039-risk-calibration-notebook.md) | Risk calibration notebook on SoK, SolRPDS, Pump.fun corpus and MemeTrans | BUILD | medium | M | agent | P5-T037, P5-T038, P2-T046 |
+| [P5-T039](tasks/P5-T039-risk-calibration-notebook.md) | Risk calibration notebook on SoK, SolRPDS, Pump.fun corpus and MemeTrans | BUILD | medium | M | agent | P5-T037, P5-T038, P2-T046, P1-T077 |
 | [P5-T040](tasks/P5-T040-viability-ev-gate-au-geo.md) | Viability score with AU geo/KYC exclusion and EV gate | BUILD | high | M | agent | P5-T037 |
 | [P5-T041](tasks/P5-T041-decision-engine-fresh-launch-reject.md) | Decision engine: reject / task / watch / auto-claim with fresh-launch default-reject | BUILD | critical | M | agent | P5-T040, P5-T038, P5-T029 |
 | [P5-T042](tasks/P5-T042-never-automated-policy-guard.md) | Never-automated policy guard enforced server-side at every layer | BUILD | critical | M | agent | P5-T011, P5-T014, P5-T015 |
@@ -86,7 +86,7 @@ _None._
 | [P5-T051](tasks/P5-T051-runbook-wallet-drained.md) | Runbook: wallet drained (revoke, isolate, sweep) | DOC | high | S | agent | P5-T025, P5-T028, P2-T068 |
 | [P5-T052](tasks/P5-T052-verify-drainer-test-suite.md) | Drainer test suite: every drainer pattern refused | VERIFY | critical | M | agent | P5-T014, P5-T015, P5-T016, P5-T042, P5-T044 |
 | [P5-T053](tasks/P5-T053-verify-autonomy-never-automated-policy.md) | Policy tests: autonomy limits and the never-automated list | VERIFY | critical | S | agent | P5-T041, P5-T042, P5-T043, P5-T044, P5-T048, P5-T049 |
-| [P5-T054](tasks/P5-T054-verify-signer-isolation-network.md) | Network test: signer and Anvil isolated; no LLM can reach keys | VERIFY | high | S | agent | P5-T017, P5-T013, P0-T021 |
+| [P5-T054](tasks/P5-T054-verify-signer-isolation-network.md) | Network test: signer and Anvil isolated; no LLM can reach keys | VERIFY | high | S | agent | P5-T017, P5-T013, P0-T021, P1-T077 |
 | [P5-T055](tasks/P5-T055-verify-sok-evaluation-report.md) | SoK evaluation report: precision/recall vs the rule-based baseline | VERIFY | medium | S | agent | P5-T039 |
 | [P5-T056](tasks/P5-T056-verify-testnet-claim-scenario.md) | Testnet claim scenario: simulation +tokens −gas, mandate respected, journal entry | VERIFY | critical | M | agent | P5-T044, P5-T046, P5-T048, P5-T065, P5-T017 |
 | [P5-T057](tasks/P5-T057-verify-depeg-exploit-simulations.md) | Depeg and exploit simulations raise alerts and urgent tasks (no automated reduce before P6) | VERIFY | high | S | agent | P5-T025, P5-T026, P5-T027 |

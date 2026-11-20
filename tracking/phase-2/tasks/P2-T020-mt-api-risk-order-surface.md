@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.10, R2.11, R2.16](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDos T2.22, T2.24
-- API: [02 §7.1 queries](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · WS topics in 02 §7.3
+- API: [02 §7.1 queries](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) · [02 §7.2 commands](../../../docs/02-v1-architecture.md#72-commands-rest-write) · WS topics in 02 §7.3
 - UI: [D06 backend contract](../../../docs/ui/dashboards/D06-risk.md) · [D05 manual ticket = manual sleeve](../../../docs/ui/dashboards/D05-execution.md)
 - Cross-phase (`depends_on`): mt-api command bus, idempotency, `audit.command` (P0-T034), confirmation levels (P0-T035), WS hub (P0-T036), all T0.24.
 - Related: P2-T069 (effective-limits API `/risk/policy` with layer per value), P2-T070 (safety state in `/risk/state`).

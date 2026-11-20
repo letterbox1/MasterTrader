@@ -44,7 +44,7 @@ Every WORM row carries `chain_id`, `seq`, `prev_hash`, `row_hash = sha256(prev_h
 - [Roadmap P0 R0.07](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [15 §2.2 layers](../../../docs/15-bots-hitl-and-worm-audit.md#22-layers) (Row hash chain)
 - [07 §8 backups & audit](../../../docs/07-security-notes.md#8-data-protection-backups--audit)
-- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs)
+- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit)
 - Related: P0-T029, P0-T038 (uses `recompute_chain`)
 - Depends on: P0-T029
 

@@ -42,7 +42,7 @@ A durable JetStream consumer in `mt-recorder` (Rust) writes every `md.*` trade, 
 ## Context & references
 
 - Roadmap: requirements [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.21](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (recording pipeline) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 3 · stores [02 §5.1](../../../docs/02-v1-architecture.md#51-stores) (Parquet forever; hot NVMe 90 days → cold HDD)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (recording pipeline) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 3 · stores [02 §5.1](../../../docs/02-v1-architecture.md#51-stores) (Parquet forever; hot NVMe 90 days → cold HDD)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-recorder` → Parquet catalog) · [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb) (raw ticks and L2 live in Parquet; old bars join them via P1-T075)
 - Storage budget R1.N3: ~0.3–1 TB/year for ~10 symbols at trades + L1 + 1 s book snapshots, native L2 diffs only for the default ≤ 3 order-book symbols ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002); recalculated from the soak (P1-T065)
 - Depends on (this phase): P1-T010

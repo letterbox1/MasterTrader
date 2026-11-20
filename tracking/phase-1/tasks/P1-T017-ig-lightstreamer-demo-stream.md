@@ -42,7 +42,7 @@ IG demo streaming prices (in `mt-recorder`, Rust) for the universe's FX, metals 
 ## Context & references
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.23](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (IG Lightstreamer demo) · [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (IG REST + Lightstreamer, `trading-ig` BSD-3) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (IG Lightstreamer demo) · [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (IG REST + Lightstreamer, `trading-ig` BSD-3) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): built and tested keyless against fixtures in IG's documented REST/Lightstreamer formats; the live demo stream is checked with your credentials in P1-T073 (from P0-T009 / P1-T002). IG's historical price allowance is limited, so history comes from Dukascopy (P1-T018)
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T009
 

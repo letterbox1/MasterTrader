@@ -37,7 +37,7 @@ review_result: ""
 
 ## Goal / expected outcome
 
-The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 binding exposes `RiskGate` (decide and preview), the compiled policy cache and the sizing models to the Nautilus Python node, paper-only Python research strategies (the `mt_research.strategy` base, P2-T003) and the Python research truth path (P2-T105). There is one risk implementation ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp)); the risk golden suite runs against the crate and a parity subset runs through the binding.
+The Python side calls the **same** `mt-risk` code as the Rust side: a PyO3 binding exposes `RiskGate` (decide and preview), the compiled policy cache and the sizing models to the Nautilus Python node, paper-only Python research strategies (the `mt_research.strategy` base, P2-T003) and the Python research truth path (P2-T105). There is one risk implementation ([18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates), [03 M11](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp)); the risk golden suite runs against the crate and a parity subset runs through the binding.
 
 ## Context & references
 

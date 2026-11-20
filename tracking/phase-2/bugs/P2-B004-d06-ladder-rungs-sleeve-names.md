@@ -41,7 +41,7 @@ D06 matches the 6-rung ladder in 03 M11 / 14 §5 and the sleeve list in 14 §3.
 
 ## Context & references
 
-- [D06 additions](../../../docs/ui/dashboards/D06-risk.md) · [03 M11 ladder](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §3 allocation](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
+- [D06 additions](../../../docs/ui/dashboards/D06-risk.md) · [03 M11 ladder](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §3 allocation](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11)
 - Affects P2-T018, P2-T042, P2-T049.
 
 ## Requirements

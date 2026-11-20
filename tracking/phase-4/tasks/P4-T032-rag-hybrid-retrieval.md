@@ -42,8 +42,8 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R4.07](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.24](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Design: [10 §3 items 2, 4, 6](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory)
-- API: [02 §7.1](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) `/rag/search`
+- Design: [10 §3 items 2, 4, 6](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag)
+- API: [02 §7.1](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) `/rag/search`
 - Verified by P4-T051 (benchmark + leakage).
 - Cross-phase: P0-T043 (`tei-embed` + `tei-rerank`, 17 §D P0-B007) is a `depends_on` entry.
 

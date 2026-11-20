@@ -44,7 +44,7 @@ MCP clients that support MCP authorization can connect to the Streamable HTTP en
 - Roadmap: [R8.08](../../../docs/roadmap/phase-8-mcp.md#3-requirements) ("OAuth 2.1 (PKCE, resource indicators) where the client supports it") · ToDo [T8.24](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
 - Decisions: [17 §A P8-B004](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) · [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes, expiry options, creation levels)
-- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.4 Tokens](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
+- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.4 Tokens](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [07 §6](../../../docs/07-security-notes.md#6-application-controls)
 - External specs (pin the versions in the PR): MCP authorization spec for HTTP transports; OAuth 2.1 draft; RFC 7636 (PKCE), RFC 8707 (resource indicators), RFC 8414 (authorization server metadata), RFC 9728 (protected resource metadata).
 - Related: P8-T002 (token model), P8-T003 (Streamable HTTP), P8-T016 (D17 consent/tokens), P8-T020 (keyless tests), P8-T035 (real client check).
 

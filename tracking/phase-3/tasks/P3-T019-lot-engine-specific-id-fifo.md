@@ -41,7 +41,7 @@ Every acquisition (trade, income receipt, airdrop, staking reward, FX cash inflo
 
 ## Context & references
 
-- Roadmap: [R3.05, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md) · [03 M18](../../../docs/03-build-spec.md#m18-trading-journal--tax--mt_journal) · [09 architecture LOT ENGINE](../../../docs/09-journal-and-tax.md#architecture)
+- Roadmap: [R3.05, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md) · [03 M18](../../../docs/03-build-spec.md#m18-trading-journal--tax) · [09 architecture LOT ENGINE](../../../docs/09-journal-and-tax.md#architecture)
 - Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Borrowed ideas: rp2 (Apache) lot-matching plugins + Decimal; isaacrowntree/ledger (MIT) brokerage in cost base — see [09 tools vetted](../../../docs/09-journal-and-tax.md#tools-vetted); vendored code under `third_party/` with pinned commit + licence
 - Command `tax.lot.select` (C1) in [D15 actions](../../../docs/ui/dashboards/D15-tax.md)

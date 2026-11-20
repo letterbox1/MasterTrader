@@ -41,7 +41,7 @@ Every non-AUD cash balance (USD at IBKR, USDT on an exchange, EUR at OANDA) is t
 
 ## Context & references
 
-- Roadmap: [R3.05, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md) · [09 AU_2026 Forex / CFDs / Futures](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · [03 M18](../../../docs/03-build-spec.md#m18-trading-journal--tax--mt_journal)
+- Roadmap: [R3.05, T3.23](../../../docs/roadmap/phase-3-journal-and-tax.md) · [09 AU_2026 Forex / CFDs / Futures](../../../docs/09-journal-and-tax.md#jurisdiction-plugin-interface) · [03 M18](../../../docs/03-build-spec.md#m18-trading-journal--tax)
 - Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
 - Agent question 4 (Div 775 thresholds/elections) in [09 questions](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks)
 - Related: P3-T024 (AU_2026 revenue/forex rules), P3-T046 (property tests)

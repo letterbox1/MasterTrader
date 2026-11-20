@@ -42,7 +42,7 @@ Every Rust service calls `mt_obs::setup(service_name)` once and gets `tracing` J
 ## Context & references
 
 - [Roadmap P0 R0.10](../../../docs/roadmap/phase-0-foundations.md#3-requirements) · [T0.25](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
-- [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-obs` row) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs)
+- [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-obs` row) · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit)
 - [02 §6 NATS](../../../docs/02-v1-architecture.md#6-messaging-nats) (`sys.heartbeat.{service}`)
 - [02 §9.2 SLOs](../../../docs/02-v1-architecture.md#92-observability--slos)
 - Related: P0-T023 (Vector/Loki), P0-T045, P0-T071 (the `mt_store` wheel)

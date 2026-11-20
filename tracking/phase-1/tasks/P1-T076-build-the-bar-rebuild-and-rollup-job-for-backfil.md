@@ -43,7 +43,7 @@ One idempotent job in `mt-recorder` rebuilds bars for an (instrument, time range
 
 - Roadmap: requirements [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.21](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets) ("rollup job for backfills and corrections")
 - Platform: [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb) (backfills and corrections re-run a rollup job that rebuilds the affected higher sizes from 1m, idempotent, upsert by key) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-recorder`)
-- Flow: [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 4 · [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket)
+- Flow: [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 4 · [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data)
 - Built on: P1-T013 (bar builder logic and tables; late-data queue), P1-T012 (Parquet catalog)
 - Used by: P1-T015 and P1-T022 (backfills call it after writing trades), P1-T013 (corrections later than the late-data window), P1-T058 (parity after a seeded backfill), P1-T075 (corrections to exported months)
 

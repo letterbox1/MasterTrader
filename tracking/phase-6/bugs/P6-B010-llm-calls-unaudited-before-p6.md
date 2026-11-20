@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: LLM calls are audited from
 ## Context & references
 
 - Found in: docs/roadmap/phase-0-foundations.md R0.07/R0.09 vs docs/roadmap/phase-6-ai-models-treasury.md R6.03
-- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) (every LLM call audited) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) (append-only audit incl. LLM calls)
+- [03 M17](../../../docs/03-build-spec.md#m17-observability--audit) (every LLM call audited) · [SPEC non-negotiables](../../../SPEC.md#non-negotiable-requirements) (append-only audit incl. LLM calls)
 - P2 T2.27 (leakage review via the gateway), P4 R4.14 (morning brief), P3 T3.64 (prompt audit)
 - Affects: P6-T005
 

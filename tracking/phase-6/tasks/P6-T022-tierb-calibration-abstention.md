@@ -42,7 +42,7 @@ Each trained head is post-hoc calibrated (temperature or isotonic) on a walk-for
 ## Context & references
 
 - Roadmap: [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.24
-- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (calibration, abstention, coverage) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (calibration, abstention, coverage) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - UI: [D10](../../../docs/ui/dashboards/D10-models-memory.md) Registry detail (reliability diagram)
 - Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) ([17 §C](../../../docs/17-decisions-register.md#c-defaults-that-were-n-or-unspecified) P6-B015): auto-decide at ≥ 0.75 precision, veto ≥ 0.90, ECE ≤ 0.05, flip rate ≤ 0.1%
 - Depends on (this phase): P6-T021

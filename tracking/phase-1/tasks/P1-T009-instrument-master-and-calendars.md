@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: requirements [R1.05](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.15](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.34](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.32](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (FinanceDatabase as symbol master) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (finest free timeframe per class; "the UI shows each instrument's finest available resolution")
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (FinanceDatabase as symbol master) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (finest free timeframe per class; "the UI shows each instrument's finest available resolution")
 - UI: [D02 Markets](../../../docs/ui/dashboards/D02-markets.md) header "min resolution" and timeframe picker disabling unsupported resolutions with a reason
 - Roadmap ToDo T1.34 now names FinanceDatabase and `exchange_calendars` (gap P1-B003 closed)
 - Depends on (this phase): P1-T005, P1-T007, P1-T078 (`mt-connectors` base)

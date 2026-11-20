@@ -44,7 +44,7 @@ You can label a stratified sample of ~200 documents relevant/irrelevant (plus op
 - Roadmap: [R4.16](../../../docs/roadmap/phase-4-intel.md#3-requirements) (minimal labelling tool + `models.label.add`, verified by a label flow test) · [R4.12](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.31](../../../docs/roadmap/phase-4-intel.md#4-todo-sets); used by T4.04 (P4-T049)
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B007): add `models.label.add` and a minimal labelling tool in P4
 - UI: [D08 Label mode (Phase 4)](../../../docs/ui/dashboards/D08-intel.md) (`models.label.add`, C0; Telegram content is never offered) · [D10 Labelling queue](../../../docs/ui/dashboards/D10-models-memory.md) (P6, reuses the labels)
-- API: [02 §7.2 Agents & models](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) (`models.label.add` C0) · `/models/labels` query ([02 §7.1](../../../docs/02-v1-architecture.md#7-api-contract-mt_api))
+- API: [02 §7.2 Agents & models](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) (`models.label.add` C0) · `/models/labels` query ([02 §7.1](../../../docs/02-v1-architecture.md#7-api-contract-mt-api))
 - Labels rule: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design): labels come from outcomes or you, **never** from shadow-model outputs
 - Related: P4-T028 (`models` tables), P4-T030 (gate scores for stratifying), P4-T043 (API router), P4-T044 (D08 document sheet), P4-T048, P4-T049, P4-T053, P4-T059 (viewport matrix includes Label mode).
 

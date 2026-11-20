@@ -45,7 +45,7 @@ The docs agree and the implementing tasks have one unambiguous answer. Suggested
 - Related: P0-T014, P0-T047
 - [03 §3 repo layout](../../../docs/03-build-spec.md#3-repository-layout)
 - [02 §11 repo layout](../../../docs/02-v1-architecture.md#11-repository-layout)
-- [03 M15](../../../docs/03-build-spec.md#m15-ui--alerts--mt_ui-calls-mt_api)
+- [03 M15](../../../docs/03-build-spec.md#m15-ui--alerts-calls-mt-api)
 
 ## Requirements
 

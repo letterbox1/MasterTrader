@@ -42,7 +42,7 @@ A fault-injection suite proves the three-way reconciliation and unconfirmed-stat
 ## Context & references
 
 - Roadmap: [R7.09 · ToDo T7.23](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · Roadmap R7.09 'Verified by: recon report'
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) · [02 §9.3](../../../docs/02-v1-architecture.md#93-degraded-modes) · Roadmap R7.09 'Verified by: recon report'
 - Related: P7-T025, P7-T026, P7-T027
 
 ## Requirements

@@ -43,7 +43,7 @@ Official Australian sources (ATO, Treasury, AUSTRAC, ASIC, RBA), plus UAE/Cyprus
 
 - Roadmap: [R4.15](../../../docs/roadmap/phase-4-intel.md#3-requirements) (verified by a diff + task test) · ToDo [T4.30](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Live inputs: [16 §4.3](../../../docs/16-configuration-and-safety-model.md#43-live-inputs-instead-of-constants) (regulatory & jurisdiction watch; never auto-applied) · [06 Regulatory & venue watch](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) (sources, how fetched)
-- Task type: `REG_CHANGE` in the canonical list ([03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation), [08](../../../docs/08-airdrops-and-token-launches.md), [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)); stored in `curation.task`, created minimally in P3
+- Task type: `REG_CHANGE` in the canonical list ([03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation), [08](../../../docs/08-airdrops-and-token-launches.md), [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)); stored in `curation.task`, created minimally in P3
 - Cross-phase (`depends_on`): P3-T038 (minimal `curation.task`), P3-T031 (residency timeline, decides which foreign authorities are watched), P1-T045 (alert fan-out; until the P5 task queue exists, the review task is also announced by notification)
 - Related: P4-T011 (trafilatura/crawl4ai fetcher reused), P4-T008 (scrape NATS account may publish `raw.reg.>`), P4-T064 (venue status watch on the same machinery).
 

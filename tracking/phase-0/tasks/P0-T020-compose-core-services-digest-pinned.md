@@ -43,7 +43,7 @@ review_result: ""
 
 - [Roadmap P0 R0.02](../../../docs/roadmap/phase-0-foundations.md#3-requirements) · [T0.41](../../../docs/roadmap/phase-0-foundations.md#4-todo-sets)
 - [18 §2.1 `mt-scheduler` replaces Prefect](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) · [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20)
-- [18 §2.3 third-party services](../../../docs/18-platform-and-deployment.md#23-third-party-services-any-language-run-as-pinned-containers) · [18 §3 layout](../../../docs/18-platform-and-deployment.md#3-repository-layout) · [18 §5 deployment modes](../../../docs/18-platform-and-deployment.md#5-deployment-modes)
+- [18 §2.3 third-party services](../../../docs/18-platform-and-deployment.md#23-third-party-services-any-language-run-unmodified-as-pinned-containers) · [18 §3 layout](../../../docs/18-platform-and-deployment.md#3-repository-layout) · [18 §5 deployment modes](../../../docs/18-platform-and-deployment.md#5-deployment-modes)
 - [02 §3.2 containers](../../../docs/02-v1-architecture.md#32-containers) · [02 §5.1 stores](../../../docs/02-v1-architecture.md#51-stores)
 - [03 §2 target environment](../../../docs/03-build-spec.md#2-target-environment) · [07 §5 network & host](../../../docs/07-security-notes.md#5-network--host)
 - Database: P0-T070 (Supabase); observability: P0-T023; models: P0-T042, P0-T043, P0-T044; networks: P0-T021; secrets: P0-T022; `docker-proxy`: P0-T065

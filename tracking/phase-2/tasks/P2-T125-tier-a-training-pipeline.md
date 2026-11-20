@@ -42,7 +42,7 @@ An `mt_research` (Python, [18 §2.2](../../../docs/18-platform-and-deployment.md
 ## Context & references
 
 - Roadmap: [R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.30
-- [10 §4.3 tier A](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [12 §5 provenance](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (training refuses `train_ok=false`)
+- [10 §4.3 tier A](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) · [12 §5 provenance](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (training refuses `train_ok=false`)
 - Label source decided ([17 §D P2-B057](../../../docs/17-decisions-register.md#d-other-decisions), [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design)): until the P6 teacher exists, tier A trains on forward-return sign / triple-barrier labels from market data; training runs via `models.tiera.train` (C1).
 - Distillation from the M8 teacher is P6 ([phase 6](../../../docs/roadmap/phase-6-ai-models-treasury.md) R6.14); this pipeline must accept a teacher-label source later without redesign
 

@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Spec: [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [D17 Actions](../../../docs/ui/dashboards/D17-mcp-console.md)
+- Spec: [02 §7.4](../../../docs/02-v1-architecture.md#74-telegram--mcp) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [07 §6](../../../docs/07-security-notes.md#6-application-controls) · [D17 Actions](../../../docs/ui/dashboards/D17-mcp-console.md)
 - Implementing tasks: P8-T004 (registry), P8-T021 (bypass test case 4)
 
 ## Requirements

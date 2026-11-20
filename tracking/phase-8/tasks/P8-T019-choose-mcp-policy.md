@@ -44,7 +44,7 @@ MCP starts safe without asking you anything: the token-create form and OAuth con
 - Roadmap: [R8.04, R8.08](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.03](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-api` in Rust; `mt-mcp` on `rmcp`)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (scopes; `trade` creates approval cards only; C1 for `read`/`analyse`/`curation`, C3 for `trade`/`strategy`/`risk_tighten` and indefinite expiry; rate limits; response cap) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) (MCP orders always need your card, TTL 5 min) · [17 §D P8-B010](../../../docs/17-decisions-register.md#d-other-decisions) (no skip-approval) · [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19) (agents seed configurable values; you review once)
-- Spec: [03 M20 safeguards](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted)
+- Spec: [03 M20 safeguards](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted)
 - UI: [D17 Tokens + Tool registry](../../../docs/ui/dashboards/D17-mcp-console.md)
 - Built on: P8-T002 (tokens, scopes), P8-T004 (registry, never-exposed list), P8-T016 (D17). Unblocks P8-T028, P8-T029, P8-T035.
 

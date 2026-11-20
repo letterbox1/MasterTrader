@@ -42,7 +42,7 @@ Recon adapters for the OANDA practice, IG demo, Alpaca paper and IBKR paper acco
 ## Context & references
 
 - Roadmap: requirements [R1.12](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.29](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) · [phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo) item 2
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) · [phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo) item 2
 - IBKR paper goes through the `ib-gateway` container (P1-T070, [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B013), only when you use IBKR
 - Build first, keys last: all four adapters are built and tested against recorded fixtures; the live run with your practice credentials is P1-T074
 - Depends on (this phase): P1-T041

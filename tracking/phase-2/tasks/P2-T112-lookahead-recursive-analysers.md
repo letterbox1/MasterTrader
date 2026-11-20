@@ -44,7 +44,7 @@ Clean-room **Rust** look-ahead, recursive-formula and repainting analysers in `c
 - Roadmap: [R2.43](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.44 (and T2.27 for the harness sections) · verified by P2-T160
 - Decision: [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) supersedes the vendoring route of [17 §A P2-B051](../../../docs/17-decisions-register.md#a-s2-items-all-resolved): the analysers are rebuilt clean-room in Rust; [19 §4](../../../docs/19-third-party-register.md#4-copyleft-register--and-the-release-plan) (copyleft register: the vendored copy must be gone before any release)
 - Clean-room rule: implement from the behaviour described in freqtrade's public docs and our own spec below; do not open, copy or translate freqtrade source files while writing this crate
-- [D04 Bias checks tab](../../../docs/ui/dashboards/D04-research-lab.md) · [03 §8 item 3](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [03 M7](../../../docs/03-build-spec.md#m7-research-lab--mt_lab)
+- [D04 Bias checks tab](../../../docs/ui/dashboards/D04-research-lab.md) · [03 §8 item 3](../../../docs/03-build-spec.md#8-promotion-gates-per-strategy-configurable) · [03 M7](../../../docs/03-build-spec.md#m7-research-lab)
 - Python research strategies (paper-only, `mt_research`) are analysed through the `mt-lab-core` binding (P2-T203) with the same code
 
 ## Requirements

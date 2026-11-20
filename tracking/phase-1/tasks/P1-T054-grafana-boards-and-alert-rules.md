@@ -42,7 +42,7 @@ Provisioned Grafana dashboards show live prices by timeframe, spreads/funding/sw
 ## Context & references
 
 - Roadmap: requirements [R1.10](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.08](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.14](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.42](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M15](../../../docs/03-build-spec.md#m15-ui--alerts--mt_ui-calls-mt_api) (Grafana: markets, costs, DQ) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (metrics → Prometheus, Grafana alerts) · exit criterion 1 "Grafana and D02 show live prices at every timeframe" ([phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo))
+- Spec: [03 M15](../../../docs/03-build-spec.md#m15-ui--alerts-calls-mt-api) (Grafana: markets, costs, DQ) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (metrics → Prometheus, Grafana alerts) · exit criterion 1 "Grafana and D02 show live prices at every timeframe" ([phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo))
 - Depends on (this phase): P1-T006, P1-T030, P1-T040, P1-T045
 - Cross-phase prerequisites (depends_on): P0-T045 (Grafana provisioning and baseline alert rules)
 

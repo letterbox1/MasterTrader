@@ -42,7 +42,7 @@ A resumable `mt-connectors` job (Rust; an `mt-scheduler` backfill run) downloads
 ## Context & references
 
 - Roadmap: requirements [R1.04](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.22](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Dukascopy historical ticks, TrueFX/HistData for cross-checks) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (Dukascopy is the FX reference) · [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list) (`duka` is dead; own parser) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors`: Dukascopy (`bi5`))
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (Dukascopy historical ticks, TrueFX/HistData for cross-checks) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (Dukascopy is the FX reference) · [06 §3 Skip list](../../../docs/06-aggregators-and-market-providers.md#skip-list) (`duka` is dead; own parser) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-connectors`: Dukascopy (`bi5`))
 - Depends on (this phase): P1-T012, P1-T006, P1-T078 (`mt-connectors` base)
 
 ## Requirements

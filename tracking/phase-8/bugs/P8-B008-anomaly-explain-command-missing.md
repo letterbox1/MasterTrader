@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) · [D09](../../../docs/ui/dashboards/D09-agents.md)
+- Spec: [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) · [D09](../../../docs/ui/dashboards/D09-agents.md)
 - Cross-phase: P6 R6.05 / T6.22
 - Implementing task: P8-T009
 

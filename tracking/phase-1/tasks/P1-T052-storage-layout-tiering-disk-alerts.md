@@ -42,7 +42,7 @@ Parquet lives on NVMe for 90 days then moves to the HDD cold tier automatically,
 ## Context & references
 
 - Roadmap: requirements [R1.N3](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.40](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Budget: R1.N3 · [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (storage budget) · [03 §2](../../../docs/03-build-spec.md#2-target-environment) (2–4 TB NVMe + HDD) · [02 §5.1](../../../docs/02-v1-architecture.md#51-stores) (hot NVMe 90 days → cold HDD; restic for cold)
+- Budget: R1.N3 · [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (storage budget) · [03 §2](../../../docs/03-build-spec.md#2-target-environment) (2–4 TB NVMe + HDD) · [02 §5.1](../../../docs/02-v1-architecture.md#51-stores) (hot NVMe 90 days → cold HDD; restic for cold)
 - L2 policy: native diffs only for ≤ 3 order-book symbols by default, others 1 s snapshots ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002); budget recalculated from the soak (P1-T065)
 - Depends on (this phase): P1-T012
 

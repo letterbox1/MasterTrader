@@ -42,7 +42,7 @@ Commodity fundamentals and positioning (EIA energy series and STEO, USDA WASDE/Q
 ## Context & references
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Futures/commodities: EIA, USDA, CFTC COT, Baker Hughes) · [06 §3 Reports, nowcasts & forecasts](../../../docs/06-aggregators-and-market-providers.md#reports-nowcasts--forecasts-m6-features-m5-release-events)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (Futures/commodities: EIA, USDA, CFTC COT, Baker Hughes) · [06 §3 Reports, nowcasts & forecasts](../../../docs/06-aggregators-and-market-providers.md#reports-nowcasts--forecasts-m6-features-m5-release-events)
 - Build first, keys last ([17 §E](../../../docs/17-decisions-register.md#e-ratification-2026-10-22)): EIA is built keyless against fixtures (live with your EIA key from P0-T010 in P1-T073); CFTC COT, Baker Hughes and USDA WASDE files are keyless and run live here. USDA QuickStats uses a free key from P0-T010 (T0.10, P1-B019): built and tested against fixtures here, live in P1-T073
 - Depends on (this phase): P1-T024, P1-T078 (`mt-connectors` base)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (EIA, USDA NASS, CFTC COT clients in `mt-connectors`)

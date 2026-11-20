@@ -41,7 +41,7 @@ One ID scheme that both prevents duplicates across restarts and keeps the epoch 
 
 ## Context & references
 
-- [03 M12 'IDs include a restart epoch'](../../../docs/03-build-spec.md#m12-execution--mt_engine) · [07 §6 'derived from the signal ID'](../../../docs/07-security-notes.md#6-application-controls)
+- [03 M12 'IDs include a restart epoch'](../../../docs/03-build-spec.md#m12-execution) · [07 §6 'derived from the signal ID'](../../../docs/07-security-notes.md#6-application-controls)
 - Affects P2-T027, P2-T055.
 
 ## Requirements

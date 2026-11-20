@@ -89,7 +89,7 @@ Wallet apps (MetaMask, Trust Wallet, Phantom, Rabby, Ledger, Ellipal) have no po
 4. **Render:** total → chain → provider → protocol → position, in base currency (UI D18).
 5. **Manual signing** happens **in your own wallet**, never in the system. The system may prepare an unsigned transaction and hand it over as a QR (vault) or a WalletConnect / EIP-6963 request (phone or browser wallet); you review and sign there. **The system never holds vault or warm keys**, and P5 has no UI signing path (D18 is a view); any later prepare-to-sign feature builds unsigned payloads only and is scoped separately.
 
-## 4. Hold-and-earn module (M22, `mt_treasury`)
+## 4. Hold-and-earn module (M22, `mt-treasury`)
 
 M22 is the Rust crate **`mt-treasury`** (indexer, allocator, cost-gate use; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). Yield scoring is Rust too. Exploratory yield research may use the Python research package (`mt_research`); it never moves funds and only hands reviewed results to `mt-treasury`.
 
@@ -181,7 +181,7 @@ The gate is one library, `mt_onchain::costgate` in the Rust `mt-onchain` crate (
 - **Indexing:** The Graph (100k queries/month).
 - **Paid upgrades** (Helius Developer $49, Yellowstone gRPC ~$98) only once logs prove a free tier is losing money.
 
-## 8. Social participation (M23, `mt_social`)
+## 8. Social participation (M23, `mt-social`)
 
 M23 is the Rust crate **`mt-social`** (drafts through `mt-agents` and the LiteLLM gateway, credibility and shill-burst posture; [18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); it never signs or posts by itself.
 

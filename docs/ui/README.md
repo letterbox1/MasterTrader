@@ -11,7 +11,7 @@ This is the complete frontend scope, ready for implementation. It defines what e
 
 **Sources of truth:**
 - [../../DESIGN.md](../../DESIGN.md): visuals and responsive rules.
-- [../02-v1-architecture.md §7](../02-v1-architecture.md#7-api-contract-mt_api): API, WebSocket topics and confirmation levels.
+- [../02-v1-architecture.md §7](../02-v1-architecture.md#7-api-contract-mt-api): API, WebSocket topics and confirmation levels.
 - [../03-build-spec.md](../03-build-spec.md): module behaviour.
 - [../18-platform-and-deployment.md](../18-platform-and-deployment.md): stack, hosting (local or Vercel), Supabase Auth and deployment modes; the scenario & crowd simulator (§2.4).
 - [../16-configuration-and-safety-model.md](../16-configuration-and-safety-model.md): every limit, threshold, timer and allocation the UI shows or edits. These are **defaults you change in settings**, never fixed values in the UI (§3.7).

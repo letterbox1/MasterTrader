@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 75 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/1/0 | 0/6 |
+| 79 | 1 | 0 | 0 | 0 | 0 | 0 | 0/0/1/0 | 0/6 |
 
 Roadmap: [phase-1-data-and-monitoring.md](../../docs/roadmap/phase-1-data-and-monitoring.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -30,7 +30,7 @@ _None._
 |---|---|---|---|---|---|---|
 | [P1-T068](tasks/P1-T068-smtp-app-password-or-email-off.md) | Create an SMTP app password for email alerts, or turn email off | USER | medium | XS | user | — |
 
-## Backlog (75)
+## Backlog (79)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -42,28 +42,28 @@ _None._
 | [P1-T006](tasks/P1-T006-quota-tracker.md) | Build the shared per-connector quota tracker | BUILD | critical | M | agent | P1-T005 |
 | [P1-T007](tasks/P1-T007-provenance-tagging-at-write.md) | Tag provenance on every ingested row at write time | BUILD | critical | M | agent | P1-T005, P0-T024, P0-T025 |
 | [P1-T008](tasks/P1-T008-retention-job.md) | Enforce retention_days with a scheduled retention job | BUILD | high | S | agent | P1-T007, P0-T027 |
-| [P1-T009](tasks/P1-T009-instrument-master-and-calendars.md) | Build the instrument master with sessions and finest resolution | BUILD | high | M | agent | P1-T005, P1-T007 |
+| [P1-T009](tasks/P1-T009-instrument-master-and-calendars.md) | Build the instrument master with sessions and finest resolution | BUILD | high | M | agent | P1-T005, P1-T007, P1-T078 |
 | [P1-T010](tasks/P1-T010-crypto-ws-binance-bybit.md) | Stream Binance and Bybit public trades, L1 and L2 to NATS | BUILD | critical | M | agent | P1-T005, P1-T006, P1-T007, P1-T009 |
 | [P1-T011](tasks/P1-T011-crypto-ws-okx-coinbase-kraken.md) | Stream OKX, Coinbase and Kraken public trades, L1 and L2 | BUILD | high | M | agent | P1-T010 |
 | [P1-T012](tasks/P1-T012-parquet-recorder-compaction.md) | Build the Parquet recorder with daily compaction | BUILD | critical | M | agent | P1-T010, P0-T027 |
 | [P1-T013](tasks/P1-T013-bar-builder-continuous-aggregates.md) | Build 1s and standard-size bars in mt-recorder into monthly partitions | BUILD | critical | M | agent | P1-T010, P1-T007 |
 | [P1-T014](tasks/P1-T014-tick-volume-value-bars.md) | Add tick, volume and value bars | BUILD | medium | S | agent | P1-T013, P1-T012 |
-| [P1-T015](tasks/P1-T015-backfill-binance-vision.md) | Backfill crypto history from data.binance.vision | BUILD | high | M | agent | P1-T012, P1-T013, P1-T006, P1-T076 |
+| [P1-T015](tasks/P1-T015-backfill-binance-vision.md) | Backfill crypto history from data.binance.vision | BUILD | high | M | agent | P1-T012, P1-T013, P1-T006, P1-T076, P1-T078 |
 | [P1-T016](tasks/P1-T016-oanda-practice-stream.md) | Stream OANDA v20 practice prices for FX and metals | BUILD | critical | M | agent | P1-T005, P1-T006, P1-T007, P1-T009 |
 | [P1-T017](tasks/P1-T017-ig-lightstreamer-demo-stream.md) | Stream IG demo prices via Lightstreamer | BUILD | high | M | agent | P1-T005, P1-T006, P1-T007, P1-T009 |
-| [P1-T018](tasks/P1-T018-backfill-dukascopy-ticks.md) | Backfill Dukascopy ticks with a bi5 parser | BUILD | high | M | agent | P1-T012, P1-T006 |
-| [P1-T019](tasks/P1-T019-ecb-frankfurter-reference-rates.md) | Self-host Frankfurter and ingest ECB reference rates | BUILD | medium | S | agent | P1-T005, P1-T007 |
-| [P1-T020](tasks/P1-T020-rba-f11-daily-fx.md) | Ingest RBA F11 daily exchange rates | BUILD | high | S | agent | P1-T005, P1-T007, P0-T027 |
+| [P1-T018](tasks/P1-T018-backfill-dukascopy-ticks.md) | Backfill Dukascopy ticks with a bi5 parser | BUILD | high | M | agent | P1-T012, P1-T006, P1-T078 |
+| [P1-T019](tasks/P1-T019-ecb-frankfurter-reference-rates.md) | Self-host Frankfurter and ingest ECB reference rates | BUILD | medium | S | agent | P1-T005, P1-T007, P1-T078 |
+| [P1-T020](tasks/P1-T020-rba-f11-daily-fx.md) | Ingest RBA F11 daily exchange rates | BUILD | high | S | agent | P1-T005, P1-T007, P0-T027, P1-T078 |
 | [P1-T021](tasks/P1-T021-alpaca-iex-realtime-stream.md) | Stream Alpaca IEX real-time trades and quotes for 30 symbols | BUILD | high | M | agent | P1-T005, P1-T006, P1-T007, P1-T009 |
-| [P1-T022](tasks/P1-T022-backfill-alpaca-history.md) | Backfill Alpaca IEX history for stocks and ETFs | BUILD | medium | S | agent | P1-T021, P1-T012, P1-T013, P1-T076 |
-| [P1-T023](tasks/P1-T023-backfill-yfinance-daily.md) | Load yfinance daily history for stocks, ETFs and futures | BUILD | medium | S | agent | P1-T013, P1-T006, P1-T009 |
-| [P1-T024](tasks/P1-T024-macro-fred-alfred-treasury.md) | Ingest FRED/ALFRED vintages and US Treasury rates | BUILD | high | M | agent | P1-T005, P1-T006, P1-T007, P0-T027 |
-| [P1-T025](tasks/P1-T025-macro-sdmx-central-banks-dbnomics.md) | Ingest sdmx1, central-bank and DBnomics series | BUILD | medium | M | agent | P1-T024 |
-| [P1-T026](tasks/P1-T026-commodities-eia-usda-cot-baker-hughes.md) | Ingest EIA, USDA, CFTC COT and Baker Hughes data | BUILD | medium | M | agent | P1-T024 |
-| [P1-T027](tasks/P1-T027-abs-cpi-flow.md) | Ingest ABS CPI for tax indexation | BUILD | high | S | agent | P1-T024 |
-| [P1-T028](tasks/P1-T028-sec-edgar-edgartools.md) | Ingest SEC EDGAR filings with edgartools | BUILD | medium | M | agent | P1-T005, P1-T006, P1-T007 |
-| [P1-T029](tasks/P1-T029-coingecko-defillama-enrichment.md) | Add CoinGecko Demo and DefiLlama enrichment with a 24 h cache | BUILD | medium | S | agent | P1-T005, P1-T006, P1-T007, P1-T008 |
-| [P1-T030](tasks/P1-T030-dq-service-core.md) | Build the mt_monitor DQ service core | BUILD | critical | M | agent | P1-T004, P0-T029, P0-T030, P0-T035 |
+| [P1-T022](tasks/P1-T022-backfill-alpaca-history.md) | Backfill Alpaca IEX history for stocks and ETFs | BUILD | medium | S | agent | P1-T021, P1-T012, P1-T013, P1-T076, P1-T078 |
+| [P1-T023](tasks/P1-T023-backfill-yfinance-daily.md) | Load daily history for stocks, ETFs and futures from terms-checked free sources | BUILD | medium | M | agent | P1-T013, P1-T006, P1-T009, P1-T078 |
+| [P1-T024](tasks/P1-T024-macro-fred-alfred-treasury.md) | Ingest FRED/ALFRED vintages and US Treasury rates | BUILD | high | M | agent | P1-T005, P1-T006, P1-T007, P0-T027, P1-T078 |
+| [P1-T025](tasks/P1-T025-macro-sdmx-central-banks-dbnomics.md) | Ingest SDMX, central-bank and DBnomics series | BUILD | medium | M | agent | P1-T024, P1-T078 |
+| [P1-T026](tasks/P1-T026-commodities-eia-usda-cot-baker-hughes.md) | Ingest EIA, USDA, CFTC COT and Baker Hughes data | BUILD | medium | M | agent | P1-T024, P1-T078 |
+| [P1-T027](tasks/P1-T027-abs-cpi-flow.md) | Ingest ABS CPI for tax indexation | BUILD | high | S | agent | P1-T024, P1-T025 |
+| [P1-T028](tasks/P1-T028-sec-edgar-edgartools.md) | Ingest SEC EDGAR filings and XBRL company facts with a Rust client | BUILD | medium | M | agent | P1-T005, P1-T006, P1-T007, P1-T078 |
+| [P1-T029](tasks/P1-T029-coingecko-defillama-enrichment.md) | Add CoinGecko Demo and DefiLlama enrichment with a 24 h cache | BUILD | medium | S | agent | P1-T005, P1-T006, P1-T007, P1-T008, P1-T078 |
+| [P1-T030](tasks/P1-T030-dq-service-core.md) | Build the mt-monitor DQ service core | BUILD | critical | M | agent | P1-T004, P0-T029, P0-T030, P0-T035 |
 | [P1-T031](tasks/P1-T031-dq-check-stale-feed.md) | Add the session-aware stale-feed check (data age, ≤ 250 ms reaction) | BUILD | critical | M | agent | P1-T030, P1-T009 |
 | [P1-T032](tasks/P1-T032-dq-check-gaps.md) | Add the gap check (sequence IDs, trade IDs, bar counts) | BUILD | high | S | agent | P1-T030 |
 | [P1-T033](tasks/P1-T033-dq-check-bad-ticks.md) | Add the bad-tick check (robust z-score, spread band, crossed book) | BUILD | high | S | agent | P1-T030 |
@@ -86,10 +86,10 @@ _None._
 | [P1-T050](tasks/P1-T050-ui-d02-instrument-detail.md) | Build D02 instrument detail with charts at every timeframe | BUILD | critical | L | agent | P1-T049, P1-T014 |
 | [P1-T051](tasks/P1-T051-ui-notifications-centre.md) | Build the notifications centre | BUILD | medium | S | agent | P1-T045, P1-T046, P0-T050 |
 | [P1-T052](tasks/P1-T052-storage-layout-tiering-disk-alerts.md) | Set up hot/cold storage tiers, compaction schedule and disk alerts | OPS | high | M | agent | P1-T012 |
-| [P1-T053](tasks/P1-T053-prefect-batch-schedules.md) | Schedule batch flows by source update time in AEST/AEDT | OPS | high | S | agent | P1-T015, P1-T018, P1-T019, P1-T020, P1-T022, P1-T023, P1-T024, P1-T025, P1-T026, P1-T027, P1-T028, P1-T029, P1-T008, P1-T037, P1-T075 |
+| [P1-T053](tasks/P1-T053-prefect-batch-schedules.md) | Schedule the batch jobs on mt-scheduler by source update time in AEST/AEDT | OPS | high | S | agent | P1-T077, P1-T078, P1-T006, P1-T008, P1-T009, P1-T012, P1-T015, P1-T018, P1-T019, P1-T020, P1-T022, P1-T023, P1-T024, P1-T025, P1-T026, P1-T027, P1-T028, P1-T029, P1-T037, P1-T052, P1-T071, P1-T075, P1-T076 |
 | [P1-T054](tasks/P1-T054-grafana-boards-and-alert-rules.md) | Provision Grafana boards and alert rules for data, costs and quotas | OPS | high | M | agent | P1-T006, P1-T030, P1-T040, P1-T045, P0-T045 |
 | [P1-T055](tasks/P1-T055-runbooks-data-ops.md) | Write data-operations runbooks | DOC | medium | S | agent | P1-T045, P1-T048, P1-T052, P1-T070, P1-T071 |
-| [P1-T056](tasks/P1-T056-verify-open-provider-checks.md) | Run the open provider checks and record them in 06 | VERIFY | high | M | agent | P0-T009 |
+| [P1-T056](tasks/P1-T056-verify-open-provider-checks.md) | Run the open provider checks and record them in 06 | VERIFY | high | M | agent | P0-T009, P1-T078 |
 | [P1-T057](tasks/P1-T057-verify-dq-fault-injection.md) | Verify DQ end to end with fault injection | VERIFY | critical | M | agent | P1-T031, P1-T032, P1-T033, P1-T034, P1-T035, P1-T036, P1-T045, P1-T048 |
 | [P1-T058](tasks/P1-T058-verify-bar-parity.md) | Verify bar parity between the partitioned bar tables and Parquet ticks | VERIFY | high | S | agent | P1-T012, P1-T013, P1-T014, P1-T076 |
 | [P1-T059](tasks/P1-T059-verify-provenance-retention.md) | Verify provenance tagging and retention end to end | VERIFY | high | S | agent | P1-T008, P1-T029 |
@@ -100,7 +100,7 @@ _None._
 | [P1-T064](tasks/P1-T064-verify-cost-panels-and-recon-clean.md) | Verify cost panels populate and reconciliation runs clean | VERIFY | high | S | agent | P1-T039, P1-T040, P1-T048, P1-T073, P1-T074 |
 | [P1-T065](tasks/P1-T065-run-7-day-recording-soak.md) | Run the 7-day continuous recording soak | RUN | critical | M | agent | P1-T001, P1-T011, P1-T016, P1-T017, P1-T021, P1-T052, P1-T053, P1-T054, P1-T057, P1-T075, P1-T076 |
 | [P1-T066](tasks/P1-T066-review-first-week-dq-alerts.md) | Tune noisy DQ thresholds from the soak week's alert stats (tightening only) | OPS | high | S | agent | P1-T065 |
-| [P1-T067](tasks/P1-T067-phase-1-exit-demo.md) | Run the Phase 1 exit demo | VERIFY | critical | M | agent | P1-T020, P1-T026, P1-T027, P1-T028, P1-T043, P1-T055, P1-T056, P1-T057, P1-T058, P1-T059, P1-T060, P1-T061, P1-T062, P1-T063, P1-T064, P1-T065, P1-T066, P1-T072, P1-T073, P1-T074, P1-T075, P1-T076 |
+| [P1-T067](tasks/P1-T067-phase-1-exit-demo.md) | Run the Phase 1 exit demo | VERIFY | critical | M | agent | P1-T020, P1-T026, P1-T027, P1-T028, P1-T043, P1-T055, P1-T056, P1-T057, P1-T058, P1-T059, P1-T060, P1-T061, P1-T062, P1-T063, P1-T064, P1-T065, P1-T066, P1-T072, P1-T073, P1-T074, P1-T075, P1-T076, P1-T079 |
 | [P1-T069](tasks/P1-T069-quarterly-austrac-register-check.md) | Re-check your venues on the AUSTRAC register each quarter | USER | medium | S | user | P1-T043, P0-T026 |
 | [P1-T070](tasks/P1-T070-ib-gateway-container.md) | Add the IBC-managed ib-gateway container for IBKR paper reconciliation | OPS | medium | M | agent | P1-T004, P0-T020, P0-T021, P0-T022 |
 | [P1-T071](tasks/P1-T071-egress-ip-country-check.md) | Build the egress IP and country check | BUILD | high | M | agent | P1-T004, P1-T005, P0-T017, P0-T035, P0-T051 |
@@ -109,6 +109,10 @@ _None._
 | [P1-T074](tasks/P1-T074-verify-live-reconciliation.md) | Live reconciliation on practice and testnet accounts | VERIFY | critical | S | agent | P0-T009, P1-T002, P1-T041, P1-T042 |
 | [P1-T075](tasks/P1-T075-create-the-monthly-bar-partition-job-and-the-par.md) | Create the monthly bar partition job and the Parquet hot-window export | BUILD | high | M | agent | P1-T013, P1-T012, P0-T027 |
 | [P1-T076](tasks/P1-T076-build-the-bar-rebuild-and-rollup-job-for-backfil.md) | Build the bar rebuild and rollup job for backfills and corrections | BUILD | high | M | agent | P1-T013, P1-T012 |
+| [P1-T077](tasks/P1-T077-mt-scheduler-skeleton-postgres-backed-jobs-cron-.md) | mt-scheduler skeleton: Postgres-backed jobs, cron, retries, run history | BUILD | high | L | agent | P1-T004, P0-T024, P0-T018, P0-T034, P0-T051 |
+| [P1-T078](tasks/P1-T078-mt-connectors-crate-skeleton-http-client-quotas-.md) | mt-connectors crate skeleton: HTTP client, quotas, provenance, pit writer, fixture harness | BUILD | critical | M | agent | P1-T005, P1-T006, P1-T007, P0-T027 |
+| [P1-T079](tasks/P1-T079-verify-mt-scheduler-retries-resume-after-restart.md) | Verify mt-scheduler: retries, resume after restart, cron history, D16 status | VERIFY | high | M | agent | P1-T077, P1-T053 |
+| [P1-T080](tasks/P1-T080-move-the-p0-host-timer-jobs-onto-mt-scheduler-an.md) | Move the P0 host-timer jobs onto mt-scheduler and wire the backup and restore commands | OPS | high | M | agent | P1-T077, P0-T037, P0-T038, P0-T039, P0-T040, P0-T041 |
 
 ## Done (0)
 

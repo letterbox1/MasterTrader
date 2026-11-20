@@ -43,9 +43,9 @@ The twelve 09 tax-agent questions (plus the 2027 follow-ups and any engine-raise
 
 - Roadmap: [T3.30, R3.07](../../../docs/roadmap/phase-3-journal-and-tax.md) · exit criterion 3
 - Platform: [18 §2](../../../docs/18-platform-and-deployment.md#2-language-split-rust-first-python-where-necessary) (`mt-journal` Rust crate, `rust_decimal`; Python only for the ccxt ledger importer `mt_ledger_import`, [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required)) · [09 architecture](../../../docs/09-journal-and-tax.md#architecture) · [18 §4](../../../docs/18-platform-and-deployment.md#4-database-supabase-postgres) (Supabase Postgres, `supabase/migrations/`, pgTAP)
-- [09 questions](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) · [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) · M19 queue [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) · D15 Questions tab [D15](../../../docs/ui/dashboards/D15-tax.md)
+- [09 questions](../../../docs/09-journal-and-tax.md#questions-for-your-tax-agent-tracked-as-tasks) · [12 §6](../../../docs/12-policy-and-compliance.md#6-professional-advice-triggers-tracked-as-tasks-in-d13--d15) · M19 queue [03 M19](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation) · D15 Questions tab [D15](../../../docs/ui/dashboards/D15-tax.md)
 - Boundary: P5 T5.30 builds the full `mt_curation` queue (ranking, digests, Telegram buttons) on the same table
-- Decision: [17 §D P3-B011/B012](../../../docs/17-decisions-register.md#d-other-decisions) (P3 adds a minimal `curation.task` table; P5 extends it additively) · [03 M19 storage](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation--mt_curation) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components)
+- Decision: [17 §D P3-B011/B012](../../../docs/17-decisions-register.md#d-other-decisions) (P3 adds a minimal `curation.task` table; P5 extends it additively) · [03 M19 storage](../../../docs/03-build-spec.md#m19-user-task-queue--community-curation) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components)
 - Cross-phase prerequisites (depends_on): P0-T024 (`curation` schema), P0-T034 (command bus), P0-T035 (C-levels)
 
 ## Requirements

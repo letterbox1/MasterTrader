@@ -42,7 +42,7 @@ The `engine` service runs a Nautilus `TradingNode` per environment (sandbox/pape
 ## Context & references
 
 - Roadmap: [R2.30, R2.10, R2.01](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
-- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) · Architecture: [02 §3.2 `engine` container](../../../docs/02-v1-architecture.md#32-containers) · [02 §4 M12 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §6 subjects](../../../docs/02-v1-architecture.md#6-messaging-nats)
+- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution) · Architecture: [02 §3.2 `engine` container](../../../docs/02-v1-architecture.md#32-containers) · [02 §4 M12 tables](../../../docs/02-v1-architecture.md#4-logical-components) · [02 §6 subjects](../../../docs/02-v1-architecture.md#6-messaging-nats)
 - Flow: [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows) · WORM: [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many)
 - Cross-phase (`depends_on`): WORM audit tables (P0-T031, T0.23); NATS JetStream streams (P1-T004). Market data `md.*` (P1) and recon jobs (P1 R1.12) are used at runtime; tests use recorded fixtures and the Nautilus sandbox venue.
 - Decisions: [17 §D P2-B009](../../../docs/17-decisions-register.md#d-other-decisions) engine control subject `engine.cmd.*` · [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) canonical audit names (`audit.order`, `audit.fill`) · [16 §3.3](../../../docs/16-configuration-and-safety-model.md#33-records-the-write-path-vs-the-integrity-check) write path (JetStream buffer 1 GB / 24 h, stop new entries above 80%).

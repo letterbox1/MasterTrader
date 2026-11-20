@@ -43,7 +43,7 @@ You review drafts in D13 (or Telegram), approve/edit/skip each, and click Post y
 
 - Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.05
 - Optional: only if P6-T003 recorded `yes`; otherwise cancel this item.
-- Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social)
+- Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt-social)
 - UI: [D13](../../../docs/ui/dashboards/D13-tasks-curation.md) social drafts
 - Depends on (this phase): P6-T047
 

@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: requirements [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.28](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (Spreads by instrument × hour-of-week; TCA implementation shortfall; M11 told to pause on spread > 3× normal, default) · UI [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Costs heatmap, alert at spread > 3× normal
+- Spec: [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (Spreads by instrument × hour-of-week; TCA implementation shortfall; M11 told to pause on spread > 3× normal, default) · UI [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Costs heatmap, alert at spread > 3× normal
 - Defaults: [16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means) wide spread > 3× normal → pause the affected bots; [16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown) cost blow-out realised ÷ modelled > 1.5× over the last 20 fills → pause the bot (P2 applies both via M11)
 - Canonical audit names ([17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer)): TCA results go to `audit.cost_event`; there is no `audit.tca` table
 - P2 continues: R2.34 TCA per order ([P2 roadmap](../../../docs/roadmap/phase-2-strategies-risk-lab.md))

@@ -41,7 +41,7 @@ The docs agree and part-B tasks can be built without guessing: an explicit P2 la
 
 ## Context & references
 
-- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [phase 6](../../../docs/roadmap/phase-6-ai-models-treasury.md) R6.14
+- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) · [phase 6](../../../docs/roadmap/phase-6-ai-models-treasury.md) R6.14
 - Affects P2-T125
 
 ## Requirements

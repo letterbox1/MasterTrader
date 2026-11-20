@@ -42,7 +42,7 @@ Calibrated heads export to ONNX (FP32) and vLLM adapters; `decision-svc` stage 2
 ## Context & references
 
 - Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.10](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.24
-- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (serving, determinism controls, outputs) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · [02 F3](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 5–7 · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (`dec.tierb.*`, KV `tierb_scores`) · [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) (p95 < 50 ms)
+- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (serving, determinism controls, outputs) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) · [02 F3](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 5–7 · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) (`dec.tierb.*`, KV `tierb_scores`) · [02 §9.2](../../../docs/02-v1-architecture.md#92-observability--slos) (p95 < 50 ms)
 - Cross-phase: P4-T029 (decision-svc stage 1), P2-T128 (tier-A runtime reads KV scores)
 - Defaults: [16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets) (veto ≥ 0.90 precision, flip rate ≤ 0.1%) · prefix caching off on the decision path (17 §A, P4-B010)
 - Depends on (this phase): P6-T022, P6-T023, P6-T018

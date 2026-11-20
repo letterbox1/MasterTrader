@@ -43,7 +43,7 @@ Claude can add watchlist items and airdrop URLs and mark tasks (done/skip/snooze
 
 - Roadmap: [R8.03](../../../docs/roadmap/phase-8-mcp.md#3-requirements) · ToDo [T8.20](../../../docs/roadmap/phase-8-mcp.md#4-todo-sets)
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-mcp` in Rust on the official `rmcp` SDK, still a thin adapter over `mt-api` (axum)) · [18 §4.6](../../../docs/18-platform-and-deployment.md#46-auth) (Supabase Auth for your web session; MCP tokens stay opaque `mt-api` tokens)
-- Spec: [03 M20 Curation row](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · [02 §7.2 Intel, Airdrops, Tasks groups](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)
+- Spec: [03 M20 Curation row](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · [02 §7.2 Intel, Airdrops, Tasks groups](../../../docs/02-v1-architecture.md#72-commands-rest-write) · [D13](../../../docs/ui/dashboards/D13-tasks-curation.md)
 - Decisions: [16 §2.12](../../../docs/16-configuration-and-safety-model.md#212-mcp-phase-8) (`curation` scope, C1 to create; never-exposed list incl. `airdrop.claim.execute`, mandates, `wallet.sweep`) · [16 §2.13](../../../docs/16-configuration-and-safety-model.md#213-curation) · [17 §B P5-B004](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (canonical task-type names in 03 M19)
 - Cross-phase (depends_on): P5-T029 (task queue), P5-T033 (discovery intake incl. `/add <url>`), P4-T043 (intel commands incl. watchlist).
 

@@ -43,7 +43,7 @@ Every connector asks one quota tracker before each call; it throttles before any
 
 - Roadmap: requirements [R1.08](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.25](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Rule: [03 §1](../../../docs/03-build-spec.md#1-ground-rules) ("every connector has a quota tracker that throttles before the limit") · registry rate limits from live headers [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry)
-- Limits in docs: Twelve Data 800/day, Myfxbook 100/day, Finnhub 60/min, FMP 250/day ([06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)); EDGAR ≤ 10 req/s ([03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket)); OANDA ≤ 4 quotes/s/instrument; Alpaca IEX 30 symbols; Telegram bot ≤ 30 msg/s ([12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules))
+- Limits in docs: Twelve Data 800/day, Myfxbook 100/day, Finnhub 60/min, FMP 250/day ([06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers)); EDGAR ≤ 10 req/s ([03 M1](../../../docs/03-build-spec.md#m1-market--macro-data)); OANDA ≤ 4 quotes/s/instrument; Alpaca IEX 30 symbols; Telegram bot ≤ 30 msg/s ([12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules))
 - UI: [D07 Data & Quality](../../../docs/ui/dashboards/D07-data-quality.md) Quotas tab (limit, used, headroom %, throttle state, next reset, warn at 80%)
 - Depends on (this phase): P1-T005
 

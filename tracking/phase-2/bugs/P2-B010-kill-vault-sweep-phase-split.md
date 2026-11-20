@@ -41,7 +41,7 @@ The docs say the sweep part of rung 6 arrives with the signer in Phase 5 (R5.07)
 
 ## Context & references
 
-- [03 M11 ladder](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [P5 R5.07](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md)
+- [03 M11 ladder](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [14 §5 ladder](../../../docs/14-strategy-evidence-and-validation.md#5-risk-engine-additions-m11) · [P5 R5.07](../../../docs/roadmap/phase-5-airdrops-wallets-curation.md)
 - Affects P2-T018, P2-T031.
 
 ## Requirements

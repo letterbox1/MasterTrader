@@ -43,7 +43,7 @@ review_result: ""
 
 - Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.35
 - Optional module, off by default (P6-T003, 16 §2.14a); built once you enable it in settings.
-- Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social) · [03 M23](../../../docs/03-build-spec.md#m23-social-participation--mt_social) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (X: web intent after approval only; no auto-posting)
+- Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt-social) · [03 M23](../../../docs/03-build-spec.md#m23-social-participation) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (X: web intent after approval only; no auto-posting)
 - UI: [D13](../../../docs/ui/dashboards/D13-tasks-curation.md) Social drafts tab
 - Container: [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`social`)
 - Depends on (this phase): P6-T003

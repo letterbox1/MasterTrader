@@ -42,7 +42,7 @@ A chaos test crashes the engine at each point of the order lifecycle on the sand
 ## Context & references
 
 - Roadmap: [R2.32](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.62
-- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
+- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution)
 - Decision: client order ID `{bot}-{engine_epoch}-{seq}` with a separately stored signal hash ([17 §D P2-B007](../../../docs/17-decisions-register.md#d-other-decisions)); clean restart flat with bots paused ([16 §3.1](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch)).
 - Related: P2-T027 (IDs + reconcile), P2-T074 (restart-flat flow), P2-T071 (one live crash/restart on testnet with your keys).
 

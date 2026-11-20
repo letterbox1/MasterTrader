@@ -42,7 +42,7 @@ Exit criterion 2 is evidenced: spread, funding and swap panels in D07/D02/Grafan
 ## Context & references
 
 - Roadmap: requirements [R1.11](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements), [R1.12](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.28](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets), [T1.29](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Exit criterion 2 ([phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo)) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous)
+- Exit criterion 2 ([phase 1 §6 exit criteria](../../../docs/roadmap/phase-1-data-and-monitoring.md#6-exit-criteria-demo)) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous)
 - Depends on (this phase): P1-T039, P1-T040, P1-T048, P1-T073, P1-T074
 - Uses the live runs proven in P1-T073 (cost collectors) and P1-T074 (reconciliation); the stack holds the keys via its sops mounts
 

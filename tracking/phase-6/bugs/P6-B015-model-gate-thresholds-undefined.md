@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: documented defaults (user-
 ## Context & references
 
 - Found in: docs/10-memory-rag-and-models.md §4.3; docs/03-build-spec.md M21
-- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) ('target precision', 'calibrated high-precision threshold') · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) ('target precision', 'calibrated high-precision threshold') · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - Affects: P6-T022, P6-T026, P6-T030, P6-T057
 
 ## Requirements

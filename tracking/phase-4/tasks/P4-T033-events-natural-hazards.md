@@ -42,7 +42,7 @@ The Rust `mt-events` crate (`ingest-events` container, [18 §2.1](../../../docs/
 ## Context & references
 
 - Roadmap: [R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents) · [02 §4 M3 row](../../../docs/02-v1-architecture.md#4-logical-components) (`text.geo_event`, `evt.*`)
+- Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events) · [02 §4 M3 row](../../../docs/02-v1-architecture.md#4-logical-components) (`text.geo_event`, `evt.*`)
 - Related: P4-T035 (exposure + score), P4-T005 (your FIRMS key), P4-T067 (live check).
 
 ## Requirements

@@ -41,7 +41,7 @@ The dead-man design covers a dead or hung engine (the most important case) with 
 
 ## Context & references
 
-- [02 §6 dead-man rule](../../../docs/02-v1-architecture.md#6-messaging-nats) · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [07 §5 fail flat](../../../docs/07-security-notes.md#5-network--host)
+- [02 §6 dead-man rule](../../../docs/02-v1-architecture.md#6-messaging-nats) · [03 M11](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [07 §5 fail flat](../../../docs/07-security-notes.md#5-network--host)
 - Affects P2-T032, P2-T044, P2-T054.
 
 ## Requirements

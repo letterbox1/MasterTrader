@@ -42,7 +42,7 @@ Humanitarian, conflict and sanctions events from ReliefWeb (disasters API), UCDP
 ## Context & references
 
 - Roadmap: [R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents)
+- Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events)
 - Related: P4-T005 (your ACLED key and OpenSanctions licence decision, 17 §D P4-B008), P4-T013 (GDELT), P4-T067 (live check). ACLED and OpenSanctions are built on recorded fixtures; the live run is P4-T067.
 
 ## Requirements

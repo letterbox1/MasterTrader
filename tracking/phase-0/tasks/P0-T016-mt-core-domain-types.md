@@ -45,7 +45,7 @@ The `mt-core` crate defines typed, immutable domain types (Instrument, BarSpec, 
 - [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-core` row) · [03 §3 repo layout](../../../docs/03-build-spec.md#3-repository-layout)
 - [02 §5.2 key conventions](../../../docs/02-v1-architecture.md#52-key-conventions)
 - [02 §6 NATS](../../../docs/02-v1-architecture.md#6-messaging-nats) (payloads are versioned schemas)
-- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) (decimals as strings, ISO-8601 UTC)
+- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) (decimals as strings, ISO-8601 UTC)
 - Depends on: P0-T014 · Unblocks: P0-T071 (Python bindings), P0-T024/P0-T027 (`mt-store`), P0-T032 (`mt-api`)
 
 ## Requirements

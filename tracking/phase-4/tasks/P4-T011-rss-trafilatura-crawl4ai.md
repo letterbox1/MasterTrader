@@ -42,7 +42,7 @@ The Rust `mt-feeds` crate polls every feed in `feeds.yaml` (Rust RSS/Atom parser
 ## Context & references
 
 - Roadmap: [R4.01](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
 - Related: P4-T010 (framework), P4-T015 (central banks reuse this fetcher), P4-T012 (RSS-Bridge feeds use the same parser).
 
 ## Requirements

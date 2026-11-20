@@ -42,7 +42,7 @@ The remaining three crypto venues publish the same normalised `md.*` streams as 
 ## Context & references
 
 - Roadmap: requirements [R1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.20](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (OKX AU derivatives unresolved → paper only; Kraken AU derivatives blocked; all fine as data sources)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) · [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry) (OKX AU derivatives unresolved → paper only; Kraken AU derivatives blocked; all fine as data sources)
 - Pattern: reuse the connector and book builder from P1-T010
 - Depends on (this phase): P1-T010
 

@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R2.34](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.26
-- Spec: [03 M16 TCA](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) · Flow: [02 F2 step 8](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
+- Spec: [03 M16 TCA](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) · Flow: [02 F2 step 8](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Cross-phase (`depends_on`): TCA scaffolding + spreads (P1-T040), fees (P1-T038), funding/financing (P1-T039), all T1.28 / R1.11.
 - Defaults: cost blow-out = realised ÷ modelled > **1.5× over the last 20 fills → pause the bot**, alert ([16 §2.1](../../../docs/16-configuration-and-safety-model.md#21-risk-sizing-and-drawdown)); the sleeve kill criterion "implementation shortfall > 2× modelled" is P7 (16 §2.6, R7.06).
 - Consumers: lab cost models (P2-T102, R2.40); D05 TCA tab (P2-T147); weekly cost review (P2-T150).

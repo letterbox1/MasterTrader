@@ -42,7 +42,7 @@ Evidence that the same strategy class, run in a Nautilus truth backtest over a r
 ## Context & references
 
 - Roadmap: [R2.01, R2.40](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.65
-- [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [03 M7 truth](../../../docs/03-build-spec.md#m7-research-lab--mt_lab) · [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
+- [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [03 M7 truth](../../../docs/03-build-spec.md#m7-research-lab) · [02 F2](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Prerequisites (`depends_on`): paper engine (P2-T021) on the sandbox venue (P2-T023; simulated fills on live P1 data, no venue keys needed) running the EMA template (P2-T008) for one week, recorded by the P1 Parquet recorder
 
 ## Requirements

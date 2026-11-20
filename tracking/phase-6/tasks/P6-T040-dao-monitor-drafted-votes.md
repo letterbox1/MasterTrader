@@ -42,7 +42,7 @@ Snapshot (GraphQL, keyless 100 req/min) and Tally (free key) are polled for prop
 ## Context & references
 
 - Roadmap: [R6.23](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.28
-- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (DAO monitoring, votes drafted for your confirmation, dedicated governance key, one wallet per DAO)
+- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (DAO monitoring, votes drafted for your confirmation, dedicated governance key, one wallet per DAO)
 - Cross-phase: P5-T029 (task queue)
 - Depends on (this phase): none. Built keyless against recorded Snapshot (keyless GraphQL) and Tally responses; the live Tally check with your key (P6-T002) is P6-T070.
 

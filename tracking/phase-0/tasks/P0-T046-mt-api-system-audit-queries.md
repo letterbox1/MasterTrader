@@ -43,7 +43,7 @@ review_result: ""
 
 - [Roadmap P0 R0.11](../../../docs/roadmap/phase-0-foundations.md#3-requirements)
 - [D16 System](../../../docs/ui/dashboards/D16-system.md) (Backend contract)
-- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt_api) (§7.1 System queries)
+- [02 §7 API contract](../../../docs/02-v1-architecture.md#7-api-contract-mt-api) (§7.1 System queries)
 - [02 §9.2 SLOs](../../../docs/02-v1-architecture.md#92-observability--slos)
 - Related: P0-T051, P0-T052
 - Depends on: P0-T032, P0-T036, P0-T023, P0-T038

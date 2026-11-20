@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: [R4.08](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.25](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events--mt_dataevents) (exposure map; event score) · [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features) (event scores as features)
+- Spec: [03 M3](../../../docs/03-build-spec.md#m3-global-events) (exposure map; event score) · [03 M6](../../../docs/03-build-spec.md#m6-features) (event scores as features)
 - UI: [D08 Events](../../../docs/ui/dashboards/D08-intel.md) (exposure-map links, event score)
 - Cross-phase: P2-T120 (feature registry, R2.46) is a `depends_on` entry.
 

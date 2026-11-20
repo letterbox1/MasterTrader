@@ -41,7 +41,7 @@ The docs agree and part-B tasks can be built without guessing: D03 states that t
 
 ## Context & references
 
-- [D03 builder](../../../docs/ui/dashboards/D03-strategies.md) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [R2.02](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements)
+- [D03 builder](../../../docs/ui/dashboards/D03-strategies.md) · [03 M0](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [R2.02](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements)
 - Affects P2-T144
 
 ## Requirements

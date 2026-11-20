@@ -41,7 +41,7 @@ The docs agree and part-B tasks can be built without guessing: a deterministic, 
 
 ## Context & references
 
-- [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features)
+- [14 §6](../../../docs/14-strategy-evidence-and-validation.md#6-validation-harness-extends-03-8) · [03 M6](../../../docs/03-build-spec.md#m6-features)
 - Affects P2-T111, P2-T126
 
 ## Requirements

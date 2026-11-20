@@ -42,7 +42,7 @@ NautilusTrader `ExecutionClient`/`DataClient` implementations in `mt-engine` tal
 ## Context & references
 
 - Roadmap: [R7.10 · ToDo T7.24](../../../docs/roadmap/phase-7-prove-and-go-live.md)
-- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (MT5 Windows bridge for FP Markets) · [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor--mt_monitor-always-on-autonomous) (TCA, recon)
+- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution) (MT5 Windows bridge for FP Markets) · [14 §8](../../../docs/14-strategy-evidence-and-validation.md#8-mastertradingbot-integration) · [03 M16](../../../docs/03-build-spec.md#m16-live-cost--data-quality-monitor-always-on-autonomous) (TCA, recon)
 - Cross-phase (`depends_on`): P2-T021 (engine node), P2-T027 (epoch client order IDs and restart reconciliation); recon adapter patterns from P1-T042.
 - Related: P7-T034, P7-T030 (resting stops via MT5 SL), P7-T025 (recon side), P7-T051 (parity)
 

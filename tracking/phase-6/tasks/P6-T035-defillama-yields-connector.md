@@ -42,7 +42,7 @@ A connector in the Rust `mt-treasury` crate pulls DefiLlama pool yields (free) a
 ## Context & references
 
 - Roadmap: [R6.21](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.28
-- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (DefiLlama yields API, free, cached hourly; never rely on `apyReward`) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (DefiLlama: official API only, no scraping/republishing)
+- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (DefiLlama yields API, free, cached hourly; never rely on `apyReward`) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (DefiLlama: official API only, no scraping/republishing)
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B006: official free API hosts `api.llama.fi` and `yields.llama.fi` are allowed; site scraping isn't) · [06](../../../docs/06-aggregators-and-market-providers.md) DefiLlama row
 - Cross-phase: P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T029 (DefiLlama client to reuse)
 

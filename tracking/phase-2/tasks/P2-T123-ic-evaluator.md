@@ -42,7 +42,7 @@ An evaluator that reports, per feature version and instrument set, the informati
 ## Context & references
 
 - Roadmap: [R2.46](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.29
-- [03 M6 versioning and evaluation](../../../docs/03-build-spec.md#m6-features--mt_features)
+- [03 M6 versioning and evaluation](../../../docs/03-build-spec.md#m6-features)
 
 ## Requirements
 

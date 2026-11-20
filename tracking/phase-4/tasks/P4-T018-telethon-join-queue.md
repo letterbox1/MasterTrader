@@ -43,7 +43,7 @@ The Python `mt_telegram_reader` package (container `mt-telegram-reader`; Teletho
 
 - Roadmap: [R4.02](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.21](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
 - Policy: [12 §4 Telegram](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (honour FLOOD_WAIT, rate-limited queue, cap 500; no mass-join, member lists, auto-DM/forward, read-receipt tricks)
-- Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) · Accounts: [07 §10](../../../docs/07-security-notes.md#10-social--scraping-accounts)
+- Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social) · Accounts: [07 §10](../../../docs/07-security-notes.md#10-social--scraping-accounts)
 - Time-sensitive: [06 §0](../../../docs/06-aggregators-and-market-providers.md#0-️-time-sensitive-actions) (Telethon archived on GitHub, moved to Codeberg → pin)
 - Related: P4-T006 (session mechanism), P4-T019 (postures), P4-T068 (live check). Decision: [17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) (P4-B001): Telegram → regex extractor → postures → code/policy only ([02 F3b](../../../docs/02-v1-architecture.md#8-end-to-end-flows)).
 

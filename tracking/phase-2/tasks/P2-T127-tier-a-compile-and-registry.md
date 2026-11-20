@@ -42,7 +42,7 @@ Calibrated tier-A models are exported to **ONNX** (the only runtime format: infe
 ## Context & references
 
 - Roadmap: [R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.30
-- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21 model registry in MLflow](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) · registry stages/artefact storage from P2-T046 (T2.41)
+- [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21 model registry in MLflow](../../../docs/03-build-spec.md#m21-decision-one--model-serving) · registry stages/artefact storage from P2-T046 (T2.41)
 - [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) M21 owns `models.registry`
 
 ## Requirements

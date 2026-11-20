@@ -42,7 +42,7 @@ The `rag` schema holds `rag.doc_chunk(id, doc_id, source, tickers[], published_a
 ## Context & references
 
 - Roadmap: [R4.07](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.24](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Design: [10 §3 items 1, 3, 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag--mt_memory)
+- Design: [10 §3 items 1, 3, 5](../../../docs/10-memory-rag-and-models.md#3-document-rag-design-postgres) · [03 M9](../../../docs/03-build-spec.md#m9-memory--rag)
 - Decision: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P4-B006): the `rag` schema is created in P0 (P0-T024, a `depends_on` entry); this task adds tables only.
 - Related: P4-T014 (filings), P4-T032 (retrieval).
 

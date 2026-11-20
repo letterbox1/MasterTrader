@@ -42,7 +42,7 @@ Templates for scalping (tick/L2), intraday, EMA/MA crossover, trend on majors (v
 ## Context & references
 
 - Roadmap: [R2.02, R2.03](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.21
-- Spec: [03 M0 template list](../../../docs/03-build-spec.md#m0-strategy-framework--mt_strategy-strategy-agnostic-any-timeframe) · [14 §3 evidence + priority](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §4 regime filters, sizing, stops](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06)
+- Spec: [03 M0 template list](../../../docs/03-build-spec.md#m0-strategy-framework-strategy-agnostic-any-timeframe) · [14 §3 evidence + priority](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) · [14 §4 regime filters, sizing, stops](../../../docs/14-strategy-evidence-and-validation.md#4-trading-methods-enforced-in-code-defaults-user-editable-in-d06)
 - UI: [D03 builder Template tab](../../../docs/ui/dashboards/D03-strategies.md)
 - Related: P2-T003 base classes, P2-T013 sizing models, P2-T028 execution algos; Part B's lab runs the template backtests.
 

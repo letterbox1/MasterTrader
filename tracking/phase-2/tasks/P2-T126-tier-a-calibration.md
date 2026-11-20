@@ -42,7 +42,7 @@ Every tier-A model is calibrated on a time-ordered holdout with isotonic or Plat
 ## Context & references
 
 - Roadmap: [R2.47](../../../docs/roadmap/phase-2-strategies-risk-lab.md#3-requirements) · ToDo T2.30
-- [10 §4.3 calibration](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models) (output is a calibrated probability/edge, which M11 sizes)
+- [10 §4.3 calibration](../../../docs/10-memory-rag-and-models.md#43-design) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving) (output is a calibrated probability/edge, which M11 sizes)
 
 ## Requirements
 

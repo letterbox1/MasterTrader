@@ -42,7 +42,7 @@ review_result: ""
 ## Context & references
 
 - Roadmap: requirements [R1.01](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.20](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (Crypto real-time) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (L2 diff 100 ms) · subjects [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–2
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (Crypto real-time) · [03 §6](../../../docs/03-build-spec.md#6-smallest-free-timeframe-by-asset-class) (L2 diff 100 ms) · subjects [02 §6](../../../docs/02-v1-architecture.md#6-messaging-nats) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) steps 1–2
 - Platform: [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-recorder`: Nautilus Rust data clients where available (U)) · [18 §9](../../../docs/18-platform-and-deployment.md#9-workstation-first-build-path) (runs on the workstation)
 - Bybit is a **data source only** for AU (derivatives blocked; [12 §2](../../../docs/12-policy-and-compliance.md#2-venue-access-registry))
 - Depends on (this phase): P1-T005, P1-T006, P1-T007, P1-T009
@@ -51,7 +51,7 @@ review_result: ""
 
 - Use NautilusTrader's Rust data clients (Binance, Bybit) where the pinned version supports the stream (U: check per venue and stream first and record the result); otherwise a thin Rust WebSocket client (`tokio-tungstenite`) behind the same `StreamConnector` trait. No ccxt in the Rust path
 - Streams: trades, best bid/ask, L2 diffs with sequence numbers (Binance `U/u`, Bybit `seq`/`u`) and a REST snapshot on (re)subscribe; local book rebuilt and published as `md.*.book` snapshots every 1 s for every symbol, plus raw diffs to the recorder for native-L2 symbols only
-- Native-speed L2 diffs are recorded only for symbols marked `l2: true` (default cap 3, `market.l2.max_native_symbols`, configurable); all other symbols get 1 s book snapshots ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002, [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket), R1.N3)
+- Native-speed L2 diffs are recorded only for symbols marked `l2: true` (default cap 3, `market.l2.max_native_symbols`, configurable); all other symbols get 1 s book snapshots ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B002, [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data), R1.N3)
 - Messages carry venue sequence IDs so the gap check (P1-T032) works; `event_time` from the venue, `ingest_time` from our clock
 - Public endpoints only; no API keys needed; connection counts and subscribe rates within venue limits via the quota tracker
 - Stamps every message with our receive time (`ingest_time`, workstation clock), the basis of data age ([16 §2.2](../../../docs/16-configuration-and-safety-model.md#22-data-freshness-what-stale-means)), and publishes connection status to KV `feed_status` and receive times/sequence breaks on `dq.raw.{venue}.{symbol}` immediately (inputs to the DQ monitor)

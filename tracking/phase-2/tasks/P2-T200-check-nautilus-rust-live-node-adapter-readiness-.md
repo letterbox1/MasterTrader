@@ -43,7 +43,7 @@ A dated, cited answer per venue to the (U) in [18 §2.1](../../../docs/18-platfo
 
 - Roadmap: [R2.30](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
 - Platform: [18 §2.1 `mt-engine`](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) · [18 §10 sources](../../../docs/18-platform-and-deployment.md#10-sources) · decision [17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19)
-- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine) (built-in adapters: IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Betfair)
+- Spec: [03 M12](../../../docs/03-build-spec.md#m12-execution) (built-in adapters: IBKR, Binance, Bybit, OKX, Coinbase, Kraken, Hyperliquid, Betfair)
 - Prior research: [engines-nautilus-hummingbot-freqtrade](../../../docs/research/engines-nautilus-hummingbot-freqtrade.md)
 - Unblocks: P2-T021 (node wrapper), P2-T023 (testnet configs). Custom adapters (Alpaca, OANDA, IG) are P2-T201.
 

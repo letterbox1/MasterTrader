@@ -42,7 +42,7 @@ Measured flip rate (decisions that change on identical repeated inputs, incl. ac
 ## Context & references
 
 - Roadmap: [R6.11](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.61
-- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) determinism controls (SemIf saw 5–6/777 flips with prefix reuse in BF16) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving--mt_models)
+- Spec: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) determinism controls (SemIf saw 5–6/777 flips with prefix reuse in BF16) · [03 M21](../../../docs/03-build-spec.md#m21-decision-one--model-serving)
 - Depends on (this phase): P6-T024
 - Defaults: flip rate ≤ 0.1% ([16 §2.10](../../../docs/16-configuration-and-safety-model.md#210-models-tier-b-and-llm-budgets)); prefix caching off on the decision path ([17 §A](../../../docs/17-decisions-register.md#a-s2-items-all-resolved) P4-B010)
 

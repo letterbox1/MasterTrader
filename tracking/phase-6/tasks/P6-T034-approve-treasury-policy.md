@@ -42,7 +42,7 @@ You have reviewed and approved (C3) the first treasury policy and the protocol a
 ## Context & references
 
 - Roadmap: [R6.20](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.21](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.22](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.03
-- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) · [13 §5](../../../docs/13-wallets-treasury-and-onchain.md#5-treasury) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) (HLP ≤ 10% of stables and ≤ 5% of portfolio, P1 capped)
+- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) · [13 §5](../../../docs/13-wallets-treasury-and-onchain.md#5-treasury) · [14 §3](../../../docs/14-strategy-evidence-and-validation.md#3-strategy-catalogue-evidence-ranked-templates) (HLP ≤ 10% of stables and ≤ 5% of portfolio, P1 capped)
 - UI: [D18](../../../docs/ui/dashboards/D18-wallets-treasury.md) `/wallets/treasury`
 - Defaults: [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) · [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) (P6-B013 HLP cap)
 - Cross-phase: P2-T035 (Telegram C3 + TOTP prompt)

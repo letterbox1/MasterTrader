@@ -43,7 +43,7 @@ The bar builder in `mt-recorder` (Rust) consumes trades and quotes and writes 1s
 
 - Roadmap: requirements [R1.02](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.21](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
 - Platform: [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb) (monthly partitions, recorder writes standard sizes, rollup job, `date_bin`, Parquet for old bars) · [18 §2.1](../../../docs/18-platform-and-deployment.md#21-rust-cargo-workspace-crates) (`mt-recorder`, `mt-store`) · [18 §3](../../../docs/18-platform-and-deployment.md#3-repository-layout) (`supabase/migrations/`)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (recording pipeline) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 4 · [02 §5.1](../../../docs/02-v1-architecture.md#51-stores)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (recording pipeline) · flow [02 §8 F1](../../../docs/02-v1-architecture.md#8-end-to-end-flows) step 4 · [02 §5.1](../../../docs/02-v1-architecture.md#51-stores)
 - Decision: timeframes run tick → 1W ([17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B011, gap closed); no TimescaleDB ([17 §G](../../../docs/17-decisions-register.md#g-platform-rust-and-python-supabase-vercel-workstation-first-2026-11-19))
 - Related: P1-T075 (partition job and the Parquet hot window), P1-T076 (rebuild and rollup job for backfills and corrections)
 - Depends on (this phase): P1-T010, P1-T007

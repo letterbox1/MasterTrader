@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Spec: [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane--mt_mcp-built-last-phase-8-only-if-wanted) · research [MCP security](../../../docs/research/observability-storage-dataquality.md#mcp-security)
+- Spec: [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · [03 M20](../../../docs/03-build-spec.md#m20-mcp-control-plane-built-last-phase-8-only-if-wanted) · research [MCP security](../../../docs/research/observability-storage-dataquality.md#mcp-security)
 - Implementing tasks: P8-T002, P8-T005, P8-T006
 
 ## Requirements

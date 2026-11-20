@@ -42,7 +42,7 @@ The docs agree and are specific enough to build from: M14 states the allowed pat
 ## Context & references
 
 - Found in: docs/03-build-spec.md M14; docs/research/mirofish.md
-- [03 M14](../../../docs/03-build-spec.md#m14-crowd-simulation-optional) · [research: MiroFish](../../../docs/research/mirofish.md)
+- [03 M14](../../../docs/03-build-spec.md#m14-scenario--crowd-simulator-go-live-tool) · [research: MiroFish](../../../docs/research/mirofish.md)
 - Affects: P6-T050
 
 ## Requirements

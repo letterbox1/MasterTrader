@@ -42,7 +42,7 @@ The ABS CPI series the 2027 indexation uses (All groups CPI, weighted average of
 ## Context & references
 
 - Roadmap: requirements [R1.06](../../../docs/roadmap/phase-1-data-and-monitoring.md#3-requirements) · ToDo [T1.24](../../../docs/roadmap/phase-1-data-and-monitoring.md#4-todo-sets)
-- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data--mt_datamarket) (ABS CPI, needed for the 2027 tax indexation) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) · consumer [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md)
+- Spec: [03 M1](../../../docs/03-build-spec.md#m1-market--macro-data) (ABS CPI, needed for the 2027 tax indexation) · [09 Goals](../../../docs/09-journal-and-tax.md#goals) · consumer [P3 roadmap](../../../docs/roadmap/phase-3-journal-and-tax.md)
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) P1-B016 (All groups CPI, eight-capital weighted average, A2325846C (U)); [06 §3](../../../docs/06-aggregators-and-market-providers.md#3-additional-forex--multi-asset-providers) (other ABS CPI series are display-only); the series ID check is P1-T056 (T1.60); the as-of rule is a tax-agent question ([09](../../../docs/09-journal-and-tax.md), question 9)
 - Depends on (this phase): P1-T024, P1-T025 (the Rust SDMX client in `mt-connectors`)
 

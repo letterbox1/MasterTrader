@@ -42,7 +42,7 @@ The allocator ranks allow-listed pools by **net yield = apyBase − amortised en
 ## Context & references
 
 - Roadmap: [R6.21](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.24](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.28
-- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt_treasury) (net yield formula, ≤ 20% per protocol, per-chain/per-stablecoin caps) · [13 §7](../../../docs/13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) (cost gate) · [13 §5](../../../docs/13-wallets-treasury-and-onchain.md#5-treasury) (reserve)
+- Spec: [13 §4](../../../docs/13-wallets-treasury-and-onchain.md#4-hold-and-earn-module-m22-mt-treasury) (net yield formula, ≤ 20% per protocol, per-chain/per-stablecoin caps) · [13 §7](../../../docs/13-wallets-treasury-and-onchain.md#7-on-chain-cost-gate--dex-execution-extends-m12--m16) (cost gate) · [13 §5](../../../docs/13-wallets-treasury-and-onchain.md#5-treasury) (reserve)
 - Cross-phase: P5-T020 (`mt_onchain::costgate` verdicts, `mt-onchain` crate), P5-T022 (wallet-indexer balances); M11 via P6-T033/P2-T017
 - Defaults: [16 §2.7](../../../docs/16-configuration-and-safety-model.md#27-wallets-signer-and-gas-13) (per-protocol ≤ 20%, HLP cap, cost-gate margin 2×)
 - Depends on (this phase): P6-T033, P6-T035

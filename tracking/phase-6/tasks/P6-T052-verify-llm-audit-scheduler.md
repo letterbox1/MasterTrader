@@ -42,7 +42,7 @@ Evidence that (a) every gateway call over a 48 h window has exactly one `audit.l
 ## Context & references
 
 - Roadmap: [R6.02](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · [R6.03](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.67 (scheduler test; also the R6.03 audit check)
-- Roadmap: R6.02 verified by 'Scheduler tests', R6.03 by 'Audit check' · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) · [15 §2.4](../../../docs/15-bots-hitl-and-worm-audit.md#24-tests-part-of-every-phase-that-adds-a-worm-table)
+- Roadmap: R6.02 verified by 'Scheduler tests', R6.03 by 'Audit check' · [03 M17](../../../docs/03-build-spec.md#m17-observability--audit) · [03 §7](../../../docs/03-build-spec.md#7-llm-cost-control) · [15 §2.4](../../../docs/15-bots-hitl-and-worm-audit.md#24-tests-part-of-every-phase-that-adds-a-worm-table)
 - Decisions: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B001: missing VERIFY ToDos added, this is T6.67; P6-B010: `audit.llm_call` written from P0, so the reconciliation covers P0–P6 callers)
 - Depends on (this phase): P6-T005, P6-T008, P6-T013, P6-T015
 

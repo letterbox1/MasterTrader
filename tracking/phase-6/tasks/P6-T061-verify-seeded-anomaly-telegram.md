@@ -42,7 +42,7 @@ End-to-end proof for R6.05: a seeded anomaly in a replayed bar stream is detecte
 ## Context & references
 
 - Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.68
-- Roadmap: R6.05 'Seeded anomaly' · [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor--mt_anomaly) · [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 2
+- Roadmap: R6.05 'Seeded anomaly' · [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor) · [roadmap §6 exit criteria](../../../docs/roadmap/phase-6-ai-models-treasury.md#6-exit-criteria-demo) item 2
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P6-B001: VERIFY ToDo added, this is T6.68)
 - Cross-phase: P1-T060 (alert path to Telegram verified with your existing bot; no new key)
 - Depends on (this phase): P6-T015

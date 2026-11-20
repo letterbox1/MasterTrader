@@ -42,7 +42,7 @@ An `anomaly` service (`mt-anomaly`, Rust, 18 §2.1) runs robust z-score, Isolati
 ## Context & references
 
 - Roadmap: [R6.05](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.22
-- Spec: [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor--mt_anomaly) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M10 owns `audit.anomaly`, publishes `alert.anomaly.*`, consumes `md.*`, `text.*`, `evt.*`) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`anomaly` container)
+- Spec: [03 M10](../../../docs/03-build-spec.md#m10-anomaly-monitor) · [02 §4](../../../docs/02-v1-architecture.md#4-logical-components) (M10 owns `audit.anomaly`, publishes `alert.anomaly.*`, consumes `md.*`, `text.*`, `evt.*`) · [02 §3.2](../../../docs/02-v1-architecture.md#32-containers) (`anomaly` container)
 - Cross-phase: P1-T013 (bars at the standard sizes written by `mt-recorder`, no continuous aggregates, [18 §4.3](../../../docs/18-platform-and-deployment.md#43-bars-without-timescaledb)), P4-T040 (sentiment/regime features), P0-T031 (WORM helper); event streams (P4-T033/P4-T034) are optional inputs, mocked in tests
 
 ## Requirements

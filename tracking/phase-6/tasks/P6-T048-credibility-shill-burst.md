@@ -43,7 +43,7 @@ Accounts you follow get credibility scores from past calls vs outcomes, and a sh
 
 - Roadmap: [R6.31](../../../docs/roadmap/phase-6-ai-models-treasury.md#3-requirements) · ToDo T6.35
 - Optional module, off by default (P6-T003, 16 §2.14a); built once you enable it in settings.
-- Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt_social) (credibility, shill-burst) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (Telegram counts only)
+- Spec: [13 §8](../../../docs/13-wallets-treasury-and-onchain.md#8-social-participation-m23-mt-social) (credibility, shill-burst) · [12 §4](../../../docs/12-policy-and-compliance.md#4-per-platform-data--automation-rules) (Telegram counts only)
 - Cross-phase: P4 social ingest, P5 wallet/on-chain data
 - Depends on (this phase): P6-T003
 

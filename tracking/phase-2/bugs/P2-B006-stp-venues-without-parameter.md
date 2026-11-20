@@ -41,7 +41,7 @@ review_result: ""
 
 ## Context & references
 
-- [12 §3 STP table](../../../docs/12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) · [03 M12](../../../docs/03-build-spec.md#m12-execution--mt_engine)
+- [12 §3 STP table](../../../docs/12-policy-and-compliance.md#3-exchange-conduct--self-trade-prevention) · [03 M12](../../../docs/03-build-spec.md#m12-execution)
 - Affects P2-T022, P2-T024–T026, P2-T056.
 
 ## Requirements

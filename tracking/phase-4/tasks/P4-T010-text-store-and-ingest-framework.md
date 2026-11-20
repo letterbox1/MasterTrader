@@ -42,7 +42,7 @@ The `text` store and the Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-plat
 ## Context & references
 
 - Roadmap: [R4.01, R4.03, R4.06](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext) · [03 §4 data model](../../../docs/03-build-spec.md#4-data-model-overview) · [02 §4 M2 row](../../../docs/02-v1-architecture.md#4-logical-components)
+- Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social) · [03 §4 data model](../../../docs/03-build-spec.md#4-data-model-overview) · [02 §4 M2 row](../../../docs/02-v1-architecture.md#4-logical-components)
 - Provenance: [12 §5](../../../docs/12-policy-and-compliance.md#5-data-provenance-tagging-one-mechanism-for-all-data-terms) (`source`, `licence`, `train_ok`, `model_input_ok`, `display_ok`, `retention_days`, `commercial_ok`)
 - Cross-phase (`depends_on`): P0-T024 (schemas, all 13 created in P0 per 17 §B), P0-T025 (seven provenance columns), P0-T027 (`pit`), P1-T005 (connector framework), P1-T006 (quota tracker), P1-T007 (provenance tagging), P1-T046 (`/data/feeds`), P1-T078 (`mt-connectors` HTTP client, quotas, provenance, fixture harness). P1-T008 (retention job) and P1-T030 (`feed_status`) are reused.
 - Decision: [17 §D](../../../docs/17-decisions-register.md#d-other-decisions) (P4-B003): postures live in `text.telegram_posture`, subject `posture.telegram.*`, consumers M4/M11 rules only ([02 §4–§6](../../../docs/02-v1-architecture.md#4-logical-components)).

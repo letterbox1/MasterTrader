@@ -42,7 +42,7 @@ For each volatility/volume forecaster of P4-T042 (Chronos Bolt small, TimesFM, K
 ## Context & references
 
 - Roadmap: [R4.11](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.27](../../../docs/roadmap/phase-4-intel.md#4-todo-sets) (forecast models via ONNX in `mt-models`; U: export support per model)
-- Spec: [03 M6](../../../docs/03-build-spec.md#m6-features--mt_features) (forecast models run in `mt_research`; ONNX in Rust where they export cleanly (U))
+- Spec: [03 M6](../../../docs/03-build-spec.md#m6-features) (forecast models run in `mt_research`; ONNX in Rust where they export cleanly (U))
 - Decision: [17 §H](../../../docs/17-decisions-register.md#h-rust-max-borrowed-code-rebuilt-in-rust-scenario-simulator-copyleft-register-2026-11-20) · [18 §2.2](../../../docs/18-platform-and-deployment.md#22-python-uv-workspace-packages-only-where-absolutely-required) (promoted models are exported to ONNX and run in Rust)
 - Parity rule: [10 §4.3](../../../docs/10-memory-rag-and-models.md#43-design) (Rust and Python scores match on a fixed sample before promotion; `mt-lab-core` runs the checks, [10 §6](../../../docs/10-memory-rag-and-models.md#6-where-this-lands-in-the-build))
 - Related: P4-T042 (forecast runners, export scripts), P4-T054 (IC report uses these features), P4-T061 (exit demo evidence).

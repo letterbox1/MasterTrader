@@ -42,7 +42,7 @@ The Rust `mt-feeds` crate ([18 §2.1](../../../docs/18-platform-and-deployment.m
 ## Context & references
 
 - Roadmap: [R4.01, R4.N1](../../../docs/roadmap/phase-4-intel.md#3-requirements) · ToDo [T4.20](../../../docs/roadmap/phase-4-intel.md#4-todo-sets)
-- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social--mt_datatext)
+- Sources: [06 §2](../../../docs/06-aggregators-and-market-providers.md#2-final-m2-social--news-ingestion-stack) · Spec: [03 M2](../../../docs/03-build-spec.md#m2-news--social)
 - Research: [social-aggregators](../../../docs/research/social-aggregators.md)
 - Related: P4-T007 (sidecar), P4-T019 (Telegram fallback bridge: its items go only to the posture extractor, never to `raw.text.*` or `nlp`, 02 F3b).
 

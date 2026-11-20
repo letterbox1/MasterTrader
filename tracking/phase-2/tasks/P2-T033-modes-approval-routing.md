@@ -42,7 +42,7 @@ After the gate approves an intent, routing follows the bot's mode (capped by its
 ## Context & references
 
 - Roadmap: [R2.20](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.25
-- Spec: [03 M11 modes](../../../docs/03-build-spec.md#m11-risk-manager--mt_risk-built-in-user-inputs-via-uitelegram-later-mcp) · [15 §1.2 modes + rules](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [15 §1.3 TTL defaults](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram)
+- Spec: [03 M11 modes](../../../docs/03-build-spec.md#m11-risk-manager-built-in-user-inputs-via-uitelegram-later-mcp) · [15 §1.2 modes + rules](../../../docs/15-bots-hitl-and-worm-audit.md#1-trading-bots) · [15 §1.3 TTL defaults](../../../docs/15-bots-hitl-and-worm-audit.md#13-hitl-approval-via-telegram)
 - Flow: [02 F2 step 5](../../../docs/02-v1-architecture.md#8-end-to-end-flows)
 - Decisions: [17 §B](../../../docs/17-decisions-register.md#b-cross-doc-conflicts-one-canonical-answer) modes `paper`/`hitl`/`autonomous` per bot (P2-B053) and paper → HITL = C2 (P2-B005) · [16 §2.3](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) TTLs, large-order rule, MCP cards.
 - Related: P2-T037 bot policy, P2-T038/T039 approval UIs.

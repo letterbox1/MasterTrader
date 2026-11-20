@@ -43,7 +43,7 @@ Trade-only, IP-allow-listed, no-withdrawal API keys exist on every testnet/pract
 
 - Roadmap: [R2.N3](../../../docs/roadmap/phase-2-strategies-risk-lab.md) · ToDo T2.03 · entry criterion §2
 - Security: [07 §3 broker & exchange keys](../../../docs/07-security-notes.md#3-broker--exchange-keys) · [07 §2 secrets](../../../docs/07-security-notes.md#2-secrets) · [SPEC NN5](../../../SPEC.md#non-negotiable-requirements)
-- Spec: [03 M12 key safety](../../../docs/03-build-spec.md#m12-execution--mt_engine)
+- Spec: [03 M12 key safety](../../../docs/03-build-spec.md#m12-execution)
 - Cross-phase (`depends_on`): practice/demo accounts from P0 (P0-T009, T0.09); sops/age secrets wiring from P0 (P0-T022, T0.43). Read-only recon keys from P1 (P1-T002, T1.02) stay separate.
 - Decisions: [16 §3.1 dead-man layer 2 has its own keys](../../../docs/16-configuration-and-safety-model.md#31-three-layer-dead-mans-switch) · [16 §3.2 one fixed egress IP](../../../docs/16-configuration-and-safety-model.md#32-network-egress-and-ip-locked-keys) · [16 §2.3 key rotation 90 days](../../../docs/16-configuration-and-safety-model.md#23-decisions-approvals-and-hitl) · [17 §D P1-B008 practice accounts use normal credentials](../../../docs/17-decisions-register.md#d-other-decisions)
 - Unblocks: P2-T071 (testnet/practice end-to-end with your keys, incl. the P2-T045 key audit on these keys), and through it the HITL bots on testnet/practice accounts (P2-T066). Paper bots run on the sandbox venue and need no keys.

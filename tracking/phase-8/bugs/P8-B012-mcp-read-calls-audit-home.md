@@ -36,7 +36,7 @@ The docs agree and are specific about this point, so the P8 tasks that depend on
 
 ## Context & references
 
-- Spec: [03 M17](../../../docs/03-build-spec.md#m17-observability--audit--mt_obs) · [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · roadmap [R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements)
+- Spec: [03 M17](../../../docs/03-build-spec.md#m17-observability--audit) · [15 §2](../../../docs/15-bots-hitl-and-worm-audit.md#2-worm-records-write-once-read-many) · [D17](../../../docs/ui/dashboards/D17-mcp-console.md) · roadmap [R8.07](../../../docs/roadmap/phase-8-mcp.md#3-requirements)
 - Implementing tasks: P8-T007, P8-T025
 
 ## Requirements
