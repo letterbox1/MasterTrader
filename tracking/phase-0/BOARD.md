@@ -8,7 +8,7 @@
 
 | Backlog | Ready | In progress | Review | Blocked | Done | Cancelled | Open bugs S1/S2/S3/S4 | Exit criteria |
 |---|---|---|---|---|---|---|---|---|
-| 60 | 12 | 0 | 0 | 1 | 0 | 0 | 0/0/0/0 | 0/6 |
+| 60 | 13 | 0 | 0 | 1 | 0 | 0 | 0/0/0/0 | 0/6 |
 
 Roadmap: [phase-0-foundations.md](../../docs/roadmap/phase-0-foundations.md) · Phase plan: [PHASE.md](PHASE.md) · Root board: [KANBAN.md](../../KANBAN.md)
 
@@ -26,7 +26,7 @@ _None._
 |---|---|---|---|
 | [P0-T001](tasks/P0-T001-reddit-api-decision.md) | Decide on Reddit and apply for API access before 2026-10-31 | USER | waiting on Reddit's decision on the 2026-10-29 Data API access request |
 
-## Ready (12)
+## Ready (13)
 
 | ID | Title | Type | Priority | Size | Owner | Waiting on |
 |---|---|---|---|---|---|---|
@@ -42,6 +42,7 @@ _None._
 | [P0-T011](tasks/P0-T011-venue-austrac-checks.md) | Check AU venues on the AUSTRAC register and send results to refine the registry seed | USER | medium | M | user | — |
 | [P0-T012](tasks/P0-T012-ups-and-4g-failover.md) | Order a UPS and a 4G failover router | USER | low | S | user | — |
 | [P0-T014](tasks/P0-T014-monorepo-skeleton.md) | Create the Cargo + uv workspace monorepo skeleton with quality tooling and a just entry point | BUILD | high | M | agent | — |
+| [P0-T074](tasks/P0-T074-licence-audit-and-copyleft-register-check-just-l.md) | Licence audit and copyleft register check (just licence-audit) | BUILD | medium | M | agent | — |
 
 ## Backlog (60)
 
