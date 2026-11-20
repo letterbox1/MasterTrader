@@ -73,6 +73,8 @@ This doc is canonical for **which language each service is written in, where eac
 | `mt_ledger_import` | ccxt's ledger/statement endpoints across many exchanges (historical accounts) | Hands normalised events to `mt-journal` |
 | `mt_mt5_bridge` (optional, Windows VPS) | The `MetaTrader5` package is Windows/Python-only | Executes only orders that already passed `mt-risk` in `mt-engine`'s MT5 adapter; no decisions of its own |
 
+**Also Python, but not ours to run:** LiteLLM loads its callbacks as Python, so the `audit.llm_call` writer is a small plugin file mounted into the unmodified LiteLLM container (P0-T042). It only writes audit rows through the `mt_store.obs` binding.
+
 **Rules:** Python never places orders, signs, or runs on the live decision path. It publishes to NATS or calls `mt-api`; reads only through `pit`; writes audit rows through the `mt-obs` binding (`mt_store.obs`), so the hash chain has one implementation.
 
 ### 2.3 Third-party services (any language, run unmodified as pinned containers)

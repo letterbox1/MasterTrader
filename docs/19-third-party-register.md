@@ -20,7 +20,7 @@ Their language is irrelevant to the Rust-first rule: we run them as they are and
 | Supabase (Postgres, Auth, Storage, Studio) | C (Postgres), Go (Auth), TypeScript (Storage, Studio) | PostgreSQL licence, Apache-2.0, MIT (U per component) | Database, login, file storage | None |
 | NATS JetStream | Go | Apache-2.0 | Event bus, KV | None |
 | Caddy | Go | Apache-2.0 | Reverse proxy, TLS | None |
-| LiteLLM | Python | MIT (its `enterprise/` folder is under a separate licence and isn't used) | LLM gateway, budgets, `audit.llm_call` callback | None. A Rust gateway (e.g. TensorZero, Apache-2.0 (U)) is an optional swap, not needed |
+| LiteLLM | Python | MIT (its `enterprise/` folder is under a separate licence and isn't used) | LLM gateway, budgets; our `audit.llm_call` callback is a small Python plugin file mounted into the unmodified container | None. A Rust gateway (e.g. TensorZero, Apache-2.0 (U)) is an optional swap, not needed |
 | MLflow | Python + TypeScript UI | Apache-2.0 | Experiments, model registry (training side) | None |
 | TEI (text-embeddings-inference) | **Rust** | Apache-2.0 | Embeddings, rerank | None |
 | llama.cpp (`llama-server`) | C/C++ | MIT | Local advisor model | None |
