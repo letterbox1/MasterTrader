@@ -68,6 +68,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 
 **Stress-testing:**
 - Trend and carry are both long crypto beta in bull markets, so stress-test against **May 2022, Nov 2022, Aug 2024 and Feb–Mar 2026**.
+- Before live, the stress tests also run the **simulated scenarios** from the scenario & crowd simulator (M14, `mt-crowdsim`, [18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)): shocks the real market hasn't produced yet, capped by `crowdsim.max_shock` ([16 §2.14b](16-configuration-and-safety-model.md#214b-scenario--crowd-simulator-m14)). The four historical shocks are what must pass; simulated results are reported alongside and don't gate unless 16 says so.
 - Keep a 20–40% stable/AUD reserve.
 
 **Minimum capital (after fees):**
@@ -112,7 +113,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 
 **Discipline:**
 - **No discretionary overrides.** The only manual trading action outside HITL approvals is **flatten-and-halt with a required reason** (`position.close` with `halt: true` and a reason). Manual tickets in D05 are their own `manual` sleeve with their own limits and journal tag.
-- **Review:** weekly review of the five worst trades.
+- **Review:** weekly review of the five worst trades. During the paper period and before live, the review pack also carries the **scenario-twin report** per bot: a second paper engine runs the same bots on replayed data with injected scenarios ([18 §2.4](18-platform-and-deployment.md#24-scenario--crowd-simulator-m14-a-go-live-tool)). It's an extra input, not a gate.
 
 **TradFi → 24/7 crypto porting pitfalls** (also for MasterTradingBot strategies):
 - No session close, so daily bars need a fixed UTC cut, and weekends are thin.
@@ -128,7 +129,7 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - Capital is split into **sleeves (engines)**, each with its own capital, limits and kill switch, so one sleeve's bad week can't drain another.
 - The risk engine **nets exposure per asset across sleeves** and enforces a total per-asset cap.
 
-**Where it runs:** all of these are the one Rust crate **`mt-risk`**, linked into `mt-api`, the engine (via a PyO3 binding for Python strategies) and `mt-deadman`; the risk golden tests run against the crate ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
+**Where it runs:** all of these are the one Rust crate **`mt-risk`**, linked into `mt-api`, the engine (via a PyO3 binding when a Python research strategy runs on the Python node) and `mt-deadman`; the risk golden tests run against the crate ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
 
 **Default limits** (per sleeve unless noted). These are defaults, not fixed rules: the reference values live in [16 §2](16-configuration-and-safety-model.md#2-default-values-all-configurable); tightening is immediate, loosening is C3:
 
@@ -180,14 +181,17 @@ _Adopted from the CryptoTrader spec ([review](11-cryptotrader-crossover-review.m
 - **Universe:** **delisted, rugged and dead instruments stay in the universe.**
 - **Conventions:** one timezone and bar-close convention.
 - **Trial counter:** every run records its parameter set and a **trial counter, incremented automatically on every tweak** (it feeds deflated Sharpe).
-- **Data:** backtests read only through `pit(as_of)`: the Rust `mt-store` implementation, through its Python binding in the lab ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). The harness and lab are Python (`mt_lab`); strategies may be Rust or Python on the same NautilusTrader engine ([18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)).
+- **Data:** backtests read only through `pit(as_of)`: the Rust `mt-store` implementation, through its Python binding in the lab ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)). 
+- **Lab split:** the production harness (walk-forward and validation, gate reports, cost models, bias analysers, setup odds) is the Rust crate **`mt-lab-core`**, which drives Nautilus Rust backtests. Exploration and training stay in Python (**`mt_research`**: notebooks, Optuna, model training), which calls the same harness through a PyO3 binding, so a notebook result and a gate result come from one implementation ([18 §2.1–2.2](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)).
+- **Strategy language:** strategies are **Rust by default** (built-in templates in `crates/mt-engine/src/strategy/`, your own in `strategies/<name>/`). Python strategies are allowed only for ML-driven research on paper, and are ported to Rust (ONNX inference via `ort`) before live.
+- **Generated strategies:** the LLM strategy generator emits Rust strategies against our templates; each is compiled and tested in the sandbox (no network, no secrets) before it reaches the registry.
 
 **Gates (all must pass):**
 1. **Leakage review:**
    - An adversarial checklist is run on the strategy code: look-ahead, survivorship, repainting indicators, costs, fill realism, full-sample fitting, regime coverage, alignment.
    - A model (via the gateway) answers present/absent per item, **quoting the exact line**.
    - Any "present" blocks the strategy until fixed or waived by you (`lab.leakage.waive`, C2, with the waiver audited).
-   - This runs alongside the freqtrade look-ahead/recursive analysers, vendored under `third_party/` with their GPL-3.0 licence and isolated in the Python `mt_lab` package (fine for personal, never-distributed use, [03 §1](03-build-spec.md#1-ground-rules); a SaaS would need a clean-room rewrite, [05](05-saas-legal-and-licensing.md)).
+   - This runs alongside the **look-ahead and recursive-formula bias analysers** in `mt-lab-core`: a clean-room Rust rewrite of freqtrade's ideas, with no GPL code. They replace the earlier vendored freqtrade copy (P2-B051), which is removed from `third_party/` once the Rust analysers catch the same seeded bugs ([19 §3](19-third-party-register.md#3-borrowed-designs-rebuilt-in-rust-no-third-party-code-in-the-runtime)).
 2. **Deflated Sharpe (DSR):**
    - DSR is a **probability** (0–1) that the strategy's true Sharpe is above zero, given all variants tried.
    - Inputs: per-period (not annualised) Sharpe, observation count, skew/kurtosis, variance of Sharpe across trials (the trial counter).
@@ -244,7 +248,7 @@ You have an existing **deterministic** system (EMA, scalping and rule-based stra
 1. **Shared libraries, not merged engines.**
    - A pure-function **indicator/signal library** (EMA, ATR, scalper triggers; no I/O), tested with **golden files** against MasterTradingBot's historical outputs.
    - A **sizing/risk library** (vol-targeting, per-asset caps, correlation buckets).
-   - These live in our own licence-clean code: Rust crates for deterministic strategies (they may be written in Rust from the start, [18 §9](18-platform-and-deployment.md#9-workstation-first-build-path)) or `mt_strategy` for Python ones; sizing/risk rules go in `mt-risk`.
+   - These live in our own licence-clean code: Rust crates, like every strategy by default ([18 §2.1](18-platform-and-deployment.md#21-rust-cargo-workspace-crates)); sizing/risk rules go in `mt-risk`.
 2. **Execution stays on FP Markets** at first:
    - **Primary:** the MT5 Python API on a Windows VPS near FP's MT5 servers (LD4 vs NY4 is settled by your client-area server name). The VPS is hardened, reachable over Tailscale only, holds only the MT5 trade-only login and no other secrets ([07](07-security-notes.md)).
    - **Linux route:** FP Markets' **cTrader Open API**, the M12 cTrader adapter to prototype.
